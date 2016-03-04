@@ -75,6 +75,7 @@
     "redux-mock-store": "0.0.6",
     "redux-thunk": "^1.0.3",
     "reselect": "^2.0.2",
+    "source-map-support": "^0.4.0",
     "strip-loader": "^0.1.1",
     "style-loader": "^0.13.0",
     "webpack": "^1.12.11",

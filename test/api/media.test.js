@@ -1,7 +1,6 @@
 import { expect } from 'chai';
 import * as data from './_data';
-import { expectError } from './_utils';
-import * as userApi from '../../src/api/user';
+import { expectError, postLogin } from './_utils';
 import * as mediaApi from '../../src/api/media';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -15,7 +14,7 @@ describe('API: Media', () => {
   let requestId;
 
   before(async () => {
-    authenticationToken = await userApi.postLogin(data.loginData);
+    authenticationToken = await postLogin(data.loginData);
   });
 
   it('upload succeeds', async () => {
