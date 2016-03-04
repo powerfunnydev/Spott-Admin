@@ -1,8 +1,8 @@
 {
-  "name": "apptivate-tagger",
+  "name": "apptivate-website",
   "version": "0.0.0",
-  "description": "Scene tagger for Apptvate",
-  "repository": "https://bitbucket.org/appiness/appiness.apptvate.cms.git",
+  "description": "Apptvate website",
+  "repository": "https://bitbucket.org/appiness/apptvate.website.git",
   "contributors": [
     {
       "name": "Arvid De Meyer"
