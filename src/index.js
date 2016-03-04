@@ -7,11 +7,9 @@ import createStore from './createStore';
 import { authenticate } from './actions/global';
 import { setBaseUrl } from './api/_request';
 import { getConfig } from './api/config';
-import Wrapper from './components/wrapper';
 
-// Error404 module
+import Wrapper from './components/wrapper';
 import Error404 from './components/error404/main';
-// Media module
 import MediaSinglePage from './components/media/singlePage';
 import MediaHome from './components/media/home';
 import MediaUpload from './components/media/upload';

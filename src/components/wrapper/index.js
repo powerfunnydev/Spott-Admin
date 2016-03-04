@@ -9,6 +9,7 @@ require('./global.css');
 /**
  * Wrapper component, containing the DOM tree of the entire application.
  */
+// TODO: integrate google analytics?
 class Application extends Component {
 
   static propTypes = {
