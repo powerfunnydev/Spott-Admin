@@ -165,6 +165,10 @@ export function del (authenticationToken, url) {
   return hookedHttpinvoke(processUrl(url), 'DELETE', optionsWithoutBody(authenticationToken));
 }
 
+/**
+ * Returns the base url of the backend, as retrieved from the config file.
+ * @param {string} url The requested base url.
+ */
 export function getApiBaseUrl () {
   return API_URL;
 }
