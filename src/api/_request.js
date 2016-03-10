@@ -1,13 +1,19 @@
 import httpinvoke from 'httpinvoke';
 
-// For testing purposes we use the environment variable set by webpack.
-// For production we retrieve the backend url from the configuration file, which
-// is retrieved from the server.
-let BASE_URL = process.env.BACKEND_URL || '';
+// we retrieve the urls from the configuration file, which is retrieved from the server.
+let API_URL;
+let APPTVATE_WEBSITE_URL;
+let CMS_URL;
+let CMS_NEXT_URL;
+let TAGGER_URL;
 
-export function setBaseUrl (baseUrl) {
-  // Remove last slash.
-  BASE_URL = baseUrl.replace(/\/$/g, '');
+export function setBaseUrls (baseUrls) {
+  // Trim trailing slashes
+  API_URL = baseUrls.api.replace(/\/$/g, '');
+  APPTVATE_WEBSITE_URL = baseUrls.apptvateWebsite.replace(/\/$/g, '');
+  CMS_URL = baseUrls.cms.replace(/\/$/g, '');
+  CMS_NEXT_URL = baseUrls.cmsNext.replace(/\/$/g, '');
+  TAGGER_URL = baseUrls.tagger.replace(/\/$/g, '');
 }
 
 // httpinvoke, our father
@@ -78,12 +84,12 @@ function optionsWithBodyForFormData (authenticationToken, body) {
 }
 
 /**
- * Prepends the url with BASE_URL if it is relative, otherwise
+ * Prepends the url with API_URL if it is relative, otherwise
  * returns the passed url unchanged.
  */
 function processUrl (url) {
   if (url && url.indexOf('http') !== 0) {
-    return `${BASE_URL}${url}`;
+    return `${API_URL}${url}`;
   }
   return url;
 }
@@ -157,4 +163,40 @@ export function put (authenticationToken, url, body) {
  */
 export function del (authenticationToken, url) {
   return hookedHttpinvoke(processUrl(url), 'DELETE', optionsWithoutBody(authenticationToken));
+}
+
+export function getApiBaseUrl () {
+  return API_URL;
+}
+
+/**
+ * Returns the base url of the apptvate website, as retrieved from the config file.
+ * @param {string} url The requested base url.
+ */
+export function getApptvateWebsiteUrl () {
+  return APPTVATE_WEBSITE_URL;
+}
+
+/**
+ * Returns the base url of the cms, as retrieved from the config file.
+ * @param {string} url The requested base url.
+ */
+export function getCmsUrl () {
+  return CMS_URL;
+}
+
+/**
+ * Returns the base url of the new cms, as retrieved from the config file.
+ * @param {string} url The requested base url.
+ */
+export function getCmsNextUrl () {
+  return CMS_NEXT_URL;
+}
+
+/**
+ * Returns the base url of the tagger, as retrieved from the config file.
+ * @param {string} url The requested base url.
+ */
+export function getTaggerUrl () {
+  return TAGGER_URL;
 }

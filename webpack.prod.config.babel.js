@@ -38,7 +38,6 @@ const configuration = {
     // Define constants used throughout the codebase
     new webpack.DefinePlugin({
       'process.env': {
-        BACKEND_URL: JSON.stringify(process.env.BACKEND_URL),
         NODE_ENV: JSON.stringify(process.env.NODE_ENV)
       }
     }),

@@ -5,7 +5,7 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import { Provider } from 'react-redux';
 import createStore from './createStore';
 import { authenticate } from './actions/global';
-import { setBaseUrl } from './api/_request';
+import { setBaseUrls } from './api/_request';
 import { getConfig } from './api/config';
 
 import Wrapper from './components/wrapper';
@@ -47,10 +47,10 @@ async function boot () {
   // Create an enhanced history that syncs navigation events with the store.
   const browserHistory = syncHistoryWithStore(hashHistory, store, { selectLocationState: (state) => state.get('router') });
 
-  // Retrieve the base url from the server.
+  // Retrieve the base url's from the server.
   await getConfig()
     .then((config) => {
-      setBaseUrl(config.api);
+      setBaseUrls(config.urls);
 
       // TODO: use authentication token of the CMS itself... (important!)
       switch (config.environment.toLowerCase()) {

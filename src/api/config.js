@@ -6,9 +6,14 @@ import { UnexpectedError } from './_errors';
  * Get the configuration, like the root url of the API.
  * @returnExample
  * {
- *   api: {
- *     root: 'https://spott-cms-rest-tst.appiness.mobi/rest/v001/'
- *   }
+ *   "urls": {
+ *     "api": "https://spott-cms-rest-prd.appiness.mobi/rest",
+ *     "apptvateWebsite": "http://apptvate.com",
+ *     "cms": "http://spott-cms-prd.appiness.mobi",
+ *     "cmsNext": "http://spott-cms-prd.appiness.mobi/cms-next",
+ *     "tagger": "http://spott-cms-prd.appiness.mobi/tagger"
+ *   },
+ *   "environment": "Production"
  * }
  * @throws UnexpectedError
  */

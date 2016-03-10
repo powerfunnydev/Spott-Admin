@@ -4,14 +4,14 @@ import { UnauthorizedError, UnexpectedError } from './_errors';
 
 /**
  * Uploading content requires a three-step process.
- * 1) Requesting a file upload using POST /rest/v001/system/files/uploads.
+ * 1) Requesting a file upload using POST /system/files/uploads.
  * 2) The actual upload to Amazon.
- * 3) Finally, we start video processing using POST /rest/v001/video/processors.
+ * 3) Finally, we start video processing using POST /video/processors.
  */
 
 /**
  * POST /system/files/uploads
- * Requesting a file upload using POST /rest/v001/system/files/uploads.
+ * Requesting a file upload using POST /system/files/uploads.
  * This call does not take any parameters (empty document), but returns information
  * necessary for upload. If the returned 'responseType' equals 'S3' (which we suppose),
  * we can succeed. The other responseType ('LOCAL') is probably only for backend testing
@@ -29,7 +29,7 @@ import { UnauthorizedError, UnexpectedError } from './_errors';
  */
 async function requestFileUpload (authenticationToken) {
   try {
-    let { body: { responseType, s3 } } = await request.post(authenticationToken, '/system/files/uploads', {});
+    let { body: { responseType, s3 } } = await request.post(authenticationToken, '/v002/system/files/uploads', {});
     // The server response either has responseType 's3' or 'local'. We expect the first.
     if (responseType !== 'S3') {
       throw new UnexpectedError();
@@ -143,9 +143,9 @@ export async function postUpload (authenticationToken, { file }, uploadingCallba
  * As mentioned, the processing is an asynchronous process which has a status
  * chaning in time (PENDING, ERROR,...) and which can fail. Using the requestId we
  * retrieve during the post call we can check progress using GET
- * /rest/v001/video/processors/{requestUuid}. Upon succesful or erroneous job
+ * /video/processors/{requestUuid}. Upon succesful or erroneous job
  * completion, we can gather the log file via GET
- * /rest/v001/video/processors/{requestUuid}/log.
+ * /video/processors/{requestUuid}/log.
  * @param {string} authenticationToken
  * @param {object} data
  * @param {string} data.description A textual description of the file to process. Important!
@@ -162,7 +162,7 @@ export async function postUpload (authenticationToken, { file }, uploadingCallba
  */
 export async function postProcess (authenticationToken, { description, mediumExternalReference, mediumExternalReferenceSource, remoteFilename, skipAudio, skipScenes }) {
   try {
-    let { body } = await request.post(authenticationToken, '/video/processors', {
+    let { body } = await request.post(authenticationToken, '/v002/video/processors', {
       description,
       filePath: remoteFilename,
       mediumExternalReference,
@@ -193,9 +193,10 @@ export async function postProcess (authenticationToken, { description, mediumExt
  * @param {object} data
  * @param {string} data.requestId The id of the process video request.
  */
+/* TODO: moved to another project, deleted this
 export async function getProcessProgress (authenticationToken, { requestId }) {
   try {
-    let { body: { status } } = await request.get(authenticationToken, `/video/processors/${requestId}`);
+    let { body: { status } } = await request.get(authenticationToken, `/v002/video/processors/${requestId}`);
     // Done, return.
     return { status };
   } catch (error) {
@@ -206,6 +207,7 @@ export async function getProcessProgress (authenticationToken, { requestId }) {
     throw new UnexpectedError(error);
   }
 }
+*/
 
 /**
  * GET /video/processors/{requestId}/log
@@ -215,9 +217,10 @@ export async function getProcessProgress (authenticationToken, { requestId }) {
  * @param {object} data
  * @param {string} data.requestId The id of the process video request.
  */
+/* TODO: moved to another project, deleted this
 export async function getProcessLog (authenticationToken, { requestId }) {
   try {
-    let { body } = await request.get(authenticationToken, `/video/processors/${requestId}/log`);
+    let { body } = await request.get(authenticationToken, `/v002/video/processors/${requestId}/log`);
     // Done, return.
     return body;
   } catch (error) {
@@ -228,3 +231,4 @@ export async function getProcessLog (authenticationToken, { requestId }) {
     throw new UnexpectedError(error);
   }
 }
+*/

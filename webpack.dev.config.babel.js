@@ -17,7 +17,7 @@ const configuration = {
       // Include our client source code
       './src/index.js',
       // Hot middleware
-      'webpack-dev-server/client?http://localhost:3001',
+      'webpack-dev-server/client?http://localhost:3003',
       'webpack-hot-middleware/client?reload=true'
     ]
   },
@@ -36,7 +36,7 @@ const configuration = {
   },
   devServer: {
     contentBase: './dist',
-    port: 3001,
+    port: 3003,
     hot: true
   },
   plugins: [
@@ -52,7 +52,6 @@ const configuration = {
     // Define constants used throughout the codebase
     new webpack.DefinePlugin({
       'process.env': {
-        BACKEND_URL: JSON.stringify(process.env.BACKEND_URL),
         NODE_ENV: JSON.stringify(process.env.NODE_ENV)
       }
     }),

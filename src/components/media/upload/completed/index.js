@@ -1,6 +1,7 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import { buttonStyles } from '../../../_common/styles';
+import { getCmsNextUrl } from '../../../../api/_request';
 
 @Radium
 export default class Completed extends Component {
@@ -44,6 +45,9 @@ export default class Completed extends Component {
     info: {
       fontSize: '20px',
       marginBottom: 30
+    },
+    infoLink: {
+      color: '#fff'
     }
   }
 
@@ -54,7 +58,8 @@ export default class Completed extends Component {
       <div style={styles.text}>
         <div style={styles.title.base}>Upload of <span style={styles.title.name}>{name}</span>...</div>
         <div style={styles.status}>Complete</div>
-        <div style={styles.info}>Thank you, come again.</div>
+        {/* Design prints "thank you, come again", due to processing we temporarily changed this */}
+        <div style={styles.info}>Click <a href={`${getCmsNextUrl()}/#/media`} style={styles.infoLink} target='_blank'>here</a> to follow up processing.</div>
         <div><button style={[ buttonStyles.base, buttonStyles.first, buttonStyles.bordered ]} onClick={this.onOkay}>Okay</button></div>
       </div>
     );
