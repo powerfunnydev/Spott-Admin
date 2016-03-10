@@ -15,4 +15,4 @@ Object.keys(global.window).forEach((key) => {
 });
 
 // Initialize API endpoint
-require('../src/api/_request').setBaseUrl(require('../src/config.json').api);
+require('../src/api/_request').setBaseUrls(require('../src/config.json').urls);

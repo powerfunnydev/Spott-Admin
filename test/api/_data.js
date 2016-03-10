@@ -9,7 +9,7 @@ export const brandId = 'b9d420e9-59da-4686-9da2-ee7258b5dd0e';
 export const scene = {
   hidden: true,
   id: '947e935e-2a6c-4d07-8721-fb4361617d6f',
-  imageUrl: 'https://spott-cms-rest-uat.appiness.mobi:443/apptvate/rest/v001/image/images/51ef110b-b8db-44f3-92b8-0ef680d587c6'
+  imageUrl: 'https://spott-cms-rest-uat.appiness.mobi:443/apptvate/rest/v002/image/images/51ef110b-b8db-44f3-92b8-0ef680d587c6'
 };
 
 /*

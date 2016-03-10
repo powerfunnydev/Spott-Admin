@@ -25,6 +25,6 @@ export function expectUrl (url) {
  * Login with username and password
  */
 export async function postLogin ({ username, password }) {
-  const { body: { authenticationToken } } = await request.post(null, '/security/login', { userName: username, password });
+  const { body: { authenticationToken } } = await request.post(null, '/v002/security/login', { userName: username, password });
   return authenticationToken;
 }
