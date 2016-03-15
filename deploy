@@ -1,0 +1,23 @@
+if [ "$#" -ne 1 ]; then
+  echo "Pass an environment (one of: tst, uat, prd)."
+  exit
+fi
+
+# Cleanup
+rm -rf ./dist
+
+# Build project
+(npm install && npm run build)
+
+# Copy configuration file to ./dist
+cp config.$1.json ./dist/config.json
+
+# Copy ./dist to Amazon S3
+case $1 in
+    tst )
+        aws s3 sync ./dist s3://tst.apptvate.com/ --delete --acl public-read ;;
+    uat )
+        aws s3 sync ./dist s3://uat.apptvate.com/ --delete --acl public-read ;;
+    prd )
+        aws s3 sync ./dist s3://apptvate.com/ --delete --acl public-read ;;
+esac
