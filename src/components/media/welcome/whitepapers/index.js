@@ -1,16 +1,20 @@
 import Radium from 'radium';
+import { Grid, Cell } from 'radium-grid';
 import React, { Component, PropTypes } from 'react';
 import Section from '../section';
 import { colors } from '../../../_common/styles';
 
 // TODO: temp replaced by iMinds logo, as requested by Michel
-const pdfIcon = require('./iminds.svg');
+const imindsIcon = require('./iminds.svg');
+const bbdoIcon = require('./bbdo.svg');
 
+const bbdoPdf = require('./bbdo.pdf');
 const livingLabsPdf = require('./livingLabs.pdf');
 
 class Whitepaper extends Component {
 
   static propTypes = {
+    icon: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired
   }
@@ -43,11 +47,11 @@ class Whitepaper extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { name, url } = this.props;
+    const { icon, name, url } = this.props;
     return (
       <a href={url} target='_blank'>
         <div>
-          <img src={pdfIcon} style={styles.download.icon} />
+          <img src={icon} style={styles.download.icon} />
           <div style={styles.group} >
             <p style={styles.name}>{name}</p>
             <p style={styles.download.base}>download <span style={styles.download.emph}>.pdf</span></p>
@@ -66,6 +70,9 @@ export default class Whitepapers extends Component {
     outer: {
       backgroundColor: '#f5f5f5'
     },
+    inner: {
+      maxWidth: 680
+    },
     title: {
       color: '#adadad',
       fontFamily: 'Rubik-Regular',
@@ -73,20 +80,23 @@ export default class Whitepapers extends Component {
       marginBottom: 60,
       textAlign: 'center'
     },
-    whitepapers: {
-      display: 'flex',
-      justifyContent: 'center'
+    nonLastCell: {
+      '@media only screen and (max-width: 640px)': {
+        paddingBottom: 35
+      }
     }
   };
 
   render () {
     const { styles } = this.constructor;
     return (
-      <Section style={styles.outer}>
+      <Section innerStyle={styles.inner} style={styles.outer}>
         <h1 style={styles.title}>Check out the whitepapers</h1>
-        <div style={styles.whitepapers}>
-          <Whitepaper name='Living Labs' url={livingLabsPdf} />
-        </div>
+        <Grid align='center' cellWidth='1' gutter='80px' largeCellWidth='1/2' mediumCellWidth='1/2'
+          xlargeCellWidth='1/2'>
+          <Cell style={styles.nonLastCell}><Whitepaper icon={imindsIcon} name='Living Labs' url={livingLabsPdf} /></Cell>
+          <Cell><Whitepaper icon={bbdoIcon} name='BBDO' url={bbdoPdf} /></Cell>
+        </Grid>
       </Section>
     );
   }
