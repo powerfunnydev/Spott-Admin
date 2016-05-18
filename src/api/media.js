@@ -29,7 +29,7 @@ import { UnauthorizedError, UnexpectedError } from './_errors';
  */
 async function requestFileUpload (authenticationToken) {
   try {
-    let { body: { responseType, s3 } } = await request.post(authenticationToken, '/v002/system/files/uploads', {});
+    let { body: { responseType, s3 } } = await request.post(authenticationToken, '/v003/system/files/uploads', {});
     // The server response either has responseType 's3' or 'local'. We expect the first.
     if (responseType !== 'S3') {
       throw new UnexpectedError();
@@ -162,7 +162,7 @@ export async function postUpload (authenticationToken, { file }, uploadingCallba
  */
 export async function postProcess (authenticationToken, { description, mediumExternalReference, mediumExternalReferenceSource, remoteFilename, skipAudio, skipScenes }) {
   try {
-    let { body } = await request.post(authenticationToken, '/v002/video/processors', {
+    let { body } = await request.post(authenticationToken, '/v003/video/processors', {
       description,
       filePath: remoteFilename,
       mediumExternalReference,
