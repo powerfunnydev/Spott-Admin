@@ -55,11 +55,7 @@ async function boot () {
       // TODO: use authentication token of the CMS itself... (important!)
       switch (config.environment.toLowerCase()) {
         case 'testing':
-          store.dispatch(authenticate('Admin', '66913386-34f5-4785-8eb0-6b4268614a51'));
-          break;
         case 'acceptance':
-          store.dispatch(authenticate('Admin', '2cc14d46-5388-4384-b0ff-24f3f406704e'));
-          break;
         case 'production':
           store.dispatch(authenticate('Admin', '781c2a15-f616-4df5-9ebb-9a9e772497ff'));
           break;
