@@ -1,5 +1,5 @@
-import { Map } from 'immutable';
-import * as actionTypes from '../constants/actionTypes';
+import { fromJS } from 'immutable';
+import * as actions from '../actions/global';
 
 /**
   * The global reducer is responsible for storing global aspects of this application.
@@ -9,15 +9,17 @@ import * as actionTypes from '../constants/actionTypes';
   * -> currentModal (e.g., 'login')
   */
 // TODO: remove hardcoded authenticationToken!
-export default (state = Map({}), action) => {
+export default (state = fromJS({ configuration: {} }), action) => {
   switch (action.type) {
-    case actionTypes.AUTHENTICATE:
+    case actions.AUTHENTICATE:
       return state
         .set('authenticationToken', action.authenticationToken)
         .set('username', action.username);
-    case actionTypes.MODAL_OPEN_LOGIN:
+    case actions.CONFIGURE:
+      return state.mergeIn([ 'configuration' ], fromJS(action.configuration));
+    case actions.MODAL_OPEN_LOGIN:
       return state.set('currentModal', 'login');
-    case actionTypes.MODAL_CLOSE:
+    case actions.MODAL_CLOSE:
       return state.delete('currentModal');
     default:
       return state;

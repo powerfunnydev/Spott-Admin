@@ -1,19 +1,68 @@
 import httpinvoke from 'httpinvoke';
 
-// we retrieve the urls from the configuration file, which is retrieved from the server.
-let API_URL;
-let APPTVATE_WEBSITE_URL;
-let CMS_URL;
-let CMS_NEXT_URL;
-let TAGGER_URL;
+// Errors
+// //////
 
-export function setBaseUrls (baseUrls) {
-  // Trim trailing slashes
-  API_URL = baseUrls.api.replace(/\/$/g, '');
-  APPTVATE_WEBSITE_URL = baseUrls.apptvateWebsite.replace(/\/$/g, '');
-  CMS_URL = baseUrls.cms.replace(/\/$/g, '');
-  CMS_NEXT_URL = baseUrls.cmsNext.replace(/\/$/g, '');
-  TAGGER_URL = baseUrls.tagger.replace(/\/$/g, '');
+/**
+ * Lowest-level error.
+ * Based upon: http://stackoverflow.com/questions/31089801/extending-error-in-javascript-with-es6-syntax
+ */
+export class RequestError extends Error {
+  constructor (message, body, originalError) {
+    super(message || 'An error occurred while processing your request.');
+    this.name = this.constructor.name;
+    this.stack = (originalError || new Error()).stack;
+    this.body = body;
+    this.originalError = originalError;
+  }
+}
+
+/**
+ * Constructs a network error wrapper.
+ */
+export class NetworkError extends RequestError {
+  constructor (originalError) {
+    super('Network error. Please check your internet connection.', null, originalError);
+  }
+}
+
+/**
+ * Constructs a Unauthorized error wrapper.
+ */
+export class UnauthorizedError extends RequestError {
+  constructor (body) {
+    super('Unauthorized. Authentication required.', body, null);
+    this.statusCode = 401;
+  }
+}
+
+/**
+ * Constructs a Bad Request error wrapper.
+ */
+export class BadRequestError extends RequestError {
+  constructor (body) {
+    super('Invalid request.', body, null);
+    this.statusCode = 400;
+  }
+}
+
+/**
+ * Constructs a Not Found error wrapper.
+ */
+export class NotFoundError extends RequestError {
+  constructor (message, body) {
+    super('Could not find the requested resource.', body, null);
+    this.statusCode = 404;
+  }
+}
+
+/**
+ * Constructs a Unexpected error wrapper.
+ */
+export class UnexpectedError extends RequestError {
+  constructor (message, body, originalError) {
+    super(message || (originalError && originalError.message) || 'An unexpected error occurred while processing your request.', body, originalError);
+  }
 }
 
 // httpinvoke, our father
@@ -48,22 +97,24 @@ const CONVERTERS = {
   'text json': (identity) => identity
 };
 
-function optionsWithoutBody (authenticationToken) {
+function optionsWithoutBody (authenticationToken, locale = 'en') {
   return {
     converters: CONVERTERS,
     headers: { // Request headers
-      authtoken: authenticationToken
+      authtoken: authenticationToken,
+      'Accept-Language': locale
     },
     outputType: 'json'
   };
 }
 
-function optionsWithBody (authenticationToken, body) {
+function optionsWithBody (authenticationToken, locale = 'en', body) {
   return {
     converters: CONVERTERS,
     headers: { // Request headers
       'Content-Type': 'application/json',
-      authtoken: authenticationToken
+      authtoken: authenticationToken,
+      'Accept-Language': locale
     },
     input: body || {},
     inputType: 'json', // Type of request data
@@ -71,27 +122,17 @@ function optionsWithBody (authenticationToken, body) {
   };
 }
 
-function optionsWithBodyForFormData (authenticationToken, body) {
+function optionsWithBodyForFormData (authenticationToken, locale = 'en', body) {
   return {
     converters: CONVERTERS,
     headers: { // Request headers
-      authtoken: authenticationToken
+      authtoken: authenticationToken,
+      'Accept-Language': locale
     },
     inputType: 'formdata', // type of request data
     outputType: 'text', // type of response body
     input: body
   };
-}
-
-/**
- * Prepends the url with API_URL if it is relative, otherwise
- * returns the passed url unchanged.
- */
-function processUrl (url) {
-  if (url && url.indexOf('http') !== 0) {
-    return `${API_URL}${url}`;
-  }
-  return url;
 }
 
 // Public functions
@@ -110,8 +151,8 @@ function processUrl (url) {
  * @param {string} url The URL of the resource to get.
  * @return {Promise<Response, Object}>} The server response or resulting error.
  */
-export function get (authenticationToken, url) {
-  return hookedHttpinvoke(processUrl(url), 'GET', optionsWithoutBody(authenticationToken));
+export function get (authenticationToken, locale, url) {
+  return hookedHttpinvoke(url, 'GET', optionsWithoutBody(authenticationToken, locale));
 }
 
 /**
@@ -121,8 +162,8 @@ export function get (authenticationToken, url) {
  * @param {object} body The body of the POST request.
  * @return {Promise<Response, Object}>} The server response or resulting error.
  */
-export function post (authenticationToken, url, body) {
-  return hookedHttpinvoke(processUrl(url), 'POST', optionsWithBody(authenticationToken, body));
+export function post (authenticationToken, locale, url, body) {
+  return hookedHttpinvoke(url, 'POST', optionsWithBody(authenticationToken, locale, body));
 }
 
 /**
@@ -136,12 +177,12 @@ export function post (authenticationToken, url, body) {
  *                   - total is a number for the total number of bytes to be sent.
  * @return {Promise<Response, Object}>} The server response or resulting error.
  */
-export function postFormData (authenticationToken, url, body, uploadingCallback) {
-  const options = optionsWithBodyForFormData(authenticationToken, body);
+export function postFormData (authenticationToken, locale, url, body, uploadingCallback) {
+  const options = optionsWithBodyForFormData(authenticationToken, locale, body);
   if (uploadingCallback) {
     options.uploading = uploadingCallback;
   }
-  return hookedHttpinvoke(processUrl(url), 'POST', options);
+  return hookedHttpinvoke(url, 'POST', options);
 }
 
 /**
@@ -151,8 +192,8 @@ export function postFormData (authenticationToken, url, body, uploadingCallback)
  * @param {object} body The body of the PUT request.
  * @return {Promise<Response, Object}>} The server response or resulting error.
  */
-export function put (authenticationToken, url, body) {
-  return hookedHttpinvoke(processUrl(url), 'PUT', optionsWithBody(authenticationToken, body));
+export function put (authenticationToken, locale, url, body) {
+  return hookedHttpinvoke(url, 'PUT', optionsWithBody(authenticationToken, locale, body));
 }
 
 /**
@@ -161,46 +202,6 @@ export function put (authenticationToken, url, body) {
  * @param {string} url The URL of the resource to delete.
  * @return {Promise<Response, Object}>} The server response or resulting error.
  */
-export function del (authenticationToken, url) {
-  return hookedHttpinvoke(processUrl(url), 'DELETE', optionsWithoutBody(authenticationToken));
-}
-
-/**
- * Returns the base url of the backend, as retrieved from the config file.
- * @param {string} url The requested base url.
- */
-export function getApiBaseUrl () {
-  return API_URL;
-}
-
-/**
- * Returns the base url of the apptvate website, as retrieved from the config file.
- * @param {string} url The requested base url.
- */
-export function getApptvateWebsiteUrl () {
-  return APPTVATE_WEBSITE_URL;
-}
-
-/**
- * Returns the base url of the cms, as retrieved from the config file.
- * @param {string} url The requested base url.
- */
-export function getCmsUrl () {
-  return CMS_URL;
-}
-
-/**
- * Returns the base url of the new cms, as retrieved from the config file.
- * @param {string} url The requested base url.
- */
-export function getCmsNextUrl () {
-  return CMS_NEXT_URL;
-}
-
-/**
- * Returns the base url of the tagger, as retrieved from the config file.
- * @param {string} url The requested base url.
- */
-export function getTaggerUrl () {
-  return TAGGER_URL;
+export function del (authenticationToken, locale, url) {
+  return hookedHttpinvoke(url, 'DELETE', optionsWithoutBody(authenticationToken, locale));
 }

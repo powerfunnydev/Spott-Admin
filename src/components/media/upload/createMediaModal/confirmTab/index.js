@@ -1,6 +1,6 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
-import { reduxForm } from 'redux-form';
+import { reduxForm } from 'redux-form/immutable';
 import { buttonStyles, colors } from '../../../../_common/styles';
 import createMediaStyles from '../styles';
 

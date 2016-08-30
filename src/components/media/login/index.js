@@ -1,8 +1,19 @@
 import React, { Component, PropTypes } from 'react';
 import ReactModal from 'react-modal';
+import { reduxForm, Field } from 'redux-form/immutable';
 import Radium from 'radium';
 import { buttonStyles } from '../../_common/styles';
 const crossImage = require('./cross.svg');
+
+function validate (values) {
+  const validationErrors = {};
+  const emailError = !values.get('email') || !values.get('email').match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+  if (emailError) { validationErrors.email = 'invalid'; }
+  const passwordError = !values.get('password') || !values.get('password').match(/^.{6,}$/);
+  if (passwordError) { validationErrors.password = 'invalid'; }
+  // Done
+  return validationErrors;
+}
 
 /**
  * Dialog style used for this modal.
@@ -31,6 +42,44 @@ const dialogStyle = {
   }
 };
 
+const textBoxStyle = {
+  error: {
+    color: '#ff0000',
+    fontSize: '16px',
+    margin: '5px 0'
+  },
+  textInput: {
+    color: 'rgba(0, 0, 0, 0.502)',
+    width: '100%',
+    height: '46px',
+    border: '1px solid rgb(187, 190, 193)',
+    borderRadius: '4px',
+    paddingLeft: 15,
+    paddingRight: 15,
+    fontFamily: 'Rubik-Regular',
+    fontSize: '18px',
+    marginBottom: 20
+  },
+  textInputError: {
+    border: '1px #ff0000 solid'
+  }
+};
+
+const renderField = Radium((props) => {
+  return (
+    <input
+      autoFocus={props.autoFocus}
+      placeholder={props.placeholder}
+      style={[ textBoxStyle.textInput, props.meta.touched && props.meta.error && textBoxStyle.textInputError ]}
+      type={props.type}
+      {...props.input} />
+  );
+});
+
+@reduxForm({
+  form: 'login',
+  validate
+})
 @Radium
 export default class LoginModal extends Component {
 
@@ -38,16 +87,6 @@ export default class LoginModal extends Component {
     onCancel: PropTypes.func.isRequired, // Callback for closing the dialog and clearing the form.
     onSubmit: PropTypes.func.isRequired
   };
-
-  constructor (props) {
-    super(props);
-    this.onCloseClick = ::this.onCloseClick;
-  }
-
-  onCloseClick (e) {
-    e.preventDefault();
-    this.props.onCancel();
-  }
 
   static styles = {
     container: {
@@ -61,18 +100,6 @@ export default class LoginModal extends Component {
       position: 'absolute',
       top: -45,
       right: -45
-    },
-    input: {
-      color: 'rgba(0, 0, 0, 0.502)',
-      width: '100%',
-      height: '46px',
-      border: '1px solid rgb(187, 190, 193)',
-      borderRadius: '4px',
-      paddingLeft: 15,
-      paddingRight: 15,
-      fontFamily: 'Rubik-Regular',
-      fontSize: '18px',
-      marginBottom: 20
     },
     button: {
       paddingTop: 8,
@@ -92,7 +119,7 @@ export default class LoginModal extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { onCancel } = this.props;
+    const { handleSubmit, onCancel } = this.props;
     return (
       <ReactModal isOpen style={dialogStyle} onRequestClose={onCancel}>
         <div style={styles.container}>
@@ -102,13 +129,13 @@ export default class LoginModal extends Component {
           <div style={styles.cross} onClick={this.onCloseClick}>
             <img alt='Close' src={crossImage} style={styles.crossImage} />
           </div>
-          <div style={styles.content}>
-            <input placeholder='Username' style={styles.input} type='text' />
-            <input placeholder='Password' style={styles.input} type='password' />
+          <form style={styles.content} onSubmit={handleSubmit}>
+            <Field component={renderField} name='email' placeholder='Your Email' type='text' />
+            <Field component={renderField} name='password' placeholder='Your Password' type='password' />
 
             <button style={styles.forgotPassword}>Forgot Password?</button>
-            <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} onClick={onCancel}>Sign In</button>
-          </div>
+            <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} type='submit'>Sign In</button>
+          </form>
         </div>
       </ReactModal>
     );

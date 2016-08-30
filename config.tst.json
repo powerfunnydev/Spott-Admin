@@ -1,6 +1,6 @@
 {
   "urls": {
-    "api": "https://spott-cms-rest-tst.appiness.mobi/rest/",
+    "api": "https://spott-cms-rest-tst.appiness.mobi/rest",
     "apptvateWebsite": "http://tst.apptvate.com",
     "cms": "http://spott-cms-tst.appiness.mobi",
     "cmsNext": "http://spott-cms-tst.appiness.mobi/cms-next",

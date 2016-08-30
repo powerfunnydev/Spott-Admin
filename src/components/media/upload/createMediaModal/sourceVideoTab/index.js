@@ -1,7 +1,7 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import Dropzone from '../../../../_common/dropzone';
-import { reduxForm } from 'redux-form';
+import { reduxForm } from 'redux-form/immutable';
 import { buttonStyles, errorTextStyle } from '../../../../_common/styles';
 import createMediaStyles from '../styles';
 
@@ -69,8 +69,8 @@ export default class SourceVideoTab extends Component {
           <h1 style={createMediaStyles.title}>Upload the source video</h1>
 
           {/* Render dropzone that enables file selection */}
-          <Dropzone message={<span>Drag & drop the source video <br/>
-            We accept .MOV, MP4, .AVI and .MXF</span>}
+          <Dropzone
+            message={<span>Drag & drop the source video <br/>We accept .MOV, MP4, .AVI and .MXF</span>}
             ref={(x) => { this.dropzone = x; }}
             {...video} />
           {submitFailed && video.touched && video.error && <div style={errorTextStyle}>{video.error}</div>}
