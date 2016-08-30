@@ -1,5 +1,6 @@
 import { fromJS } from 'immutable';
 import * as actions from '../actions/global';
+import * as userActions from '../actions/users';
 
 /**
   * The global reducer is responsible for storing global aspects of this application.
@@ -7,14 +8,19 @@ import * as actions from '../actions/global';
   * global
   * -> authenticationToken
   * -> currentModal (e.g., 'login')
+  * -> user (current user object)
   */
-// TODO: remove hardcoded authenticationToken!
-export default (state = fromJS({ configuration: {} }), action) => {
+export default (state = fromJS({ authentication: {}, configuration: { currentLocale: 'en' } }), action) => {
   switch (action.type) {
-    case actions.AUTHENTICATE:
-      return state
-        .set('authenticationToken', action.authenticationToken)
-        .set('username', action.username);
+    // User actions
+    // ////////////
+    case userActions.LOGIN_SUCCESS:
+      return state.set('authentication', fromJS(action.data));
+    case userActions.LOGOUT_SUCCESS:
+      return state.set('authentication', null);
+
+    // Global actions
+    // //////////////
     case actions.CONFIGURE:
       return state.mergeIn([ 'configuration' ], fromJS(action.configuration));
     case actions.MODAL_OPEN_LOGIN:

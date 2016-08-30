@@ -21,6 +21,7 @@ const configuration = {
     loaders: [
       { exclude: /node_modules/, loader: `strip-loader?strip[]=console.log!babel!eslint?failOnWarning=false&failOnError=false`, test: /\.js$/ },
       { loader: ExtractTextWebpackPlugin.extract('style', 'css'), test: /\.css$/ },
+      { loader: 'json', test: /\.json/ },
       { loader: 'file?name=[name]-[md5:hash].[ext]', test: /\.gif$|\.jpg$|\.jpeg$|\.png|\.eot$|\.svg$|\.ttf$|\.woff$|\.woff2$|\.pdf$/ }
     ]
   },

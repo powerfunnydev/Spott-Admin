@@ -1,0 +1,27 @@
+{
+  "common": {
+    "errors": {
+      "unexpected": "Il y a eu un problème!"
+    }
+  },
+  "header": {
+    "login": "Connectez-vous",
+    "logout": "Se déconnecter",
+    "home": "Page d'accueil"
+  },
+  "error404": {
+    "pageDoesNotExist": "La page demandée n'existe pas.",
+    "returnToApptvate": "Retournez à Apptvate.com",
+    "somethingWentWrong": "Il y a eu un problème!",
+    "title": "Whoops!"
+  },
+  "login": {
+    "errors": {
+      "incorrect": "Email/password combination is incorrect."
+    },
+    "title": "Je m'inscris",
+    "email": "Votre e-mail",
+    "password": "Votre mot de passe",
+    "submitButton": "Connectez-vous"
+  }
+}

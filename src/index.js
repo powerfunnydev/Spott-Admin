@@ -4,14 +4,14 @@ import ReactDOM from 'react-dom';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { Provider } from 'react-redux';
 import createStore from './createStore';
-import { authenticate, init } from './actions/global';
+import { init, LOGIN_SUCCESS } from './actions/global';
 
-import Wrapper from './components/wrapper';
-import Error404 from './components/error404/main';
-import MediaSinglePage from './components/media/singlePage';
-import MediaHome from './components/media/home';
-import MediaUpload from './components/media/upload';
-import MediaWelcome from './components/media/welcome';
+import Wrapper from './pages/wrapper';
+import Error404 from './pages/error404/main';
+import MediaSinglePage from './pages/media/singlePage';
+import MediaHome from './pages/media/home';
+import MediaUpload from './pages/media/upload';
+import MediaWelcome from './pages/media/welcome';
 
 import reducer from './reducers';
 
@@ -48,8 +48,13 @@ async function boot () {
   // Initialize configuration: save base urls in state, etc.
   await store.dispatch(init());
 
-  // TODO: Remove this...
-  store.dispatch(authenticate('Admin', '781c2a15-f616-4df5-9ebb-9a9e772497ff'));
+  // Load session from local storage.
+  if (localStorage) {
+    const session = localStorage.getItem('session');
+    if (session) {
+      store.dispatch({ data: JSON.parse(session), type: LOGIN_SUCCESS });
+    }
+  }
 
   // Render application
   ReactDOM.render(

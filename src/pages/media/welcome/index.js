@@ -20,7 +20,7 @@ import { welcomeSelector } from '../../../selectors/global';
 @connect(welcomeSelector, (dispatch) => ({
   closeModal: bindActionCreators(globalActions.closeModal, dispatch),
   openLoginModal: bindActionCreators(globalActions.openLoginModal, dispatch),
-  login: bindActionCreators(actions.submit, dispatch)
+  login: bindActionCreators(actions.login, dispatch)
 }))
 export default class Welcome extends Component {
 

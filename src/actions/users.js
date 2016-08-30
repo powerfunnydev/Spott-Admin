@@ -5,6 +5,9 @@ export const LOGIN_REQUEST = 'LOGIN_REQUEST';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 
+export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
+export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
+
 export function login ({ email, password }) {
   return async (dispatch, getState) => {
     dispatch({ type: LOGIN_REQUEST });
@@ -19,6 +22,16 @@ export function login ({ email, password }) {
     } catch (error) {
       dispatch({ error, type: LOGIN_FAILURE });
       throw error;
+    }
+  };
+}
+
+export function logout () {
+  return (dispatch) => {
+    dispatch({ type: LOGOUT_REQUEST });
+    dispatch({ type: LOGOUT_SUCCESS });
+    if (localStorage) {
+      localStorage.removeItem('session');
     }
   };
 }

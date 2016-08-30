@@ -3,6 +3,7 @@ import ReactModal from 'react-modal';
 import { reduxForm, Field } from 'redux-form/immutable';
 import Radium from 'radium';
 import { buttonStyles } from '../../_common/styles';
+import localized from '../../_common/localized';
 const crossImage = require('./cross.svg');
 
 function validate (values) {
@@ -43,11 +44,6 @@ const dialogStyle = {
 };
 
 const textBoxStyle = {
-  error: {
-    color: '#ff0000',
-    fontSize: '16px',
-    margin: '5px 0'
-  },
   textInput: {
     color: 'rgba(0, 0, 0, 0.502)',
     width: '100%',
@@ -70,12 +66,13 @@ const renderField = Radium((props) => {
     <input
       autoFocus={props.autoFocus}
       placeholder={props.placeholder}
-      style={[ textBoxStyle.textInput, props.meta.touched && props.meta.error && textBoxStyle.textInputError ]}
+      style={[ textBoxStyle.textInput, props.meta.touched && props.meta.error && textBoxStyle.textInputError, props.style ]}
       type={props.type}
       {...props.input} />
   );
 });
 
+@localized
 @reduxForm({
   form: 'login',
   validate
@@ -88,7 +85,22 @@ export default class LoginModal extends Component {
     onSubmit: PropTypes.func.isRequired
   };
 
+  constructor (props) {
+    super(props);
+    this.onCloseClick = ::this.onCloseClick;
+  }
+
+  onCloseClick (e) {
+    e.preventDefault();
+    this.props.onCancel();
+  }
+
   static styles = {
+    error: {
+      color: '#ff0000',
+      fontSize: '1em',
+      marginBottom: '1em'
+    },
     container: {
       position: 'relative'
     },
@@ -119,7 +131,7 @@ export default class LoginModal extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { handleSubmit, onCancel } = this.props;
+    const { error, handleSubmit, onCancel, t } = this.props;
     return (
       <ReactModal isOpen style={dialogStyle} onRequestClose={onCancel}>
         <div style={styles.container}>
@@ -130,11 +142,13 @@ export default class LoginModal extends Component {
             <img alt='Close' src={crossImage} style={styles.crossImage} />
           </div>
           <form style={styles.content} onSubmit={handleSubmit}>
-            <Field component={renderField} name='email' placeholder='Your Email' type='text' />
-            <Field component={renderField} name='password' placeholder='Your Password' type='password' />
+            <Field component={renderField} name='email' placeholder={t('login.email')} type='text' />
+            <Field component={renderField} name='password' placeholder={t('login.password')} type='password' />
 
-            <button style={styles.forgotPassword}>Forgot Password?</button>
-            <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} type='submit'>Sign In</button>
+            {error && typeof error === 'string' && <div style={styles.error}>{t(error)}</div>}
+
+            {/* <button style={styles.forgotPassword}>Forgot Password?</button> */}
+            <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} type='submit'>{t('login.submitButton')}</button>
           </form>
         </div>
       </ReactModal>

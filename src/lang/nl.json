@@ -1,0 +1,27 @@
+{
+  "common": {
+    "errors": {
+      "unexpected": "Er ging iets mis!"
+    }
+  },
+  "header": {
+    "login": "Aanmelden",
+    "logout": "Afmelden",
+    "home": "Home"
+  },
+  "error404": {
+    "pageDoesNotExist": "De door u opgevraagde pagina bestaat niet.",
+    "returnToApptvate": "Keer terug naar Apptvate.com",
+    "somethingWentWrong": "Er ging iets mis!",
+    "title": "Whoops!"
+  },
+  "login": {
+    "errors": {
+      "incorrect": "Email/password combination is incorrect."
+    },
+    "title": "Log in",
+    "email": "Je e-mail",
+    "password": "Je wachtwoord",
+    "submitButton": "Aanmelden"
+  }
+}

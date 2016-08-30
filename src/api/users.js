@@ -1,19 +1,20 @@
 import { post } from './request';
-import { transformUser } from './transformers';
 
 export async function login (baseUrl, { email, password }) {
-  console.warn(baseUrl);
-  console.warn(`${baseUrl}/v003/security/login`);
   try {
     // TODO: localize! Server should return proper error message to display to the user.
     const { body } = await post(null, 'nl', `${baseUrl}/v003/security/login`, { userName: email, password });
     return {
       authenticationToken: body.authenticationToken,
-      user: transformUser(body.user)
+      user: {
+        email: body.userName,
+        roles: body.roles
+      }
     };
   } catch (error) {
-    if (error.body.message === 'verkeerde gebruikersnaam/password combinatie') {
-      throw 'Email/password combination is incorrect.';
+    console.warn('err', error);
+    if (error.body.httpStatus === 401) {
+      throw 'incorrect';
     }
     throw error.body.message;
   }
