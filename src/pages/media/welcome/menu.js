@@ -1,24 +1,42 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-scroll';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { buttonStyles } from '../../_common/styles';
+import { menuSelector } from './selectors';
+import localized from '../../_common/localized';
+import * as actions from '../actions';
 
+@localized
+@connect(menuSelector, (dispatch) => ({
+  logout: bindActionCreators(actions.logout, dispatch)
+}))
 @Radium
 export default class Menu extends Component {
 
   static propTypes = {
+    isAuthenticated: PropTypes.bool.isRequired,
+    logout: PropTypes.func.isRequired,
     neutral: PropTypes.bool,
+    t: PropTypes.func.isRequired,
     onOpenLoginModal: PropTypes.func.isRequired
   };
 
   constructor (props) {
     super(props);
     this.onSignInClick = ::this.onSignInClick;
+    this.onLogOutClick = ::this.onLogOutClick;
   }
 
   onSignInClick (e) {
     e.preventDefault();
     this.props.onOpenLoginModal();
+  }
+
+  onLogOutClick (e) {
+    e.preventDefault();
+    this.props.logout();
   }
 
   static styles = {
@@ -43,7 +61,7 @@ export default class Menu extends Component {
   /* TODO: temporarily removed, add when login system is being implemented
    <button style={[ buttonStyles.base, buttonStyles.extraSmall, styles.header.signOutButton ]}>Sign Out</button>*/
   render () {
-    const { neutral } = this.props;
+    const { isAuthenticated, neutral, t } = this.props;
     const { styles } = this.constructor;
     return (
       <div>
@@ -68,7 +86,9 @@ export default class Menu extends Component {
             <button key='contact' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Contact</button>
           </Link>
         </span>
-        <button key='signIn' style={[ buttonStyles.base, buttonStyles.extraSmall, neutral ? styles.linkButton : buttonStyles.pink ]} onClick={this.onSignInClick}>Sign In</button>
+        {isAuthenticated
+          ? <button key='signIn' style={[ buttonStyles.base, buttonStyles.extraSmall, neutral ? styles.linkButton : buttonStyles.pink ]} onClick={this.onSignInClick}>{t('header.login')}</button>
+          : <button key='logout' style={[ buttonStyles.base, buttonStyles.extraSmall, neutral ? styles.linkButton : buttonStyles.pink ]} onClick={this.onLogOutClick}>{t('header.logout')}</button>}}
       </div>
     );
   }

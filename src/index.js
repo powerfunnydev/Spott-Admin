@@ -4,16 +4,14 @@ import ReactDOM from 'react-dom';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { Provider } from 'react-redux';
 import createStore from './createStore';
-import { authenticate } from './actions/global';
-import { setBaseUrls } from './api/_request';
-import { getConfig } from './api/config';
+import { init, LOGIN_SUCCESS } from './actions/global';
 
-import Wrapper from './components/wrapper';
-import Error404 from './components/error404/main';
-import MediaSinglePage from './components/media/singlePage';
-import MediaHome from './components/media/home';
-import MediaUpload from './components/media/upload';
-import MediaWelcome from './components/media/welcome';
+import Wrapper from './pages/wrapper';
+import Error404 from './pages/error404/main';
+import MediaSinglePage from './pages/media/singlePage';
+import MediaHome from './pages/media/home';
+import MediaUpload from './pages/media/upload';
+import MediaWelcome from './pages/media/welcome';
 
 import reducer from './reducers';
 
@@ -47,31 +45,26 @@ async function boot () {
   // Create an enhanced history that syncs navigation events with the store.
   const browserHistory = syncHistoryWithStore(hashHistory, store, { selectLocationState: (state) => state.get('router') });
 
-  // Retrieve the base url's from the server.
-  await getConfig()
-    .then((config) => {
-      setBaseUrls(config.urls);
+  // Initialize configuration: save base urls in state, etc.
+  await store.dispatch(init());
 
-      // TODO: use authentication token of the CMS itself... (important!)
-      switch (config.environment.toLowerCase()) {
-        case 'testing':
-        case 'acceptance':
-        case 'production':
-          store.dispatch(authenticate('Admin', '781c2a15-f616-4df5-9ebb-9a9e772497ff'));
-          break;
-        default:
-          throw new Error('Unknown backend URL. Check configuration file config.json.');
-      }
+  // Load session from local storage.
+  if (localStorage) {
+    const session = localStorage.getItem('session');
+    if (session) {
+      store.dispatch({ data: JSON.parse(session), type: LOGIN_SUCCESS });
+    }
+  }
 
-      // Render application
-      ReactDOM.render(
-        <Provider key='provider' store={store}>
-          <Router history={browserHistory}>
-            {routes}
-          </Router>
-        </Provider>,
-        document.getElementById('root'));
-    });
+  // Render application
+  ReactDOM.render(
+    <Provider key='provider' store={store}>
+      <Router history={browserHistory}>
+        {routes}
+      </Router>
+    </Provider>,
+    document.getElementById('root')
+  );
 }
 
 boot();

@@ -1,16 +1,27 @@
 /* eslint-disable prefer-const */
-import { destroy } from 'redux-form';
-import {
-  CREATE_MEDIA_SELECT_TAB, CREATE_MEDIA_SELECT_MEDIA_TYPE,
-  CREATE_MEDIA_START, CREATE_MEDIA_SUCCESS, CREATE_MEDIA_ERROR,
-  PROCESS_MEDIA_START, PROCESS_MEDIA_SUCCESS, PROCESS_MEDIA_ERROR,
-  UPLOAD_FILE_START, UPLOAD_FILE_SUCCESS, UPLOAD_FILE_ERROR, UPLOAD_FILE_PROGRESS,
-  CREATE_MEDIA_START_WIZARD, CREATE_MEDIA_CANCEL_WIZARD
-} from '../constants/actionTypes';
+import { destroy } from 'redux-form/immutable';
 import { postProcess, postUpload } from '../api/media';
 import { authenticationTokenSelector } from '../selectors/global';
 import { createRecordStart, createRecordSuccess, createRecordError } from '../actions/_utils';
 import { zeroPad } from '../utils';
+
+export const CREATE_MEDIA_START_WIZARD = 'CREATE_MEDIA_START_WIZARD';
+export const CREATE_MEDIA_SELECT_TAB = 'CREATE_MEDIA_SELECT_TAB';
+export const CREATE_MEDIA_SELECT_MEDIA_TYPE = 'CREATE_MEDIA_SELECT_MEDIA_TYPE';
+export const CREATE_MEDIA_CANCEL_WIZARD = 'CREATE_MEDIA_CANCEL_WIZARD';
+
+export const CREATE_MEDIA_START = 'CREATE_MEDIA_START';
+export const CREATE_MEDIA_SUCCESS = 'CREATE_MEDIA_SUCCESS';
+export const CREATE_MEDIA_ERROR = 'CREATE_MEDIA_ERROR';
+
+export const PROCESS_MEDIA_START = 'PROCESS_MEDIA_START';
+export const PROCESS_MEDIA_SUCCESS = 'PROCESS_MEDIA_SUCCESS';
+export const PROCESS_MEDIA_ERROR = 'PROCESS_MEDIA_ERROR';
+
+export const UPLOAD_FILE_START = 'MEDIA_UPLOAD_FILE_START';
+export const UPLOAD_FILE_SUCCESS = 'MEDIA_UPLOAD_FILE_SUCCESS';
+export const UPLOAD_FILE_ERROR = 'MEDIA_UPLOAD_FILE_ERROR';
+export const UPLOAD_FILE_PROGRESS = 'MEDIA_UPLOAD_FILE_PROGRESS';
 
 /**
  * Opens the create media modal with video upload etc.

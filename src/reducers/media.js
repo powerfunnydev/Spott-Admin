@@ -1,5 +1,5 @@
 import { Map } from 'immutable';
-import * as actionTypes from '../constants/actionTypes';
+import * as actions from '../actions/media';
 import { LOCATION_CHANGE } from 'react-router-redux';
 import { DESCRIPTION_TAB } from '../constants/createMediaTabTypes';
 import { EPISODE } from '../constants/mediaTypes';
@@ -22,19 +22,19 @@ export default (state = Map({ currentCreateMediaMediaType: EPISODE, currentCreat
           .set('currentCreateMediaTab', DESCRIPTION_TAB);
       }
       return state;
-    case actionTypes.CREATE_MEDIA_SELECT_MEDIA_TYPE:
+    case actions.CREATE_MEDIA_SELECT_MEDIA_TYPE:
       return state.set('currentCreateMediaMediaType', action.mediaType);
-    case actionTypes.CREATE_MEDIA_SELECT_TAB:
+    case actions.CREATE_MEDIA_SELECT_TAB:
       return state.set('currentCreateMediaTab', action.tab);
-    case actionTypes.CREATE_MEDIA_CANCEL_WIZARD:
+    case actions.CREATE_MEDIA_CANCEL_WIZARD:
       return state.set('createMediaStatus', 'cancelled');
-    case actionTypes.CREATE_MEDIA_START:
+    case actions.CREATE_MEDIA_START:
       return state.set('createMediaStatus', 'progress')
         .set('createMediaJobName', action.jobName);
-    case actionTypes.UPLOAD_FILE_START:
+    case actions.UPLOAD_FILE_START:
       return state.set('createMediaProgress', 0)
         .set('createMediaStartTime', new Date().getTime());
-    case actionTypes.UPLOAD_FILE_PROGRESS:
+    case actions.UPLOAD_FILE_PROGRESS:
       // Calculate progress as a percentage
       const progressPercentage = Math.round((action.currentBytes * 100) / action.totalBytes);
       // Calculate remaining time in seconds
@@ -52,9 +52,9 @@ export default (state = Map({ currentCreateMediaMediaType: EPISODE, currentCreat
       // Update state
       return state.set('createMediaProgress', progressPercentage)
         .set('createMediaRemainingTime', remainingTime);
-    case actionTypes.CREATE_MEDIA_SUCCESS:
+    case actions.CREATE_MEDIA_SUCCESS:
       return state.set('createMediaStatus', 'completed');
-    case actionTypes.CREATE_MEDIA_ERROR:
+    case actions.CREATE_MEDIA_ERROR:
       return state.set('createMediaStatus', 'failed');
 
     default:

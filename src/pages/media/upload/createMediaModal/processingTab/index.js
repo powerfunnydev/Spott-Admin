@@ -1,7 +1,7 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import { reduxForm } from 'redux-form';
+import { reduxForm } from 'redux-form/immutable';
 import { buttonStyles, errorTextStyle } from '../../../../_common/styles';
 import Checkbox from '../../../../_common/checkbox';
 import createMediaStyles from '../styles';

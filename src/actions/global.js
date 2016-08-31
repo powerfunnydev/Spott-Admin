@@ -1,11 +1,15 @@
-import { AUTHENTICATE, MODAL_OPEN_LOGIN, MODAL_CLOSE } from '../constants/actionTypes';
+import { getConfiguration } from '../api/config';
 
-/**
- * Authenticate the user, setting an access token for the rest of the app's lifetime.
- * @return {string} The session token
- */
-export function authenticate (username, authenticationToken) {
-  return { type: AUTHENTICATE, username, authenticationToken };
+export const CONFIGURE = 'CONFIGURE';
+
+export const MODAL_OPEN_LOGIN = 'MODAL_OPEN_LOGIN';
+export const MODAL_CLOSE = 'MODAL_CLOSE';
+
+export function init () {
+  return async (dispatch) => {
+    const configuration = await getConfiguration();
+    dispatch({ type: CONFIGURE, configuration });
+  };
 }
 
 export function openLoginModal () {

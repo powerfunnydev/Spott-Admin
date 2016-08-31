@@ -1,0 +1,27 @@
+{
+  "common": {
+    "errors": {
+      "unexpected": "Something went wrong!"
+    }
+  },
+  "header": {
+    "login": "Sign In",
+    "logout": "Log Out",
+    "home": "Home"
+  },
+  "error404": {
+    "pageDoesNotExist": "The page you requested doesn't exist.",
+    "returnToApptvate": "Return to Apptvate.com",
+    "somethingWentWrong": "Something went wrong!",
+    "title": "Whoops!"
+  },
+  "login": {
+    "errors": {
+      "incorrect": "Email/password combination is incorrect."
+    },
+    "title": "Log In",
+    "email": "Your Email",
+    "password": "Your Password",
+    "submitButton": "Log in"
+  }
+}

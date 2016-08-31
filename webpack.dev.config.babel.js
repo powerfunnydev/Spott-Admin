@@ -25,6 +25,7 @@ const configuration = {
     loaders: [
       { exclude: /node_modules/, loader: `babel!eslint?failOnWarning=false&failOnError=false`, test: /\.js$/ },
       { loader: 'style!css', test: /\.css$/ },
+      { loader: 'json', test: /\.json/ },
       { loader: 'file?name=[name]-[md5:hash].[ext]', test: /\.gif$|\.jpg$|\.jpeg$|\.png|\.eot$|\.svg$|\.ttf$|\.woff$|\.woff2$|\.pdf$/ }
     ]
   },
