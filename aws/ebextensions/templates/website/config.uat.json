@@ -1,0 +1,8 @@
+{
+  "facebookAppId": "542103612649024",
+  "urls": {
+    "api": "https://spott-ios-rest-uat.appiness.mobi/rest",
+    "cmsApi": "https://spott-cms-rest-uat.appiness.mobi/rest"
+  },
+  "environment": "uat"
+}
