@@ -1,8 +1,10 @@
 {
-  "facebookAppId": "542100602649325",
   "urls": {
-    "api": "https://spott-ios-rest-tst.appiness.mobi/rest",
-    "cmsApi": "https://spott-cms-rest-tst.appiness.mobi/rest"
+    "api": "https://spott-cms-rest-tst.appiness.mobi/rest",
+    "apptvateWebsite": "http://tst.apptvate.com",
+    "cms": "http://spott-cms-tst.appiness.mobi",
+    "cmsNext": "http://spott-cms-tst.appiness.mobi/cms-next",
+    "tagger": "http://spott-cms-tst.appiness.mobi/tagger"
   },
-  "environment": "tst"
+  "environment": "Testing"
 }
