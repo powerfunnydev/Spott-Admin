@@ -1,3 +1,5 @@
+/* TODO: DEPRECATED! REMOVE THIS CODE. */
+
 /* eslint-disable prefer-const */
 import { authenticationTokenSelector } from '../selectors/global';
 

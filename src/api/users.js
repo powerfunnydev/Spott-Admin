@@ -12,7 +12,6 @@ export async function login (baseUrl, { email, password }) {
       }
     };
   } catch (error) {
-    console.warn('err', error);
     if (error.body.httpStatus === 401) {
       throw 'incorrect';
     }
@@ -22,4 +21,9 @@ export async function login (baseUrl, { email, password }) {
 
 export function register (baseUrl, { email, firstname, lastname, password, dateOfBirth, gender }) {
   return post(null, null, `${baseUrl}/v003/user/users/register/username`, { email, firstName: firstname, lastName: lastname, password, dateOfBirth, gender });
+}
+
+export function forgotPassword (baseUrl, authenticationToken, locale, { email }) {
+  return { email };
+  //post(null, null, `${baseUrl}/v003/user/users/register/username`, { email });
 }

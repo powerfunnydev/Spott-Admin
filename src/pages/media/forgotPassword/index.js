@@ -1,19 +1,14 @@
 import React, { Component, PropTypes } from 'react';
 import { reduxForm, Field } from 'redux-form/immutable';
 import Radium from 'radium';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { buttonStyles } from '../../_common/styles';
 import localized from '../../_common/localized';
 import Modal from '../../_common/modal';
-import * as globalActions from '../../../actions/global';
 
 function validate (values) {
   const validationErrors = {};
   const emailError = !values.get('email') || !values.get('email').match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
   if (emailError) { validationErrors.email = 'invalid'; }
-  const passwordError = !values.get('password') || !values.get('password').match(/^.{6,}$/);
-  if (passwordError) { validationErrors.password = 'invalid'; }
   // Done
   return validationErrors;
 }
@@ -48,18 +43,16 @@ const renderField = Radium((props) => {
 });
 
 @localized
-@connect(null, (dispatch) => ({
-  openForgotPasswordModal: bindActionCreators(globalActions.openForgotPasswordModal, dispatch)
-}))
 @reduxForm({
-  form: 'login',
+  form: 'forgotPassword',
   validate
 })
 @Radium
-export default class LoginModal extends Component {
+export default class ForgotPasswordModal extends Component {
 
   static propTypes = {
-    openForgotPasswordModal: PropTypes.func.isRequired,
+    error: PropTypes.any,
+    handleSubmit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired, // Callback for closing the dialog and clearing the form.
     onSubmit: PropTypes.func.isRequired
@@ -68,7 +61,9 @@ export default class LoginModal extends Component {
   constructor (props) {
     super(props);
     this.onCloseClick = ::this.onCloseClick;
-    this.onForgotPasswordClick = ::this.onForgotPasswordClick;
+    this.onSubmit = ::this.onSubmit;
+    // We show that a mail has been send to the user.
+    this.state = { email: null };
   }
 
   onCloseClick (e) {
@@ -76,9 +71,9 @@ export default class LoginModal extends Component {
     this.props.onCancel();
   }
 
-  onForgotPasswordClick (e) {
-    e.preventDefault();
-    this.props.openForgotPasswordModal();
+  async onSubmit () {
+    const { email } = await Reflect.apply(this.props.handleSubmit, this, arguments);
+    this.setState({ email });
   }
 
   static styles = {
@@ -102,28 +97,31 @@ export default class LoginModal extends Component {
       width: 'auto',
       float: 'right'
     },
-    forgotPassword: {
-      fontSize: '13px',
-      color: 'white',
-      padding: '8px 0'
+    sendEmail: {
+      color: '#ffffff',
+      marginBottom: '1em'
     }
   };
 
   render () {
     const { styles } = this.constructor;
     const { error, handleSubmit, onCancel, t } = this.props;
+    const { email } = this.state;
     return (
       <Modal isOpen onClose={onCancel}>
         <div style={styles.container}>
-          <form style={styles.content} onSubmit={handleSubmit}>
-            <Field component={renderField} name='email' placeholder={t('login.email')} type='text' />
-            <Field component={renderField} name='password' placeholder={t('login.password')} type='password' />
+          {email
+            ? <div style={styles.content}>
+                <p style={styles.sendEmail}>{t('forgotPassword.sendEmail', { email })}</p>
+                <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} onClick={this.onCloseClick}>{t('common.ok')}</button>
+              </div>
+            : <form style={styles.content} onSubmit={this.onSubmit}>
+              <Field component={renderField} name='email' placeholder={t('forgotPassword.email')} type='text' />
 
-            {error && typeof error === 'string' && <div style={styles.error}>{t(error)}</div>}
+              {error && typeof error === 'string' && <p style={styles.error}>{t(error)}</p>}
 
-            <button style={styles.forgotPassword} onClick={this.onForgotPasswordClick}>{t('login.forgotPassword')}</button>
-            <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} type='submit'>{t('login.submitButton')}</button>
-          </form>
+              <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} type='submit'>{t('forgotPassword.submitButton')}</button>
+            </form>}
         </div>
       </Modal>
     );

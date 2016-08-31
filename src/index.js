@@ -4,7 +4,8 @@ import ReactDOM from 'react-dom';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { Provider } from 'react-redux';
 import createStore from './createStore';
-import { init, LOGIN_SUCCESS } from './actions/global';
+import { init } from './actions/global';
+import { LOGIN_SUCCESS } from './actions/users';
 
 import Wrapper from './pages/wrapper';
 import Error404 from './pages/error404/main';

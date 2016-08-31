@@ -11,7 +11,8 @@ import HowItWorks from './howItWorks';
 import Partners from './partners';
 import Pricing from './pricing';
 import Whitepapers from './whitepapers';
-import Login from '../login';
+import LoginModal from '../login';
+import ForgotPasswordModal from '../forgotPassword';
 import * as globalActions from '../../../actions/global';
 import * as actions from '../actions';
 import { welcomeSelector } from '../../../selectors/global';
@@ -19,6 +20,7 @@ import { welcomeSelector } from '../../../selectors/global';
 @Radium
 @connect(welcomeSelector, (dispatch) => ({
   closeModal: bindActionCreators(globalActions.closeModal, dispatch),
+  forgotPassword: bindActionCreators(actions.forgotPassword, dispatch),
   openLoginModal: bindActionCreators(globalActions.openLoginModal, dispatch),
   login: bindActionCreators(actions.login, dispatch)
 }))
@@ -27,6 +29,7 @@ export default class Welcome extends Component {
   static propTypes = {
     closeModal: PropTypes.func.isRequired,
     currentModal: PropTypes.string,
+    forgotPassword: PropTypes.func.isRequired,
     login: PropTypes.func.isRequired,
     openLoginModal: PropTypes.func.isRequired
   };
@@ -36,12 +39,14 @@ export default class Welcome extends Component {
   }
 
   render () {
-    const { closeModal, currentModal, login, openLoginModal } = this.props;
+    const { closeModal, currentModal, forgotPassword, login, openLoginModal } = this.props;
 
     return (
       <div style={{ minWidth: 350 }}>
         {currentModal === 'login' &&
-          <Login onCancel={closeModal} onSubmit={login} />}
+          <LoginModal onCancel={closeModal} onSubmit={login} />}
+        {currentModal === 'forgotPassword' &&
+          <ForgotPasswordModal onCancel={closeModal} onSubmit={forgotPassword} />}
         <Hero onOpenLoginModal={openLoginModal} />
         <About />
         <ForWho />

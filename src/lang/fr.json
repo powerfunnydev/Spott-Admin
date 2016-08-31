@@ -2,7 +2,8 @@
   "common": {
     "errors": {
       "unexpected": "Il y a eu un problème!"
-    }
+    },
+    "ok": "Ok"
   },
   "header": {
     "login": "Connectez-vous",
@@ -15,13 +16,19 @@
     "somethingWentWrong": "Il y a eu un problème!",
     "title": "Whoops!"
   },
+  "forgotPassword": {
+    "email": "Votre e-mail",
+    "submitButton": "Reset password",
+    "sendEmail": "A mail has been send to %(email)s to reset your password."
+  },
   "login": {
+    "email": "Votre e-mail",
     "errors": {
       "incorrect": "Email/password combination is incorrect."
     },
-    "title": "Je m'inscris",
-    "email": "Votre e-mail",
+    "forgotPassword": "Forgot Password?",
     "password": "Votre mot de passe",
-    "submitButton": "Connectez-vous"
+    "submitButton": "Connectez-vous",
+    "title": "Je m'inscris"
   }
 }
