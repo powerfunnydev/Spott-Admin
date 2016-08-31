@@ -1,0 +1,175 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>appiness.mobi</groupId>
+		<artifactId>appiness.root</artifactId>
+		<version>07</version>
+	</parent>
+	<artifactId>apptvate.website</artifactId>
+	<packaging>pom</packaging>
+	<name>${project.artifactId}</name>
+	<version>01.00.00-SNAPSHOT</version>
+	<scm>
+		<connection>scm:git:https://bitbucket.org/appiness/apptvate.website</connection>
+		<tag>HEAD</tag>
+	</scm>
+	<repositories>
+		<repository>
+			<id>appiness</id>
+			<url>https://nexus.appiness.mobi/nexus/content/groups/public</url>
+		</repository>
+	</repositories>
+	<properties>
+		<stage.dir>${project.build.directory}/stage</stage.dir>
+		<stage.website.dir>${stage.dir}/.ebextensions/files/website</stage.website.dir>
+		<website.dist.file>${project.build.directory}/${project.artifactId}-${project.version}.zip</website.dist.file>
+		<node-version>v5.0.0</node-version>
+		<npm-version>3.8.6</npm-version>
+	</properties>
+	<build>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>com.github.eirslett</groupId>
+					<artifactId>frontend-maven-plugin</artifactId>
+					<version>1.0</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${basedir}/node_modules</directory>
+						</fileset>
+						<fileset>
+							<directory>${basedir}/dist</directory>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<configuration>
+					<nodeVersion>${node-version}</nodeVersion>
+					<npmVersion>${npm-version}</npmVersion>
+				</configuration>
+				<executions>
+					<execution>
+						<id>node-npm</id>
+						<goals>
+							<goal>install-node-and-npm</goal>
+						</goals>
+						<phase>generate-resources</phase>
+					</execution>
+					<execution>
+						<id>install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<phase>generate-resources</phase>
+						<configuration>
+							<arguments>install</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<id>run-build</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<phase>generate-resources</phase>
+						<configuration>
+							<arguments>run build</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+
+					<execution>
+						<id>zip</id>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+
+								<!-- Website code -->
+								<delete dir="${stage.dir}" />
+								<mkdir dir="${stage.website.dir}" />
+								<copy todir="${stage.website.dir}">
+									<fileset dir="${basedir}/dist">
+										<include name="**/**" />
+									</fileset>
+								</copy>
+
+								<!-- Website version -->
+								<tstamp>
+									<format property="build.time" pattern="yyyy-MM-dd'T'HH:mm:ssZ" />
+								</tstamp>
+								<echo message="{${line.separator}" file="${stage.website.dir}/version.json" append="false" />
+								<echo message=" &quot;version&quot;:&quot;${project.version}&quot;,${line.separator}" file="${stage.website.dir}/version.json" append="true" />
+								<echo message=" &quot;build&quot;:&quot;${buildNumber}&quot;,${line.separator}" file="${stage.website.dir}/version.json" append="true" />
+								<echo message=" &quot;timestamp&quot;:&quot;${build.time}&quot;${line.separator}" file="${stage.website.dir}/version.json" append="true" />
+								<echo message="}${line.separator}" file="${stage.website.dir}/version.json" append="true" />
+
+								<!-- Dummy node app -->
+								<copy todir="${stage.dir}">
+									<fileset dir="${basedir}/aws/nodejs">
+										<include name="**/**" />
+									</fileset>
+								</copy>
+
+
+								<!-- AWS config -->
+								<mkdir dir="${stage.dir}/.ebextensions" />
+								<copy todir="${stage.dir}/.ebextensions">
+									<fileset dir="${basedir}/aws/ebextensions">
+										<include name="**/**" />
+									</fileset>
+								</copy>
+
+								<zip destfile="${website.dist.file}" basedir="${stage.dir}" />
+							</target>
+						</configuration>
+					</execution>
+
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>${website.dist.file}</file>
+									<type>zip</type>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>
