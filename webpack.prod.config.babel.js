@@ -1,5 +1,6 @@
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 const webpack = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
@@ -31,6 +32,10 @@ const configuration = {
     path: path.join(__dirname, 'dist')
   },
   plugins: [
+    new CopyWebpackPlugin([
+      { from: './dev/version.json', to: 'version.json' },
+      { from: './dev/config.json', to: 'config.json' }
+    ]),
     // Protects against multiple React installs when npm linking
     new webpack.NormalModuleReplacementPlugin(/^react?$/, require.resolve('react')),
     new webpack.NormalModuleReplacementPlugin(/^react(\/addons)?$/, require.resolve('react/addons')),

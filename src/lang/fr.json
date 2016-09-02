@@ -17,9 +17,18 @@
     "title": "Whoops!"
   },
   "forgotPassword": {
+    "errors": {
+      "failed": "Nous avons rencontré une erreur en essayant de changer votre mot de passe :("
+    },
     "email": "Votre e-mail",
     "submitButton": "Reset password",
     "sendEmail": "A mail has been send to %(email)s to reset your password."
+  },
+  "resetPassword": {
+    "password": "Your New Password",
+    "passwordRepeat": "Repeat Password",
+    "submitButton": "Change password",
+    "success": "Your password has been successfully changed!"
   },
   "login": {
     "email": "Votre e-mail",

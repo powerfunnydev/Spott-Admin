@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 import { reduxForm, Field } from 'redux-form/immutable';
 import Radium from 'radium';
 import { connect } from 'react-redux';
@@ -59,6 +60,8 @@ const renderField = Radium((props) => {
 export default class LoginModal extends Component {
 
   static propTypes = {
+    error: PropTypes.any,
+    handleSubmit: PropTypes.func.isRequired,
     openForgotPasswordModal: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired, // Callback for closing the dialog and clearing the form.
@@ -69,6 +72,14 @@ export default class LoginModal extends Component {
     super(props);
     this.onCloseClick = ::this.onCloseClick;
     this.onForgotPasswordClick = ::this.onForgotPasswordClick;
+  }
+
+  // The autofocus attribute will only work when the page loads initially.
+  // When a popup opens we still need to manually focus the field.
+  componentDidMount () {
+    setTimeout(() => {
+      ReactDOM.findDOMNode(this._email).focus();
+    }, 0);
   }
 
   onCloseClick (e) {
@@ -112,11 +123,12 @@ export default class LoginModal extends Component {
   render () {
     const { styles } = this.constructor;
     const { error, handleSubmit, onCancel, t } = this.props;
+
     return (
       <Modal isOpen onClose={onCancel}>
         <div style={styles.container}>
           <form style={styles.content} onSubmit={handleSubmit}>
-            <Field component={renderField} name='email' placeholder={t('login.email')} type='text' />
+            <Field component={renderField} name='email' placeholder={t('login.email')} ref={(c) => { this._email = c; }} type='email' />
             <Field component={renderField} name='password' placeholder={t('login.password')} type='password' />
 
             {error && typeof error === 'string' && <div style={styles.error}>{t(error)}</div>}

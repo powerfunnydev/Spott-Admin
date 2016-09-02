@@ -1,7 +1,7 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 
-const logoImage = require('./welcome/hero/header/apptvateLogo.svg');
+const logoImage = require('./welcome/header/apptvateLogo.svg');
 const backgroundImage = require('./welcome/hero/background.jpg');
 
 @Radium

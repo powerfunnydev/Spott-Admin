@@ -22,6 +22,7 @@ import reducer from './reducers';
 const routes = (
   <Route component={Wrapper}>
     <Route component={MediaWelcome} path='/' />
+    <Route component={MediaWelcome} path='reset-password' resetPassword />
     <Route component={MediaSinglePage} path='media'>
       <IndexRoute component={MediaHome}/>
       <Route component={MediaUpload} path='upload' />

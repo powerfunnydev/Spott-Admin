@@ -1,7 +1,7 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-scroll';
-import Header from './header';
+import Header from '../header';
 import { buttonStyles } from '../../../_common/styles';
 
 const backgroundImage = require('./background.jpg');

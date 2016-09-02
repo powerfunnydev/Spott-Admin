@@ -42,7 +42,8 @@ const configuration = {
   },
   plugins: [
     new CopyWebpackPlugin([
-      { from: 'src/config.json', to: 'config.json' }
+      { from: './dev/version.json', to: 'version.json' },
+      { from: './dev/config.json', to: 'config.json' }
     ]),
     // Protects against multiple React installs when npm linking
     new webpack.NormalModuleReplacementPlugin(/^react?$/, require.resolve('react')),
