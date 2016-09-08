@@ -6,19 +6,17 @@ import createMediaStyles from '../styles';
 
 @reduxForm({
   destroyOnUnmount: false,
-  fields: [
-    'episode', 'episodeTitle', 'season', 'seriesName', // Description
-    'video', // Source video
-    'mediumExternalReference', 'mediumExternalReferenceSource', 'skipAudio', 'skipScenes' // Processing
-  ], // Note: all form fields on the last tab, see http://erikras.github.io/redux-form/#/examples/wizard?_k=s8rdrm
-  form: 'createMedia',
-  getFormState: (state, reduxMountPoint) => state.get(reduxMountPoint) // Get the `form` state (reduxMountPoint = 'form' by default).
+  // fields: [
+  //   'episode', 'episodeTitle', 'season', 'seriesName', // Description
+  //   'video', // Source video
+  //   'mediumExternalReference', 'mediumExternalReferenceSource', 'skipAudio', 'skipScenes' // Processing
+  // ], // Note: all form fields on the last tab, see http://erikras.github.io/redux-form/#/examples/wizard?_k=s8rdrm
+  form: 'createMedia'
 })
 @Radium
 export default class ConfirmTab extends Component {
 
   static propTypes = {
-    fields: PropTypes.object.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     onBack: PropTypes.func.isRequired
   };

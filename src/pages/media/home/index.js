@@ -4,18 +4,16 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { buttonStyles } from '../../_common/styles';
 import { updatePath } from '../../../actions/router';
-import homeSelector from '../../../selectors/home';
 
 // TODO: Support "See History"
-@connect(homeSelector, (dispatch) => {
+@connect(null, (dispatch) => {
   return { updatePath: bindActionCreators(updatePath, dispatch) };
 })
 @Radium
 export default class Home extends Component {
 
   static propTypes = {
-    updatePath: PropTypes.func.isRequired,
-    username: PropTypes.string.isRequired
+    updatePath: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -47,12 +45,11 @@ export default class Home extends Component {
   }
 
   render () {
-    const { username } = this.props;
     const styles = this.constructor.styles;
     return (
       <div>
         <div style={styles.text}>
-          Welcome <span style={styles.username}>{username}</span>,<br/>
+          Welcome,<br/>
           What would you like to do?
         </div>
         <div>

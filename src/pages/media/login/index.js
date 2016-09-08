@@ -11,9 +11,11 @@ import * as globalActions from '../../../actions/global';
 
 function validate (values) {
   const validationErrors = {};
-  const emailError = !values.get('email') || !values.get('email').match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+  const { email, password } = values.toJS();
+  const emailError = !email;
+  // !values.get('email') || !values.get('email').match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
   if (emailError) { validationErrors.email = 'invalid'; }
-  const passwordError = !values.get('password') || !values.get('password').match(/^.{6,}$/);
+  const passwordError = !password || !password.match(/^.{6,}$/);
   if (passwordError) { validationErrors.password = 'invalid'; }
   // Done
   return validationErrors;
@@ -128,7 +130,7 @@ export default class LoginModal extends Component {
       <Modal isOpen onClose={onCancel}>
         <div style={styles.container}>
           <form style={styles.content} onSubmit={handleSubmit}>
-            <Field component={renderField} name='email' placeholder={t('login.email')} ref={(c) => { this._email = c; }} type='email' />
+            <Field component={renderField} name='email' placeholder={t('login.email')} ref={(c) => { this._email = c; }} />
             <Field component={renderField} name='password' placeholder={t('login.password')} type='password' />
 
             {error && typeof error === 'string' && <div style={styles.error}>{t(error)}</div>}

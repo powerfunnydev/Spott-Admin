@@ -7,7 +7,7 @@ export async function login (baseUrl, { email, password }) {
     return {
       authenticationToken: body.authenticationToken,
       user: {
-        email: body.userName,
+        username: body.userName,
         roles: body.roles
       }
     };

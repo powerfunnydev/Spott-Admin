@@ -89,9 +89,14 @@ export default class CreateMediaModal extends Component {
             <Tabs currentTab={currentTab} onTabClick={onSelectTab} />
 
             <div>
+              {/* Initializing your form (using initialValues) will overwrite any existing values. */}
               {currentTab === DESCRIPTION_TAB &&
                 <DescriptionTab
                   currentMediaType={currentMediaType}
+                  initialValues={{
+                    mediumExternalReferenceSource: initialMediumExternalReferenceSource,
+                    mediumExternalReference: initialMediumExternalReference
+                  }}
                   onSelectMediaType={onSelectMediaType}
                   onSubmit={onSelectTab.bind(this, SOURCE_VIDEO_TAB)} />}
               {currentTab === SOURCE_VIDEO_TAB &&
@@ -101,13 +106,9 @@ export default class CreateMediaModal extends Component {
               {/* currentTab === ADDITIONAL_ASSETS_TAB &&
                 <AdditionalAssetsTab
                   onBack={onSelectTab.bind(this, SOURCE_VIDEO_TAB)}
-                  onSubmit={onSelectTab.bind(this, CONFIRM_TAB)} /> */}
+                  onSubmit={onSelectTab.bind(this, CONFIRM_TAB)} />           } */}
               {currentTab === PROCESSING_TAB &&
                 <ProcessingTab
-                  initialValues={{
-                    mediumExternalReferenceSource: initialMediumExternalReferenceSource,
-                    mediumExternalReference: initialMediumExternalReference
-                  }}
                   onBack={onSelectTab.bind(this, SOURCE_VIDEO_TAB)}
                   onSubmit={onSelectTab.bind(this, CONFIRM_TAB)} />}
               {currentTab === CONFIRM_TAB &&

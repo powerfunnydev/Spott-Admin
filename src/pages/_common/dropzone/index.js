@@ -3,7 +3,7 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import ReactDropzone from 'react-dropzone';
 import { fileSizeToString } from '../../../utils';
-import { colors } from '../styles';
+import { colors, errorTextStyle } from '../styles';
 
 const uploadIcon = require('./upload.svg');
 
@@ -11,9 +11,10 @@ const uploadIcon = require('./upload.svg');
 export default class Dropzone extends Component {
 
   static propTypes = {
+    input: PropTypes.object.isRequired,
     message: PropTypes.node.isRequired,
-    value: PropTypes.object,
-    onChange: PropTypes.func.isRequired
+    meta: PropTypes.object.isRequired,
+    name: PropTypes.string.isRequired
   };
 
   constructor (props) {
@@ -24,15 +25,16 @@ export default class Dropzone extends Component {
   /**
    * Focus this input.
    */
-  focus () {
-    // Focus the first input
-    ReactDOM.findDOMNode(this.dropzone).focus();
+  componentDidMount () {
+    setTimeout(() => {
+      ReactDOM.findDOMNode(this.dropzone).focus();
+    }, 0);
   }
 
   onDrop (files) {
     // Since we have set multiple to false during render, we can be sure that
     // files is a singleton array. As such, we extract the single file inside files.
-    this.props.onChange(files[0]);
+    this.props.input.onChange(files[0]);
   }
 
   static styles = {
@@ -90,7 +92,7 @@ export default class Dropzone extends Component {
   };
 
   render () {
-    const { message, value } = this.props;
+    const { input: { value }, message, meta } = this.props;
     const styles = this.constructor.styles;
     return (
       <div>
@@ -103,12 +105,15 @@ export default class Dropzone extends Component {
           </div>
           <span style={styles.browseButton}>Browse</span>
         </ReactDropzone>
+
         {/* Render information about selected video. */}
         {value &&
           <div style={styles.file.container} title={`${value.name} - ${fileSizeToString(value.size)}`}>
             <div style={styles.file.name}>{value.name}</div>
             <div style={styles.file.size}>{fileSizeToString(value.size)}</div>
           </div>}
+
+        {meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
       </div>
     );
   }
