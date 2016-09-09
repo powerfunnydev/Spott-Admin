@@ -135,7 +135,7 @@ export default class LoginModal extends Component {
 
             {error && typeof error === 'string' && <div style={styles.error}>{t(error)}</div>}
 
-            <button style={styles.forgotPassword} onClick={this.onForgotPasswordClick}>{t('login.forgotPassword')}</button>
+            <button style={styles.forgotPassword} type='button' onClick={this.onForgotPasswordClick}>{t('login.forgotPassword')}</button>
             <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} type='submit'>{t('login.submitButton')}</button>
           </form>
         </div>

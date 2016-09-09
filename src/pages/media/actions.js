@@ -18,6 +18,16 @@ export function login (values) {
   };
 }
 
+export function loginWithAuthenticationToken (authenticationToken) {
+  return async (dispatch, getState) => {
+    try {
+      await dispatch(actions.login({ authenticationToken }));
+    } catch (e) {
+      console.warn('Could not automatically login.');
+    }
+  };
+}
+
 export const logout = actions.logout;
 
 export function forgotPassword (values) {

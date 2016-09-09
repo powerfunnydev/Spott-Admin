@@ -17,12 +17,12 @@ export const RESET_PASSWORD_ERROR = 'RESET_PASSWORD_ERROR';
 export const LOGOUT_START = 'LOGOUT_START';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 
-export function login ({ email, password }) {
+export function login ({ authenticationToken, email, password }) {
   return async (dispatch, getState) => {
     dispatch({ type: LOGIN_START });
     try {
       const baseUrl = apiBaseUrlSelector(getState());
-      const data = await api.login(baseUrl, { email, password });
+      const data = await api.login(baseUrl, { authenticationToken, email, password });
       dispatch({ data, type: LOGIN_SUCCESS });
       if (localStorage) {
         localStorage.setItem('session', JSON.stringify(data));
