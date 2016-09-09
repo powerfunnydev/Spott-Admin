@@ -5,7 +5,7 @@ export const cmsBaseUrlSelector = (state) => state.getIn([ 'global', 'configurat
 export const cmsNextBaseUrlSelector = (state) => state.getIn([ 'global', 'configuration', 'urls', 'cmsNext' ]);
 export const currentLocaleSelector = (state) => state.getIn([ 'global', 'configuration', 'currentLocale' ]);
 export const currentModalSelector = (state) => state.getIn([ 'global', 'currentModal' ]);
-export const isAuthenticatedSelector = (state) => !state.getIn([ 'global', 'authentication', 'authenticationToken' ]);
+export const isAuthenticatedSelector = (state) => Boolean(state.getIn([ 'global', 'authentication', 'authenticationToken' ]));
 export const taggerBaseUrlSelector = (state) => state.getIn([ 'global', 'configuration', 'urls', 'tagger' ]);
 export const usernameSelector = (state) => state.getIn([ 'global', 'username' ]);
 export const versionSelector = (state) => state.getIn([ 'global', 'configuration', 'version' ]);

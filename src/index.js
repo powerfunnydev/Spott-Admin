@@ -13,6 +13,7 @@ import MediaSinglePage from './pages/media/singlePage';
 import MediaHome from './pages/media/home';
 import MediaUpload from './pages/media/upload';
 import MediaWelcome from './pages/media/welcome';
+import Reporting from './pages/reporting';
 
 import reducer from './reducers';
 
@@ -27,6 +28,7 @@ const routes = (
       <IndexRoute component={MediaHome}/>
       <Route component={MediaUpload} path='upload' />
     </Route>
+    <Route component={Reporting} path='reporting' />
     <Route component={Error404} path='*' />
   </Route>
 );
