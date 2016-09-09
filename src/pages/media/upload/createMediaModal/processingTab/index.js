@@ -1,14 +1,15 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
-import { reduxForm } from 'redux-form/immutable';
+import { reduxForm, Field } from 'redux-form/immutable';
 import { buttonStyles, errorTextStyle } from '../../../../_common/styles';
 import Checkbox from '../../../../_common/checkbox';
 import createMediaStyles from '../styles';
 
-function validate ({ mediumExternalReferenceSource, mediumExternalReference }) {
+function validate (values) {
   const errors = {};
-  // Validate seriesName
+  const { mediumExternalReferenceSource, mediumExternalReference } = values.toJS();
+  console.error('mediumExternalReferenceSource', mediumExternalReferenceSource, mediumExternalReference);
+  // Validate mediumExternalReferenceSource
   if (typeof mediumExternalReferenceSource === 'undefined' || mediumExternalReferenceSource === '') {
     errors.mediumExternalReferenceSource = 'Medium external reference source is required.';
   }
@@ -20,18 +21,28 @@ function validate ({ mediumExternalReferenceSource, mediumExternalReference }) {
   return errors;
 }
 
+const renderField = (field) => {
+  return (
+    <div>
+      <label htmlFor={field.name} style={createMediaStyles.label}>{field.label}</label>
+      <input
+        id={field.name}
+        {...field}
+        {...field.input} />
+      {field.meta.touched && field.meta.error && <div style={errorTextStyle}>{field.meta.error}</div>}
+    </div>
+  );
+};
+
 @reduxForm({
   destroyOnUnmount: false,
-  fields: [ 'mediumExternalReference', 'mediumExternalReferenceSource', 'skipAudio', 'skipScenes' ],
   form: 'createMedia',
-  getFormState: (state, reduxMountPoint) => state.get(reduxMountPoint), // Get the `form` state (reduxMountPoint = 'form' by default).
   validate
 })
 @Radium
 export default class ProcessingTab extends Component {
 
   static propTypes = {
-    fields: PropTypes.object.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     submitFailed: PropTypes.bool.isRequired,
     onBack: PropTypes.func.isRequired
@@ -44,7 +55,9 @@ export default class ProcessingTab extends Component {
 
   componentDidMount () {
     // Focus the first input
-    ReactDOM.findDOMNode(this.mediumExternalReferenceSourceInput).focus();
+    // setTimeout(() => {
+    //   document.getElementById('mediumExternalReferenceSource').focus();
+    // }, 0);
   }
 
   onBack (e) {
@@ -61,7 +74,7 @@ export default class ProcessingTab extends Component {
   // TODO: this should only be for admins, and should be optional.
   render () {
     const styles = this.constructor.styles;
-    const { fields: { mediumExternalReference, mediumExternalReferenceSource, skipAudio, skipScenes }, handleSubmit, submitFailed } = this.props;
+    const { handleSubmit } = this.props;
 
     return (
       <form noValidate onSubmit={handleSubmit}>
@@ -73,21 +86,37 @@ export default class ProcessingTab extends Component {
           </div>
 
           <div>
-            <label htmlFor='mediumExternalReferenceSource' style={createMediaStyles.label}>Medium external reference source</label>
-            <input id='mediumExternalReferenceSource' placeholder='e.g, system or zalando'
-              ref={(x) => { this.mediumExternalReferenceSourceInput = x; }}
-              style={createMediaStyles.inputText} type='text' {...mediumExternalReferenceSource} />
-            {submitFailed && mediumExternalReferenceSource.touched && mediumExternalReferenceSource.error && <div style={errorTextStyle}>{mediumExternalReferenceSource.error}</div>}
+            <Field
+              component={renderField}
+              label='Medium external reference source'
+              name='mediumExternalReferenceSource'
+              placeholder='e.g, system or zalando'
+              style={createMediaStyles.inputText}
+              type='text' />
           </div>
 
           <div style={styles.row}>
-            <label htmlFor='mediumExternalReference' style={createMediaStyles.label}>Medium external reference</label>
-            <input id='mediumExternalReference' placeholder='e.g, abcdef1234abcdef1234abcdef1234' style={createMediaStyles.inputText} type='text' {...mediumExternalReference} />
-            {submitFailed && mediumExternalReference.touched && mediumExternalReference.error && <div style={errorTextStyle}>{mediumExternalReference.error}</div>}
+            <Field
+              component={renderField}
+              label='Medium external reference'
+              name='mediumExternalReference'
+              placeholder='e.g, abcdef1234abcdef1234abcdef1234'
+              style={createMediaStyles.inputText}
+              type='text' />
           </div>
 
-          <Checkbox field={skipAudio} label='Skip audio' style={styles.row} />
-          <Checkbox field={skipScenes} label='Skip scenes' style={styles.row} />
+          <Field
+            component={Checkbox}
+            label='Skip audio'
+            name='skipAudio'
+            style={styles.row} />
+
+          <Field
+            component={Checkbox}
+            label='Skip scenes'
+            name='skipScenes'
+            style={styles.row} />
+
         </div>
 
         <div style={createMediaStyles.footer.container}>

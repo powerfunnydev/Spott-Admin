@@ -2,7 +2,7 @@ import Radium from 'radium';
 import React, { Component } from 'react';
 import { Grid, Cell } from 'radium-grid';
 import { Element } from 'react-scroll';
-import Section from '../section';
+import Section from '../../../_common/section';
 
 const magicIcon = require('./magic.svg');
 const shopTvIcon = require('./shopTv.svg');

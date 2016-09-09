@@ -6,8 +6,10 @@ import createMediaStyles from '../styles';
 import Episode from './episode';
 import { EPISODE } from '../../../../../constants/mediaTypes';
 
-function validate ({ episode, episodeTitle, season, seriesName }) {
+function validate (values) {
   const errors = {};
+  const { episode, episodeTitle, season, seriesName } = values.toJS();
+  console.error('values', values.toJS());
   // Validate seriesName
   if (typeof seriesName === 'undefined' || seriesName === '') {
     errors.seriesName = 'Series name is required.';
@@ -30,9 +32,7 @@ function validate ({ episode, episodeTitle, season, seriesName }) {
 
 @reduxForm({
   destroyOnUnmount: false,
-  fields: [ 'episode', 'episodeTitle', 'season', 'seriesName' ],
   form: 'createMedia',
-  getFormState: (state, reduxMountPoint) => state.get(reduxMountPoint), // Get the `form` state (reduxMountPoint = 'form' by default).
   validate
 })
 @Radium
@@ -40,7 +40,6 @@ export default class DescriptionTab extends Component {
 
   static propTypes = {
     currentMediaType: PropTypes.string.isRequired,
-    fields: PropTypes.object.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     submitFailed: PropTypes.bool.isRequired,
     onSelectMediaType: PropTypes.func.isRequired
@@ -65,7 +64,7 @@ export default class DescriptionTab extends Component {
   // TODO: prefill data when medium is given
   render () {
     // const styles = this.constructor.styles;
-    const { currentMediaType, fields: { episode, episodeTitle, season, seriesName }, handleSubmit, submitFailed } = this.props;
+    const { currentMediaType, handleSubmit } = this.props;
 
     return (
       <form noValidate onSubmit={handleSubmit}>
@@ -78,15 +77,7 @@ export default class DescriptionTab extends Component {
             style={styles.mediaTypes}
             onMediaTypeClick={onSelectMediaType} />*/}
           <p>Note: currently, only episodes are supported.</p>
-
-          {currentMediaType === EPISODE &&
-            <Episode
-              episode={episode}
-              episodeTitle={episodeTitle}
-              season={season}
-              seriesName={seriesName}
-              submitFailed={submitFailed} />}
-
+          {currentMediaType === EPISODE && <Episode />}
         </div>
 
         <div style={createMediaStyles.footer.container}>

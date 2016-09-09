@@ -66,7 +66,7 @@ class Tab extends Component {
     const { status, text } = this.props;
     return (
       <button disabled={status !== COMPLETED_STATUS} style={[ styles.tab.base ]} onClick={this.onClick}>
-        <div style={[ styles.dot.base, status === ACTIVE_STATUS && styles.dot.active, status === COMPLETED_STATUS && styles.dot.completed ]}></div>
+        <div style={[ styles.dot.base, status === ACTIVE_STATUS && styles.dot.active, status === COMPLETED_STATUS && styles.dot.completed ]} />
         <div style={[ status === ACTIVE_STATUS && styles.text.active ]}>{text}</div>
       </button>
     );

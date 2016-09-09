@@ -1,24 +1,29 @@
-import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
+import React, { Component } from 'react';
+import { Field } from 'redux-form/immutable';
 import { errorTextStyle } from '../../../../_common/styles';
 import createMediaStyles from '../styles';
 
-export default class Episode extends Component {
+const renderField = (field) => {
+  return (
+    <div>
+      <label htmlFor={field.name} style={createMediaStyles.label}>{field.label}</label>
+      <input
+        id={field.name}
+        {...field}
+        {...field.input} />
+      {field.meta.touched && field.meta.error && <div style={errorTextStyle}>{field.meta.error}</div>}
+    </div>
+  );
+};
 
-  static propTypes = {
-    episode: PropTypes.object.isRequired,
-    episodeTitle: PropTypes.object.isRequired,
-    season: PropTypes.object.isRequired,
-    seriesName: PropTypes.object.isRequired,
-    submitFailed: PropTypes.bool.isRequired
-  };
+export default class Episode extends Component {
 
   componentDidMount () {
     // Focus the first input. For some weird reason this does not work
     // when not wrapped in a setTimeout(). To be investigated if someone
     // has a lot of time, but for now it'll do.
     setTimeout(() => {
-      ReactDOM.findDOMNode(this.seriesNameInput).focus();
+      document.getElementById('seriesName').focus();
     }, 0);
   }
 
@@ -35,37 +40,55 @@ export default class Episode extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { episode, episodeTitle, season, seriesName, submitFailed } = this.props;
+
     return (
       <div>
         <div>
-          <label htmlFor='seriesName' style={createMediaStyles.label}>Series name</label>
-          <input id='seriesName' placeholder='e.g., Suits'
-            ref={(x) => { this.seriesNameInput = x; }}
-            required style={createMediaStyles.inputText} type='text' {...seriesName} />
-          {submitFailed && seriesName.touched && seriesName.error && <div style={errorTextStyle}>{seriesName.error}</div>}
+          <Field
+            component={renderField}
+            label='Series name'
+            name='seriesName'
+            placeholder='e.g., Suits'
+            style={createMediaStyles.inputText}
+            type='text' />
         </div>
 
         <div style={styles.info}>
           <div style={styles.small}>
-            <label htmlFor='season' style={createMediaStyles.label}>Season</label>
-            <input id='season' max='9999' min='0' placeholder='SE' required
-              style={createMediaStyles.inputText} type='number' {...season} />
+            <Field
+              component={renderField}
+              label='Season'
+              max='9999'
+              min='0'
+              name='season'
+              placeholder='SE'
+              required
+              style={createMediaStyles.inputText}
+              type='number' />
           </div>
           <div style={styles.small}>
-            <label htmlFor='episode' style={createMediaStyles.label}>Episode</label>
-            <input id='episode' max='9999' min='0' placeholder='EP' required
-              style={createMediaStyles.inputText} type='number' {...episode} />
+            <Field
+              component={renderField}
+              label='Episode'
+              max='9999'
+              min='0'
+              name='episode'
+              placeholder='EP'
+              required
+              style={createMediaStyles.inputText}
+              type='number' />
           </div>
           <div>
-            <label htmlFor='episodeTitle' style={createMediaStyles.label}>Episode title</label>
-            <input id='episodeTitle' placeholder='e.g, Dogfight' required style={createMediaStyles.inputText}
-              type='text' {...episodeTitle} />
+          <Field
+            component={renderField}
+            label='Episode title'
+            name='episodeTitle'
+            placeholder='e.g, Dogfight'
+            required
+            style={createMediaStyles.inputText}
+            type='text' />
           </div>
         </div>
-        {submitFailed && season.touched && season.error && <div style={errorTextStyle}>{season.error}</div>}
-        {submitFailed && episode.touched && episode.error && <div style={errorTextStyle}>{episode.error}</div>}
-        {submitFailed && episodeTitle.touched && episodeTitle.error && <div style={errorTextStyle}>{episodeTitle.error}</div>}
       </div>
     );
   }

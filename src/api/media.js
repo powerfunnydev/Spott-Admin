@@ -26,8 +26,8 @@ import { post, postFormData, UnexpectedError } from './request';
  * @return {object} The upload configuration for S3, which includes the bucketUrl, AWSAccessKeyId,
  * acl, policy, signature and baseKey.
  */
-async function requestFileUpload (authenticationToken) {
-  let { body: { responseType, s3 } } = await post(authenticationToken, null, '/v003/system/files/uploads', {});
+async function requestFileUpload (baseUrl, authenticationToken) {
+  let { body: { responseType, s3 } } = await post(authenticationToken, null, `${baseUrl}/v003/system/files/uploads`, {});
   // The server response either has responseType 's3' or 'local'. We expect the first.
   if (responseType !== 'S3') {
     throw new UnexpectedError();
@@ -70,8 +70,9 @@ async function requestFileUpload (authenticationToken) {
   * @throws UnauthorizedError
   * @throws UnexpectedError
   */
-export async function postUpload (authenticationToken, { file }, uploadingCallback) {
-  let { acl, AWSAccessKeyId, baseKey, bucketUrl, policy, signature } = await requestFileUpload(authenticationToken);
+export async function postUpload (baseUrl, authenticationToken, { file }, uploadingCallback) {
+  let { acl, AWSAccessKeyId, baseKey, bucketUrl, policy, signature } = await requestFileUpload(baseUrl, authenticationToken);
+  console.error(acl, AWSAccessKeyId, baseKey, bucketUrl, policy, signature);
 
   // Perform an upload to Amazon S3
   try {
@@ -113,7 +114,7 @@ export async function postUpload (authenticationToken, { file }, uploadingCallba
         });
       });
     } else {
-      await postFormData(null, bucketUrl, reqBody, uploadingCallback);
+      await postFormData(authenticationToken, null, bucketUrl, reqBody, uploadingCallback);
     }
     return { remoteFilename };
   } catch (error) {
@@ -151,8 +152,8 @@ export async function postUpload (authenticationToken, { file }, uploadingCallba
  * }
  * @throws UnexpectedError
  */
-export async function postProcess (authenticationToken, { description, mediumExternalReference, mediumExternalReferenceSource, remoteFilename, skipAudio, skipScenes }) {
-  let { body } = await post(authenticationToken, null, '/v003/video/processors', {
+export async function postProcess (baseUrl, authenticationToken, { description, mediumExternalReference, mediumExternalReferenceSource, remoteFilename, skipAudio, skipScenes }) {
+  let { body } = await post(authenticationToken, null, `${baseUrl}/v003/video/processors`, {
     description,
     filePath: remoteFilename,
     mediumExternalReference,

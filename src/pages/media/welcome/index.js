@@ -1,48 +1,22 @@
 import Radium from 'radium';
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React, { Component } from 'react';
 import About from './about';
 import Contact from './contact';
-import Footer from './footer';
+import Footer from '../../app/footer';
 import ForWho from './forWho';
 import Hero from './hero';
 import HowItWorks from './howItWorks';
 import Partners from './partners';
 import Pricing from './pricing';
 import Whitepapers from './whitepapers';
-import Login from '../login';
-import * as globalActions from '../../../actions/global';
-import * as actions from '../actions';
-import { welcomeSelector } from '../../../selectors/global';
 
 @Radium
-@connect(welcomeSelector, (dispatch) => ({
-  closeModal: bindActionCreators(globalActions.closeModal, dispatch),
-  openLoginModal: bindActionCreators(globalActions.openLoginModal, dispatch),
-  login: bindActionCreators(actions.login, dispatch)
-}))
 export default class Welcome extends Component {
 
-  static propTypes = {
-    closeModal: PropTypes.func.isRequired,
-    currentModal: PropTypes.string,
-    login: PropTypes.func.isRequired,
-    openLoginModal: PropTypes.func.isRequired
-  };
-
-  constructor (props) {
-    super(props);
-  }
-
   render () {
-    const { closeModal, currentModal, login, openLoginModal } = this.props;
-
     return (
       <div style={{ minWidth: 350 }}>
-        {currentModal === 'login' &&
-          <Login onCancel={closeModal} onSubmit={login} />}
-        <Hero onOpenLoginModal={openLoginModal} />
+        <Hero />
         <About />
         <ForWho />
         <Partners />
@@ -50,7 +24,7 @@ export default class Welcome extends Component {
         <HowItWorks />
         <Pricing />
         <Contact />
-        <Footer onOpenLoginModal={openLoginModal} />
+        <Footer />
       </div>
     );
   }

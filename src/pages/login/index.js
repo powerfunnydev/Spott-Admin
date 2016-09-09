@@ -1,47 +1,25 @@
 import React, { Component, PropTypes } from 'react';
-import ReactModal from 'react-modal';
+import ReactDOM from 'react-dom';
 import { reduxForm, Field } from 'redux-form/immutable';
 import Radium from 'radium';
-import { buttonStyles } from '../../_common/styles';
-import localized from '../../_common/localized';
-const crossImage = require('./cross.svg');
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { buttonStyles } from '../_common/styles';
+import localized from '../_common/localized';
+import Modal from '../_common/modal';
+import * as globalActions from '../../actions/global';
 
 function validate (values) {
   const validationErrors = {};
-  const emailError = !values.get('email') || !values.get('email').match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+  const { email, password } = values.toJS();
+  const emailError = !email;
+  // !values.get('email') || !values.get('email').match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
   if (emailError) { validationErrors.email = 'invalid'; }
-  const passwordError = !values.get('password') || !values.get('password').match(/^.{6,}$/);
+  const passwordError = !password || !password.match(/^.{6,}$/);
   if (passwordError) { validationErrors.password = 'invalid'; }
   // Done
   return validationErrors;
 }
-
-/**
- * Dialog style used for this modal.
- * Note: get merged with defaults by react-modal
- */
-const dialogStyle = {
-  overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0.80)'
-  },
-  content: {
-    backgroundColor: 'transparent',
-    border: 'none',
-    fontFamily: 'Rubik-Regular',
-    fontWeight: 'normal',
-    // Set width and center horizontally
-    margin: 'auto',
-    minWidth: 200,
-    maxWidth: 400,
-    // Internal padding
-    padding: 0,
-    // Fit height to content, centering vertically
-    bottom: 'auto',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    overflow: 'visible'
-  }
-};
 
 const textBoxStyle = {
   textInput: {
@@ -73,6 +51,9 @@ const renderField = Radium((props) => {
 });
 
 @localized
+@connect(null, (dispatch) => ({
+  openForgotPasswordModal: bindActionCreators(globalActions.openForgotPasswordModal, dispatch)
+}))
 @reduxForm({
   form: 'login',
   validate
@@ -81,6 +62,10 @@ const renderField = Radium((props) => {
 export default class LoginModal extends Component {
 
   static propTypes = {
+    error: PropTypes.any,
+    handleSubmit: PropTypes.func.isRequired,
+    openForgotPasswordModal: PropTypes.func.isRequired,
+    t: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired, // Callback for closing the dialog and clearing the form.
     onSubmit: PropTypes.func.isRequired
   };
@@ -88,11 +73,25 @@ export default class LoginModal extends Component {
   constructor (props) {
     super(props);
     this.onCloseClick = ::this.onCloseClick;
+    this.onForgotPasswordClick = ::this.onForgotPasswordClick;
+  }
+
+  // The autofocus attribute will only work when the page loads initially.
+  // When a popup opens we still need to manually focus the field.
+  componentDidMount () {
+    setTimeout(() => {
+      ReactDOM.findDOMNode(this._email).focus();
+    }, 0);
   }
 
   onCloseClick (e) {
     e.preventDefault();
     this.props.onCancel();
+  }
+
+  onForgotPasswordClick (e) {
+    e.preventDefault();
+    this.props.openForgotPasswordModal();
   }
 
   static styles = {
@@ -106,12 +105,6 @@ export default class LoginModal extends Component {
     },
     content: {
       padding: '20px 34px 20px 34px'
-    },
-    cross: {
-      cursor: 'pointer',
-      position: 'absolute',
-      top: -45,
-      right: -45
     },
     button: {
       paddingTop: 8,
@@ -132,26 +125,21 @@ export default class LoginModal extends Component {
   render () {
     const { styles } = this.constructor;
     const { error, handleSubmit, onCancel, t } = this.props;
+
     return (
-      <ReactModal isOpen style={dialogStyle} onRequestClose={onCancel}>
+      <Modal isOpen onClose={onCancel}>
         <div style={styles.container}>
-          {/* Although this is a button, we chose a <div> for accessibility.
-              The dialog can be canceled by pressing 'escape', so we remove the
-              cross from tab focus. */}
-          <div style={styles.cross} onClick={this.onCloseClick}>
-            <img alt='Close' src={crossImage} style={styles.crossImage} />
-          </div>
           <form style={styles.content} onSubmit={handleSubmit}>
-            <Field component={renderField} name='email' placeholder={t('login.email')} type='text' />
+            <Field component={renderField} name='email' placeholder={t('login.email')} ref={(c) => { this._email = c; }} />
             <Field component={renderField} name='password' placeholder={t('login.password')} type='password' />
 
             {error && typeof error === 'string' && <div style={styles.error}>{t(error)}</div>}
 
-            {/* <button style={styles.forgotPassword}>Forgot Password?</button> */}
+            {/* <button style={styles.forgotPassword} type='button' onClick={this.onForgotPasswordClick}>{t('login.forgotPassword')}</button> */}
             <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} type='submit'>{t('login.submitButton')}</button>
           </form>
         </div>
-      </ReactModal>
+      </Modal>
     );
   }
 

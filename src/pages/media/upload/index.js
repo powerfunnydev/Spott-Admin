@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updatePath } from '../../../actions/router';
 import * as mediaActions from '../../../actions/media';
+import { loginWithAuthenticationToken } from '../actions';
 import uploadSelector from '../../../selectors/upload';
 import Cancelled from './cancelled';
 import Completed from './completed';
@@ -13,12 +14,14 @@ import Progress from './progress';
 
 // (state, props) =>
 @connect((state, { location: { query } }) => ({
+  authenticationToken: query.auth,
   initialMediumExternalReferenceSource: query.mediumExternalReferenceSource,
   initialMediumExternalReference: query.mediumExternalReference,
   ...uploadSelector(state)
 }), (dispatch) => ({
   cancelWizard: bindActionCreators(mediaActions.cancelWizard, dispatch),
   createMedia: bindActionCreators(mediaActions.createMedia, dispatch),
+  loginWithAuthenticationToken: bindActionCreators(loginWithAuthenticationToken, dispatch),
   selectMediaType: bindActionCreators(mediaActions.selectMediaType, dispatch),
   selectTab: bindActionCreators(mediaActions.selectTab, dispatch),
   updatePath: bindActionCreators(updatePath, dispatch)
@@ -27,6 +30,7 @@ import Progress from './progress';
 export default class Upload extends Component {
 
   static propTypes = {
+    authenticationToken: PropTypes.string,
     cancelWizard: PropTypes.func.isRequired,
     createMedia: PropTypes.func.isRequired,
     currentMediaType: PropTypes.string.isRequired,
@@ -34,6 +38,7 @@ export default class Upload extends Component {
     initialMediumExternalReference: PropTypes.string,
     initialMediumExternalReferenceSource: PropTypes.string,
     jobName: PropTypes.string,
+    loginWithAuthenticationToken: PropTypes.func.isRequired,
     progress: PropTypes.number, // Only when status = 'progress'
     remainingTime: PropTypes.number, // Only when status = 'progress'. In seconds. May be null (unknown).
     selectMediaType: PropTypes.func.isRequired,
@@ -45,6 +50,15 @@ export default class Upload extends Component {
   constructor (props) {
     super(props);
     this.onDone = ::this.onDone;
+  }
+
+  // Auto login with the authenticationToken that comes from the CMS.
+  // TODO: can be removed when Apptvate and CMS are merged (= same domain).
+  componentDidMount () {
+    const authenticationToken = this.props.authenticationToken;
+    if (authenticationToken) {
+      this.props.loginWithAuthenticationToken(authenticationToken);
+    }
   }
 
   onDone () {

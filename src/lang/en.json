@@ -2,7 +2,8 @@
   "common": {
     "errors": {
       "unexpected": "Something went wrong!"
-    }
+    },
+    "ok": "Ok"
   },
   "header": {
     "login": "Sign In",
@@ -15,13 +16,28 @@
     "somethingWentWrong": "Something went wrong!",
     "title": "Whoops!"
   },
+  "forgotPassword": {
+    "errors": {
+      "failed": "We encountered an error while trying to change your password :("
+    },
+    "email": "Your Email",
+    "submitButton": "Reset password",
+    "sendEmail": "A mail has been send to %(email)s to reset your password."
+  },
+  "resetPassword": {
+    "password": "Your New Password",
+    "passwordRepeat": "Repeat Password",
+    "submitButton": "Change password",
+    "success": "Your password has been successfully changed!"
+  },
   "login": {
+    "email": "Your Email or Username",
     "errors": {
       "incorrect": "Email/password combination is incorrect."
     },
-    "title": "Log In",
-    "email": "Your Email",
+    "forgotPassword": "Forgot Password?",
     "password": "Your Password",
-    "submitButton": "Log in"
+    "submitButton": "Log in",
+    "title": "Log In"
   }
 }

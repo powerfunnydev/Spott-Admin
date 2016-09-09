@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import { destroy } from 'redux-form/immutable';
 import { postProcess, postUpload } from '../api/media';
-import { authenticationTokenSelector } from '../selectors/global';
+import { apiBaseUrlSelector, authenticationTokenSelector } from '../selectors/global';
 import { createRecordStart, createRecordSuccess, createRecordError } from '../actions/_utils';
 import { zeroPad } from '../utils';
 
@@ -68,15 +68,17 @@ export function selectMediaType (mediaType) {
  */
 function uploadFile (file) {
   return async (dispatch, getState) => {
-    let state = getState();
-    let authenticationToken = authenticationTokenSelector(state);
+    const state = getState();
+    const authenticationToken = authenticationTokenSelector(state);
+    const baseUrl = apiBaseUrlSelector(state);
+
     dispatch(createRecordStart(UPLOAD_FILE_START));
     try {
       // A callback is provided to dispatch the progress of the file upload.
       // We dispatch UPLOAD_FILE_PROGRESS one time per second, this both to reduce
       // excessive action triggers as well as to provide a more 'calm' UI.
       let lastProgressTriggerTime = 0;
-      let records = await postUpload(authenticationToken, { file }, (currentBytes, totalBytes) => {
+      let records = await postUpload(baseUrl, authenticationToken, { file }, (currentBytes, totalBytes) => {
         let now = new Date().getTime();
         if (now - lastProgressTriggerTime >= 1000) {
           lastProgressTriggerTime = now;
@@ -112,12 +114,13 @@ function uploadFile (file) {
  */
 export function processMedia ({ description, mediumExternalReference, mediumExternalReferenceSource, remoteFilename, skipAudio, skipScenes }) {
   return async (dispatch, getState) => {
-    let state = getState();
-    let authenticationToken = authenticationTokenSelector(state);
+    const state = getState();
+    const authenticationToken = authenticationTokenSelector(state);
+    const baseUrl = apiBaseUrlSelector(state);
 
     dispatch(createRecordStart(PROCESS_MEDIA_START));
     try {
-      let records = await postProcess(authenticationToken, { description, mediumExternalReference, mediumExternalReferenceSource, remoteFilename, skipAudio, skipScenes });
+      const records = await postProcess(baseUrl, authenticationToken, { description, mediumExternalReference, mediumExternalReferenceSource, remoteFilename, skipAudio, skipScenes });
       dispatch(createRecordSuccess(PROCESS_MEDIA_SUCCESS, records, { description, mediumExternalReference, mediumExternalReferenceSource, remoteFilename }));
       return records;
     } catch (error) {
@@ -145,8 +148,10 @@ export function processMedia ({ description, mediumExternalReference, mediumExte
  * @param {object} data.video A File object containing the video.
  * @return {string} The action
  */
-export function createMedia ({ episode, episodeTitle, mediumExternalReference, mediumExternalReferenceSource, season, seriesName, skipAudio, skipScenes, video }) {
+export function createMedia (values) {
   return async (dispatch, getState) => {
+    console.error('VALUES', values.toJS());
+    const { episode, episodeTitle, mediumExternalReference, mediumExternalReferenceSource, season, seriesName, skipAudio, skipScenes, video } = values.toJS();
     // A description could be 'Suits S02E01 Dogfight'.
     let description = `${seriesName} S${zeroPad(season)}E${zeroPad(episode)} ${episodeTitle}`;
     try {

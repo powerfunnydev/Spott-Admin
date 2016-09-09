@@ -6,5 +6,5 @@
     "cmsNext": "http://spott-cms-uat.appiness.mobi/cms-next",
     "tagger": "http://spott-cms-uat.appiness.mobi/tagger"
   },
-  "environment": "Acceptance"
+  "environment": "uat"
 }

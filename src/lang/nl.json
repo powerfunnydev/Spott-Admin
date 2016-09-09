@@ -2,7 +2,8 @@
   "common": {
     "errors": {
       "unexpected": "Er ging iets mis!"
-    }
+    },
+    "ok": "Ok"
   },
   "header": {
     "login": "Aanmelden",
@@ -15,13 +16,28 @@
     "somethingWentWrong": "Er ging iets mis!",
     "title": "Whoops!"
   },
+  "forgotPassword": {
+    "errors": {
+      "failed": "Er is een fout opgetreden tijdens de poging om uw wachtwoord te wijzigen :("
+    },
+    "email": "Je e-mail",
+    "submitButton": "Wachtwoord opnieuw instellen",
+    "sendEmail": "A mail has been send to %(email)s to reset your password."
+  },
+  "resetPassword": {
+    "password": "Your New Password",
+    "passwordRepeat": "Repeat Password",
+    "submitButton": "Change password",
+    "success": "Your password has been successfully changed!"
+  },
   "login": {
+    "email": "Je e-mail of gebruikersnaam",
     "errors": {
       "incorrect": "Email/password combination is incorrect."
     },
-    "title": "Log in",
-    "email": "Je e-mail",
+    "forgotPassword": "Forgot Password?",
     "password": "Je wachtwoord",
-    "submitButton": "Aanmelden"
+    "submitButton": "Aanmelden",
+    "title": "Log in"
   }
 }

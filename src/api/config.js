@@ -17,6 +17,18 @@ import { get } from './request';
  * @throws UnexpectedError
  */
 export async function getConfiguration () {
-  const { body: config } = await get(null, null, `${window.location.origin}/config.json`);
-  return config;
+  const { body: { environment, urls } } = await get(null, null, '/config.json');
+  const { body: version } = await get(null, null, '/version.json');
+  const { body: { version: apiVersion } } = await get(null, null, `${urls.api}/v003/system/info`);
+
+  return {
+    environment,
+    urls,
+    version: {
+      apiVersion: apiVersion.version,
+      apiVersionFull: `${apiVersion.version} build ${apiVersion.build} (${apiVersion.buildTime})`,
+      version: version.version,
+      versionFull: `${version.version} build ${version.build} (${version.timestamp})`
+    }
+  };
 }

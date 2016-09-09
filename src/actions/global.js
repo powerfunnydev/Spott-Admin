@@ -3,6 +3,7 @@ import { getConfiguration } from '../api/config';
 export const CONFIGURE = 'CONFIGURE';
 
 export const MODAL_OPEN_LOGIN = 'MODAL_OPEN_LOGIN';
+export const MODAL_OPEN_FORGOT_PASSWORD = 'MODAL_OPEN_FORGOT_PASSWORD';
 export const MODAL_CLOSE = 'MODAL_CLOSE';
 
 export function init () {
@@ -14,6 +15,10 @@ export function init () {
 
 export function openLoginModal () {
   return { type: MODAL_OPEN_LOGIN };
+}
+
+export function openForgotPasswordModal () {
+  return { type: MODAL_OPEN_FORGOT_PASSWORD };
 }
 
 export function closeModal () {

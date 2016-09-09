@@ -2,7 +2,7 @@ import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import { Grid, Cell } from 'radium-grid';
 import { Element, Link } from 'react-scroll';
-import Section from '../section';
+import Section from '../../../_common/section';
 
 const broadcastersImage = require('./broadcasters.svg');
 const contentProducersImage = require('./contentProducers.svg');
@@ -58,7 +58,7 @@ class Target extends Component {
         <img src={imageUrl} />
         <h2 style={styles.title}>{title}</h2>
         <div style={styles.text}>{text}</div>
-        <div style={styles.line}></div>
+        <div style={styles.line} />
         {/* TODO: is "go to features" in design, but replaced by "how it works" */}
         <Link duration={500} offset={50} smooth spy to='howItWorks'>
           <button style={styles.button}>How It Works</button>

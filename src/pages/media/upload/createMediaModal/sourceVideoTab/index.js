@@ -1,12 +1,13 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import Dropzone from '../../../../_common/dropzone';
-import { reduxForm } from 'redux-form/immutable';
-import { buttonStyles, errorTextStyle } from '../../../../_common/styles';
+import { reduxForm, Field } from 'redux-form/immutable';
+import { buttonStyles } from '../../../../_common/styles';
 import createMediaStyles from '../styles';
 
-function validate ({ video }) {
+function validate (values) {
   const errors = {};
+  const { video } = values.toJS();
   // Validate video
   if (!(video instanceof File)) {
     errors.video = 'Please select a video.';
@@ -31,16 +32,13 @@ webkitRelativePath: ""
 
 @reduxForm({
   destroyOnUnmount: false,
-  fields: [ 'video' ],
   form: 'createMedia',
-  getFormState: (state, reduxMountPoint) => state.get(reduxMountPoint), // Get the `form` state (reduxMountPoint = 'form' by default).
   validate
 })
 @Radium
 export default class SourceVideoTab extends Component {
 
   static propTypes = {
-    fields: PropTypes.object.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     submitFailed: PropTypes.bool.isRequired,
     onBack: PropTypes.func.isRequired
@@ -51,32 +49,25 @@ export default class SourceVideoTab extends Component {
     this.onBack = ::this.onBack;
   }
 
-  componentDidMount () {
-    // Focus the first input
-    this.dropzone.focus();
-  }
-
   onBack (e) {
     e.preventDefault();
     this.props.onBack();
   }
 
   render () {
-    const { fields: { video }, handleSubmit, submitFailed } = this.props;
+    const { handleSubmit } = this.props;
     return (
       <form noValidate onSubmit={handleSubmit}>
         <div style={createMediaStyles.body}>
           <h1 style={createMediaStyles.title}>Upload the source video</h1>
 
           {/* Render dropzone that enables file selection */}
-          <Dropzone
+          <Field
+            component={Dropzone}
             message={<span>Drag & drop the source video <br/>We accept .MOV, MP4, .AVI and .MXF</span>}
-            ref={(x) => { this.dropzone = x; }}
-            {...video} />
-          {submitFailed && video.touched && video.error && <div style={errorTextStyle}>{video.error}</div>}
+            name='video' />
 
           {/* TODO: Design shows a checkbox "This is the final version" */}
-          <div></div>
         </div>
 
         <div style={createMediaStyles.footer.container}>

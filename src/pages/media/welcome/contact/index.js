@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import { Element } from 'react-scroll';
 import ReactDOM from 'react-dom';
 import { colors } from '../../../_common/styles';
-import Section from '../section';
+import Section from '../../../_common/section';
 
 const facebookImage = require('./facebook.svg');
 const twitterImage = require('./twitter.svg');
@@ -57,7 +57,7 @@ class Map extends Component {
     const { styles } = this.constructor;
     return (
       <div>
-        <div ref={(x) => { this.mapContainer = x; }} style={styles.map}></div>
+        <div ref={(x) => { this.mapContainer = x; }} style={styles.map} />
         <div>
           <a href='https://www.google.be/maps/place/Appiness/@50.9455304,4.0385531,17z/data=!3m1!4b1!4m2!3m1!1s0x47c397e3c9fbdfc9:0xe00fdbd49b06d2d'
             style={styles.linkToGoogleMaps}

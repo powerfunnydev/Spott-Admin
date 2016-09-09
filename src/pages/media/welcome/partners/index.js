@@ -1,7 +1,7 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import Slider from 'react-slick';
-import Section from '../section';
+import Section from '../../../_common/section';
 import './slick.css';
 
 const bbdoIcon = require('./bbdo.jpg');

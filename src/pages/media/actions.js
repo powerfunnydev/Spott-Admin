@@ -1,21 +1,11 @@
-import { SubmissionError } from 'redux-form/immutable';
 import * as actions from '../../actions/users';
-import { closeModal } from '../../actions/global';
 
-export function login (values) {
+export function loginWithAuthenticationToken (authenticationToken) {
   return async (dispatch, getState) => {
-    const { email, password } = values.toJS();
     try {
-      await dispatch(actions.login({ email, password }));
-      dispatch(closeModal());
+      await dispatch(actions.login({ authenticationToken }));
     } catch (e) {
-      if (e === 'incorrect') {
-        throw new SubmissionError({ _error: 'login.errors.incorrect' });
-      }
-      console.warn('Login error', e);
-      throw new SubmissionError({ _error: 'common.errors.unexpected' });
+      console.warn('Could not automatically login.');
     }
   };
 }
-
-export const logout = actions.logout;
