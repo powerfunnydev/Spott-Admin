@@ -1,17 +1,13 @@
 import Radium from 'radium';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-scroll';
-import Header from '../header';
+import Header from '../../../app/header';
 import { buttonStyles } from '../../../_common/styles';
 
 const backgroundImage = require('./background.jpg');
 
 @Radium
 export default class Hero extends Component {
-
-  static propTypes = {
-    onOpenLoginModal: PropTypes.func.isRequired
-  };
 
   constructor (props) {
     super(props);
@@ -75,11 +71,10 @@ export default class Hero extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { onOpenLoginModal } = this.props;
 
     return (
       <div ref={(x) => { this.hero = x; }} style={styles.container}>
-        <Header onOpenLoginModal={onOpenLoginModal} />
+        <Header />
 
         {/* Page body */}
         <div style={styles.body.div}>

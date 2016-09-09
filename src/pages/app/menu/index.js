@@ -1,17 +1,19 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import { Link as ScrollLink } from 'react-scroll';
-import { Link as RouterLink } from 'react-router';
+// import { Link as RouterLink } from 'react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { buttonStyles } from '../../_common/styles';
-import { menuSelector } from './selectors';
 import localized from '../../_common/localized';
+import { menuSelector } from '../selectors';
+import * as globalActions from '../../../actions/global';
 import * as actions from '../actions';
 
 @localized
 @connect(menuSelector, (dispatch) => ({
-  logout: bindActionCreators(actions.logout, dispatch)
+  logout: bindActionCreators(actions.logout, dispatch),
+  openLoginModal: bindActionCreators(globalActions.openLoginModal, dispatch)
 }))
 @Radium
 export default class Menu extends Component {
@@ -20,8 +22,8 @@ export default class Menu extends Component {
     isAuthenticated: PropTypes.bool.isRequired,
     logout: PropTypes.func.isRequired,
     neutral: PropTypes.bool,
-    t: PropTypes.func.isRequired,
-    onOpenLoginModal: PropTypes.func.isRequired
+    openLoginModal: PropTypes.func.isRequired,
+    t: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -32,7 +34,7 @@ export default class Menu extends Component {
 
   onSignInClick (e) {
     e.preventDefault();
-    this.props.onOpenLoginModal();
+    this.props.openLoginModal();
   }
 
   onLogOutClick (e) {
@@ -45,8 +47,8 @@ export default class Menu extends Component {
       color: 'rgb(135, 141, 143)',
       fontFamily: 'Rubik-Medium',
       textTransform: 'uppercase',
-      '@media only screen and (max-width: 790px)': {
-        marginLeft: 4
+      '@media only screen and (max-width: 830px)': {
+        marginLeft: 3
       }
 
     },
@@ -92,10 +94,10 @@ export default class Menu extends Component {
             <button key='contact' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Contact</button>
           </ScrollLink>
         </span>
-        {isAuthenticated &&
+        {/* {isAuthenticated &&
           <RouterLink to='reporting'>
             <button key='reporting' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Reporting</button>
-          </RouterLink>}
+          </RouterLink>} */}
         {isAuthenticated
           ? <button key='logout' style={[ buttonStyles.base, buttonStyles.extraSmall, neutral ? styles.linkButton : buttonStyles.pink ]} onClick={this.onLogOutClick}>{t('header.logout')}</button>
           : <button key='signIn' style={[ buttonStyles.base, buttonStyles.extraSmall, neutral ? styles.linkButton : buttonStyles.pink ]} onClick={this.onSignInClick}>{t('header.login')}</button>}

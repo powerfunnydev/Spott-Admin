@@ -31,7 +31,7 @@
     "success": "Your password has been successfully changed!"
   },
   "login": {
-    "email": "Votre e-mail",
+    "email": "Votre e-mail ou nom d'utilisateur",
     "errors": {
       "incorrect": "Email/password combination is incorrect."
     },

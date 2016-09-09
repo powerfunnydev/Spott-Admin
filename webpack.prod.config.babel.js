@@ -20,7 +20,7 @@ const configuration = {
   },
   module: {
     loaders: [
-      { exclude: /node_modules/, loader: `strip-loader?strip[]=console.log!babel!eslint?failOnWarning=false&failOnError=false`, test: /\.js$/ },
+      { exclude: /node_modules/, loader: 'strip-loader?strip[]=console.log!babel!eslint?failOnWarning=false&failOnError=false', test: /\.js$/ },
       { loader: ExtractTextWebpackPlugin.extract('style', 'css'), test: /\.css$/ },
       { loader: 'json', test: /\.json/ },
       { loader: 'file?name=[name]-[md5:hash].[ext]', test: /\.gif$|\.jpg$|\.jpeg$|\.png|\.eot$|\.svg$|\.ttf$|\.woff$|\.woff2$|\.pdf$/ }
@@ -38,7 +38,6 @@ const configuration = {
     ]),
     // Protects against multiple React installs when npm linking
     new webpack.NormalModuleReplacementPlugin(/^react?$/, require.resolve('react')),
-    new webpack.NormalModuleReplacementPlugin(/^react(\/addons)?$/, require.resolve('react/addons')),
     // In production we write css to its own file
     new ExtractTextWebpackPlugin('[name]-[chunkhash].css'),
     // Define constants used throughout the codebase

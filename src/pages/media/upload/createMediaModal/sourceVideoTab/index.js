@@ -68,7 +68,6 @@ export default class SourceVideoTab extends Component {
             name='video' />
 
           {/* TODO: Design shows a checkbox "This is the final version" */}
-          <div></div>
         </div>
 
         <div style={createMediaStyles.footer.container}>

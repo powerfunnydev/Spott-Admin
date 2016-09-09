@@ -15,8 +15,7 @@ export default class Header extends Component {
     version: ImmutablePropTypes.mapContains({
       apiVersionFull: PropTypes.string.isRequired,
       versionFull: PropTypes.string.isRequired
-    }).isRequired,
-    onOpenLoginModal: PropTypes.func.isRequired
+    }).isRequired
   };
 
   static styles = {
@@ -44,7 +43,7 @@ export default class Header extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { version, onOpenLoginModal } = this.props;
+    const { version } = this.props;
 
     return (
       <div style={styles.container}>
@@ -55,7 +54,7 @@ export default class Header extends Component {
         <div style={styles.logo.wrapper}><img src={logoImage} style={styles.logo.image} /></div>
 
         {/* Menu */}
-        <Menu onOpenLoginModal={onOpenLoginModal} />
+        <Menu />
 
       </div>
     );

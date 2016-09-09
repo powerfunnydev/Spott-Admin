@@ -1,7 +1,7 @@
 import Radium from 'radium';
 import { Grid, Cell } from 'radium-grid';
 import React, { Component, PropTypes } from 'react';
-import Section from '../section';
+import Section from '../../../_common/section';
 import { colors } from '../../../_common/styles';
 
 // TODO: temp replaced by iMinds logo, as requested by Michel

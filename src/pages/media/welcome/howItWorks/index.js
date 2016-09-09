@@ -2,7 +2,7 @@ import Radium from 'radium';
 import { Grid, Cell } from 'radium-grid';
 import React, { Component, PropTypes } from 'react';
 import { Element } from 'react-scroll';
-import Section from '../section';
+import Section from '../../../_common/section';
 import { colors } from '../../../_common/styles';
 
 const arrowImage = require('./arrow.svg');

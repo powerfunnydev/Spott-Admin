@@ -1,20 +1,15 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { reduxForm, Field } from 'redux-form/immutable';
 import Radium from 'radium';
-import { buttonStyles } from '../../_common/styles';
-import localized from '../../_common/localized';
-import Modal from '../../_common/modal';
-import * as routerActions from '../../../actions/router';
+import { buttonStyles } from '../_common/styles';
+import localized from '../_common/localized';
+import Modal from '../_common/modal';
 
 function validate (values) {
   const validationErrors = {};
-  const passwordError = !values.get('password') || !values.get('password').match(/^.{6,}$/);
-  if (passwordError) { validationErrors.password = 'invalid'; }
-  const passwordRepeatError = !values.get('passwordRepeat') || !(values.get('passwordRepeat').match(/^.{6,}$/) && values.get('password') === values.get('passwordRepeat'));
-  if (passwordRepeatError) { validationErrors.passwordRepeat = 'invalid'; }
+  const emailError = !values.get('email') || !values.get('email').match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+  if (emailError) { validationErrors.email = 'invalid'; }
   // Done
   return validationErrors;
 }
@@ -49,21 +44,17 @@ const renderField = Radium((props) => {
 });
 
 @localized
-@connect(null, (dispatch) => ({
-  updatePath: bindActionCreators(routerActions.updatePath, dispatch)
-}))
 @reduxForm({
-  form: 'resetPassword',
+  form: 'forgotPassword',
   validate
 })
 @Radium
-export default class ResetPasswordModal extends Component {
+export default class ForgotPasswordModal extends Component {
 
   static propTypes = {
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired,
-    updatePath: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired, // Callback for closing the dialog and clearing the form.
     onSubmit: PropTypes.func.isRequired
   };
@@ -72,28 +63,27 @@ export default class ResetPasswordModal extends Component {
     super(props);
     this.onCloseClick = ::this.onCloseClick;
     this.onSubmit = ::this.onSubmit;
-    // Show message that password has been changed.
-    this.state = { success: false };
+    // We show that a mail has been send to the user.
+    this.state = { email: null };
   }
 
   // The autofocus attribute will only work when the page loads initially.
   // When a popup opens we still need to manually focus the field.
   componentDidMount () {
     setTimeout(() => {
-      ReactDOM.findDOMNode(this._password).focus();
+      ReactDOM.findDOMNode(this._email).focus();
     }, 0);
   }
 
   onCloseClick (e) {
     e.preventDefault();
     this.props.onCancel();
-    this.props.updatePath('/');
   }
 
   /* eslint-disable react/no-set-state */
   async onSubmit () {
-    const success = !await Reflect.apply(this.props.handleSubmit, this, arguments);
-    this.setState({ success });
+    const { email } = await Reflect.apply(this.props.handleSubmit, this, arguments);
+    this.setState({ email });
   }
 
   static styles = {
@@ -117,7 +107,7 @@ export default class ResetPasswordModal extends Component {
       width: 'auto',
       float: 'right'
     },
-    success: {
+    sendEmail: {
       color: '#ffffff',
       marginBottom: '1em'
     }
@@ -125,25 +115,23 @@ export default class ResetPasswordModal extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { error, t, onCancel } = this.props;
-    const { success } = this.state;
-
+    const { error, onCancel, t } = this.props;
+    const { email } = this.state;
     return (
       <Modal isOpen onClose={onCancel}>
         <div style={styles.container}>
-          {success
+          {email
             ? <div style={styles.content}>
-                <p style={styles.success}>{t('resetPassword.success')}</p>
+                <p style={styles.sendEmail}>{t('forgotPassword.sendEmail', { email })}</p>
                 <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} onClick={this.onCloseClick}>{t('common.ok')}</button>
               </div>
             : <form style={styles.content} onSubmit={this.onSubmit}>
-                <Field component={renderField} name='password' placeholder={t('resetPassword.password')} ref={(c) => { this._password = c; }} type='password' />
-                <Field component={renderField} name='passwordRepeat' placeholder={t('resetPassword.passwordRepeat')} type='password' />
+              <Field component={renderField} name='email' placeholder={t('forgotPassword.email')} ref={(c) => { this._email = c; }} type='email' />
 
-                {error && typeof error === 'string' && <p style={styles.error}>{t(error)}</p>}
+              {error && typeof error === 'string' && <p style={styles.error}>{t(error)}</p>}
 
-                <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} type='submit'>{t('resetPassword.submitButton')}</button>
-              </form>}
+              <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} type='submit'>{t('forgotPassword.submitButton')}</button>
+            </form>}
         </div>
       </Modal>
     );

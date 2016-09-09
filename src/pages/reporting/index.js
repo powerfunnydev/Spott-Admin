@@ -1,3 +1,13 @@
-import React from 'react';
+import React, { Component } from 'react';
+import Header from '../app/header';
 
-export default () => <div>Hellow!</div>;
+export default class Reporting extends Component {
+
+  render () {
+    return (
+      <div>
+        <Header />
+      </div>
+    );
+  }
+}

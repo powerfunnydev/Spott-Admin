@@ -1,16 +1,12 @@
 import Radium from 'radium';
-import React, { Component, PropTypes } from 'react';
-import Section from '../section';
+import React, { Component } from 'react';
+import Section from '../../_common/section';
 import Menu from '../menu';
 
 const footerLogoImage = require('./footer.svg');
 
 @Radium
 export default class Footer extends Component {
-
-  static propTypes = {
-    onOpenLoginModal: PropTypes.func.isRequired
-  };
 
   static styles = {
     section: {
@@ -40,14 +36,13 @@ export default class Footer extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { onOpenLoginModal } = this.props;
 
     return (
       <Section innerStyle={styles.section.inner} style={styles.section.outer}>
         {/* Logo */}
         <div style={styles.logo.wrapper}><img src={footerLogoImage} style={styles.logo.image} /></div>
         {/* Menu */}
-        <Menu neutral onOpenLoginModal={onOpenLoginModal} />
+        <Menu neutral />
       </Section>
     );
   }

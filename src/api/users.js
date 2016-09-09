@@ -13,6 +13,7 @@ export async function login (baseUrl, { authenticationToken, email, password }) 
     };
   } catch (error) {
     if (error.body.httpStatus === 401) {
+      /* eslint-disable no-throw-literal */
       throw 'incorrect';
     }
     throw error.body.message;

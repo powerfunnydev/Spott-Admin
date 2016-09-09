@@ -61,7 +61,6 @@ export default class ConfirmTab extends Component {
           <h1 style={createMediaStyles.title}>Almost there!</h1>
 
           {/* TODO: final notes, as designed */}
-          <div></div>
 
           {/* TODO: show estimation of number of bytes to upload */}
           <p style={styles.info.text}>It seems like you've got everything you need to start uploading to Apptvate!

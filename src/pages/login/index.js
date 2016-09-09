@@ -2,14 +2,21 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { reduxForm, Field } from 'redux-form/immutable';
 import Radium from 'radium';
-import { buttonStyles } from '../../_common/styles';
-import localized from '../../_common/localized';
-import Modal from '../../_common/modal';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { buttonStyles } from '../_common/styles';
+import localized from '../_common/localized';
+import Modal from '../_common/modal';
+import * as globalActions from '../../actions/global';
 
 function validate (values) {
   const validationErrors = {};
-  const emailError = !values.get('email') || !values.get('email').match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+  const { email, password } = values.toJS();
+  const emailError = !email;
+  // !values.get('email') || !values.get('email').match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
   if (emailError) { validationErrors.email = 'invalid'; }
+  const passwordError = !password || !password.match(/^.{6,}$/);
+  if (passwordError) { validationErrors.password = 'invalid'; }
   // Done
   return validationErrors;
 }
@@ -44,16 +51,20 @@ const renderField = Radium((props) => {
 });
 
 @localized
+@connect(null, (dispatch) => ({
+  openForgotPasswordModal: bindActionCreators(globalActions.openForgotPasswordModal, dispatch)
+}))
 @reduxForm({
-  form: 'forgotPassword',
+  form: 'login',
   validate
 })
 @Radium
-export default class ForgotPasswordModal extends Component {
+export default class LoginModal extends Component {
 
   static propTypes = {
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
+    openForgotPasswordModal: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired, // Callback for closing the dialog and clearing the form.
     onSubmit: PropTypes.func.isRequired
@@ -62,9 +73,7 @@ export default class ForgotPasswordModal extends Component {
   constructor (props) {
     super(props);
     this.onCloseClick = ::this.onCloseClick;
-    this.onSubmit = ::this.onSubmit;
-    // We show that a mail has been send to the user.
-    this.state = { email: null };
+    this.onForgotPasswordClick = ::this.onForgotPasswordClick;
   }
 
   // The autofocus attribute will only work when the page loads initially.
@@ -80,10 +89,9 @@ export default class ForgotPasswordModal extends Component {
     this.props.onCancel();
   }
 
-  /* eslint-disable react/no-set-state */
-  async onSubmit () {
-    const { email } = await Reflect.apply(this.props.handleSubmit, this, arguments);
-    this.setState({ email });
+  onForgotPasswordClick (e) {
+    e.preventDefault();
+    this.props.openForgotPasswordModal();
   }
 
   static styles = {
@@ -107,31 +115,29 @@ export default class ForgotPasswordModal extends Component {
       width: 'auto',
       float: 'right'
     },
-    sendEmail: {
-      color: '#ffffff',
-      marginBottom: '1em'
+    forgotPassword: {
+      fontSize: '13px',
+      color: 'white',
+      padding: '8px 0'
     }
   };
 
   render () {
     const { styles } = this.constructor;
-    const { error, onCancel, t } = this.props;
-    const { email } = this.state;
+    const { error, handleSubmit, onCancel, t } = this.props;
+
     return (
       <Modal isOpen onClose={onCancel}>
         <div style={styles.container}>
-          {email
-            ? <div style={styles.content}>
-                <p style={styles.sendEmail}>{t('forgotPassword.sendEmail', { email })}</p>
-                <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} onClick={this.onCloseClick}>{t('common.ok')}</button>
-              </div>
-            : <form style={styles.content} onSubmit={this.onSubmit}>
-              <Field component={renderField} name='email' placeholder={t('forgotPassword.email')} ref={(c) => { this._email = c; }} type='email' />
+          <form style={styles.content} onSubmit={handleSubmit}>
+            <Field component={renderField} name='email' placeholder={t('login.email')} ref={(c) => { this._email = c; }} />
+            <Field component={renderField} name='password' placeholder={t('login.password')} type='password' />
 
-              {error && typeof error === 'string' && <p style={styles.error}>{t(error)}</p>}
+            {error && typeof error === 'string' && <div style={styles.error}>{t(error)}</div>}
 
-              <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} type='submit'>{t('forgotPassword.submitButton')}</button>
-            </form>}
+            {/* <button style={styles.forgotPassword} type='button' onClick={this.onForgotPasswordClick}>{t('login.forgotPassword')}</button> */}
+            <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} type='submit'>{t('login.submitButton')}</button>
+          </form>
         </div>
       </Modal>
     );
