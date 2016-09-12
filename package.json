@@ -21,7 +21,9 @@
   },
   "private": true,
   "license": "UNLICENSED",
-  "dependencies": {},
+  "dependencies": {
+    "aws-sdk": "^2.6.0"
+  },
   "devDependencies": {
     "babel-core": "6.14.0",
     "babel-eslint": "6.1.2",
