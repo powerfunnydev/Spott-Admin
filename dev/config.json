@@ -1,0 +1,10 @@
+{
+  "urls": {
+    "api": "https://spott-cms-rest-tst.appiness.mobi/rest",
+    "apptvateWebsite": "http://localhost:3003",
+    "cms": "http://localhost:3000",
+    "cmsNext": "http://localhost:2999/cms-next",
+    "tagger": "http://localhost:3001"
+  },
+  "environment": "Testing"
+}

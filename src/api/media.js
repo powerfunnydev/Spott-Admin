@@ -1,6 +1,24 @@
 /* eslint-disable prefer-const */
-import * as request from './_request';
-import { UnauthorizedError, UnexpectedError } from './_errors';
+import { post, UnexpectedError } from './request';
+import AWS from 'aws-sdk';
+
+function uploadToS3 ({ accessKeyId, acl, baseKey, bucket, file, policy, signature }, uploadingCallback) {
+  return new Promise((resolve, reject) => {
+    // Constructs a service interface object. A specific api version can be provided.
+    const s3 = new AWS.S3({ accessKeyId, secretAccessKey: 'WtDWvDohG6HKM2YV7hRStNoymSTCca66DVyBJtGj' });
+
+    s3.upload({ Body: file, Bucket: bucket, Key: `${baseKey}/${file.name}`, Policy: policy, Signature: signature })
+      .on('httpUploadProgress', (e) => {
+        uploadingCallback(e.loaded, e.total);
+      })
+     .send((err, data) => {
+       if (err) {
+         return reject(err);
+       }
+       resolve();
+     });
+  });
+}
 
 /**
  * Uploading content requires a three-step process.
@@ -27,31 +45,22 @@ import { UnauthorizedError, UnexpectedError } from './_errors';
  * @return {object} The upload configuration for S3, which includes the bucketUrl, AWSAccessKeyId,
  * acl, policy, signature and baseKey.
  */
-async function requestFileUpload (authenticationToken) {
-  try {
-    let { body: { responseType, s3 } } = await request.post(authenticationToken, '/v003/system/files/uploads', {});
-    // The server response either has responseType 's3' or 'local'. We expect the first.
-    if (responseType !== 'S3') {
-      throw new UnexpectedError();
-    }
-
-    // Return the configuration for S3
-    return {
-      // Insert bucket name in rootUrl
-      bucketUrl: s3.rootUrl.replace('://', `://${s3.bucketName}.`),
-      AWSAccessKeyId: s3.accessKey,
-      acl: s3.acl,
-      policy: s3.policyDocument,
-      signature: s3.signature,
-      baseKey: s3.uploadDirectory
-    };
-  } catch (error) {
-    switch (error.statusCode) {
-      case 403:
-        throw new UnauthorizedError();
-    }
-    throw new UnexpectedError(error);
+async function requestFileUpload (baseUrl, authenticationToken) {
+  let { body: { responseType, s3 } } = await post(authenticationToken, null, `${baseUrl}/v003/system/files/uploads`, {});
+  // The server response either has responseType 's3' or 'local'. We expect the first.
+  if (responseType !== 'S3') {
+    throw new UnexpectedError();
   }
+
+  // Return the configuration for S3
+  return {
+    accessKeyId: s3.accessKey,
+    acl: s3.acl,
+    bucket: s3.bucketName,
+    policy: s3.policyDocument,
+    signature: s3.signature,
+    baseKey: s3.uploadDirectory
+  };
 }
 
  /**
@@ -79,8 +88,8 @@ async function requestFileUpload (authenticationToken) {
   * @throws UnauthorizedError
   * @throws UnexpectedError
   */
-export async function postUpload (authenticationToken, { file }, uploadingCallback) {
-  let { acl, AWSAccessKeyId, baseKey, bucketUrl, policy, signature } = await requestFileUpload(authenticationToken);
+export async function postUpload (baseUrl, authenticationToken, { file }, uploadingCallback) {
+  let { accessKeyId, acl, baseKey, bucket, bucketUrl, policy, signature } = await requestFileUpload(baseUrl, authenticationToken);
 
   // Perform an upload to Amazon S3
   try {
@@ -102,7 +111,7 @@ export async function postUpload (authenticationToken, { file }, uploadingCallba
       // file is a regular File
       remoteFilename = `${baseKey}/${file.name}`;
     }
-    reqBody.append('AWSAccessKeyId', AWSAccessKeyId);
+    reqBody.append('AWSAccessKeyId', accessKeyId);
     reqBody.append('acl', acl);
     reqBody.append('key', remoteFilename);
     reqBody.append('policy', policy);
@@ -122,7 +131,7 @@ export async function postUpload (authenticationToken, { file }, uploadingCallba
         });
       });
     } else {
-      await request.postFormData(null, bucketUrl, reqBody, uploadingCallback);
+      await uploadToS3({ accessKeyId, acl, baseKey, bucket, file, policy, signature }, uploadingCallback);
     }
     return { remoteFilename };
   } catch (error) {
@@ -160,27 +169,19 @@ export async function postUpload (authenticationToken, { file }, uploadingCallba
  * }
  * @throws UnexpectedError
  */
-export async function postProcess (authenticationToken, { description, mediumExternalReference, mediumExternalReferenceSource, remoteFilename, skipAudio, skipScenes }) {
-  try {
-    let { body } = await request.post(authenticationToken, '/v003/video/processors', {
-      description,
-      filePath: remoteFilename,
-      mediumExternalReference,
-      mediumExternalReferenceSource,
-      skipAudio,
-      skipScenes
-    });
-    // Done, return.
-    return {
-      requestId: body.requestId.uuid,
-      description: body.description,
-      outputFileName: body.outputFileName
-    };
-  } catch (error) {
-    switch (error.statusCode) {
-      case 403:
-        throw new UnauthorizedError();
-    }
-    throw new UnexpectedError(error);
-  }
+export async function postProcess (baseUrl, authenticationToken, { description, mediumExternalReference, mediumExternalReferenceSource, remoteFilename, skipAudio, skipScenes }) {
+  let { body } = await post(authenticationToken, null, `${baseUrl}/v003/video/processors`, {
+    description,
+    filePath: remoteFilename,
+    mediumExternalReference,
+    mediumExternalReferenceSource,
+    skipAudio,
+    skipScenes
+  });
+  // Done, return.
+  return {
+    requestId: body.requestId.uuid,
+    description: body.description,
+    outputFileName: body.outputFileName
+  };
 }

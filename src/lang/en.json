@@ -1,0 +1,43 @@
+{
+  "common": {
+    "errors": {
+      "unexpected": "Something went wrong!"
+    },
+    "ok": "Ok"
+  },
+  "header": {
+    "login": "Sign In",
+    "logout": "Log Out",
+    "home": "Home"
+  },
+  "error404": {
+    "pageDoesNotExist": "The page you requested doesn't exist.",
+    "returnToApptvate": "Return to Apptvate.com",
+    "somethingWentWrong": "Something went wrong!",
+    "title": "Whoops!"
+  },
+  "forgotPassword": {
+    "errors": {
+      "failed": "We encountered an error while trying to change your password :("
+    },
+    "email": "Your Email",
+    "submitButton": "Reset password",
+    "sendEmail": "A mail has been send to %(email)s to reset your password."
+  },
+  "resetPassword": {
+    "password": "Your New Password",
+    "passwordRepeat": "Repeat Password",
+    "submitButton": "Change password",
+    "success": "Your password has been successfully changed!"
+  },
+  "login": {
+    "email": "Your Email or Username",
+    "errors": {
+      "incorrect": "Email/password combination is incorrect."
+    },
+    "forgotPassword": "Forgot Password?",
+    "password": "Your Password",
+    "submitButton": "Log in",
+    "title": "Log In"
+  }
+}

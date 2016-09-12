@@ -235,7 +235,7 @@
     "react/jsx-closing-bracket-location": [1, "after-props"],
     "react/jsx-curly-spacing": 1,
     "react/jsx-indent-props": [1, 2],
-    "react/jsx-max-props-per-line": [1, { "maximum": 5 }],
+    "react/jsx-max-props-per-line": [1, { "maximum": 6 }],
     "react/jsx-no-duplicate-props": [2, { "ignoreCase": true }],
     "react/jsx-no-literals": 0,
     "react/jsx-no-undef": 2,

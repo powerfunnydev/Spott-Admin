@@ -2,7 +2,7 @@ import { combineReducers } from 'redux-immutablejs';
 import media from './media';
 import globalReducer from './global';
 import { routerReducer as router } from 'react-router-redux';
-import { reducer as form } from 'redux-form';
+import { reducer as form } from 'redux-form/immutable';
 
 /**
  * The application's main reducer

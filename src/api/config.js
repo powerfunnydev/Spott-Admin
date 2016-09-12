@@ -1,5 +1,4 @@
-import * as request from './_request';
-import { UnexpectedError } from './_errors';
+import { get } from './request';
 
 /**
  * GET /config.json
@@ -17,12 +16,19 @@ import { UnexpectedError } from './_errors';
  * }
  * @throws UnexpectedError
  */
-export async function getConfig () {
-  try {
-    const { body: config } = await request.get(null, `${window.location.origin}/config.json`);
-    return config;
-  } catch (error) {
-    console.log(error);
-    throw new UnexpectedError(error);
-  }
+export async function getConfiguration () {
+  const { body: { environment, urls } } = await get(null, null, '/config.json');
+  const { body: version } = await get(null, null, '/version.json');
+  const { body: { version: apiVersion } } = await get(null, null, `${urls.api}/v003/system/info`);
+
+  return {
+    environment,
+    urls,
+    version: {
+      apiVersion: apiVersion.version,
+      apiVersionFull: `${apiVersion.version} build ${apiVersion.build} (${apiVersion.buildTime})`,
+      version: version.version,
+      versionFull: `${version.version} build ${version.build} (${version.timestamp})`
+    }
+  };
 }
