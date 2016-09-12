@@ -1,5 +1,24 @@
 /* eslint-disable prefer-const */
-import { post, postFormData, UnexpectedError } from './request';
+import { post, UnexpectedError } from './request';
+import AWS from 'aws-sdk';
+
+function uploadToS3 ({ accessKeyId, acl, baseKey, bucket, file, policy, signature }, uploadingCallback) {
+  return new Promise((resolve, reject) => {
+    // Constructs a service interface object. A specific api version can be provided.
+    const s3 = new AWS.S3({ accessKeyId, secretAccessKey: 'WtDWvDohG6HKM2YV7hRStNoymSTCca66DVyBJtGj' });
+
+    s3.upload({ Body: file, Bucket: bucket, Key: `${baseKey}/${file.name}`, Policy: policy, Signature: signature })
+      .on('httpUploadProgress', (e) => {
+        uploadingCallback(e.loaded, e.total);
+      })
+     .send((err, data) => {
+       if (err) {
+         return reject(err);
+       }
+       resolve();
+     });
+  });
+}
 
 /**
  * Uploading content requires a three-step process.
@@ -35,10 +54,9 @@ async function requestFileUpload (baseUrl, authenticationToken) {
 
   // Return the configuration for S3
   return {
-    // Insert bucket name in rootUrl
-    bucketUrl: s3.rootUrl.replace('://', `://${s3.bucketName}.`),
-    AWSAccessKeyId: s3.accessKey,
+    accessKeyId: s3.accessKey,
     acl: s3.acl,
+    bucket: s3.bucketName,
     policy: s3.policyDocument,
     signature: s3.signature,
     baseKey: s3.uploadDirectory
@@ -71,8 +89,7 @@ async function requestFileUpload (baseUrl, authenticationToken) {
   * @throws UnexpectedError
   */
 export async function postUpload (baseUrl, authenticationToken, { file }, uploadingCallback) {
-  let { acl, AWSAccessKeyId, baseKey, bucketUrl, policy, signature } = await requestFileUpload(baseUrl, authenticationToken);
-  console.error(acl, AWSAccessKeyId, baseKey, bucketUrl, policy, signature);
+  let { accessKeyId, acl, baseKey, bucket, bucketUrl, policy, signature } = await requestFileUpload(baseUrl, authenticationToken);
 
   // Perform an upload to Amazon S3
   try {
@@ -94,7 +111,7 @@ export async function postUpload (baseUrl, authenticationToken, { file }, upload
       // file is a regular File
       remoteFilename = `${baseKey}/${file.name}`;
     }
-    reqBody.append('AWSAccessKeyId', AWSAccessKeyId);
+    reqBody.append('AWSAccessKeyId', accessKeyId);
     reqBody.append('acl', acl);
     reqBody.append('key', remoteFilename);
     reqBody.append('policy', policy);
@@ -114,7 +131,7 @@ export async function postUpload (baseUrl, authenticationToken, { file }, upload
         });
       });
     } else {
-      await postFormData(authenticationToken, null, bucketUrl, reqBody, uploadingCallback);
+      await uploadToS3({ accessKeyId, acl, baseKey, bucket, file, policy, signature }, uploadingCallback);
     }
     return { remoteFilename };
   } catch (error) {
