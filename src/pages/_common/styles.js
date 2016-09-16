@@ -1,14 +1,20 @@
+import React, { Component, PropTypes } from 'react';
+import Radium from 'radium';
+
 export const colors = {
-  primaryBlue: 'rgb(31, 188, 233)',
+  primaryBlue: '#09bbf0',
   primaryBlue2: 'rgb(57, 214, 255)',
   secondaryPink: 'rgb(211, 23, 81)',
   secondaryPink2: 'rgb(237, 49, 107)',
-  black: 'rgb(14, 27, 32)',
+  black: '#121e22',
   darkerGray: 'rgb(135, 141, 143)',
   darkGray: 'rgb(186, 189, 192)',
   lightGray: 'rgb(241, 243, 244)',
+  lightGray2: '#ced6da',
   errorColor: 'rgb(236, 65, 15)'
 };
+
+export const defaultSpacing = 15;
 
 const hoveredBlueButtonStyle = {
   backgroundColor: colors.primaryBlue2,
@@ -98,4 +104,64 @@ export const errorTextStyle = {
   color: colors.errorColor,
   paddingTop: 3,
   fontSize: '11px'
+};
+
+export const fontWeights = {
+  light: 'Rubik-Light',
+  regular: 'Rubik-Regular',
+  medium: 'Rubik-Medium',
+  bold: 'Rubik-Bold'
+};
+
+export const mediaQueryThresholds = {
+  extraSmall: 0,
+  small: 480,
+  medium: 768,
+  large: 992,
+  extraLarge: 1200
+};
+export const mediaQueries = {
+  small: `@media only screen and (min-width: ${mediaQueryThresholds.small}px)`,
+  medium: `@media only screen and (min-width: ${mediaQueryThresholds.medium}px)`,
+  large: `@media only screen and (min-width: ${mediaQueryThresholds.large}px)`,
+  extraLarge: `@media only screen and (min-width: ${mediaQueryThresholds.extraLarge}px)`
+};
+export function makeTextStyle (fontWeight = fontWeights.regular, fontSize = '1em', letterSpacing = 0, lineHeight = 'normal') {
+  return {
+    fontFamily: fontWeight,
+    fontSize,
+    letterSpacing,
+    lineHeight
+  };
+}
+
+// Container component
+// ///////////////////
+
+const containerStyles = {
+  marginLeft: 'auto',
+  marginRight: 'auto',
+  width: '100%',
+  paddingLeft: '0.9375em',
+  paddingRight: '0.9375em',
+  [mediaQueries.medium]: {
+    paddingLeft: 0,
+    paddingRight: 0,
+    width: 738
+  },
+  [mediaQueries.large]: {
+    width: 962
+  },
+  [mediaQueries.extraLarge]: {
+    width: 1170
+  }
+};
+export const Container = Radium((props) => (
+  <div {...props} style={[ containerStyles, props.style ]}>
+    {props.children}
+  </div>
+));
+Container.propTypes = {
+  children: PropTypes.node,
+  style: PropTypes.object
 };

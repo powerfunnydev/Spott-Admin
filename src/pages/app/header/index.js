@@ -21,9 +21,10 @@ export default class Header extends Component {
   static styles = {
     container: {
       height: 40,
-      marginTop: 30,
-      marginLeft: 40,
-      marginRight: 40,
+      paddingTop: 40,
+      paddingBottom: 40,
+      paddingLeft: 40,
+      paddingRight: 40,
       display: 'flex',
       alignContent: 'space-between',
       alignItems: 'center'

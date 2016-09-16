@@ -1,5 +1,5 @@
 import React from 'react';
-import { IndexRoute, Router, Route, hashHistory } from 'react-router';
+import { IndexRedirect, IndexRoute, Router, Route, hashHistory } from 'react-router';
 import ReactDOM from 'react-dom';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { Provider } from 'react-redux';
@@ -13,7 +13,9 @@ import MediaSinglePage from './pages/media/singlePage';
 import MediaHome from './pages/media/home';
 import MediaUpload from './pages/media/upload';
 import MediaWelcome from './pages/media/welcome';
-// import Reporting from './pages/reporting';
+import Reporting from './pages/reporting';
+import ReportingActivity from './pages/reporting/activity';
+import ReportingRankings from './pages/reporting/rankings';
 
 import reducer from './reducers';
 
@@ -28,7 +30,11 @@ const routes = (
       <IndexRoute component={MediaHome}/>
       <Route component={MediaUpload} path='upload' />
     </Route>
-    {/* <Route component={Reporting} path='reporting' /> */}
+    <Route component={Reporting} path='reporting'>
+      <IndexRedirect to='activity' />
+      <Route component={ReportingActivity} path='activity' />
+      <Route component={ReportingRankings} path='rankings' />
+    </Route>
     <Route component={Error404} path='*' />
   </Route>
 );
