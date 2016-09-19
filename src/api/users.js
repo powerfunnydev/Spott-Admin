@@ -2,8 +2,8 @@ import { post } from './request';
 
 export async function login (baseUrl, { authenticationToken, email, password }) {
   try {
-    // TODO: localize! Server should return proper error message to display to the user.
-    const { body } = await post(null, 'nl', `${baseUrl}/v003/security/login`, { authenticationToken, userName: email, password });
+    // TODO: localize! Server should return proper error message to display to the user. 'APPTVATE_USER'
+    const { body } = await post(null, 'nl', `${baseUrl}/v003/security/login`, { authenticationToken, userName: email, password, roles: [ ] });
     return {
       authenticationToken: body.authenticationToken,
       user: {

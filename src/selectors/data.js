@@ -2,9 +2,9 @@ import { List, Map } from 'immutable';
 import { createSelector } from 'reselect';
 import { LAZY } from '../constants/statusTypes';
 
-export const seriesEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'series' ]);
+export const mediaEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'media' ]);
 
-export const searchStringHasSeriesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasSeries' ]);
+export const searchStringHasMediaRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasMedia' ]);
 
 /**
  * Utility selector factory for accessing related id's.

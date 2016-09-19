@@ -1,5 +1,5 @@
 import { fromJS, List, Map } from 'immutable';
-import * as seriesActions from '../actions/series';
+import * as mediaActions from '../actions/media';
 import { FETCHING, UPDATING, ERROR, LOADED } from '../constants/statusTypes';
 
 // path is e.g., [ 'relations', type, id ]
@@ -46,19 +46,19 @@ function searchError (state, relationsKey, key, error) {
 
 export default (state = fromJS({
   entities: {
-    series: {}
+    media: {}
   },
   relations: {
-    searchStringHasSeries: {}
+    searchStringHasMedia: {}
   }
 }), action) => {
   switch (action.type) {
-    case seriesActions.SERIES_SEARCH_START:
-      return searchStart(state, 'searchStringHasSeries', action.searchString);
-    case seriesActions.SERIES_SEARCH_SUCCESS:
-      return searchSuccess(state, 'series', 'searchStringHasSeries', action.searchString, action.data);
-    case seriesActions.SERIES_SEARCH_ERROR:
-      return searchError(state, 'searchStringHasSeries', action.searchString, action.error);
+    case mediaActions.MEDIA_SEARCH_START:
+      return searchStart(state, 'searchStringHasMedia', action.searchString);
+    case mediaActions.MEDIA_SEARCH_SUCCESS:
+      return searchSuccess(state, 'media', 'searchStringHasMedia', action.searchString, action.data);
+    case mediaActions.MEDIA_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasMedia', action.searchString, action.error);
     default:
       return state;
   }

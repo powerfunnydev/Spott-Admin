@@ -1,5 +1,5 @@
 /* eslint-disable prefer-const */
-import { post, UnexpectedError } from './request';
+import { get, post, UnexpectedError } from './request';
 import AWS from 'aws-sdk';
 
 function uploadToS3 ({ accessKeyId, acl, baseKey, bucket, file, policy, signature }, uploadingCallback) {
@@ -184,4 +184,54 @@ export async function postProcess (baseUrl, authenticationToken, { description, 
     description: body.description,
     outputFileName: body.outputFileName
   };
+}
+
+function transformMedium ({ title, type, posterImage, profileImage, uuid: id }) {
+  return {
+    id,
+    title,
+    type,
+    posterImage: posterImage && { id: posterImage.uuid, url: posterImage. url },
+    profileImage: profileImage && { id: profileImage.uuid, url: profileImage. url }
+  };
+}
+
+/**
+  * @returnExample
+  * {
+  *   basedOnDefaultLocale: { en: false, fr: true, nl: false },
+  *   mediumCategories: [ '123', '124', '1235' ],
+  *   defaultLocale: 'en',
+  *   description: { en: 'Home', fr: 'A la maison', nl: 'Thuis' },
+  *   externalReference: '...',
+  *   externalReferenceSource: '...',
+  *   id: 'abcdef123',
+  *   locales: [ 'en', 'fr', 'nl' ],
+  *   poster: { en: ..., fr: ..., nl: ... }
+  *   publishStatus: 'DRAFT' || 'REVIEW' || 'PUBLISHED',
+  *   relatedCharacterIds: [ '1234', '1235', ... ],
+  *   keyVisual: { en: ..., fr: ..., nl: ... },
+  *   startYear: { en: 1991, fr: 1991, nl: 1991 },
+  *   endYear: { en: 2000, fr: 2000, nl: 2000 },
+  *   title: { en: 'Home', fr: 'A la maison', nl: 'Thuis' }
+  * }
+  */
+
+/**
+ * GET /media/series?searchString=...
+ * Search for series.
+ * @param {string} authenticationToken The authentication token of the logged in user.
+ * @param {Object} data
+ * @param {string} [data.searchString=''] The string to search products on.
+ * @throws UnauthorizedError
+ * @throws UnexpectedError
+ */
+export async function searchMedia (baseUrl, authenticationToken, locale, { searchString = '' }) {
+  // TODO: Use media instead of series.
+  let searchUrl = `${baseUrl}/v003/media/media?pageSize=30&types=TV_SERIE,MOVIE,COMMERCIAL`;
+  if (searchString) {
+    searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
+  }
+  const { body: { data } } = await get(authenticationToken, locale, searchUrl);
+  return data.map(transformMedium);
 }

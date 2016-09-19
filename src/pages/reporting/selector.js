@@ -1,20 +1,25 @@
 import { createStructuredSelector } from 'reselect';
 import {
   createEntityIdsByRelationSelector,
-  searchStringHasSeriesRelationsSelector,
-  seriesEntitiesSelector
+  searchStringHasMediaRelationsSelector,
+  mediaEntitiesSelector
 } from '../../selectors/data';
 
-export const currentSeriesSearchStringSelector = (state) => state.getIn([ 'reporting', 'currentSeriesSearchString' ]);
+export const currentMediaSearchStringSelector = (state) => state.getIn([ 'reporting', 'currentMediaSearchString' ]);
 
-export const searchedSeriesIdsSelector = createEntityIdsByRelationSelector(searchStringHasSeriesRelationsSelector, currentSeriesSearchStringSelector);
+export const searchedMediumIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediaRelationsSelector, currentMediaSearchStringSelector);
 
 export const mediaFilterSelector = createStructuredSelector({
-  searchedSeriesIds: searchedSeriesIdsSelector,
-  seriesById: seriesEntitiesSelector
+  mediaById: mediaEntitiesSelector,
+  searchedMediumIds: searchedMediumIdsSelector
 });
 
 export const eventsFilterSelector = createStructuredSelector({
-  eventsById: seriesEntitiesSelector,
-  searchedEventIds: searchedSeriesIdsSelector
+  eventsById: mediaEntitiesSelector,
+  searchedEventIds: searchedMediumIdsSelector
+});
+
+export const filterSelector = createStructuredSelector({
+  searchedMediumIds: searchedMediumIdsSelector,
+  seriesById: mediaEntitiesSelector
 });

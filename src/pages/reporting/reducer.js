@@ -1,5 +1,5 @@
 import { Map } from 'immutable';
-import { SERIES_SEARCH_START } from './actions';
+import { MEDIA_SEARCH_START } from './actions';
 
 /**
  * -> currentSeriesSearchString
@@ -7,8 +7,8 @@ import { SERIES_SEARCH_START } from './actions';
 export default (state = Map({}), action) => {
   switch (action.type) {
 
-    case SERIES_SEARCH_START: // Autocompletion field of series selection
-      return state.set('currentSeriesSearchString', action.searchString);
+    case MEDIA_SEARCH_START: // Autocompletion field of series selection
+      return state.set('currentMediaSearchString', action.searchString);
 
     // Uninteresting actions
     default:

@@ -1,64 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Link } from 'react-router';
-import moment from 'moment';
-import { reduxForm, Field } from 'redux-form/immutable';
 import Header from '../app/header';
-import DateInput from '../_common/inputs/dateInput';
-import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
-import * as actions from './actions';
-import selector from './selector';
-
-@connect(selector, (dispatch) => ({
-  searchSeries: bindActionCreators(actions.searchSeries, dispatch)
-}))
-@reduxForm({
-  form: 'reportingDateRange',
-  initialValues: {
-    fromDate: moment().startOf('day').subtract(1, 'months').date(1).toDate(),
-    toDate: moment().toDate()
-  }
-})
-@Radium
-class DateRangeForm extends Component {
-
-  static propTypes = {
-    children: PropTypes.node.isRequired,
-    style: PropTypes.object
-  };
-
-  static styles = {
-    dateInput: {
-      width: '6em'
-    },
-    separator: {
-      paddingTop: 11.25
-    }
-  };
-
-  render () {
-    const styles = this.constructor.styles;
-    return (
-      <form style={this.props.style}>
-        <Field
-          component={DateInput}
-          name='fromDate'
-          placeholder={'reporting.activity.dateFrom'}
-          style={styles.dateInput}
-          onChange={(e) => console.warn('UPDATE', e)} />
-        <div style={styles.separator}>&nbsp;-&nbsp;</div>
-        <Field
-          component={DateInput}
-          name='toDate'
-          placeholder={'reporting.activity.dateTo'}
-          style={styles.dateInput}
-          onChange={(e) => console.warn('UPDATE', e)} />
-      </form>
-    );
-  }
-}
+import { colors, fontWeights, makeTextStyle, mediaQueries, Container } from '../_common/styles';
+import MediaFilterForm from './forms/mediaFilterForm';
 
 @Radium
 export default class Reporting extends Component {
@@ -100,10 +45,9 @@ export default class Reporting extends Component {
         opacity: 1
       }
     },
-    dateRangeForm: {
-      alignItems: 'center',
-      display: 'flex',
-      float: 'right'
+    mediaFilterForm: {
+      float: 'right',
+      width: '50%'
     }
   };
 
@@ -123,7 +67,7 @@ export default class Reporting extends Component {
             <div style={styles.tab.container}>
               <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/reporting/rankings'>Rankings</Link>
             </div>
-            <DateRangeForm style={styles.dateRangeForm} />
+            <MediaFilterForm style={styles.mediaFilterForm} />
           </Container>
         </div>
         {children}
