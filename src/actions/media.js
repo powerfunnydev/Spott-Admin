@@ -1,8 +1,9 @@
 /* eslint-disable prefer-const */
 import { destroy } from 'redux-form/immutable';
-import { postProcess, postUpload } from '../api/media';
+import * as mediaApi from '../api/media';
 import { apiBaseUrlSelector, authenticationTokenSelector } from '../selectors/global';
 import { createRecordStart, createRecordSuccess, createRecordError } from '../actions/_utils';
+import { makeApiActionCreator } from './utils';
 import { zeroPad } from '../utils';
 
 export const CREATE_MEDIA_START_WIZARD = 'CREATE_MEDIA_START_WIZARD';
@@ -22,6 +23,12 @@ export const UPLOAD_FILE_START = 'MEDIA_UPLOAD_FILE_START';
 export const UPLOAD_FILE_SUCCESS = 'MEDIA_UPLOAD_FILE_SUCCESS';
 export const UPLOAD_FILE_ERROR = 'MEDIA_UPLOAD_FILE_ERROR';
 export const UPLOAD_FILE_PROGRESS = 'MEDIA_UPLOAD_FILE_PROGRESS';
+
+export const MEDIA_SEARCH_START = 'DATA/MEDIA_SEARCH_START';
+export const MEDIA_SEARCH_SUCCESS = 'DATA/MEDIA_SEARCH_SUCCESS';
+export const MEDIA_SEARCH_ERROR = 'DATA/MEDIA_SEARCH_ERROR';
+
+export const searchMedia = makeApiActionCreator(mediaApi.searchMedia, MEDIA_SEARCH_START, MEDIA_SEARCH_SUCCESS, MEDIA_SEARCH_ERROR);
 
 /**
  * Opens the create media modal with video upload etc.
@@ -78,7 +85,7 @@ function uploadFile (file) {
       // We dispatch UPLOAD_FILE_PROGRESS one time per second, this both to reduce
       // excessive action triggers as well as to provide a more 'calm' UI.
       let lastProgressTriggerTime = 0;
-      let records = await postUpload(baseUrl, authenticationToken, { file }, (currentBytes, totalBytes) => {
+      let records = await mediaApi.postUpload(baseUrl, authenticationToken, { file }, (currentBytes, totalBytes) => {
         let now = new Date().getTime();
         if (now - lastProgressTriggerTime >= 1000) {
           lastProgressTriggerTime = now;
@@ -120,7 +127,7 @@ export function processMedia ({ description, mediumExternalReference, mediumExte
 
     dispatch(createRecordStart(PROCESS_MEDIA_START));
     try {
-      const records = await postProcess(baseUrl, authenticationToken, { description, mediumExternalReference, mediumExternalReferenceSource, remoteFilename, skipAudio, skipScenes });
+      const records = await mediaApi.postProcess(baseUrl, authenticationToken, { description, mediumExternalReference, mediumExternalReferenceSource, remoteFilename, skipAudio, skipScenes });
       dispatch(createRecordSuccess(PROCESS_MEDIA_SUCCESS, records, { description, mediumExternalReference, mediumExternalReferenceSource, remoteFilename }));
       return records;
     } catch (error) {
@@ -150,7 +157,6 @@ export function processMedia ({ description, mediumExternalReference, mediumExte
  */
 export function createMedia (values) {
   return async (dispatch, getState) => {
-    console.error('VALUES', values.toJS());
     const { episode, episodeTitle, mediumExternalReference, mediumExternalReferenceSource, season, seriesName, skipAudio, skipScenes, video } = values.toJS();
     // A description could be 'Suits S02E01 Dogfight'.
     let description = `${seriesName} S${zeroPad(season)}E${zeroPad(episode)} ${episodeTitle}`;
