@@ -1,7 +1,7 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import { Link as ScrollLink } from 'react-scroll';
-// import { Link as RouterLink } from 'react-router';
+import { Link as RouterLink } from 'react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { buttonStyles } from '../../_common/styles';
@@ -94,10 +94,10 @@ export default class Menu extends Component {
             <button key='contact' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Contact</button>
           </ScrollLink>
         </span>
-        {/* {isAuthenticated &&
+        {isAuthenticated &&
           <RouterLink to='reporting'>
             <button key='reporting' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Reporting</button>
-          </RouterLink>} */}
+          </RouterLink>}
         {isAuthenticated
           ? <button key='logout' style={[ buttonStyles.base, buttonStyles.extraSmall, neutral ? styles.linkButton : buttonStyles.pink ]} onClick={this.onLogOutClick}>{t('header.logout')}</button>
           : <button key='signIn' style={[ buttonStyles.base, buttonStyles.extraSmall, neutral ? styles.linkButton : buttonStyles.pink ]} onClick={this.onSignInClick}>{t('header.login')}</button>}
