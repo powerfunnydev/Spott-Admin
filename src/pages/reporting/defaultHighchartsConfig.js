@@ -1,14 +1,15 @@
+import { fromJS } from 'immutable';
 
-export const timelineConfig = {
+export const timelineConfig = fromJS({
   chart: {
     style: {
       fontFamily: 'Rubik-Regular, Verdana, sans-serif'
     }
   },
-  colors: [
-    '#643dfa',
-    '#f0b609'
-  ],
+  // colors: [
+  //   '#643dfa'
+  //   '#f0b609'
+  // ],
   credits: false,
   title: {
     text: null
@@ -34,7 +35,7 @@ export const timelineConfig = {
     borderColor: '#ced6da',
     borderRadius: 2,
     boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)',
-    headerFormat: '<p style="font-size: 10px; color: #6d8791; margin-bottom: 9px; margin-left: 3px; margin-top: 3px;">All Events ({point.x:%a %e %b})</p>',
+    headerFormat: '<p style="font-size: 10px; color: #6d8791; margin-bottom: 9px; margin-left: 3px; margin-top: 3px;">{eventType} ({point.x:%a %e %b})</p>',
     pointFormat: '<p style="font-size: 12px; margin-bottom: 7px; margin-left: 3px;"><span style="color:{point.color};">{series.name}</span>\u00a0\u00a0\u00a0\u00a0<b>{point.y}</b></p>',
     shared: true,
     style: {
@@ -50,33 +51,10 @@ export const timelineConfig = {
       }
     }
   },
-  series: [ {
-    name: 'Dagelijkse Kost',
-            // Define the data points. All series have a dummy year
-            // of 1970/71 in order to be compared on the same x axis. Note
-            // that in JavaScript, months start at 0 for January, 1 for February etc.
-    data: [
-      [ Date.UTC(1970, 0, 1), 210 ],
-      [ Date.UTC(1970, 0, 2), 220 ],
-      [ Date.UTC(1970, 0, 3), 240 ],
-      [ Date.UTC(1970, 0, 4), 300 ],
-      [ Date.UTC(1970, 0, 5), 230 ],
-      [ Date.UTC(1970, 0, 6), 170 ]
-    ]
-  }, {
-    name: 'Familie',
-    data: [
-      [ Date.UTC(1970, 0, 1), 120 ],
-      [ Date.UTC(1970, 0, 2), 120 ],
-      [ Date.UTC(1970, 0, 3), 140 ],
-      [ Date.UTC(1970, 0, 4), 100 ],
-      [ Date.UTC(1970, 0, 5), 140 ],
-      [ Date.UTC(1970, 0, 6), 170 ]
-    ]
-  } ]
-};
+  series: []
+});
 
-export const ageConfig = {
+export const ageConfig = fromJS({
   chart: {
     polar: true,
     style: {
@@ -84,10 +62,10 @@ export const ageConfig = {
     },
     type: 'line'
   },
-  colors: [
-    '#643dfa',
-    '#f0b609'
-  ],
+  // colors: [
+  //   '#643dfa',
+  //   '#f0b609'
+  // ],
   credits: false,
   title: {
     text: null
@@ -123,7 +101,7 @@ export const ageConfig = {
     borderColor: '#ced6da',
     borderRadius: 2,
     boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)',
-    headerFormat: '<p style="font-size: 10px; color: #6d8791; margin-bottom: 9px; margin-left: 3px; margin-top: 3px;">All Events ({point.x})</p>',
+    headerFormat: '<p style="font-size: 10px; color: #6d8791; margin-bottom: 9px; margin-left: 3px; margin-top: 3px;">{eventType} ({point.x})</p>',
     pointFormat: '<p style="font-size: 12px; margin-bottom: 7px; margin-left: 3px;"><span style="color:{point.color};">{series.name}</span>\u00a0\u00a0\u00a0\u00a0<b>{point.y}</b></p>',
     shared: true,
     style: {
@@ -139,14 +117,16 @@ export const ageConfig = {
       font: 'normal 12px Rubik-Regular, Verdana, sans-serif'
     }
   },
-  series: [ {
-    name: 'Dagelijkse Kost',
-    data: [ 430, 190, 600, 350, 170, 20 ]
-  }, {
-    name: 'Familie',
-    data: [ 500, 390, 420, 310, 260, 25 ]
-  } ]
-};
+  series: []
+});
+
+// [ {
+//   name: 'Dagelijkse Kost',
+//   data: [ 430, 190, 600, 350, 170, 20 ]
+// }, {
+//   name: 'Familie',
+//   data: [ 500, 390, 420, 310, 260, 25 ]
+// } ]
 
 export const genderConfig = {
   chart: {
@@ -155,10 +135,10 @@ export const genderConfig = {
     },
     type: 'column'
   },
-  colors: [
-    '#643dfa',
-    '#f0b609'
-  ],
+  // colors: [
+  //   '#643dfa',
+  //   '#f0b609'
+  // ],
   credits: false,
   title: {
     text: null
@@ -209,7 +189,7 @@ export const genderConfig = {
     boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)',
     headerFormat:
       `<div style="color: #6d8791; margin-left: -11px; margin-right: -11px; margin-bottom: 2px; margin-top: -11px;">
-         <p style="font-size: 10px; margin-bottom: 10px;">All Events</p>
+         <p style="font-size: 10px; margin-bottom: 10px;">{event}</p>
          <p style="font-size: 12px;">{point.x}\u00a0\u00a0\u00a0\u00a0<b style="color: #17262b;">56%</b></p>
       </div>`,
     pointFormat:

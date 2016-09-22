@@ -23,11 +23,12 @@ export default class MediaFilterForm extends Component {
     mediaById: ImmutablePropTypes.map,
     searchMedia: PropTypes.func.isRequired,
     searchedMediumIds: ImmutablePropTypes.map.isRequired,
-    style: PropTypes.object
+    style: PropTypes.object,
+    onChange: PropTypes.func.isRequired
   };
 
   render () {
-    const { searchMedia, mediaById, searchedMediumIds, style } = this.props;
+    const { searchMedia, mediaById, searchedMediumIds, style, onChange } = this.props;
     return (
       <form style={style}>
         <Field
@@ -39,7 +40,7 @@ export default class MediaFilterForm extends Component {
           name='media'
           options={searchedMediumIds.get('data').toJS()}
           placeholder='Series/Movies/Commercials'
-          onChange={(e) => console.warn('UPDATE', e)} />
+          onChange={onChange.bind(null, 'media')} />
       </form>
     );
   }

@@ -10,32 +10,47 @@ import SelectInput from '../_common/inputs/selectInput';
 import { colors, fontWeights, makeTextStyle, mediaQueries, Container } from '../_common/styles';
 import { FETCHING } from '../../constants/statusTypes';
 import * as actions from './actions';
-import { filterSelector } from './selector';
+import { rankingsFilterSelector } from './selector';
 import Widget from './widget';
 
-@connect(filterSelector, (dispatch) => ({
-  searchMedia: bindActionCreators(actions.searchMedia, dispatch)
+@connect(rankingsFilterSelector, (dispatch) => ({
+  loadAges: bindActionCreators(actions.loadAges, dispatch),
+  loadGenders: bindActionCreators(actions.loadGenders, dispatch)
 }))
 @reduxForm({
   destroyOnUnmount: false,
-  form: 'reportingFilter'
+  form: 'reportingRankingsFilter'
 })
 @Radium
-class FilterForm extends Component {
+class RankingsFilterForm extends Component {
 
   static propTypes = {
-    searchMedia: PropTypes.func.isRequired,
-    searchedMediumIds: ImmutablePropTypes.map.isRequired,
-    seriesById: ImmutablePropTypes.map,
+    // searchMedia: PropTypes.func.isRequired,
+    // searchedMediumIds: ImmutablePropTypes.map.isRequired,
+    // seriesById: ImmutablePropTypes.map,
     style: PropTypes.object
   };
+
+  async componentDidMount () {
+    const ages = await this.props.loadAges();
+    const genders = await this.props.loadGenders();
+
+    const ageIds = ages.map(({ id }) => id);
+    const genderIds = genders.map(({ id }) => id);
+
+    this.props.dispatch(this.props.change('ages', ageIds));
+    this.props.onChange('ages', ageIds);
+
+    this.props.dispatch(this.props.change('genders', genderIds));
+    this.props.onChange('genders', genderIds);
+  }
 
   static styles = {
     filters: {
       marginLeft: '-0.75em',
       marginRight: '-0.75em'
     },
-    filter: {
+    field: {
       display: 'inline-block',
       paddingLeft: '0.75em',
       paddingRight: '0.75em',
@@ -46,7 +61,7 @@ class FilterForm extends Component {
         width: '50%'
       },
       [mediaQueries.medium]: {
-        width: '25%'
+        width: '50%'
       }
     },
     title: {
@@ -58,33 +73,31 @@ class FilterForm extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { searchMedia, seriesById, searchedMediumIds, style } = this.props;
+    const { ages, agesById, genders, gendersById, style, onChange } = this.props;
     return (
       <form style={style}>
         <h2 style={styles.title}>Filter</h2>
         <div style={styles.filters}>
           <Field
             component={SelectInput}
-            getItemText={(id) => seriesById.getIn([ id, 'title' ])}
-            getOptions={searchMedia}
-            isLoading={searchedMediumIds.get('_status') === FETCHING}
+            getItemText={(id) => agesById.getIn([ id, 'description' ])}
+            isLoading={ages.get('_status') === FETCHING}
             multiselect
             name='ages'
-            options={searchedMediumIds.get('data').toJS()}
-            placeholder='Ages'
-            style={styles.filter}
-            onChange={(e) => console.warn('UPDATE', e)} />
+            options={ages.get('data').map((e) => e.get('id')).toJS()}
+            placeholder='Age'
+            style={styles.field}
+            onChange={onChange.bind(null, 'ages')} />
           <Field
             component={SelectInput}
-            getItemText={(id) => seriesById.getIn([ id, 'title', seriesById.getIn([ id, 'defaultLocale' ]) ])}
-            getOptions={searchMedia}
-            isLoading={searchedMediumIds.get('_status') === FETCHING}
+            getItemText={(id) => gendersById.getIn([ id, 'description' ])}
+            isLoading={genders.get('_status') === FETCHING}
             multiselect
             name='genders'
-            options={searchedMediumIds.get('data').toJS()}
-            placeholder='Genders'
-            style={styles.filter}
-            onChange={(e) => console.warn('UPDATE', e)} />
+            options={genders.get('data').map((e) => e.get('id')).toJS()}
+            placeholder='Gender'
+            style={styles.field}
+            onChange={onChange.bind(null, 'genders')} />
           {/* TODO: add location filter. */}
         </div>
       </form>
@@ -242,7 +255,7 @@ export default class Rankings extends Component {
     return (
       <div>
         <Container>
-          <FilterForm style={styles.filter}/>
+          <RankingsFilterForm style={styles.filter} onChange={() => console.warn('test')}/>
         </Container>
         <div style={styles.rankings}>
           <Container>

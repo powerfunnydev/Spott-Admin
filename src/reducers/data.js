@@ -1,54 +1,19 @@
-import { fromJS, List, Map } from 'immutable';
+import { fromJS } from 'immutable';
 import * as mediaActions from '../actions/media';
-import { FETCHING, UPDATING, ERROR, LOADED } from '../constants/statusTypes';
-
-// path is e.g., [ 'relations', type, id ]
-function fetchStart (state, path) {
-  // Get the data (entity/relations) from the state, which can be undefined.
-  const data = state.getIn(path);
-  // The data is already fetched if the data exist and there is no status.
-  const loaded = data && data.get('_status') === LOADED;
-  // When the data is already present, set it's status to 'updating'.
-  // This way we now if there is already data, but it's updating.
-  if (loaded) {
-    return state.mergeIn(path, { _status: UPDATING });
-  }
-  // If the data do not exist, set the status to 'fetching'.
-  return state.mergeIn(path, { _status: FETCHING });
-}
-
-function fetchSuccess (state, path, data) {
-  return state.setIn(path, fromJS({ ...data, _status: LOADED }));
-}
-
-function fetchError (state, path, error) {
-  return state.setIn(path, Map({ _error: error, _status: ERROR }));
-}
-
-function searchStart (state, relationsKey, key) {
-  return fetchStart(state, [ 'relations', relationsKey, key ]);
-}
-
-function searchSuccess (state, entitiesKey, relationsKey, key, data) {
-  data.forEach((item) => item._status = LOADED); // Add _status 'loaded' to each fetched entity.
-  return state
-    .mergeIn([ 'entities', entitiesKey ], fromJS(data.reduce((accumulator, next) => {
-      accumulator[next.id] = next;
-      return accumulator;
-    }, {})))
-    .setIn([ 'relations', relationsKey, key ],
-      Map({ _status: LOADED, data: List(data.map((item) => item.id)) }));
-}
-
-function searchError (state, relationsKey, key, error) {
-  return fetchError(state, [ 'relations', relationsKey, key ], error);
-}
+import * as reportingActions from '../actions/reporting';
+import { searchStart, searchSuccess, searchError, fetchListStart, fetchListSuccess, fetchListError } from './utils';
 
 export default (state = fromJS({
   entities: {
+    ages: {},
+    events: {},
+    genders: {},
     media: {}
   },
   relations: {
+    ages: {},
+    events: {},
+    genders: {},
     searchStringHasMedia: {}
   }
 }), action) => {
@@ -59,6 +24,27 @@ export default (state = fromJS({
       return searchSuccess(state, 'media', 'searchStringHasMedia', action.searchString, action.data);
     case mediaActions.MEDIA_SEARCH_ERROR:
       return searchError(state, 'searchStringHasMedia', action.searchString, action.error);
+
+    case reportingActions.AGES_FETCH_START:
+      return fetchListStart(state, 'ages');
+    case reportingActions.AGES_FETCH_SUCCESS:
+      return fetchListSuccess(state, 'ages', 'ages', action.data);
+    case reportingActions.AGES_FETCH_ERROR:
+      return fetchListError(state, 'ages', action.error);
+
+    case reportingActions.EVENTS_FETCH_START:
+      return fetchListStart(state, 'events');
+    case reportingActions.EVENTS_FETCH_SUCCESS:
+      return fetchListSuccess(state, 'events', 'events', action.data);
+    case reportingActions.EVENTS_FETCH_ERROR:
+      return fetchListError(state, 'events', action.error);
+
+    case reportingActions.GENDERS_FETCH_START:
+      return fetchListStart(state, 'genders');
+    case reportingActions.GENDERS_FETCH_SUCCESS:
+      return fetchListSuccess(state, 'genders', 'genders', action.data);
+    case reportingActions.GENDERS_FETCH_ERROR:
+      return fetchListError(state, 'genders', action.error);
     default:
       return state;
   }

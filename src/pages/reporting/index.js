@@ -1,15 +1,22 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { Link } from 'react-router';
 import Header from '../app/header';
 import { colors, fontWeights, makeTextStyle, mediaQueries, Container } from '../_common/styles';
 import MediaFilterForm from './forms/mediaFilterForm';
+import * as actions from './actions';
 
+@connect(null, (dispatch) => ({
+  loadActivities: bindActionCreators(actions.loadActivities, dispatch)
+}))
 @Radium
 export default class Reporting extends Component {
 
   static propTypes = {
-    children: PropTypes.node.isRequired
+    children: PropTypes.node.isRequired,
+    loadActivities: PropTypes.func.isRequired
   };
 
   static styles = {
@@ -53,7 +60,7 @@ export default class Reporting extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { children } = this.props;
+    const { children, loadActivities } = this.props;
     return (
       <div>
         <div style={styles.header}>
@@ -67,7 +74,7 @@ export default class Reporting extends Component {
             <div style={styles.tab.container}>
               <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/reporting/rankings'>Rankings</Link>
             </div>
-            <MediaFilterForm style={styles.mediaFilterForm} />
+            <MediaFilterForm style={styles.mediaFilterForm} onChange={() => this.props.loadActivities()} />
           </Container>
         </div>
         {children}

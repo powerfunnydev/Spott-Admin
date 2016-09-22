@@ -1,5 +1,6 @@
 import { formValueSelector } from 'redux-form/immutable';
 import { searchMedia as dataSearchMedia } from '../../actions/media';
+import { fetchAges, fetchEvents, fetchGenders, fetchTimelineData, fetchAgeData, fetchGenderData } from '../../actions/reporting';
 
 // Action types
 // ////////////
@@ -21,20 +22,30 @@ export function searchMedia (searchString = '') {
   };
 }
 
+// Events are for every view the same.
+export const loadAges = fetchAges;
+export const loadEvents = fetchEvents;
+export const loadGenders = fetchGenders;
+
 export function loadActivities () {
   return async (dispatch, getState) => {
     const state = getState();
-    const dateRangeSelector = formValueSelector('reportingDateRange');
-    const { dateFrom, dateTo } = dateRangeSelector(state, 'dateFrom', 'dateTo');
 
-    const eventsFilterSelector = formValueSelector('reportingEventsFilter');
-    const { events } = eventsFilterSelector(state, 'events');
+    const eventFilterSelector = formValueSelector('reportingActivityFilter');
+    const { endDate, event, startDate } = eventFilterSelector(state, 'endDate', 'event', 'startDate');
 
     const mediaFilterSelector = formValueSelector('reportingMediaFilter');
-    const { media } = mediaFilterSelector(state, 'media');
+    const media = mediaFilterSelector(state, 'media');
 
     try {
-      dispatch({ dateFrom, dateTo, events, media, type: ACTIVITIES_FETCH_START });
+      if (endDate && event && startDate && media) {
+        for (const mediumId of media) {
+          dispatch(fetchTimelineData({ startDate, endDate, eventType: event, mediumId }));
+          dispatch(fetchAgeData({ startDate, endDate, eventType: event, mediumId }));
+          dispatch(fetchGenderData({ startDate, endDate, eventType: event, mediumId }));
+        }
+      }
+
       // return await dispatch(dataSearchSeries({ searchString }));
     } catch (error) {
       dispatch({ error, type: ACTIVITIES_FETCH_ERROR });

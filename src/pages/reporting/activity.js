@@ -1,5 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import Highcharts from 'react-highcharts';
 // Note that Highcharts has to be in the codebase already
 // Highcharts more
@@ -9,26 +11,24 @@ import HighchartsExporting from 'highcharts-exporting';
 import Widget, { largeWidgetStyle, mediumWidgetStyle } from './widget';
 import { colors, fontWeights, makeTextStyle, mediaQueries, Container } from '../_common/styles';
 import ActivityFilterForm from './forms/activityFilterForm';
-import { ageConfig, genderConfig, timelineConfig } from './defaultHighchartsConfig';
+import * as actions from './actions';
+import { activitySelector } from './selector';
 
 HighchartsMore(Highcharts.Highcharts);
 HighchartsExporting(Highcharts.Highcharts);
 
+@connect(activitySelector, (dispatch) => ({
+  loadActivities: bindActionCreators(actions.loadActivities, dispatch)
+}))
 @Radium
 export default class ReportingActivity extends Component {
 
   static propTypes = {
-
+    ageConfig: PropTypes.object.isRequired,
+    genderConfig: PropTypes.object.isRequired,
+    loadActivities: PropTypes.func.isRequired,
+    timelineConfig: PropTypes.object.isRequired
   };
-
-  constructor (props) {
-    super(props);
-    this.load = :: this.load;
-  }
-
-  load () {
-    console.warn('props', this.props);
-  }
 
   static styles = {
     activityFilterForm: {
@@ -79,11 +79,14 @@ export default class ReportingActivity extends Component {
 
   render () {
     const styles = this.constructor.styles;
+    const { ageConfig, genderConfig, timelineConfig } = this.props;
     return (
       <div>
         <div style={styles.charts}>
           <Container>
-            <ActivityFilterForm style={styles.activityFilterForm} onChange={(field) => console.warn('CHANGED', field)} />
+            <ActivityFilterForm
+              style={styles.activityFilterForm}
+              onChange={() => this.props.loadActivities()} />
             <Widget style={largeWidgetStyle} title='Timeline'>
               <Highcharts config={timelineConfig} isPureConfig />
             </Widget>
@@ -91,9 +94,9 @@ export default class ReportingActivity extends Component {
               <Widget style={mediumWidgetStyle} title='Age'>
                 <Highcharts config={ageConfig} isPureConfig />
               </Widget>
-              <Widget style={mediumWidgetStyle} title='Gender'>
+              {/* <Widget style={mediumWidgetStyle} title='Gender'>
                 <Highcharts config={genderConfig} isPureConfig />
-              </Widget>
+              </Widget> */}
               {/* <Widget title='Location'>
                 <Highcharts config={locationConfig} isPureConfig />
               </Widget> */}

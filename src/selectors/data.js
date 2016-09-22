@@ -2,9 +2,17 @@ import { List, Map } from 'immutable';
 import { createSelector } from 'reselect';
 import { LAZY } from '../constants/statusTypes';
 
+export const agesEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'ages' ]);
+export const eventsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'events' ]);
+export const gendersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'genders' ]);
+
 export const mediaEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'media' ]);
 
 export const searchStringHasMediaRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasMedia' ]);
+
+export const agesListSelector = (state) => state.getIn([ 'data', 'lists', 'ages' ]);
+export const eventsListSelector = (state) => state.getIn([ 'data', 'lists', 'events' ]);
+export const gendersListSelector = (state) => state.getIn([ 'data', 'lists', 'genders' ]);
 
 /**
  * Utility selector factory for accessing related id's.
@@ -75,5 +83,19 @@ export function createEntityByIdSelector (entitiesSelector, entityKeySelector) {
     }
     // Good, we have an entity. Return it!
     return entity;
+  });
+}
+
+export function createEntitiesByListSelector (listSelector, entitiesByIdSelector) {
+  return createSelector(entitiesByIdSelector, listSelector, (entitiesById, list) => {
+    // If we did not have a list container, no fetching has started yet.
+    if (!list) {
+      return Map({ _status: LAZY, data: List() });
+    }
+    // Good, we have a list container. Ensure we always have a list in 'data', then
+    // resolve each item in the underlying 'data' list.
+    return list.set('data', (list.get('data') || List()).map((id) => {
+      return entitiesById.get(id);
+    }));
   });
 }
