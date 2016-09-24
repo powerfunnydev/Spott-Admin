@@ -75,7 +75,7 @@ export const ageConfig = fromJS({
     startAngle: -30
   },
   xAxis: {
-    categories: [ '-18', '18-25', '26-35', '36-45', '46-65', '66+' ],
+    categories: [], // '-18', '18-25', '26-35', '36-45', '46-65', '66+'
     labels: {
       style: {
         color: '#aab5b8',
@@ -102,7 +102,7 @@ export const ageConfig = fromJS({
     borderRadius: 2,
     boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)',
     headerFormat: '<p style="font-size: 10px; color: #6d8791; margin-bottom: 9px; margin-left: 3px; margin-top: 3px;">{eventType} ({point.x})</p>',
-    pointFormat: '<p style="font-size: 12px; margin-bottom: 7px; margin-left: 3px;"><span style="color:{point.color};">{series.name}</span>\u00a0\u00a0\u00a0\u00a0<b>{point.y}</b></p>',
+    pointFormat: '<p style="font-size: 12px; margin-bottom: 7px; margin-left: 3px;"><span style="color:{point.color};">{series.name}</span>\u00a0\u00a0\u00a0\u00a0<b>{point.y:.0f}%</b></p>',
     shared: true,
     style: {
       padding: 7
@@ -128,7 +128,7 @@ export const ageConfig = fromJS({
 //   data: [ 500, 390, 420, 310, 260, 25 ]
 // } ]
 
-export const genderConfig = {
+export const genderConfig = fromJS({
   chart: {
     style: {
       fontFamily: 'Rubik-Regular, Verdana, sans-serif'
@@ -144,7 +144,7 @@ export const genderConfig = {
     text: null
   },
   xAxis: {
-    categories: [ 'Male', 'Female' ],
+    categories: [], // Series
     labels: {
       style: {
         color: '#aab5b8',
@@ -189,13 +189,13 @@ export const genderConfig = {
     boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)',
     headerFormat:
       `<div style="color: #6d8791; margin-left: -11px; margin-right: -11px; margin-bottom: 2px; margin-top: -11px;">
-         <p style="font-size: 10px; margin-bottom: 10px;">{event}</p>
-         <p style="font-size: 12px;">{point.x}\u00a0\u00a0\u00a0\u00a0<b style="color: #17262b;">56%</b></p>
+         <p style="font-size: 10px; margin-bottom: 10px;">{eventType}</p>
+         <p style="font-size: 12px;">{point.x}\u00a0\u00a0\u00a0\u00a0<b style="color: #17262b;"></b></p>
       </div>`,
     pointFormat:
       `<div style="font-size: 12px; margin-left: -10px; margin-right: -10px;">
         <div style="margin-right: 5px; height: 20px; width: 4px; border-left-width: 1px; border-left-style: solid; border-left-color: #ced6da; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: #ced6da; display: inline-block;">\u00a0</div>
-        <div style="display: inline-block;vertical-align: bottom; margin-bottom: -6px;"><span style="color:{point.color};">{series.name}</span>\u00a0\u00a0\u00a0\u00a0<b>{point.y}</b></div>
+        <div style="display: inline-block;vertical-align: bottom; margin-bottom: -6px;"><span style="color:{point.color};">{series.name}</span>\u00a0\u00a0\u00a0\u00a0<b>{point.y:.0f}%</b></div>
       </div>`,
     shared: true,
     style: {
@@ -206,17 +206,18 @@ export const genderConfig = {
   },
   plotOptions: {
     column: {
-      stacking: 'normal'
+      stacking: 'percent'
     }
   },
-  series: [ {
-    name: 'Dagelijkse Kost',
-    data: [ 300, 380 ]
-  }, {
-    name: 'Familie',
-    data: [ 350, 350 ]
-  } ]
-};
+  series: []
+ //  {
+ //   name: 'Dagelijkse Kost', // Male
+ //   data: [ 300, 380 ]
+ // }, {
+ //   name: 'Familie', // Female
+ //   data: [ 350, 350 ]
+ // }
+});
 
 export const locationConfig = {
   chart: {

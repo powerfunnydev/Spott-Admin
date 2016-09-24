@@ -94,9 +94,9 @@ export default class ReportingActivity extends Component {
               <Widget style={mediumWidgetStyle} title='Age'>
                 <Highcharts config={ageConfig} isPureConfig />
               </Widget>
-              {/* <Widget style={mediumWidgetStyle} title='Gender'>
+              <Widget style={mediumWidgetStyle} title='Gender'>
                 <Highcharts config={genderConfig} isPureConfig />
-              </Widget> */}
+              </Widget>
               {/* <Widget title='Location'>
                 <Highcharts config={locationConfig} isPureConfig />
               </Widget> */}

@@ -87,7 +87,7 @@ export default class DateRangeInput extends Component {
               linkedCalendars
               startDate={startDate.input.value}
               theme={styles.theme}
-              onChange={this.onChange}/>}
+              onChange={this.onChange}/>
           </div>}
       </div>
     );

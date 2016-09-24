@@ -21,6 +21,8 @@ import { eventsFilterSelector } from '../selector';
   form: 'reportingActivityFilter',
   initialValues: {
     endDate: moment(),
+    // We assume the ALL event will be always there.
+    event: 'ALL',
     startDate: moment().startOf('day').subtract(1, 'months').date(1)
   }
 })
@@ -35,13 +37,8 @@ export default class ActivityFilterForm extends Component {
     onChange: PropTypes.func.isRequired
   };
 
-  async componentDidMount () {
-    const events = await this.props.loadEvents();
-    const firstEvent = events && events[0] && events[0].id;
-    if (firstEvent) {
-      this.props.dispatch(this.props.change('event', firstEvent));
-      this.props.onChange('event', firstEvent);
-    }
+  componentDidMount () {
+    this.props.loadEvents();
   }
 
   static styles = {
