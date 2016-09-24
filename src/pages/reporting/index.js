@@ -4,19 +4,24 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Link } from 'react-router';
 import Header from '../app/header';
-import { colors, fontWeights, makeTextStyle, mediaQueries, Container } from '../_common/styles';
+import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
 import MediaFilterForm from './forms/mediaFilterForm';
 import * as actions from './actions';
 
 @connect(null, (dispatch) => ({
-  loadActivities: bindActionCreators(actions.loadActivities, dispatch)
+  loadActivities: bindActionCreators(actions.loadActivities, dispatch),
+  loadRankings: bindActionCreators(actions.loadRankings, dispatch)
 }))
 @Radium
 export default class Reporting extends Component {
 
   static propTypes = {
     children: PropTypes.node.isRequired,
-    loadActivities: PropTypes.func.isRequired
+    loadActivities: PropTypes.func.isRequired,
+    loadRankings: PropTypes.func.isRequired,
+    location: PropTypes.shape({
+      pathname: PropTypes.string.isRequired
+    })
   };
 
   static styles = {
@@ -60,11 +65,12 @@ export default class Reporting extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { children, loadActivities } = this.props;
+    const { children, loadActivities, loadRankings, location } = this.props;
+    console.warn('PROPSE', this.props);
     return (
       <div>
         <div style={styles.header}>
-          <Header />
+          <Header hideHomePageLinks />
         </div>
         <div style={styles.tabs}>
           <Container>
@@ -74,7 +80,13 @@ export default class Reporting extends Component {
             <div style={styles.tab.container}>
               <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/reporting/rankings'>Rankings</Link>
             </div>
-            <MediaFilterForm style={styles.mediaFilterForm} onChange={() => this.props.loadActivities()} />
+            <MediaFilterForm style={styles.mediaFilterForm} onChange={() => {
+              if (location.pathname === '/reporting/rankings') {
+                loadRankings();
+              } else {
+                loadActivities();
+              }
+            }} />
           </Container>
         </div>
         {children}
