@@ -2,18 +2,17 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-// import { Link } from 'react-router';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { reduxForm, Field } from 'redux-form/immutable';
-// import Header from '../app/header';
 import SelectInput from '../_common/inputs/selectInput';
 import { colors, fontWeights, makeTextStyle, mediaQueries, Container } from '../_common/styles';
 import { FETCHING } from '../../constants/statusTypes';
 import * as actions from './actions';
-import { rankingsFilterSelector } from './selector';
+import { rankingsFilterSelector, rankingsSelector } from './selector';
 import Widget from './widget';
 
 @connect(rankingsFilterSelector, (dispatch) => ({
+  initializeRankingsFilterForm: bindActionCreators(actions.initializeRankingsFilterForm, dispatch),
   loadAges: bindActionCreators(actions.loadAges, dispatch),
   loadGenders: bindActionCreators(actions.loadGenders, dispatch)
 }))
@@ -25,24 +24,24 @@ import Widget from './widget';
 class RankingsFilterForm extends Component {
 
   static propTypes = {
-    // searchMedia: PropTypes.func.isRequired,
-    // searchedMediumIds: ImmutablePropTypes.map.isRequired,
-    // seriesById: ImmutablePropTypes.map,
-    style: PropTypes.object
+    ages: ImmutablePropTypes.map.isRequired,
+    agesById: ImmutablePropTypes.map.isRequired,
+    genders: ImmutablePropTypes.map.isRequired,
+    gendersById: ImmutablePropTypes.map.isRequired,
+    initializeRankingsFilterForm: PropTypes.func.isRequired,
+    loadAges: PropTypes.func.isRequired,
+    loadGenders: PropTypes.func.isRequired,
+    loadRankings: PropTypes.func.isRequired,
+    style: PropTypes.object,
+    onChange: PropTypes.func.isRequired
   };
 
   async componentDidMount () {
     const ages = await this.props.loadAges();
     const genders = await this.props.loadGenders();
-
-    const ageIds = ages.map(({ id }) => id);
-    const genderIds = genders.map(({ id }) => id);
-
-    this.props.dispatch(this.props.change('ages', ageIds));
-    this.props.onChange('ages', ageIds);
-
-    this.props.dispatch(this.props.change('genders', genderIds));
-    this.props.onChange('genders', genderIds);
+    // Initialize form and refresh rankings.
+    await this.props.initializeRankingsFilterForm(ages, genders);
+    await this.props.onChange();
   }
 
   static styles = {
@@ -109,9 +108,10 @@ class RankingsFilterForm extends Component {
 class RankingItem extends Component {
 
   static propTypes = {
+    count: PropTypes.number.isRequired,
+    countLabel: PropTypes.string.isRequired,
     imageUrl: PropTypes.string,
     position: PropTypes.number.isRequired,
-    subscribers: PropTypes.number.isRequired,
     title: PropTypes.string.isRequired
   };
 
@@ -146,23 +146,23 @@ class RankingItem extends Component {
       ...makeTextStyle(fontWeights.medium, '0.75em'),
       color: '#6d8791',
       textAlign: 'right',
-      width: '4em',
+      width: '10%',
       marginRight: '1.25em'
     },
     title: {
       ...makeTextStyle(fontWeights.regular, '0.75em'),
       color: '#17262b',
       marginRight: '0.625em',
-      width: '100%',
+      width: '55%',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap'
     },
-    subscribers: {
+    count: {
       ...makeTextStyle(fontWeights.regular, '0.625em'),
       color: '#6d8791',
       textAlign: 'right',
-      width: '100%',
+      width: '35%',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap'
@@ -171,7 +171,7 @@ class RankingItem extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { imageUrl, position, subscribers, title } = this.props;
+    const { imageUrl, position, count, countLabel, title } = this.props;
     return (
       <div style={styles.container}>
         <span style={styles.position}>{position}</span>
@@ -182,21 +182,23 @@ class RankingItem extends Component {
             </div>
           </div>}
         <span style={styles.title}>{title}</span>
-        <span style={styles.subscribers}><b>{subscribers}</b> subscribers</span>
+        <span style={styles.count}><b>{count}</b> {countLabel}</span>
       </div>
     );
   }
 }
 
-// @connect(selector, (dispatch) => ({
-//   searchMedia: bindActionCreators(actions.searchMedia, dispatch)
-// }))
+@connect(rankingsSelector, (dispatch) => ({
+  loadRankings: bindActionCreators(actions.loadRankings, dispatch)
+}))
 export default class Rankings extends Component {
 
   static propTypes = {
-    // searchMedia: PropTypes.func.isRequired,
-    // searchedMediumIds: ImmutablePropTypes.map.isRequired,
-    // seriesById: ImmutablePropTypes.map
+    brandSubscriptions: PropTypes.array.isRequired,
+    characterSubscriptions: PropTypes.array.isRequired,
+    loadRankings: PropTypes.func.isRequired,
+    mediumSubscriptions: PropTypes.array.isRequired,
+    productViews: PropTypes.array.isRequired
   };
 
   static styles = {
@@ -236,10 +238,14 @@ export default class Rankings extends Component {
       }
     },
     widgets: {
+      display: 'flex',
+      flexWrap: 'wrap',
       marginLeft: '-0.75em',
       marginRight: '-0.75em'
     },
     rankingWidget: {
+      height: 260,
+      overflowY: 'scroll',
       paddingBottom: 0,
       paddingLeft: 0,
       paddingRight: 0,
@@ -249,22 +255,63 @@ export default class Rankings extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const imageUrl = 'https://media.licdn.com/mpr/mpr/shrink_200_200/AAEAAQAAAAAAAAjwAAAAJGMzMDNiZDE5LTEyOGMtNDU2OS05MGMyLTM2ZTdmYjYzNTRlNg.png';
-    // const { searchMedia, seriesById, searchedMediumIds } = this.props;
-    const content = [ 1, 2, 3, 4, 5, 6 ].map((i) => <RankingItem imageUrl={imageUrl} key={i} position={i} subscribers={Math.round(Math.random() * 100000)} title='Dagelijkse Kost' />);
+    const { brandSubscriptions, characterSubscriptions, mediumSubscriptions, productViews } = this.props;
+
     return (
       <div>
         <Container>
-          <RankingsFilterForm style={styles.filter} onChange={() => console.warn('test')}/>
+          <RankingsFilterForm
+            style={styles.filter}
+            onChange={() => this.props.loadRankings()}/>
         </Container>
         <div style={styles.rankings}>
           <Container>
             <div style={styles.widgets}>
-              <Widget contentStyle={styles.rankingWidget} title='Programs'>{content}</Widget>
-              <Widget contentStyle={styles.rankingWidget} title='Interactive commercials'>{content}</Widget>
-              <Widget contentStyle={styles.rankingWidget} title='Characters'>{content}</Widget>
-              <Widget contentStyle={styles.rankingWidget} title='Products'>{content}</Widget>
-              <Widget contentStyle={styles.rankingWidget} title='Brands'>{content}</Widget>
+              <Widget contentStyle={styles.rankingWidget} title='Programs'>
+                {mediumSubscriptions.map((ms, i) => (
+                  <RankingItem
+                    count={ms.count}
+                    countLabel='Subscribers'
+                    imageUrl={ms.medium.posterImage && ms.medium.posterImage.url}
+                    key={ms.medium.id}
+                    position={i + 1}
+                    title={ms.medium.title} />
+                ))}
+              </Widget>
+              {/* <Widget contentStyle={styles.rankingWidget} title='Interactive commercials'>{content}</Widget> */}
+              <Widget contentStyle={styles.rankingWidget} title='Characters'>
+                {characterSubscriptions.map((cs, i) => (
+                  <RankingItem
+                    count={cs.count}
+                    countLabel='Subscribers'
+                    imageUrl={cs.character.portraitImage && cs.character.portraitImage.url}
+                    key={cs.character.id}
+                    position={i + 1}
+                    title={cs.character.name ? `${cs.character.name} - ${cs.medium.title}` : cs.medium.title} />
+                ))}
+              </Widget>
+              <Widget contentStyle={styles.rankingWidget} title='Products'>
+                {productViews.map((pw, i) => (
+                  <RankingItem
+                    count={pw.count}
+                    countLabel='Views'
+                    imageUrl={pw.product.image && pw.product.image.url}
+                    key={pw.product.id}
+                    position={i + 1}
+                    title={pw.product.shortName} />
+                ))}
+              </Widget>
+              <Widget contentStyle={styles.rankingWidget} title='Brands'>
+                {brandSubscriptions.map((bs, i) => (
+                  <RankingItem
+                    count={bs.count}
+                    countLabel='Subscribers'
+                    imageUrl={bs.brand.logo && bs.brand.logo.url}
+                    key={bs.brand.id}
+                    position={i + 1}
+                    title={bs.brand.name} />
+                ))}
+              </Widget>
             </div>
           </Container>
         </div>

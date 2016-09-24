@@ -1,5 +1,6 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
+import { Link } from 'react-router';
 import { connect } from 'react-redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Menu from '../menu';
@@ -12,6 +13,7 @@ const logoImage = require('./apptvateLogo.svg');
 export default class Header extends Component {
 
   static propTypes = {
+    hideHomePageLinks: PropTypes.bool,
     version: ImmutablePropTypes.mapContains({
       apiVersionFull: PropTypes.string.isRequired,
       versionFull: PropTypes.string.isRequired
@@ -44,7 +46,7 @@ export default class Header extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { version } = this.props;
+    const { hideHomePageLinks, version } = this.props;
 
     return (
       <div style={styles.container}>
@@ -52,10 +54,14 @@ export default class Header extends Component {
         <span style={styles.version}>App version: {version.get('versionFull')} API version: {version.get('apiVersionFull')}</span>
 
         {/* Logo */}
-        <div style={styles.logo.wrapper}><img src={logoImage} style={styles.logo.image} /></div>
+        <div style={styles.logo.wrapper}>
+          <Link to='/'>
+            <img src={logoImage} style={styles.logo.image} />
+          </Link>
+        </div>
 
         {/* Menu */}
-        <Menu />
+        <Menu hideHomePageLinks={hideHomePageLinks} />
 
       </div>
     );

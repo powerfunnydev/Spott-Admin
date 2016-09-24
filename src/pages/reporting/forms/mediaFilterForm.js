@@ -27,6 +27,13 @@ export default class MediaFilterForm extends Component {
     onChange: PropTypes.func.isRequired
   };
 
+  async componentDidMount () {
+    const media = await this.props.searchMedia();
+    const mediaIds = media.map(({ id }) => id).splice(0, 5);
+    this.props.dispatch(this.props.change('media', mediaIds));
+    this.props.onChange('media', mediaIds);
+  }
+
   render () {
     const { searchMedia, mediaById, searchedMediumIds, style, onChange } = this.props;
     return (
