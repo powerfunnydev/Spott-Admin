@@ -43,17 +43,18 @@ export default class ActivityFilterForm extends Component {
 
   static styles = {
     container: {
-      display: 'flex'
     },
     col6: {
       width: '100%'
-
     },
     eventContainer: {
+      display: 'flex',
       paddingRight: '1.5em'
     },
     field: {
-      paddingTop: 0
+      display: 'inline-block',
+      paddingTop: 0,
+      width: '50%'
     }
   };
 
@@ -63,24 +64,20 @@ export default class ActivityFilterForm extends Component {
 
     return (
       <form style={[ styles.container, style ]}>
-        <div style={[ styles.col6, styles.eventContainer ]}>
-          <Field
-            component={SelectInput}
-            getItemText={(id) => eventsById.getIn([ id, 'description' ])}
-            isLoading={events.get('_status') === FETCHING}
-            name='event'
-            options={events.get('data').map((e) => e.get('id')).toJS()}
-            placeholder='Event'
-            style={styles.field}
-            onChange={onChange.bind(null, 'event')} />
-        </div>
-        <div style={styles.col6}>
-          <Fields
-            component={DateRangeInput}
-            names={[ 'endDate', 'startDate' ]}
-            style={styles.field}
-            onChange={onChange.bind(null, 'dateRange')} />
-        </div>
+        <Field
+          component={SelectInput}
+          getItemText={(id) => eventsById.getIn([ id, 'description' ])}
+          isLoading={events.get('_status') === FETCHING}
+          name='event'
+          options={events.get('data').map((e) => e.get('id')).toJS()}
+          placeholder='Event'
+          style={[ styles.field, { paddingRight: '0.75em' } ]}
+          onChange={onChange.bind(null, 'event')} />
+        <Fields
+          component={DateRangeInput}
+          names={[ 'endDate', 'startDate' ]}
+          style={[ styles.field, { float: 'right', textAlign: 'right', paddingLeft: '0.75em' } ]}
+          onChange={onChange.bind(null, 'dateRange')} />
       </form>
     );
   }
