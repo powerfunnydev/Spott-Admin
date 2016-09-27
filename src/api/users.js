@@ -8,7 +8,7 @@ export async function login (baseUrl, { authenticationToken, email, password }) 
       authenticationToken: body.authenticationToken,
       user: {
         username: body.userName,
-        roles: body.roles
+        roles: body.roles.map(({ role }) => role)
       }
     };
   } catch (error) {

@@ -8,4 +8,5 @@ export const currentModalSelector = (state) => state.getIn([ 'global', 'currentM
 export const isAuthenticatedSelector = (state) => Boolean(state.getIn([ 'global', 'authentication', 'authenticationToken' ]));
 export const taggerBaseUrlSelector = (state) => state.getIn([ 'global', 'configuration', 'urls', 'tagger' ]);
 export const usernameSelector = (state) => state.getIn([ 'global', 'username' ]);
+export const userRolesSelector = (state) => state.getIn([ 'global', 'authentication', 'user', 'roles' ]);
 export const versionSelector = (state) => state.getIn([ 'global', 'configuration', 'version' ]);
