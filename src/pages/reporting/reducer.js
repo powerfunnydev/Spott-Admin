@@ -1,6 +1,32 @@
 import { Map } from 'immutable';
 import { MEDIA_SEARCH_START } from './actions';
 import * as actions from '../../actions/reporting';
+import { fetchStart, fetchSuccess, fetchError } from '../../reducers/utils';
+
+function fetchActivityDataStart (state, field, { mediumIds }) {
+  let newState = state;
+  for (const mediumId of mediumIds) {
+    newState = fetchStart(newState, [ field, mediumId ]);
+  }
+  return newState;
+}
+
+// data is an object with key: mediumId, value: list of data.
+function fetchActivityDataSuccess (state, field, { data, mediumIds }) {
+  let newState = state;
+  for (const mediumId of mediumIds) {
+    newState = fetchSuccess(newState, [ field, mediumId ], data[mediumId]);
+  }
+  return newState;
+}
+
+function fetchActivityDataError (state, field, { error, mediumIds }) {
+  let newState = state;
+  for (const mediumId of mediumIds) {
+    newState = fetchError(newState, [ field, mediumId ], error);
+  }
+  return newState;
+}
 
 export default (state = Map({
   ageData: Map({}),
@@ -17,25 +43,25 @@ export default (state = Map({
       return state.set('currentMediaSearchString', action.searchString);
 
     case actions.AGE_DATA_FETCH_START:
-      return state.setIn([ 'ageData', action.mediumId ], []);
+      return fetchActivityDataStart(state, 'ageData', action);
     case actions.AGE_DATA_FETCH_SUCCESS:
-      return state.setIn([ 'ageData', action.mediumId ], action.data);
+      return fetchActivityDataSuccess(state, 'ageData', action);
     case actions.AGE_DATA_FETCH_ERROR:
-      return state.setIn([ 'ageData', action.mediumId ], []);
+      return fetchActivityDataError(state, 'ageData', action);
 
     case actions.GENDER_DATA_FETCH_START:
-      return state.setIn([ 'genderData', action.mediumId ], []);
+      return fetchActivityDataStart(state, 'genderData', action);
     case actions.GENDER_DATA_FETCH_SUCCESS:
-      return state.setIn([ 'genderData', action.mediumId ], action.data);
+      return fetchActivityDataSuccess(state, 'genderData', action);
     case actions.GENDER_DATA_FETCH_ERROR:
-      return state.setIn([ 'genderData', action.mediumId ], []);
+      return fetchActivityDataError(state, 'genderData', action);
 
     case actions.TIMELINE_DATA_FETCH_START:
-      return state.setIn([ 'timelineData', action.mediumId ], []);
+      return fetchActivityDataStart(state, 'timelineData', action);
     case actions.TIMELINE_DATA_FETCH_SUCCESS:
-      return state.setIn([ 'timelineData', action.mediumId ], action.data);
+      return fetchActivityDataSuccess(state, 'timelineData', action);
     case actions.TIMELINE_DATA_FETCH_ERROR:
-      return state.setIn([ 'timelineData', action.mediumId ], []);
+      return fetchActivityDataError(state, 'timelineData', action);
 
     case actions.BRAND_SUBSCRIPTIONS_FETCH_START:
       return state;

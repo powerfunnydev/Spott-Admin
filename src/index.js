@@ -16,28 +16,48 @@ import MediaWelcome from './pages/media/welcome';
 import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
 import ReportingRankings from './pages/reporting/rankings';
-
+import { authenticationTokenSelector, userRolesSelector } from './selectors/global';
 import reducer from './reducers';
 
 /**
  * The application routes
  */
-const routes = (
-  <Route component={App}>
-    <Route component={MediaWelcome} path='/' />
-    <Route component={MediaWelcome} path='reset-password' resetPassword />
-    <Route component={MediaSinglePage} path='media'>
-      <IndexRoute component={MediaHome}/>
-      <Route component={MediaUpload} path='upload' />
+function getRoutes ({ getState }) {
+  function requireOneRole (roles) {
+    return (nextState, replace) => {
+      const state = getState();
+      if (!authenticationTokenSelector(state)) {
+        return replace({ pathname: '/', state: { nextPathname: nextState.location.pathname } });
+      }
+      const currentRoles = userRolesSelector(state).toJS();
+      let hasCorrectRoles = false;
+      for (const role of currentRoles) {
+        // If I have one of the roles, I'm authorized!
+        hasCorrectRoles = hasCorrectRoles || roles.indexOf(role) > -1;
+      }
+      if (!hasCorrectRoles) {
+        return replace({ pathname: '/', state: { nextPathname: nextState.location.pathname } });
+      }
+    };
+  }
+
+  return (
+    <Route component={App}>
+      <Route component={MediaWelcome} path='/' />
+      <Route component={MediaWelcome} path='reset-password' resetPassword />
+      <Route component={MediaSinglePage} path='media' onEnter={requireOneRole([ 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
+        <IndexRoute component={MediaHome}/>
+        <Route component={MediaUpload} path='upload' />
+      </Route>
+      <Route component={Reporting} path='reporting' onEnter={requireOneRole([ 'BROADCASTER', 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
+        <IndexRedirect to='activity' />
+        <Route component={ReportingActivity} path='activity' />
+        <Route component={ReportingRankings} path='rankings' />
+      </Route>
+      <Route component={Error404} path='*' />
     </Route>
-    <Route component={Reporting} path='reporting'>
-      <IndexRedirect to='activity' />
-      <Route component={ReportingActivity} path='activity' />
-      <Route component={ReportingRankings} path='rankings' />
-    </Route>
-    <Route component={Error404} path='*' />
-  </Route>
-);
+  );
+}
 
 /**
  * Bootstrap the application. Performs all necessary initializations.
@@ -70,7 +90,7 @@ async function boot () {
   ReactDOM.render(
     <Provider key='provider' store={store}>
       <Router history={browserHistory}>
-        {routes}
+        {getRoutes(store)}
       </Router>
     </Provider>,
     document.getElementById('root')

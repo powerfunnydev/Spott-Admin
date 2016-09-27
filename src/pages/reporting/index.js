@@ -80,7 +80,8 @@ export default class Reporting extends Component {
             <div style={styles.tab.container}>
               <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/reporting/rankings'>Rankings</Link>
             </div>
-            <MediaFilterForm style={styles.mediaFilterForm} onChange={() => {
+            <MediaFilterForm style={styles.mediaFilterForm} onChange={(f) => {
+              console.warn('CHANGE', f);
               if (location.pathname === '/reporting/rankings') {
                 loadRankings();
               } else {

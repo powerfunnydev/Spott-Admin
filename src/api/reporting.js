@@ -1,5 +1,5 @@
 import { get } from './request';
-import { transformBrandSubscription, transformCharacterSubscription, transformProductView, transformMediumSubscription } from './transformers';
+import { transformActivityData, transformBrandSubscription, transformCharacterSubscription, transformProductView, transformMediumSubscription } from './transformers';
 
 /**
  * GET /report/activityReportEventTypes
@@ -29,19 +29,22 @@ export async function getGenders (baseUrl, authenticationToken, locale) {
   return genders.map(({ description, gender }) => ({ description, id: gender }));
 }
 
-export async function getTimelineData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumId, startDate }) {
-  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=DATE_BASED&type=${eventType}&mediumUuid=${mediumId}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.format())}&aggregationLevel=DAY&fillGaps=true`);
-  return data;
+export async function getTimelineData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
+  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=DATE_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.format())}&aggregationLevel=DAY&fillGaps=true`);
+  console.warn('getTimelineData', data);
+  return transformActivityData(data, (d) => d);
 }
 
-export async function getAgeData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumId, startDate }) {
-  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=AGE_BASED&type=${eventType}&mediumUuid=${mediumId}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.format())}&aggregationLevel=DAY&fillGaps=true`);
-  return data.map(({ ageRange: { from, to }, value }) => ({ label: to ? `${from}-${to}` : `${from}+`, value }));
+export async function getAgeData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
+  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=AGE_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.format())}&aggregationLevel=DAY&fillGaps=true`);
+  console.warn('getAgeData', data);
+  return transformActivityData(data, (d) => d.map(({ ageRange: { from, to }, value }) => ({ label: to ? `${from}-${to}` : `${from}+`, value })));
 }
 
-export async function getGenderData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumId, startDate }) {
-  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=GENDER_BASED&type=${eventType}&mediumUuid=${mediumId}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.format())}&aggregationLevel=DAY&fillGaps=true`);
-  return data.map(({ gender, value }) => ({ id: gender, value }));
+export async function getGenderData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
+  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=GENDER_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.format())}&aggregationLevel=DAY&fillGaps=true`);
+  console.warn('getGenderData', data);
+  return transformActivityData(data, (d) => d.map(({ gender, value }) => ({ id: gender, value })));
 }
 
 export async function getRankingCharacterSubscriptions (baseUrl, authenticationToken, locale, { mediumIds }) {

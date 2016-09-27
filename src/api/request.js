@@ -79,14 +79,41 @@ function tryToParseJson (text) {
 // Hooking a finished hook into httpinvoke creates a new httpinvoke. The given callback is executed
 // upon each processed request. The callback has the power to manipulate the arguments seen by the
 // rest of the appication.
-const hookedHttpinvoke = httpinvoke.hook('finished', function (err, output, statusCode, headers) {
-  if (err) { return arguments; }
+const hookedHttpinvoke = httpinvoke.hook('finished', (err, output, statusCode, headers) => {
+  // httpinvoke failed?
+  if (err) {
+    // Was there a network error?
+    if (typeof err === 'object' && err.message === 'network error') {
+      return [ new NetworkError(err), output, statusCode, headers ];
+    }
+    // We do not know the exact reason, throw a general error
+    return [ new UnexpectedError(null, null, err), output, statusCode, headers ];
+  }
   // Convert 400's and 500's to error
   if (statusCode >= 400 && statusCode <= 599) {
+    let responseError;
+    // Try parse body text as JSON, but don't fail if we do not succeed.
     const newOutput = tryToParseJson(output);
-    return [ { body: newOutput, statusCode }, newOutput, statusCode, headers ];
+    // Construct correct low-level error
+    switch (statusCode) {
+      case 400:
+        responseError = new BadRequestError(newOutput); break;
+      case 401:
+        responseError = new UnauthorizedError(newOutput); break;
+      case 403:
+        // We received 403 Forbidden. We are not authorized. This can be due to an invalid
+        // expired authentication token. We do a hard reload of the application, which will
+        // redirect us to login. Ugly, but effective!
+        window.localStorage.removeItem('session');
+        return window.location.reload();
+      case 404:
+        responseError = new NotFoundError(newOutput); break;
+      default:
+        responseError = new UnexpectedError(null, newOutput);
+    }
+    return [ responseError, newOutput, statusCode, headers ];
   }
-  return [ err, tryToParseJson(output), statusCode, headers ];
+  return [ null, tryToParseJson(output), statusCode, headers ];
 });
 
 // Internal helpers

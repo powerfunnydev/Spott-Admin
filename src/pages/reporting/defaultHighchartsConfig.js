@@ -45,6 +45,9 @@ export const timelineConfig = fromJS({
   },
 
   plotOptions: {
+    series: {
+      animation: false
+    },
     spline: {
       marker: {
         enabled: true
@@ -117,7 +120,12 @@ export const ageConfig = fromJS({
       font: 'normal 12px Rubik-Regular, Verdana, sans-serif'
     }
   },
-  series: []
+  series: [],
+  plotOptions: {
+    series: {
+      animation: false
+    }
+  }
 });
 
 // [ {
@@ -207,16 +215,12 @@ export const genderConfig = fromJS({
   plotOptions: {
     column: {
       stacking: 'percent'
+    },
+    series: {
+      animation: false
     }
   },
   series: []
- //  {
- //   name: 'Dagelijkse Kost', // Male
- //   data: [ 300, 380 ]
- // }, {
- //   name: 'Familie', // Female
- //   data: [ 350, 350 ]
- // }
 });
 
 export const locationConfig = {
