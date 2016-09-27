@@ -19,8 +19,10 @@ export async function getActivityReportEvents (baseUrl, authenticationToken, loc
 export async function getAges (baseUrl, authenticationToken, locale) {
   const { body: ageRanges } = await get(authenticationToken, locale, `${baseUrl}/v003/report/ageRanges`);
   return ageRanges.map(({ from, to }) => {
-    const description = to ? `${from}-${to}` : `${from}+`;
-    return { description, id: description };
+    return {
+      description: to ? `${from}-${to}` : `${from}+`,
+      id: to ? `${from}-${to}` : `${from}-`
+    };
   });
 }
 
@@ -31,38 +33,35 @@ export async function getGenders (baseUrl, authenticationToken, locale) {
 
 export async function getTimelineData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
   const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=DATE_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.format())}&aggregationLevel=DAY&fillGaps=true`);
-  console.warn('getTimelineData', data);
   return transformActivityData(data, (d) => d);
 }
 
 export async function getAgeData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
   const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=AGE_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.format())}&aggregationLevel=DAY&fillGaps=true`);
-  console.warn('getAgeData', data);
-  return transformActivityData(data, (d) => d.map(({ ageRange: { from, to }, value }) => ({ label: to ? `${from}-${to}` : `${from}+`, value })));
+  return transformActivityData(data, (d) => d.map(({ ageRange: { from, to }, value }) => ({ id: to ? `${from}-${to}` : `${from}-`, value })));
 }
 
 export async function getGenderData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
   const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=GENDER_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.format())}&aggregationLevel=DAY&fillGaps=true`);
-  console.warn('getGenderData', data);
   return transformActivityData(data, (d) => d.map(({ gender, value }) => ({ id: gender, value })));
 }
 
-export async function getRankingCharacterSubscriptions (baseUrl, authenticationToken, locale, { mediumIds }) {
-  const { body: { characterSubscriptions } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumRanking?type=CHARACTER_SUBSCRIPTIONS&mediaUuidList=${mediumIds.join(',')}`);
+export async function getRankingCharacterSubscriptions (baseUrl, authenticationToken, locale, { ages, genders, mediumIds }) {
+  const { body: { characterSubscriptions } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumRanking?ageRanges=${ages.join(',')}&genders=${genders.join(',')}&type=CHARACTER_SUBSCRIPTIONS&mediaUuidList=${mediumIds.join(',')}`);
   return characterSubscriptions.map(transformCharacterSubscription);
 }
 
-export async function getRankingBrandSubscriptions (baseUrl, authenticationToken, locale, { mediumIds }) {
-  const { body: { brandSubscriptions } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumRanking?type=BRAND_SUBSCRIPTIONS&mediaUuidList=${mediumIds.join(',')}`);
+export async function getRankingBrandSubscriptions (baseUrl, authenticationToken, locale, { ages, genders, mediumIds }) {
+  const { body: { brandSubscriptions } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumRanking?ageRanges=${ages.join(',')}&genders=${genders.join(',')}&type=BRAND_SUBSCRIPTIONS&mediaUuidList=${mediumIds.join(',')}`);
   return brandSubscriptions.map(transformBrandSubscription);
 }
 
-export async function getRankingMediumSubscriptions (baseUrl, authenticationToken, locale, { mediumIds }) {
-  const { body: { mediumSubscriptions } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumRanking?type=MEDIUM_SUBSCRIPTIONS&mediaUuidList=${mediumIds.join(',')}`);
+export async function getRankingMediumSubscriptions (baseUrl, authenticationToken, locale, { ages, genders, mediumIds }) {
+  const { body: { mediumSubscriptions } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumRanking?ageRanges=${ages.join(',')}&genders=${genders.join(',')}&type=MEDIUM_SUBSCRIPTIONS&mediaUuidList=${mediumIds.join(',')}`);
   return mediumSubscriptions.map(transformMediumSubscription);
 }
 
-export async function getRankingProductViews (baseUrl, authenticationToken, locale, { mediumIds }) {
-  const { body: { productViews } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumRanking?type=PRODUCT_VIEWS&mediaUuidList=${mediumIds.join(',')}`);
+export async function getRankingProductViews (baseUrl, authenticationToken, locale, { ages, genders, mediumIds }) {
+  const { body: { productViews } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumRanking?ageRanges=${ages.join(',')}&genders=${genders.join(',')}&type=PRODUCT_VIEWS&mediaUuidList=${mediumIds.join(',')}`);
   return productViews.map(transformProductView);
 }

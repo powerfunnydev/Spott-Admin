@@ -55,7 +55,7 @@ export default class DateRangeInput extends Component {
       fontSize: '16px',
       height: 38,
       padding: 6,
-      width: 300
+      width: '100%'
     },
     theme: {
       DateRange: {
@@ -78,12 +78,12 @@ export default class DateRangeInput extends Component {
     const styles = this.constructor.styles;
     const { startDate, endDate, style } = this.props;
     // Format date.
-    const dateFormat = 'D MMM. YYYY';
+    const dateFormat = 'D MMMM YYYY';
 
     return (
-      <div style={[ { position: 'relative', width: '100%', textAlign: 'right' }, style ]}>
+      <div style={style}>
         <div style={styles.wrapper}>
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', paddingRight: '0.75em', width: '100%' }}>
             <input
               readOnly
               style={styles.base}
@@ -103,7 +103,7 @@ export default class DateRangeInput extends Component {
               </div>}
           </div>
           -
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'relative', paddingLeft: '0.75em', width: '100%' }}>
             <input
               readOnly
               style={styles.base}
