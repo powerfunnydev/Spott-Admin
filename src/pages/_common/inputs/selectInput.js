@@ -22,6 +22,7 @@ export default class SelectInput extends Component {
     input: PropTypes.object.isRequired, // Provides value and onChange. Note that value is an id.
     isLoading: PropTypes.bool,
     label: PropTypes.string,
+    maxSelect: PropTypes.number,
     meta: PropTypes.object.isRequired,
     multiselect: PropTypes.bool,
     options: PropTypes.array, // A list of id's...
@@ -72,7 +73,7 @@ export default class SelectInput extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { disabled, first, getItemText, getOptions, input, isLoading, label, meta, multiselect, placeholder, required, style } = this.props;
+    const { disabled, first, getItemText, getOptions, input, isLoading, label, meta, maxSelect, multiselect, placeholder, required, style } = this.props;
     const options = this.props.options ? this.props.options.map((o) => ({ value: o, label: getItemText(o) })) : [];
 
     let value;
@@ -81,6 +82,8 @@ export default class SelectInput extends Component {
     } else {
       value = input.value && { value: input.value, label: getItemText(input.value) };
     }
+
+    const maxSelected = maxSelect ? input.value.length >= maxSelect : false;
 
     return (
       <div style={[ !first && styles.padTop, style ]}>
@@ -93,7 +96,7 @@ export default class SelectInput extends Component {
           filterOption={() => true}
           isLoading={isLoading}
           multi={multiselect}
-          options={options}
+          options={maxSelected ? [] : options}
           placeholder={placeholder}
           style={[ styles.base, disabled && styles.disabled ]}
           value={value} // Overides value of of {...field}
