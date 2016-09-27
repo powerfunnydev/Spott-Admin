@@ -73,7 +73,7 @@ const timelineConfigSelector = createSelector(
     if (event) {
       eventType = event.get('description');
       for (const mediumId of mediumIds) {
-        const d = timelineData.get(mediumId) || [];
+        const d = timelineData.getIn([ mediumId, 'data' ]) || [];
         // There should be data available, otherwise Highcharts will crash.
         if (d.length > 0) {
           series.push({
@@ -103,7 +103,7 @@ const ageConfigSelector = createSelector(
     if (event) {
       eventType = event.get('description');
       for (const mediumId of mediumIds) {
-        d = ageData.get(mediumId) || [];
+        d = ageData.getIn([ mediumId, 'data' ]) || [];
         // There should be data available, otherwise Highcharts will crash.
         if (d.length > 0) {
           const total = d.reduce((t, { value }) => t + value, 0);
@@ -141,16 +141,15 @@ const genderConfigSelector = createSelector(
       // Aggregate data, there are three series, one for each gender.
       // We skip unknown gender for now.
       for (const mediumId of mediumIds) {
-        const d = genderData.get(mediumId) || [];
+        const d = genderData.getIn([ mediumId, 'data' ]) || [];
 
         if (d.length === 3) {
-          const unknown = d[0].value;
           const male = d[1].value;
           const female = d[2].value;
-          const total = unknown + male + female;
-          // Unknown = 50% male and 50% female.
-          series[0].data.push(100 * (male + (unknown / 2)) / total);
-          series[1].data.push(100 * (female + (unknown / 2)) / total);
+          const total = male + female;
+          // Unknown gender is ignored.
+          series[0].data.push(100 * male / total);
+          series[1].data.push(100 * female / total);
         }
       }
     }

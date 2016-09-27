@@ -35,21 +35,19 @@ export function loadActivities () {
     const state = getState();
 
     // Get the current selected media (series/movies/commercials).
-    const media = mediaFilterSelector(state, 'media');
+    const mediumIds = mediaFilterSelector(state, 'media');
 
     // Get the date range and the event type.
     const eventFilterSelector = formValueSelector('reportingActivityFilter');
     const { endDate, event, startDate } = eventFilterSelector(state, 'endDate', 'event', 'startDate');
 
     try {
-      if (endDate && event && startDate && media) {
+      if (endDate && event && startDate && mediumIds) {
         // We need to load the genders to show in the gender chart.
         await dispatch(loadGenders());
-        for (const mediumId of media) {
-          await dispatch(fetchTimelineData({ startDate, endDate, eventType: event, mediumId }));
-          await dispatch(fetchAgeData({ startDate, endDate, eventType: event, mediumId }));
-          await dispatch(fetchGenderData({ startDate, endDate, eventType: event, mediumId }));
-        }
+        await dispatch(fetchTimelineData({ startDate, endDate, eventType: event, mediumIds }));
+        await dispatch(fetchAgeData({ startDate, endDate, eventType: event, mediumIds }));
+        await dispatch(fetchGenderData({ startDate, endDate, eventType: event, mediumIds }));
       }
     } catch (error) {
       dispatch({ error, type: ACTIVITIES_FETCH_ERROR });

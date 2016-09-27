@@ -55,3 +55,11 @@ export function transformProductView ({
     count
   };
 }
+
+export function transformActivityData (dataList, transformer) {
+  const res = {};
+  for (const { data, medium } of dataList) {
+    res[medium.uuid] = transformer(data);
+  }
+  return res;
+}

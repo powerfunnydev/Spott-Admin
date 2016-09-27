@@ -2,7 +2,7 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { colors } from '../styles';
-import { DateRange } from 'react-date-range';
+import { Calendar } from 'react-date-range';
 
 @Radium
 export default class DateRangeInput extends Component {
@@ -16,24 +16,32 @@ export default class DateRangeInput extends Component {
 
   constructor (props) {
     super(props);
-    this.onChange = ::this.onChange;
     this.openDateRangePicker = ::this.openDateRangePicker;
     this.closeDateRangePicker = ::this.closeDateRangePicker;
-    this.state = { open: false };
+    this.state = { open: null };
   }
 
   closeDateRangePicker () {
-    this.setState({ open: false });
+    this.setState({ open: null });
   }
 
-  openDateRangePicker () {
-    this.setState({ open: true });
+  openDateRangePicker (openInputField) {
+    this.setState({ open: openInputField });
   }
 
-  onChange ({ endDate, startDate }) {
+  onChange (field, date) {
     const { startDate: { input: startDateInput }, endDate: { input: endDateInput }, onChange } = this.props;
-    startDateInput.onChange(startDate);
-    endDateInput.onChange(endDate);
+    let startDate = startDateInput.value;
+    let endDate = endDateInput.value;
+
+    if (field === 'startDate') {
+      startDateInput.onChange(date);
+      startDate = date;
+    } else {
+      endDateInput.onChange(date);
+      endDate = date;
+    }
+
     if (onChange) {
       onChange({ endDate, startDate });
     }
@@ -59,6 +67,10 @@ export default class DateRangeInput extends Component {
       top: '2.7em',
       right: 0,
       zIndex: 1
+    },
+    wrapper: {
+      display: 'flex',
+      alignItems: 'center'
     }
   };
 
@@ -70,25 +82,47 @@ export default class DateRangeInput extends Component {
 
     return (
       <div style={[ { position: 'relative', width: '100%', textAlign: 'right' }, style ]}>
-        <input
-          readOnly
-          style={styles.base}
-          type='text'
-          value={`${startDate.input.value.format(dateFormat).toString()} - ${endDate.input.value.format(dateFormat).toString()}`}
-          onBlur={this.closeDateRangePicker}
-          onFocus={this.openDateRangePicker} />
-        {this.state.open &&
-          <div style={styles.popup} onMouseDown={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}>
-            <DateRange
-              endDate={endDate.input.value}
-              linkedCalendars
-              startDate={startDate.input.value}
-              theme={styles.theme}
-              onChange={this.onChange}/>
-          </div>}
+        <div style={styles.wrapper}>
+          <div style={{ position: 'relative' }}>
+            <input
+              readOnly
+              style={styles.base}
+              type='text'
+              value={`${startDate.input.value.format(dateFormat).toString()}`}
+              onBlur={this.closeDateRangePicker}
+              onFocus={this.openDateRangePicker.bind(this, 'startDate')} />
+            {this.state.open === 'startDate' &&
+              <div style={styles.popup} onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}>
+                <Calendar
+                  date={startDate.input.value}
+                  theme={styles.theme}
+                  onChange={this.onChange.bind(this, 'startDate')}/>
+              </div>}
+          </div>
+          -
+          <div style={{ position: 'relative' }}>
+            <input
+              readOnly
+              style={styles.base}
+              type='text'
+              value={`${endDate.input.value.format(dateFormat).toString()}`}
+              onBlur={this.closeDateRangePicker}
+              onFocus={this.openDateRangePicker.bind(this, 'endDate')} />
+            {this.state.open === 'endDate' &&
+              <div style={styles.popup} onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}>
+                <Calendar
+                  date={endDate.input.value}
+                  theme={styles.theme}
+                  onChange={this.onChange.bind(this, 'endDate')}/>
+              </div>}
+          </div>
+        </div>
       </div>
     );
   }
