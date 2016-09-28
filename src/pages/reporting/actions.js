@@ -65,7 +65,6 @@ export function loadRankings () {
 
     try {
       if (ages && genders && media) {
-        console.warn('LOAD RANKINGS');
         await dispatch(fetchBrandSubscriptions({ ages, genders, mediumIds: media }));
         await dispatch(fetchCharacterSubscriptions({ ages, genders, mediumIds: media }));
         await dispatch(fetchMediumSubscriptions({ ages, genders, mediumIds: media }));
