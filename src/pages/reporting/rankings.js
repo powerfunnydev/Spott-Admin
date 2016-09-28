@@ -6,7 +6,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { reduxForm, Field } from 'redux-form/immutable';
 import SelectInput from '../_common/inputs/selectInput';
 import { colors, fontWeights, makeTextStyle, mediaQueries, Container } from '../_common/styles';
-import { FETCHING } from '../../constants/statusTypes';
+import { FETCHING, isLoading } from '../../constants/statusTypes';
 import * as actions from './actions';
 import { rankingsFilterSelector, rankingsSelector } from './selector';
 import Widget from './widget';
@@ -80,7 +80,7 @@ class RankingsFilterForm extends Component {
           <Field
             component={SelectInput}
             getItemText={(id) => agesById.getIn([ id, 'description' ])}
-            isLoading={ages.get('_status') === FETCHING}
+            isLoading={isLoading(ages)}
             multiselect
             name='ages'
             options={ages.get('data').map((e) => e.get('id')).toJS()}
@@ -194,11 +194,11 @@ class RankingItem extends Component {
 export default class Rankings extends Component {
 
   static propTypes = {
-    brandSubscriptions: PropTypes.array.isRequired,
-    characterSubscriptions: PropTypes.array.isRequired,
+    brandSubscriptions: ImmutablePropTypes.map.isRequired,
+    characterSubscriptions: ImmutablePropTypes.map.isRequired,
     loadRankings: PropTypes.func.isRequired,
-    mediumSubscriptions: PropTypes.array.isRequired,
-    productViews: PropTypes.array.isRequired
+    mediumSubscriptions: ImmutablePropTypes.map.isRequired,
+    productViews: ImmutablePropTypes.map.isRequired
   };
 
   static styles = {
@@ -267,8 +267,8 @@ export default class Rankings extends Component {
         <div style={styles.rankings}>
           <Container>
             <div style={styles.widgets}>
-              <Widget contentStyle={styles.rankingWidget} title='Programs'>
-                {mediumSubscriptions.map((ms, i) => (
+              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(mediumSubscriptions)} title='Programs'>
+                {mediumSubscriptions.get('data').map((ms, i) => (
                   <RankingItem
                     count={ms.count}
                     countLabel='Subscribers'
@@ -279,8 +279,8 @@ export default class Rankings extends Component {
                 ))}
               </Widget>
               {/* <Widget contentStyle={styles.rankingWidget} title='Interactive commercials'>{content}</Widget> */}
-              <Widget contentStyle={styles.rankingWidget} title='Characters'>
-                {characterSubscriptions.map((cs, i) => (
+              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(characterSubscriptions)} title='Characters'>
+                {characterSubscriptions.get('data').map((cs, i) => (
                   <RankingItem
                     count={cs.count}
                     countLabel='Subscribers'
@@ -290,8 +290,8 @@ export default class Rankings extends Component {
                     title={cs.character.name ? `${cs.character.name} - ${cs.medium.title}` : cs.medium.title} />
                 ))}
               </Widget>
-              <Widget contentStyle={styles.rankingWidget} title='Products'>
-                {productViews.map((pw, i) => (
+              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(productViews)} title='Products'>
+                {productViews.get('data').map((pw, i) => (
                   <RankingItem
                     count={pw.count}
                     countLabel='Views'
@@ -301,8 +301,8 @@ export default class Rankings extends Component {
                     title={pw.product.shortName} />
                 ))}
               </Widget>
-              <Widget contentStyle={styles.rankingWidget} title='Brands'>
-                {brandSubscriptions.map((bs, i) => (
+              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(brandSubscriptions)} title='Brands'>
+                {brandSubscriptions.get('data').map((bs, i) => (
                   <RankingItem
                     count={bs.count}
                     countLabel='Subscribers'
