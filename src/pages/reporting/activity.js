@@ -26,6 +26,9 @@ export default class ReportingActivity extends Component {
   static propTypes = {
     ageConfig: PropTypes.object.isRequired,
     genderConfig: PropTypes.object.isRequired,
+    isLoadingAge: PropTypes.bool.isRequired,
+    isLoadingGender: PropTypes.bool.isRequired,
+    isLoadingTimeline: PropTypes.bool.isRequired,
     loadActivities: PropTypes.func.isRequired,
     timelineConfig: PropTypes.object.isRequired
   };
@@ -79,7 +82,7 @@ export default class ReportingActivity extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { ageConfig, genderConfig, timelineConfig } = this.props;
+    const { ageConfig, genderConfig, isLoadingAge, isLoadingGender, isLoadingTimeline, timelineConfig } = this.props;
     return (
       <div>
         <div style={styles.charts}>
@@ -87,14 +90,14 @@ export default class ReportingActivity extends Component {
             <ActivityFilterForm
               style={styles.activityFilterForm}
               onChange={() => this.props.loadActivities()} />
-            <Widget style={largeWidgetStyle} title='Timeline'>
+            <Widget isLoading={isLoadingTimeline} style={largeWidgetStyle} title='Timeline'>
               <Highcharts config={timelineConfig} isPureConfig />
             </Widget>
             <div style={styles.widgets}>
-              <Widget style={mediumWidgetStyle} title='Age'>
+              <Widget isLoading={isLoadingAge} style={mediumWidgetStyle} title='Age'>
                 <Highcharts config={ageConfig} isPureConfig />
               </Widget>
-              <Widget style={mediumWidgetStyle} title='Gender'>
+              <Widget isLoading={isLoadingGender} style={mediumWidgetStyle} title='Gender'>
                 <Highcharts config={genderConfig} isPureConfig />
               </Widget>
               {/* <Widget title='Location'>

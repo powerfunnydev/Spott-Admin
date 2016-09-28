@@ -1,4 +1,4 @@
-import { Map } from 'immutable';
+import { fromJS } from 'immutable';
 import { MEDIA_SEARCH_START } from './actions';
 import * as actions from '../../actions/reporting';
 import { fetchStart, fetchSuccess, fetchError } from '../../reducers/utils';
@@ -28,14 +28,14 @@ function fetchActivityDataError (state, field, { error, mediumIds }) {
   return newState;
 }
 
-export default (state = Map({
-  ageData: Map({}),
-  brandSubscriptions: [],
-  characterSubscriptions: [],
-  genderData: Map({}),
-  mediumSubscriptions: [],
-  productViews: [],
-  timelineData: Map({})
+export default (state = fromJS({
+  ageData: {},
+  brandSubscriptions: { data: [] },
+  characterSubscriptions: { data: [] },
+  genderData: {},
+  mediumSubscriptions: { data: [] },
+  productViews: { data: [] },
+  timelineData: {}
 }), action) => {
   switch (action.type) {
 
@@ -64,36 +64,32 @@ export default (state = Map({
       return fetchActivityDataError(state, 'timelineData', action);
 
     case actions.BRAND_SUBSCRIPTIONS_FETCH_START:
-      return state;
-      // .set('brandSubscriptions', []);
+      return fetchStart(state, [ 'brandSubscriptions' ]);
     case actions.BRAND_SUBSCRIPTIONS_FETCH_SUCCESS:
-      return state.set('brandSubscriptions', action.data);
+      return fetchSuccess(state, [ 'brandSubscriptions' ], action.data);
     case actions.BRAND_SUBSCRIPTIONS_FETCH_ERROR:
-      return state.set('brandSubscriptions', []);
+      return fetchError(state, [ 'brandSubscriptions' ], action.error);
 
     case actions.CHARACTER_SUBSCRIPTIONS_FETCH_START:
-      return state;
-      // .set('characterSubscriptions', []);
+      return fetchStart(state, [ 'characterSubscriptions' ]);
     case actions.CHARACTER_SUBSCRIPTIONS_FETCH_SUCCESS:
-      return state.set('characterSubscriptions', action.data);
+      return fetchSuccess(state, [ 'characterSubscriptions' ], action.data);
     case actions.CHARACTER_SUBSCRIPTIONS_FETCH_ERROR:
-      return state.set('characterSubscriptions', []);
+      return fetchError(state, [ 'characterSubscriptions' ], action.error);
 
     case actions.MEDIUM_SUBSCRIPTIONS_FETCH_START:
-      return state;
-      // .set('mediumSubscriptions', []);
+      return fetchStart(state, [ 'mediumSubscriptions' ]);
     case actions.MEDIUM_SUBSCRIPTIONS_FETCH_SUCCESS:
-      return state.set('mediumSubscriptions', action.data);
+      return fetchSuccess(state, [ 'mediumSubscriptions' ], action.data);
     case actions.MEDIUM_SUBSCRIPTIONS_FETCH_ERROR:
-      return state.set('mediumSubscriptions', []);
+      return fetchError(state, [ 'mediumSubscriptions' ], action.error);
 
     case actions.PRODUCT_VIEWS_FETCH_START:
-      return state;
-      // .set('mediumSubscriptions', []);
+      return fetchStart(state, [ 'productViews' ]);
     case actions.PRODUCT_VIEWS_FETCH_SUCCESS:
-      return state.set('productViews', action.data);
+      return fetchSuccess(state, [ 'productViews' ], action.data);
     case actions.PRODUCT_VIEWS_FETCH_ERROR:
-      return state.set('productViews', []);
+      return fetchError(state, [ 'productViews' ], action.error);
 
     // Uninteresting actions
     default:

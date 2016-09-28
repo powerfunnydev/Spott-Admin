@@ -13,6 +13,7 @@ import {
   agesEntitiesSelector
 } from '../../selectors/data';
 import { ageConfig, genderConfig, timelineConfig } from './defaultHighchartsConfig';
+import { isLoading } from '../../constants/statusTypes';
 
 export const ageDataSelector = (state) => state.getIn([ 'reporting', 'ageData' ]);
 export const brandSubscriptionsSelector = (state) => state.getIn([ 'reporting', 'brandSubscriptions' ]);
@@ -90,6 +91,21 @@ const timelineConfigSelector = createSelector(
       .toJS();
   }
 );
+
+function isLoadingReducer (mediumIds, data) {
+  // If one of the mediumI
+  for (const mediumId of mediumIds) {
+    const loading = isLoading(data.get(mediumId));
+    if (loading) {
+      return true;
+    }
+  }
+  return false;
+}
+
+const isLoadingTimelineSelector = createSelector(mediumIdsSelector, timelineDataSelector, isLoadingReducer);
+const isLoadingAgeSelector = createSelector(mediumIdsSelector, ageDataSelector, isLoadingReducer);
+const isLoadingGenderSelector = createSelector(mediumIdsSelector, genderDataSelector, isLoadingReducer);
 
 const ageConfigSelector = createSelector(
   eventSelector,
@@ -171,6 +187,9 @@ const genderConfigSelector = createSelector(
 export const activitySelector = createStructuredSelector({
   ageConfig: ageConfigSelector,
   genderConfig: genderConfigSelector,
+  isLoadingAge: isLoadingAgeSelector,
+  isLoadingGender: isLoadingGenderSelector,
+  isLoadingTimeline: isLoadingTimelineSelector,
   mediaById: mediaEntitiesSelector,
   mediumIds: mediumIdsSelector,
   timelineConfig: timelineConfigSelector

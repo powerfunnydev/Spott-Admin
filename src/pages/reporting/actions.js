@@ -45,9 +45,9 @@ export function loadActivities () {
       if (endDate && event && startDate && mediumIds) {
         // We need to load the genders to show in the gender chart.
         await dispatch(loadGenders());
-        await dispatch(fetchTimelineData({ startDate, endDate, eventType: event, mediumIds }));
-        await dispatch(fetchAgeData({ startDate, endDate, eventType: event, mediumIds }));
-        await dispatch(fetchGenderData({ startDate, endDate, eventType: event, mediumIds }));
+        dispatch(fetchTimelineData({ startDate, endDate, eventType: event, mediumIds }));
+        dispatch(fetchAgeData({ startDate, endDate, eventType: event, mediumIds }));
+        dispatch(fetchGenderData({ startDate, endDate, eventType: event, mediumIds }));
       }
     } catch (error) {
       dispatch({ error, type: ACTIVITIES_FETCH_ERROR });
@@ -65,10 +65,10 @@ export function loadRankings () {
 
     try {
       if (ages && genders && media) {
-        await dispatch(fetchBrandSubscriptions({ ages, genders, mediumIds: media }));
-        await dispatch(fetchCharacterSubscriptions({ ages, genders, mediumIds: media }));
-        await dispatch(fetchMediumSubscriptions({ ages, genders, mediumIds: media }));
-        await dispatch(fetchProductViews({ ages, genders, mediumIds: media }));
+        dispatch(fetchBrandSubscriptions({ ages, genders, mediumIds: media }));
+        dispatch(fetchCharacterSubscriptions({ ages, genders, mediumIds: media }));
+        dispatch(fetchMediumSubscriptions({ ages, genders, mediumIds: media }));
+        dispatch(fetchProductViews({ ages, genders, mediumIds: media }));
       }
 
       // return await dispatch(dataSearchSeries({ searchString }));
