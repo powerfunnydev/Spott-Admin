@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { fontWeights, makeTextStyle, mediaQueries } from '../_common/styles';
+import Spinner from '../_common/spinner';
 
 export const smallWidgetStyle = {
   width: '100%',
@@ -50,6 +51,7 @@ export default class Widget extends Component {
   static propTypes = {
     children: PropTypes.node,
     contentStyle: PropTypes.object,
+    isLoading: PropTypes.bool,
     style: PropTypes.object,
     title: PropTypes.string
   };
@@ -70,8 +72,9 @@ export default class Widget extends Component {
     },
     header: {
       backgroundColor: '#eaeced',
-      paddingTop: '0.625em',
-      paddingBottom: '0.625em',
+      display: 'flex',
+      alignItems: 'center',
+      height: '2em',
       paddingLeft: '1em',
       paddingRight: '1em',
       borderBottomWidth: 1,
@@ -87,12 +90,13 @@ export default class Widget extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { children, contentStyle, style, title } = this.props;
+    const { children, contentStyle, isLoading, style, title } = this.props;
     return (
       <div style={[ smallWidgetStyle, style ]}>
         <div style={styles.container}>
           <div style={styles.header}>
-            <h2 style={styles.title}>{title}</h2>
+            <h2 style={styles.title}>{title}&nbsp;&nbsp;&nbsp;</h2>
+            {isLoading && <Spinner />}
           </div>
           <div style={[ styles.content, contentStyle ]}>
             {children}
