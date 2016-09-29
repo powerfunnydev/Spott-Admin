@@ -175,12 +175,11 @@ class RankingItem extends Component {
     return (
       <div style={styles.container}>
         <span style={styles.position}>{position}</span>
-        {imageUrl &&
           <div>
             <div style={styles.image.wrapper} >
-              <img alt={title} src={imageUrl} style={styles.image.image} title={title} />
+              {imageUrl && <img alt={title} src={imageUrl} style={styles.image.image} title={title} />}
             </div>
-          </div>}
+          </div>
         <span style={styles.title}>{title}</span>
         <span style={styles.count}><b>{count}</b> {countLabel}</span>
       </div>
@@ -198,6 +197,7 @@ export default class Rankings extends Component {
     characterSubscriptions: ImmutablePropTypes.map.isRequired,
     loadRankings: PropTypes.func.isRequired,
     mediumSubscriptions: ImmutablePropTypes.map.isRequired,
+    mediumSyncs: ImmutablePropTypes.map.isRequired,
     productViews: ImmutablePropTypes.map.isRequired
   };
 
@@ -255,7 +255,7 @@ export default class Rankings extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { brandSubscriptions, characterSubscriptions, mediumSubscriptions, productViews } = this.props;
+    const { brandSubscriptions, characterSubscriptions, mediumSubscriptions, mediumSyncs, productViews } = this.props;
 
     return (
       <div>
@@ -272,6 +272,17 @@ export default class Rankings extends Component {
                   <RankingItem
                     count={ms.count}
                     countLabel='Subscribers'
+                    imageUrl={ms.medium.posterImage && ms.medium.posterImage.url}
+                    key={ms.medium.id}
+                    position={i + 1}
+                    title={ms.medium.title} />
+                ))}
+              </Widget>
+              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(mediumSubscriptions)} title='Program syncs'>
+                {mediumSyncs.get('data').map((ms, i) => (
+                  <RankingItem
+                    count={ms.count}
+                    countLabel='Syncs'
                     imageUrl={ms.medium.posterImage && ms.medium.posterImage.url}
                     key={ms.medium.id}
                     position={i + 1}

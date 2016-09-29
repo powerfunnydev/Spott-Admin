@@ -1,6 +1,10 @@
 import { change, formValueSelector } from 'redux-form/immutable';
 import { searchMedia as dataSearchMedia } from '../../actions/media';
-import { fetchAges, fetchEvents, fetchGenders, fetchProductViews, fetchTimelineData, fetchAgeData, fetchBrandSubscriptions, fetchMediumSubscriptions, fetchGenderData, fetchCharacterSubscriptions } from '../../actions/reporting';
+import {
+  fetchAges, fetchEvents, fetchGenders, fetchProductViews, fetchTimelineData,
+  fetchAgeData, fetchBrandSubscriptions, fetchMediumSyncs, fetchMediumSubscriptions,
+  fetchGenderData, fetchCharacterSubscriptions
+} from '../../actions/reporting';
 
 const rankingsFilterSelector = formValueSelector('reportingRankingsFilter');
 const mediaFilterSelector = formValueSelector('reportingMediaFilter');
@@ -68,6 +72,7 @@ export function loadRankings () {
         dispatch(fetchBrandSubscriptions({ ages, genders, mediumIds: media }));
         dispatch(fetchCharacterSubscriptions({ ages, genders, mediumIds: media }));
         dispatch(fetchMediumSubscriptions({ ages, genders, mediumIds: media }));
+        dispatch(fetchMediumSyncs({ ages, genders, mediumIds: media }));
         dispatch(fetchProductViews({ ages, genders, mediumIds: media }));
       }
 

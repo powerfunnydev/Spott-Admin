@@ -1,5 +1,5 @@
 import { get } from './request';
-import { transformActivityData, transformBrandSubscription, transformCharacterSubscription, transformProductView, transformMediumSubscription } from './transformers';
+import { transformActivityData, transformBrandSubscription, transformCharacterSubscription, transformProductView, transformMediumInfo } from './transformers';
 
 /**
  * GET /report/activityReportEventTypes
@@ -58,7 +58,12 @@ export async function getRankingBrandSubscriptions (baseUrl, authenticationToken
 
 export async function getRankingMediumSubscriptions (baseUrl, authenticationToken, locale, { ages, genders, mediumIds }) {
   const { body: { mediumSubscriptions } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumRanking?ageRanges=${ages.join(',')}&genders=${genders.join(',')}&type=MEDIUM_SUBSCRIPTIONS&mediaUuidList=${mediumIds.join(',')}`);
-  return mediumSubscriptions.map(transformMediumSubscription);
+  return mediumSubscriptions.map(transformMediumInfo);
+}
+
+export async function getRankingMediumSyncs (baseUrl, authenticationToken, locale, { ages, genders, mediumIds }) {
+  const { body: { mediumSyncs } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumRanking?ageRanges=${ages.join(',')}&genders=${genders.join(',')}&type=MEDIUM_SYNCS&mediaUuidList=${mediumIds.join(',')}`);
+  return mediumSyncs.map(transformMediumInfo);
 }
 
 export async function getRankingProductViews (baseUrl, authenticationToken, locale, { ages, genders, mediumIds }) {

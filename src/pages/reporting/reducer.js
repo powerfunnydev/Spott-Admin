@@ -34,6 +34,7 @@ export default (state = fromJS({
   characterSubscriptions: { data: [] },
   genderData: {},
   mediumSubscriptions: { data: [] },
+  mediumSyncs: { data: [] },
   productViews: { data: [] },
   timelineData: {}
 }), action) => {
@@ -83,6 +84,13 @@ export default (state = fromJS({
       return fetchSuccess(state, [ 'mediumSubscriptions' ], action.data);
     case actions.MEDIUM_SUBSCRIPTIONS_FETCH_ERROR:
       return fetchError(state, [ 'mediumSubscriptions' ], action.error);
+
+    case actions.MEDIUM_SYNCS_FETCH_START:
+      return fetchStart(state, [ 'mediumSyncs' ]);
+    case actions.MEDIUM_SYNCS_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'mediumSyncs' ], action.data);
+    case actions.MEDIUM_SYNCS_FETCH_ERROR:
+      return fetchError(state, [ 'mediumSyncs' ], action.error);
 
     case actions.PRODUCT_VIEWS_FETCH_START:
       return fetchStart(state, [ 'productViews' ]);
