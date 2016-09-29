@@ -28,7 +28,8 @@ export function transformCharacterSubscription ({
   };
 }
 
-export function transformMediumSubscription ({
+// Can transforms medium subscriptions and medium syncs.
+export function transformMediumInfo ({
   medium: { posterImage, title, uuid: mediumId },
   count
 }) {

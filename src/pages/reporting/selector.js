@@ -21,6 +21,7 @@ export const characterSubscriptionsSelector = (state) => state.getIn([ 'reportin
 export const currentMediaSearchStringSelector = (state) => state.getIn([ 'reporting', 'currentMediaSearchString' ]);
 export const genderDataSelector = (state) => state.getIn([ 'reporting', 'genderData' ]);
 export const mediumSubscriptionsSelector = (state) => state.getIn([ 'reporting', 'mediumSubscriptions' ]);
+export const mediumSyncsSelector = (state) => state.getIn([ 'reporting', 'mediumSyncs' ]);
 export const productViewsSelector = (state) => state.getIn([ 'reporting', 'productViews' ]);
 export const timelineDataSelector = (state) => state.getIn([ 'reporting', 'timelineData' ]);
 
@@ -209,5 +210,6 @@ export const rankingsSelector = createStructuredSelector({
   brandSubscriptions: brandSubscriptionsSelector,
   characterSubscriptions: characterSubscriptionsSelector,
   mediumSubscriptions: mediumSubscriptionsSelector,
+  mediumSyncs: mediumSyncsSelector,
   productViews: productViewsSelector
 });
