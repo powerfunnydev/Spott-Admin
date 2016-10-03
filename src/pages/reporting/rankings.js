@@ -7,12 +7,12 @@ import { reduxForm, Field } from 'redux-form/immutable';
 import SelectInput from '../_common/inputs/selectInput';
 import { colors, fontWeights, makeTextStyle, mediaQueries, Container } from '../_common/styles';
 import { FETCHING, isLoading } from '../../constants/statusTypes';
+import { slowdown } from '../../utils';
 import * as actions from './actions';
 import { rankingsFilterSelector, rankingsSelector } from './selector';
 import Widget from './widget';
 
 @connect(rankingsFilterSelector, (dispatch) => ({
-  initializeRankingsFilterForm: bindActionCreators(actions.initializeRankingsFilterForm, dispatch),
   loadAges: bindActionCreators(actions.loadAges, dispatch),
   loadGenders: bindActionCreators(actions.loadGenders, dispatch)
 }))
@@ -28,7 +28,6 @@ class RankingsFilterForm extends Component {
     agesById: ImmutablePropTypes.map.isRequired,
     genders: ImmutablePropTypes.map.isRequired,
     gendersById: ImmutablePropTypes.map.isRequired,
-    initializeRankingsFilterForm: PropTypes.func.isRequired,
     loadAges: PropTypes.func.isRequired,
     loadGenders: PropTypes.func.isRequired,
     loadRankings: PropTypes.func.isRequired,
@@ -37,10 +36,9 @@ class RankingsFilterForm extends Component {
   };
 
   async componentDidMount () {
-    const ages = await this.props.loadAges();
-    const genders = await this.props.loadGenders();
-    // Initialize form and refresh rankings.
-    await this.props.initializeRankingsFilterForm(ages, genders);
+    // Load ages and genders, then load the rankings.
+    await this.props.loadAges();
+    await this.props.loadGenders();
     await this.props.onChange();
   }
 
@@ -60,6 +58,7 @@ class RankingsFilterForm extends Component {
         width: '50%'
       },
       [mediaQueries.medium]: {
+        // For the moment there are only 2 charts, location is coming soon.
         width: '50%'
       }
     },
@@ -97,7 +96,7 @@ class RankingsFilterForm extends Component {
             placeholder='Gender'
             style={styles.field}
             onChange={onChange.bind(null, 'genders')} />
-          {/* TODO: add location filter. */}
+          {/* TODO: Add location filter. */}
         </div>
       </form>
     );
@@ -201,6 +200,11 @@ export default class Rankings extends Component {
     productViews: ImmutablePropTypes.map.isRequired
   };
 
+  constructor (props) {
+    super(props);
+    this.slowdownLoadRankings = slowdown(props.loadRankings, 300);
+  }
+
   static styles = {
     rankings: {
       backgroundColor: colors.lightGray,
@@ -262,7 +266,7 @@ export default class Rankings extends Component {
         <Container>
           <RankingsFilterForm
             style={styles.filter}
-            onChange={() => this.props.loadRankings()}/>
+            onChange={() => this.slowdownLoadRankings()}/>
         </Container>
         <div style={styles.rankings}>
           <Container>

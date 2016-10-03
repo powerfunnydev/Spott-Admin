@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { Link } from 'react-router';
 import Header from '../app/header';
 import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
+import { slowdown } from '../../utils';
 import MediaFilterForm from './forms/mediaFilterForm';
 import * as actions from './actions';
 
@@ -23,6 +24,12 @@ export default class Reporting extends Component {
       pathname: PropTypes.string.isRequired
     })
   };
+
+  constructor (props) {
+    super(props);
+    this.slowdownLoadActivities = slowdown(props.loadActivities, 300);
+    this.slowdownLoadRankings = slowdown(props.loadRankings, 300);
+  }
 
   static styles = {
     header: {
@@ -65,8 +72,7 @@ export default class Reporting extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { children, loadActivities, loadRankings, location } = this.props;
-    console.warn('PROPSE', this.props);
+    const { children, location } = this.props;
     return (
       <div>
         <div style={styles.header}>
@@ -81,11 +87,10 @@ export default class Reporting extends Component {
               <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/reporting/rankings'>Rankings</Link>
             </div>
             <MediaFilterForm style={styles.mediaFilterForm} onChange={(f) => {
-              console.warn('CHANGE', f);
               if (location.pathname === '/reporting/rankings') {
-                loadRankings();
+                this.slowdownLoadRankings();
               } else {
-                loadActivities();
+                this.slowdownLoadActivities();
               }
             }} />
           </Container>

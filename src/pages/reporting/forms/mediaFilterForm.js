@@ -20,6 +20,8 @@ import { mediaFilterSelector } from '../selector';
 export default class MediaFilterForm extends Component {
 
   static propTypes = {
+    change: PropTypes.func.isRequired,
+    dispatch: PropTypes.func.isRequired,
     mediaById: ImmutablePropTypes.map,
     searchMedia: PropTypes.func.isRequired,
     searchedMediumIds: ImmutablePropTypes.map.isRequired,
@@ -28,6 +30,7 @@ export default class MediaFilterForm extends Component {
   };
 
   async componentDidMount () {
+    // Select the first 5 media.
     const media = await this.props.searchMedia();
     const mediaIds = media.map(({ id }) => id).splice(0, 5);
     this.props.dispatch(this.props.change('media', mediaIds));

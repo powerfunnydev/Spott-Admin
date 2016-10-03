@@ -39,7 +39,7 @@ export async function getTimelineData (baseUrl, authenticationToken, locale, { e
 export async function getAgeData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
   const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=AGE_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.format())}&aggregationLevel=DAY&fillGaps=true`);
   // There is no need for an id for ages.
-  return transformActivityData(data, (d) => d.map(({ ageRange: { from, to }, value }) => ({ label: to ? `${from}-${to}` : `${from}-`, value })));
+  return transformActivityData(data, (d) => d.map(({ ageRange: { from, to }, value }) => ({ label: to ? `${from}-${to}` : `${from}+`, value })));
 }
 
 export async function getGenderData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
