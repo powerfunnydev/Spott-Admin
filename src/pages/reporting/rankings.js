@@ -3,106 +3,13 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { reduxForm, Field } from 'redux-form/immutable';
-import SelectInput from '../_common/inputs/selectInput';
-import { colors, fontWeights, makeTextStyle, mediaQueries, Container } from '../_common/styles';
-import { FETCHING, isLoading } from '../../constants/statusTypes';
+import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
+import { isLoading } from '../../constants/statusTypes';
+import { slowdown } from '../../utils';
 import * as actions from './actions';
-import { rankingsFilterSelector, rankingsSelector } from './selector';
+import { rankingsSelector } from './selector';
 import Widget from './widget';
-
-@connect(rankingsFilterSelector, (dispatch) => ({
-  initializeRankingsFilterForm: bindActionCreators(actions.initializeRankingsFilterForm, dispatch),
-  loadAges: bindActionCreators(actions.loadAges, dispatch),
-  loadGenders: bindActionCreators(actions.loadGenders, dispatch)
-}))
-@reduxForm({
-  destroyOnUnmount: false,
-  form: 'reportingRankingsFilter'
-})
-@Radium
-class RankingsFilterForm extends Component {
-
-  static propTypes = {
-    ages: ImmutablePropTypes.map.isRequired,
-    agesById: ImmutablePropTypes.map.isRequired,
-    genders: ImmutablePropTypes.map.isRequired,
-    gendersById: ImmutablePropTypes.map.isRequired,
-    initializeRankingsFilterForm: PropTypes.func.isRequired,
-    loadAges: PropTypes.func.isRequired,
-    loadGenders: PropTypes.func.isRequired,
-    loadRankings: PropTypes.func.isRequired,
-    style: PropTypes.object,
-    onChange: PropTypes.func.isRequired
-  };
-
-  async componentDidMount () {
-    const ages = await this.props.loadAges();
-    const genders = await this.props.loadGenders();
-    // Initialize form and refresh rankings.
-    await this.props.initializeRankingsFilterForm(ages, genders);
-    await this.props.onChange();
-  }
-
-  static styles = {
-    filters: {
-      marginLeft: '-0.75em',
-      marginRight: '-0.75em'
-    },
-    field: {
-      display: 'inline-block',
-      paddingLeft: '0.75em',
-      paddingRight: '0.75em',
-      paddingTop: 0,
-      paddingBottom: '0.5em',
-      width: '100%',
-      [mediaQueries.small]: {
-        width: '50%'
-      },
-      [mediaQueries.medium]: {
-        width: '50%'
-      }
-    },
-    title: {
-      ...makeTextStyle(fontWeights.medium, '0.75em'),
-      color: '#6d8791',
-      paddingBottom: '1em'
-    }
-  };
-
-  render () {
-    const styles = this.constructor.styles;
-    const { ages, agesById, genders, gendersById, style, onChange } = this.props;
-    return (
-      <form style={style}>
-        <h2 style={styles.title}>Filter</h2>
-        <div style={styles.filters}>
-          <Field
-            component={SelectInput}
-            getItemText={(id) => agesById.getIn([ id, 'description' ])}
-            isLoading={isLoading(ages)}
-            multiselect
-            name='ages'
-            options={ages.get('data').map((e) => e.get('id')).toJS()}
-            placeholder='Age'
-            style={styles.field}
-            onChange={onChange.bind(null, 'ages')} />
-          <Field
-            component={SelectInput}
-            getItemText={(id) => gendersById.getIn([ id, 'description' ])}
-            isLoading={genders.get('_status') === FETCHING}
-            multiselect
-            name='genders'
-            options={genders.get('data').map((e) => e.get('id')).toJS()}
-            placeholder='Gender'
-            style={styles.field}
-            onChange={onChange.bind(null, 'genders')} />
-          {/* TODO: add location filter. */}
-        </div>
-      </form>
-    );
-  }
-}
+import RankingsFilterForm from './forms/rankingsFilterForm';
 
 @Radium
 class RankingItem extends Component {
@@ -201,6 +108,11 @@ export default class Rankings extends Component {
     productViews: ImmutablePropTypes.map.isRequired
   };
 
+  constructor (props) {
+    super(props);
+    this.slowdownLoadRankings = slowdown(props.loadRankings, 300);
+  }
+
   static styles = {
     rankings: {
       backgroundColor: colors.lightGray,
@@ -262,7 +174,7 @@ export default class Rankings extends Component {
         <Container>
           <RankingsFilterForm
             style={styles.filter}
-            onChange={() => this.props.loadRankings()}/>
+            onChange={() => this.slowdownLoadRankings()}/>
         </Container>
         <div style={styles.rankings}>
           <Container>

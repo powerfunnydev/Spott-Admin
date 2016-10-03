@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { Link } from 'react-router';
 import Header from '../app/header';
 import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
+import { slowdown } from '../../utils';
 import MediaFilterForm from './forms/mediaFilterForm';
 import * as actions from './actions';
 
@@ -23,6 +24,12 @@ export default class Reporting extends Component {
       pathname: PropTypes.string.isRequired
     })
   };
+
+  constructor (props) {
+    super(props);
+    this.slowdownLoadActivities = slowdown(props.loadActivities, 300);
+    this.slowdownLoadRankings = slowdown(props.loadRankings, 300);
+  }
 
   static styles = {
     header: {
@@ -60,32 +67,37 @@ export default class Reporting extends Component {
     mediaFilterForm: {
       float: 'right',
       width: '50%'
+    },
+    wrapper: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'flex-end'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { children, loadActivities, loadRankings, location } = this.props;
-    console.warn('PROPSE', this.props);
+    const { children, location } = this.props;
     return (
       <div>
         <div style={styles.header}>
           <Header hideHomePageLinks />
         </div>
         <div style={styles.tabs}>
-          <Container>
-            <div style={styles.tab.container}>
-              <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/reporting/activity'>Activity</Link>
-            </div>
-            <div style={styles.tab.container}>
-              <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/reporting/rankings'>Rankings</Link>
+          <Container style={styles.wrapper}>
+            <div>
+              <div style={styles.tab.container}>
+                <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/reporting/activity'>Activity</Link>
+              </div>
+              <div style={styles.tab.container}>
+                <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/reporting/rankings'>Rankings</Link>
+              </div>
             </div>
             <MediaFilterForm style={styles.mediaFilterForm} onChange={(f) => {
-              console.warn('CHANGE', f);
               if (location.pathname === '/reporting/rankings') {
-                loadRankings();
+                this.slowdownLoadRankings();
               } else {
-                loadActivities();
+                this.slowdownLoadActivities();
               }
             }} />
           </Container>

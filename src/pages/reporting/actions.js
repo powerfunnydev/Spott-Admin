@@ -63,18 +63,17 @@ export function loadRankings () {
   return async (dispatch, getState) => {
     const state = getState();
 
-    const { ages, genders } = rankingsFilterSelector(state, 'ages', 'genders');
+    const { ages = [], genders = [] } = rankingsFilterSelector(state, 'ages', 'genders');
 
     const media = mediaFilterSelector(state, 'media');
+    const mediumIds = media || [];
 
     try {
-      if (ages && genders && media) {
-        dispatch(fetchBrandSubscriptions({ ages, genders, mediumIds: media }));
-        dispatch(fetchCharacterSubscriptions({ ages, genders, mediumIds: media }));
-        dispatch(fetchMediumSubscriptions({ ages, genders, mediumIds: media }));
-        dispatch(fetchMediumSyncs({ ages, genders, mediumIds: media }));
-        dispatch(fetchProductViews({ ages, genders, mediumIds: media }));
-      }
+      dispatch(fetchBrandSubscriptions({ ages, genders, mediumIds }));
+      dispatch(fetchCharacterSubscriptions({ ages, genders, mediumIds }));
+      dispatch(fetchMediumSubscriptions({ ages, genders, mediumIds }));
+      dispatch(fetchMediumSyncs({ ages, genders, mediumIds }));
+      dispatch(fetchProductViews({ ages, genders, mediumIds }));
 
       // return await dispatch(dataSearchSeries({ searchString }));
     } catch (error) {
@@ -83,19 +82,19 @@ export function loadRankings () {
   };
 }
 
-export function initializeRankingsFilterForm (ages, genders) {
-  return async (dispatch, getState) => {
-    const state = getState();
-    const { ages: currentAges, genders: currentGenders } = rankingsFilterSelector(state, 'ages', 'genders');
-
-    if (!currentAges || currentAges.length === 0) {
-      const ageIds = ages.map(({ id }) => id);
-      dispatch(change('reportingRankingsFilter', 'ages', ageIds));
-    }
-
-    if (!currentGenders || currentGenders.length === 0) {
-      const genderIds = genders.map(({ id }) => id);
-      dispatch(change('reportingRankingsFilter', 'genders', genderIds));
-    }
-  };
-}
+// export function initializeRankingsFilterForm (ages, genders) {
+//   return async (dispatch, getState) => {
+//     const state = getState();
+//     const { ages: currentAges, genders: currentGenders } = rankingsFilterSelector(state, 'ages', 'genders');
+//
+//     if (!currentAges || currentAges.length === 0) {
+//       const ageIds = ages.map(({ id }) => id);
+//       dispatch(change('reportingRankingsFilter', 'ages', ageIds));
+//     }
+//
+//     if (!currentGenders || currentGenders.length === 0) {
+//       const genderIds = genders.map(({ id }) => id);
+//       dispatch(change('reportingRankingsFilter', 'genders', genderIds));
+//     }
+//   };
+// }

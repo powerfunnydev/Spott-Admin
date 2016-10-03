@@ -68,6 +68,13 @@ export default class SelectInput extends Component {
     disabled: {
       backgroundColor: colors.lightGray,
       color: colors.darkerGray
+    },
+    info: {
+      color: colors.darkGray,
+      paddingBottom: 3,
+      paddingTop: 3,
+      fontSize: '11px',
+      float: 'right'
     }
   };
 
@@ -104,6 +111,7 @@ export default class SelectInput extends Component {
           onChange={this.onInternalChange}  // Overides onChange of of {...field};
           onInputChange={getOptions}
           onOpen={getOptions} />
+        {typeof maxSelect === 'number' && <span style={styles.info}>{input.value.length}/{maxSelect} selected</span>}
         {meta.touched && meta.error === 'required' && <div style={errorTextStyle}>This field is required.</div>}
       </div>
     );
