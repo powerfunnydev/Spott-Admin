@@ -67,6 +67,11 @@ export default class Reporting extends Component {
     mediaFilterForm: {
       float: 'right',
       width: '50%'
+    },
+    wrapper: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'flex-end'
     }
   };
 
@@ -79,12 +84,14 @@ export default class Reporting extends Component {
           <Header hideHomePageLinks />
         </div>
         <div style={styles.tabs}>
-          <Container>
-            <div style={styles.tab.container}>
-              <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/reporting/activity'>Activity</Link>
-            </div>
-            <div style={styles.tab.container}>
-              <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/reporting/rankings'>Rankings</Link>
+          <Container style={styles.wrapper}>
+            <div>
+              <div style={styles.tab.container}>
+                <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/reporting/activity'>Activity</Link>
+              </div>
+              <div style={styles.tab.container}>
+                <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/reporting/rankings'>Rankings</Link>
+              </div>
             </div>
             <MediaFilterForm style={styles.mediaFilterForm} onChange={(f) => {
               if (location.pathname === '/reporting/rankings') {

@@ -71,6 +71,7 @@ export default class SelectInput extends Component {
     },
     info: {
       color: colors.darkGray,
+      paddingBottom: 3,
       paddingTop: 3,
       fontSize: '11px',
       float: 'right'
