@@ -13,6 +13,7 @@ const logoImage = require('./apptvateLogo.svg');
 export default class Header extends Component {
 
   static propTypes = {
+    currentPath: PropTypes.string.isRequired,
     hideHomePageLinks: PropTypes.bool,
     version: ImmutablePropTypes.mapContains({
       apiVersionFull: PropTypes.string.isRequired,
@@ -47,7 +48,6 @@ export default class Header extends Component {
   render () {
     const { styles } = this.constructor;
     const { hideHomePageLinks, version } = this.props;
-
     return (
       <div style={styles.container}>
 
@@ -61,7 +61,7 @@ export default class Header extends Component {
         </div>
 
         {/* Menu */}
-        <Menu hideHomePageLinks={hideHomePageLinks} />
+        <Menu currentPath={this.props.currentPath} hideHomePageLinks={hideHomePageLinks} />
 
       </div>
     );

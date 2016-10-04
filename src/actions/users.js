@@ -18,6 +18,7 @@ export const LOGOUT_START = 'LOGOUT_START';
 export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
 
 export function login ({ authenticationToken, email, password }) {
+  console.log(email, ' ', password);
   return async (dispatch, getState) => {
     dispatch({ type: LOGIN_START });
     try {

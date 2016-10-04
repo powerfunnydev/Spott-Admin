@@ -1,5 +1,5 @@
 import Radium from 'radium';
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import About from './about';
 import Contact from './contact';
 import Footer from '../../app/footer';
@@ -13,10 +13,15 @@ import Whitepapers from './whitepapers';
 @Radium
 export default class Welcome extends Component {
 
+  static propTypes = {
+    children: PropTypes.node,
+    location: PropTypes.object.isRequired
+  }
+
   render () {
     return (
       <div style={{ minWidth: 350 }}>
-        <Hero />
+        <Hero currentPath={this.props.location.pathname}/>
         <About />
         <ForWho />
         <Partners />
@@ -24,7 +29,8 @@ export default class Welcome extends Component {
         <HowItWorks />
         <Pricing />
         <Contact />
-        <Footer />
+        <Footer currentPath={this.props.location.pathname}/>
+        {this.props.children}
       </div>
     );
   }

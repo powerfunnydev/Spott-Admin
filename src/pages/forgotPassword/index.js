@@ -1,7 +1,10 @@
-import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { push as routerPush } from 'react-router-redux';
 import { reduxForm, Field } from 'redux-form/immutable';
 import Radium from 'radium';
+import React, { Component, PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 import { buttonStyles } from '../_common/styles';
 import localized from '../_common/localized';
 import Modal from '../_common/modal';
@@ -48,14 +51,18 @@ const renderField = Radium((props) => {
   form: 'forgotPassword',
   validate
 })
+@connect(null, (dispatch) => ({
+  routerPush: bindActionCreators(routerPush, dispatch)
+}))
 @Radium
 export default class ForgotPasswordModal extends Component {
 
   static propTypes = {
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
+    location: PropTypes.object,
+    routerPush: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired, // Callback for closing the dialog and clearing the form.
     onSubmit: PropTypes.func.isRequired
   };
 
@@ -76,8 +83,8 @@ export default class ForgotPasswordModal extends Component {
   }
 
   onCloseClick (e) {
-    e.preventDefault();
-    this.props.onCancel();
+    console.log('forgot', this.props.location);
+    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
   }
 
   /* eslint-disable react/no-set-state */
@@ -115,10 +122,11 @@ export default class ForgotPasswordModal extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { error, onCancel, t } = this.props;
+    const { error, t } = this.props;
     const { email } = this.state;
+    console.log('loc forgot pass', this.props.location);
     return (
-      <Modal isOpen onClose={onCancel}>
+      <Modal isOpen onClose={this.onCloseClick}>
         <div style={styles.container}>
           {email
             ? <div style={styles.content}>

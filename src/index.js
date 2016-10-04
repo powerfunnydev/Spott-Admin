@@ -13,6 +13,9 @@ import MediaSinglePage from './pages/media/singlePage';
 import MediaHome from './pages/media/home';
 import MediaUpload from './pages/media/upload';
 import MediaWelcome from './pages/media/welcome';
+import Login from './pages/login';
+import ForgotPassword from './pages/forgotPassword';
+import ResetPassword from './pages/resetPassword';
 import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
 import ReportingRankings from './pages/reporting/rankings';
@@ -27,7 +30,7 @@ function getRoutes ({ getState }) {
     return (nextState, replace) => {
       const state = getState();
       if (!authenticationTokenSelector(state)) {
-        return replace({ pathname: '/', state: { nextPathname: nextState.location.pathname } });
+        return replace({ pathname: '/login', state: { returnTo: nextState.location.pathname } });
       }
       const currentRoles = userRolesSelector(state).toJS();
       let hasCorrectRoles = false;
@@ -36,15 +39,18 @@ function getRoutes ({ getState }) {
         hasCorrectRoles = hasCorrectRoles || roles.indexOf(role) > -1;
       }
       if (!hasCorrectRoles) {
-        return replace({ pathname: '/', state: { nextPathname: nextState.location.pathname } });
+        return replace({ pathname: '/', state: { returnTo: nextState.location.pathname } });
       }
     };
   }
 
   return (
     <Route component={App}>
-      <Route component={MediaWelcome} path='/' />
-      <Route component={MediaWelcome} path='reset-password' resetPassword />
+      <Route component={MediaWelcome} path='/'>
+        <Route component={Login} path='login' />
+        <Route component={ForgotPassword} path='forgotpassword' />
+        <Route component={ResetPassword} path='resetPassword' />
+      </Route>
       <Route component={MediaSinglePage} path='media' onEnter={requireOneRole([ 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
         <IndexRoute component={MediaHome}/>
         <Route component={MediaUpload} path='upload' />

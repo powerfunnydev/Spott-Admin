@@ -1,13 +1,14 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { reduxForm, Field } from 'redux-form/immutable';
+import { push as routerPush } from 'react-router-redux';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { buttonStyles } from '../_common/styles';
 import localized from '../_common/localized';
 import Modal from '../_common/modal';
-import * as globalActions from '../../actions/global';
+import * as actions from '../app/actions';
 
 function validate (values) {
   const validationErrors = {};
@@ -52,7 +53,8 @@ const renderField = Radium((props) => {
 
 @localized
 @connect(null, (dispatch) => ({
-  openForgotPasswordModal: bindActionCreators(globalActions.openForgotPasswordModal, dispatch)
+  login: bindActionCreators(actions.login, dispatch),
+  routerPush: bindActionCreators(routerPush, dispatch)
 }))
 @reduxForm({
   form: 'login',
@@ -64,16 +66,17 @@ export default class LoginModal extends Component {
   static propTypes = {
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
-    openForgotPasswordModal: PropTypes.func.isRequired,
-    t: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired, // Callback for closing the dialog and clearing the form.
-    onSubmit: PropTypes.func.isRequired
+    location: PropTypes.object.isRequired,
+    login: PropTypes.func.isRequired,
+    routerPush: PropTypes.func.isRequired,
+    t: PropTypes.func.isRequired
   };
 
   constructor (props) {
     super(props);
     this.onCloseClick = ::this.onCloseClick;
     this.onForgotPasswordClick = ::this.onForgotPasswordClick;
+    this.submit = ::this.submit;
   }
 
   // The autofocus attribute will only work when the page loads initially.
@@ -84,14 +87,18 @@ export default class LoginModal extends Component {
     }, 0);
   }
 
-  onCloseClick (e) {
-    e.preventDefault();
-    this.props.onCancel();
+  async submit (values) {
+    console.log('values', values.toJS());
+    await this.props.login(values);
+    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
   }
 
-  onForgotPasswordClick (e) {
-    e.preventDefault();
-    this.props.openForgotPasswordModal();
+  onCloseClick () {
+    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
+  }
+
+  onForgotPasswordClick () {
+    this.props.routerPush({ pathname: '/forgotpassword', returnTo: this.props.location.pathname });
   }
 
   static styles = {
@@ -124,18 +131,18 @@ export default class LoginModal extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { error, handleSubmit, onCancel, t } = this.props;
-
+    const { error, handleSubmit, login, t } = this.props;
+    console.log('loc login', this.props.location);
     return (
-      <Modal isOpen onClose={onCancel}>
+      <Modal isOpen onClose={this.onCloseClick}>
         <div style={styles.container}>
-          <form style={styles.content} onSubmit={handleSubmit}>
+          <form style={styles.content} onSubmit={handleSubmit(this.submit)}>
             <Field component={renderField} name='email' placeholder={t('login.email')} ref={(c) => { this._email = c; }} />
             <Field component={renderField} name='password' placeholder={t('login.password')} type='password' />
 
             {error && typeof error === 'string' && <div style={styles.error}>{t(error)}</div>}
 
-            {/* <button style={styles.forgotPassword} type='button' onClick={this.onForgotPasswordClick}>{t('login.forgotPassword')}</button> */}
+            <button style={styles.forgotPassword} type='button' onClick={this.onForgotPasswordClick}>{t('login.forgotPassword')}</button>
             <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} type='submit'>{t('login.submitButton')}</button>
           </form>
         </div>

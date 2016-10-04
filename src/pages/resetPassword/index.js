@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { reduxForm, Field } from 'redux-form/immutable';
+import { push as routerPush } from 'react-router-redux';
 import Radium from 'radium';
 import { buttonStyles } from '../_common/styles';
 import localized from '../_common/localized';
@@ -50,7 +51,7 @@ const renderField = Radium((props) => {
 
 @localized
 @connect(null, (dispatch) => ({
-  updatePath: bindActionCreators(routerActions.updatePath, dispatch)
+  routerPush: bindActionCreators(routerPush, dispatch)
 }))
 @reduxForm({
   form: 'resetPassword',
@@ -62,9 +63,9 @@ export default class ResetPasswordModal extends Component {
   static propTypes = {
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
+    routerPush: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired,
-    updatePath: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired, // Callback for closing the dialog and clearing the form.
     onSubmit: PropTypes.func.isRequired
   };
 
@@ -85,9 +86,8 @@ export default class ResetPasswordModal extends Component {
   }
 
   onCloseClick (e) {
-    e.preventDefault();
-    this.props.onCancel();
-    this.props.updatePath('/');
+    console.log('loc resetpassword', this.props.location);
+    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
   }
 
   /* eslint-disable react/no-set-state */
@@ -125,11 +125,11 @@ export default class ResetPasswordModal extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { error, t, onCancel } = this.props;
+    const { error, t } = this.props;
     const { success } = this.state;
 
     return (
-      <Modal isOpen onClose={onCancel}>
+      <Modal isOpen onClose={this.onCloseClick}>
         <div style={styles.container}>
           {success
             ? <div style={styles.content}>
