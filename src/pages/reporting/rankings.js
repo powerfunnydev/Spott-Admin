@@ -22,6 +22,24 @@ class RankingItem extends Component {
     title: PropTypes.string.isRequired
   };
 
+  constructor (props) {
+    super(props);
+    this.onMouseEnter = ::this.onMouseEnter;
+    this.onMouseLeave = ::this.onMouseLeave;
+    this.state = { tooltip: false };
+  }
+
+  /* eslint-disable react/no-set-state */
+  onMouseEnter (e) {
+    e.preventDefault();
+    const { left, top } = this._container.getClientRects()[0];
+    this.setState({ tooltip: { x: left, y: top - 200 } });
+  }
+  onMouseLeave (e) {
+    e.preventDefault();
+    this.setState({ tooltip: false });
+  }
+
   static styles = {
     container: {
       borderBottomColor: '#eaeced',
@@ -47,6 +65,12 @@ class RankingItem extends Component {
         maxWidth: '100%',
         maxHeight: '100%',
         borderRadius: '0.25em'
+      },
+      tooltip: {
+        border: `solid 1px ${colors.lightGray2}`,
+        boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)',
+        height: 200,
+        position: 'fixed'
       }
     },
     position: {
@@ -78,15 +102,20 @@ class RankingItem extends Component {
 
   render () {
     const styles = this.constructor.styles;
+    const { tooltip } = this.state;
     const { imageUrl, position, count, countLabel, title } = this.props;
+
+    /* eslint-disable no-return-assign */
     return (
-      <div style={styles.container}>
+      <div ref={(c) => this._container = c} style={styles.container}>
+        {tooltip && imageUrl &&
+          <img alt={title} src={`${imageUrl}?height=250&width=250`} style={[ styles.image.image, styles.image.tooltip, { top: tooltip.y } ]} title={title} />}
         <span style={styles.position}>{position}</span>
-          <div>
-            <div style={styles.image.wrapper} >
-              {imageUrl && <img alt={title} src={imageUrl} style={styles.image.image} title={title} />}
-            </div>
+        <div onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
+          <div style={styles.image.wrapper} >
+            {imageUrl && <img alt={title} src={`${imageUrl}?height=70&width=70`} style={styles.image.image} title={title} />}
           </div>
+        </div>
         <span style={styles.title}>{title}</span>
         <span style={styles.count}><b>{count}</b> {countLabel}</span>
       </div>
