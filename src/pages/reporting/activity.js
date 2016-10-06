@@ -9,7 +9,7 @@ import HighchartsMore from 'highcharts-more';
 // Highcharts exporting
 import HighchartsExporting from 'highcharts-exporting';
 import Widget, { largeWidgetStyle, mediumWidgetStyle } from './widget';
-import { colors, fontWeights, makeTextStyle, mediaQueries, Container } from '../_common/styles';
+import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
 import ActivityFilterForm from './forms/activityFilterForm';
 import * as actions from './actions';
 import { activitySelector } from './selector';

@@ -81,7 +81,7 @@ export default class Reporting extends Component {
     return (
       <div>
         <div style={styles.header}>
-          <Header hideHomePageLinks />
+          <Header currentPath={this.props.location.pathname} hideHomePageLinks />
         </div>
         <div style={styles.tabs}>
           <Container style={styles.wrapper}>

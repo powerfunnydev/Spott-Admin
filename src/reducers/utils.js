@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 import { fromJS, List, Map } from 'immutable';
 import { FETCHING, UPDATING, ERROR, LOADED } from '../constants/statusTypes';
 

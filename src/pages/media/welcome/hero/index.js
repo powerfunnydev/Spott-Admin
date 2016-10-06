@@ -1,5 +1,5 @@
 import Radium from 'radium';
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-scroll';
 import Header from '../../../app/header';
 import { buttonStyles } from '../../../_common/styles';
@@ -9,6 +9,9 @@ const backgroundImage = require('./background.jpg');
 @Radium
 export default class Hero extends Component {
 
+  static propTypes={
+    currentPath: PropTypes.string.isRequired
+  }
   constructor (props) {
     super(props);
     this._updateHeight = ::this._updateHeight;
@@ -74,7 +77,7 @@ export default class Hero extends Component {
 
     return (
       <div ref={(x) => { this.hero = x; }} style={styles.container}>
-        <Header />
+        <Header currentPath={this.props.currentPath}/>
 
         {/* Page body */}
         <div style={styles.body.div}>
