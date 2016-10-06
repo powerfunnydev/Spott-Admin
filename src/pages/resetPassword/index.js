@@ -2,12 +2,13 @@ import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { reduxForm, Field } from 'redux-form/immutable';
+import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
+import { push as routerPush } from 'react-router-redux';
 import Radium from 'radium';
 import { buttonStyles } from '../_common/styles';
 import localized from '../_common/localized';
 import Modal from '../_common/modal';
-import * as routerActions from '../../actions/router';
+import { resetPassword } from '../../actions/users';
 
 function validate (values) {
   const validationErrors = {};
@@ -49,8 +50,15 @@ const renderField = Radium((props) => {
 });
 
 @localized
-@connect(null, (dispatch) => ({
-  updatePath: bindActionCreators(routerActions.updatePath, dispatch)
+// We get the reset password token from the query param in the url from the mail.
+// We initialize the form with the reset password token.
+@connect((state, { location: { query: { token } } }) => ({
+  initialValues: {
+    token
+  }
+}), (dispatch) => ({
+  routerPush: bindActionCreators(routerPush, dispatch),
+  submit: bindActionCreators(resetPassword, dispatch)
 }))
 @reduxForm({
   form: 'resetPassword',
@@ -62,16 +70,16 @@ export default class ResetPasswordModal extends Component {
   static propTypes = {
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
-    t: PropTypes.func.isRequired,
-    updatePath: PropTypes.func.isRequired,
-    onCancel: PropTypes.func.isRequired, // Callback for closing the dialog and clearing the form.
-    onSubmit: PropTypes.func.isRequired
+    location: PropTypes.object.isRequired,
+    routerPush: PropTypes.func.isRequired,
+    submit: PropTypes.func.isRequired,
+    t: PropTypes.func.isRequired
   };
 
   constructor (props) {
     super(props);
     this.onCloseClick = ::this.onCloseClick;
-    this.onSubmit = ::this.onSubmit;
+    this.submit = ::this.submit;
     // Show message that password has been changed.
     this.state = { success: false };
   }
@@ -84,16 +92,18 @@ export default class ResetPasswordModal extends Component {
     }, 0);
   }
 
-  onCloseClick (e) {
-    e.preventDefault();
-    this.props.onCancel();
-    this.props.updatePath('/');
+  /* eslint-disable react/no-set-state */
+  async submit (form) {
+    try {
+      await this.props.submit(form.toJS());
+      this.setState({ success: true });
+    } catch (error) {
+      throw new SubmissionError({ _error: 'resetPassword.errors.failed' });
+    }
   }
 
-  /* eslint-disable react/no-set-state */
-  async onSubmit () {
-    const success = !await Reflect.apply(this.props.handleSubmit, this, arguments);
-    this.setState({ success });
+  onCloseClick (e) {
+    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
   }
 
   static styles = {
@@ -125,18 +135,18 @@ export default class ResetPasswordModal extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { error, t, onCancel } = this.props;
+    const { error, handleSubmit, t } = this.props;
     const { success } = this.state;
 
     return (
-      <Modal isOpen onClose={onCancel}>
+      <Modal isOpen onClose={this.onCloseClick}>
         <div style={styles.container}>
           {success
             ? <div style={styles.content}>
                 <p style={styles.success}>{t('resetPassword.success')}</p>
                 <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} onClick={this.onCloseClick}>{t('common.ok')}</button>
               </div>
-            : <form style={styles.content} onSubmit={this.onSubmit}>
+            : <form style={styles.content} onSubmit={handleSubmit(this.submit)}>
                 <Field component={renderField} name='password' placeholder={t('resetPassword.password')} ref={(c) => { this._password = c; }} type='password' />
                 <Field component={renderField} name='passwordRepeat' placeholder={t('resetPassword.passwordRepeat')} type='password' />
 

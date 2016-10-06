@@ -1,5 +1,5 @@
 import Radium from 'radium';
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import Section from '../../_common/section';
 import Menu from '../menu';
 
@@ -8,6 +8,9 @@ const footerLogoImage = require('./footer.svg');
 @Radium
 export default class Footer extends Component {
 
+  static propTypes = {
+    currentPath: PropTypes.string.isRequired
+  }
   static styles = {
     section: {
       outer: {
@@ -42,7 +45,7 @@ export default class Footer extends Component {
         {/* Logo */}
         <div style={styles.logo.wrapper}><img src={footerLogoImage} style={styles.logo.image} /></div>
         {/* Menu */}
-        <Menu neutral />
+        <Menu currentPath={this.props.currentPath} neutral />
       </Section>
     );
   }

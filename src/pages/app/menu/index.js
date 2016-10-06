@@ -9,7 +9,7 @@ import { buttonStyles } from '../../_common/styles';
 import localized from '../../_common/localized';
 import { menuSelector } from '../selectors';
 import * as globalActions from '../../../actions/global';
-import * as actions from '../actions';
+import * as actions from '../../../actions/users';
 
 @localized
 @connect(menuSelector, (dispatch) => ({
@@ -21,7 +21,8 @@ import * as actions from '../actions';
 export default class Menu extends Component {
 
   static propTypes = {
-    hideHomePageLinks: PropTypes.bool.isRequired,
+    currentPath: PropTypes.string.isRequired,
+    hideHomePageLinks: PropTypes.bool,
     isAuthenticated: PropTypes.bool.isRequired,
     logout: PropTypes.func.isRequired,
     neutral: PropTypes.bool,
@@ -38,7 +39,7 @@ export default class Menu extends Component {
 
   onSignInClick (e) {
     e.preventDefault();
-    this.props.openLoginModal();
+    this.props.routerPush({ pathname: '/login', state: { returnTo: this.props.currentPath } });
   }
 
   async onLogOutClick (e) {

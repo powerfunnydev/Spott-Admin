@@ -10,7 +10,7 @@ import httpinvoke from 'httpinvoke';
 export class RequestError extends Error {
   constructor (message, body, originalError) {
     super(message || 'An error occurred while processing your request.');
-    this.name = this.constructor.name;
+    this.name = 'RequestError';
     this.stack = (originalError || new Error()).stack;
     this.body = body;
     this.originalError = originalError;
@@ -23,6 +23,7 @@ export class RequestError extends Error {
 export class NetworkError extends RequestError {
   constructor (originalError) {
     super('Network error. Please check your internet connection.', null, originalError);
+    this.name = 'NetworkError';
   }
 }
 
@@ -33,6 +34,7 @@ export class UnauthorizedError extends RequestError {
   constructor (body) {
     super('Unauthorized. Authentication required.', body, null);
     this.statusCode = 401;
+    this.name = 'UnauthorizedError';
   }
 }
 
@@ -43,6 +45,7 @@ export class BadRequestError extends RequestError {
   constructor (body) {
     super('Invalid request.', body, null);
     this.statusCode = 400;
+    this.name = 'BadRequestError';
   }
 }
 
@@ -53,6 +56,7 @@ export class NotFoundError extends RequestError {
   constructor (message, body) {
     super('Could not find the requested resource.', body, null);
     this.statusCode = 404;
+    this.name = 'NotFoundError';
   }
 }
 
@@ -62,6 +66,7 @@ export class NotFoundError extends RequestError {
 export class UnexpectedError extends RequestError {
   constructor (message, body, originalError) {
     super(message || (originalError && originalError.message) || 'An unexpected error occurred while processing your request.', body, originalError);
+    this.name = 'UnexpectedError';
   }
 }
 

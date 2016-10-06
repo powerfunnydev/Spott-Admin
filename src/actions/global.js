@@ -4,7 +4,6 @@ export const CONFIGURE = 'CONFIGURE';
 
 export const MODAL_OPEN_LOGIN = 'MODAL_OPEN_LOGIN';
 export const MODAL_OPEN_FORGOT_PASSWORD = 'MODAL_OPEN_FORGOT_PASSWORD';
-export const MODAL_CLOSE = 'MODAL_CLOSE';
 
 export function init () {
   return async (dispatch) => {
@@ -19,8 +18,4 @@ export function openLoginModal () {
 
 export function openForgotPasswordModal () {
   return { type: MODAL_OPEN_FORGOT_PASSWORD };
-}
-
-export function closeModal () {
-  return { type: MODAL_CLOSE };
 }

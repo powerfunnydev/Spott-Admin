@@ -18,13 +18,17 @@
   },
   "forgotPassword": {
     "errors": {
-      "failed": "Er is een fout opgetreden tijdens de poging om uw wachtwoord te wijzigen :("
+      "alreadySendMail": "Er is reeds een e-mail verstuurd. Controleer je e-mail voor verdere instructies.",
+      "invalidEmail": "Ongeldig e-mailadres."
     },
     "email": "Je e-mail",
     "submitButton": "Wachtwoord opnieuw instellen",
     "sendEmail": "A mail has been send to %(email)s to reset your password."
   },
   "resetPassword": {
+    "errors": {
+      "failed": "Er is een fout opgetreden tijdens de poging om uw wachtwoord te wijzigen :("
+    },
     "password": "Your New Password",
     "passwordRepeat": "Repeat Password",
     "submitButton": "Change password",

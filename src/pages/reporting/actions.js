@@ -1,4 +1,4 @@
-import { change, formValueSelector } from 'redux-form/immutable';
+import { formValueSelector } from 'redux-form/immutable';
 import { searchMedia as dataSearchMedia } from '../../actions/media';
 import {
   fetchAges, fetchEvents, fetchGenders, fetchProductViews, fetchTimelineData,

@@ -9,7 +9,7 @@ import { EPISODE } from '../../../../../constants/mediaTypes';
 function validate (values) {
   const errors = {};
   const { episode, episodeTitle, season, seriesName } = values.toJS();
-  console.error('values', values.toJS());
+
   // Validate seriesName
   if (typeof seriesName === 'undefined' || seriesName === '') {
     errors.seriesName = 'Series name is required.';

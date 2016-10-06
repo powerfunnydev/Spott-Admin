@@ -16,14 +16,24 @@ export async function login (baseUrl, { authenticationToken, email, password }) 
       /* eslint-disable no-throw-literal */
       throw 'incorrect';
     }
-    throw error.body.message;
+    throw error;
   }
 }
 
-export function forgotPassword (baseUrl, authenticationToken, locale, { email }) {
-  return post(authenticationToken, locale, `${baseUrl}/v003/user/password/reset`, { email });
+export async function forgotPassword (baseUrl, authenticationToken, locale, { email }) {
+  try {
+    return await post(authenticationToken, 'en', `${baseUrl}/v003/user/password/reset`, { email });
+  } catch (error) {
+    if (error.name === 'BadRequestError' && error.body) {
+      if (error.body.message === 'user already has a reset token') {
+        throw 'alreadySendMail';
+      }
+      throw 'invalidEmail';
+    }
+    throw error;
+  }
 }
 
-export function resetPassword (baseUrl, authenticationToken, locale, { password, token }) {
-  return post(authenticationToken, locale, `${baseUrl}/v003/user/password/change`, { password, token });
+export async function resetPassword (baseUrl, authenticationToken, locale, { password, token }) {
+  await post(authenticationToken, locale, `${baseUrl}/v003/user/password/change`, { password, token });
 }

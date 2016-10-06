@@ -8,7 +8,7 @@ import createMediaStyles from '../styles';
 function validate (values) {
   const errors = {};
   const { mediumExternalReferenceSource, mediumExternalReference } = values.toJS();
-  console.error('mediumExternalReferenceSource', mediumExternalReferenceSource, mediumExternalReference);
+
   // Validate mediumExternalReferenceSource
   if (typeof mediumExternalReferenceSource === 'undefined' || mediumExternalReferenceSource === '') {
     errors.mediumExternalReferenceSource = 'Medium external reference source is required.';
