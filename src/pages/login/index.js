@@ -87,9 +87,9 @@ export default class LoginModal extends Component {
     }, 0);
   }
 
-  async submit (values) {
+  async submit (form) {
     try {
-      await this.props.submit(values);
+      await this.props.submit(form.toJS());
       this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
     } catch (error) {
       if (error === 'incorrect') {
