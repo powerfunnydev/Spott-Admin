@@ -25,6 +25,7 @@ import reducer from './reducers';
 /**
  * The application routes
  */
+ /* eslint-disable react/prop-types */
 function getRoutes ({ getState }) {
   function requireOneRole (roles) {
     return (nextState, replace) => {
@@ -64,6 +65,7 @@ function getRoutes ({ getState }) {
     </Route>
   );
 }
+/* eslint-eanble react/prop-types */
 
 /**
  * Bootstrap the application. Performs all necessary initializations.

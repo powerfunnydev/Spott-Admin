@@ -1,13 +1,14 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { push as routerPush } from 'react-router-redux';
-import { reduxForm, Field } from 'redux-form/immutable';
+import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { buttonStyles } from '../_common/styles';
 import localized from '../_common/localized';
 import Modal from '../_common/modal';
+import { forgotPassword } from '../../actions/users';
 
 function validate (values) {
   const validationErrors = {};
@@ -52,7 +53,8 @@ const renderField = Radium((props) => {
   validate
 })
 @connect(null, (dispatch) => ({
-  routerPush: bindActionCreators(routerPush, dispatch)
+  routerPush: bindActionCreators(routerPush, dispatch),
+  submit: bindActionCreators(forgotPassword, dispatch)
 }))
 @Radium
 export default class ForgotPasswordModal extends Component {
@@ -62,14 +64,14 @@ export default class ForgotPasswordModal extends Component {
     handleSubmit: PropTypes.func.isRequired,
     location: PropTypes.object,
     routerPush: PropTypes.func.isRequired,
-    t: PropTypes.func.isRequired,
-    onSubmit: PropTypes.func.isRequired
+    submit: PropTypes.func.isRequired,
+    t: PropTypes.func.isRequired
   };
 
   constructor (props) {
     super(props);
     this.onCloseClick = ::this.onCloseClick;
-    this.onSubmit = ::this.onSubmit;
+    this.submit = ::this.submit;
     // We show that a mail has been send to the user.
     this.state = { email: null };
   }
@@ -82,15 +84,25 @@ export default class ForgotPasswordModal extends Component {
     }, 0);
   }
 
-  onCloseClick (e) {
-    console.log('forgot', this.props.location);
-    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
+  /* eslint-disable react/no-set-state */
+  async submit (form) {
+    try {
+      const email = form.get('email');
+      await this.props.submit({ email });
+      this.setState({ email });
+    } catch (error) {
+      if (error === 'alreadySendMail') {
+        throw new SubmissionError({ _error: 'forgotPassword.errors.alreadySendMail' });
+      }
+      if (error === 'invalidEmail') {
+        throw new SubmissionError({ _error: 'forgotPassword.errors.invalidEmail' });
+      }
+      throw new SubmissionError({ _error: 'forgotPassword.errors.failed' });
+    }
   }
 
-  /* eslint-disable react/no-set-state */
-  async onSubmit () {
-    const { email } = await Reflect.apply(this.props.handleSubmit, this, arguments);
-    this.setState({ email });
+  onCloseClick (e) {
+    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
   }
 
   static styles = {
@@ -122,9 +134,9 @@ export default class ForgotPasswordModal extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { error, t } = this.props;
+    const { error, handleSubmit, t } = this.props;
     const { email } = this.state;
-    console.log('loc forgot pass', this.props.location);
+
     return (
       <Modal isOpen onClose={this.onCloseClick}>
         <div style={styles.container}>
@@ -133,7 +145,7 @@ export default class ForgotPasswordModal extends Component {
                 <p style={styles.sendEmail}>{t('forgotPassword.sendEmail', { email })}</p>
                 <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.pink, styles.button ]} onClick={this.onCloseClick}>{t('common.ok')}</button>
               </div>
-            : <form style={styles.content} onSubmit={this.onSubmit}>
+            : <form style={styles.content} onSubmit={handleSubmit(this.submit)}>
               <Field component={renderField} name='email' placeholder={t('forgotPassword.email')} ref={(c) => { this._email = c; }} type='email' />
 
               {error && typeof error === 'string' && <p style={styles.error}>{t(error)}</p>}

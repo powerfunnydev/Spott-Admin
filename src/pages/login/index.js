@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import { reduxForm, Field } from 'redux-form/immutable';
+import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import { push as routerPush } from 'react-router-redux';
 import Radium from 'radium';
 import { connect } from 'react-redux';
@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import { buttonStyles } from '../_common/styles';
 import localized from '../_common/localized';
 import Modal from '../_common/modal';
-import * as actions from '../app/actions';
+import * as actions from '../../actions/users';
 
 function validate (values) {
   const validationErrors = {};
@@ -53,8 +53,8 @@ const renderField = Radium((props) => {
 
 @localized
 @connect(null, (dispatch) => ({
-  login: bindActionCreators(actions.login, dispatch),
-  routerPush: bindActionCreators(routerPush, dispatch)
+  routerPush: bindActionCreators(routerPush, dispatch),
+  submit: bindActionCreators(actions.login, dispatch)
 }))
 @reduxForm({
   form: 'login',
@@ -67,8 +67,8 @@ export default class LoginModal extends Component {
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    login: PropTypes.func.isRequired,
     routerPush: PropTypes.func.isRequired,
+    submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired
   };
 
@@ -88,9 +88,15 @@ export default class LoginModal extends Component {
   }
 
   async submit (values) {
-    console.log('values', values.toJS());
-    await this.props.login(values);
-    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
+    try {
+      await this.props.submit(values);
+      this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
+    } catch (error) {
+      if (error === 'incorrect') {
+        throw new SubmissionError({ _error: 'login.errors.incorrect' });
+      }
+      throw new SubmissionError({ _error: 'common.errors.unexpected' });
+    }
   }
 
   onCloseClick () {
@@ -131,8 +137,8 @@ export default class LoginModal extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { error, handleSubmit, login, t } = this.props;
-    console.log('loc login', this.props.location);
+    const { error, handleSubmit, t } = this.props;
+
     return (
       <Modal isOpen onClose={this.onCloseClick}>
         <div style={styles.container}>

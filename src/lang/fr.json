@@ -18,13 +18,17 @@
   },
   "forgotPassword": {
     "errors": {
-      "failed": "Nous avons rencontré une erreur en essayant de changer votre mot de passe :("
+      "alreadySendMail": "Un e-mail a déjà été envoyé. Veuillez vérifier votre e-mail pour de plus amples instructions.",
+      "invalidEmail": "E-mail incorrect."
     },
     "email": "Votre e-mail",
     "submitButton": "Reset password",
     "sendEmail": "A mail has been send to %(email)s to reset your password."
   },
   "resetPassword": {
+    "errors": {
+      "failed": "Nous avons rencontré une erreur en essayant de changer votre mot de passe :("
+    },
     "password": "Your New Password",
     "passwordRepeat": "Repeat Password",
     "submitButton": "Change password",

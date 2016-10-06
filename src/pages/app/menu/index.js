@@ -9,7 +9,7 @@ import { buttonStyles } from '../../_common/styles';
 import localized from '../../_common/localized';
 import { menuSelector } from '../selectors';
 import * as globalActions from '../../../actions/global';
-import * as actions from '../actions';
+import * as actions from '../../../actions/users';
 
 @localized
 @connect(menuSelector, (dispatch) => ({
