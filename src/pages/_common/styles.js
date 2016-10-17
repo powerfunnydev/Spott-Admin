@@ -2,16 +2,22 @@ import React, { PropTypes } from 'react';
 import Radium from 'radium';
 
 export const colors = {
+  white: '#ffffff',
   primaryBlue: '#09bbf0',
-  primaryBlue2: 'rgb(57, 214, 255)',
-  secondaryPink: 'rgb(211, 23, 81)',
-  secondaryPink2: 'rgb(237, 49, 107)',
+  primaryBlue2: '#39D6FF',
+  secondaryPink: '#D31751',
+  secondaryPink2: '#ED316B',
+  lightBlue: '#e6f8fd',
   black: '#121e22',
-  darkerGray: 'rgb(135, 141, 143)',
-  darkGray: 'rgb(186, 189, 192)',
-  lightGray: 'rgb(241, 243, 244)',
+  darkerGray: '#878D8F',
+  darkGray: '#BABDC0',
+  darkGray2: '#6d8791',
+  veryDarkGray: '#17262b',
+  veryLightGray: '#eaeced',
+  lightGray: '#F1F3F4',
   lightGray2: '#ced6da',
-  errorColor: 'rgb(236, 65, 15)'
+  lightGray3: '#aab5b8',
+  errorColor: '#EC410F'
 };
 
 export const defaultSpacing = 15;

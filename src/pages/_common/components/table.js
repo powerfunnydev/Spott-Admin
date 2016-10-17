@@ -1,0 +1,296 @@
+import React, { Component, PropTypes } from 'react';
+import Radium from 'radium';
+import { colors } from '../../_common/styles';
+import { NONE, ASC, DESC } from '../../content/contentProducers/actions';
+const arrow = require('../../../assets/images/arrow-gray.svg');
+const check = require('../../../assets/images/check.svg');
+
+const generalStyles = {
+  arrowUnder: { transform: 'rotateZ(180deg)' },
+  arrowLeft: { transform: 'rotateZ(270deg)' },
+  arrowRight: { transform: 'rotateZ(90deg)' }
+};
+
+@Radium
+export default class Checkbox extends Component {
+
+  static propTypes = {
+    checked: PropTypes.bool,
+    onChange: PropTypes.func // Uses the field's onChange, and this one if provided.
+  };
+
+  constructor (props) {
+    super(props);
+  }
+
+  static styles = {
+    checkbox: {
+      height: 14,
+      width: 14,
+      border: `1px solid ${colors.darkGray}`,
+      borderRadius: 2,
+      cursor: 'pointer',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    checked: {
+      backgroundColor: colors.primaryBlue
+    }
+  };
+
+  render () {
+    const styles = this.constructor.styles;
+    const { checked, onChange } = this.props;
+
+    return (
+      <span style={[ styles.checkbox, checked && styles.checked ]} onClick={() => { console.log('test'); onChange(); }}>
+        {checked && <img src={check}/>}</span>
+    );
+  }
+}
+
+@Radium
+export class CheckBoxCel extends Component {
+
+  static propTypes = {
+    checked: PropTypes.bool,
+    style: PropTypes.object,
+    onChange: PropTypes.func.isRequired
+  }
+
+  static styles = {
+    cel: {
+      height: '42px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }
+  }
+
+  render () {
+    const { checked, style, onChange } = this.props;
+    const { styles } = this.constructor;
+    return (
+      <div style={[ styles.cel, style ]}>
+        <Checkbox checked={checked} onChange={onChange}/>
+        {/* <input checked={checked} type='checkbox' onClick={(e) => { onChange(); }}/>*/}
+      </div>
+    );
+  }
+}
+
+/**
+ * This component renders only children or a value by mean of getValue and objectToRender.
+ * Don't pass both to this component.
+ */
+@Radium
+export class TextCel extends Component {
+
+  static propTypes = {
+    children: PropTypes.node,
+    getValue: PropTypes.func,
+    objectToRender: PropTypes.object,
+    sortColumn: PropTypes.func,
+    sortDirection: PropTypes.number,
+    style: PropTypes.object,
+    onClick: PropTypes.func
+  }
+
+  static styles = {
+    cel: {
+      paddingLeft: '16px',
+      display: 'flex',
+      alignItems: 'center',
+      height: '40px',
+      fontSize: '12px',
+      color: colors.darkGray2
+    },
+    pointer: {
+      cursor: 'pointer'
+    },
+    headerSelected: {
+      backgroundColor: colors.veryLightGray
+    },
+    arrowRight: {
+      marginLeft: 'auto',
+      marginRight: '17px'
+    },
+    clickable: {
+      color: colors.veryDarkGray
+    }
+  }
+
+  render () {
+    const { styles } = this.constructor;
+    const { children, style, getValue, objectToRender, onClick, sortColumn, sortDirection } = this.props;
+
+    return (
+      <div style={[ styles.cel, style, (sortColumn || onClick) && styles.pointer,
+            sortDirection && sortDirection !== NONE && styles.headerSelected,
+            onClick && styles.clickable ]} onClick={sortColumn || onClick}>
+        <div>
+          {children}
+          {getValue && objectToRender && getValue(objectToRender)}
+        </div>
+        <div style={styles.arrowRight}>
+          {sortDirection === ASC && <img src={arrow}/>}
+          {sortDirection === DESC && <img src={arrow} style={generalStyles.arrowUnder} />}
+        </div>
+      </div>
+    );
+  }
+}
+
+@Radium
+export class Headers extends Component {
+  static propTypes = {
+    children: PropTypes.node.isRequired
+  }
+
+  static styles = {
+    row: {
+      display: 'flex',
+      flexDirection: 'row'
+    }
+  }
+
+  render () {
+    const { styles } = this.constructor;
+    const { children } = this.props;
+    return (
+      <div style={styles.row}>
+        {children}
+      </div>
+    );
+  }
+}
+
+@Radium
+export class Row extends Component {
+  static propTypes = {
+    children: PropTypes.node.isRequired,
+    index: PropTypes.number,
+    isFirst: PropTypes.bool
+  }
+
+  static styles = {
+    row: {
+      display: 'flex',
+      flexDirection: 'row'
+    },
+    borderRow: {
+      borderTop: `1px solid ${colors.veryLightGray}`
+    }
+  }
+
+  render () {
+    const { styles } = this.constructor;
+    const { children, isFirst, index } = this.props;
+    return (
+      <div style={[ styles.row, (!isFirst) && styles.borderRow, index && index % 2 === 1 && { backgroundColor: colors.lightBlue } ]}>
+        {children}
+      </div>
+    );
+  }
+}
+
+@Radium
+export class Rows extends Component {
+  static propTypes = {
+    children: PropTypes.node.isRequired
+  }
+
+  render () {
+    const { children } = this.props;
+
+    return (
+      <div>
+        {children}
+      </div>
+    );
+  }
+}
+
+@Radium
+export class Pagination extends Component {
+  static propTypes = {
+    onLeftClick: PropTypes.func.isRequired,
+    onRightClick: PropTypes.func.isRequired
+  }
+  static styles = {
+    pagination: {
+      marginTop: '30px',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      width: '190px',
+      height: '30px',
+      display: 'flex',
+      flexDirection: 'row',
+      border: `solid 1px ${colors.lightGray2}`
+    },
+    smallButton: {
+      width: '40px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      cursor: 'pointer'
+    },
+    middle: {
+      width: '110px',
+      borderLeft: `solid 1px ${colors.lightGray2}`,
+      borderRight: `solid 1px ${colors.lightGray2}`,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }
+  }
+  render () {
+    const { styles } = this.constructor;
+    const { onLeftClick, onRightClick } = this.props;
+    return (
+      <div style={styles.pagination}>
+        <div style={styles.smallButton} onClick={onLeftClick}>
+          <img src={arrow} style={generalStyles.arrowLeft}/>
+        </div>
+        <div style={styles.middle}>
+          ABC
+        </div>
+        <div style={styles.smallButton} onClick={onRightClick}>
+          <img src={arrow} style={generalStyles.arrowRight}/>
+        </div>
+      </div>
+    );
+  }
+}
+
+@Radium
+export class Table extends Component {
+  static propTypes = {
+    children: PropTypes.node.isRequired
+  }
+
+  static propTypes = {
+    pagination: PropTypes.bool
+  };
+
+  static styles = {
+    table: {
+      border: `1px solid ${colors.lightGray3}`,
+      marginTop: '50px'
+    }
+  }
+
+  render () {
+    const { styles } = this.constructor;
+    const { children } = this.props;
+
+    return (
+      <div>
+        <div style={styles.table}>
+          {children}
+        </div>
+      </div>
+    );
+  }
+}

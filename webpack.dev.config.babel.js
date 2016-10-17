@@ -9,7 +9,7 @@ const path = require('path');
  * @type {Object}
  */
 const configuration = {
-  devtool: 'cheap-module-eval-source-map', // Enable line-based sourcemaps
+  devtool: 'source-map', // Enable line-based sourcemaps
   entry: {
     main: [
       // Install babel-friendly environment

@@ -8,6 +8,7 @@ import { init } from './actions/global';
 import { LOGIN_SUCCESS } from './actions/users';
 
 import App from './pages/app';
+import ContentProducers from './pages/content/contentProducers';
 import Error404 from './pages/error404/main';
 import MediaSinglePage from './pages/media/singlePage';
 import MediaHome from './pages/media/home';
@@ -60,6 +61,10 @@ function getRoutes ({ getState }) {
         <IndexRedirect to='activity' />
         <Route component={ReportingActivity} path='activity' />
         <Route component={ReportingRankings} path='rankings' />
+      </Route>
+      <Route path='content' >
+        <IndexRedirect to='content-producers' />
+        <Route component={ContentProducers} path='content-producers' />
       </Route>
       <Route component={Error404} path='*' />
     </Route>

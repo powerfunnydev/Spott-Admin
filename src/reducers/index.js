@@ -5,11 +5,15 @@ import media from './media';
 import globalReducer from './global';
 import data from './data';
 import reporting from '../pages/reporting/reducer';
+import contentProducers from '../pages/content/contentProducers/reducer';
 
 /**
  * The application's main reducer
  */
 export default combineReducers({
+  content: combineReducers({
+    contentProducers
+  }),
   data,
   form,
   media,
