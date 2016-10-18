@@ -1,5 +1,9 @@
-import { fetchContentProducers as dataFetchContentProducers, fetchSortedContentProducers as dataFetchSortedContentProducers } from '../../../actions/contentProducers';
-import { sortFieldSelector } from './selector';
+import { fetchContentProducers as dataFetchContentProducers } from '../../../actions/contentProducers';
+
+export const sortDirections = {
+  ASC: 1,
+  DESC: 2
+};
 export const NONE = 0;
 export const ASC = 1;
 export const DESC = 2;
@@ -15,7 +19,7 @@ export const SELECT_CHECKBOX = 'CONTENT_PRODERS/SELECT_CHECKBOX';
 
 export const SORT_COLUMN = 'CONTENT_PRODERS/SORT_COLUMN';
 
-function directionToString (direction) {
+export function directionToString (direction) {
   if (direction === ASC) {
     return 'ASC';
   } else if (direction === DESC) {
@@ -24,10 +28,10 @@ function directionToString (direction) {
   return '';
 }
 
-export function loadContentProducers () {
+export function load (query) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataFetchContentProducers());
+      return await dispatch(dataFetchContentProducers(query));
     } catch (error) {
       dispatch({ error, type: CONTENT_PRODUCERS_FETCH_ERROR });
     }
@@ -40,12 +44,4 @@ export function selectAllCheckboxes () {
 
 export function selectCheckbox (id) {
   return { type: SELECT_CHECKBOX, id };
-}
-
-export function sortColumn (sortField) {
-  return async (dispatch, getState) => {
-    await dispatch({ type: SORT_COLUMN, sortField });
-    const sortDirection = directionToString(sortFieldSelector(getState(), sortField));
-    dispatch(dataFetchSortedContentProducers({ sortField, sortDirection }));
-  };
 }

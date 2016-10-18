@@ -2,7 +2,10 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { colors } from '../../_common/styles';
 import { NONE, ASC, DESC } from '../../content/contentProducers/actions';
-const arrow = require('../../../assets/images/arrow-gray.svg');
+import Spinner from '../../_common/spinner';
+
+const arrowGray = require('../../../assets/images/arrow-gray.svg');
+const arrowLightGray = require('../../../assets/images/arrow-light-gray.svg');
 const check = require('../../../assets/images/check.svg');
 
 const generalStyles = {
@@ -134,8 +137,8 @@ export class TextCel extends Component {
           {getValue && objectToRender && getValue(objectToRender)}
         </div>
         <div style={styles.arrowRight}>
-          {sortDirection === ASC && <img src={arrow}/>}
-          {sortDirection === DESC && <img src={arrow} style={generalStyles.arrowUnder} />}
+          {sortDirection === ASC && <img src={arrowGray}/>}
+          {sortDirection === DESC && <img src={arrowGray} style={generalStyles.arrowUnder} />}
         </div>
       </div>
     );
@@ -198,14 +201,35 @@ export class Row extends Component {
 @Radium
 export class Rows extends Component {
   static propTypes = {
-    children: PropTypes.node.isRequired
+    children: PropTypes.node.isRequired,
+    isLoading: PropTypes.bool
+  }
+
+  static styles = {
+    rows: {
+      position: 'absolute',
+      display: 'flex',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'gray',
+      opacity: 0.5,
+      justifyContent: 'center',
+      alignItems: 'center'
+    }
   }
 
   render () {
-    const { children } = this.props;
-
+    const { children, isLoading } = this.props;
+    const { styles } = this.constructor;
     return (
-      <div>
+      <div style={{ position: 'relative', minHeight: '100px' }}>
+        {isLoading &&
+          <div style={styles.rows}>
+           <Spinner style={{ height: '30px', width: '30px' }}/>
+          </div>
+        }
         {children}
       </div>
     );
@@ -215,6 +239,8 @@ export class Rows extends Component {
 @Radium
 export class Pagination extends Component {
   static propTypes = {
+    currentPage: PropTypes.number.isRequired,
+    pageCount: PropTypes.number.isRequired,
     onLeftClick: PropTypes.func.isRequired,
     onRightClick: PropTypes.func.isRequired
   }
@@ -237,27 +263,34 @@ export class Pagination extends Component {
       cursor: 'pointer'
     },
     middle: {
+      fontSize: '12px',
       width: '110px',
       borderLeft: `solid 1px ${colors.lightGray2}`,
       borderRight: `solid 1px ${colors.lightGray2}`,
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center'
+    },
+    gray: {
+      color: colors.darkGray2
     }
   }
   render () {
     const { styles } = this.constructor;
-    const { onLeftClick, onRightClick } = this.props;
+    // currentPage is not an index. First page is 1, not 0.
+    const { currentPage, pageCount, onLeftClick, onRightClick } = this.props;
     return (
       <div style={styles.pagination}>
-        <div style={styles.smallButton} onClick={onLeftClick}>
-          <img src={arrow} style={generalStyles.arrowLeft}/>
+        <div style={styles.smallButton} onClick={(currentPage > 1) && onLeftClick}>
+          {(currentPage > 1) && <img src={arrowGray} style={generalStyles.arrowLeft}/>}
+          {(currentPage <= 1) && <img src={arrowLightGray} style={generalStyles.arrowLeft}/>}
         </div>
         <div style={styles.middle}>
-          ABC
+          <span>{currentPage} <span style={styles.gray}> of {pageCount}</span></span>
         </div>
-        <div style={styles.smallButton} onClick={onRightClick}>
-          <img src={arrow} style={generalStyles.arrowRight}/>
+        <div style={styles.smallButton} onClick={(currentPage < pageCount) && onRightClick}>
+          {(currentPage < pageCount) && <img src={arrowGray} style={generalStyles.arrowRight}/>}
+          {(currentPage >= pageCount) && <img src={arrowLightGray} style={generalStyles.arrowRight}/>}
         </div>
       </div>
     );

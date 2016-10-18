@@ -1,15 +1,15 @@
 import { get } from './request';
+import { transformContentProducers } from './transformers';
 
-export async function fetchContentProducers (baseUrl, authenticationToken, locale) {
-  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/media/contentProducers`);
-  return data;
-}
 
-export async function fetchSortedContentProducers (baseUrl, authenticationToken, locale, { sortDirection, sortField }) {
-  let url = `${baseUrl}/v003/media/contentProducers`;
-  if (sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
-    url = url.concat(`?sortDirection=${sortDirection}&sortField=${sortField}`);
+export async function fetchContentProducers (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let url = `${baseUrl}/v003/media/contentProducers?page=${page}&pageSize=${pageSize}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${searchString}`);
   }
-  const { body: { data } } = await get(authenticationToken, locale, url);
-  return data;
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  const { body } = await get(authenticationToken, locale, url);
+  return { ...transformContentProducers(body) };
 }

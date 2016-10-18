@@ -1,5 +1,21 @@
 import { transformAvailabilitiesFromApi } from './_helpers';
 
+export function transformContentProducers (body) {
+  const contentProducers = body.data;
+  const data = [];
+  for (const cp of contentProducers) {
+    const newCp = {};
+    newCp.id = cp.uuid;
+    newCp.name = cp.name;
+    newCp.createdOn = cp.auditInfo.createdOn;
+    newCp.lastUpdatedBy = cp.auditInfo.lastUpdatedBy;
+    newCp.lastUpdatedOn = cp.auditInfo.lastUpdatedOn;
+    data.push(newCp);
+  }
+  body.data = data;
+  return body;
+}
+
 export function transformBrandSubscription ({
   brand: { logo, name, uuid: brandId },
   count
