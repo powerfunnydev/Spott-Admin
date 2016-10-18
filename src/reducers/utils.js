@@ -2,6 +2,14 @@
 import { fromJS, List, Map } from 'immutable';
 import { FETCHING, UPDATING, ERROR, LOADED } from '../constants/statusTypes';
 
+export function serializeFilterHasContentProducers ({ searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let id = `page=${page}&pageSize=${pageSize}&searchString=${searchString}`;
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    id = id.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  return id;
+}
+
 // path is e.g., [ 'relations', type, id ]
 export function fetchStart (state, path) {
   // Get the data (entity/relations) from the state, which can be undefined.
