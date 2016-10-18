@@ -1,6 +1,7 @@
 /* eslint-disable prefer-const */
-import { get, post, UnexpectedError } from './request';
 import AWS from 'aws-sdk';
+import { get, post, UnexpectedError } from './request';
+import { transformMedium } from './transformers';
 
 function uploadToS3 ({ accessKeyId, acl, baseKey, bucket, file, policy, signature }, uploadingCallback) {
   return new Promise((resolve, reject) => {
@@ -186,16 +187,6 @@ export async function postProcess (baseUrl, authenticationToken, { description, 
   };
 }
 
-function transformMedium ({ title, type, posterImage, profileImage, uuid: id }) {
-  return {
-    id,
-    title,
-    type,
-    posterImage: posterImage && { id: posterImage.uuid, url: posterImage. url },
-    profileImage: profileImage && { id: profileImage.uuid, url: profileImage. url }
-  };
-}
-
 /**
   * @returnExample
   * {
@@ -227,7 +218,6 @@ function transformMedium ({ title, type, posterImage, profileImage, uuid: id }) 
  * @throws UnexpectedError
  */
 export async function searchMedia (baseUrl, authenticationToken, locale, { searchString = '' }) {
-  // TODO: Use media instead of series.
   let searchUrl = `${baseUrl}/v003/media/media?pageSize=30&types=TV_SERIE,MOVIE,COMMERCIAL`;
   if (searchString) {
     searchUrl += `&searchString=${encodeURIComponent(searchString)}`;

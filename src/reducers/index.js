@@ -6,6 +6,7 @@ import globalReducer from './global';
 import data from './data';
 import reporting from '../pages/reporting/reducer';
 import contentProducers from '../pages/content/contentProducers/reducer';
+import tvGuideCreate from '../pages/tvGuide/create/reducer';
 
 /**
  * The application's main reducer
@@ -16,8 +17,11 @@ export default combineReducers({
   }),
   data,
   form,
-  media,
   global: globalReducer,
+  media,
   reporting,
-  router
+  router,
+  tvGuide: combineReducers({
+    create: tvGuideCreate
+  })
 });

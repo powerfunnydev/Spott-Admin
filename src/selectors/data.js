@@ -9,6 +9,7 @@ export const gendersEntitiesSelector = (state) => state.getIn([ 'data', 'entitie
 export const mediaEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'media' ]);
 
 export const searchStringHasMediaRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasMedia' ]);
+export const searchStringHasSeriesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasSeries' ]);
 
 export const agesListSelector = (state) => state.getIn([ 'data', 'lists', 'ages' ]);
 export const eventsListSelector = (state) => state.getIn([ 'data', 'lists', 'events' ]);

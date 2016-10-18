@@ -43,5 +43,10 @@
     "password": "Je wachtwoord",
     "submitButton": "Aanmelden",
     "title": "Log in"
+  },
+  "mediaTypes": {
+    "COMMERCIAL": "TV-spot",
+    "MOVIE": "Film",
+    "TV_SERIE": "Tv show"
   }
 }

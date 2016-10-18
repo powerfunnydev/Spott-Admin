@@ -43,5 +43,10 @@
     "password": "Your Password",
     "submitButton": "Log in",
     "title": "Log In"
+  },
+  "mediaTypes": {
+    "COMMERCIAL": "Commercial",
+    "MOVIE": "Movie",
+    "TV_SERIE": "Series"
   }
 }

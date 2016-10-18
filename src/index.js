@@ -20,6 +20,7 @@ import ResetPassword from './pages/resetPassword';
 import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
 import ReportingRankings from './pages/reporting/rankings';
+import TvGuideCreateEntry from './pages/tvGuide/create';
 import { authenticationTokenSelector, userRolesSelector } from './selectors/global';
 import reducer from './reducers';
 
@@ -62,9 +63,12 @@ function getRoutes ({ getState }) {
         <Route component={ReportingActivity} path='activity' />
         <Route component={ReportingRankings} path='rankings' />
       </Route>
-      <Route path='content' >
+      <Route path='content'>
         <IndexRedirect to='content-producers' />
         <Route component={ContentProducers} path='content-producers' />
+      </Route>
+      <Route path='tv-guide'>
+        <IndexRoute component={TvGuideCreateEntry} />
       </Route>
       <Route component={Error404} path='*' />
     </Route>

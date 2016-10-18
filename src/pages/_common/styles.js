@@ -39,13 +39,47 @@ const hoveredGrayButtonStyle = {
   border: '1px solid rgb(191, 196, 199)'
 };
 
+export const errorTextStyle = {
+  color: colors.errorColor,
+  paddingTop: 3,
+  fontSize: '11px'
+};
+
+export const fontWeights = {
+  light: 'Rubik-Light',
+  regular: 'Rubik-Regular',
+  medium: 'Rubik-Medium',
+  bold: 'Rubik-Bold'
+};
+
+export const mediaQueryThresholds = {
+  extraSmall: 0,
+  small: 480,
+  medium: 768,
+  large: 992,
+  extraLarge: 1200
+};
+export const mediaQueries = {
+  small: `@media only screen and (min-width: ${mediaQueryThresholds.small}px)`,
+  medium: `@media only screen and (min-width: ${mediaQueryThresholds.medium}px)`,
+  large: `@media only screen and (min-width: ${mediaQueryThresholds.large}px)`,
+  extraLarge: `@media only screen and (min-width: ${mediaQueryThresholds.extraLarge}px)`
+};
+export function makeTextStyle (fontWeight = fontWeights.regular, fontSize = '1em', letterSpacing = 0, lineHeight = 'normal') {
+  return {
+    fontFamily: fontWeight,
+    fontSize,
+    letterSpacing,
+    lineHeight
+  };
+}
+
 export const buttonStyles = {
   base: {
     borderRadius: 4,
     color: 'white',
     display: 'inline-block',
-    fontFamily: 'Rubik-Regular',
-    fontSize: '14px',
+    ...makeTextStyle(fontWeights.regular, '14px'),
     marginLeft: 14,
     paddingTop: 8,
     paddingBottom: 8,
@@ -56,9 +90,12 @@ export const buttonStyles = {
   },
   // Button sizes
   small: {
-    fontSize: '13px',
-    paddingBottom: 6,
-    paddingTop: 6,
+    ...makeTextStyle(fontWeights.medium, '12px'),
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingLeft: 15,
+    paddingRight: 15,
+    width: 'auto',
     minWidth: 70
   },
   extraSmall: {
@@ -100,46 +137,34 @@ export const buttonStyles = {
     ':hover': hoveredGrayButtonStyle,
     ':focus': hoveredGrayButtonStyle
   },
+  white: {
+    backgroundColor: 'white',
+    border: '1px solid #ced6da',
+    color: '#6d8791',
+    ':hover': hoveredGrayButtonStyle,
+    ':focus': hoveredGrayButtonStyle
+  },
   // Disable left margin for the first button
   first: {
     marginLeft: 0
   }
 };
 
-export const errorTextStyle = {
-  color: colors.errorColor,
-  paddingTop: 3,
-  fontSize: '11px'
+const formSubtitleStyle = {
+  ...makeTextStyle(fontWeights.medium, '0.75em'),
+  color: colors.black,
+  marginTop: '1.875em'
 };
 
-export const fontWeights = {
-  light: 'Rubik-Light',
-  regular: 'Rubik-Regular',
-  medium: 'Rubik-Medium',
-  bold: 'Rubik-Bold'
+export const FormSubtitle = Radium((props) => (
+  <h2 {...props} style={[ formSubtitleStyle, props.style ]}>
+    {props.children}
+  </h2>
+));
+FormSubtitle.propTypes = {
+  children: PropTypes.node,
+  style: PropTypes.object
 };
-
-export const mediaQueryThresholds = {
-  extraSmall: 0,
-  small: 480,
-  medium: 768,
-  large: 992,
-  extraLarge: 1200
-};
-export const mediaQueries = {
-  small: `@media only screen and (min-width: ${mediaQueryThresholds.small}px)`,
-  medium: `@media only screen and (min-width: ${mediaQueryThresholds.medium}px)`,
-  large: `@media only screen and (min-width: ${mediaQueryThresholds.large}px)`,
-  extraLarge: `@media only screen and (min-width: ${mediaQueryThresholds.extraLarge}px)`
-};
-export function makeTextStyle (fontWeight = fontWeights.regular, fontSize = '1em', letterSpacing = 0, lineHeight = 'normal') {
-  return {
-    fontFamily: fontWeight,
-    fontSize,
-    letterSpacing,
-    lineHeight
-  };
-}
 
 // Container component
 // ///////////////////

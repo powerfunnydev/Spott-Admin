@@ -43,5 +43,10 @@
     "password": "Votre mot de passe",
     "submitButton": "Connectez-vous",
     "title": "Je m'inscris"
+  },
+  "mediaTypes": {
+    "COMMERCIAL": "Spot publicitaire",
+    "MOVIE": "Film",
+    "TV_SERIE": "Show télévisé"
   }
 }
