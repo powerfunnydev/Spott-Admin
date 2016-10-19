@@ -15,6 +15,10 @@ export function transformContentProducers (body) {
   return body;
 }
 
+export function transformTvGuideEntry ({ auditInfo: { createdOn, lastUpdatedBy, lastUpdatedOn }, uuid: id }) {
+  return { createdOn, id, lastUpdatedBy, lastUpdatedOn };
+}
+
 export function transformBrandSubscription ({
   brand: { logo, name, uuid: brandId },
   count

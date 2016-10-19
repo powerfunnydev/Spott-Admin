@@ -1,5 +1,6 @@
 import { searchMedia as dataSearchMedia } from '../../../actions/media';
 import { searchBroadcastChannels as dataSearchBroadcastChannels } from '../../../actions/broadcastChannel';
+import { persistTvGuideEntry } from '../../../actions/tvGuide';
 import { searchSeasons as dataSearchSeasons } from '../../../actions/season';
 import { searchEpisodes as dataSearchEpisodes } from '../../../actions/episode';
 import { currentSeasonIdSelector, currentMediumIdSelector } from './selector';
@@ -16,7 +17,7 @@ export const MEDIA_SEARCH_ERROR = 'TV_GUIDE_CREATE/MEDIA_SEARCH_ERROR';
 export const SEASONS_SEARCH_START = 'TV_GUIDE_CREATE/SEASONS_SEARCH_START';
 export const SEASONS_SEARCH_ERROR = 'TV_GUIDE_CREATE/SEASONS_SEARCH_ERROR';
 
-export const submit = () => 'persistTvGuideEntry';
+export const submit = persistTvGuideEntry;
 
 function createSearchAction (dataAction, startActionType, errorActionType, selector) {
   return (searchString = '') => {

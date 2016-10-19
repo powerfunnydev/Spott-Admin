@@ -11,5 +11,5 @@ export async function fetchContentProducers (baseUrl, authenticationToken, local
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }
   const { body } = await get(authenticationToken, locale, url);
-  return { ...transformContentProducers(body) };
+  return transformContentProducers(body);
 }

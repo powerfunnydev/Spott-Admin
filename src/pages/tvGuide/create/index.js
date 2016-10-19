@@ -35,7 +35,6 @@ import selector from './selector';
   searchEpisodes: bindActionCreators(actions.searchEpisodes, dispatch),
   searchMedia: bindActionCreators(actions.searchMedia, dispatch),
   searchSeasons: bindActionCreators(actions.searchSeasons, dispatch),
-  // TODO
   submit: bindActionCreators(actions.submit, dispatch)
 }))
 @reduxForm({

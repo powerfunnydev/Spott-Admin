@@ -10,6 +10,14 @@ export function serializeFilterHasContentProducers ({ searchString = '', page = 
   return id;
 }
 
+export function serializeFilterHasTvGuideEntries ({ page = 0, pageSize = 25, sortDirection, sortField }) {
+  let id = `page=${page}&pageSize=${pageSize}`;
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    id = id.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  return id;
+}
+
 export function serializeFilterHasEpisodes ({ searchString = '', seasonId = '' }) {
   return `searchString=${searchString}&seasonId=${seasonId}`;
 }

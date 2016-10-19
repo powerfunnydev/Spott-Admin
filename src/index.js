@@ -21,6 +21,7 @@ import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
 import ReportingRankings from './pages/reporting/rankings';
 import TvGuideCreateEntry from './pages/tvGuide/create';
+import TvGuideList from './pages/tvGuide/list';
 import { authenticationTokenSelector, userRolesSelector } from './selectors/global';
 import reducer from './reducers';
 
@@ -68,7 +69,8 @@ function getRoutes ({ getState }) {
         <Route component={ContentProducers} path='content-producers' />
       </Route>
       <Route path='tv-guide'>
-        <IndexRoute component={TvGuideCreateEntry} />
+        <IndexRoute component={TvGuideList} />
+        <Route component={TvGuideCreateEntry} path='create' />
       </Route>
       <Route component={Error404} path='*' />
     </Route>

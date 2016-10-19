@@ -12,6 +12,7 @@ import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
 
+/* eslint-disable react/no-set-state*/
 const numberOfRows = 25;
 
 @connect(selector, (dispatch) => ({
@@ -24,7 +25,6 @@ const numberOfRows = 25;
 export default class ContentProducers extends Component {
 
   static propTypes = {
-    contentProducers: ImmutablePropTypes.map.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -34,7 +34,8 @@ export default class ContentProducers extends Component {
     pageCount: PropTypes.number,
     routerPush: PropTypes.func.isRequired,
     selectAllCheckboxes: PropTypes.func.isRequired,
-    selectCheckbox: PropTypes.func.isRequired
+    selectCheckbox: PropTypes.func.isRequired,
+    tvGuideEntries: ImmutablePropTypes.map.isRequired
   };
 
   constructor (props) {
@@ -58,16 +59,16 @@ export default class ContentProducers extends Component {
     }
   }
 
-  getName (cp) {
-    return cp.get('name');
+  getName (tvGuideEntry) {
+    return tvGuideEntry.get('name');
   }
 
-  getUpdatedBy (cp) {
-    return cp.get('lastUpdatedBy');
+  getUpdatedBy (tvGuideEntry) {
+    return tvGuideEntry.get('lastUpdatedBy');
   }
 
-  getLastUpdatedOn (cp) {
-    const date = new Date(cp.get('lastUpdatedOn'));
+  getLastUpdatedOn (tvGuideEntry) {
+    const date = new Date(tvGuideEntry.get('lastUpdatedOn'));
     return moment(date).format('YYYY-MM-DD HH:mm');
   }
 
@@ -131,9 +132,10 @@ export default class ContentProducers extends Component {
   }
 
   render () {
-    const { contentProducers, isSelected, location: { pathname, query: { page, searchString, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox } = this.props;
+    const { isSelected, location: { pathname, query: { page, searchString, sortField, sortDirection } },
+      pageCount, selectAllCheckboxes, selectCheckbox, tvGuideEntries } = this.props;
     const { styles } = this.constructor;
+    console.log('tvGuideEntries', tvGuideEntries.toJS());
     return (
       <div>
         <Header currentPath={pathname} hideHomePageLinks />
@@ -152,15 +154,15 @@ export default class ContentProducers extends Component {
                 <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</TextCel>
                 <TextCel sortColumn={this.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE} style={[ styles.header, styles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</TextCel>
               </Headers>
-              <Rows isLoading={contentProducers.get('_status') !== 'loaded'}>
-                {contentProducers.get('data').map((cp, index) => {
+              <Rows isLoading={tvGuideEntries.get('_status') !== 'loaded'}>
+                {tvGuideEntries.get('data').map((tvGuideEntry, index) => {
                   return (
                     <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                       {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                      <CheckBoxCel checked={isSelected.get(cp.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, cp.get('id'))}/>
-                      <TextCel getValue={this.getName} objectToRender={cp} style={{ flex: 2 }} onClick={() => { }} />
-                      <TextCel getValue={this.getUpdatedBy} objectToRender={cp} style={{ flex: 2 }}/>
-                      <TextCel getValue={this.getLastUpdatedOn} objectToRender={cp} style={{ flex: 2 }}/>
+                      <CheckBoxCel checked={isSelected.get(tvGuideEntry.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, tvGuideEntry.get('id'))}/>
+                      <TextCel getValue={this.getName} objectToRender={tvGuideEntry} style={{ flex: 2 }} onClick={() => { }} />
+                      <TextCel getValue={this.getUpdatedBy} objectToRender={tvGuideEntry} style={{ flex: 2 }}/>
+                      <TextCel getValue={this.getLastUpdatedOn} objectToRender={tvGuideEntry} style={{ flex: 2 }}/>
                     </Row>
                   );
                 })}
