@@ -7,6 +7,7 @@ import moment from 'moment';
 import Header from '../../app/header';
 import { Container, colors, makeTextStyle } from '../../_common/styles';
 import { CheckBoxCel, Table, Headers, TextCel, Rows, Row, Pagination } from '../../_common/components/table';
+import SearchInput from '../../_common/components/searchInput';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
@@ -23,9 +24,7 @@ function determineSortDirection (sortField, query) {
   return actions.directionToString((sortDirection + 1) % 3);
 }
 
-@connect((state, ownProps) => ({
-  ...selector(state, ownProps)
-}), (dispatch) => ({
+@connect(selector, (dispatch) => ({
   load: bindActionCreators(actions.load, dispatch),
   routerPush: bindActionCreators(routerPush, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
@@ -50,6 +49,7 @@ export default class ContentProducers extends Component {
 
   constructor (props) {
     super(props);
+    this.onChangeSearchString = ::this.onChangeSearchString;
   }
 
   componentWillMount () {
@@ -62,7 +62,8 @@ export default class ContentProducers extends Component {
     if (query.page !== nextQuery.page ||
       query.pageSize !== nextQuery.pageSize ||
       query.sortDirection !== nextQuery.sortDirection ||
-      query.sortField !== nextQuery.sortField) {
+      query.sortField !== nextQuery.sortField ||
+      query.searchString !== nextQuery.searchString) {
       this.props.load(nextProps.location.query);
     }
   }
@@ -86,6 +87,18 @@ export default class ContentProducers extends Component {
       page: 0,
       sortField,
       sortDirection: determineSortDirection(sortField, this.props.location.query)
+    };
+    // props will be updated -> componentWillReceiveProps
+    this.props.routerPush({
+      ...this.props.location,
+      query
+    });
+  }
+
+  onChangeSearchString (e) {
+    const query = {
+      ...this.props.location.query,
+      searchString: e.target.value
     };
     // props will be updated -> componentWillReceiveProps
     this.props.routerPush({
@@ -120,41 +133,52 @@ export default class ContentProducers extends Component {
     notFirstHeader: {
       borderLeft: `1px solid ${colors.lightGray2}`,
       borderBottom: `1px solid ${colors.lightGray2}`
-    }
+    },
+    searchContainer: {
+      height: '70px',
+      display: 'flex',
+      alignItems: 'center' }
   }
 
   render () {
-    const { contentProducers, isSelected, location: { pathname, query: { page, sortField, sortDirection } },
+    const { contentProducers, isSelected, location: { pathname, query: { page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox } = this.props;
     const { styles } = this.constructor;
     return (
       <div>
         <Header currentPath={pathname} hideHomePageLinks />
-        <Container>
-          <Table>
-            <Headers>
-              {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-              <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ styles.header, styles.firstHeader, { flex: 0.25 } ]} onChange={selectAllCheckboxes}/>
-              <TextCel sortColumn={this.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? actions.sortDirections[sortDirection] : actions.NONE} style={[ styles.header, styles.notFirstHeader, { flex: 2 } ]}>NAME</TextCel>
-              <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</TextCel>
-              <TextCel sortColumn={this.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? actions.sortDirections[sortDirection] : actions.NONE} style={[ styles.header, styles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</TextCel>
-            </Headers>
-            <Rows isLoading={contentProducers.get('_status') !== 'loaded'}>
-              {contentProducers.get('data').map((cp, index) => {
-                return (
-                  <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
-                    {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                    <CheckBoxCel checked={isSelected.get(cp.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, cp.get('id'))}/>
-                    <TextCel getValue={this.getName} objectToRender={cp} style={{ flex: 2 }} onClick={() => { }} />
-                    <TextCel getValue={this.getUpdatedBy} objectToRender={cp} style={{ flex: 2 }}/>
-                    <TextCel getValue={this.getLastUpdatedOn} objectToRender={cp} style={{ flex: 2 }}/>
-                  </Row>
-                );
-              })}
-            </Rows>
-          </Table>
-          <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.onChangePage(parseInt(page, 10), true); }}/>
-        </Container>
+        <div style={{ backgroundColor: colors.veryLightGray }}>
+          <Container style={styles.searchContainer}>
+            <SearchInput value={searchString} onChange={this.onChangeSearchString}/>
+          </Container>
+        </div>
+        <div style={{ backgroundColor: colors.lightGray }}>
+          <Container style={{ paddingTop: '50px', paddingBottom: '50px' }}>
+            <Table>
+              <Headers>
+                {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ styles.header, styles.firstHeader, { flex: 0.25 } ]} onChange={selectAllCheckboxes}/>
+                <TextCel sortColumn={this.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? actions.sortDirections[sortDirection] : actions.NONE} style={[ styles.header, styles.notFirstHeader, { flex: 2 } ]}>NAME</TextCel>
+                <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</TextCel>
+                <TextCel sortColumn={this.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? actions.sortDirections[sortDirection] : actions.NONE} style={[ styles.header, styles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</TextCel>
+              </Headers>
+              <Rows isLoading={contentProducers.get('_status') !== 'loaded'}>
+                {contentProducers.get('data').map((cp, index) => {
+                  return (
+                    <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
+                      {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                      <CheckBoxCel checked={isSelected.get(cp.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, cp.get('id'))}/>
+                      <TextCel getValue={this.getName} objectToRender={cp} style={{ flex: 2 }} onClick={() => { }} />
+                      <TextCel getValue={this.getUpdatedBy} objectToRender={cp} style={{ flex: 2 }}/>
+                      <TextCel getValue={this.getLastUpdatedOn} objectToRender={cp} style={{ flex: 2 }}/>
+                    </Row>
+                  );
+                })}
+              </Rows>
+            </Table>
+            <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.onChangePage(parseInt(page, 10), true); }}/>
+          </Container>
+        </div>
       </div>
 
     );
