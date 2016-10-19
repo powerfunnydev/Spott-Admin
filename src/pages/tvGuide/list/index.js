@@ -5,7 +5,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { push as routerPush } from 'react-router-redux';
 import moment from 'moment';
 import Header from '../../app/header';
-import { Container, colors, makeTextStyle } from '../../_common/styles';
+import { buttonStyles, colors, Container, makeTextStyle } from '../../_common/styles';
 import { determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, TextCel, Rows, Row, Pagination } from '../../_common/components/table';
 import Radium from 'radium';
 import * as actions from './actions';
@@ -40,6 +40,7 @@ export default class ContentProducers extends Component {
 
   constructor (props) {
     super(props);
+    this.onClickNewEntry = ::this.onClickNewEntry;
   }
 
   componentWillMount () {
@@ -70,8 +71,16 @@ export default class ContentProducers extends Component {
     return tvGuideEntry.get('medium').get('title');
   }
 
+  getStartDate (tvGuideEntry) {
+    return moment(tvGuideEntry.get('start')).format('DD/MM/YYYY hh:mm');
+  }
+
+  getEndDate (tvGuideEntry) {
+    return moment(tvGuideEntry.get('end')).format('DD/MM/YYYY hh:mm');
+  }
+
   getChannelName (tvGuideEntry) {
-    return tvGuideEntry.get('channel').get('name');
+    return tvGuideEntry.getIn([ 'channel', 'name' ]);
   }
 
   getUpdatedBy (tvGuideEntry) {
@@ -110,12 +119,21 @@ export default class ContentProducers extends Component {
     });
   }
 
+  onClickNewEntry (e) {
+    e.preventDefault();
+    this.props.routerPush({
+      pathname: 'tv-guide/create',
+      state: { returnTo: this.props.location }
+    });
+  }
+
   static styles = {
     header: {
-      height: '32px',
-      color: colors.darkGray2,
+      ...makeTextStyle(null, '0.688em', '0.50px'),
       backgroundColor: colors.white,
-      ...makeTextStyle(null, '11px', '0.50px')
+      color: colors.darkGray2,
+      height: '32px',
+      textTransform: 'uppercase'
     },
     firstHeader: {
       borderBottom: `1px solid ${colors.lightGray2}`
@@ -124,10 +142,12 @@ export default class ContentProducers extends Component {
       borderLeft: `1px solid ${colors.lightGray2}`,
       borderBottom: `1px solid ${colors.lightGray2}`
     },
-    searchContainer: {
-      height: '70px',
+    filterContainer: {
+      alignItems: 'center',
       display: 'flex',
-      alignItems: 'center' }
+      paddingBottom: '1.25em',
+      paddingTop: '1.25em'
+    }
   }
 
   render () {
@@ -137,16 +157,33 @@ export default class ContentProducers extends Component {
     return (
       <div>
         <Header currentPath={pathname} hideHomePageLinks />
+        <div style={{ backgroundColor: colors.veryLightGray }}>
+          <Container style={styles.filterContainer}>
+            <button key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue, { marginLeft: 0, float: 'right' } ]} type='button' onClick={this.onClickNewEntry}>New entry</button>
+          </Container>
+        </div>
         <div style={{ backgroundColor: colors.lightGray }}>
           <Container style={{ paddingTop: '50px', paddingBottom: '50px' }}>
             <Table>
               <Headers>
                 {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                 <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ styles.header, styles.firstHeader, { flex: 0.5 } ]} onChange={selectAllCheckboxes}/>
-                <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}>CHANNEL</TextCel>
-                <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 2 } ]}>TITLE</TextCel>
-                <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}>UPDATED BY</TextCel>
-                <TextCel sortColumn={this.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE} style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}>LAST UPDATED ON</TextCel>
+                <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}>Channel</TextCel>
+                <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 2 } ]}>Title</TextCel>
+                <TextCel
+                  sortColumn={this.onSortField.bind(this, 'START')}
+                  sortDirection={sortField === 'START' ? sortDirections[sortDirection] : NONE}
+                  style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}>
+                  Start
+                </TextCel>
+                <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}>End</TextCel>
+                <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}>Updated by</TextCel>
+                <TextCel
+                  sortColumn={this.onSortField.bind(this, 'LAST_MODIFIED')}
+                  sortDirection={sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE}
+                  style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}>
+                  Last updated on
+                </TextCel>
               </Headers>
               <Rows isLoading={tvGuideEntries.get('_status') !== 'loaded'}>
                 {tvGuideEntries.get('data').map((tvGuideEntry, index) => {
@@ -156,6 +193,8 @@ export default class ContentProducers extends Component {
                       <CheckBoxCel checked={isSelected.get(tvGuideEntry.get('id'))} style={{ flex: 0.5 }} onChange={selectCheckbox.bind(this, tvGuideEntry.get('id'))}/>
                       <TextCel getValue={this.getChannelName} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
                       <TextCel getValue={this.getMediumTitle} objectToRender={tvGuideEntry} style={{ flex: 2 }}/>
+                      <TextCel getValue={this.getStartDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
+                      <TextCel getValue={this.getEndDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
                       <TextCel getValue={this.getUpdatedBy} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
                       <TextCel getValue={this.getLastUpdatedOn} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
                     </Row>

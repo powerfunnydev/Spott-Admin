@@ -91,14 +91,14 @@ export default class LoginModal extends Component {
   async submit (form) {
     try {
       await this.props.submit(form.toJS());
-      this.props.routerPush('/tv-guide');
+      this.onCloseClick();
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
   }
 
   onCloseClick () {
-    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
+    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || 'tv-guide');
   }
 
   static styles = {
