@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { colors } from '../../_common/styles';
-import { NONE, ASC, DESC } from '../../content/contentProducers/actions';
 import Spinner from '../../_common/spinner';
 
 const arrowGray = require('../../../assets/images/arrow-gray.svg');
@@ -13,6 +12,32 @@ const generalStyles = {
   arrowLeft: { transform: 'rotateZ(270deg)' },
   arrowRight: { transform: 'rotateZ(90deg)' }
 };
+
+export const sortDirections = {
+  ASC: 1,
+  DESC: 2
+};
+export const NONE = 0;
+export const ASC = 1;
+export const DESC = 2;
+
+export function directionToString (direction) {
+  if (direction === ASC) {
+    return 'ASC';
+  } else if (direction === DESC) {
+    return 'DESC';
+  }
+  return '';
+}
+
+export function determineSortDirection (sortField, query) {
+  let sortDirection = NONE;
+  if (query.sortField === sortField && query.sortDirection) {
+    // map string to number
+    sortDirection = sortDirections[query.sortDirection];
+  }
+  return directionToString((sortDirection + 1) % 3);
+}
 
 @Radium
 export default class Checkbox extends Component {

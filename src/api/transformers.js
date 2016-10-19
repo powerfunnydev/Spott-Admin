@@ -15,6 +15,22 @@ export function transformContentProducers (body) {
   return body;
 }
 
+export function transformTvGuide (body) {
+  const tvGuideEntries = body.data;
+  const data = [];
+  for (const tvGE of tvGuideEntries) {
+    const newTvGE = {};
+    newTvGE.id = tvGE.uuid;
+    newTvGE.name = tvGE.name;
+    newTvGE.createdOn = tvGE.auditInfo.createdOn;
+    newTvGE.lastUpdatedBy = tvGE.auditInfo.lastUpdatedBy;
+    newTvGE.lastUpdatedOn = tvGE.auditInfo.lastUpdatedOn;
+    data.push(newTvGE);
+  }
+  body.data = data;
+  return body;
+}
+
 export function transformBrandSubscription ({
   brand: { logo, name, uuid: brandId },
   count
