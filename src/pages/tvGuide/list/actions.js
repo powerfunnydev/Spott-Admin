@@ -1,10 +1,12 @@
-import { fetchTvGuide as dataFetchTvGuide } from '../../../actions/tvGuide';
+import { fetchTvGuide as dataFetchTvGuide, deleteTvGuideEntries as dataDeleteTvGuideEntries } from '../../../actions/tvGuide';
 
 // Action types
 // ////////////
 
 export const TV_GUIDE_FETCH_START = 'TV_GUIDE/TV_GUIDE_FETCH_START';
 export const TV_GUIDE_FETCH_ERROR = 'TV_GUIDE/TV_GUIDE_FETCH_ERROR';
+
+export const TV_GUIDE_ENTRIES_DELETE_ERROR = 'TV_GUIDE/TV_GUIDE_ENTRIES_REMOVE_ERROR';
 
 export const SELECT_ALL_CHECKBOXES = 'TV_GUIDE/SELECT_ALL_CHECKBOXES';
 export const SELECT_CHECKBOX = 'TV_GUIDE/SELECT_CHECKBOX';
@@ -17,6 +19,17 @@ export function load (query) {
       return await dispatch(dataFetchTvGuide(query));
     } catch (error) {
       dispatch({ error, type: TV_GUIDE_FETCH_ERROR });
+    }
+  };
+}
+
+export function deleteTvGuideEntries (tvGuideEntryIds) {
+  return async (dispatch, getState) => {
+    try {
+      console.warn('tvGuideEntryIds', tvGuideEntryIds);
+      return await dispatch(dataDeleteTvGuideEntries({ tvGuideEntryIds }));
+    } catch (error) {
+      dispatch({ error, type: TV_GUIDE_ENTRIES_DELETE_ERROR });
     }
   };
 }

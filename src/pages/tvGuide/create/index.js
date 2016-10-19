@@ -13,6 +13,7 @@ import SelectInput from '../../_common/inputs/selectInput';
 import localized from '../../_common/localized';
 import { FETCHING } from '../../../constants/statusTypes';
 import CreateModal from '../../_common/createModal';
+import { load } from '../list/actions';
 import * as actions from './actions';
 import selector from './selector';
 
@@ -39,6 +40,7 @@ function validate (values, { medium, t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
+  load: bindActionCreators(load, dispatch),
   routerPush: bindActionCreators(routerPush, dispatch),
   searchBroadcastChannels: bindActionCreators(actions.searchBroadcastChannels, dispatch),
   searchEpisodes: bindActionCreators(actions.searchEpisodes, dispatch),
@@ -57,7 +59,7 @@ function validate (values, { medium, t }) {
   validate
 })
 @Radium
-export default class LoginModal extends Component {
+export default class CreateTvGuideEntryModal extends Component {
 
   static propTypes = {
     broadcastChannelsById: ImmutablePropTypes.map.isRequired,
@@ -65,6 +67,7 @@ export default class LoginModal extends Component {
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
+    load: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     mediaById: ImmutablePropTypes.map.isRequired,
     medium: ImmutablePropTypes.map.isRequired,
@@ -91,6 +94,11 @@ export default class LoginModal extends Component {
   async submit (form) {
     try {
       await this.props.submit(form.toJS());
+      // Load the new list of items, using the location query of the previous page.
+      const location = this.props.location && this.props.location.state && this.props.location.state.returnTo;
+      if (location && location.query) {
+        this.props.load(location.query);
+      }
       this.onCloseClick();
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
@@ -127,7 +135,7 @@ export default class LoginModal extends Component {
           label='Medium title'
           name='mediumId'
           options={searchedMediumIds.get('data').toJS()}
-          placeholder='Series'
+          placeholder='Medium title'
           required
           onChange={() => {
             this.props.dispatch(this.props.change('seasonId', null));

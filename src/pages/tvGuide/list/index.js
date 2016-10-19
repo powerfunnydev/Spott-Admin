@@ -15,6 +15,7 @@ import selector from './selector';
 const numberOfRows = 25;
 
 @connect(selector, (dispatch) => ({
+  deleteTvGuideEntries: bindActionCreators(actions.deleteTvGuideEntries, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   routerPush: bindActionCreators(routerPush, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
@@ -25,6 +26,7 @@ export default class ContentProducers extends Component {
 
   static propTypes = {
     children: PropTypes.node,
+    deleteTvGuideEntries: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -40,6 +42,7 @@ export default class ContentProducers extends Component {
 
   constructor (props) {
     super(props);
+    this.onClickDeleteSelected = ::this.onClickDeleteSelected;
     this.onClickNewEntry = ::this.onClickNewEntry;
   }
 
@@ -127,6 +130,18 @@ export default class ContentProducers extends Component {
     });
   }
 
+  async onClickDeleteSelected (e) {
+    e.preventDefault();
+    const tvGuideEntryIds = [];
+    this.props.isSelected.forEach((selected, key) => {
+      if (selected && key !== 'ALL') {
+        tvGuideEntryIds.push(key);
+      }
+    });
+    await this.props.deleteTvGuideEntries(tvGuideEntryIds);
+    await this.props.load(this.props.location.query);
+  }
+
   static styles = {
     header: {
       ...makeTextStyle(null, '0.688em', '0.50px'),
@@ -154,12 +169,15 @@ export default class ContentProducers extends Component {
     const { children, isSelected, location: { pathname, query: { page, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, tvGuideEntries } = this.props;
     const { styles } = this.constructor;
+    const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
+
     return (
       <div>
         <Header currentPath={pathname} hideHomePageLinks />
         <div style={{ backgroundColor: colors.veryLightGray }}>
           <Container style={styles.filterContainer}>
-            <button key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue, { marginLeft: 0, float: 'right' } ]} type='button' onClick={this.onClickNewEntry}>New entry</button>
+            <button key='delete' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue, { marginLeft: 0 } ]} type='button' onClick={this.onClickDeleteSelected}>Delete {numberSelected}</button>
+            <button key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} type='button' onClick={this.onClickNewEntry}>New entry</button>
           </Container>
         </div>
         <div style={{ backgroundColor: colors.lightGray }}>

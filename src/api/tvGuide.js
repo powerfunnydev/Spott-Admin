@@ -1,4 +1,4 @@
-import { get, post } from './request';
+import { del, get, post } from './request';
 import { transformTvGuideEntry } from './transformers';
 
 export async function fetchTvGuide (baseUrl, authenticationToken, locale, { page = 0, pageSize = 25, sortDirection, sortField }) {
@@ -26,6 +26,12 @@ export async function persistTvGuideEntry (baseUrl, authenticationToken, locale,
     start: start.format(),
     medium: { uuid: episodeId || mediumId }
   });
+}
+
+export async function deleteTvGuideEntries (baseUrl, authenticationToken, locale, { tvGuideEntryIds }) {
+  for (const tvGuideEntryId of tvGuideEntryIds) {
+    await del(authenticationToken, locale, `${baseUrl}/v004/media/tvGuideEntries/${tvGuideEntryId}`);
+  }
 }
 //
 // export async function postBrand (authenticationToken, { basedOnDefaultLocale,
