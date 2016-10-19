@@ -180,7 +180,8 @@ export class Row extends Component {
   static styles = {
     row: {
       display: 'flex',
-      flexDirection: 'row'
+      flexDirection: 'row',
+      backgroundColor: colors.white
     },
     borderRow: {
       borderTop: `1px solid ${colors.veryLightGray}`
@@ -253,7 +254,8 @@ export class Pagination extends Component {
       height: '30px',
       display: 'flex',
       flexDirection: 'row',
-      border: `solid 1px ${colors.lightGray2}`
+      border: `solid 1px ${colors.lightGray2}`,
+      backgroundColor: colors.white
     },
     smallButton: {
       width: '40px',
@@ -304,23 +306,22 @@ export class Table extends Component {
   }
 
   static propTypes = {
-    pagination: PropTypes.bool
+    style: PropTypes.object
   };
 
   static styles = {
     table: {
-      border: `1px solid ${colors.lightGray3}`,
-      marginTop: '50px'
+      border: `1px solid ${colors.lightGray3}`
     }
   }
 
   render () {
     const { styles } = this.constructor;
-    const { children } = this.props;
+    const { children, style } = this.props;
 
     return (
       <div>
-        <div style={styles.table}>
+        <div style={[ styles.table, style ]}>
           {children}
         </div>
       </div>

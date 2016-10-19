@@ -21,7 +21,9 @@
   },
   "private": true,
   "license": "UNLICENSED",
-  "dependencies": {},
+  "dependencies": {
+    "react-simple-dropdown": "^1.1.4"
+  },
   "devDependencies": {
     "aws-sdk": "2.6.0",
     "babel-core": "6.14.0",
