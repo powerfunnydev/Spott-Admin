@@ -16,15 +16,7 @@ export const MEDIA_SEARCH_ERROR = 'TV_GUIDE_CREATE/MEDIA_SEARCH_ERROR';
 export const SEASONS_SEARCH_START = 'TV_GUIDE_CREATE/SEASONS_SEARCH_START';
 export const SEASONS_SEARCH_ERROR = 'TV_GUIDE_CREATE/SEASONS_SEARCH_ERROR';
 
-// export function submit (tvGuideEntry) {
-//   return async (dispatch) => {
-//     try {
-//       return await dispatch(persistTvGuideEntry(tvGuideEntry));
-//     } catch (error) {
-//       throw { _error: error.name }; // Catched by redux form.
-//     }
-//   };
-// }
+export const submit = () => 'persistTvGuideEntry';
 
 function createSearchAction (dataAction, startActionType, errorActionType, selector) {
   return (searchString = '') => {

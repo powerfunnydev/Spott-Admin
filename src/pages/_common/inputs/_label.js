@@ -23,7 +23,6 @@ export default class Label extends Component {
       display: 'block',
       fontSize: '0.625em',
       paddingBottom: '0.625em',
-      paddingTop: '1.25em',
       textTransform: 'uppercase'
     }
   };

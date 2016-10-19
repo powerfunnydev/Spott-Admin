@@ -217,6 +217,6 @@ export function transformSeason ({ availabilities, characters, defaultLocale,
   return season;
 }
 
-export function transformBroadcastChannel (data) {
-  return data;
+export function transformBroadcastChannel ({ name, uuid: id }) {
+  return { id, name };
 }

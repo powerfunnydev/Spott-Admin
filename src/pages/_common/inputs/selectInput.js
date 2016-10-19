@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Select from 'react-select';
 import Radium from 'radium';
-import { colors, defaultSpacing, errorTextStyle } from '../styles';
+import { colors, errorTextStyle } from '../styles';
 import Label from './_label';
 
 import 'react-select/dist/react-select.min.css';
@@ -57,12 +57,12 @@ export default class SelectInput extends Component {
 
   static styles = {
     padTop: {
-      paddingTop: defaultSpacing * 0.75
+      paddingTop: '1.25em'
     },
     base: {
-      border: `1px solid ${colors.darkGray}`,
+      border: `1px solid ${colors.lightGray2}`,
       borderRadius: 4,
-      fontSize: '16px',
+      fontSize: '1em',
       width: '100%'
     },
     disabled: {
@@ -70,10 +70,10 @@ export default class SelectInput extends Component {
       color: colors.darkerGray
     },
     info: {
-      color: colors.darkGray,
-      paddingBottom: 3,
-      paddingTop: 3,
-      fontSize: '11px',
+      color: colors.lightGray2,
+      paddingBottom: '0.188em',
+      paddingTop: '0.188em',
+      fontSize: '0.688em',
       float: 'right'
     }
   };

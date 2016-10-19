@@ -1,0 +1,10 @@
+.rc-time-picker {
+  width: 100%;
+}
+
+.rc-time-picker-input {
+  color: #17262b;
+  height: auto;
+  font-size: 16px;
+  padding: 6px;
+}

@@ -8,6 +8,7 @@ import { bindActionCreators } from 'redux';
 import moment from 'moment';
 import { FormSubtitle } from '../../_common/styles';
 import DateInput from '../../_common/inputs/dateInput';
+import TimeInput from '../../_common/inputs/timeInput';
 import SelectInput from '../../_common/inputs/selectInput';
 import localized from '../../_common/localized';
 import { FETCHING } from '../../../constants/statusTypes';
@@ -30,17 +31,20 @@ import selector from './selector';
 @localized
 @connect(selector, (dispatch) => ({
   routerPush: bindActionCreators(routerPush, dispatch),
+  searchBroadcastChannels: bindActionCreators(actions.searchBroadcastChannels, dispatch),
   searchEpisodes: bindActionCreators(actions.searchEpisodes, dispatch),
   searchMedia: bindActionCreators(actions.searchMedia, dispatch),
   searchSeasons: bindActionCreators(actions.searchSeasons, dispatch),
   // TODO
-  submit: bindActionCreators(actions.searchMedia, dispatch)
+  submit: bindActionCreators(actions.submit, dispatch)
 }))
 @reduxForm({
   form: 'tvGuideCreateEntry',
   initialValues: {
     endDate: moment().startOf('day'),
-    startDate: moment().startOf('day')
+    endTime: moment(),
+    startDate: moment().startOf('day'),
+    startTime: moment()
   }
 })
 @Radium
@@ -74,6 +78,7 @@ export default class LoginModal extends Component {
 
   async submit (form) {
     try {
+      console.warn('form.toJS()', form.toJS());
       await this.props.submit(form.toJS());
       this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
     } catch (error) {
@@ -89,6 +94,11 @@ export default class LoginModal extends Component {
   }
 
   static styles = {
+    col2: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'flex-end'
+    }
   };
 
   render () {
@@ -99,9 +109,8 @@ export default class LoginModal extends Component {
       searchedEpisodeIds, searchedSeasonIds, searchedMediumIds, medium, t
     } = this.props;
 
-    console.warn('broadcastChannelsById', broadcastChannelsById && broadcastChannelsById.toJS());
     return (
-      <CreateModal isOpen title='New TV guide entry' onClose={this.onCloseClick}>
+      <CreateModal isOpen title='New TV guide entry' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle style={{ marginTop: 0 }}>Content</FormSubtitle>
         <Field
           component={SelectInput}
@@ -139,7 +148,7 @@ export default class LoginModal extends Component {
         <FormSubtitle>Airtime</FormSubtitle>
         <Field
           component={SelectInput}
-          getItemText={(id) => broadcastChannelsById.getIn([ id, 'title', broadcastChannelsById.getIn([ id, 'defaultLocale' ]) ])}
+          getItemText={(id) => broadcastChannelsById.getIn([ id, 'name' ])}
           getOptions={searchBroadcastChannels}
           isLoading={searchedBroadcastChannelIds.get('_status') === FETCHING}
           label='Channel'
@@ -147,18 +156,32 @@ export default class LoginModal extends Component {
           options={searchedBroadcastChannelIds.get('data').toJS()}
           placeholder='Channel'
           required />
-        <Field
-          component={DateInput}
-          label='Start'
-          name='startDate'
-          required />
-        <Field
-          component={DateInput}
-          label='End'
-          name='endDate'
-          required />
-        {/* <Field component={renderField} name='email' placeholder={t('login.email')} ref={(c) => { this._email = c; }} />
-        <Field component={renderField} name='password' placeholder={t('login.password')} type='password' /> */}
+        <div style={styles.col2}>
+          <Field
+            component={DateInput}
+            label='Start'
+            name='startDate'
+            required
+            style={{ paddingRight: '0.313em' }} />
+          <Field
+            component={TimeInput}
+            name='startTime'
+            required
+            style={{ paddingLeft: '0.313em' }} />
+        </div>
+        <div style={styles.col2}>
+          <Field
+            component={DateInput}
+            label='End'
+            name='endDate'
+            required
+            style={{ paddingRight: '0.313em' }} />
+          <Field
+            component={TimeInput}
+            name='endTime'
+            required
+            style={{ paddingLeft: '0.313em' }} />
+        </div>
       </CreateModal>
     );
   }
