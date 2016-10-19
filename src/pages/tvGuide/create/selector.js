@@ -1,11 +1,16 @@
 import { createSelector, createStructuredSelector } from 'reselect';
+import { getFormValues } from 'redux-form/immutable';
 import {
-  mediaEntitiesSelector,
+  broadcastChannelsEntitiesSelector,
   createEntityByIdSelector,
   createEntityIdsByRelationSelector,
-  searchStringHasMediaRelationsSelector
+  filterHasEpisodesRelationsSelector,
+  filterHasSeasonsRelationsSelector,
+  listMediaEntitiesSelector,
+  searchStringHasMediaRelationsSelector,
+  searchStringHasBroadcastChannelsRelationsSelector
 } from '../../../selectors/data';
-import { getFormValues } from 'redux-form/immutable';
+import { serializeFilterHasEpisodes, serializeFilterHasSeries } from '../../../reducers/utils';
 
 const formSelector = getFormValues('tvGuideCreateEntry');
 
@@ -13,23 +18,46 @@ export const currentMediumIdSelector = createSelector(
   formSelector,
   (form) => form && form.get('mediumId')
 );
+export const currentSeasonIdSelector = createSelector(
+  formSelector,
+  (form) => form && form.get('seasonId')
+);
 
-const currentMediumSelector = createEntityByIdSelector(mediaEntitiesSelector, currentMediumIdSelector);
+const currentMediumSelector = createEntityByIdSelector(listMediaEntitiesSelector, currentMediumIdSelector);
 
-// export const currentSeasonsSearchStringSelector = (state) => state.getIn([ 'content', 'editEpisodes', 'currentSeasonsSearchString' ]);
+export const currentBroadcastChannelsSearchStringSelector = (state) => state.getIn([ 'tvGuide', 'create', 'currentBroadcastChannelsSearchString' ]);
+export const currentEpisodesSearchStringSelector = (state) => state.getIn([ 'tvGuide', 'create', 'currentEpisodesSearchString' ]);
+export const currentSeasonsSearchStringSelector = (state) => state.getIn([ 'tvGuide', 'create', 'currentSeasonsSearchString' ]);
 export const currentMediaSearchStringSelector = (state) => state.getIn([ 'tvGuide', 'create', 'currentMediaSearchString' ]);
 // export const currentContentProducersSearchStringSelector = (state) => state.getIn([ 'content', 'editEpisodes', 'currentContentProducersSearchString' ]);
 // export const currentSeriesFilterHasSeasonsStringSelector = createSelector(
 //   currentSeriesIdSelector,
 //   currentSeasonsSearchStringSelector,
 //   (seriesId, searchString) => `searchString=${encodeURIComponent(searchString || '')}&seriesId=${seriesId || ''}`
+
 // );
-// export const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(seriesFilterHasSeasonsRelationsSelector, currentSeriesFilterHasSeasonsStringSelector);
+
+const currentEpisodesFilterSelector = createSelector(
+  currentEpisodesSearchStringSelector,
+  currentSeasonIdSelector,
+  (searchString, seasonId) => serializeFilterHasEpisodes({ searchString, seasonId })
+);
+const currentSeasonsFilterSelector = createSelector(
+  currentSeasonsSearchStringSelector,
+  currentMediumIdSelector,
+  (searchString, seriesId) => serializeFilterHasSeries({ searchString, seriesId })
+);
+export const searchedEpisodeIdsSelector = createEntityIdsByRelationSelector(filterHasEpisodesRelationsSelector, currentEpisodesFilterSelector);
+export const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(filterHasSeasonsRelationsSelector, currentSeasonsFilterSelector);
 export const searchedMediumIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediaRelationsSelector, currentMediaSearchStringSelector);
+export const searchedBroadcastChannelIdsSelector = createEntityIdsByRelationSelector(searchStringHasBroadcastChannelsRelationsSelector, currentBroadcastChannelsSearchStringSelector);
 
 export default createStructuredSelector({
-  // searchedSeasonIds: searchedSeasonIdsSelector,
+  broadcastChannelsById: broadcastChannelsEntitiesSelector,
+  searchedBroadcastChannelIds: searchedBroadcastChannelIdsSelector,
+  searchedEpisodeIds: searchedEpisodeIdsSelector,
+  searchedSeasonIds: searchedSeasonIdsSelector,
   searchedMediumIds: searchedMediumIdsSelector,
   medium: currentMediumSelector,
-  mediaById: mediaEntitiesSelector
+  mediaById: listMediaEntitiesSelector
 });

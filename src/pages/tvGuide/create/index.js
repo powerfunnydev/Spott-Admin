@@ -5,7 +5,9 @@ import { push as routerPush } from 'react-router-redux';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import moment from 'moment';
 import { FormSubtitle } from '../../_common/styles';
+import DateInput from '../../_common/inputs/dateInput';
 import SelectInput from '../../_common/inputs/selectInput';
 import localized from '../../_common/localized';
 import { FETCHING } from '../../../constants/statusTypes';
@@ -13,57 +15,33 @@ import CreateModal from '../../_common/createModal';
 import * as actions from './actions';
 import selector from './selector';
 
-function validate (values) {
-  const validationErrors = {};
-  const { email, password } = values.toJS();
-  const emailError = !email;
-  // !values.get('email') || !values.get('email').match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-  if (emailError) { validationErrors.email = 'invalid'; }
-  const passwordError = !password || !password.match(/^.{6,}$/);
-  if (passwordError) { validationErrors.password = 'invalid'; }
-  // Done
-  return validationErrors;
-}
-
-const textBoxStyle = {
-  textInput: {
-    color: 'rgba(0, 0, 0, 0.502)',
-    width: '100%',
-    height: '46px',
-    border: '1px solid rgb(187, 190, 193)',
-    borderRadius: '4px',
-    paddingLeft: 15,
-    paddingRight: 15,
-    fontFamily: 'Rubik-Regular',
-    fontSize: '18px',
-    marginBottom: 20
-  },
-  textInputError: {
-    border: '1px #ff0000 solid'
-  }
-};
-
-const renderField = Radium((props) => {
-  return (
-    <input
-      autoFocus={props.autoFocus}
-      placeholder={props.placeholder}
-      style={[ textBoxStyle.textInput, props.meta.touched && props.meta.error && textBoxStyle.textInputError, props.style ]}
-      type={props.type}
-      {...props.input} />
-  );
-});
+// function validate (values) {
+//   const validationErrors = {};
+//   const { email, password } = values.toJS();
+//   const emailError = !email;
+//   // !values.get('email') || !values.get('email').match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+//   if (emailError) { validationErrors.email = 'invalid'; }
+//   const passwordError = !password || !password.match(/^.{6,}$/);
+//   if (passwordError) { validationErrors.password = 'invalid'; }
+//   // Done
+//   return validationErrors;
+// }
 
 @localized
 @connect(selector, (dispatch) => ({
   routerPush: bindActionCreators(routerPush, dispatch),
+  searchEpisodes: bindActionCreators(actions.searchEpisodes, dispatch),
   searchMedia: bindActionCreators(actions.searchMedia, dispatch),
+  searchSeasons: bindActionCreators(actions.searchSeasons, dispatch),
   // TODO
   submit: bindActionCreators(actions.searchMedia, dispatch)
 }))
 @reduxForm({
   form: 'tvGuideCreateEntry',
-  validate
+  initialValues: {
+    endDate: moment().startOf('day'),
+    startDate: moment().startOf('day')
+  }
 })
 @Radium
 export default class LoginModal extends Component {
@@ -73,6 +51,8 @@ export default class LoginModal extends Component {
     handleSubmit: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     routerPush: PropTypes.func.isRequired,
+    searchEpisodes: PropTypes.func.isRequired,
+    searchSeasons: PropTypes.func.isRequired,
     searchSeries: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired
@@ -81,7 +61,6 @@ export default class LoginModal extends Component {
   constructor (props) {
     super(props);
     this.onCloseClick = ::this.onCloseClick;
-    this.onForgotPasswordClick = ::this.onForgotPasswordClick;
     this.submit = ::this.submit;
   }
 
@@ -109,36 +88,18 @@ export default class LoginModal extends Component {
     this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
   }
 
-  onForgotPasswordClick () {
-    this.props.routerPush({ pathname: '/forgotpassword', returnTo: this.props.location.pathname });
-  }
-
   static styles = {
-    error: {
-      color: '#ff0000',
-      fontSize: '1em',
-      marginBottom: '1em'
-    },
-    button: {
-      paddingTop: 8,
-      paddingBottom: 8,
-      paddingLeft: 18,
-      paddingRight: 18,
-      textTransform: 'uppercase',
-      width: 'auto',
-      float: 'right'
-    },
-    forgotPassword: {
-      fontSize: '13px',
-      color: 'white',
-      padding: '8px 0'
-    }
   };
 
   render () {
     const { styles } = this.constructor;
-    const { error, handleSubmit, mediaById, searchMedia, searchedMediumIds, medium, t } = this.props;
+    const {
+      broadcastChannelsById, error, handleSubmit, mediaById, searchBroadcastChannels,
+      searchEpisodes, searchMedia, searchSeasons, searchedBroadcastChannelIds,
+      searchedEpisodeIds, searchedSeasonIds, searchedMediumIds, medium, t
+    } = this.props;
 
+    console.warn('broadcastChannelsById', broadcastChannelsById && broadcastChannelsById.toJS());
     return (
       <CreateModal isOpen title='New TV guide entry' onClose={this.onCloseClick}>
         <FormSubtitle style={{ marginTop: 0 }}>Content</FormSubtitle>
@@ -156,16 +117,46 @@ export default class LoginModal extends Component {
           <div>
             <Field
               component={SelectInput}
-              getItemText={(id) => `${mediaById.getIn([ id, 'title' ])} (${t(`mediaTypes.${mediaById.getIn([ id, 'type' ])}`)})`}
+              getItemText={(id) => mediaById.getIn([ id, 'title', mediaById.getIn([ id, 'defaultLocale' ]) ])}
               getOptions={searchSeasons}
-              isLoading={searchedMediumIds.get('_status') === FETCHING}
+              isLoading={searchedSeasonIds.get('_status') === FETCHING}
               label='Season'
               name='seasonId'
-              options={searchedMediumIds.get('data').toJS()}
+              options={searchedSeasonIds.get('data').toJS()}
               placeholder='Season'
+              required />
+            <Field
+              component={SelectInput}
+              getItemText={(id) => mediaById.getIn([ id, 'title', mediaById.getIn([ id, 'defaultLocale' ]) ])}
+              getOptions={searchEpisodes}
+              isLoading={searchedEpisodeIds.get('_status') === FETCHING}
+              label='Episode'
+              name='episodeId'
+              options={searchedEpisodeIds.get('data').toJS()}
+              placeholder='Episode'
               required />
           </div>}
         <FormSubtitle>Airtime</FormSubtitle>
+        <Field
+          component={SelectInput}
+          getItemText={(id) => broadcastChannelsById.getIn([ id, 'title', broadcastChannelsById.getIn([ id, 'defaultLocale' ]) ])}
+          getOptions={searchBroadcastChannels}
+          isLoading={searchedBroadcastChannelIds.get('_status') === FETCHING}
+          label='Channel'
+          name='broadcastChannelId'
+          options={searchedBroadcastChannelIds.get('data').toJS()}
+          placeholder='Channel'
+          required />
+        <Field
+          component={DateInput}
+          label='Start'
+          name='startDate'
+          required />
+        <Field
+          component={DateInput}
+          label='End'
+          name='endDate'
+          required />
         {/* <Field component={renderField} name='email' placeholder={t('login.email')} ref={(c) => { this._email = c; }} />
         <Field component={renderField} name='password' placeholder={t('login.password')} type='password' /> */}
       </CreateModal>

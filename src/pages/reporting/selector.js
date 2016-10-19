@@ -6,7 +6,7 @@ import {
   eventsEntitiesSelector,
   eventsListSelector,
   searchStringHasMediaRelationsSelector,
-  mediaEntitiesSelector,
+  listMediaEntitiesSelector,
   gendersListSelector,
   gendersEntitiesSelector,
   agesListSelector,
@@ -35,7 +35,7 @@ const agesSelector = createEntitiesByListSelector(agesListSelector, agesEntities
 // //////
 
 export const mediaFilterSelector = createStructuredSelector({
-  mediaById: mediaEntitiesSelector,
+  mediaById: listMediaEntitiesSelector,
   searchedMediumIds: searchedMediumIdsSelector
 });
 
@@ -66,7 +66,7 @@ const eventSelector = createSelector(
 
 const timelineConfigSelector = createSelector(
   eventSelector,
-  mediaEntitiesSelector,
+  listMediaEntitiesSelector,
   mediumIdsSelector,
   timelineDataSelector,
   (event, mediaById, mediumIds, timelineData) => {
@@ -110,7 +110,7 @@ const isLoadingGenderSelector = createSelector(mediumIdsSelector, genderDataSele
 
 const ageConfigSelector = createSelector(
   eventSelector,
-  mediaEntitiesSelector,
+  listMediaEntitiesSelector,
   mediumIdsSelector,
   ageDataSelector,
   (event, mediaById, mediumIds, ageData) => {
@@ -142,7 +142,7 @@ const ageConfigSelector = createSelector(
 
 const genderConfigSelector = createSelector(
   eventSelector,
-  mediaEntitiesSelector,
+  listMediaEntitiesSelector,
   mediumIdsSelector,
   genderDataSelector,
   gendersEntitiesSelector,
@@ -191,7 +191,7 @@ export const activitySelector = createStructuredSelector({
   isLoadingAge: isLoadingAgeSelector,
   isLoadingGender: isLoadingGenderSelector,
   isLoadingTimeline: isLoadingTimelineSelector,
-  mediaById: mediaEntitiesSelector,
+  mediaById: listMediaEntitiesSelector,
   mediumIds: mediumIdsSelector,
   timelineConfig: timelineConfigSelector
 });

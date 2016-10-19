@@ -5,7 +5,6 @@ import { bindActionCreators } from 'redux';
 import moment from 'moment';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { reduxForm, Field, Fields } from 'redux-form/immutable';
-// import DateInput from '../../_common/inputs/dateInput';
 import SelectInput from '../../_common/inputs/selectInput';
 import DateRangeInput from '../../_common/inputs/dateRangeInput';
 import { FETCHING } from '../../../constants/statusTypes';

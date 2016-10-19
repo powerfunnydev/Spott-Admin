@@ -1,4 +1,3 @@
-import { transformAvailabilitiesFromApi } from './_helpers';
 
 export function transformContentProducers (body) {
   const contentProducers = body.data;
@@ -46,7 +45,7 @@ export function transformCharacterSubscription ({
   };
 }
 
-export function transformMedium ({ title, type, posterImage, profileImage, uuid: id }) {
+export function transformListMedium ({ title, type, posterImage, profileImage, uuid: id }) {
   return {
     id,
     title,
@@ -97,58 +96,127 @@ export function transformActivityData (dataList, transformer) {
   * @returnExample
   * {
   *   availabilityFrom: <date>,
-  *   availabilityPlannedToMakeInteractive: <bool>,,
   *   availabilityPlatforms: [<id>],
   *   availabilityTo: <date>,
   *   availabilityVideoStatusType: 'DISABLED' || 'SYNCABLE' || 'INTERACTIVE',
   *   basedOnDefaultLocale: { en: false, fr: true, nl: false },
-  *   mediumCategories: [ '123', '124', '1235' ],
   *   defaultLocale: 'en',
-  *   description: { en: 'Home', fr: 'A la maison', nl: 'Thuis' },
+  *   description: { en: '...', fr: '...', nl: '...' },
   *   externalReference: '...',
   *   externalReferenceSource: '...',
+  *   hasTitle: { en: true, fr: true, nl: true },
   *   id: 'abcdef123',
-  *   locales: [ 'en', 'fr', 'nl' ],
-  *   poster: { en: ..., fr: ..., nl: ... }
-  *   publishStatus: 'DRAFT' || 'REVIEW' || 'PUBLISHED',
-  *   relatedCharacterIds: [ '1234', '1235', ... ],
   *   keyVisual: { en: ..., fr: ..., nl: ... },
-  *   startYear: { en: 1991, fr: 1991, nl: 1991 },
-  *   endYear: { en: 2000, fr: 2000, nl: 2000 },
-  *   title: { en: 'Home', fr: 'A la maison', nl: 'Thuis' }
+  *   locales: [ 'en', 'fr', 'nl' ],
+  *   number: 2,
+  *   poster: { en: ..., fr: ..., nl: ... },
+  *   publishStatus: 'DRAFT' || 'REVIEW' || 'PUBLISHED',
+  *   relatedCharacterIds: [ '1234', '1235', ... ]
+  *   relatedVideoId: '1234',
+  *   seasonId: 'abc12',
+  *   seriesId: 'bca12',
+  *   title: { en: 'Pilot', fr: 'Pilot', nl: 'Pilot' }
   * }
   */
-export function transformSeries ({ availabilities, categories, characters, defaultLocale,
-  externalReference: { reference: externalReference, source: externalReferenceSource },
-  localeData, publishStatus, type, uuid: id }) {
-  const series = {
-    ...transformAvailabilitiesFromApi(availabilities),
+export function transformEpisode ({ availabilities, characters, contentProducers, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource },
+  localeData, number, publishStatus, season, serie, uuid: id, video }) {
+  const episode = {
+    // ...convertAvailabilitiesFromApi(availabilities),
     basedOnDefaultLocale: {},
-    mediumCategories: categories.map((mediumCategory) => mediumCategory.uuid),
+    contentProducerIds: contentProducers.map((cp) => cp.uuid),
     defaultLocale,
     description: {}, // Locale data
     externalReference,
     externalReferenceSource,
+    hasTitle: {}, // Locale data
     id,
-    locales: [],
     keyVisual: {},
-    publishStatus,
+    locales: [],
+    number,
     poster: {},
+    publishStatus,
     relatedCharacterIds: characters.map((c) => c.character.uuid),
-    startYear: {}, // Locale data
-    endYear: {}, // Locale data
-    title: {}, // Locale data
-    type
+    relatedVideoId: video && video.uuid,
+    seasonId: season.uuid,
+    seriesId: serie.uuid,
+    title: {} // Locale data
   };
-  for (const { basedOnDefaultLocale, description, endYear, locale, posterImage, profileCover, startYear, title } of localeData) {
-    series.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
-    series.description[locale] = description;
-    series.endYear[locale] = endYear;
-    series.keyVisual[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
-    series.poster[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
-    series.startYear[locale] = startYear;
-    series.title[locale] = title;
-    series.locales.push(locale);
+  for (const { basedOnDefaultLocale, description, hasTitle, locale, posterImage, profileCover, title } of localeData) {
+    episode.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+    episode.description[locale] = description;
+    episode.hasTitle[locale] = hasTitle;
+    episode.keyVisual[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
+    episode.poster[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
+    episode.title[locale] = title;
+    episode.locales.push(locale);
   }
-  return series;
+  return episode;
+}
+
+/**
+  * @returnExample
+  * {
+  *   availabilityFrom: <date>,,
+  *   availabilityPlatforms: [<id>],
+  *   availabilityTo: <date>,
+  *   availabilityVideoStatusType: 'DISABLED' || 'SYNCABLE' || 'INTERACTIVE',
+  *   basedOnDefaultLocale: { en: false, fr: true, nl: false },
+  *   defaultLocale: 'en',
+  *   description: { en: 'Home', fr: 'A la maison', nl: 'Thuis' },
+  *   endYear: { en: 1991, fr: 1991, nl: 1991 },
+  *   externalReference: '...',
+  *   externalReferenceSource: '...',
+  *   hasTitle: { en: true, fr: true, nl: true },
+  *   id: 'abcdef123',
+  *   [keyVisual]: { en: ..., fr: ..., nl: ... },
+  *   locales: [ 'en', 'fr', 'nl' ],
+  *   number: 1,
+  *   [poster]: { en: ..., fr: ..., nl: ... },
+  *   publishStatus: 'DRAFT' || 'PUBLISH',
+  *   relatedCharacterIds: [ '1234', '1235', ... ],
+  *   seriesId: 'abc123',
+  *   startYear: { en: 1991, fr: 1991, nl: 1991 },
+  *   title: { en: 'Home', fr: 'A la maison', nl: 'Thuis' }
+  * }
+  */
+export function transformSeason ({ availabilities, characters, defaultLocale,
+  externalReference: { reference: externalReference, source: externalReferenceSource },
+  localeData, number, publishStatus, serie, uuid: id }) {
+  const season = {
+    // ...transformAvailabilitiesFromApi(availabilities),
+    basedOnDefaultLocale: {},
+    defaultLocale,
+    description: {}, // Locale data
+    endYear: {}, // Locale data
+    externalReference,
+    externalReferenceSource,
+    hasTitle: {}, // Locale data
+    id,
+    keyVisual: {},  // Locale data
+    locales: [],
+    number,
+    poster: {}, // Locale data
+    publishStatus,
+    relatedCharacterIds: characters.map((c) => c.character.uuid),
+    seriesId: serie.uuid,
+    startYear: {}, // Locale data
+    title: {} // Locale data
+  };
+  for (const { basedOnDefaultLocale, description, endYear, hasTitle, locale,
+    posterImage, profileCover, startYear, title } of localeData) {
+    season.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+    season.description[locale] = description;
+    season.endYear[locale] = endYear;
+    season.hasTitle[locale] = hasTitle;
+    season.startYear[locale] = startYear;
+    season.title[locale] = title;
+    season.keyVisual[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
+    season.locales.push(locale);
+    season.poster[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
+  }
+  return season;
+}
+
+export function transformBroadcastChannel (data) {
+  return data;
 }

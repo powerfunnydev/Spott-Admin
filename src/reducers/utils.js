@@ -10,6 +10,14 @@ export function serializeFilterHasContentProducers ({ searchString = '', page = 
   return id;
 }
 
+export function serializeFilterHasEpisodes ({ searchString = '', seasonId = '' }) {
+  return `searchString=${searchString}&seasonId=${seasonId}`;
+}
+
+export function serializeFilterHasSeries ({ searchString = '', seriesId = '' }) {
+  return `searchString=${searchString}&seriesId=${seriesId}`;
+}
+
 // path is e.g., [ 'relations', type, id ]
 export function fetchStart (state, path) {
   // Get the data (entity/relations) from the state, which can be undefined.

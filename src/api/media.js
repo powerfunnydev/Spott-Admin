@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import AWS from 'aws-sdk';
 import { get, post, UnexpectedError } from './request';
-import { transformMedium } from './transformers';
+import { transformListMedium } from './transformers';
 
 function uploadToS3 ({ accessKeyId, acl, baseKey, bucket, file, policy, signature }, uploadingCallback) {
   return new Promise((resolve, reject) => {
@@ -223,5 +223,5 @@ export async function searchMedia (baseUrl, authenticationToken, locale, { searc
     searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
   }
   const { body: { data } } = await get(authenticationToken, locale, searchUrl);
-  return data.map(transformMedium);
+  return data.map(transformListMedium);
 }

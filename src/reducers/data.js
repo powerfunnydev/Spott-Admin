@@ -1,23 +1,29 @@
 import { fromJS } from 'immutable';
-import * as seriesActions from '../actions/series';
+import * as broadcastChannelActions from '../actions/broadcastChannel';
+import * as episodeActions from '../actions/episode';
+import * as seasonActions from '../actions/season';
 import * as mediaActions from '../actions/media';
 import * as contentProducersActions from '../actions/contentProducers';
 import * as reportingActions from '../actions/reporting';
-import { serializeFilterHasContentProducers, searchStart, searchSuccess, searchError, fetchListStart, fetchListSuccess, fetchListError } from './utils';
+import { serializeFilterHasContentProducers, serializeFilterHasEpisodes, serializeFilterHasSeries, searchStart, searchSuccess, searchError, fetchListStart, fetchListSuccess, fetchListError } from './utils';
 
 export default (state = fromJS({
   entities: {
     ages: {},
+    broadcastChannels: {},
     contentProducers: {},
     events: {},
     genders: {},
-    media: {}
+    listMedia: {}
   },
   relations: {
     ages: {},
     events: {},
+    filterHasEpisodes: {},
     filterHasContentProducers: {},
+    filterHasSeasons: {},
     genders: {},
+    searchStringHasBroadcastChannels: {},
     searchStringHasMedia: {},
     searchStringHasSeries: {}
   }
@@ -34,15 +40,36 @@ export default (state = fromJS({
     case contentProducersActions.CONTENT_PRODUCERS_FETCH_ERROR:
       return searchError(state, 'filterHasContentProducers', serializeFilterHasContentProducers(action), action.error);
 
+    case broadcastChannelActions.BROADCAST_CHANNEL_SEARCH_START:
+      return searchStart(state, 'searchStringHasBroadcastChannels', action.searchString);
+    case broadcastChannelActions.BROADCAST_CHANNEL_SEARCH_SUCCESS:
+      return searchSuccess(state, 'broadcastChannels', 'searchStringHasBroadcastChannels', action.searchString, action.data);
+    case broadcastChannelActions.BROADCAST_CHANNEL_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasBroadcastChannels', action.searchString, action.error);
+
     // Media
     // /////
+
+    case episodeActions.EPISODES_SEARCH_START:
+      return searchStart(state, 'filterHasSeasons', serializeFilterHasEpisodes(action));
+    case episodeActions.EPISODES_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'filterHasEpisodes', serializeFilterHasEpisodes(action), action.data);
+    case episodeActions.EPISODES_SEARCH_ERROR:
+      return searchError(state, 'filterHasSeasons', serializeFilterHasEpisodes(action), action.error);
 
     case mediaActions.MEDIA_SEARCH_START:
       return searchStart(state, 'searchStringHasMedia', action.searchString);
     case mediaActions.MEDIA_SEARCH_SUCCESS:
-      return searchSuccess(state, 'media', 'searchStringHasMedia', action.searchString, action.data);
+      return searchSuccess(state, 'listMedia', 'searchStringHasMedia', action.searchString, action.data);
     case mediaActions.MEDIA_SEARCH_ERROR:
       return searchError(state, 'searchStringHasMedia', action.searchString, action.error);
+
+    case seasonActions.SEASONS_SEARCH_START:
+      return searchStart(state, 'filterHasSeasons', serializeFilterHasSeries(action));
+    case seasonActions.SEASONS_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'filterHasSeasons', serializeFilterHasSeries(action), action.data);
+    case seasonActions.SEASONS_SEARCH_ERROR:
+      return searchError(state, 'filterHasSeasons', serializeFilterHasSeries(action), action.error);
 
     // Reporting
     // /////////
@@ -67,16 +94,6 @@ export default (state = fromJS({
       return fetchListSuccess(state, 'genders', 'genders', action.data);
     case reportingActions.GENDERS_FETCH_ERROR:
       return fetchListError(state, 'genders', action.error);
-
-    // Series
-    // //////
-
-    case seriesActions.SERIES_SEARCH_START:
-      return searchStart(state, 'searchStringHasSeries', action.searchString);
-    case seriesActions.SERIES_SEARCH_SUCCESS:
-      return searchSuccess(state, 'media', 'searchStringHasSeries', action.searchString, action.data);
-    case seriesActions.SERIES_SEARCH_ERROR:
-      return searchError(state, 'searchStringHasSeries', action.searchString, action.error);
 
     default:
       return state;
