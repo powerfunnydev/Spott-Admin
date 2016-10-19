@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import { push as routerPush } from 'react-router-redux';
 import Radium from 'radium';
 import { connect } from 'react-redux';
@@ -15,6 +15,8 @@ import { FETCHING } from '../../../constants/statusTypes';
 import CreateModal from '../../_common/createModal';
 import * as actions from './actions';
 import selector from './selector';
+
+/* eslint-disable react/sort-prop-types */
 
 // function validate (values) {
 //   const validationErrors = {};
@@ -50,13 +52,22 @@ import selector from './selector';
 export default class LoginModal extends Component {
 
   static propTypes = {
+    broadcastChannelsById: ImmutablePropTypes.map.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    mediaById: ImmutablePropTypes.map.isRequired,
+    medium: ImmutablePropTypes.map.isRequired,
     routerPush: PropTypes.func.isRequired,
+    searchBroadcastChannels: PropTypes.func.isRequired,
+    searchedBroadcastChannelIds: ImmutablePropTypes.map.isRequired,
+    searchedEpisodeIds: ImmutablePropTypes.map.isRequired,
+    searchedMediumIds: ImmutablePropTypes.map.isRequired,
+    searchedSeasonIds: ImmutablePropTypes.map.isRequired,
     searchEpisodes: PropTypes.func.isRequired,
+    searchMedia: PropTypes.func.isRequired,
     searchSeasons: PropTypes.func.isRequired,
-    searchSeries: PropTypes.func.isRequired,
+    searchSeries: PropTypes.func,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired
   };
@@ -103,7 +114,7 @@ export default class LoginModal extends Component {
   render () {
     const { styles } = this.constructor;
     const {
-      broadcastChannelsById, error, handleSubmit, mediaById, searchBroadcastChannels,
+      broadcastChannelsById, handleSubmit, mediaById, searchBroadcastChannels,
       searchEpisodes, searchMedia, searchSeasons, searchedBroadcastChannelIds,
       searchedEpisodeIds, searchedSeasonIds, searchedMediumIds, medium, t
     } = this.props;

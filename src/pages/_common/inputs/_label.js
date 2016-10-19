@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { colors } from '../styles';
 
 const requiredImage = require('./images/required.svg');
 

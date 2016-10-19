@@ -15,10 +15,6 @@ export function transformContentProducers (body) {
   return body;
 }
 
-export function transformTvGuideEntry ({ auditInfo: { createdOn, lastUpdatedBy, lastUpdatedOn }, uuid: id }) {
-  return { createdOn, id, lastUpdatedBy, lastUpdatedOn };
-}
-
 export function transformBrandSubscription ({
   brand: { logo, name, uuid: brandId },
   count
@@ -223,4 +219,14 @@ export function transformSeason ({ availabilities, characters, defaultLocale,
 
 export function transformBroadcastChannel ({ name, uuid: id }) {
   return { id, name };
+}
+
+export function transformTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastUpdatedOn }, uuid: id, start, medium, medium: { season }, channel }) {
+  return {
+    start, id, lastUpdatedBy, lastUpdatedOn,
+    medium: transformListMedium(medium),
+    channel: transformBroadcastChannel(channel),
+    season: season && { title: season.title },
+    serie: season && season.serie && { title: season.serie.title }
+  };
 }
