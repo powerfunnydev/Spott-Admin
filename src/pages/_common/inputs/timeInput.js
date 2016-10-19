@@ -2,19 +2,20 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import TimePicker from 'rc-time-picker';
-import { colors } from '../styles';
+import { errorTextStyle } from '../styles';
 import Label from './_label';
 import 'rc-time-picker/assets/index.css';
 import './styles/timeInput.css';
 
 @Radium
-export default class DateInput extends Component {
+export default class TimeInput extends Component {
 
   static propTypes = {
     dateFormat: PropTypes.string,
     first: PropTypes.bool,
     input: PropTypes.object.isRequired,
     label: PropTypes.string,
+    meta: PropTypes.object.isRequired,
     required: PropTypes.bool,
     style: PropTypes.object,
     onChange: PropTypes.func
@@ -36,50 +37,34 @@ export default class DateInput extends Component {
     this.setState({ open: true });
   }
 
-  onChange (date) {
+  onChange (time) {
     const { input, onChange } = this.props;
-    input.onChange(date);
+    input.onChange(time);
     if (onChange) {
-      onChange(date);
+      onChange(time);
     }
     this.closeDatePicker();
   }
 
   static styles = {
-    base: {
-      border: `1px solid ${colors.darkGray}`,
-      borderRadius: 4,
-      cursor: 'pointer',
-      fontSize: '16px',
-      height: 38,
-      padding: 6,
-      width: '100%'
-    },
-    theme: {
-      DateRange: {
-        background: 'transparent'
-      }
-    },
-    popup: {
-      position: 'absolute',
-      top: '2.7em',
-      right: 0,
-      zIndex: 1
+    padTop: {
+      paddingTop: '1.25em'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { dateFormat, first, input, label, required, style } = this.props;
+    const { first, input, label, meta, required, style } = this.props;
 
     return (
       <div style={[ !first && styles.padTop, style ]}>
-        {label && <Label required={required} text={label} />}
+        {label ? <Label required={required} text={label} /> : <Label />}
         <TimePicker
           placeholder='hh:mm'
           showSecond={false}
-          value={input.value}
+          value={typeof input.value === 'object' ? input.value : null}
           onChange={this.onChange}/>
+        {meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
       </div>
     );
   }

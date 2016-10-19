@@ -45,12 +45,12 @@ export default class DateInput extends Component {
 
   static styles = {
     base: {
-      border: `1px solid ${colors.darkGray}`,
+      border: `1px solid ${colors.lightGray2}`,
       borderRadius: 4,
       cursor: 'pointer',
-      fontSize: '16px',
-      height: 38,
-      padding: 6,
+      fontSize: '1em',
+      height: '2.375em',
+      padding: '0.375em',
       width: '100%'
     },
     theme: {

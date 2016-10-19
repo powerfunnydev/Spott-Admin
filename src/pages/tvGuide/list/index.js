@@ -25,6 +25,7 @@ const numberOfRows = 25;
 export default class ContentProducers extends Component {
 
   static propTypes = {
+    children: PropTypes.node,
     isSelected: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -132,7 +133,7 @@ export default class ContentProducers extends Component {
   }
 
   render () {
-    const { isSelected, location: { pathname, query: { page, searchString, sortField, sortDirection } },
+    const { children, isSelected, location: { pathname, query: { page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, tvGuideEntries } = this.props;
     const { styles } = this.constructor;
     console.log('tvGuideEntries', tvGuideEntries.toJS());
@@ -171,6 +172,7 @@ export default class ContentProducers extends Component {
             <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.onChangePage(parseInt(page, 10), true); }}/>
           </Container>
         </div>
+        {children}
       </div>
 
     );

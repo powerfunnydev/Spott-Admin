@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import ReactDOM from 'react-dom';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import { push as routerPush } from 'react-router-redux';
 import Radium from 'radium';
@@ -16,17 +15,26 @@ import CreateModal from '../../_common/createModal';
 import * as actions from './actions';
 import selector from './selector';
 
-// function validate (values) {
-//   const validationErrors = {};
-//   const { email, password } = values.toJS();
-//   const emailError = !email;
-//   // !values.get('email') || !values.get('email').match(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
-//   if (emailError) { validationErrors.email = 'invalid'; }
-//   const passwordError = !password || !password.match(/^.{6,}$/);
-//   if (passwordError) { validationErrors.password = 'invalid'; }
-//   // Done
-//   return validationErrors;
-// }
+function validate (values, { medium, t }) {
+  const validationErrors = {};
+  if (!values.toJS) {
+    return validationErrors;
+  }
+  const { broadcastChannelId, endDate, endTime, episodeId, mediumId, seasonId, startDate, startTime } = values.toJS();
+  if (!broadcastChannelId) { validationErrors.broadcastChannelId = t('common.errors.required'); }
+  if (!endDate) { validationErrors.endDate = t('common.errors.required'); }
+  if (!endTime) { validationErrors.endTime = t('common.errors.required'); }
+  // When a series is selected, the episode is required.
+  if (medium.get('type') === 'TV_SERIE' && !episodeId) { validationErrors.episodeId = t('common.errors.required'); }
+  if (!mediumId) { validationErrors.mediumId = t('common.errors.required'); }
+  // When a series is selected, the episode is required.
+  if (medium.get('type') === 'TV_SERIE' && !seasonId) { validationErrors.seasonId = t('common.errors.required'); }
+  if (!startDate) { validationErrors.startDate = t('common.errors.required'); }
+  if (!startTime) { validationErrors.startTime = t('common.errors.required'); }
+
+  // Done
+  return validationErrors;
+}
 
 @localized
 @connect(selector, (dispatch) => ({
@@ -44,7 +52,8 @@ import selector from './selector';
     endTime: moment(),
     startDate: moment().startOf('day'),
     startTime: moment()
-  }
+  },
+  validate
 })
 @Radium
 export default class LoginModal extends Component {
@@ -67,23 +76,11 @@ export default class LoginModal extends Component {
     this.submit = ::this.submit;
   }
 
-  // The autofocus attribute will only work when the page loads initially.
-  // When a popup opens we still need to manually focus the field.
-  componentDidMount () {
-    // setTimeout(() => {
-    //   ReactDOM.findDOMNode(this._email).focus();
-    // }, 0);
-  }
-
   async submit (form) {
     try {
-      console.warn('form.toJS()', form.toJS());
       await this.props.submit(form.toJS());
-      this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
+      this.props.routerPush('/tv-guide');
     } catch (error) {
-      if (error === 'incorrect') {
-        throw new SubmissionError({ _error: 'login.errors.incorrect' });
-      }
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
   }
@@ -95,8 +92,7 @@ export default class LoginModal extends Component {
   static styles = {
     col2: {
       display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'flex-end'
+      justifyContent: 'space-between'
     }
   };
 
@@ -120,7 +116,11 @@ export default class LoginModal extends Component {
           name='mediumId'
           options={searchedMediumIds.get('data').toJS()}
           placeholder='Series'
-          required />
+          required
+          onChange={() => {
+            this.props.dispatch(this.props.change('seasonId', null));
+            this.props.dispatch(this.props.change('episodeId', null));
+          }} />
         {medium.get('type') === 'TV_SERIE' &&
           <div>
             <Field
@@ -132,7 +132,10 @@ export default class LoginModal extends Component {
               name='seasonId'
               options={searchedSeasonIds.get('data').toJS()}
               placeholder='Season'
-              required />
+              required
+              onChange={() => {
+                this.props.dispatch(this.props.change('episodeId', null));
+              }} />
             <Field
               component={SelectInput}
               getItemText={(id) => mediaById.getIn([ id, 'title', mediaById.getIn([ id, 'defaultLocale' ]) ])}

@@ -17,7 +17,7 @@ export const colors = {
   lightGray: '#F1F3F4',
   lightGray2: '#ced6da',
   lightGray3: '#aab5b8',
-  errorColor: '#EC410F'
+  errorColor: '#e17575'
 };
 
 export const defaultSpacing = 15;

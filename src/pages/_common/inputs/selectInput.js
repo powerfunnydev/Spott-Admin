@@ -65,6 +65,10 @@ export default class SelectInput extends Component {
       fontSize: '1em',
       width: '100%'
     },
+    error: {
+      color: colors.errorColor,
+      border: `1px solid ${colors.errorColor}`
+    },
     disabled: {
       backgroundColor: colors.lightGray,
       color: colors.darkerGray
@@ -105,14 +109,14 @@ export default class SelectInput extends Component {
           multi={multiselect}
           options={maxSelected ? [] : options}
           placeholder={placeholder}
-          style={[ styles.base, disabled && styles.disabled ]}
+          style={[ styles.base, disabled && styles.disabled, meta.touched && meta.error && styles.error ]}
           value={value} // Overides value of of {...field}
           onBlur={() => input.onBlur(input.value)} // Overides onBlur of of {...field}
           onChange={this.onInternalChange}  // Overides onChange of of {...field};
           onInputChange={getOptions}
           onOpen={getOptions} />
         {typeof maxSelect === 'number' && <span style={styles.info}>{input.value.length}/{maxSelect} selected</span>}
-        {meta.touched && meta.error === 'required' && <div style={errorTextStyle}>This field is required.</div>}
+        {meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
       </div>
     );
   }
