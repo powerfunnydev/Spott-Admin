@@ -6,8 +6,13 @@ export async function fetchTvGuide (baseUrl, authenticationToken, locale, { page
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }
-  const { body: { data } } = await get(authenticationToken, locale, url);
-  return data.map(transformTvGuideEntry);
+  const { body } = await get(authenticationToken, locale, url);
+  // There is also usable data in body (not only in data field).
+  // We need also fields page, pageCount,...
+  // console.log('before transform', { ...body });
+  body.data = body.data.map(transformTvGuideEntry);
+  // console.log('after tranform', body);
+  return body;
 }
 
 export async function persistTvGuideEntry (baseUrl, authenticationToken, locale, { mediumId, episodeId, broadcastChannelId, startDate, startTime, endDate, endTime }) {

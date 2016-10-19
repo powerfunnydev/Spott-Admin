@@ -250,7 +250,7 @@ export class Rows extends Component {
     const { children, isLoading } = this.props;
     const { styles } = this.constructor;
     return (
-      <div style={{ position: 'relative', minHeight: '100px' }}>
+      <div style={{ position: 'relative', minHeight: '84px' }}>
         {isLoading &&
           <div style={styles.rows}>
            <Spinner style={{ height: '30px', width: '30px' }}/>

@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import { push as routerPush } from 'react-router-redux';
 import Radium from 'radium';
 import { connect } from 'react-redux';
@@ -59,13 +60,24 @@ function validate (values, { medium, t }) {
 export default class LoginModal extends Component {
 
   static propTypes = {
+    broadcastChannelsById: ImmutablePropTypes.map.isRequired,
+    change: PropTypes.func.isRequired,
+    dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    mediaById: ImmutablePropTypes.map.isRequired,
+    medium: ImmutablePropTypes.map.isRequired,
     routerPush: PropTypes.func.isRequired,
+    searchBroadcastChannels: PropTypes.func.isRequired,
     searchEpisodes: PropTypes.func.isRequired,
+    searchMedia: PropTypes.func.isRequired,
     searchSeasons: PropTypes.func.isRequired,
-    searchSeries: PropTypes.func.isRequired,
+    searchSeries: PropTypes.func,
+    searchedBroadcastChannelIds: ImmutablePropTypes.map.isRequired,
+    searchedEpisodeIds: ImmutablePropTypes.map.isRequired,
+    searchedMediumIds: ImmutablePropTypes.map.isRequired,
+    searchedSeasonIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired
   };
@@ -99,7 +111,7 @@ export default class LoginModal extends Component {
   render () {
     const { styles } = this.constructor;
     const {
-      broadcastChannelsById, error, handleSubmit, mediaById, searchBroadcastChannels,
+      broadcastChannelsById, handleSubmit, mediaById, searchBroadcastChannels,
       searchEpisodes, searchMedia, searchSeasons, searchedBroadcastChannelIds,
       searchedEpisodeIds, searchedSeasonIds, searchedMediumIds, medium, t
     } = this.props;
