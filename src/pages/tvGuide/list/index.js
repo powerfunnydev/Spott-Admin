@@ -10,6 +10,7 @@ import { determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Heade
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
+import Dropdown, { styles as dropdownStyles } from '../../_common/components/dropdown';
 
 /* eslint-disable react/no-set-state*/
 const numberOfRows = 25;
@@ -146,6 +147,7 @@ export default class ContentProducers extends Component {
                 <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 2 } ]}>TITLE</TextCel>
                 <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}>UPDATED BY</TextCel>
                 <TextCel sortColumn={this.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE} style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}>LAST UPDATED ON</TextCel>
+                <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}/>
               </Headers>
               <Rows isLoading={tvGuideEntries.get('_status') !== 'loaded'}>
                 {tvGuideEntries.get('data').map((tvGuideEntry, index) => {
@@ -157,6 +159,11 @@ export default class ContentProducers extends Component {
                       <TextCel getValue={this.getMediumTitle} objectToRender={tvGuideEntry} style={{ flex: 2 }}/>
                       <TextCel getValue={this.getUpdatedBy} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
                       <TextCel getValue={this.getLastUpdatedOn} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
+                      <Dropdown style={{ flex: 1 }} onChange={(e) => { console.log(e); }} elementShown={<div key={0} style={[ dropdownStyles.clickable, { width: '100%' } ]} onClick={() => { console.log('top'); }}>A</div>}>
+                        <div key={1} style={dropdownStyles.option} onClick={() => { console.log('rest'); }}>C</div>
+                        <div key={2} style={dropdownStyles.option} onClick={() => { console.log('rest'); }}>B</div>
+                        <div key={3} style={dropdownStyles.option} onClick={() => { console.log('rest'); }}>C</div>
+                      </Dropdown>
                     </Row>
                   );
                 })}
