@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import classNames from 'classnames';
 import Radium from 'radium';
+import { colors } from '../../_common/styles';
 const arrowGray = require('../../../assets/images/arrow-gray.svg');
 
 /* eslint-disable react/prop-types */
@@ -12,10 +12,23 @@ export const styles = {
     position: 'relative',
     height: '20px'
   },
+  topElement: {
+    color: colors.darkGray2,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    paddingRight: '12px'
+  },
+  center: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
   clickable: {
     cursor: 'pointer'
   },
   control: {
+    height: '20px',
     display: 'flex',
     paddingLeft: '10px',
     flexDirection: 'row',
@@ -40,12 +53,13 @@ export const styles = {
     zIndex: 1000
   },
   option: {
+    color: colors.darkGray2,
+    display: 'flex',
+    alignItems: 'center',
     paddingLeft: '10px',
     height: '20px',
     boxSizing: 'border-box',
-    color: 'rgba(51, 51, 51, 0.8)',
     cursor: 'pointer',
-    display: 'block',
     ':hover': {
       backgroundColor: '#f2f9fc',
       color: '#333'
@@ -53,8 +67,8 @@ export const styles = {
   },
   arrowUnder: { transform: 'rotateZ(180deg)' },
   arrow: {
-    width: '10px',
-    height: '10px'
+    width: '8px',
+    height: '5px'
   },
   arrowContainer: {
     borderLeft: '1px solid #ccc',

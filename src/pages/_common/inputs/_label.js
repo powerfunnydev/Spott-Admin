@@ -31,7 +31,7 @@ export default class Label extends Component {
     const { text, required, style, ...rest } = this.props;
     return (
       <label {...rest} style={[ styles.container, style ]}>
-        {text} {required && <img src={requiredImage} style={styles.asterix} />}
+        {text || '\u00a0'} {required && <img src={requiredImage} style={styles.asterix} />}
       </label>
     );
   }

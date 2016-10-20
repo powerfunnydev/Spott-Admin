@@ -1,6 +1,8 @@
 {
   "common": {
     "errors": {
+      "required": "This field is required.",
+      "invalid": "This field is invalid.",
       "unexpected": "Something went wrong!"
     },
     "ok": "Ok"

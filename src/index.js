@@ -68,8 +68,7 @@ function getRoutes ({ getState }) {
         <IndexRedirect to='content-producers' />
         <Route component={ContentProducers} path='content-producers' />
       </Route>
-      <Route path='tv-guide'>
-        <IndexRoute component={TvGuideList} />
+      <Route component={TvGuideList} path='tv-guide'>
         <Route component={TvGuideCreateEntry} path='create' />
       </Route>
       <Route component={Error404} path='*' />

@@ -138,18 +138,16 @@ export default class CreateModal extends Component {
             </div>
             {/* handleSubmit(this.submit) */}
             <form onSubmit={onSubmit}>
+              <div style={styles.error}>
+                {error && typeof error === 'string' && t(error)}
+              </div>
               <div style={styles.content}>
                 {children}
               </div>
               <div style={styles.footer}>
-                <div style={styles.error}>
-                  {error && typeof error === 'string' && t(error)}
-                </div>
-                <div>
-                  <button key='cancel' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white ]} type='button' onClick={this.onForgotPasswordClick}>Cancel</button>
-                  <button key='submit' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} type='submit'>Create</button>
-                </div>
-                </div>
+                <button key='cancel' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white ]} type='button' onClick={this.onForgotPasswordClick}>Cancel</button>
+                <button key='submit' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} type='submit'>Create</button>
+              </div>
             </form>
           </div>
         </RemoveBodyScrollbar>
