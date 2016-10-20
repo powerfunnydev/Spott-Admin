@@ -5,7 +5,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { push as routerPush } from 'react-router-redux';
 import moment from 'moment';
 import Header from '../../app/header';
-import { buttonStyles, colors, Container, makeTextStyle } from '../../_common/styles';
+import { buttonStyles, colors, fontWeights, Container, makeTextStyle } from '../../_common/styles';
 import { determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, TextCel, Rows, Row, Pagination } from '../../_common/components/table';
 import Radium from 'radium';
 import * as actions from './actions';
@@ -37,6 +37,7 @@ export default class ContentProducers extends Component {
     routerPush: PropTypes.func.isRequired,
     selectAllCheckboxes: PropTypes.func.isRequired,
     selectCheckbox: PropTypes.func.isRequired,
+    totalResultCount: PropTypes.number.isRequired,
     tvGuideEntries: ImmutablePropTypes.map.isRequired
   };
 
@@ -158,16 +159,32 @@ export default class ContentProducers extends Component {
       borderBottom: `1px solid ${colors.lightGray2}`
     },
     filterContainer: {
-      alignItems: 'center',
-      display: 'flex',
+      textAlign: 'right',
       paddingBottom: '1.25em',
       paddingTop: '1.25em'
+    },
+    tableTitle: {
+      base: {
+        ...makeTextStyle(fontWeights.medium, '0.75em'),
+        paddingBottom: '1.25em',
+        paddingTop: '1.25em'
+      },
+      entries: {
+        ...makeTextStyle(fontWeights.regular)
+      },
+      entity: {
+        color: colors.veryDarkGray,
+        textTransform: 'uppercase'
+      },
+      count: {
+        color: '#536970'
+      }
     }
   }
 
   render () {
     const { children, isSelected, location: { pathname, query: { page, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, tvGuideEntries } = this.props;
+      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, tvGuideEntries } = this.props;
     const { styles } = this.constructor;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
 
@@ -181,7 +198,10 @@ export default class ContentProducers extends Component {
           </Container>
         </div>
         <div style={{ backgroundColor: colors.lightGray }}>
-          <Container style={{ paddingTop: '50px', paddingBottom: '50px' }}>
+          <Container style={{ paddingTop: '1.875em', paddingBottom: '1.875em' }}>
+            <div style={styles.tableTitle.base}>
+              <span style={styles.tableTitle.entity}>Entries</span><span style={styles.tableTitle.count}>&nbsp;&nbsp;{totalResultCount} <span style={styles.tableTitle.entries}>Entries</span></span>
+            </div>
             <Table>
               <Headers>
                 {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}

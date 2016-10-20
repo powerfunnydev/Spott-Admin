@@ -47,20 +47,16 @@ export default class Checkbox extends Component {
     onChange: PropTypes.func // Uses the field's onChange, and this one if provided.
   };
 
-  constructor (props) {
-    super(props);
-  }
-
   static styles = {
     checkbox: {
-      height: 14,
-      width: 14,
+      alignItems: 'center',
       border: `1px solid ${colors.darkGray}`,
       borderRadius: 2,
       cursor: 'pointer',
       display: 'flex',
+      height: 14,
       justifyContent: 'center',
-      alignItems: 'center'
+      width: 14
     },
     checked: {
       backgroundColor: colors.primaryBlue
@@ -72,7 +68,7 @@ export default class Checkbox extends Component {
     const { checked, onChange } = this.props;
 
     return (
-      <span style={[ styles.checkbox, checked && styles.checked ]} onClick={() => { console.log('test'); onChange(); }}>
+      <span style={[ styles.checkbox, checked && styles.checked ]} onClick={onChange}>
         {checked && <img src={check}/>}</span>
     );
   }
@@ -88,11 +84,11 @@ export class CheckBoxCel extends Component {
   }
 
   static styles = {
-    cel: {
-      height: '42px',
+    cell: {
+      alignItems: 'center',
       display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center'
+      minHeight: '2.625em',
+      justifyContent: 'center'
     }
   }
 
@@ -100,7 +96,7 @@ export class CheckBoxCel extends Component {
     const { checked, style, onChange } = this.props;
     const { styles } = this.constructor;
     return (
-      <div style={[ styles.cel, style ]}>
+      <div style={[ styles.cell, style ]}>
         <Checkbox checked={checked} onChange={onChange}/>
         {/* <input checked={checked} type='checkbox' onClick={(e) => { onChange(); }}/>*/}
       </div>
@@ -126,13 +122,16 @@ export class TextCel extends Component {
   }
 
   static styles = {
-    cel: {
-      paddingLeft: '16px',
-      display: 'flex',
+    cell: {
       alignItems: 'center',
-      height: '40px',
-      fontSize: '12px',
-      color: colors.darkGray2
+      color: colors.darkGray2,
+      display: 'flex',
+      fontSize: '0.75em',
+      paddingLeft: '1em',
+      paddingRight: '1em',
+      minHeight: '2.625em',
+      paddingTop: '1em',
+      paddingBottom: '1em'
     },
     pointer: {
       cursor: 'pointer'
@@ -142,7 +141,7 @@ export class TextCel extends Component {
     },
     arrowRight: {
       marginLeft: 'auto',
-      marginRight: '17px'
+      marginRight: '1.063em'
     },
     clickable: {
       color: colors.veryDarkGray
@@ -154,7 +153,7 @@ export class TextCel extends Component {
     const { children, style, getValue, objectToRender, onClick, sortColumn, sortDirection } = this.props;
 
     return (
-      <div style={[ styles.cel, style, (sortColumn || onClick) && styles.pointer,
+      <div style={[ styles.cell, style, (sortColumn || onClick) && styles.pointer,
             sortDirection && sortDirection !== NONE && styles.headerSelected,
             onClick && styles.clickable ]} onClick={sortColumn || onClick}>
         <div>
@@ -239,7 +238,7 @@ export class Rows extends Component {
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'gray',
+      backgroundColor: '#f4f5f5',
       opacity: 0.5,
       justifyContent: 'center',
       alignItems: 'center'
@@ -250,10 +249,10 @@ export class Rows extends Component {
     const { children, isLoading } = this.props;
     const { styles } = this.constructor;
     return (
-      <div style={{ position: 'relative', minHeight: '84px' }}>
+      <div style={{ position: 'relative', minHeight: '5.25em' }}>
         {isLoading &&
           <div style={styles.rows}>
-           <Spinner style={{ height: '30px', width: '30px' }}/>
+           <Spinner style={{ height: '1.875em', width: '1.875em' }}/>
           </div>
         }
         {children}
@@ -272,26 +271,26 @@ export class Pagination extends Component {
   }
   static styles = {
     pagination: {
-      marginTop: '30px',
+      marginTop: '1.875em',
       marginLeft: 'auto',
       marginRight: 'auto',
-      width: '190px',
-      height: '30px',
+      maxWidth: '11.875em',
+      height: '1.875em',
       display: 'flex',
       flexDirection: 'row',
       border: `solid 1px ${colors.lightGray2}`,
       backgroundColor: colors.white
     },
     smallButton: {
-      width: '40px',
+      width: '2.5em',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       cursor: 'pointer'
     },
     middle: {
-      fontSize: '12px',
-      width: '110px',
+      fontSize: '0.75em',
+      width: '100%',
       borderLeft: `solid 1px ${colors.lightGray2}`,
       borderRight: `solid 1px ${colors.lightGray2}`,
       display: 'flex',
