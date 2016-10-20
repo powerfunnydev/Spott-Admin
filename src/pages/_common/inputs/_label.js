@@ -9,7 +9,7 @@ export default class Label extends Component {
   static propTypes = {
     required: PropTypes.bool,
     style: PropTypes.object,
-    text: PropTypes.node.isRequired
+    text: PropTypes.node
   };
 
   static styles = {

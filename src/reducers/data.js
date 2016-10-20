@@ -46,11 +46,11 @@ export default (state = fromJS({
     // Tv Guide
     // /////////////////
 
-    case tvGuideActions.TV_GUIDE_FETCH_START:
+    case tvGuideActions.TV_GUIDE_ENTRIES_FETCH_START:
       return searchStart(state, 'filterHasTvGuideEntries', serializeFilterHasTvGuideEntries(action));
-    case tvGuideActions.TV_GUIDE_FETCH_SUCCESS:
+    case tvGuideActions.TV_GUIDE_ENTRIES_FETCH_SUCCESS:
       return searchSuccess(state, 'tvGuideEntries', 'filterHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.data.data);
-    case tvGuideActions.TV_GUIDE_FETCH_ERROR:
+    case tvGuideActions.TV_GUIDE_ENTRIES_FETCH_ERROR:
       return searchError(state, 'filterHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.error);
 
     case broadcastChannelActions.BROADCAST_CHANNEL_SEARCH_START:

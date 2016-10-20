@@ -1,4 +1,4 @@
-import React, { PropTypes } from 'react';
+import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 
 export const colors = {
@@ -17,6 +17,7 @@ export const colors = {
   lightGray: '#F1F3F4',
   lightGray2: '#ced6da',
   lightGray3: '#aab5b8',
+  lightGray4: '#f4f5f5',
   errorColor: '#e17575'
 };
 
@@ -157,12 +158,13 @@ const formSubtitleStyle = {
 };
 
 export const FormSubtitle = Radium((props) => (
-  <h2 {...props} style={[ formSubtitleStyle, props.style ]}>
+  <h2 style={[ formSubtitleStyle, props.style, props.first && { marginTop: '0px' } ]}>
     {props.children}
   </h2>
 ));
 FormSubtitle.propTypes = {
   children: PropTypes.node,
+  first: PropTypes.bool,
   style: PropTypes.object
 };
 
@@ -196,3 +198,53 @@ Container.propTypes = {
   children: PropTypes.node,
   style: PropTypes.object
 };
+
+@Radium
+export class EditTemplate extends Component {
+
+  static propTypes = {
+    children: PropTypes.node,
+    onCancel: PropTypes.func,
+    onSubmit: PropTypes.func
+  };
+
+  constructor (props) {
+    super(props);
+  }
+
+  static styles = {
+    cancelAndSubmitComponent: {
+      paddingBottom: '10px',
+      paddingTop: '10px',
+      paddingRight: '22.5px',
+      display: 'flex',
+      justifyContent: 'flex-end',
+      borderBottom: `1px solid ${colors.lightGray3}`,
+      borderLeft: `1px solid ${colors.lightGray3}`,
+      borderRight: `1px solid ${colors.lightGray3}`,
+      backgroundColor: colors.veryLightGray,
+      width: '100%'
+    }
+  };
+
+  render () {
+    const { styles } = this.constructor;
+    const { children, onCancel, onSubmit } = this.props;
+    return (
+      <Container style={{ marginTop: '1.3em' }}>
+        {children}
+        {(onCancel || onSubmit) && <div style={styles.cancelAndSubmitComponent}>
+          {onCancel && <button
+            key='cancel'
+            style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white ]}
+            onClick={onCancel}>Cancel</button>}
+          {onSubmit && <button
+            key='save'
+            style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]}
+            onClick={onSubmit}>Save</button>}
+        </div>}
+      </Container>
+    );
+  }
+
+}

@@ -80,23 +80,23 @@ export default class DateInput extends Component {
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
         <div style={{ position: 'relative', width: '100%' }}>
-          <input
+          {input.value.format && <input
             readOnly
             style={styles.base}
             type='text'
             value={`${input.value.format(format).toString()}`}
             onBlur={this.closeDatePicker}
-            onFocus={this.openDatePicker} />
-          {this.state.open &&
-            <div style={styles.popup} onMouseDown={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}>
-              <Calendar
-                date={input.value}
-                theme={styles.theme}
-                onChange={this.onChange}/>
-            </div>}
+            onFocus={this.openDatePicker} />}
+        {this.state.open &&
+          <div style={styles.popup} onMouseDown={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}>
+            <Calendar
+              date={input.value}
+              theme={styles.theme}
+              onChange={this.onChange}/>
+          </div>}
         </div>
       </div>
     );

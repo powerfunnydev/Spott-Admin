@@ -7,6 +7,7 @@ import data from './data';
 import reporting from '../pages/reporting/reducer';
 import contentProducers from '../pages/content/contentProducers/reducer';
 import tvGuideCreate from '../pages/tvGuide/create/reducer';
+import tvGuideEdit from '../pages/tvGuide/edit/reducer';
 import tvGuideList from '../pages/tvGuide/list/reducer';
 
 /**
@@ -24,6 +25,7 @@ export default combineReducers({
   router,
   tvGuide: combineReducers({
     create: tvGuideCreate,
+    edit: tvGuideEdit,
     list: tvGuideList
   })
 });

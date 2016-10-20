@@ -126,7 +126,7 @@ export default class CreateTvGuideEntryModal extends Component {
 
     return (
       <CreateModal isOpen title='New TV guide entry' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
-        <FormSubtitle style={{ marginTop: 0 }}>Content</FormSubtitle>
+        <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}
           getItemText={(id) => `${mediaById.getIn([ id, 'title' ])} (${t(`mediaTypes.${mediaById.getIn([ id, 'type' ])}`)})`}

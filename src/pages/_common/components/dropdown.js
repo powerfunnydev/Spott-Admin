@@ -91,6 +91,7 @@ class Dropdown extends Component {
     };
     this.mounted = true;
     this.handleDocumentClick = this.handleDocumentClick.bind(this);
+    this.toggleOpen = this.toggleOpen.bind(this);
   }
 
   componentDidMount () {
@@ -104,14 +105,16 @@ class Dropdown extends Component {
     document.removeEventListener('touchend', this.handleDocumentClick, false);
   }
 
+  toggleOpen () {
+    this.setState({ isOpen: !this.state.isOpen });
+  }
+
   handleMouseDown (event) {
     if (event.type === 'mousedown' && event.button !== 0) { return; }
     event.stopPropagation();
     event.preventDefault();
 
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
+    this.toggleOpen();
   }
 
   handleDocumentClick (event) {
@@ -124,7 +127,7 @@ class Dropdown extends Component {
 
   render () {
     const { children, elementShown, style } = this.props;
-    const menu = this.state.isOpen ? <div style={styles.menu}>{children}</div> : null;
+    const menu = this.state.isOpen ? <div style={styles.menu} onClick={this.toggleOpen}>{children}</div> : null;
 
     return (
       <div style={[ styles.root, style ]}>

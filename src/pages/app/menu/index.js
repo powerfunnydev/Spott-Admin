@@ -105,13 +105,18 @@ export default class Menu extends Component {
             </ScrollLink>
           </span>}
         {isAuthenticated &&
-          <RouterLink to='reporting'>
-            <button key='reporting' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Reporting</button>
-          </RouterLink>}
-        {isAuthenticated &&
           <RouterLink to='content'>
             <button key='content' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Content</button>
           </RouterLink>}
+        {isAuthenticated &&
+          <RouterLink to='tv-guide'>
+            <button key='tv-guide' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>TV Guide</button>
+          </RouterLink>}
+        {isAuthenticated &&
+          <RouterLink to='reporting'>
+            <button key='reporting' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Reporting</button>
+          </RouterLink>}
+
         {isAuthenticated
           ? <button key='logout' style={[ buttonStyles.base, buttonStyles.extraSmall, neutral ? styles.linkButton : buttonStyles.pink ]} onClick={this.onLogOutClick}>{t('header.logout')}</button>
           : <button key='signIn' style={[ buttonStyles.base, buttonStyles.extraSmall, neutral ? styles.linkButton : buttonStyles.pink ]} onClick={this.onSignInClick}>{t('header.login')}</button>}

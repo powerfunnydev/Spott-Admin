@@ -21,6 +21,7 @@ import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
 import ReportingRankings from './pages/reporting/rankings';
 import TvGuideCreateEntry from './pages/tvGuide/create';
+import TvGuideEditEntry from './pages/tvGuide/edit';
 import TvGuideList from './pages/tvGuide/list';
 import { authenticationTokenSelector, userRolesSelector } from './selectors/global';
 import reducer from './reducers';
@@ -70,6 +71,9 @@ function getRoutes ({ getState }) {
       </Route>
       <Route component={TvGuideList} path='tv-guide'>
         <Route component={TvGuideCreateEntry} path='create' />
+      </Route>
+      <Route path='tv-guide'>
+        <Route component={TvGuideEditEntry} path='edit/:id' />
       </Route>
       <Route component={Error404} path='*' />
     </Route>

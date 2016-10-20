@@ -17,6 +17,7 @@ const numberOfRows = 25;
 
 @connect(selector, (dispatch) => ({
   deleteTvGuideEntries: bindActionCreators(actions.deleteTvGuideEntries, dispatch),
+  deleteTvGuideEntry: bindActionCreators(actions.deleteTvGuideEntry, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   routerPush: bindActionCreators(routerPush, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
@@ -28,6 +29,7 @@ export default class ContentProducers extends Component {
   static propTypes = {
     children: PropTypes.node,
     deleteTvGuideEntries: PropTypes.func.isRequired,
+    deleteTvGuideEntry: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -95,6 +97,11 @@ export default class ContentProducers extends Component {
   getLastUpdatedOn (tvGuideEntry) {
     const date = new Date(tvGuideEntry.get('lastUpdatedOn'));
     return moment(date).format('YYYY-MM-DD HH:mm');
+  }
+
+  async deleteTvGuideEntry (tvGuideEntryId) {
+    await this.props.deleteTvGuideEntry(tvGuideEntryId);
+    await this.props.load(this.props.location.query);
   }
 
   onSortField (sortField) {
@@ -239,9 +246,9 @@ export default class ContentProducers extends Component {
                       <TextCel getValue={this.getLastUpdatedOn} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
                       <div style={[ dropdownStyles.center, { flex: 1, ...makeTextStyle(fontWeights.regular, '11px', '0.3px') } ]}>
                         <Dropdown
-                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { console.log('top'); }}>Edit</div>}
+                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPush(`tv-guide/edit/${tvGuideEntry.get('id')}`); }}>Edit</div>}
                           onChange={(e) => { console.log(e); }}>
-                          <div key={1} style={[ dropdownStyles.option ]} onClick={() => { console.log('rest'); }}>Remove</div>
+                          <div key={1} style={[ dropdownStyles.option ]} onClick={(e) => { e.preventDefault(); this.deleteTvGuideEntry(tvGuideEntry.get('id')); }}>Remove</div>
                         </Dropdown>
                       </div>
                     </Row>
