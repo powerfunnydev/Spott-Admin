@@ -65,14 +65,14 @@ function getRoutes ({ getState }) {
         <Route component={ReportingActivity} path='activity' />
         <Route component={ReportingRankings} path='rankings' />
       </Route>
-      <Route path='content'>
+      <Route path='content' onEnter={requireOneRole([ 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
         <IndexRedirect to='content-producers' />
         <Route component={ContentProducers} path='content-producers' />
       </Route>
-      <Route component={TvGuideList} path='tv-guide'>
+      <Route component={TvGuideList} path='tv-guide' onEnter={requireOneRole([ 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
         <Route component={TvGuideCreateEntry} path='create' />
       </Route>
-      <Route path='tv-guide'>
+      <Route path='tv-guide' onEnter={requireOneRole([ 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
         <Route component={TvGuideEditEntry} path='edit/:id' />
       </Route>
       <Route component={Error404} path='*' />

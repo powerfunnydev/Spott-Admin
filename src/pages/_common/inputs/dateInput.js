@@ -1,9 +1,10 @@
 /* eslint-disable react/no-set-state */
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { Calendar } from 'react-date-range';
+import DatePicker from 'react-datepicker';
 import { colors } from '../styles';
 import Label from './_label';
+require('./customDatePicker.css');
 
 @Radium
 export default class DateInput extends Component {
@@ -23,11 +24,18 @@ export default class DateInput extends Component {
     this.openDatePicker = ::this.openDatePicker;
     this.closeDatePicker = ::this.closeDatePicker;
     this.onChange = ::this.onChange;
+    this.determineHeight = ::this.determineHeight;
     this.state = { open: null };
   }
 
+  determineHeight (e) {
+    console.log('refs', this.refs);
+    console.log('height window', window.innerHeight);
+    console.log('height click', e.clientY);
+  }
+
   closeDatePicker () {
-    this.setState({ open: null });
+    // this.setState({ open: null });
   }
 
   openDatePicker () {
@@ -40,7 +48,7 @@ export default class DateInput extends Component {
     if (onChange) {
       onChange(date);
     }
-    this.closeDatePicker();
+    // this.closeDatePicker();
   }
 
   static styles = {
@@ -80,23 +88,17 @@ export default class DateInput extends Component {
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
         <div style={{ position: 'relative', width: '100%' }}>
-          {input.value.format && <input
-            readOnly
-            style={styles.base}
-            type='text'
-            value={`${input.value.format(format).toString()}`}
-            onBlur={this.closeDatePicker}
-            onFocus={this.openDatePicker} />}
-        {this.state.open &&
-          <div style={styles.popup} onMouseDown={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-          }}>
-            <Calendar
-              date={input.value}
-              theme={styles.theme}
-              onChange={this.onChange}/>
-          </div>}
+          {input.value.format && <DatePicker
+            customInput={<input
+              readOnly
+              ref='input'
+              style={styles.base}
+              type='text'
+              value={`${input.value.format(format).toString()}`}/>}
+            dateFormat={format}
+            selected={input.value}
+            style={{ width: '100%' }}
+            onChange={this.onChange}/>}
         </div>
       </div>
     );
