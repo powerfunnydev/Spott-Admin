@@ -38,7 +38,9 @@ export default class DateInput extends Component {
       borderRadius: 2,
       cursor: 'pointer',
       fontSize: '1em',
-      width: '100%'
+      width: '100%',
+      paddingTop: 0,
+      paddingBottom: 0
     },
     text: {
       paddingLeft: '10px',
