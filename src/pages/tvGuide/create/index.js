@@ -112,7 +112,7 @@ export default class CreateTvGuideEntryModal extends Component {
   static styles = {
     col2: {
       display: 'flex',
-      justifyContent: 'space-between'
+      flexDirection: 'row'
     }
   };
 
@@ -184,12 +184,12 @@ export default class CreateTvGuideEntryModal extends Component {
             label='Start'
             name='startDate'
             required
-            style={{ paddingRight: '0.313em' }} />
+            style={{ flex: 1, paddingRight: '0.313em' }} />
           <Field
             component={TimeInput}
             name='startTime'
             required
-            style={{ paddingLeft: '0.313em' }} />
+            style={{ flex: 1, paddingLeft: '0.313em' }} />
         </div>
         <div style={styles.col2}>
           <Field
@@ -197,12 +197,12 @@ export default class CreateTvGuideEntryModal extends Component {
             label='End'
             name='endDate'
             required
-            style={{ paddingRight: '0.313em' }} />
+            style={{ flex: 1, paddingRight: '0.313em' }} />
           <Field
             component={TimeInput}
             name='endTime'
             required
-            style={{ paddingLeft: '0.313em' }} />
+            style={{ flex: 1, paddingLeft: '0.313em' }} />
         </div>
       </CreateModal>
     );
