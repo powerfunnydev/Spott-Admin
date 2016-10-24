@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { reduxForm, Field, Fields } from 'redux-form/immutable';
+import { reduxForm, Field } from 'redux-form/immutable';
 import SelectInput from '../../_common/inputs/selectInput';
-import DateRangeInput from '../../_common/inputs/dateRangeInput';
+import DateInput from '../../_common/inputs/dateInput';
 import { FETCHING } from '../../../constants/statusTypes';
 import * as actions from '../actions';
 import { eventsFilterSelector } from '../selector';
@@ -42,6 +42,9 @@ export default class ActivityFilterForm extends Component {
 
   static styles = {
     container: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center'
     },
     col6: {
       width: '100%'
@@ -51,9 +54,7 @@ export default class ActivityFilterForm extends Component {
       paddingRight: '1.5em'
     },
     field: {
-      display: 'inline-block',
-      paddingTop: 0,
-      width: '50%'
+      flex: 5
     }
   };
 
@@ -65,6 +66,7 @@ export default class ActivityFilterForm extends Component {
       <form style={[ styles.container, style ]}>
         <Field
           component={SelectInput}
+          first
           getItemText={(id) => eventsById.getIn([ id, 'description' ])}
           isLoading={events.get('_status') === FETCHING}
           name='event'
@@ -72,11 +74,23 @@ export default class ActivityFilterForm extends Component {
           placeholder='Event'
           style={[ styles.field, { paddingRight: '0.75em' } ]}
           onChange={onChange.bind(null, 'event')} />
-        <Fields
-          component={DateRangeInput}
-          names={[ 'endDate', 'startDate' ]}
-          style={[ styles.field, { float: 'right', textAlign: 'right', paddingLeft: '0.75em' } ]}
-          onChange={onChange.bind(null, 'dateRange')} />
+        <Field
+          component={DateInput}
+          dateFormat='D MMMM YYYY'
+          first
+          name='startDate'
+          required
+          style={{ flex: 2.25 }}
+          onChange={onChange.bind(null, 'dateRange')}/>
+        <div style={{ flex: 0.3, display: 'flex', justifyContent: 'center' }}><p>-</p></div>
+        <Field
+          component={DateInput}
+          dateFormat='D MMMM YYYY'
+          first
+          name='endDate'
+          required
+          style={{ flex: 2.25 }}
+          onChange={onChange.bind(null, 'dateRange')}/>
       </form>
     );
   }

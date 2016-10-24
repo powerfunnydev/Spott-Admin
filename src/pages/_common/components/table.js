@@ -66,8 +66,7 @@ export class TotalEntries extends Component {
   static styles = {
     base: {
       ...makeTextStyle(fontWeights.medium, '0.75em'),
-      paddingBottom: '1.25em',
-      paddingTop: '1.25em'
+      paddingBottom: '1.25em'
     },
     entries: {
       ...makeTextStyle(fontWeights.regular)

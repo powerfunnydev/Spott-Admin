@@ -4,7 +4,7 @@ import Radium from 'radium';
 import DatePicker from 'react-datepicker';
 import { colors } from '../styles';
 import Label from './_label';
-require('./customDatePicker.css');
+require('./styles/customDatePicker.css');
 
 @Radium
 export default class DateInput extends Component {
@@ -21,25 +21,7 @@ export default class DateInput extends Component {
 
   constructor (props) {
     super(props);
-    this.openDatePicker = ::this.openDatePicker;
-    this.closeDatePicker = ::this.closeDatePicker;
-    this.onChange = ::this.onChange;
-    this.determineHeight = ::this.determineHeight;
-    this.state = { open: null };
-  }
-
-  determineHeight (e) {
-    console.log('refs', this.refs);
-    console.log('height window', window.innerHeight);
-    console.log('height click', e.clientY);
-  }
-
-  closeDatePicker () {
-    // this.setState({ open: null });
-  }
-
-  openDatePicker () {
-    this.setState({ open: true });
+    this.onChange = :: this.onChange;
   }
 
   onChange (date) {
@@ -48,18 +30,22 @@ export default class DateInput extends Component {
     if (onChange) {
       onChange(date);
     }
-    // this.closeDatePicker();
   }
 
   static styles = {
     base: {
       border: `1px solid ${colors.lightGray2}`,
-      borderRadius: 4,
+      borderRadius: 2,
       cursor: 'pointer',
       fontSize: '1em',
-      height: '2.375em',
-      padding: '0.375em',
       width: '100%'
+    },
+    text: {
+      paddingLeft: '10px',
+      paddingRight: '10px',
+      lineHeight: '30px',
+      fontSize: '0.688em',
+      color: colors.veryDarkGray
     },
     theme: {
       DateRange: {
@@ -83,16 +69,15 @@ export default class DateInput extends Component {
 
     // Format date.
     const format = dateFormat || 'DD/MM/YYYY';
-
     return (
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
-        <div style={{ position: 'relative', width: '100%' }}>
+        <div style={{ position: 'relative', width: '100%', height: '30px' }}>
           {input.value.format && <DatePicker
             customInput={<input
               readOnly
               ref='input'
-              style={styles.base}
+              style={[ styles.base, styles.text ]}
               type='text'
               value={`${input.value.format(format).toString()}`}/>}
             dateFormat={format}

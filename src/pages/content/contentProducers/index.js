@@ -11,6 +11,7 @@ import SearchInput from '../../_common/components/searchInput';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
+import SpecificHeader from '../header';
 
 const numberOfRows = 25;
 
@@ -125,6 +126,7 @@ export default class ContentProducers extends Component {
     return (
       <div>
         <Header currentPath={pathname} hideHomePageLinks />
+        <SpecificHeader/>
         <div style={{ backgroundColor: colors.veryLightGray }}>
           <Container style={styles.searchContainer}>
             <SearchInput isLoading={contentProducers.get('_status') !== 'loaded'} value={searchString} onChange={this.onChangeSearchString}/>

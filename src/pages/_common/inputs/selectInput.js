@@ -4,7 +4,7 @@ import Radium from 'radium';
 import { colors, errorTextStyle } from '../styles';
 import Label from './_label';
 
-import 'react-select/dist/react-select.min.css';
+require('./styles/selectInputStyle.css');
 
 const WrappedSelect = Radium(Select);
 
@@ -61,7 +61,7 @@ export default class SelectInput extends Component {
     },
     base: {
       border: `1px solid ${colors.lightGray2}`,
-      borderRadius: 4,
+      borderRadius: 2,
       fontSize: '1em',
       width: '100%'
     },
@@ -79,6 +79,12 @@ export default class SelectInput extends Component {
       paddingTop: '0.188em',
       fontSize: '0.688em',
       float: 'right'
+    },
+    text: {
+      cursor: 'pointer',
+      lineHeight: '30px',
+      fontSize: '0.688em',
+      color: colors.veryDarkGray
     }
   };
 
@@ -86,7 +92,6 @@ export default class SelectInput extends Component {
     const styles = this.constructor.styles;
     const { disabled, first, getItemText, getOptions, input, isLoading, label, meta, maxSelect, multiselect, placeholder, required, style } = this.props;
     const options = this.props.options ? this.props.options.map((o) => ({ value: o, label: getItemText(o) })) : [];
-
     let value;
     if (multiselect) {
       value = (input.value || []).map((o) => ({ value: o, label: getItemText(o) })); // We fall back to [] because of https://github.com/erikras/redux-form/issues/621
@@ -109,7 +114,7 @@ export default class SelectInput extends Component {
           multi={multiselect}
           options={maxSelected ? [] : options}
           placeholder={placeholder}
-          style={[ styles.base, disabled && styles.disabled, meta.touched && meta.error && styles.error ]}
+          style={[ styles.base, disabled && styles.disabled, meta.touched && meta.error && styles.error, styles.text ]}
           value={value} // Overides value of of {...field}
           onBlur={() => input.onBlur(input.value)} // Overides onBlur of of {...field}
           onChange={this.onInternalChange}  // Overides onChange of of {...field};

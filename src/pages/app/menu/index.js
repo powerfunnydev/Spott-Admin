@@ -104,15 +104,19 @@ export default class Menu extends Component {
               <button key='contact' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Contact</button>
             </ScrollLink>
           </span>}
-        {isAuthenticated &&
+        {!hideHomePageLinks &&
+          <RouterLink to='content'>
+            <button key='content' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>CMS</button>
+          </RouterLink>}
+        {hideHomePageLinks && isAuthenticated &&
           <RouterLink to='content'>
             <button key='content' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Content</button>
           </RouterLink>}
-        {isAuthenticated &&
+        {hideHomePageLinks && isAuthenticated &&
           <RouterLink to='tv-guide'>
             <button key='tv-guide' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>TV Guide</button>
           </RouterLink>}
-        {isAuthenticated &&
+        {hideHomePageLinks && isAuthenticated &&
           <RouterLink to='reporting'>
             <button key='reporting' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Reporting</button>
           </RouterLink>}
