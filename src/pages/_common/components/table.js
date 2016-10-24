@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { colors } from '../../_common/styles';
+import { colors, makeTextStyle, fontWeights } from '../../_common/styles';
 import Spinner from '../../_common/spinner';
 
 const arrowGray = require('../../../assets/images/arrow-gray.svg');
@@ -11,6 +11,23 @@ const generalStyles = {
   arrowUnder: { transform: 'rotateZ(180deg)' },
   arrowLeft: { transform: 'rotateZ(270deg)' },
   arrowRight: { transform: 'rotateZ(90deg)' }
+};
+
+export const headerStyles = {
+  header: {
+    minHeight: '32px',
+    color: colors.darkGray2,
+    backgroundColor: colors.white,
+    ...makeTextStyle(null, '11px', '0.50px'),
+    textTransform: 'uppercase'
+  },
+  firstHeader: {
+    borderBottom: `1px solid ${colors.lightGray2}`
+  },
+  notFirstHeader: {
+    borderLeft: `1px solid ${colors.lightGray2}`,
+    borderBottom: `1px solid ${colors.lightGray2}`
+  }
 };
 
 export const sortDirections = {
@@ -40,7 +57,43 @@ export function determineSortDirection (sortField, query) {
 }
 
 @Radium
-export default class Checkbox extends Component {
+export class TotalEntries extends Component {
+
+  static propTypes = {
+    totalResultCount: PropTypes.number.isRequired
+  }
+
+  static styles = {
+    base: {
+      ...makeTextStyle(fontWeights.medium, '0.75em'),
+      paddingBottom: '1.25em',
+      paddingTop: '1.25em'
+    },
+    entries: {
+      ...makeTextStyle(fontWeights.regular)
+    },
+    entity: {
+      color: colors.veryDarkGray,
+      textTransform: 'uppercase'
+    },
+    count: {
+      color: '#536970'
+    }
+  }
+
+  render () {
+    const { styles } = this.constructor;
+    const { totalResultCount } = this.props;
+    return (
+      <div style={styles.base}>
+        <span style={styles.entity}>Entries</span><span style={styles.count}>&nbsp;&nbsp;{totalResultCount} <span style={styles.entries}>Entries</span></span>
+      </div>
+    );
+  }
+}
+
+@Radium
+export class Checkbox extends Component {
 
   static propTypes = {
     checked: PropTypes.bool,

@@ -7,9 +7,13 @@
     "import"
   ],
   "env": {
+    "mocha": true,
     "browser": true,
     "node": true,
     "es6": true
+  },
+  "globals": {
+    "expect": true
   },
   "ecmaFeatures": {
     "arrowFunctions": true,

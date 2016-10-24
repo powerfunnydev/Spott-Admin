@@ -6,7 +6,7 @@ import { push as routerPush } from 'react-router-redux';
 import moment from 'moment';
 import Header from '../../app/header';
 import { buttonStyles, colors, fontWeights, Container, makeTextStyle } from '../../_common/styles';
-import { determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, TextCel, Rows, Row, Pagination } from '../../_common/components/table';
+import { TotalEntries, headerStyles, determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, TextCel, Rows, Row, Pagination } from '../../_common/components/table';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
@@ -152,41 +152,10 @@ export default class ContentProducers extends Component {
   }
 
   static styles = {
-    header: {
-      ...makeTextStyle(null, '0.688em', '0.50px'),
-      backgroundColor: colors.white,
-      color: colors.darkGray2,
-      height: '32px',
-      textTransform: 'uppercase'
-    },
-    firstHeader: {
-      borderBottom: `1px solid ${colors.lightGray2}`
-    },
-    notFirstHeader: {
-      borderLeft: `1px solid ${colors.lightGray2}`,
-      borderBottom: `1px solid ${colors.lightGray2}`
-    },
     filterContainer: {
       textAlign: 'right',
       paddingBottom: '1.25em',
       paddingTop: '1.25em'
-    },
-    tableTitle: {
-      base: {
-        ...makeTextStyle(fontWeights.medium, '0.75em'),
-        paddingBottom: '1.25em',
-        paddingTop: '1.25em'
-      },
-      entries: {
-        ...makeTextStyle(fontWeights.regular)
-      },
-      entity: {
-        color: colors.veryDarkGray,
-        textTransform: 'uppercase'
-      },
-      count: {
-        color: '#536970'
-      }
     }
   }
 
@@ -207,30 +176,28 @@ export default class ContentProducers extends Component {
         </div>
         <div style={{ backgroundColor: colors.lightGray }}>
           <Container style={{ paddingTop: '1.875em', paddingBottom: '1.875em' }}>
-            <div style={styles.tableTitle.base}>
-              <span style={styles.tableTitle.entity}>Entries</span><span style={styles.tableTitle.count}>&nbsp;&nbsp;{totalResultCount} <span style={styles.tableTitle.entries}>Entries</span></span>
-            </div>
+            <TotalEntries totalResultCount={totalResultCount}/>
             <Table>
               <Headers>
                 {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ styles.header, styles.firstHeader, { flex: 0.5 } ]} onChange={selectAllCheckboxes}/>
-                <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}>Channel</TextCel>
-                <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 2 } ]}>Title</TextCel>
+                <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader, { flex: 0.5 } ]} onChange={selectAllCheckboxes}/>
+                <TextCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Channel</TextCel>
+                <TextCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Title</TextCel>
                 <TextCel
                   sortColumn={this.onSortField.bind(this, 'START')}
                   sortDirection={sortField === 'START' ? sortDirections[sortDirection] : NONE}
-                  style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}>
+                  style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>
                   Start
                 </TextCel>
-                <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}>End</TextCel>
-                <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}>Updated by</TextCel>
+                <TextCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>End</TextCel>
+                <TextCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 0.8 } ]}>Updated by</TextCel>
                 <TextCel
                   sortColumn={this.onSortField.bind(this, 'LAST_MODIFIED')}
                   sortDirection={sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE}
-                  style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}>
+                  style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>
                   Last updated on
                 </TextCel>
-                <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 1 } ]}/>
+                <TextCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}/>
               </Headers>
               <Rows isLoading={tvGuideEntries.get('_status') !== 'loaded'}>
                 {tvGuideEntries.get('data').map((tvGuideEntry, index) => {
@@ -242,7 +209,7 @@ export default class ContentProducers extends Component {
                       <TextCel getValue={this.getMediumTitle} objectToRender={tvGuideEntry} style={{ flex: 2 }}/>
                       <TextCel getValue={this.getStartDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
                       <TextCel getValue={this.getEndDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
-                      <TextCel getValue={this.getUpdatedBy} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
+                      <TextCel getValue={this.getUpdatedBy} objectToRender={tvGuideEntry} style={{ flex: 0.8 }}/>
                       <TextCel getValue={this.getLastUpdatedOn} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
                       <div style={[ dropdownStyles.center, { flex: 1, ...makeTextStyle(fontWeights.regular, '11px', '0.3px') } ]}>
                         <Dropdown

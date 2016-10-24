@@ -10,13 +10,10 @@ const searchIcon = require('../../../assets/images/searchIcon.png');
 @Radium
 export default class SearchInput extends Component {
   static propTypes = {
+    isLoading: PropTypes.bool,
     value: PropTypes.string,
     onChange: PropTypes.func.isRequired
   }
-
-  static propTypes = {
-    pagination: PropTypes.bool
-  };
 
   static styles = {
     container: {
@@ -24,11 +21,17 @@ export default class SearchInput extends Component {
       flexDirection: 'row',
       border: `solid 1px ${colors.lightGray2}`,
       width: '370px',
-      backgroundColor: 'white'
+      backgroundColor: 'white',
+      ':hover': {
+        border: `solid 1px ${colors.lightGray3}`
+      },
+      ':focus': {
+        border: `solid 1px ${colors.lightGray3}`
+      }
     },
     iconWrapper: {
       display: 'flex',
-      width: '30px',
+      padding: '10px',
       height: '30px',
       alignItems: 'center',
       justifyContent: 'center'
@@ -44,20 +47,24 @@ export default class SearchInput extends Component {
       borderColor: 'transparent',
       height: '30px',
       fontSize: '12px',
-      width: '100%'
+      width: '100%',
+      color: colors.veryDarkGray
     }
   }
 
   render () {
     const { styles } = this.constructor;
-    const { value, onChange } = this.props;
+    const { isLoading, value, onChange } = this.props;
 
     return (
-      <div style={styles.container}>
+      <div key={'searchInputContainer'} style={styles.container}>
         <div style={styles.iconWrapper}>
           <img src={searchIcon} style={styles.icon}/>
         </div>
         <input placeholder='Search' style={styles.input} value={value} onChange={onChange}/>
+        {value && <div style={{ fontSize: '11px', letterSpacing: '0.5px', color: colors.primaryBlue, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingRight: '10px' }}>
+          {isLoading && <div>LOADING</div>}
+        </div>}
       </div>
     );
   }
