@@ -1,10 +1,11 @@
 import { createStructuredSelector } from 'reselect';
-import { isAuthenticatedSelector, versionSelector } from '../../selectors/global';
+import { isAuthenticatedSelector, userRolesSelector, versionSelector } from '../../selectors/global';
 
 export const headerSelector = createStructuredSelector({
   version: versionSelector
 });
 
 export const menuSelector = createStructuredSelector({
-  isAuthenticated: isAuthenticatedSelector
+  isAuthenticated: isAuthenticatedSelector,
+  userRoles: userRolesSelector
 });

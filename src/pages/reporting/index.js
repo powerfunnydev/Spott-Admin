@@ -32,9 +32,6 @@ export default class Reporting extends Component {
   }
 
   static styles = {
-    header: {
-      backgroundColor: colors.black
-    },
     tabs: {
       borderBottomWidth: 1,
       borderBottomStyle: 'solid',
@@ -80,9 +77,7 @@ export default class Reporting extends Component {
     const { children, location } = this.props;
     return (
       <div>
-        <div style={styles.header}>
-          <Header currentPath={this.props.location.pathname} hideHomePageLinks />
-        </div>
+        <Header currentPath={this.props.location.pathname} hideHomePageLinks />
         <div style={styles.tabs}>
           <Container style={styles.wrapper}>
             <div>

@@ -1,19 +1,19 @@
+/* eslint-disable react/no-set-state */
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { colors, defaultSpacing, errorTextStyle } from '../styles';
+import DatePicker from 'react-datepicker';
+import { colors } from '../styles';
 import Label from './_label';
-import moment from 'moment';
+require('./styles/customDatePicker.css');
 
 @Radium
 export default class DateInput extends Component {
 
   static propTypes = {
-    disabled: PropTypes.bool,
+    dateFormat: PropTypes.string,
     first: PropTypes.bool,
     input: PropTypes.object.isRequired,
     label: PropTypes.string,
-    meta: PropTypes.object.isRequired,
-    placeholder: PropTypes.string.isRequired,
     required: PropTypes.bool,
     style: PropTypes.object,
     onChange: PropTypes.func
@@ -21,69 +21,72 @@ export default class DateInput extends Component {
 
   constructor (props) {
     super(props);
-    this.onChange = ::this.onChange;
+    this.onChange = :: this.onChange;
   }
 
-  onChange (e) {
+  onChange (date) {
     const { input, onChange } = this.props;
-    const value = e.target.value;
-    // Was a valid string entered?
-    if (!value || !/^(\d{4})-(\d{2})-(\d{2})$/.test(value)) {
-      return input.onChange(value); // Set (invalid) string value
-    }
-    // Create a moment, and check validity.
-    const m = moment(value, 'YYYY-MM-DD');
-    if (!m.isValid()) {
-      input.onChange(value); // Set (invalid) string value
-      // Trigger change on field, with valid value.
-      if (onChange) {
-        onChange(value);
-      }
-    }
-    input.onChange(m.toDate());
-    // Set the constructed date object
+    input.onChange(date);
     if (onChange) {
-      onChange(m.toDate());
+      onChange(date);
     }
-  }
-
-  onBlur (event, input) {
-    event.target = { value: input.value };
-    input.onBlur(event);
   }
 
   static styles = {
-    padTop: {
-      paddingTop: defaultSpacing * 0.75
-    },
     base: {
-      border: `1px solid ${colors.darkGray}`,
-      borderRadius: 4,
-      fontSize: '16px',
-      height: 38,
-      padding: 6,
-      width: '100%'
+      border: `1px solid ${colors.lightGray2}`,
+      borderRadius: 2,
+      cursor: 'pointer',
+      fontSize: '1em',
+      width: '100%',
+      paddingTop: 0,
+      paddingBottom: 0
     },
-    disabled: {
-      backgroundColor: colors.lightGray,
-      color: colors.darkerGray
+    text: {
+      paddingLeft: '10px',
+      paddingRight: '10px',
+      lineHeight: '30px',
+      fontSize: '0.688em',
+      color: colors.veryDarkGray
+    },
+    theme: {
+      DateRange: {
+        background: 'transparent'
+      }
+    },
+    padTop: {
+      paddingTop: '1.25em'
+    },
+    popup: {
+      position: 'absolute',
+      top: '2.7em',
+      right: 0,
+      zIndex: 1
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { disabled, first, input, label, meta, placeholder, required, style } = this.props;
-    const stringValue = input.value instanceof Date ? moment(input.value).format('YYYY-MM-DD') : input.value;
+    const { dateFormat, first, input, label, required, style } = this.props;
+
+    // Format date.
+    const format = dateFormat || 'DD/MM/YYYY';
     return (
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
-        <input {...input}
-          disabled={disabled} placeholder={placeholder} required={required}
-          style={[ styles.base, disabled && styles.disabled ]} type='text'
-          value={stringValue}
-          onBlur={(event) => this.onBlur(event, input)}
-          onChange={this.onChange} />
-        {meta.touched && meta.error === 'required' && <div style={errorTextStyle}>This date is required.</div>}
+        <div style={{ position: 'relative', width: '100%', height: '30px' }}>
+          {input.value.format && <DatePicker
+            customInput={<input
+              readOnly
+              ref='input'
+              style={[ styles.base, styles.text ]}
+              type='text'
+              value={`${input.value.format(format).toString()}`}/>}
+            dateFormat={format}
+            selected={input.value}
+            style={{ width: '100%' }}
+            onChange={this.onChange}/>}
+        </div>
       </div>
     );
   }
