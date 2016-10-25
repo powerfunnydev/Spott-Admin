@@ -5,12 +5,14 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { push as routerPush } from 'react-router-redux';
 import moment from 'moment';
 import Header from '../../app/header';
-import { buttonStyles, colors, fontWeights, Container, makeTextStyle } from '../../_common/styles';
-import { TotalEntries, headerStyles, determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, TextCel, Rows, Row, Pagination } from '../../_common/components/table';
+import { buttonStyles, colors, Container } from '../../_common/styles';
+import { TotalEntries, headerStyles, determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
 import Dropdown, { styles as dropdownStyles } from '../../_common/components/dropdown';
+import PlusButton from '../../_common/buttons/plusButton';
+import EntityDetails from '../../_common/entityDetails';
 
 /* eslint-disable react/no-set-state*/
 const numberOfRows = 25;
@@ -21,7 +23,8 @@ const numberOfRows = 25;
   load: bindActionCreators(actions.load, dispatch),
   routerPush: bindActionCreators(routerPush, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
-  selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
+  selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch),
+  selectEntity: bindActionCreators(actions.selectEntity, dispatch)
 }))
 @Radium
 export default class ContentProducers extends Component {
@@ -40,6 +43,8 @@ export default class ContentProducers extends Component {
     routerPush: PropTypes.func.isRequired,
     selectAllCheckboxes: PropTypes.func.isRequired,
     selectCheckbox: PropTypes.func.isRequired,
+    selectEntity: PropTypes.func.isRequired,
+    selectedEntity: ImmutablePropTypes.map,
     totalResultCount: PropTypes.number.isRequired,
     tvGuideEntries: ImmutablePropTypes.map.isRequired
   };
@@ -161,17 +166,20 @@ export default class ContentProducers extends Component {
 
   render () {
     const { children, isSelected, location: { pathname, query: { page, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, tvGuideEntries } = this.props;
+      pageCount, selectAllCheckboxes, selectCheckbox, selectEntity, selectedEntity, totalResultCount, tvGuideEntries } = this.props;
     const { styles } = this.constructor;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
-
     return (
       <div>
         <Header currentPath={pathname} hideHomePageLinks />
+        {selectedEntity.get('_status') === 'loaded' && <Container><EntityDetails
+          image={selectedEntity.getIn([ 'medium', 'profileImage', 'url' ])}
+          subtitle={selectedEntity.get('medium').get('title')}
+          title={selectedEntity.getIn([ 'serie', 'title' ]) || selectedEntity.get('medium').get('title')}/></Container>}
         <div style={{ backgroundColor: colors.veryLightGray }}>
           <Container style={styles.filterContainer}>
-            <button key='delete' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue, { marginLeft: 0 } ]} type='button' onClick={this.onClickDeleteSelected}>Delete {numberSelected}</button>
-            <button key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} type='button' onClick={this.onClickNewEntry}>New entry</button>
+            <button key='delete' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} type='button' onClick={this.onClickDeleteSelected}>Delete {numberSelected}</button>
+            <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='New entry' onClick={this.onClickNewEntry} />
           </Container>
         </div>
         <div style={{ backgroundColor: colors.lightGray }}>
@@ -181,23 +189,23 @@ export default class ContentProducers extends Component {
               <Headers>
                 {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                 <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader, { flex: 0.5 } ]} onChange={selectAllCheckboxes}/>
-                <TextCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Channel</TextCel>
-                <TextCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Title</TextCel>
-                <TextCel
+                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Channel</CustomCel>
+                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Title</CustomCel>
+                <CustomCel
                   sortColumn={this.onSortField.bind(this, 'START')}
                   sortDirection={sortField === 'START' ? sortDirections[sortDirection] : NONE}
                   style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>
                   Start
-                </TextCel>
-                <TextCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>End</TextCel>
-                <TextCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 0.8 } ]}>Updated by</TextCel>
-                <TextCel
+                </CustomCel>
+                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>End</CustomCel>
+                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 0.8 } ]}>Updated by</CustomCel>
+                <CustomCel
                   sortColumn={this.onSortField.bind(this, 'LAST_MODIFIED')}
                   sortDirection={sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE}
                   style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>
                   Last updated on
-                </TextCel>
-                <TextCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}/>
+                </CustomCel>
+                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Updated by</CustomCel>
               </Headers>
               <Rows isLoading={tvGuideEntries.get('_status') !== 'loaded'}>
                 {tvGuideEntries.get('data').map((tvGuideEntry, index) => {
@@ -205,19 +213,18 @@ export default class ContentProducers extends Component {
                     <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                       {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                       <CheckBoxCel checked={isSelected.get(tvGuideEntry.get('id'))} style={{ flex: 0.5 }} onChange={selectCheckbox.bind(this, tvGuideEntry.get('id'))}/>
-                      <TextCel getValue={this.getChannelName} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
-                      <TextCel getValue={this.getMediumTitle} objectToRender={tvGuideEntry} style={{ flex: 2 }}/>
-                      <TextCel getValue={this.getStartDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
-                      <TextCel getValue={this.getEndDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
-                      <TextCel getValue={this.getUpdatedBy} objectToRender={tvGuideEntry} style={{ flex: 0.8 }}/>
-                      <TextCel getValue={this.getLastUpdatedOn} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
-                      <div style={[ dropdownStyles.center, { flex: 1, ...makeTextStyle(fontWeights.regular, '11px', '0.3px') } ]}>
+                      <CustomCel getValue={this.getChannelName} objectToRender={tvGuideEntry} style={{ flex: 1 }} /* onClick={selectEntity.bind(this, tvGuideEntry.get('id'))} *//>
+                      <CustomCel getValue={this.getMediumTitle} objectToRender={tvGuideEntry} style={{ flex: 2 }}/>
+                      <CustomCel getValue={this.getStartDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
+                      <CustomCel getValue={this.getEndDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
+                      <CustomCel getValue={this.getUpdatedBy} objectToRender={tvGuideEntry} style={{ flex: 0.8 }}/>
+                      <CustomCel getValue={this.getLastUpdatedOn} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
+                      <CustomCel style={{ flex: 1 }}>
                         <Dropdown
-                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPush(`tv-guide/edit/${tvGuideEntry.get('id')}`); }}>Edit</div>}
-                          onChange={(e) => { console.log(e); }}>
+                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPush(`tv-guide/edit/${tvGuideEntry.get('id')}`); }}>Edit</div>}>
                           <div key={1} style={[ dropdownStyles.option ]} onClick={(e) => { e.preventDefault(); this.deleteTvGuideEntry(tvGuideEntry.get('id')); }}>Remove</div>
                         </Dropdown>
-                      </div>
+                      </CustomCel>
                     </Row>
                   );
                 })}

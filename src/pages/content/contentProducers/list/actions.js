@@ -1,4 +1,4 @@
-import { fetchContentProducers as dataFetchContentProducers } from '../../../actions/contentProducers';
+import { fetchContentProducers as dataFetchContentProducers } from '../../../../actions/contentProducers';
 
 // Action types
 // ////////////

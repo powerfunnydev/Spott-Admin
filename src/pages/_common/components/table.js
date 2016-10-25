@@ -161,7 +161,7 @@ export class CheckBoxCel extends Component {
  * Don't pass both to this component.
  */
 @Radium
-export class TextCel extends Component {
+export class CustomCel extends Component {
 
   static propTypes = {
     children: PropTypes.node,
@@ -205,9 +205,9 @@ export class TextCel extends Component {
     const { children, style, getValue, objectToRender, onClick, sortColumn, sortDirection } = this.props;
 
     return (
-      <div style={[ styles.cell, style, (sortColumn || onClick) && styles.pointer,
+      <div style={[ styles.cell, (sortColumn || onClick) && styles.pointer,
             sortDirection && sortDirection !== NONE && styles.headerSelected,
-            onClick && styles.clickable ]} onClick={sortColumn || onClick}>
+            onClick && styles.clickable, style ]} onClick={sortColumn || onClick}>
         <div>
           {children}
           {getValue && objectToRender && getValue(objectToRender)}

@@ -12,6 +12,7 @@ export const TV_GUIDE_ENTRIES_DELETE_ERROR = 'TV_GUIDE_LIST/TV_GUIDE_ENTRIES_REM
 
 export const SELECT_ALL_CHECKBOXES = 'TV_GUIDE_LIST/SELECT_ALL_CHECKBOXES';
 export const SELECT_CHECKBOX = 'TV_GUIDE_LIST/SELECT_CHECKBOX';
+export const SELECT_ENTITY = 'TV_GUIDE_LIST/SELECT_ENTITY';
 
 export const SORT_COLUMN = 'TV_GUIDE_LIST/SORT_COLUMN';
 
@@ -51,4 +52,8 @@ export function selectAllCheckboxes () {
 
 export function selectCheckbox (id) {
   return { type: SELECT_CHECKBOX, id };
+}
+
+export function selectEntity (id) {
+  return { type: SELECT_ENTITY, id };
 }

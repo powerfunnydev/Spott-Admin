@@ -8,7 +8,7 @@ import { init } from './actions/global';
 import { LOGIN_SUCCESS } from './actions/users';
 
 import App from './pages/app';
-import ContentProducers from './pages/content/contentProducers';
+import ContentProducersList from './pages/content/contentProducers/list';
 import Error404 from './pages/error404/main';
 import MediaSinglePage from './pages/media/singlePage';
 import MediaHome from './pages/media/home';
@@ -67,7 +67,7 @@ function getRoutes ({ getState }) {
       </Route>
       <Route path='content' onEnter={requireOneRole([ 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
         <IndexRedirect to='content-producers' />
-        <Route component={ContentProducers} path='content-producers' />
+        <Route component={ContentProducersList} path='content-producers' />
       </Route>
       <Route component={TvGuideList} path='tv-guide' onEnter={requireOneRole([ 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
         <Route component={TvGuideCreateEntry} path='create' />

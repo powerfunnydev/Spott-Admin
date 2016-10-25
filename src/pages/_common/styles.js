@@ -14,6 +14,7 @@ export const colors = {
   darkYellow: '#cca644',
   lightYellow: '#fffaee',
   black: '#121e22',
+  black2: '#0d1b20',
   darkerGray: '#878D8F',
   darkGray: '#BABDC0',
   darkGray2: '#6d8791',
@@ -82,41 +83,41 @@ export function makeTextStyle (fontWeight = fontWeights.regular, fontSize = '1em
 
 export const buttonStyles = {
   base: {
-    borderRadius: 4,
+    borderRadius: '2px',
     color: 'white',
     display: 'inline-block',
     ...makeTextStyle(fontWeights.regular, '14px'),
-    marginLeft: 14,
-    paddingTop: 8,
-    paddingBottom: 8,
+    marginLeft: '10px',
+    paddingTop: '8px',
+    paddingBottom: '8px',
     textAlign: 'center',
     textDecoration: 'none',
     transition: 'background-color 200ms linear, border-color 200ms linear',
-    width: 100
+    minWidth: '100px'
   },
   // Button sizes
   small: {
-    ...makeTextStyle(fontWeights.medium, '12px'),
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingLeft: 15,
-    paddingRight: 15,
+    ...makeTextStyle(fontWeights.regular, '12px'),
+    paddingTop: '8px',
+    paddingBottom: '8px',
+    paddingLeft: '13px',
+    paddingRight: '13px',
     width: 'auto',
-    minWidth: 70
+    minWidth: '70px'
   },
   extraSmall: {
     fontSize: '13px',
-    paddingTop: 4,
-    paddingBottom: 4,
-    paddingLeft: 10,
-    paddingRight: 10,
+    paddingTop: '4px',
+    paddingBottom: '4px',
+    paddingLeft: '10px',
+    paddingRight: '10px',
     width: 'auto'
   },
   large: {
     fontSize: '18px',
-    paddingBottom: 12,
-    paddingTop: 12,
-    minWidth: 170
+    paddingBottom: '12px',
+    paddingTop: '12px',
+    minWidth: '170px'
   },
   // Button flavors
   blue: {

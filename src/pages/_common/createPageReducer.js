@@ -1,7 +1,8 @@
 import { fromJS } from 'immutable';
 
-export default ({ DATA_FETCH_SUCCESS, SELECT_ALL_CHECKBOXES, SELECT_CHECKBOX }) => (state = fromJS({
+export default ({ DATA_FETCH_SUCCESS, SELECT_ALL_CHECKBOXES, SELECT_CHECKBOX, SELECT_ENTITY }) => (state = fromJS({
   isSelected: { ALL: false },
+  selectedEntity: null,
   pageCount: 0,
   totalResultCount: 0
 }), action) => {
@@ -25,6 +26,9 @@ export default ({ DATA_FETCH_SUCCESS, SELECT_ALL_CHECKBOXES, SELECT_CHECKBOX }) 
     }
     case SELECT_CHECKBOX: {
       return state.setIn([ 'isSelected', action.id ], !state.getIn([ 'isSelected', action.id ]));
+    }
+    case SELECT_ENTITY: {
+      return state.set('selectedEntity', action.id);
     }
     // Uninteresting actions
     default:
