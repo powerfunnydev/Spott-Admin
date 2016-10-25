@@ -166,12 +166,13 @@ export default class ContentProducers extends Component {
 
   render () {
     const { children, isSelected, location: { pathname, query: { page, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, selectEntity, selectedEntity, totalResultCount, tvGuideEntries } = this.props;
+      pageCount, selectAllCheckboxes, selectCheckbox, selectedEntity, totalResultCount, tvGuideEntries } = this.props;
     const { styles } = this.constructor;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
       <div>
         <Header currentPath={pathname} hideHomePageLinks />
+        {/* selectedEntity is in development, it will not be used currently */}
         {selectedEntity.get('_status') === 'loaded' && <Container><EntityDetails
           image={selectedEntity.getIn([ 'medium', 'profileImage', 'url' ])}
           subtitle={selectedEntity.get('medium').get('title')}
@@ -205,7 +206,7 @@ export default class ContentProducers extends Component {
                   style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>
                   Last updated on
                 </CustomCel>
-                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Updated by</CustomCel>
+                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}/>
               </Headers>
               <Rows isLoading={tvGuideEntries.get('_status') !== 'loaded'}>
                 {tvGuideEntries.get('data').map((tvGuideEntry, index) => {
