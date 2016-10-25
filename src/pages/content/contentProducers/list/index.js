@@ -4,25 +4,16 @@ import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { push as routerPush } from 'react-router-redux';
 import moment from 'moment';
-import Header from '../../app/header';
-import { Container, colors, makeTextStyle } from '../../_common/styles';
-import { CheckBoxCel, Table, Headers, TextCel, Rows, Row, Pagination } from '../../_common/components/table';
-import SearchInput from '../../_common/components/searchInput';
+import Header from '../../../app/header';
+import { Container, colors } from '../../../_common/styles';
+import { TotalEntries, headerStyles, determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table';
+import SearchInput from '../../../_common/components/searchInput';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
+import SpecificHeader from '../../header';
 
-/* eslint-disable react/no-set-state*/
 const numberOfRows = 25;
-
-function determineSortDirection (sortField, query) {
-  let sortDirection = actions.NONE;
-  if (query.sortField === sortField && query.sortDirection) {
-    // map string to number
-    sortDirection = actions.sortDirections[query.sortDirection];
-  }
-  return actions.directionToString((sortDirection + 1) % 3);
-}
 
 @connect(selector, (dispatch) => ({
   load: bindActionCreators(actions.load, dispatch),
@@ -44,7 +35,8 @@ export default class ContentProducers extends Component {
     pageCount: PropTypes.number,
     routerPush: PropTypes.func.isRequired,
     selectAllCheckboxes: PropTypes.func.isRequired,
-    selectCheckbox: PropTypes.func.isRequired
+    selectCheckbox: PropTypes.func.isRequired,
+    totalResultCount: PropTypes.number.isRequired
   };
 
   constructor (props) {
@@ -121,46 +113,35 @@ export default class ContentProducers extends Component {
   }
 
   static styles = {
-    header: {
-      height: '32px',
-      color: colors.darkGray2,
-      backgroundColor: colors.white,
-      ...makeTextStyle(null, '11px', '0.50px')
-    },
-    firstHeader: {
-      borderBottom: `1px solid ${colors.lightGray2}`
-    },
-    notFirstHeader: {
-      borderLeft: `1px solid ${colors.lightGray2}`,
-      borderBottom: `1px solid ${colors.lightGray2}`
-    },
     searchContainer: {
-      height: '70px',
+      minHeight: '70px',
       display: 'flex',
       alignItems: 'center' }
   }
 
   render () {
     const { contentProducers, isSelected, location: { pathname, query: { page, searchString, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox } = this.props;
+      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount } = this.props;
     const { styles } = this.constructor;
     return (
       <div>
         <Header currentPath={pathname} hideHomePageLinks />
+        <SpecificHeader/>
         <div style={{ backgroundColor: colors.veryLightGray }}>
           <Container style={styles.searchContainer}>
-            <SearchInput value={searchString} onChange={this.onChangeSearchString}/>
+            <SearchInput isLoading={contentProducers.get('_status') !== 'loaded'} value={searchString} onChange={this.onChangeSearchString}/>
           </Container>
         </div>
         <div style={{ backgroundColor: colors.lightGray }}>
           <Container style={{ paddingTop: '50px', paddingBottom: '50px' }}>
+            <TotalEntries totalResultCount={totalResultCount}/>
             <Table>
               <Headers>
                 {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ styles.header, styles.firstHeader, { flex: 0.25 } ]} onChange={selectAllCheckboxes}/>
-                <TextCel sortColumn={this.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? actions.sortDirections[sortDirection] : actions.NONE} style={[ styles.header, styles.notFirstHeader, { flex: 2 } ]}>NAME</TextCel>
-                <TextCel style={[ styles.header, styles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</TextCel>
-                <TextCel sortColumn={this.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? actions.sortDirections[sortDirection] : actions.NONE} style={[ styles.header, styles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</TextCel>
+                <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader, { flex: 0.25 } ]} onChange={selectAllCheckboxes}/>
+                <CustomCel sortColumn={this.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>NAME</CustomCel>
+                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
+                <CustomCel sortColumn={this.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
               </Headers>
               <Rows isLoading={contentProducers.get('_status') !== 'loaded'}>
                 {contentProducers.get('data').map((cp, index) => {
@@ -168,9 +149,9 @@ export default class ContentProducers extends Component {
                     <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                       {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                       <CheckBoxCel checked={isSelected.get(cp.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, cp.get('id'))}/>
-                      <TextCel getValue={this.getName} objectToRender={cp} style={{ flex: 2 }} onClick={() => { }} />
-                      <TextCel getValue={this.getUpdatedBy} objectToRender={cp} style={{ flex: 2 }}/>
-                      <TextCel getValue={this.getLastUpdatedOn} objectToRender={cp} style={{ flex: 2 }}/>
+                      <CustomCel getValue={this.getName} objectToRender={cp} style={{ flex: 2 }} />
+                      <CustomCel getValue={this.getUpdatedBy} objectToRender={cp} style={{ flex: 2 }}/>
+                      <CustomCel getValue={this.getLastUpdatedOn} objectToRender={cp} style={{ flex: 2 }}/>
                     </Row>
                   );
                 })}

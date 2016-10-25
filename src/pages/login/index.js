@@ -100,6 +100,7 @@ export default class LoginModal extends Component {
   }
 
   onCloseClick () {
+    console.log('props', this.props);
     this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
   }
 

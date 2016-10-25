@@ -1,6 +1,8 @@
 {
   "common": {
     "errors": {
+      "required": "This field is required.",
+      "invalid": "This field is invalid.",
       "unexpected": "Er ging iets mis!"
     },
     "ok": "Ok"
@@ -43,5 +45,10 @@
     "password": "Je wachtwoord",
     "submitButton": "Aanmelden",
     "title": "Log in"
+  },
+  "mediaTypes": {
+    "COMMERCIAL": "TV-spot",
+    "MOVIE": "Film",
+    "TV_SERIE": "Tv show"
   }
 }

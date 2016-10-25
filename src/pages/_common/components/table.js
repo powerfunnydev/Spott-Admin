@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { colors } from '../../_common/styles';
-import { NONE, ASC, DESC } from '../../content/contentProducers/actions';
+import { colors, makeTextStyle, fontWeights } from '../../_common/styles';
 import Spinner from '../../_common/spinner';
 
 const arrowGray = require('../../../assets/images/arrow-gray.svg');
@@ -14,28 +13,102 @@ const generalStyles = {
   arrowRight: { transform: 'rotateZ(90deg)' }
 };
 
+export const headerStyles = {
+  header: {
+    minHeight: '32px',
+    color: colors.darkGray2,
+    backgroundColor: colors.white,
+    ...makeTextStyle(null, '11px', '0.50px'),
+    textTransform: 'uppercase'
+  },
+  firstHeader: {
+    borderBottom: `1px solid ${colors.lightGray2}`
+  },
+  notFirstHeader: {
+    borderLeft: `1px solid ${colors.lightGray2}`,
+    borderBottom: `1px solid ${colors.lightGray2}`
+  }
+};
+
+export const sortDirections = {
+  ASC: 1,
+  DESC: 2
+};
+export const NONE = 0;
+export const ASC = 1;
+export const DESC = 2;
+
+export function directionToString (direction) {
+  if (direction === ASC) {
+    return 'ASC';
+  } else if (direction === DESC) {
+    return 'DESC';
+  }
+  return '';
+}
+
+export function determineSortDirection (sortField, query) {
+  let sortDirection = NONE;
+  if (query.sortField === sortField && query.sortDirection) {
+    // map string to number
+    sortDirection = sortDirections[query.sortDirection];
+  }
+  return directionToString((sortDirection + 1) % 3);
+}
+
 @Radium
-export default class Checkbox extends Component {
+export class TotalEntries extends Component {
+
+  static propTypes = {
+    totalResultCount: PropTypes.number.isRequired
+  }
+
+  static styles = {
+    base: {
+      ...makeTextStyle(fontWeights.medium, '0.75em'),
+      paddingBottom: '1.25em'
+    },
+    entries: {
+      ...makeTextStyle(fontWeights.regular)
+    },
+    entity: {
+      color: colors.veryDarkGray,
+      textTransform: 'uppercase'
+    },
+    count: {
+      color: '#536970'
+    }
+  }
+
+  render () {
+    const { styles } = this.constructor;
+    const { totalResultCount } = this.props;
+    return (
+      <div style={styles.base}>
+        <span style={styles.entity}>Entries</span><span style={styles.count}>&nbsp;&nbsp;{totalResultCount} <span style={styles.entries}>Entries</span></span>
+      </div>
+    );
+  }
+}
+
+@Radium
+export class Checkbox extends Component {
 
   static propTypes = {
     checked: PropTypes.bool,
     onChange: PropTypes.func // Uses the field's onChange, and this one if provided.
   };
 
-  constructor (props) {
-    super(props);
-  }
-
   static styles = {
     checkbox: {
-      height: 14,
-      width: 14,
+      alignItems: 'center',
       border: `1px solid ${colors.darkGray}`,
       borderRadius: 2,
       cursor: 'pointer',
       display: 'flex',
+      height: 14,
       justifyContent: 'center',
-      alignItems: 'center'
+      width: 14
     },
     checked: {
       backgroundColor: colors.primaryBlue
@@ -47,7 +120,7 @@ export default class Checkbox extends Component {
     const { checked, onChange } = this.props;
 
     return (
-      <span style={[ styles.checkbox, checked && styles.checked ]} onClick={() => { console.log('test'); onChange(); }}>
+      <span style={[ styles.checkbox, checked && styles.checked ]} onClick={onChange}>
         {checked && <img src={check}/>}</span>
     );
   }
@@ -63,11 +136,11 @@ export class CheckBoxCel extends Component {
   }
 
   static styles = {
-    cel: {
-      height: '42px',
+    cell: {
+      alignItems: 'center',
       display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center'
+      minHeight: '2.625em',
+      justifyContent: 'center'
     }
   }
 
@@ -75,7 +148,7 @@ export class CheckBoxCel extends Component {
     const { checked, style, onChange } = this.props;
     const { styles } = this.constructor;
     return (
-      <div style={[ styles.cel, style ]}>
+      <div style={[ styles.cell, style ]}>
         <Checkbox checked={checked} onChange={onChange}/>
         {/* <input checked={checked} type='checkbox' onClick={(e) => { onChange(); }}/>*/}
       </div>
@@ -88,7 +161,7 @@ export class CheckBoxCel extends Component {
  * Don't pass both to this component.
  */
 @Radium
-export class TextCel extends Component {
+export class CustomCel extends Component {
 
   static propTypes = {
     children: PropTypes.node,
@@ -101,13 +174,16 @@ export class TextCel extends Component {
   }
 
   static styles = {
-    cel: {
-      paddingLeft: '16px',
-      display: 'flex',
+    cell: {
       alignItems: 'center',
-      height: '40px',
-      fontSize: '12px',
-      color: colors.darkGray2
+      color: colors.darkGray2,
+      display: 'flex',
+      fontSize: '0.75em',
+      paddingLeft: '1em',
+      paddingRight: '1em',
+      minHeight: '2.625em',
+      paddingTop: '1em',
+      paddingBottom: '1em'
     },
     pointer: {
       cursor: 'pointer'
@@ -117,7 +193,7 @@ export class TextCel extends Component {
     },
     arrowRight: {
       marginLeft: 'auto',
-      marginRight: '17px'
+      marginRight: '1.063em'
     },
     clickable: {
       color: colors.veryDarkGray
@@ -129,9 +205,9 @@ export class TextCel extends Component {
     const { children, style, getValue, objectToRender, onClick, sortColumn, sortDirection } = this.props;
 
     return (
-      <div style={[ styles.cel, style, (sortColumn || onClick) && styles.pointer,
+      <div style={[ styles.cell, (sortColumn || onClick) && styles.pointer,
             sortDirection && sortDirection !== NONE && styles.headerSelected,
-            onClick && styles.clickable ]} onClick={sortColumn || onClick}>
+            onClick && styles.clickable, style ]} onClick={sortColumn || onClick}>
         <div>
           {children}
           {getValue && objectToRender && getValue(objectToRender)}
@@ -214,7 +290,7 @@ export class Rows extends Component {
       left: 0,
       right: 0,
       bottom: 0,
-      backgroundColor: 'gray',
+      backgroundColor: '#f4f5f5',
       opacity: 0.5,
       justifyContent: 'center',
       alignItems: 'center'
@@ -225,10 +301,10 @@ export class Rows extends Component {
     const { children, isLoading } = this.props;
     const { styles } = this.constructor;
     return (
-      <div style={{ position: 'relative', minHeight: '100px' }}>
+      <div style={{ position: 'relative', minHeight: '5.25em' }}>
         {isLoading &&
           <div style={styles.rows}>
-           <Spinner style={{ height: '30px', width: '30px' }}/>
+           <Spinner style={{ height: '1.875em', width: '1.875em' }}/>
           </div>
         }
         {children}
@@ -247,26 +323,26 @@ export class Pagination extends Component {
   }
   static styles = {
     pagination: {
-      marginTop: '30px',
+      marginTop: '1.875em',
       marginLeft: 'auto',
       marginRight: 'auto',
-      width: '190px',
-      height: '30px',
+      maxWidth: '11.875em',
+      height: '1.875em',
       display: 'flex',
       flexDirection: 'row',
       border: `solid 1px ${colors.lightGray2}`,
       backgroundColor: colors.white
     },
     smallButton: {
-      width: '40px',
+      width: '2.5em',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       cursor: 'pointer'
     },
     middle: {
-      fontSize: '12px',
-      width: '110px',
+      fontSize: '0.75em',
+      width: '100%',
       borderLeft: `solid 1px ${colors.lightGray2}`,
       borderRight: `solid 1px ${colors.lightGray2}`,
       display: 'flex',

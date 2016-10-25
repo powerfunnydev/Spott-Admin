@@ -1,6 +1,8 @@
 {
   "common": {
     "errors": {
+      "required": "This field is required.",
+      "invalid": "This field is invalid.",
       "unexpected": "Something went wrong!"
     },
     "ok": "Ok"
@@ -43,5 +45,10 @@
     "password": "Your Password",
     "submitButton": "Log in",
     "title": "Log In"
+  },
+  "mediaTypes": {
+    "COMMERCIAL": "Commercial",
+    "MOVIE": "Movie",
+    "TV_SERIE": "Series"
   }
 }
