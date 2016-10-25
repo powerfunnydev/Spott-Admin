@@ -19,7 +19,7 @@ import { eventsFilterSelector } from '../selector';
   destroyOnUnmount: false,
   form: 'reportingActivityFilter',
   initialValues: {
-    endDate: moment(),
+    endDate: moment().startOf('day'),
     // We assume the ALL event will be always there.
     event: 'ALL',
     startDate: moment().startOf('day').subtract(1, 'months').date(1)

@@ -32,18 +32,18 @@ export async function getGenders (baseUrl, authenticationToken, locale) {
 }
 
 export async function getTimelineData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
-  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=DATE_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.format())}&aggregationLevel=DAY&fillGaps=true`);
+  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=DATE_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}&aggregationLevel=DAY&fillGaps=true`);
   return transformActivityData(data, (d) => d);
 }
 
 export async function getAgeData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
-  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=AGE_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.format())}&aggregationLevel=DAY&fillGaps=true`);
+  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=AGE_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}&aggregationLevel=DAY&fillGaps=true`);
   // There is no need for an id for ages.
   return transformActivityData(data, (d) => d.map(({ ageRange: { from, to }, value }) => ({ label: to ? `${from}-${to}` : `${from}+`, value })));
 }
 
 export async function getGenderData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
-  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=GENDER_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.format())}&aggregationLevel=DAY&fillGaps=true`);
+  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=GENDER_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}&aggregationLevel=DAY&fillGaps=true`);
   return transformActivityData(data, (d) => d.map(({ gender, value }) => ({ id: gender, value })));
 }
 
