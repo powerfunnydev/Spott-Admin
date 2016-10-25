@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Menu from '../menu';
 import { headerSelector } from '../selectors';
+import { colors } from '../../_common/styles';
 
 const logoImage = require('./apptvateLogo.svg');
 
@@ -23,6 +24,7 @@ export default class Header extends Component {
 
   static styles = {
     container: {
+      backgroundColor: colors.black,
       height: 40,
       paddingTop: 40,
       paddingBottom: 40,

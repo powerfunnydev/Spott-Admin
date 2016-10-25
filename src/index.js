@@ -8,6 +8,7 @@ import { init } from './actions/global';
 import { LOGIN_SUCCESS } from './actions/users';
 
 import App from './pages/app';
+import ContentProducersList from './pages/content/contentProducers/list';
 import Error404 from './pages/error404/main';
 import MediaSinglePage from './pages/media/singlePage';
 import MediaHome from './pages/media/home';
@@ -19,6 +20,9 @@ import ResetPassword from './pages/resetPassword';
 import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
 import ReportingRankings from './pages/reporting/rankings';
+import TvGuideCreateEntry from './pages/tvGuide/create';
+import TvGuideEditEntry from './pages/tvGuide/edit';
+import TvGuideList from './pages/tvGuide/list';
 import { authenticationTokenSelector, userRolesSelector } from './selectors/global';
 import reducer from './reducers';
 
@@ -60,6 +64,16 @@ function getRoutes ({ getState }) {
         <IndexRedirect to='activity' />
         <Route component={ReportingActivity} path='activity' />
         <Route component={ReportingRankings} path='rankings' />
+      </Route>
+      <Route path='content' onEnter={requireOneRole([ 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
+        <IndexRedirect to='content-producers' />
+        <Route component={ContentProducersList} path='content-producers' />
+      </Route>
+      <Route component={TvGuideList} path='tv-guide' onEnter={requireOneRole([ 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
+        <Route component={TvGuideCreateEntry} path='create' />
+      </Route>
+      <Route path='tv-guide' onEnter={requireOneRole([ 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
+        <Route component={TvGuideEditEntry} path='edit/:id' />
       </Route>
       <Route component={Error404} path='*' />
     </Route>

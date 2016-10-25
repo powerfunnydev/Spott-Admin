@@ -9,7 +9,7 @@ const path = require('path');
  * @type {Object}
  */
 const configuration = {
-  devtool: 'cheap-module-eval-source-map', // Enable line-based sourcemaps
+  devtool: 'source-map', // Enable line-based sourcemaps
   entry: {
     main: [
       // Install babel-friendly environment
@@ -24,7 +24,7 @@ const configuration = {
   module: {
     loaders: [
       { exclude: /node_modules/, loader: 'babel!eslint?failOnWarning=false&failOnError=false', test: /\.js$/ },
-      { loader: 'style!css', test: /\.css$/ },
+      { loader: 'style!css', test: /\.css$|\.less$/ },
       { loader: 'json', test: /\.json/ },
       { loader: 'file?name=[name]-[md5:hash].[ext]', test: /\.gif$|\.jpg$|\.jpeg$|\.png|\.eot$|\.svg$|\.ttf$|\.woff$|\.woff2$|\.pdf$/ }
     ]

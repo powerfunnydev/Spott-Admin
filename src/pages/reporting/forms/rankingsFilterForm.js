@@ -28,7 +28,6 @@ export default class RankingsFilterForm extends Component {
     gendersById: ImmutablePropTypes.map.isRequired,
     loadAges: PropTypes.func.isRequired,
     loadGenders: PropTypes.func.isRequired,
-    loadRankings: PropTypes.func.isRequired,
     style: PropTypes.object,
     onChange: PropTypes.func.isRequired
   };
