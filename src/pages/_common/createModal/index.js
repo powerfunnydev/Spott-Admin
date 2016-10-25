@@ -57,8 +57,10 @@ export default class CreateModal extends Component {
     children: PropTypes.node,
     isOpen: PropTypes.bool.isRequired,
     style: PropTypes.object,
+    t: PropTypes.func.isRequired,
     title: PropTypes.string,
-    onClose: PropTypes.func.isRequired
+    onClose: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired
   };
 
   static styles = {
