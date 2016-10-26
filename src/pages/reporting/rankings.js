@@ -3,9 +3,10 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
+import { push as routerPush } from 'react-router-redux';
 import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
 import { isLoading } from '../../constants/statusTypes';
-import { slowdown } from '../../utils';
+import { arraysEqual, slowdown } from '../../utils';
 import * as actions from './actions';
 import { rankingsSelector } from './selector';
 import Widget from './widget';
@@ -124,7 +125,8 @@ class RankingItem extends Component {
 }
 
 @connect(rankingsSelector, (dispatch) => ({
-  loadRankings: bindActionCreators(actions.loadRankings, dispatch)
+  loadRankings: bindActionCreators(actions.loadRankings, dispatch),
+  routerPush: bindActionCreators(routerPush, dispatch)
 }))
 export default class Rankings extends Component {
 
@@ -132,14 +134,42 @@ export default class Rankings extends Component {
     brandSubscriptions: ImmutablePropTypes.map.isRequired,
     characterSubscriptions: ImmutablePropTypes.map.isRequired,
     loadRankings: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
     mediumSubscriptions: ImmutablePropTypes.map.isRequired,
     mediumSyncs: ImmutablePropTypes.map.isRequired,
-    productViews: ImmutablePropTypes.map.isRequired
+    productViews: ImmutablePropTypes.map.isRequired,
+    routerPush: PropTypes.func.isRequired
   };
 
   constructor (props) {
     super(props);
-    this.slowdownLoadRankings = slowdown(props.loadRankings, 300);
+    this.onChangeRankingsFilter = ::this.onChangeRankingsFilter;
+    this.loadRankings = slowdown(props.loadRankings, 300);
+  }
+
+  componentWillMount () {
+    this.loadRankings(this.props.location.query);
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const nextQuery = nextProps.location.query;
+    const query = this.props.location.query;
+
+    if (!arraysEqual(query.ages, nextQuery.ages) ||
+      !arraysEqual(query.genders, nextQuery.genders) ||
+      !arraysEqual(query.media, nextQuery.media)) {
+      this.loadRankings(nextProps.location.query);
+    }
+  }
+
+  onChangeRankingsFilter (field, type, value) {
+    this.props.routerPush({
+      ...this.props.location,
+      query: {
+        ...this.props.location.query,
+        [field]: value
+      }
+    });
   }
 
   static styles = {
@@ -196,14 +226,18 @@ export default class Rankings extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { brandSubscriptions, characterSubscriptions, mediumSubscriptions, mediumSyncs, productViews } = this.props;
+    const { brandSubscriptions, characterSubscriptions, location: { query: { ages, genders } }, mediumSubscriptions, mediumSyncs, productViews } = this.props;
 
     return (
       <div>
         <Container>
           <RankingsFilterForm
+            fields={{
+              ages: typeof ages === 'string' ? [ ages ] : ages,
+              genders: typeof genders === 'string' ? [ genders ] : genders
+            }}
             style={styles.filter}
-            onChange={() => this.slowdownLoadRankings()}/>
+            onChange={this.onChangeRankingsFilter}/>
         </Container>
         <div style={styles.rankings}>
           <Container>

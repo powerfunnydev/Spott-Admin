@@ -15,7 +15,7 @@ export default class TimeInput extends Component {
     first: PropTypes.bool,
     input: PropTypes.object.isRequired,
     label: PropTypes.string,
-    meta: PropTypes.object.isRequired,
+    meta: PropTypes.object,
     required: PropTypes.bool,
     style: PropTypes.object,
     onChange: PropTypes.func
@@ -39,7 +39,9 @@ export default class TimeInput extends Component {
 
   onChange (time) {
     const { input, onChange } = this.props;
-    input.onChange(time);
+    if (input.onChange) {
+      input.onChange(time);
+    }
     if (onChange) {
       onChange(time);
     }
@@ -64,7 +66,7 @@ export default class TimeInput extends Component {
           showSecond={false}
           value={typeof input.value === 'object' ? input.value : null}
           onChange={this.onChange}/>
-        {meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
+        {meta && meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
       </div>
     );
   }

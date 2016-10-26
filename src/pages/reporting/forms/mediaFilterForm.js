@@ -3,7 +3,6 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { reduxForm, Field } from 'redux-form/immutable';
 import SelectInput from '../../_common/inputs/selectInput';
 import { FETCHING } from '../../../constants/statusTypes';
 import * as actions from '../actions';
@@ -12,16 +11,13 @@ import { mediaFilterSelector } from '../selector';
 @connect(mediaFilterSelector, (dispatch) => ({
   searchMedia: bindActionCreators(actions.searchMedia, dispatch)
 }))
-@reduxForm({
-  destroyOnUnmount: false,
-  form: 'reportingMediaFilter'
-})
 @Radium
 export default class MediaFilterForm extends Component {
 
   static propTypes = {
-    change: PropTypes.func.isRequired,
-    dispatch: PropTypes.func.isRequired,
+    fields: PropTypes.shape({
+      media: PropTypes.array
+    }).isRequired,
     mediaById: ImmutablePropTypes.map,
     searchMedia: PropTypes.func.isRequired,
     searchedMediumIds: ImmutablePropTypes.map.isRequired,
@@ -29,29 +25,30 @@ export default class MediaFilterForm extends Component {
     onChange: PropTypes.func.isRequired
   };
 
+  // If there are no media, select the first 5.
   async componentDidMount () {
-    // Select the first 5 media.
-    const media = await this.props.searchMedia();
-    const mediaIds = media.map(({ id }) => id).splice(0, 5);
-    this.props.dispatch(this.props.change('media', mediaIds));
-    this.props.onChange('media', mediaIds);
+    const { media } = this.props.fields;
+    if (!media || media.length === 0) {
+      // Select the first 5 media.
+      this.props.onChange('media', 'array', (await this.props.searchMedia()).map(({ id }) => id).splice(0, 5));
+    }
   }
 
   render () {
-    const { searchMedia, mediaById, searchedMediumIds, style, onChange } = this.props;
+    const { fields, searchMedia, mediaById, searchedMediumIds, style, onChange } = this.props;
     return (
       <form style={style}>
-        <Field
-          component={SelectInput}
+        <SelectInput
           getItemText={(id) => mediaById.getIn([ id, 'title' ])}
           getOptions={searchMedia}
+          input={{ value: fields.media }}
           isLoading={searchedMediumIds.get('_status') === FETCHING}
           maxSelect={5}
           multiselect
           name='media'
           options={searchedMediumIds.get('data').toJS()}
           placeholder='Series/Movies/Commercials'
-          onChange={onChange.bind(null, 'media')} />
+          onChange={onChange.bind(null, 'media', 'array')} />
       </form>
     );
   }

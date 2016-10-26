@@ -1,13 +1,10 @@
-import { formValueSelector } from 'redux-form/immutable';
+import moment from 'moment';
 import { searchMedia as dataSearchMedia } from '../../actions/media';
 import {
   fetchAges, fetchEvents, fetchGenders, fetchProductViews, fetchTimelineData,
   fetchAgeData, fetchBrandSubscriptions, fetchMediumSyncs, fetchMediumSubscriptions,
   fetchGenderData, fetchCharacterSubscriptions
 } from '../../actions/reporting';
-
-const rankingsFilterSelector = formValueSelector('reportingRankingsFilter');
-const mediaFilterSelector = formValueSelector('reportingMediaFilter');
 
 // Action types
 // ////////////
@@ -34,24 +31,42 @@ export const loadAges = fetchAges;
 export const loadEvents = fetchEvents;
 export const loadGenders = fetchGenders;
 
-export function loadActivities () {
-  return async (dispatch, getState) => {
-    const state = getState();
+// export function updateActivitiesLocation () {
+//   return async (dispatch, getState) => {
+//     const state = getState();
+//
+//     // Get the current selected media (series/movies/commercials).
+//     const mediumIds = mediaFilterSelector(state, 'media');
+//
+//     // Get the date range and the event type.
+//     const eventFilterSelector = formValueSelector('reportingActivityFilter');
+//     const { endDate, event, startDate } = eventFilterSelector(state, 'endDate', 'event', 'startDate');
+//
+//     // Change route.
+//     const currentLocation = state.get('router').locationBeforeTransitions;
+//     dispatch(routerPush({ ...currentLocation, query: {
+//       endDate: endDate.format('YYYY-MM-DD'),
+//       event,
+//       startDate: startDate.format('YYYY-MM-DD'),
+//       mediumIds
+//     } }));
+//   };
+// }
 
-    // Get the current selected media (series/movies/commercials).
-    const mediumIds = mediaFilterSelector(state, 'media');
-
-    // Get the date range and the event type.
-    const eventFilterSelector = formValueSelector('reportingActivityFilter');
-    const { endDate, event, startDate } = eventFilterSelector(state, 'endDate', 'event', 'startDate');
-
+export function loadActivities (query) {
+  return async (dispatch) => {
     try {
-      if (endDate && event && startDate && mediumIds) {
+      if (query && query.endDate && query.event && query.startDate && query.media) {
+        const endDate = moment(query.endDate);
+        const startDate = moment(query.startDate);
+        const eventType = query.event;
+        const mediumIds = typeof query.media === 'string' ? [ query.media ] : (query.media || []);
+
         // We need to load the genders to show in the gender chart.
         await dispatch(loadGenders());
-        dispatch(fetchTimelineData({ startDate, endDate, eventType: event, mediumIds }));
-        dispatch(fetchAgeData({ startDate, endDate, eventType: event, mediumIds }));
-        dispatch(fetchGenderData({ startDate, endDate, eventType: event, mediumIds }));
+        dispatch(fetchTimelineData({ startDate, endDate, eventType, mediumIds }));
+        dispatch(fetchAgeData({ startDate, endDate, eventType, mediumIds }));
+        dispatch(fetchGenderData({ startDate, endDate, eventType, mediumIds }));
       }
     } catch (error) {
       dispatch({ error, type: ACTIVITIES_FETCH_ERROR });
@@ -59,25 +74,41 @@ export function loadActivities () {
   };
 }
 
-export function loadRankings () {
+// export function updateRankingsLocation () {
+//   return async (dispatch, getState) => {
+//     const state = getState();
+//
+//     const { ages = [], genders = [] } = rankingsFilterSelector(state, 'ages', 'genders');
+//     const mediumIds = mediaFilterSelector(state, 'media') || [];
+//
+//     // Change route.
+//     const currentLocation = state.get('router').locationBeforeTransitions;
+//     dispatch(routerPush({ ...currentLocation, query: {
+//       ages,
+//       genders,
+//       mediumIds
+//     } }));
+//   };
+// }
+
+export function loadRankings (query) {
   return async (dispatch, getState) => {
-    const state = getState();
+    if (query) {
+      const ages = typeof query.ages === 'string' ? [ query.ages ] : (query.ages || []);
+      const genders = typeof query.genders === 'string' ? [ query.genders ] : (query.genders || []);
+      const mediumIds = typeof query.media === 'string' ? [ query.media ] : (query.media || []);
 
-    const { ages = [], genders = [] } = rankingsFilterSelector(state, 'ages', 'genders');
+      try {
+        dispatch(fetchBrandSubscriptions({ ages, genders, mediumIds }));
+        dispatch(fetchCharacterSubscriptions({ ages, genders, mediumIds }));
+        dispatch(fetchMediumSubscriptions({ ages, genders, mediumIds }));
+        dispatch(fetchMediumSyncs({ ages, genders, mediumIds }));
+        dispatch(fetchProductViews({ ages, genders, mediumIds }));
 
-    const media = mediaFilterSelector(state, 'media');
-    const mediumIds = media || [];
-
-    try {
-      dispatch(fetchBrandSubscriptions({ ages, genders, mediumIds }));
-      dispatch(fetchCharacterSubscriptions({ ages, genders, mediumIds }));
-      dispatch(fetchMediumSubscriptions({ ages, genders, mediumIds }));
-      dispatch(fetchMediumSyncs({ ages, genders, mediumIds }));
-      dispatch(fetchProductViews({ ages, genders, mediumIds }));
-
-      // return await dispatch(dataSearchSeries({ searchString }));
-    } catch (error) {
-      dispatch({ error, type: ACTIVITIES_FETCH_ERROR });
+        // return await dispatch(dataSearchSeries({ searchString }));
+      } catch (error) {
+        dispatch({ error, type: ACTIVITIES_FETCH_ERROR });
+      }
     }
   };
 }

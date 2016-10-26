@@ -3,6 +3,8 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Highcharts from 'react-highcharts';
+import { push as routerPush } from 'react-router-redux';
+import moment from 'moment';
 // Note that Highcharts has to be in the codebase already
 // Highcharts more
 import HighchartsMore from 'highcharts-more';
@@ -13,12 +15,14 @@ import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles
 import ActivityFilterForm from './forms/activityFilterForm';
 import * as actions from './actions';
 import { activitySelector } from './selector';
+import { arraysEqual, slowdown } from '../../utils';
 
 HighchartsMore(Highcharts.Highcharts);
 HighchartsExporting(Highcharts.Highcharts);
 
 @connect(activitySelector, (dispatch) => ({
-  loadActivities: bindActionCreators(actions.loadActivities, dispatch)
+  loadActivities: bindActionCreators(actions.loadActivities, dispatch),
+  routerPush: bindActionCreators(routerPush, dispatch)
 }))
 @Radium
 export default class ReportingActivity extends Component {
@@ -30,8 +34,51 @@ export default class ReportingActivity extends Component {
     isLoadingGender: PropTypes.bool.isRequired,
     isLoadingTimeline: PropTypes.bool.isRequired,
     loadActivities: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
+    routerPush: PropTypes.func.isRequired,
     timelineConfig: PropTypes.object.isRequired
   };
+
+  constructor (props) {
+    super(props);
+    this.onChangeActivityFilter = ::this.onChangeActivityFilter;
+    this.loadActivities = slowdown(props.loadActivities, 300);
+  }
+
+  componentDidMount () {
+    const location = this.props.location;
+    const query = {
+      // We assume the ALL event will be always there.
+      endDate: moment().startOf('day').format('YYYY-MM-DD'),
+      event: 'ALL',
+      startDate: moment().startOf('day').subtract(1, 'months').date(1).format('YYYY-MM-DD'),
+      ...location.query
+    };
+    this.props.routerPush({ ...location, query });
+    this.loadActivities(query);
+  }
+
+  componentWillReceiveProps (nextProps) {
+    const nextQuery = nextProps.location.query;
+    const query = this.props.location.query;
+
+    if (query.endDate !== nextQuery.endDate ||
+      query.event !== nextQuery.event ||
+      query.startDate !== nextQuery.startDate ||
+      !arraysEqual(query.media, nextQuery.media)) {
+      this.loadActivities(nextProps.location.query);
+    }
+  }
+
+  onChangeActivityFilter (field, type, value) {
+    this.props.routerPush({
+      ...this.props.location,
+      query: {
+        ...this.props.location.query,
+        [field]: type === 'string' || type === 'array' ? value : value.format('YYYY-MM-DD')
+      }
+    });
+  }
 
   static styles = {
     activityFilterForm: {
@@ -82,14 +129,20 @@ export default class ReportingActivity extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { ageConfig, genderConfig, isLoadingAge, isLoadingGender, isLoadingTimeline, timelineConfig } = this.props;
+    const { ageConfig, genderConfig, isLoadingAge, isLoadingGender, isLoadingTimeline, location: { query: { startDate, endDate, event } }, timelineConfig } = this.props;
     return (
       <div>
         <div style={styles.charts}>
           <Container>
             <ActivityFilterForm
+              fields={{
+                // TODO validation
+                endDate: moment(endDate),
+                startDate: moment(startDate),
+                event
+              }}
               style={styles.activityFilterForm}
-              onChange={() => this.props.loadActivities()} />
+              onChange={this.onChangeActivityFilter} />
             <Widget isLoading={isLoadingTimeline} style={largeWidgetStyle} title='Timeline'>
               <Highcharts config={timelineConfig} isPureConfig />
             </Widget>
