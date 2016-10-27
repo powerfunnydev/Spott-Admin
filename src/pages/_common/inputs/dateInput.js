@@ -26,10 +26,8 @@ export default class DateInput extends Component {
 
   onChange (date) {
     const { input, onChange } = this.props;
-    input.onChange(date);
-    if (onChange) {
-      onChange(date);
-    }
+    input.onChange && input.onChange(date);
+    onChange && onChange(date);
   }
 
   static styles = {
@@ -75,17 +73,17 @@ export default class DateInput extends Component {
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
         <div style={{ position: 'relative', width: '100%', height: '30px' }}>
-          {input.value.format && <DatePicker
+          <DatePicker
             customInput={<input
               readOnly
               ref='input'
               style={[ styles.base, styles.text ]}
               type='text'
-              value={`${input.value.format(format).toString()}`}/>}
+              value={input.value && `${input.value.format(format).toString()}`}/>}
             dateFormat={format}
             selected={input.value}
             style={{ width: '100%' }}
-            onChange={this.onChange}/>}
+            onChange={this.onChange}/>
         </div>
       </div>
     );

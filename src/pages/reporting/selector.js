@@ -1,5 +1,4 @@
 import { createSelector, createStructuredSelector } from 'reselect';
-import { formValueSelector } from 'redux-form/immutable';
 import {
   createEntityIdsByRelationSelector,
   createEntitiesByListSelector,
@@ -47,15 +46,14 @@ export const eventsFilterSelector = createStructuredSelector({
   eventsById: eventsEntitiesSelector
 });
 
-const reportingMediaFilterSelector = formValueSelector('reportingMediaFilter');
-const reportingActivityFilterSelector = formValueSelector('reportingActivityFilter');
-
-function mediumIdsSelector (state) {
-  return reportingMediaFilterSelector(state, 'media') || [];
+function mediumIdsSelector (state, props) {
+  const query = props.location && props.location.query;
+  return typeof query.media === 'string' ? [ query.media ] : (query.media || []);
 }
 
-function eventIdSelector (state) {
-  return reportingActivityFilterSelector(state, 'event');
+function eventIdSelector (state, props) {
+  const query = props.location && props.location.query;
+  return query.event || '';
 }
 
 const eventSelector = createSelector(

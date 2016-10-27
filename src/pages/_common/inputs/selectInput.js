@@ -23,7 +23,7 @@ export default class SelectInput extends Component {
     isLoading: PropTypes.bool,
     label: PropTypes.string,
     maxSelect: PropTypes.number,
-    meta: PropTypes.object.isRequired,
+    meta: PropTypes.object,
     multiselect: PropTypes.bool,
     options: PropTypes.array, // A list of id's...
     placeholder: PropTypes.string,
@@ -44,15 +44,13 @@ export default class SelectInput extends Component {
   }
 
   onInternalChange (internalValue) {
-    const { input, multiselect } = this.props;
+    const { input, multiselect, onChange } = this.props;
     const newValue = multiselect
       ? internalValue.map((v) => v.value)
       : internalValue.value;
 
-    input.onChange(newValue);
-    if (this.props.onChange) {
-      this.props.onChange(newValue);
-    }
+    input.onChange && input.onChange(newValue);
+    onChange && onChange(newValue);
   }
 
   static styles = {
@@ -99,7 +97,7 @@ export default class SelectInput extends Component {
       value = input.value && { value: input.value, label: getItemText(input.value) };
     }
 
-    const maxSelected = maxSelect ? input.value.length >= maxSelect : false;
+    const maxSelected = maxSelect ? ((input.value && input.value.length) || 0) >= maxSelect : false;
 
     return (
       <div style={[ !first && styles.padTop, style ]}>
@@ -114,14 +112,14 @@ export default class SelectInput extends Component {
           multi={multiselect}
           options={maxSelected ? [] : options}
           placeholder={placeholder}
-          style={[ styles.base, disabled && styles.disabled, meta.touched && meta.error && styles.error, styles.text ]}
+          style={[ styles.base, disabled && styles.disabled, meta && meta.touched && meta.error && styles.error, styles.text ]}
           value={value} // Overides value of of {...field}
-          onBlur={() => input.onBlur(input.value)} // Overides onBlur of of {...field}
+          onBlur={() => input.onBlur && input.onBlur(input.value)} // Overides onBlur of of {...field}
           onChange={this.onInternalChange}  // Overides onChange of of {...field};
           onInputChange={getOptions}
           onOpen={getOptions} />
-        {typeof maxSelect === 'number' && <span style={styles.info}>{input.value.length}/{maxSelect} selected</span>}
-        {meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
+        {typeof maxSelect === 'number' && <span style={styles.info}>{(input.value && input.value.length) || 0}/{maxSelect} selected</span>}
+        {meta && meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
       </div>
     );
   }

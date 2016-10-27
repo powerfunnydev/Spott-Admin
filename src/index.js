@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import createStore from './createStore';
 import { init } from './actions/global';
 import { LOGIN_SUCCESS } from './actions/users';
+import { ADMIN, BROADCASTER, CONTENT_MANAGER } from './constants/userRoles';
 
 import App from './pages/app';
 import BroadcastersList from './pages/content/broadcasters/list';
@@ -63,24 +64,23 @@ function getRoutes ({ getState }) {
         <Route component={ForgotPassword} path='forgotpassword' />
         <Route component={ResetPassword} path='resetPassword' />
       </Route>
-      <Route component={MediaSinglePage} path='media' onEnter={requireOneRole([ 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
+      <Route component={MediaSinglePage} path='media' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <IndexRoute component={MediaHome}/>
         <Route component={MediaUpload} path='upload' />
       </Route>
-      <Route component={Reporting} path='reporting' onEnter={requireOneRole([ 'BROADCASTER', 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
+      <Route component={Reporting} path='reporting' onEnter={requireOneRole([ BROADCASTER, CONTENT_MANAGER, ADMIN ])}>
         <IndexRedirect to='activity' />
         <Route component={ReportingActivity} path='activity' />
         <Route component={ReportingRankings} path='rankings' />
       </Route>
-      <Route path='content' onEnter={requireOneRole([ 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
-        <IndexRedirect to='content-producers'/>
+      <Route path='content' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
+        <IndexRedirect to='content-producers' />
         <Route component={ContentProducersList} path='content-producers'>
           <Route component={ContentProducersCreateEntry} path='create'/>
         </Route>
         <Route path='content-producers'>
           <Route component={ContentProducersEditEntry} path='edit/:id'/>
         </Route>
-
         <Route component={BroadcastersList} path='broadcasters'>
           <Route component={BroadcastersCreateEntry} path='create'/>
         </Route>
@@ -91,13 +91,13 @@ function getRoutes ({ getState }) {
           </Route>
         </Route>
         <Route path='broadcast-channels'>
-          <Route component={BroadcastChannelCreateEntry} path='create'/>
+          <Route component={BroadcastChannelCreateEntry} path='create' />
         </Route>
       </Route>
-      <Route component={TvGuideList} path='tv-guide' onEnter={requireOneRole([ 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
+      <Route component={TvGuideList} path='tv-guide' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <Route component={TvGuideCreateEntry} path='create' />
       </Route>
-      <Route path='tv-guide' onEnter={requireOneRole([ 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
+      <Route path='tv-guide' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <Route component={TvGuideEditEntry} path='edit/:id' />
       </Route>
       <Route component={Error404} path='*' />

@@ -1,17 +1,19 @@
 import React, { Component, PropTypes } from 'react';
+import { push as routerPush } from 'react-router-redux';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Link } from 'react-router';
+
 import Header from '../app/header';
 import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
-import { slowdown } from '../../utils';
 import MediaFilterForm from './forms/mediaFilterForm';
 import * as actions from './actions';
 
 @connect(null, (dispatch) => ({
   loadActivities: bindActionCreators(actions.loadActivities, dispatch),
-  loadRankings: bindActionCreators(actions.loadRankings, dispatch)
+  loadRankings: bindActionCreators(actions.loadRankings, dispatch),
+  routerPush: bindActionCreators(routerPush, dispatch)
 }))
 @Radium
 export default class Reporting extends Component {
@@ -22,14 +24,9 @@ export default class Reporting extends Component {
     loadRankings: PropTypes.func.isRequired,
     location: PropTypes.shape({
       pathname: PropTypes.string.isRequired
-    })
+    }),
+    routerPush: PropTypes.func.isRequired
   };
-
-  constructor (props) {
-    super(props);
-    this.slowdownLoadActivities = slowdown(props.loadActivities, 300);
-    this.slowdownLoadRankings = slowdown(props.loadRankings, 300);
-  }
 
   static styles = {
     tabs: {
@@ -75,25 +72,35 @@ export default class Reporting extends Component {
   render () {
     const styles = this.constructor.styles;
     const { children, location } = this.props;
+    const { query: { media } } = location;
     return (
       <div>
-        <Header currentPath={this.props.location.pathname} hideHomePageLinks />
+        <Header currentPath={location.pathname} hideHomePageLinks />
         <div style={styles.tabs}>
           <Container style={styles.wrapper}>
             <div>
               <div style={styles.tab.container}>
-                <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/reporting/activity'>Activity</Link>
+                <Link activeStyle={styles.tab.active} style={styles.tab.base} to={{
+                  ...location,
+                  pathname: '/reporting/activity'
+                }}>Activity</Link>
               </div>
               <div style={styles.tab.container}>
-                <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/reporting/rankings'>Rankings</Link>
+                <Link activeStyle={styles.tab.active} style={styles.tab.base} to={{
+                  ...location,
+                  pathname: '/reporting/rankings'
+                }}>Rankings</Link>
               </div>
             </div>
-            <MediaFilterForm style={styles.mediaFilterForm} onChange={(f) => {
-              if (location.pathname === '/reporting/rankings') {
-                this.slowdownLoadRankings();
-              } else {
-                this.slowdownLoadActivities();
-              }
+            <MediaFilterForm fields={{
+              media: typeof media === 'string' ? [ media ] : media
+            }} style={styles.mediaFilterForm} onChange={(field, type, value) => {
+              this.props.routerPush({
+                ...location,
+                query: {
+                  ...location.query,
+                  [field]: type === 'string' || type === 'array' ? value : value.format('YYYY-MM-DD') }
+              });
             }} />
           </Container>
         </div>
