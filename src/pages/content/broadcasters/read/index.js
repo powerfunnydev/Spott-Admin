@@ -40,6 +40,7 @@ export default class ReadBroadcastersEntry extends Component {
 
   async componentDidMount () {
     if (this.props.params.id) {
+      console.log('id', this.props.params.id);
       await this.props.load(this.props.params.id);
     }
   }
@@ -50,17 +51,17 @@ export default class ReadBroadcastersEntry extends Component {
 
   render () {
     const { children, currentBroadcaster, location: { pathname }, deleteBroadcastersEntry } = this.props;
-    const data = currentBroadcaster.get('data');
     return (
       <div style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
         <Header currentPath={pathname} hideHomePageLinks />
         <SpecificHeader/>
         <Container>
-          {currentBroadcaster.get('_status') === 'loaded' && data &&
-            <EntityDetails image={data.logo && data.logo.url} title={data.name}
-              onEdit={() => { this.props.routerPush(`content/broadcasters/edit/${data.id}`); }}
-              onRemove={() => { deleteBroadcastersEntry(data.id); this.redirect(); }}/>}
+          {currentBroadcaster.get('_status') === 'loaded' && currentBroadcaster &&
+            <EntityDetails image={currentBroadcaster.getIn([ 'logo', 'url' ])} title={currentBroadcaster.getIn([ 'name' ])}
+              onEdit={() => { this.props.routerPush(`content/broadcasters/edit/${currentBroadcaster.getIn([ 'id' ])}`); }}
+              onRemove={() => { deleteBroadcastersEntry(currentBroadcaster.getIn([ 'id' ])); this.redirect(); }}/>}
         </Container>
+        <button onClick={() => { this.props.routerPush(`content/broadcasters/read/${currentBroadcaster.getIn([ 'id' ])}/create/broadcast-channel`); }}>Add channel </button>
         {children}
       </div>
     );

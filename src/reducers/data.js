@@ -22,6 +22,7 @@ export default (state = fromJS({
   },
   relations: {
     ages: {},
+    broadcastChannels: {},
     events: {},
     filterHasEpisodes: {},
     filterHasBroadcasters: {},
@@ -37,8 +38,26 @@ export default (state = fromJS({
 }), action) => {
   switch (action.type) {
 
+    // Broadcaster Channels
+    // /////////////////
+
+    case broadcastChannelActions.BROADCAST_CHANNEL_SEARCH_START:
+      return searchStart(state, 'searchStringHasBroadcastChannels', action.searchString);
+    case broadcastChannelActions.BROADCAST_CHANNEL_SEARCH_SUCCESS:
+      return searchSuccess(state, 'broadcastChannels', 'searchStringHasBroadcastChannels', action.searchString, action.data);
+    case broadcastChannelActions.BROADCAST_CHANNEL_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasBroadcastChannels', action.searchString, action.error);
+
     // Broadcasters
     // /////////////////
+
+    /* case broadcastersActions.BROADCASTER_CHANNELS_FETCH_START:
+      return fetchListStart(state, 'broadcastChannels');
+    case broadcastersActions.BROADCASTER_CHANNELS_FETCH_SUCCESS:
+      return fetchListSuccess(state, 'broadcastChannels', 'broadcastChannels', action.data);
+    case broadcastersActions.BROADCASTER_CHANNELS_FETCH_ERROR:
+      return fetchListError(state, 'broadcastChannels', action.error); */
+
     case broadcastersActions.BROADCASTERS_ENTRY_FETCH_START:
       return fetchStart(state, [ 'entities', 'broadcasters', action.broadcastersEntryId ]);
     case broadcastersActions.BROADCASTERS_ENTRY_FETCH_SUCCESS:
@@ -79,13 +98,6 @@ export default (state = fromJS({
       return searchSuccess(state, 'tvGuideEntries', 'filterHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.data.data);
     case tvGuideActions.TV_GUIDE_ENTRIES_FETCH_ERROR:
       return searchError(state, 'filterHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.error);
-
-    case broadcastChannelActions.BROADCAST_CHANNEL_SEARCH_START:
-      return searchStart(state, 'searchStringHasBroadcastChannels', action.searchString);
-    case broadcastChannelActions.BROADCAST_CHANNEL_SEARCH_SUCCESS:
-      return searchSuccess(state, 'broadcastChannels', 'searchStringHasBroadcastChannels', action.searchString, action.data);
-    case broadcastChannelActions.BROADCAST_CHANNEL_SEARCH_ERROR:
-      return searchError(state, 'searchStringHasBroadcastChannels', action.searchString, action.error);
 
     // Media
     // /////

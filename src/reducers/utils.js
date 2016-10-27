@@ -50,7 +50,7 @@ export function fetchStart (state, path) {
 }
 
 export function fetchSuccess (state, path, data) {
-  return state.setIn(path, Map({ data, _status: LOADED }));
+  return state.setIn(path, Map({ ...data, _status: LOADED }));
 }
 
 export function fetchError (state, path, error) {

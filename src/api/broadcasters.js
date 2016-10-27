@@ -17,6 +17,15 @@ export async function fetchBroadcasters (baseUrl, authenticationToken, locale, {
   return body;
 }
 
+export async function fetchBroadcasterChannels (baseUrl, authenticationToken, locale, { broadcastersEntryId }) {
+  const url = `${baseUrl}/v004/media/broadcasters/${broadcastersEntryId}/channels`;
+  const { body } = await get(authenticationToken, locale, url);
+  console.log('before transform', { ...body });
+  const result = transformBroadcaster(body);
+  // console.log('after tranform', result);
+  return result;
+}
+
 export async function fetchBroadcastersEntry (baseUrl, authenticationToken, locale, { broadcastersEntryId }) {
   const url = `${baseUrl}/v004/media/broadcasters/${broadcastersEntryId}`;
   const { body } = await get(authenticationToken, locale, url);

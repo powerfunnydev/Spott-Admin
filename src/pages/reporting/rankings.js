@@ -227,7 +227,7 @@ export default class Rankings extends Component {
   render () {
     const styles = this.constructor.styles;
     const { brandSubscriptions, characterSubscriptions, location: { query: { ages, genders } }, mediumSubscriptions, mediumSyncs, productViews } = this.props;
-
+    console.log('mediumSubscriptions', mediumSubscriptions.toJS());
     return (
       <div>
         <Container>

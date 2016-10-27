@@ -149,7 +149,7 @@ export default class CreateModal extends Component {
               </div>
               <div style={styles.footer}>
                 <div style={{ marginLeft: 'auto' }}>
-                  <button key='cancel' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white ]} type='button' onClick={this.onForgotPasswordClick}>Cancel</button>
+                  <button key='cancel' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white ]} type='button' onClick={(e) => { e.preventDefault(); onClose(); }}>Cancel</button>
                   <button key='submit' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} type='submit'>Create</button>
                 </div>
               </div>

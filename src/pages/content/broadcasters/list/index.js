@@ -5,8 +5,8 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { push as routerPush } from 'react-router-redux';
 import moment from 'moment';
 import Header from '../../../app/header';
-import { Container, colors, buttonStyles } from '../../../_common/styles';
-import { TotalEntries, headerStyles, determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table';
+import { Root, Container, buttonStyles } from '../../../_common/styles';
+import { generalStyles, TotalEntries, headerStyles, determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table';
 import SearchInput from '../../../_common/inputs/searchInput';
 import Radium from 'radium';
 import * as actions from './actions';
@@ -74,16 +74,16 @@ export default class Broadcasters extends Component {
     await this.props.load(this.props.location.query);
   }
 
-  getName (cp) {
-    return cp.get('name');
+  getName (broadcaster) {
+    return broadcaster.get('name');
   }
 
-  getUpdatedBy (cp) {
-    return cp.get('lastUpdatedBy');
+  getUpdatedBy (broadcaster) {
+    return broadcaster.get('lastUpdatedBy');
   }
 
-  getLastUpdatedOn (cp) {
-    const date = new Date(cp.get('lastUpdatedOn'));
+  getLastUpdatedOn (broadcaster) {
+    const date = new Date(broadcaster.get('lastUpdatedOn'));
     return moment(date).format('YYYY-MM-DD HH:mm');
   }
 
@@ -146,33 +146,25 @@ export default class Broadcasters extends Component {
     await this.props.load(this.props.location.query);
   }
 
-  static styles = {
-    searchContainer: {
-      minHeight: '70px',
-      display: 'flex',
-      alignItems: 'center' }
-  }
-
   render () {
     const { broadcasters, children, isSelected, location: { pathname, query: { page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount } = this.props;
-    const { styles } = this.constructor;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
-      <div>
+      <Root>
         <Header currentPath={pathname} hideHomePageLinks />
         <SpecificHeader/>
-        <div style={{ backgroundColor: colors.veryLightGray }}>
-          <Container style={styles.searchContainer}>
+        <div style={generalStyles.backgroundBar}>
+          <Container style={generalStyles.searchContainer}>
             <SearchInput isLoading={broadcasters.get('_status') !== 'loaded'} value={searchString} onChange={this.onChangeSearchString}/>
-            <div style={{ marginLeft: 'auto' }}>
+            <div style={generalStyles.floatRight}>
               <button key='delete' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} type='button' onClick={this.onClickDeleteSelected}>Delete {numberSelected}</button>
               <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='New Broadcaster' onClick={this.onClickNewEntry} />
             </div>
           </Container>
         </div>
-        <div style={{ backgroundColor: colors.lightGray }}>
-          <Container style={{ paddingTop: '50px', paddingBottom: '50px' }}>
+        <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
+          <Container style={generalStyles.paddingTable}>
             <TotalEntries totalResultCount={totalResultCount}/>
             <Table>
               <Headers>
@@ -182,16 +174,16 @@ export default class Broadcasters extends Component {
                 <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}/>
               </Headers>
               <Rows isLoading={broadcasters.get('_status') !== 'loaded'}>
-                {broadcasters.get('data').map((cp, index) => {
+                {broadcasters.get('data').map((broadcaster, index) => {
                   return (
                     <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                       {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                      <CheckBoxCel checked={isSelected.get(cp.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, cp.get('id'))}/>
-                      <CustomCel getValue={this.getName} objectToRender={cp} style={{ flex: 5 }} /* onClick={() => { this.props.routerPush(`content/broadcasters/read/${cp.get('id')}`); }}*//>
+                      <CheckBoxCel checked={isSelected.get(broadcaster.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, broadcaster.get('id'))}/>
+                      <CustomCel getValue={this.getName} objectToRender={broadcaster} style={{ flex: 5 }} /* onClick={() => { this.props.routerPush(`content/broadcasters/read/${broadcaster.get('id')}`); }}*//>
                       <CustomCel style={{ flex: 1 }}>
                         <Dropdown
-                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPush(`content/broadcasters/edit/${cp.get('id')}`); }}>Edit</div>}>
-                          <div key={1} style={[ dropdownStyles.option ]} onClick={(e) => { e.preventDefault(); this.deleteBroadcastersEntry(cp.get('id')); }}>Remove</div>
+                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPush(`content/broadcasters/edit/${broadcaster.get('id')}`); }}>Edit</div>}>
+                          <div key={1} style={[ dropdownStyles.option ]} onClick={(e) => { e.preventDefault(); this.deleteBroadcastersEntry(broadcaster.get('id')); }}>Remove</div>
                         </Dropdown>
                       </CustomCel>
                     </Row>
@@ -203,9 +195,7 @@ export default class Broadcasters extends Component {
           </Container>
         </div>
         {children}
-      </div>
-
+      </Root>
     );
   }
-
 }

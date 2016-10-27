@@ -34,10 +34,10 @@ export async function fetchBroadcastChannelsEntry (baseUrl, authenticationToken,
   return result;
 }
 
-export async function persistBroadcastChannels (baseUrl, authenticationToken, locale, { id, name }) {
+export async function persistBroadcastChannel (baseUrl, authenticationToken, locale, { id, name, broadcasterId }) {
   console.log('name', name);
   const url = `${baseUrl}/v004/media/broadcastChannels`;
-  await post(authenticationToken, locale, url, { uuid: id, name });
+  await post(authenticationToken, locale, url, { uuid: id, name, broadcaster: { uuid: broadcasterId } });
 }
 
 export async function deleteBroadcastChannelsEntry (baseUrl, authenticationToken, locale, { broadcastChannelsEntryId }) {

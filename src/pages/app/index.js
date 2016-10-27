@@ -41,7 +41,7 @@ export default class Application extends Component {
 
   render () {
     return (
-      <StyleRoot>
+      <StyleRoot style={{ height: '100%' }}>
         {this.props.children}
       </StyleRoot>
     );
