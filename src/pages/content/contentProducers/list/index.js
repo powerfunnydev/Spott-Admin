@@ -7,6 +7,7 @@ import moment from 'moment';
 import Header from '../../../app/header';
 import { Root, Container, buttonStyles } from '../../../_common/styles';
 import { generalStyles, TotalEntries, headerStyles, determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table';
+import Line from '../../../_common/components/line';
 import SearchInput from '../../../_common/inputs/searchInput';
 import Radium from 'radium';
 import * as actions from './actions';
@@ -171,6 +172,7 @@ export default class ContentProducers extends Component {
             </div>
           </Container>
         </div>
+        <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
           <Container style={generalStyles.paddingTable}>
             <TotalEntries totalResultCount={totalResultCount}/>

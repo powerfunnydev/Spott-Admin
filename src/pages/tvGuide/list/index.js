@@ -7,6 +7,7 @@ import moment from 'moment';
 import Header from '../../app/header';
 import { Root, buttonStyles, Container } from '../../_common/styles';
 import { generalStyles, TotalEntries, headerStyles, determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table';
+import Line from '../../_common/components/line';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
@@ -175,6 +176,7 @@ export default class TvGuideList extends Component {
             </div>
           </Container>
         </div>
+        <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
           <Container style={generalStyles.paddingTable}>
             <TotalEntries totalResultCount={totalResultCount}/>
