@@ -7,7 +7,7 @@ const removeIcon = require('../../../assets/images/garbage.svg');
 export default class RemoveButton extends Component {
   static propTypes = {
     style: PropTypes.object,
-    text: PropTypes.string.isRequired,
+    text: PropTypes.string,
     onClick: PropTypes.func.isRequired
   }
 

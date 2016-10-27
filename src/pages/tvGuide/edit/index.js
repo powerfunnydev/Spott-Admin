@@ -159,8 +159,8 @@ export default class EditTvGuideEntry extends Component {
         <Header currentPath={pathname} hideHomePageLinks />
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
           <Tabs>
-            <TabList style={{ marginBottom: 0, borderWidth: 0 }}>
-              <Tab style={{ borderColor: colors.lightGray3 }}>Details</Tab>
+          <TabList style={{ marginBottom: 0, borderWidth: 0 }}>
+            <Tab style={{ fontSize: '12px', color: '#536970', borderColor: colors.lightGray3 }}>Details</Tab>
             </TabList>
             <TabPanel>
               <Section first>

@@ -4,18 +4,21 @@ import { LAZY } from '../constants/statusTypes';
 
 export const agesEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'ages' ]);
 export const broadcastChannelsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'broadcastChannels' ]);
+export const broadcastersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'broadcasters' ]);
 export const contentProducersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'contentProducers' ]);
 export const eventsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'events' ]);
 export const gendersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'genders' ]);
 export const listMediaEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listMedia' ]);
 export const tvGuideEntriesEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'tvGuideEntries' ]);
 
+export const filterHasBroadcastersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasBroadcasters' ]);
 export const filterHasContentProducersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasContentProducers' ]);
 export const filterHasEpisodesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasEpisodes' ]);
 export const filterHasSeasonsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasSeasons' ]);
 export const filterHasTvGuideEntriesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasTvGuideEntries' ]);
 export const searchStringHasBroadcastChannelsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasBroadcastChannels' ]);
 export const searchStringHasMediaRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasMedia' ]);
+export const searchStringHasBroadcastersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasBroadcasters' ]);
 
 export const agesListSelector = (state) => state.getIn([ 'data', 'lists', 'ages' ]);
 export const eventsListSelector = (state) => state.getIn([ 'data', 'lists', 'events' ]);

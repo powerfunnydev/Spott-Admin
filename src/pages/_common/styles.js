@@ -18,6 +18,7 @@ export const colors = {
   darkerGray: '#878D8F',
   darkGray: '#BABDC0',
   darkGray2: '#6d8791',
+  darkGray3: '#536970',
   veryDarkGray: '#17262b',
   veryLightGray: '#eaeced',
   lightGray: '#F1F3F4',
@@ -86,7 +87,7 @@ export const buttonStyles = {
     borderRadius: '2px',
     color: 'white',
     display: 'inline-block',
-    ...makeTextStyle(fontWeights.regular, '14px'),
+    ...makeTextStyle(fontWeights.medium, '14px'),
     marginLeft: '10px',
     paddingTop: '8px',
     paddingBottom: '8px',
@@ -97,7 +98,7 @@ export const buttonStyles = {
   },
   // Button sizes
   small: {
-    ...makeTextStyle(fontWeights.regular, '12px'),
+    ...makeTextStyle(fontWeights.medium, '12px'),
     paddingTop: '8px',
     paddingBottom: '8px',
     paddingLeft: '13px',

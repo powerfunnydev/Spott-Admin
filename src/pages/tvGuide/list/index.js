@@ -27,7 +27,7 @@ const numberOfRows = 25;
   selectEntity: bindActionCreators(actions.selectEntity, dispatch)
 }))
 @Radium
-export default class ContentProducers extends Component {
+export default class TvGuideList extends Component {
 
   static propTypes = {
     children: PropTypes.node,
@@ -84,11 +84,11 @@ export default class ContentProducers extends Component {
   }
 
   getStartDate (tvGuideEntry) {
-    return moment(tvGuideEntry.get('start')).format('DD/MM/YYYY hh:mm');
+    return moment(tvGuideEntry.get('start')).format('YYYY-MM-DD HH:mm');
   }
 
   getEndDate (tvGuideEntry) {
-    return moment(tvGuideEntry.get('end')).format('DD/MM/YYYY hh:mm');
+    return moment(tvGuideEntry.get('end')).format('YYYY-MM-DD HH:mm');
   }
 
   getChannelName (tvGuideEntry) {
@@ -100,8 +100,7 @@ export default class ContentProducers extends Component {
   }
 
   getLastUpdatedOn (tvGuideEntry) {
-    const date = new Date(tvGuideEntry.get('lastUpdatedOn'));
-    return moment(date).format('YYYY-MM-DD HH:mm');
+    return moment(tvGuideEntry.get('lastUpdatedOn')).format('YYYY-MM-DD HH:mm');
   }
 
   async deleteTvGuideEntry (tvGuideEntryId) {

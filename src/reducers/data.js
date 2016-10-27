@@ -3,14 +3,16 @@ import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as episodeActions from '../actions/episode';
 import * as seasonActions from '../actions/season';
 import * as mediaActions from '../actions/media';
-import * as contentProducersActions from '../actions/contentProducers';
+import * as broadcastersActions from '../actions/broadcasters';
+import * as contentProducersActions from '../actions/contentProducer';
 import * as reportingActions from '../actions/reporting';
 import * as tvGuideActions from '../actions/tvGuide';
-import { serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers, serializeFilterHasEpisodes, serializeFilterHasSeries, searchStart, searchSuccess, searchError, fetchListStart, fetchListSuccess, fetchListError } from './utils';
+import { serializeFilterHasBroadcasters, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers, serializeFilterHasEpisodes, serializeFilterHasSeries, fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, fetchListSuccess, fetchListError } from './utils';
 
 export default (state = fromJS({
   entities: {
     ages: {},
+    broadcasters: {},
     broadcastChannels: {},
     contentProducers: {},
     events: {},
@@ -22,25 +24,50 @@ export default (state = fromJS({
     ages: {},
     events: {},
     filterHasEpisodes: {},
+    filterHasBroadcasters: {},
     filterHasContentProducers: {},
     filterHasSeasons: {},
     filterHasTvGuideEntries: {},
     genders: {},
     searchStringHasBroadcastChannels: {},
+    searchStringHasBroadcasters: {},
     searchStringHasMedia: {},
     searchStringHasSeries: {}
   }
 }), action) => {
   switch (action.type) {
 
+    // Broadcasters
+    // /////////////////
+    case broadcastersActions.BROADCASTERS_ENTRY_FETCH_START:
+      return fetchStart(state, [ 'entities', 'broadcasters', action.broadcastersEntryId ]);
+    case broadcastersActions.BROADCASTERS_ENTRY_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'broadcasters', action.broadcastersEntryId ], action.data);
+    case broadcastersActions.BROADCASTERS_ENTRY_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'broadcasters', action.broadcastersEntryId ], action.error);
+
+    case broadcastersActions.BROADCASTERS_FETCH_START:
+      return searchStart(state, 'filterHasBroadcasters', serializeFilterHasBroadcasters(action));
+    case broadcastersActions.BROADCASTERS_FETCH_SUCCESS:
+      return searchSuccess(state, 'broadcasters', 'filterHasBroadcasters', serializeFilterHasBroadcasters(action), action.data.data);
+    case broadcastersActions.BROADCASTERS_FETCH_ERROR:
+      return searchError(state, 'filterHasBroadcasters', serializeFilterHasBroadcasters(action), action.error);
+
+    case broadcastersActions.BROADCASTERS_SEARCH_START:
+      return searchStart(state, 'searchStringHasBroadcasters', action.searchString);
+    case broadcastersActions.BROADCASTERS_SEARCH_SUCCESS:
+      return searchSuccess(state, 'broadcasters', 'searchStringHasBroadcasters', action.searchString, action.data);
+    case broadcastersActions.BROADCASTERS_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasBroadcasters', action.searchString, action.error);
+
     // Content producers
     // /////////////////
 
-    case contentProducersActions.CONTENT_PRODUCERS_FETCH_START:
+    case contentProducersActions.CONTENT_PRODUCER_FETCH_START:
       return searchStart(state, 'filterHasContentProducers', serializeFilterHasContentProducers(action));
-    case contentProducersActions.CONTENT_PRODUCERS_FETCH_SUCCESS:
+    case contentProducersActions.CONTENT_PRODUCER_FETCH_SUCCESS:
       return searchSuccess(state, 'contentProducers', 'filterHasContentProducers', serializeFilterHasContentProducers(action), action.data.data);
-    case contentProducersActions.CONTENT_PRODUCERS_FETCH_ERROR:
+    case contentProducersActions.CONTENT_PRODUCER_FETCH_ERROR:
       return searchError(state, 'filterHasContentProducers', serializeFilterHasContentProducers(action), action.error);
 
     // Tv Guide
