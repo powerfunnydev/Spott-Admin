@@ -8,7 +8,7 @@ export const BROADCASTERS_SEARCH_ERROR = 'BROADCAST_CHANNELS_CREATE/BROADCASTERS
 export function searchBroadcasters (searchString) {
   return async (dispatch, getState) => {
     try {
-      await dispatch({ type: BROADCASTERS_SEARCH_START });
+      await dispatch({ type: BROADCASTERS_SEARCH_START, searchString });
       return await dispatch(dataSearchBroadcasters({ searchString }));
     } catch (error) {
       dispatch({ error, type: BROADCASTERS_SEARCH_ERROR });

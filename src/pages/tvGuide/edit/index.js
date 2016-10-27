@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
 import Header from '../../app/header';
-import { FormSubtitle, colors, EditTemplate } from '../../_common/styles';
+import { Root, FormSubtitle, colors, EditTemplate } from '../../_common/styles';
 import DateInput from '../../_common/inputs/dateInput';
 import TimeInput from '../../_common/inputs/timeInput';
 import SelectInput from '../../_common/inputs/selectInput';
@@ -155,7 +155,7 @@ export default class EditTvGuideEntry extends Component {
       searchedEpisodeIds, searchedSeasonIds, searchedMediumIds, medium, t
     } = this.props;
     return (
-      <div style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
+      <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
         <Header currentPath={pathname} hideHomePageLinks />
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
           <Tabs>
@@ -246,7 +246,7 @@ export default class EditTvGuideEntry extends Component {
             </TabPanel>
           </Tabs>
         </EditTemplate>
-      </div>
+      </Root>
     );
   }
 

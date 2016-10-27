@@ -5,8 +5,8 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { push as routerPush } from 'react-router-redux';
 import moment from 'moment';
 import Header from '../../../app/header';
-import { Container, colors, buttonStyles } from '../../../_common/styles';
-import { TotalEntries, headerStyles, determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table';
+import { Root, Container, buttonStyles } from '../../../_common/styles';
+import { generalStyles, TotalEntries, headerStyles, determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table';
 import SearchInput from '../../../_common/inputs/searchInput';
 import Radium from 'radium';
 import * as actions from './actions';
@@ -159,20 +159,20 @@ export default class ContentProducers extends Component {
     const { styles } = this.constructor;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
-      <div>
+      <Root>
         <Header currentPath={pathname} hideHomePageLinks />
         <SpecificHeader/>
-        <div style={{ backgroundColor: colors.veryLightGray }}>
+        <div style={generalStyles.backgroundBar}>
           <Container style={styles.searchContainer}>
             <SearchInput isLoading={contentProducers.get('_status') !== 'loaded'} value={searchString} onChange={this.onChangeSearchString}/>
-            <div style={{ marginLeft: 'auto' }}>
+            <div style={generalStyles.floatRight}>
               <button key='delete' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} type='button' onClick={this.onClickDeleteSelected}>Delete {numberSelected}</button>
               <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='New Content Producer' onClick={this.onClickNewEntry} />
             </div>
           </Container>
         </div>
-        <div style={{ backgroundColor: colors.lightGray }}>
-          <Container style={{ paddingTop: '50px', paddingBottom: '50px' }}>
+        <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
+          <Container style={generalStyles.paddingTable}>
             <TotalEntries totalResultCount={totalResultCount}/>
             <Table>
               <Headers>
@@ -207,7 +207,7 @@ export default class ContentProducers extends Component {
           </Container>
         </div>
         {children}
-      </div>
+      </Root>
 
     );
   }

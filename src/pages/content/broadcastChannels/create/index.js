@@ -78,7 +78,6 @@ export default class CreateBroadcasterEntryModal extends Component {
 
   render () {
     const { broadcastersById, handleSubmit, searchBroadcasters, searchedBroadcasterIds } = this.props;
-    console.log('searchedBroadcasterIds', searchedBroadcasterIds.get('data').toJS());
     return (
       <CreateModal isOpen title='Create Broadcast Channel' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>

@@ -206,6 +206,24 @@ Container.propTypes = {
   style: PropTypes.object
 };
 
+// Container component
+// ///////////////////
+
+const rootStyles = {
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100%'
+};
+export const Root = Radium((props) => (
+  <div {...props} style={[ rootStyles, props.style ]}>
+    {props.children}
+  </div>
+));
+Container.propTypes = {
+  children: PropTypes.node,
+  style: PropTypes.object
+};
+
 @Radium
 export class EditTemplate extends Component {
 

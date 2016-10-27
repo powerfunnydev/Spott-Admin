@@ -7,10 +7,31 @@ const arrowGray = require('../../../assets/images/arrow-gray.svg');
 const arrowLightGray = require('../../../assets/images/arrow-light-gray.svg');
 const check = require('../../../assets/images/check.svg');
 
-const generalStyles = {
+export const generalStyles = {
   arrowUnder: { transform: 'rotateZ(180deg)' },
   arrowLeft: { transform: 'rotateZ(270deg)' },
-  arrowRight: { transform: 'rotateZ(90deg)' }
+  arrowRight: { transform: 'rotateZ(90deg)' },
+  searchContainer: {
+    minHeight: '70px',
+    display: 'flex',
+    alignItems: 'center'
+  },
+  paddingTable: {
+    paddingTop: '50px',
+    paddingBottom: '50px'
+  },
+  backgroundBar: {
+    backgroundColor: colors.veryLightGray
+  },
+  backgroundTable: {
+    backgroundColor: colors.lightGray
+  },
+  fillPage: {
+    flex: 1
+  },
+  floatRight: {
+    marginLeft: 'auto'
+  }
 };
 
 export const headerStyles = {

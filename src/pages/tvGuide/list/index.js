@@ -5,8 +5,8 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { push as routerPush } from 'react-router-redux';
 import moment from 'moment';
 import Header from '../../app/header';
-import { buttonStyles, colors, Container } from '../../_common/styles';
-import { TotalEntries, headerStyles, determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table';
+import { Root, buttonStyles, Container } from '../../_common/styles';
+import { generalStyles, TotalEntries, headerStyles, determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
@@ -155,35 +155,28 @@ export default class TvGuideList extends Component {
     await this.props.load(this.props.location.query);
   }
 
-  static styles = {
-    filterContainer: {
-      textAlign: 'right',
-      paddingBottom: '1.25em',
-      paddingTop: '1.25em'
-    }
-  }
-
   render () {
     const { children, isSelected, location: { pathname, query: { page, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, selectedEntity, totalResultCount, tvGuideEntries } = this.props;
-    const { styles } = this.constructor;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
-      <div>
+      <Root>
         <Header currentPath={pathname} hideHomePageLinks />
         {/* selectedEntity is in development, it will not be used currently */}
         {selectedEntity.get('_status') === 'loaded' && <Container><EntityDetails
           image={selectedEntity.getIn([ 'medium', 'profileImage', 'url' ])}
           subtitle={selectedEntity.get('medium').get('title')}
           title={selectedEntity.getIn([ 'serie', 'title' ]) || selectedEntity.get('medium').get('title')}/></Container>}
-        <div style={{ backgroundColor: colors.veryLightGray }}>
-          <Container style={styles.filterContainer}>
-            <button key='delete' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} type='button' onClick={this.onClickDeleteSelected}>Delete {numberSelected}</button>
-            <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='New entry' onClick={this.onClickNewEntry} />
+        <div style={generalStyles.backgroundBar}>
+          <Container style={generalStyles.searchContainer}>
+            <div style={generalStyles.floatRight}>
+              <button key='delete' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} type='button' onClick={this.onClickDeleteSelected}>Delete {numberSelected}</button>
+              <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='New Tv Guide Entry' onClick={this.onClickNewEntry} />
+            </div>
           </Container>
         </div>
-        <div style={{ backgroundColor: colors.lightGray }}>
-          <Container style={{ paddingTop: '1.875em', paddingBottom: '1.875em' }}>
+        <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
+          <Container style={generalStyles.paddingTable}>
             <TotalEntries totalResultCount={totalResultCount}/>
             <Table>
               <Headers>
@@ -234,7 +227,7 @@ export default class TvGuideList extends Component {
           </Container>
         </div>
         {children}
-      </div>
+      </Root>
 
     );
   }

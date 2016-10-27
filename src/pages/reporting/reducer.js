@@ -1,7 +1,12 @@
-import { fromJS } from 'immutable';
+import { fromJS, Map } from 'immutable';
 import { MEDIA_SEARCH_START } from './actions';
 import * as actions from '../../actions/reporting';
-import { fetchStart, fetchSuccess, fetchError } from '../../reducers/utils';
+import { fetchStart, fetchError } from '../../reducers/utils';
+import { LOADED } from '../../constants/statusTypes';
+
+export function fetchSuccess (state, path, data) {
+  return state.setIn(path, Map({ data, _status: LOADED }));
+}
 
 function fetchActivityDataStart (state, field, { mediumIds }) {
   let newState = state;

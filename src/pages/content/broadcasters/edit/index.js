@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import TextInput from '../../../_common/inputs/textInput';
 import Header from '../../../app/header';
-import { FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
+import { Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import localized from '../../../_common/localized';
 import * as actions from './actions';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
@@ -77,7 +77,7 @@ export default class EditBroadcastersEntry extends Component {
   render () {
     const { location: { pathname }, handleSubmit } = this.props;
     return (
-      <div style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
+      <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
         <Header currentPath={pathname} hideHomePageLinks />
         <SpecificHeader/>
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
@@ -98,7 +98,7 @@ export default class EditBroadcastersEntry extends Component {
             </TabPanel>
           </Tabs>
         </EditTemplate>
-      </div>
+      </Root>
     );
   }
 
