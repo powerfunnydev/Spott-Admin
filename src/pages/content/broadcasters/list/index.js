@@ -18,21 +18,21 @@ import Dropdown, { styles as dropdownStyles } from '../../../_common/components/
 const numberOfRows = 25;
 
 @connect(selector, (dispatch) => ({
-  deleteContentProducersEntry: bindActionCreators(actions.deleteContentProducerEntry, dispatch),
-  deleteContentProducersEntries: bindActionCreators(actions.deleteContentProducerEntries, dispatch),
+  deleteBroadcastersEntry: bindActionCreators(actions.deleteBroadcastersEntry, dispatch),
+  deleteBroadcastersEntries: bindActionCreators(actions.deleteBroadcastersEntries, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   routerPush: bindActionCreators(routerPush, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
 }))
 @Radium
-export default class ContentProducers extends Component {
+export default class Broadcasters extends Component {
 
   static propTypes = {
+    broadcasters: ImmutablePropTypes.map.isRequired,
     children: PropTypes.node,
-    contentProducers: ImmutablePropTypes.map.isRequired,
-    deleteContentProducersEntries: PropTypes.func.isRequired,
-    deleteContentProducersEntry: PropTypes.func.isRequired,
+    deleteBroadcastersEntries: PropTypes.func.isRequired,
+    deleteBroadcastersEntry: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -69,8 +69,8 @@ export default class ContentProducers extends Component {
     }
   }
 
-  async deleteContentProducersEntry (contentProducersEntryId) {
-    await this.props.deleteContentProducersEntry(contentProducersEntryId);
+  async deleteBroadcastersEntry (broadcastersEntryId) {
+    await this.props.deleteBroadcastersEntry(broadcastersEntryId);
     await this.props.load(this.props.location.query);
   }
 
@@ -129,20 +129,20 @@ export default class ContentProducers extends Component {
   onClickNewEntry (e) {
     e.preventDefault();
     this.props.routerPush({
-      pathname: 'content/content-producers/create',
+      pathname: 'content/broadcasters/create',
       state: { returnTo: this.props.location }
     });
   }
 
   async onClickDeleteSelected (e) {
     e.preventDefault();
-    const contentProducersEntryIds = [];
+    const broadcastersEntryIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {
-        contentProducersEntryIds.push(key);
+        broadcastersEntryIds.push(key);
       }
     });
-    await this.props.deleteContentProducersEntries(contentProducersEntryIds);
+    await this.props.deleteBroadcastersEntries(broadcastersEntryIds);
     await this.props.load(this.props.location.query);
   }
 
@@ -154,7 +154,7 @@ export default class ContentProducers extends Component {
   }
 
   render () {
-    const { contentProducers, children, isSelected, location: { pathname, query: { page, searchString, sortField, sortDirection } },
+    const { broadcasters, children, isSelected, location: { pathname, query: { page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount } = this.props;
     const { styles } = this.constructor;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
@@ -164,10 +164,10 @@ export default class ContentProducers extends Component {
         <SpecificHeader/>
         <div style={{ backgroundColor: colors.veryLightGray }}>
           <Container style={styles.searchContainer}>
-            <SearchInput isLoading={contentProducers.get('_status') !== 'loaded'} value={searchString} onChange={this.onChangeSearchString}/>
+            <SearchInput isLoading={broadcasters.get('_status') !== 'loaded'} value={searchString} onChange={this.onChangeSearchString}/>
             <div style={{ marginLeft: 'auto' }}>
               <button key='delete' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} type='button' onClick={this.onClickDeleteSelected}>Delete {numberSelected}</button>
-              <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='New Content Producer' onClick={this.onClickNewEntry} />
+              <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='New Broadcaster' onClick={this.onClickNewEntry} />
             </div>
           </Container>
         </div>
@@ -178,24 +178,20 @@ export default class ContentProducers extends Component {
               <Headers>
                 {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                 <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader, { flex: 0.25 } ]} onChange={selectAllCheckboxes}/>
-                <CustomCel sortColumn={this.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>NAME</CustomCel>
-                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
-                <CustomCel sortColumn={this.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
+                <CustomCel sortColumn={this.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 5 } ]}>NAME</CustomCel>
                 <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}/>
               </Headers>
-              <Rows isLoading={contentProducers.get('_status') !== 'loaded'}>
-                {contentProducers.get('data').map((cp, index) => {
+              <Rows isLoading={broadcasters.get('_status') !== 'loaded'}>
+                {broadcasters.get('data').map((cp, index) => {
                   return (
                     <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                       {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                       <CheckBoxCel checked={isSelected.get(cp.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, cp.get('id'))}/>
-                      <CustomCel getValue={this.getName} objectToRender={cp} style={{ flex: 2 }} />
-                      <CustomCel getValue={this.getUpdatedBy} objectToRender={cp} style={{ flex: 2 }}/>
-                      <CustomCel getValue={this.getLastUpdatedOn} objectToRender={cp} style={{ flex: 2 }}/>
+                      <CustomCel getValue={this.getName} objectToRender={cp} style={{ flex: 5 }} /* onClick={() => { this.props.routerPush(`content/broadcasters/read/${cp.get('id')}`); }}*//>
                       <CustomCel style={{ flex: 1 }}>
                         <Dropdown
-                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPush(`content/content-producers/edit/${cp.get('id')}`); }}>Edit</div>}>
-                          <div key={1} style={[ dropdownStyles.option ]} onClick={(e) => { e.preventDefault(); this.deleteContentProducersEntry(cp.get('id')); }}>Remove</div>
+                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPush(`content/broadcasters/edit/${cp.get('id')}`); }}>Edit</div>}>
+                          <div key={1} style={[ dropdownStyles.option ]} onClick={(e) => { e.preventDefault(); this.deleteBroadcastersEntry(cp.get('id')); }}>Remove</div>
                         </Dropdown>
                       </CustomCel>
                     </Row>

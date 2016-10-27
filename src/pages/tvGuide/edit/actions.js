@@ -24,7 +24,7 @@ export const submit = persistTvGuideEntry;
 export function load (tvGuideEntryId) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataFetchTvGuideEntry(tvGuideEntryId));
+      return await dispatch(dataFetchTvGuideEntry({ tvGuideEntryId }));
     } catch (error) {
       dispatch({ error, type: TV_GUIDE_FETCH_ENTRY_ERROR });
     }

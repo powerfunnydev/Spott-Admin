@@ -9,6 +9,7 @@ export const TV_GUIDE_ENTRIES_FETCH_ERROR = 'TV_GUIDE_LIST/TV_GUIDE_FETCH_ERROR'
 export const TV_GUIDE_ENTRIES_FETCH_SUCCESS = 'TV_GUIDE_LIST/TV_GUIDE_FETCH_SUCCESS';
 
 export const TV_GUIDE_ENTRIES_DELETE_ERROR = 'TV_GUIDE_LIST/TV_GUIDE_ENTRIES_REMOVE_ERROR';
+export const TV_GUIDE_ENTRY_DELETE_ERROR = 'TV_GUIDE_LIST/TV_GUIDE_ENTRY_REMOVE_ERROR';
 
 export const SELECT_ALL_CHECKBOXES = 'TV_GUIDE_LIST/SELECT_ALL_CHECKBOXES';
 export const SELECT_CHECKBOX = 'TV_GUIDE_LIST/SELECT_CHECKBOX';
@@ -39,9 +40,9 @@ export function deleteTvGuideEntries (tvGuideEntryIds) {
 export function deleteTvGuideEntry (tvGuideEntryId) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataDeleteTvGuideEntry(tvGuideEntryId));
+      return await dispatch(dataDeleteTvGuideEntry({ tvGuideEntryId }));
     } catch (error) {
-      dispatch({ error, type: TV_GUIDE_ENTRIES_DELETE_ERROR });
+      dispatch({ error, type: TV_GUIDE_ENTRY_DELETE_ERROR });
     }
   };
 }

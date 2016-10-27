@@ -58,12 +58,15 @@ export default class Reporting extends Component {
     const styles = this.constructor.styles;
 
     return (
-      <div>
+      <div style={{ backgroundColor: '#FFFFFF' }}>
         <div style={styles.tabs}>
           <Container style={styles.wrapper}>
             <div>
               <div style={styles.tab.container}>
                 <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/content/content-producers'>Content producers</Link>
+              </div>
+              <div style={styles.tab.container}>
+                <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/content/broadcasters'>Broadcasters</Link>
               </div>
             </div>
           </Container>

@@ -25,3 +25,15 @@ h1, h2, h3, p {
   margin: 0;
   padding: 0;
 }
+
+body {
+  text-rendering: optimizeLegibility !important;
+  -webkit-font-smoothing: antialiased;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
+}
+
+/* Base styles */
+
+html, body {
+  height: 100%;
+}

@@ -13,7 +13,7 @@ export async function fetchTvGuideEntries (baseUrl, authenticationToken, locale,
   return body;
 }
 
-export async function fetchTvGuideEntry (baseUrl, authenticationToken, locale, tvGuideEntryId) {
+export async function fetchTvGuideEntry (baseUrl, authenticationToken, locale, { tvGuideEntryId }) {
   const url = `${baseUrl}/v004/media/tvGuideEntries/${tvGuideEntryId}`;
   const { body } = await get(authenticationToken, locale, url);
   // console.log('before transform', { ...body });
@@ -35,7 +35,7 @@ export async function persistTvGuideEntry (baseUrl, authenticationToken, locale,
   });
 }
 
-export async function deleteTvGuideEntry (baseUrl, authenticationToken, locale, tvGuideEntryId) {
+export async function deleteTvGuideEntry (baseUrl, authenticationToken, locale, { tvGuideEntryId }) {
   await del(authenticationToken, locale, `${baseUrl}/v004/media/tvGuideEntries/${tvGuideEntryId}`);
 }
 

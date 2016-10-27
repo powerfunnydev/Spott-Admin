@@ -8,7 +8,7 @@ export default class EntityDetails extends Component {
   static propTypes = {
     image: PropTypes.string,
     style: PropTypes.object,
-    subtitle: PropTypes.string.isRequired,
+    subtitle: PropTypes.string,
     title: PropTypes.string.isRequired,
     onEdit: PropTypes.func,
     onRemove: PropTypes.func
@@ -26,8 +26,8 @@ export default class EntityDetails extends Component {
 then 2 lines, if the text too long to fit in this are it gets cut of by 3 dots…</div>
         </div>
         <div style={{ marginLeft: 'auto' }}>
-          {onEdit && <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white ]} onEdit={onEdit}>Edit</button>}
-          {onRemove && <RemoveButton style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white, { minWidth: '30px' } ]} onRemove={onRemove}/>}
+          {onEdit && <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white ]} onClick={onEdit}>Edit</button>}
+          {onRemove && <RemoveButton style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white, { minWidth: '30px' } ]} onClick={onRemove}/>}
         </div>
       </div>
     );

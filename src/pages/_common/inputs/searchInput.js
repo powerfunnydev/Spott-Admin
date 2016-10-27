@@ -3,7 +3,7 @@ import Radium from 'radium';
 import { colors } from '../../_common/styles';
 
 const searchIcon = require('../../../assets/images/searchIcon.png');
-
+const borderRadius = '4px';
 /**
  * TODO Styling placeholder
  */
@@ -20,6 +20,7 @@ export default class SearchInput extends Component {
       display: 'flex',
       flexDirection: 'row',
       border: `solid 1px ${colors.lightGray2}`,
+      borderRadius,
       width: '370px',
       backgroundColor: 'white',
       ':hover': {
@@ -30,6 +31,8 @@ export default class SearchInput extends Component {
       }
     },
     iconWrapper: {
+      borderTopLeftRadius: borderRadius,
+      borderBottomLeftRadius: borderRadius,
       display: 'flex',
       padding: '10px',
       height: '30px',
@@ -41,6 +44,8 @@ export default class SearchInput extends Component {
       height: '15px'
     },
     input: {
+      borderTopRightRadius: borderRadius,
+      borderBottomRightRadius: borderRadius,
       ':focus': {
         outline: 'none'
       },

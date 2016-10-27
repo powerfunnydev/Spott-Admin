@@ -6,6 +6,9 @@ import globalReducer from './global';
 import data from './data';
 import reporting from '../pages/reporting/reducer';
 import contentProducersList from '../pages/content/contentProducers/list/reducer';
+import broadcastersList from '../pages/content/broadcasters/list/reducer';
+import broadcastersRead from '../pages/content/broadcasters/read/reducer';
+import broadcastChannelsCreate from '../pages/content/broadcastChannels/create/reducer';
 import tvGuideCreate from '../pages/tvGuide/create/reducer';
 import tvGuideEdit from '../pages/tvGuide/edit/reducer';
 import tvGuideList from '../pages/tvGuide/list/reducer';
@@ -15,6 +18,13 @@ import tvGuideList from '../pages/tvGuide/list/reducer';
  */
 export default combineReducers({
   content: combineReducers({
+    broadcastChannels: combineReducers({
+      create: broadcastChannelsCreate
+    }),
+    broadcasters: combineReducers({
+      list: broadcastersList,
+      read: broadcastersRead
+    }),
     contentProducers: combineReducers({
       list: contentProducersList
     })

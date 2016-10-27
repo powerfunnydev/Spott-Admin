@@ -16,10 +16,11 @@ const generalStyles = {
 export const headerStyles = {
   header: {
     minHeight: '32px',
-    color: colors.darkGray2,
-    backgroundColor: colors.white,
     ...makeTextStyle(null, '11px', '0.50px'),
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
+    ':hover': {
+      backgroundColor: colors.lightGray4
+    }
   },
   firstHeader: {
     borderBottom: `1px solid ${colors.lightGray2}`
@@ -101,6 +102,7 @@ export class Checkbox extends Component {
 
   static styles = {
     checkbox: {
+      backgroundColor: colors.white,
       alignItems: 'center',
       border: `1px solid ${colors.darkGray}`,
       borderRadius: 2,
@@ -189,6 +191,7 @@ export class CustomCel extends Component {
       cursor: 'pointer'
     },
     headerSelected: {
+      color: colors.darkGray3,
       backgroundColor: colors.veryLightGray
     },
     arrowRight: {
@@ -261,6 +264,20 @@ export class Row extends Component {
     },
     borderRow: {
       borderTop: `1px solid ${colors.veryLightGray}`
+    },
+    odd: {
+      backgroundColor: 'rgba(230, 248, 253, 0.5)',
+      transition: 'background-color .25s ease-in-out',
+      ':hover': {
+        backgroundColor: colors.lightBlue
+      }
+    },
+    even: {
+      backgroundColor: colors.white,
+      transition: 'background-color .25s ease-in-out',
+      ':hover': {
+        backgroundColor: colors.lightGray4
+      }
     }
   }
 
@@ -268,7 +285,7 @@ export class Row extends Component {
     const { styles } = this.constructor;
     const { children, isFirst, index } = this.props;
     return (
-      <div style={[ styles.row, (!isFirst) && styles.borderRow, index && index % 2 === 1 && { backgroundColor: colors.lightBlue } ]}>
+      <div style={[ styles.row, (!isFirst) && styles.borderRow, index && index % 2 === 1 ? styles.odd : styles.even ]}>
         {children}
       </div>
     );
@@ -387,7 +404,9 @@ export class Table extends Component {
 
   static styles = {
     table: {
-      border: `1px solid ${colors.lightGray3}`
+      border: `1px solid ${colors.lightGray3}`,
+      borderRadius: '2px',
+      backgroundColor: colors.white
     }
   }
 

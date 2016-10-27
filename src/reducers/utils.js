@@ -2,12 +2,20 @@
 import { fromJS, List, Map } from 'immutable';
 import { FETCHING, UPDATING, ERROR, LOADED } from '../constants/statusTypes';
 
-export function serializeFilterHasContentProducers ({ searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
-  let id = `page=${page}&pageSize=${pageSize}&searchString=${searchString}`;
+function serialize ({ searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let id = `page=${page}&pageSize=${pageSize}`;
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     id = id.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }
   return id;
+}
+
+export function serializeFilterHasContentProducers (query) {
+  return serialize(query);
+}
+
+export function serializeFilterHasBroadcasters (query) {
+  return serialize(query);
 }
 
 export function serializeFilterHasTvGuideEntries ({ page = 0, pageSize = 25, sortDirection, sortField }) {

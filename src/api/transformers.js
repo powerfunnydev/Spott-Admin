@@ -1,4 +1,8 @@
 
+export function transformBroadcaster ({ logo, name, uuid }) {
+  return { logo: { url: logo && logo.url }, name, id: uuid };
+}
+
 export function transformContentProducers (body) {
   const contentProducers = body.data;
   const data = [];
@@ -221,9 +225,9 @@ export function transformBroadcastChannel ({ name, uuid: id }) {
   return { id, name };
 }
 
-export function transformTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastUpdatedOn }, uuid: id, start, medium, medium: { season }, channel }) {
+export function transformTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastUpdatedOn }, uuid: id, start, end, medium, medium: { season }, channel }) {
   return {
-    start, id, lastUpdatedBy, lastUpdatedOn,
+    start, end, id, lastUpdatedBy, lastUpdatedOn,
     medium: transformListMedium(medium),
     channel: transformBroadcastChannel(channel),
     season: season && { title: season.title },
