@@ -181,7 +181,7 @@ export default class Broadcasters extends Component {
                     <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                       {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                       <CheckBoxCel checked={isSelected.get(broadcaster.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, broadcaster.get('id'))}/>
-                      <CustomCel getValue={this.getName} objectToRender={broadcaster} style={{ flex: 5 }} /* onClick={() => { this.props.routerPush(`content/broadcasters/read/${broadcaster.get('id')}`); }}*//>
+                      <CustomCel getValue={this.getName} objectToRender={broadcaster} style={{ flex: 5 }} onClick={() => { this.props.routerPush(`content/broadcasters/read/${broadcaster.get('id')}`); }}/>
                       <CustomCel style={{ flex: 1 }}>
                         <Dropdown
                           elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPush(`content/broadcasters/edit/${broadcaster.get('id')}`); }}>Edit</div>}>

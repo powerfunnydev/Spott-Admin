@@ -35,9 +35,14 @@ export async function fetchBroadcastChannelsEntry (baseUrl, authenticationToken,
 }
 
 export async function persistBroadcastChannel (baseUrl, authenticationToken, locale, { id, name, broadcasterId }) {
-  console.log('name', name);
+  let bc = {};
+  if (broadcasterId) {
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/broadcastChannels/${broadcasterId}`);
+    console.log('body', body);
+    bc = body;
+  }
   const url = `${baseUrl}/v004/media/broadcastChannels`;
-  await post(authenticationToken, locale, url, { uuid: id, name, broadcaster: { uuid: broadcasterId } });
+  await post(authenticationToken, locale, url, { ...bc, uuid: id, name, broadcaster: { uuid: broadcasterId } });
 }
 
 export async function deleteBroadcastChannelsEntry (baseUrl, authenticationToken, locale, { broadcastChannelsEntryId }) {
