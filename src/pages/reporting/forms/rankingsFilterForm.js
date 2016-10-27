@@ -3,7 +3,6 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { reduxForm, Field } from 'redux-form/immutable';
 import SelectInput from '../../_common/inputs/selectInput';
 import { fontWeights, makeTextStyle, mediaQueries } from '../../_common/styles';
 import { FETCHING, isLoading } from '../../../constants/statusTypes';
@@ -14,16 +13,16 @@ import { rankingsFilterSelector } from '../selector';
   loadAges: bindActionCreators(actions.loadAges, dispatch),
   loadGenders: bindActionCreators(actions.loadGenders, dispatch)
 }))
-@reduxForm({
-  destroyOnUnmount: false,
-  form: 'reportingRankingsFilter'
-})
 @Radium
 export default class RankingsFilterForm extends Component {
 
   static propTypes = {
     ages: ImmutablePropTypes.map.isRequired,
     agesById: ImmutablePropTypes.map.isRequired,
+    fields: PropTypes.shape({
+      ages: PropTypes.array,
+      genders: PropTypes.array
+    }),
     genders: ImmutablePropTypes.map.isRequired,
     gendersById: ImmutablePropTypes.map.isRequired,
     loadAges: PropTypes.func.isRequired,
@@ -68,31 +67,31 @@ export default class RankingsFilterForm extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { ages, agesById, genders, gendersById, style, onChange } = this.props;
+    const { ages, agesById, fields, genders, gendersById, style, onChange } = this.props;
     return (
       <form style={style}>
         <h2 style={styles.title}>Filter</h2>
         <div style={styles.filters}>
-          <Field
-            component={SelectInput}
+          <SelectInput
             getItemText={(id) => agesById.getIn([ id, 'description' ])}
+            input={{ value: fields.ages }}
             isLoading={isLoading(ages)}
             multiselect
             name='ages'
             options={ages.get('data').map((e) => e.get('id')).toJS()}
             placeholder='Age'
             style={styles.field}
-            onChange={onChange.bind(null, 'ages')} />
-          <Field
-            component={SelectInput}
+            onChange={onChange.bind(null, 'ages', 'array')} />
+          <SelectInput
             getItemText={(id) => gendersById.getIn([ id, 'description' ])}
+            input={{ value: fields.genders }}
             isLoading={genders.get('_status') === FETCHING}
             multiselect
             name='genders'
             options={genders.get('data').map((e) => e.get('id')).toJS()}
             placeholder='Gender'
             style={styles.field}
-            onChange={onChange.bind(null, 'genders')} />
+            onChange={onChange.bind(null, 'genders', 'array')} />
           {/* TODO: Add location filter. */}
         </div>
       </form>

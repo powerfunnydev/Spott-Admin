@@ -55,6 +55,7 @@ export default class CreateModal extends Component {
 
   static propTypes = {
     children: PropTypes.node,
+    error: PropTypes.any,
     isOpen: PropTypes.bool.isRequired,
     style: PropTypes.object,
     t: PropTypes.func.isRequired,

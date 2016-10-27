@@ -52,6 +52,9 @@ export default class Menu extends Component {
   }
 
   static styles = {
+    activeLink: {
+      pointerEvents: 'none'
+    },
     linkButton: {
       color: 'rgb(135, 141, 143)',
       fontFamily: 'Rubik-Medium',
@@ -101,19 +104,19 @@ export default class Menu extends Component {
           </span>}
 
         {!hideHomePageLinks && isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
-          <RouterLink to='content'>
+          <RouterLink activeStyle={styles.activeLink} to='content'>
             <button key='content' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>CMS</button>
           </RouterLink>}
         {hideHomePageLinks && isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
-          <RouterLink to='content'>
+          <RouterLink activeStyle={styles.activeLink} to='content'>
             <button key='content' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Content</button>
           </RouterLink>}
         {hideHomePageLinks && isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
-          <RouterLink to='tv-guide'>
+          <RouterLink activeStyle={styles.activeLink} to='tv-guide'>
             <button key='tv-guide' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>TV Guide</button>
           </RouterLink>}
         {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER) || userRoles.includes(BROADCASTER)) &&
-          <RouterLink to='reporting'>
+          <RouterLink activeStyle={styles.activeLink} to='reporting'>
             <button key='reporting' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Reporting</button>
           </RouterLink>}
 

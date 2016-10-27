@@ -11,6 +11,16 @@ export function fileSizeToString (size) {
   return `${(Number(size / Math.pow(1024, i)).toFixed(2))}${[ 'B', 'kB', 'MB', 'GB', 'TB' ][i]}`;
 }
 
+export function arraysEqual (a, b) {
+  if (a === b) { return true; }
+  if (!a || !b) { return false; }
+  if (a.length !== b.length) { return false; }
+  for (let i = 0; i < a.length; ++i) {
+    if (a[i] !== b[i]) { return false; }
+  }
+  return true;
+}
+
 /**
  * Creates and returns a new debounced version of the passed function which
  * will postpone its execution until after wait milliseconds have elapsed since
