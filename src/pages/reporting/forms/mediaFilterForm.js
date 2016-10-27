@@ -30,7 +30,8 @@ export default class MediaFilterForm extends Component {
     const { media } = this.props.fields;
     if (!media || media.length === 0) {
       // Select the first 5 media.
-      this.props.onChange('media', 'array', (await this.props.searchMedia()).map(({ id }) => id).splice(0, 5));
+      const firstFiveMedia = (await this.props.searchMedia()).map(({ id }) => id).splice(0, 5);
+      this.props.onChange('media', 'array', firstFiveMedia);
     }
   }
 

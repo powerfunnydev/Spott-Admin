@@ -45,7 +45,7 @@ export default class ReportingActivity extends Component {
     this.loadActivities = slowdown(props.loadActivities, 300);
   }
 
-  componentDidMount () {
+  async componentDidMount () {
     const location = this.props.location;
     const query = {
       // We assume the ALL event will be always there.
@@ -54,8 +54,8 @@ export default class ReportingActivity extends Component {
       startDate: moment().startOf('day').subtract(1, 'months').date(1).format('YYYY-MM-DD'),
       ...location.query
     };
-    this.props.routerPush({ ...location, query });
-    this.loadActivities(query);
+    await this.props.routerPush({ ...location, query });
+    await this.loadActivities(query);
   }
 
   componentWillReceiveProps (nextProps) {
