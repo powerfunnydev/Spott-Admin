@@ -1,10 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import Select from 'react-select';
 import Radium from 'radium';
-import { colors, defaultSpacing, errorTextStyle } from '../styles';
+import { colors, errorTextStyle } from '../styles';
 import Label from './_label';
 
-import 'react-select/dist/react-select.min.css';
+require('./styles/selectInputStyle.css');
 
 const WrappedSelect = Radium(Select);
 
@@ -23,7 +23,7 @@ export default class SelectInput extends Component {
     isLoading: PropTypes.bool,
     label: PropTypes.string,
     maxSelect: PropTypes.number,
-    meta: PropTypes.object.isRequired,
+    meta: PropTypes.object,
     multiselect: PropTypes.bool,
     options: PropTypes.array, // A list of id's...
     placeholder: PropTypes.string,
@@ -44,37 +44,45 @@ export default class SelectInput extends Component {
   }
 
   onInternalChange (internalValue) {
-    const { input, multiselect } = this.props;
+    const { input, multiselect, onChange } = this.props;
     const newValue = multiselect
       ? internalValue.map((v) => v.value)
       : internalValue.value;
 
-    input.onChange(newValue);
-    if (this.props.onChange) {
-      this.props.onChange(newValue);
-    }
+    input.onChange && input.onChange(newValue);
+    onChange && onChange(newValue);
   }
 
   static styles = {
     padTop: {
-      paddingTop: defaultSpacing * 0.75
+      paddingTop: '1.25em'
     },
     base: {
-      border: `1px solid ${colors.darkGray}`,
-      borderRadius: 4,
-      fontSize: '16px',
+      border: `1px solid ${colors.lightGray2}`,
+      borderRadius: 2,
+      fontSize: '1em',
       width: '100%'
+    },
+    error: {
+      color: colors.errorColor,
+      border: `1px solid ${colors.errorColor}`
     },
     disabled: {
       backgroundColor: colors.lightGray,
       color: colors.darkerGray
     },
     info: {
-      color: colors.darkGray,
-      paddingBottom: 3,
-      paddingTop: 3,
-      fontSize: '11px',
+      color: colors.lightGray2,
+      paddingBottom: '0.188em',
+      paddingTop: '0.188em',
+      fontSize: '0.688em',
       float: 'right'
+    },
+    text: {
+      cursor: 'pointer',
+      lineHeight: '30px',
+      fontSize: '0.688em',
+      color: colors.veryDarkGray
     }
   };
 
@@ -82,7 +90,6 @@ export default class SelectInput extends Component {
     const styles = this.constructor.styles;
     const { disabled, first, getItemText, getOptions, input, isLoading, label, meta, maxSelect, multiselect, placeholder, required, style } = this.props;
     const options = this.props.options ? this.props.options.map((o) => ({ value: o, label: getItemText(o) })) : [];
-
     let value;
     if (multiselect) {
       value = (input.value || []).map((o) => ({ value: o, label: getItemText(o) })); // We fall back to [] because of https://github.com/erikras/redux-form/issues/621
@@ -90,7 +97,7 @@ export default class SelectInput extends Component {
       value = input.value && { value: input.value, label: getItemText(input.value) };
     }
 
-    const maxSelected = maxSelect ? input.value.length >= maxSelect : false;
+    const maxSelected = maxSelect ? ((input.value && input.value.length) || 0) >= maxSelect : false;
 
     return (
       <div style={[ !first && styles.padTop, style ]}>
@@ -105,14 +112,14 @@ export default class SelectInput extends Component {
           multi={multiselect}
           options={maxSelected ? [] : options}
           placeholder={placeholder}
-          style={[ styles.base, disabled && styles.disabled ]}
+          style={[ styles.base, disabled && styles.disabled, meta && meta.touched && meta.error && styles.error, styles.text ]}
           value={value} // Overides value of of {...field}
-          onBlur={() => input.onBlur(input.value)} // Overides onBlur of of {...field}
+          onBlur={() => input.onBlur && input.onBlur(input.value)} // Overides onBlur of of {...field}
           onChange={this.onInternalChange}  // Overides onChange of of {...field};
           onInputChange={getOptions}
           onOpen={getOptions} />
-        {typeof maxSelect === 'number' && <span style={styles.info}>{input.value.length}/{maxSelect} selected</span>}
-        {meta.touched && meta.error === 'required' && <div style={errorTextStyle}>This field is required.</div>}
+        {typeof maxSelect === 'number' && <span style={styles.info}>{(input.value && input.value.length) || 0}/{maxSelect} selected</span>}
+        {meta && meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
       </div>
     );
   }

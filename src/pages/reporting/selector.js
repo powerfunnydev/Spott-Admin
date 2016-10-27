@@ -1,12 +1,11 @@
 import { createSelector, createStructuredSelector } from 'reselect';
-import { formValueSelector } from 'redux-form/immutable';
 import {
   createEntityIdsByRelationSelector,
   createEntitiesByListSelector,
   eventsEntitiesSelector,
   eventsListSelector,
   searchStringHasMediaRelationsSelector,
-  mediaEntitiesSelector,
+  listMediaEntitiesSelector,
   gendersListSelector,
   gendersEntitiesSelector,
   agesListSelector,
@@ -35,7 +34,7 @@ const agesSelector = createEntitiesByListSelector(agesListSelector, agesEntities
 // //////
 
 export const mediaFilterSelector = createStructuredSelector({
-  mediaById: mediaEntitiesSelector,
+  mediaById: listMediaEntitiesSelector,
   searchedMediumIds: searchedMediumIdsSelector
 });
 
@@ -47,15 +46,14 @@ export const eventsFilterSelector = createStructuredSelector({
   eventsById: eventsEntitiesSelector
 });
 
-const reportingMediaFilterSelector = formValueSelector('reportingMediaFilter');
-const reportingActivityFilterSelector = formValueSelector('reportingActivityFilter');
-
-function mediumIdsSelector (state) {
-  return reportingMediaFilterSelector(state, 'media') || [];
+function mediumIdsSelector (state, props) {
+  const query = props.location && props.location.query;
+  return typeof query.media === 'string' ? [ query.media ] : (query.media || []);
 }
 
-function eventIdSelector (state) {
-  return reportingActivityFilterSelector(state, 'event');
+function eventIdSelector (state, props) {
+  const query = props.location && props.location.query;
+  return query.event || '';
 }
 
 const eventSelector = createSelector(
@@ -66,7 +64,7 @@ const eventSelector = createSelector(
 
 const timelineConfigSelector = createSelector(
   eventSelector,
-  mediaEntitiesSelector,
+  listMediaEntitiesSelector,
   mediumIdsSelector,
   timelineDataSelector,
   (event, mediaById, mediumIds, timelineData) => {
@@ -110,7 +108,7 @@ const isLoadingGenderSelector = createSelector(mediumIdsSelector, genderDataSele
 
 const ageConfigSelector = createSelector(
   eventSelector,
-  mediaEntitiesSelector,
+  listMediaEntitiesSelector,
   mediumIdsSelector,
   ageDataSelector,
   (event, mediaById, mediumIds, ageData) => {
@@ -142,7 +140,7 @@ const ageConfigSelector = createSelector(
 
 const genderConfigSelector = createSelector(
   eventSelector,
-  mediaEntitiesSelector,
+  listMediaEntitiesSelector,
   mediumIdsSelector,
   genderDataSelector,
   gendersEntitiesSelector,
@@ -191,7 +189,7 @@ export const activitySelector = createStructuredSelector({
   isLoadingAge: isLoadingAgeSelector,
   isLoadingGender: isLoadingGenderSelector,
   isLoadingTimeline: isLoadingTimelineSelector,
-  mediaById: mediaEntitiesSelector,
+  mediaById: listMediaEntitiesSelector,
   mediumIds: mediumIdsSelector,
   timelineConfig: timelineConfigSelector
 });

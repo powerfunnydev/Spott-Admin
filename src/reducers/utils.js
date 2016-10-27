@@ -2,6 +2,38 @@
 import { fromJS, List, Map } from 'immutable';
 import { FETCHING, UPDATING, ERROR, LOADED } from '../constants/statusTypes';
 
+function serialize ({ searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let id = `page=${page}&pageSize=${pageSize}`;
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    id = id.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  return id;
+}
+
+export function serializeFilterHasContentProducers (query) {
+  return serialize(query);
+}
+
+export function serializeFilterHasBroadcasters (query) {
+  return serialize(query);
+}
+
+export function serializeFilterHasTvGuideEntries ({ page = 0, pageSize = 25, sortDirection, sortField }) {
+  let id = `page=${page}&pageSize=${pageSize}`;
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    id = id.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  return id;
+}
+
+export function serializeFilterHasEpisodes ({ searchString = '', seasonId = '' }) {
+  return `searchString=${searchString}&seasonId=${seasonId}`;
+}
+
+export function serializeFilterHasSeries ({ searchString = '', seriesId = '' }) {
+  return `searchString=${searchString}&seriesId=${seriesId}`;
+}
+
 // path is e.g., [ 'relations', type, id ]
 export function fetchStart (state, path) {
   // Get the data (entity/relations) from the state, which can be undefined.
@@ -18,7 +50,7 @@ export function fetchStart (state, path) {
 }
 
 export function fetchSuccess (state, path, data) {
-  return state.setIn(path, Map({ data, _status: LOADED }));
+  return state.setIn(path, Map({ ...data, _status: LOADED }));
 }
 
 export function fetchError (state, path, error) {

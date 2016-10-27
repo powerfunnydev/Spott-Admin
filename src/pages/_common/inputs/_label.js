@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { colors } from '../styles';
+
+const requiredImage = require('./images/required.svg');
 
 @Radium
 export default class Label extends Component {
@@ -8,18 +9,20 @@ export default class Label extends Component {
   static propTypes = {
     required: PropTypes.bool,
     style: PropTypes.object,
-    text: PropTypes.node.isRequired
+    text: PropTypes.node
   };
 
   static styles = {
     asterix: {
-      color: colors.secondaryPink
+      marginLeft: '0.313em',
+      verticalAlign: 'middle'
     },
     container: {
-      color: colors.darkerGray,
+      color: '#536970',
       display: 'block',
-      fontSize: '16px',
-      paddingBottom: '3px'
+      fontSize: '0.625em',
+      paddingBottom: '0.625em',
+      textTransform: 'uppercase'
     }
   };
 
@@ -27,7 +30,9 @@ export default class Label extends Component {
     const styles = this.constructor.styles;
     const { text, required, style, ...rest } = this.props;
     return (
-      <label {...rest} style={[ styles.container, style ]}>{text} {required && <span style={styles.asterix}>*</span>}</label>
+      <label {...rest} style={[ styles.container, style ]}>
+        {text || '\u00a0'} {required && <img src={requiredImage} style={styles.asterix} />}
+      </label>
     );
   }
 

@@ -6,8 +6,17 @@ import { Provider } from 'react-redux';
 import createStore from './createStore';
 import { init } from './actions/global';
 import { LOGIN_SUCCESS } from './actions/users';
+import { ADMIN, BROADCASTER, CONTENT_MANAGER } from './constants/userRoles';
 
 import App from './pages/app';
+import BroadcastersList from './pages/content/broadcasters/list';
+import BroadcastersCreateEntry from './pages/content/broadcasters/create';
+import BroadcastersEditEntry from './pages/content/broadcasters/edit';
+import BroadcastersReadEntry from './pages/content/broadcasters/read';
+import BroadcastChannelCreateEntry from './pages/content/broadcastChannels/create';
+import ContentProducersList from './pages/content/contentProducers/list';
+import ContentProducersCreateEntry from './pages/content/contentProducers/create';
+import ContentProducersEditEntry from './pages/content/contentProducers/edit';
 import Error404 from './pages/error404/main';
 import MediaSinglePage from './pages/media/singlePage';
 import MediaHome from './pages/media/home';
@@ -19,6 +28,9 @@ import ResetPassword from './pages/resetPassword';
 import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
 import ReportingRankings from './pages/reporting/rankings';
+import TvGuideCreateEntry from './pages/tvGuide/create';
+import TvGuideEditEntry from './pages/tvGuide/edit';
+import TvGuideList from './pages/tvGuide/list';
 import { authenticationTokenSelector, userRolesSelector } from './selectors/global';
 import reducer from './reducers';
 
@@ -52,14 +64,41 @@ function getRoutes ({ getState }) {
         <Route component={ForgotPassword} path='forgotpassword' />
         <Route component={ResetPassword} path='resetPassword' />
       </Route>
-      <Route component={MediaSinglePage} path='media' onEnter={requireOneRole([ 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
+      <Route component={MediaSinglePage} path='media' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <IndexRoute component={MediaHome}/>
         <Route component={MediaUpload} path='upload' />
       </Route>
-      <Route component={Reporting} path='reporting' onEnter={requireOneRole([ 'BROADCASTER', 'CONTENT_MANAGER', 'SYS_ADMIN' ])}>
+      <Route component={Reporting} path='reporting' onEnter={requireOneRole([ BROADCASTER, CONTENT_MANAGER, ADMIN ])}>
         <IndexRedirect to='activity' />
         <Route component={ReportingActivity} path='activity' />
         <Route component={ReportingRankings} path='rankings' />
+      </Route>
+      <Route path='content' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
+        <IndexRedirect to='content-producers' />
+        <Route component={ContentProducersList} path='content-producers'>
+          <Route component={ContentProducersCreateEntry} path='create'/>
+        </Route>
+        <Route path='content-producers'>
+          <Route component={ContentProducersEditEntry} path='edit/:id'/>
+        </Route>
+        <Route component={BroadcastersList} path='broadcasters'>
+          <Route component={BroadcastersCreateEntry} path='create'/>
+        </Route>
+        <Route path='broadcasters'>
+          <Route component={BroadcastersEditEntry} path='edit/:id'/>
+          <Route component={BroadcastersReadEntry} path='read/:id'>
+            <Route component={BroadcastChannelCreateEntry} path='create/broadcast-channel'/>
+          </Route>
+        </Route>
+        <Route path='broadcast-channels'>
+          <Route component={BroadcastChannelCreateEntry} path='create' />
+        </Route>
+      </Route>
+      <Route component={TvGuideList} path='tv-guide' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
+        <Route component={TvGuideCreateEntry} path='create' />
+      </Route>
+      <Route path='tv-guide' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
+        <Route component={TvGuideEditEntry} path='edit/:id' />
       </Route>
       <Route component={Error404} path='*' />
     </Route>
