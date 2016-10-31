@@ -132,7 +132,7 @@ class Info extends Component {
         <div style={[ styles.block.base ]}>
           <h1 style={[ styles.title ]}>Contact</h1>
           <p><span style={styles.companyName}>Appiness NV</span><br />
-          Hershage 10, 9020 Aalst, Belgium<br />
+          Hershage 10, 9300 Aalst, Belgium<br />
           +32 493 137 160<br />
           <a href='mailto:info@apptvate.com' style={styles.emailLink}>info@apptvate.com</a></p>
         </div>
