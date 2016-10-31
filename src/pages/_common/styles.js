@@ -25,6 +25,7 @@ export const colors = {
   lightGray2: '#ced6da',
   lightGray3: '#aab5b8',
   lightGray4: '#f4f5f5',
+  lightGray5: '#d8d8d8',
   errorColor: '#e17575'
 };
 

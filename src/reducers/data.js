@@ -51,12 +51,12 @@ export default (state = fromJS({
     // Broadcasters
     // /////////////////
 
-    /* case broadcastersActions.BROADCASTER_CHANNELS_FETCH_START:
+    case broadcastersActions.BROADCASTER_CHANNELS_FETCH_START:
       return fetchListStart(state, 'broadcastChannels');
     case broadcastersActions.BROADCASTER_CHANNELS_FETCH_SUCCESS:
       return fetchListSuccess(state, 'broadcastChannels', 'broadcastChannels', action.data);
     case broadcastersActions.BROADCASTER_CHANNELS_FETCH_ERROR:
-      return fetchListError(state, 'broadcastChannels', action.error); */
+      return fetchListError(state, 'broadcastChannels', action.error);
 
     case broadcastersActions.BROADCASTERS_ENTRY_FETCH_START:
       return fetchStart(state, [ 'entities', 'broadcasters', action.broadcastersEntryId ]);

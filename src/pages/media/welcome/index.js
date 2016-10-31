@@ -21,7 +21,7 @@ export default class Welcome extends Component {
   render () {
     return (
       <div style={{ minWidth: 350 }}>
-        <Hero currentPath={this.props.location.pathname}/>
+        <Hero currentLocation={this.props.location}/>
         <About />
         <ForWho />
         <Partners />
@@ -29,7 +29,7 @@ export default class Welcome extends Component {
         <HowItWorks />
         <Pricing />
         <Contact />
-        <Footer currentPath={this.props.location.pathname}/>
+        <Footer currentLocation={this.props.location}/>
         {this.props.children}
       </div>
     );

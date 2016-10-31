@@ -3,12 +3,12 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
-import { push as routerPush } from 'react-router-redux';
 import Radium from 'radium';
 import { buttonStyles } from '../_common/styles';
 import localized from '../_common/localized';
 import Modal from '../_common/modal';
 import { resetPassword } from '../../actions/users';
+import { routerPushWithReturnTo } from '../../actions/global';
 
 function validate (values) {
   const validationErrors = {};
@@ -57,7 +57,7 @@ const renderField = Radium((props) => {
     token
   }
 }), (dispatch) => ({
-  routerPush: bindActionCreators(routerPush, dispatch),
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   submit: bindActionCreators(resetPassword, dispatch)
 }))
 @reduxForm({
@@ -71,7 +71,7 @@ export default class ResetPasswordModal extends Component {
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    routerPush: PropTypes.func.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired
   };
@@ -103,7 +103,7 @@ export default class ResetPasswordModal extends Component {
   }
 
   onCloseClick (e) {
-    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
+    this.props.routerPushWithReturnTo('/', true);
   }
 
   static styles = {

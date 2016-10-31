@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Radium from 'radium';
-import { colors } from '../../_common/styles';
+import { fontWeights, makeTextStyle, colors } from '../../_common/styles';
 const arrowGray = require('../../../assets/images/arrow-gray.svg');
 
 /* eslint-disable react/prop-types */
@@ -10,14 +10,15 @@ const arrowGray = require('../../../assets/images/arrow-gray.svg');
 export const styles = {
   root: {
     position: 'relative',
-    height: '20px'
+    textAlign: 'right',
+    ...makeTextStyle(fontWeights.regular, '11px', '0.3px')
   },
   topElement: {
     color: colors.darkGray2,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    paddingRight: '12px'
+    display: 'inline-block',
+    paddingRight: '12px',
+    paddingTop: '3px',
+    paddingBottom: '3px'
   },
   center: {
     display: 'flex',
@@ -28,10 +29,7 @@ export const styles = {
     cursor: 'pointer'
   },
   control: {
-    height: '20px',
-    display: 'flex',
-    paddingLeft: '10px',
-    flexDirection: 'row',
+    display: 'inline-block',
     backgroundColor: 'white',
     border: '1px solid #ccc',
     borderRadius: '2px',
@@ -41,6 +39,7 @@ export const styles = {
     }
   },
   menu: {
+    textAlign: 'left',
     backgroundColor: 'white',
     border: '1px solid #ccc',
     boxShadow: '0 1px 0 rgba(0, 0, 0, 0.06)',
@@ -54,10 +53,11 @@ export const styles = {
   },
   option: {
     color: colors.darkGray2,
+    paddingTop: '3px',
+    paddingBottom: '3px',
+    paddingLeft: '10px',
     display: 'flex',
     alignItems: 'center',
-    paddingLeft: '10px',
-    height: '20px',
     boxSizing: 'border-box',
     cursor: 'pointer',
     ':hover': {
@@ -68,17 +68,20 @@ export const styles = {
   arrowUnder: { transform: 'rotateZ(180deg)' },
   arrow: {
     width: '8px',
-    height: '5px'
+    height: '6px'
   },
   arrowContainer: {
-    borderLeft: '1px solid #ccc',
-    display: 'flex',
-    paddingRight: '12px',
-    paddingLeft: '12px',
-    marginLeft: 'auto',
-    alignItems: 'center',
-    justifyContent:
-    'center'
+    display: 'inline-block',
+    paddingTop: '3px',
+    paddingBottom: '3px',
+    paddingRight: '6px',
+    paddingLeft: '6px'
+  },
+  paddingLeft: {
+    paddingLeft: '10px'
+  },
+  seperator: {
+    borderLeft: '1px solid #ccc'
   }
 };
 
@@ -130,10 +133,10 @@ class Dropdown extends Component {
     const menu = this.state.isOpen ? <div style={styles.menu} onClick={this.toggleOpen}>{children}</div> : null;
 
     return (
-      <div style={[ styles.root, style ]}>
-        <div style={styles.control}>
+      <div style={[ styles.root, style, { minWidth: '100px' } ]}>
+        <div style={[ styles.control, elementShown && styles.paddingLeft ]}>
           {elementShown}
-          <div style={[ styles.arrowContainer, styles.clickable ]} onMouseDown={this.handleMouseDown.bind(this)}>
+          <div style={[ styles.arrowContainer, styles.clickable, elementShown && styles.seperator ]} onMouseDown={this.handleMouseDown.bind(this)}>
             <img src={arrowGray} style={[ styles.arrow, !this.state.isOpen && styles.arrowUnder ]} />
           </div>
         </div>

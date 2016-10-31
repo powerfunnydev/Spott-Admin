@@ -3,7 +3,7 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Highcharts from 'react-highcharts';
-import { push as routerPush } from 'react-router-redux';
+import { routerPushWithReturnTo } from '../../actions/global';
 import moment from 'moment';
 // Note that Highcharts has to be in the codebase already
 // Highcharts more
@@ -22,7 +22,7 @@ HighchartsExporting(Highcharts.Highcharts);
 
 @connect(activitySelector, (dispatch) => ({
   loadActivities: bindActionCreators(actions.loadActivities, dispatch),
-  routerPush: bindActionCreators(routerPush, dispatch)
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @Radium
 export default class ReportingActivity extends Component {
@@ -35,7 +35,7 @@ export default class ReportingActivity extends Component {
     isLoadingTimeline: PropTypes.bool.isRequired,
     loadActivities: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    routerPush: PropTypes.func.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
     timelineConfig: PropTypes.object.isRequired
   };
 
@@ -54,7 +54,7 @@ export default class ReportingActivity extends Component {
       startDate: moment().startOf('day').subtract(1, 'months').date(1).format('YYYY-MM-DD'),
       ...location.query
     };
-    await this.props.routerPush({ ...location, query });
+    await this.props.routerPushWithReturnTo({ ...location, query });
     await this.loadActivities(query);
   }
 
@@ -71,7 +71,7 @@ export default class ReportingActivity extends Component {
   }
 
   onChangeActivityFilter (field, type, value) {
-    this.props.routerPush({
+    this.props.routerPushWithReturnTo({
       ...this.props.location,
       query: {
         ...this.props.location.query,

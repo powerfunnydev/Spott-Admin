@@ -10,7 +10,7 @@ const backgroundImage = require('./background.jpg');
 export default class Hero extends Component {
 
   static propTypes={
-    currentPath: PropTypes.string.isRequired
+    currentLocation: PropTypes.object.isRequired
   }
   constructor (props) {
     super(props);
@@ -77,7 +77,7 @@ export default class Hero extends Component {
 
     return (
       <div ref={(x) => { this.hero = x; }} style={styles.container}>
-        <Header currentPath={this.props.currentPath}/>
+        <Header currentLocation={this.props.currentLocation}/>
 
         {/* Page body */}
         <div style={styles.body.div}>

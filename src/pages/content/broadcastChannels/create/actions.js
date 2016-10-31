@@ -1,6 +1,6 @@
-import { persistBroadcastChannelsEntry } from '../../../../actions/broadcastChannel';
-import { searchBroadcasters as dataSearchBroadcasters } from '../../../../actions/broadcasters';
-export const submit = persistBroadcastChannelsEntry;
+import { persistBroadcastChannelEntry } from '../../../../actions/broadcastChannel';
+import { searchBroadcasters as dataSearchBroadcasters, fetchBroadcasterChannels as dataFetchBroadcasterChannels } from '../../../../actions/broadcasters';
+export const submit = persistBroadcastChannelEntry;
 
 export const BROADCASTERS_SEARCH_START = 'BROADCAST_CHANNELS_CREATE/BROADCASTERS_SEARCH_START';
 export const BROADCASTERS_SEARCH_ERROR = 'BROADCAST_CHANNELS_CREATE/BROADCASTERS_SEARCH_ERROR';
@@ -13,5 +13,11 @@ export function searchBroadcasters (searchString) {
     } catch (error) {
       dispatch({ error, type: BROADCASTERS_SEARCH_ERROR });
     }
+  };
+}
+
+export function loadBroadcastChannels (broadcastersEntryId) {
+  return async (dispatch, getState) => {
+    return await dispatch(dataFetchBroadcasterChannels({ broadcastersEntryId }));
   };
 }

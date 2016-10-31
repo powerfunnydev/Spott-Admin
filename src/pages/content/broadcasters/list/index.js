@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { push as routerPush } from 'react-router-redux';
 import moment from 'moment';
 import Header from '../../../app/header';
 import { Root, Container, buttonStyles } from '../../../_common/styles';
@@ -13,8 +12,10 @@ import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
 import SpecificHeader from '../../header';
+import Button from '../../../_common/buttons/button';
 import PlusButton from '../../../_common/buttons/plusButton';
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
+import { routerPushWithReturnTo } from '../../../../actions/global';
 
 const numberOfRows = 25;
 
@@ -22,7 +23,7 @@ const numberOfRows = 25;
   deleteBroadcastersEntry: bindActionCreators(actions.deleteBroadcastersEntry, dispatch),
   deleteBroadcastersEntries: bindActionCreators(actions.deleteBroadcastersEntries, dispatch),
   load: bindActionCreators(actions.load, dispatch),
-  routerPush: bindActionCreators(routerPush, dispatch),
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
 }))
@@ -41,7 +42,7 @@ export default class Broadcasters extends Component {
       query: PropTypes.object.isRequired
     }),
     pageCount: PropTypes.number,
-    routerPush: PropTypes.func.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
     selectAllCheckboxes: PropTypes.func.isRequired,
     selectCheckbox: PropTypes.func.isRequired,
     totalResultCount: PropTypes.number.isRequired
@@ -96,7 +97,7 @@ export default class Broadcasters extends Component {
       sortDirection: determineSortDirection(sortField, this.props.location.query)
     };
     // props will be updated -> componentWillReceiveProps
-    this.props.routerPush({
+    this.props.routerPushWithReturnTo({
       ...this.props.location,
       query
     });
@@ -108,7 +109,7 @@ export default class Broadcasters extends Component {
       searchString: e.target.value
     };
     // props will be updated -> componentWillReceiveProps
-    this.props.routerPush({
+    this.props.routerPushWithReturnTo({
       ...this.props.location,
       query
     });
@@ -121,7 +122,7 @@ export default class Broadcasters extends Component {
       page: nextPage
     };
     // props will be updated -> componentWillReceiveProps
-    this.props.routerPush({
+    this.props.routerPushWithReturnTo({
       ...this.props.location,
       query
     });
@@ -129,10 +130,7 @@ export default class Broadcasters extends Component {
 
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPush({
-      pathname: 'content/broadcasters/create',
-      state: { returnTo: this.props.location }
-    });
+    this.props.routerPushWithReturnTo('content/broadcasters/create');
   }
 
   async onClickDeleteSelected (e) {
@@ -148,18 +146,18 @@ export default class Broadcasters extends Component {
   }
 
   render () {
-    const { broadcasters, children, isSelected, location: { pathname, query: { page, searchString, sortField, sortDirection } },
+    const { broadcasters, children, isSelected, location, location: { query: { page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
       <Root>
-        <Header currentPath={pathname} hideHomePageLinks />
+        <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <div style={generalStyles.backgroundBar}>
           <Container style={generalStyles.searchContainer}>
             <SearchInput isLoading={broadcasters.get('_status') !== 'loaded'} value={searchString} onChange={this.onChangeSearchString}/>
             <div style={generalStyles.floatRight}>
-              <button key='delete' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} type='button' onClick={this.onClickDeleteSelected}>Delete {numberSelected}</button>
+              <Button key='delete' style={[ buttonStyles.blue ]} text={`Delete ${numberSelected}`} onClick={this.onClickDeleteSelected}/>
               <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='New Broadcaster' onClick={this.onClickNewEntry} />
             </div>
           </Container>
@@ -181,10 +179,10 @@ export default class Broadcasters extends Component {
                     <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                       {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                       <CheckBoxCel checked={isSelected.get(broadcaster.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, broadcaster.get('id'))}/>
-                      <CustomCel getValue={this.getName} objectToRender={broadcaster} style={{ flex: 5 }} /* onClick={() => { this.props.routerPush(`content/broadcasters/read/${broadcaster.get('id')}`); }}*//>
+                      <CustomCel getValue={this.getName} objectToRender={broadcaster} style={{ flex: 5 }} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcaster.get('id')}`); }}/>
                       <CustomCel style={{ flex: 1 }}>
                         <Dropdown
-                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPush(`content/broadcasters/edit/${broadcaster.get('id')}`); }}>Edit</div>}>
+                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/edit/${broadcaster.get('id')}`); }}>Edit</div>}>
                           <div key={1} style={[ dropdownStyles.option ]} onClick={(e) => { e.preventDefault(); this.deleteBroadcastersEntry(broadcaster.get('id')); }}>Remove</div>
                         </Dropdown>
                       </CustomCel>

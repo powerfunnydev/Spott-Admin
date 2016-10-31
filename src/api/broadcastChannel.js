@@ -25,8 +25,8 @@ export async function fetchBroadcastChannels (baseUrl, authenticationToken, loca
   return body;
 }
 
-export async function fetchBroadcastChannelsEntry (baseUrl, authenticationToken, locale, { broadcastChannelsEntryId }) {
-  const url = `${baseUrl}/v004/media/broadcastChannels/${broadcastChannelsEntryId}`;
+export async function fetchBroadcastChannelEntry (baseUrl, authenticationToken, locale, { broadcastChannelEntryId }) {
+  const url = `${baseUrl}/v004/media/broadcastChannels/${broadcastChannelEntryId}`;
   const { body } = await get(authenticationToken, locale, url);
   // console.log('before transform', { ...body });
   const result = transformBroadcastChannel(body);
@@ -35,17 +35,22 @@ export async function fetchBroadcastChannelsEntry (baseUrl, authenticationToken,
 }
 
 export async function persistBroadcastChannel (baseUrl, authenticationToken, locale, { id, name, broadcasterId }) {
-  console.log('name', name);
+  let bc = {};
+  if (id) {
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/broadcastChannels/${id}`);
+    bc = body;
+  }
   const url = `${baseUrl}/v004/media/broadcastChannels`;
-  await post(authenticationToken, locale, url, { uuid: id, name, broadcaster: { uuid: broadcasterId } });
+  bc.broadcaster = broadcasterId && { uuid: broadcasterId } || bc.broadcaster;
+  await post(authenticationToken, locale, url, { ...bc, uuid: id, name });
 }
 
-export async function deleteBroadcastChannelsEntry (baseUrl, authenticationToken, locale, { broadcastChannelsEntryId }) {
-  await del(authenticationToken, locale, `${baseUrl}/v004/media/broadcastChannels/${broadcastChannelsEntryId}`);
+export async function deleteBroadcastChannelEntry (baseUrl, authenticationToken, locale, { broadcastChannelEntryId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/broadcastChannels/${broadcastChannelEntryId}`);
 }
 
-export async function deleteBroadcastChannelsEntries (baseUrl, authenticationToken, locale, { broadcastChannelsEntryIds }) {
-  for (const broadcastChannelsEntryId of broadcastChannelsEntryIds) {
-    await deleteBroadcastChannelsEntry(baseUrl, authenticationToken, locale, { broadcastChannelsEntryId });
+export async function deleteBroadcastChannelEntries (baseUrl, authenticationToken, locale, { broadcastChannelEntryIds }) {
+  for (const broadcastChannelEntryId of broadcastChannelEntryIds) {
+    await deleteBroadcastChannelEntry(baseUrl, authenticationToken, locale, { broadcastChannelEntryId });
   }
 }

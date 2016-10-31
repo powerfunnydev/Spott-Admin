@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { push as routerPush } from 'react-router-redux';
+import { routerPushWithReturnTo } from '../../actions/global';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -13,7 +13,7 @@ import * as actions from './actions';
 @connect(null, (dispatch) => ({
   loadActivities: bindActionCreators(actions.loadActivities, dispatch),
   loadRankings: bindActionCreators(actions.loadRankings, dispatch),
-  routerPush: bindActionCreators(routerPush, dispatch)
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @Radium
 export default class Reporting extends Component {
@@ -25,7 +25,7 @@ export default class Reporting extends Component {
     location: PropTypes.shape({
       pathname: PropTypes.string.isRequired
     }),
-    routerPush: PropTypes.func.isRequired
+    routerPushWithReturnTo: PropTypes.func.isRequired
   };
 
   static styles = {
@@ -75,7 +75,7 @@ export default class Reporting extends Component {
     const { query: { media } } = location;
     return (
       <div>
-        <Header currentPath={location.pathname} hideHomePageLinks />
+        <Header currentLocation={location} hideHomePageLinks />
         <div style={styles.tabs}>
           <Container style={styles.wrapper}>
             <div>
@@ -95,7 +95,7 @@ export default class Reporting extends Component {
             <MediaFilterForm fields={{
               media: typeof media === 'string' ? [ media ] : media
             }} style={styles.mediaFilterForm} onChange={(field, type, value) => {
-              this.props.routerPush({
+              this.props.routerPushWithReturnTo({
                 ...location,
                 query: {
                   ...location.query,

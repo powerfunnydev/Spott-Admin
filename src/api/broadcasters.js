@@ -1,5 +1,5 @@
 import { del, get, post } from './request';
-import { transformBroadcaster } from './transformers';
+import { transformBroadcaster, transformBroadcastChannel } from './transformers';
 
 
 export async function fetchBroadcasters (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
@@ -20,13 +20,14 @@ export async function fetchBroadcasters (baseUrl, authenticationToken, locale, {
 export async function fetchBroadcasterChannels (baseUrl, authenticationToken, locale, { broadcastersEntryId }) {
   const url = `${baseUrl}/v004/media/broadcasters/${broadcastersEntryId}/channels`;
   const { body } = await get(authenticationToken, locale, url);
-  console.log('before transform', { ...body });
-  const result = transformBroadcaster(body);
+  console.log('body', body);
+  // console.log('before transform', { ...body });
+  // const result = transformBroadcaster(body);
   // console.log('after tranform', result);
-  return result;
+  return body.data.map(transformBroadcastChannel);
 }
 
-export async function fetchBroadcastersEntry (baseUrl, authenticationToken, locale, { broadcastersEntryId }) {
+export async function fetchBroadcasterEntry (baseUrl, authenticationToken, locale, { broadcastersEntryId }) {
   const url = `${baseUrl}/v004/media/broadcasters/${broadcastersEntryId}`;
   const { body } = await get(authenticationToken, locale, url);
   // console.log('before transform', { ...body });
@@ -35,19 +36,24 @@ export async function fetchBroadcastersEntry (baseUrl, authenticationToken, loca
   return result;
 }
 
-export async function persistBroadcasters (baseUrl, authenticationToken, locale, { id, name }) {
-  console.log('name', name);
+export async function persistBroadcaster (baseUrl, authenticationToken, locale, { id, name }) {
+  let broadcaster;
+  if (id) {
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/broadcasters/${id}`);
+    broadcaster = body;
+    // console.log('body', body);
+  }
   const url = `${baseUrl}/v004/media/broadcasters`;
-  await post(authenticationToken, locale, url, { uuid: id, name });
+  await post(authenticationToken, locale, url, { ...broadcaster, uuid: id, name });
 }
 
-export async function deleteBroadcastersEntry (baseUrl, authenticationToken, locale, { broadcastersEntryId }) {
+export async function deleteBroadcasterEntry (baseUrl, authenticationToken, locale, { broadcastersEntryId }) {
   await del(authenticationToken, locale, `${baseUrl}/v004/media/broadcasters/${broadcastersEntryId}`);
 }
 
-export async function deleteBroadcastersEntries (baseUrl, authenticationToken, locale, { broadcastersEntryIds }) {
+export async function deleteBroadcasterEntries (baseUrl, authenticationToken, locale, { broadcastersEntryIds }) {
   for (const broadcastersEntryId of broadcastersEntryIds) {
-    await deleteBroadcastersEntry(baseUrl, authenticationToken, locale, { broadcastersEntryId });
+    await deleteBroadcasterEntry(baseUrl, authenticationToken, locale, { broadcastersEntryId });
   }
 }
 

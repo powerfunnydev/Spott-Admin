@@ -2,7 +2,6 @@ import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import { Link as ScrollLink } from 'react-scroll';
 import { Link as RouterLink } from 'react-router';
-import { push as routerPush } from 'react-router-redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -17,19 +16,19 @@ import { ADMIN, BROADCASTER, CONTENT_MANAGER } from '../../../constants/userRole
 @connect(menuSelector, (dispatch) => ({
   logout: bindActionCreators(actions.logout, dispatch),
   openLoginModal: bindActionCreators(globalActions.openLoginModal, dispatch),
-  routerPush: bindActionCreators(routerPush, dispatch)
+  routerPushWithReturnTo: bindActionCreators(globalActions.routerPushWithReturnTo, dispatch)
 }))
 @Radium
 export default class Menu extends Component {
 
   static propTypes = {
-    currentPath: PropTypes.string.isRequired,
+    currentLocation: PropTypes.object.isRequired,
     hideHomePageLinks: PropTypes.bool,
     isAuthenticated: PropTypes.bool.isRequired,
     logout: PropTypes.func.isRequired,
     neutral: PropTypes.bool,
     openLoginModal: PropTypes.func.isRequired,
-    routerPush: PropTypes.func.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired,
     userRoles: ImmutablePropTypes.list
   };
@@ -42,13 +41,13 @@ export default class Menu extends Component {
 
   onSignInClick (e) {
     e.preventDefault();
-    this.props.routerPush({ pathname: '/login', state: { returnTo: this.props.currentPath } });
+    this.props.routerPushWithReturnTo('/login');
   }
 
   async onLogOutClick (e) {
     e.preventDefault();
     await this.props.logout();
-    await this.props.routerPush('/');
+    await this.props.routerPushWithReturnTo('/');
   }
 
   static styles = {

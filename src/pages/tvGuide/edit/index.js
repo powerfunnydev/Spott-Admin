@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { push as routerPush } from 'react-router-redux';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -16,7 +15,9 @@ import { FETCHING } from '../../../constants/statusTypes';
 import * as actions from './actions';
 import selector from './selector';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { styles as tabStyles } from '../../_common/components/tabs';
 import Section from '../../_common/components/section';
+import { routerPushWithReturnTo } from '../../../actions/global';
 
 function validate (values, { medium, t }) {
   const validationErrors = {};
@@ -42,7 +43,7 @@ function validate (values, { medium, t }) {
 @localized
 @connect(selector, (dispatch) => ({
   load: bindActionCreators(actions.load, dispatch),
-  routerPush: bindActionCreators(routerPush, dispatch),
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchBroadcastChannels: bindActionCreators(actions.searchBroadcastChannels, dispatch),
   searchEpisodes: bindActionCreators(actions.searchEpisodes, dispatch),
   searchMedia: bindActionCreators(actions.searchMedia, dispatch),
@@ -68,7 +69,7 @@ export default class EditTvGuideEntry extends Component {
     mediaById: ImmutablePropTypes.map.isRequired,
     medium: ImmutablePropTypes.map.isRequired,
     params: PropTypes.object.isRequired,
-    routerPush: PropTypes.func.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcastChannels: PropTypes.func.isRequired,
     searchEpisodes: PropTypes.func.isRequired,
     searchMedia: PropTypes.func.isRequired,
@@ -112,7 +113,7 @@ export default class EditTvGuideEntry extends Component {
   }
 
   redirect () {
-    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || 'tv-guide');
+    this.props.routerPushWithReturnTo('tv-guide', true);
   }
 
   async submit (form) {
@@ -150,17 +151,17 @@ export default class EditTvGuideEntry extends Component {
   render () {
     const { styles } = this.constructor;
     const {
-      location: { pathname }, broadcastChannelsById, handleSubmit, mediaById, searchBroadcastChannels,
+      location, broadcastChannelsById, handleSubmit, mediaById, searchBroadcastChannels,
       searchEpisodes, searchMedia, searchSeasons, searchedBroadcastChannelIds,
       searchedEpisodeIds, searchedSeasonIds, searchedMediumIds, medium, t
     } = this.props;
     return (
       <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
-        <Header currentPath={pathname} hideHomePageLinks />
+        <Header currentLocation={location} hideHomePageLinks />
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
           <Tabs>
-          <TabList style={{ marginBottom: 0, borderWidth: 0 }}>
-            <Tab style={{ fontSize: '12px', color: '#536970', borderColor: colors.lightGray3 }}>Details</Tab>
+          <TabList style={tabStyles.tabList}>
+            <Tab style={tabStyles.tab}>Details</Tab>
             </TabList>
             <TabPanel>
               <Section first>

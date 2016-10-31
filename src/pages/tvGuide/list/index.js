@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { push as routerPush } from 'react-router-redux';
+import { routerPushWithReturnTo } from '../../../actions/global';
 import moment from 'moment';
 import Header from '../../app/header';
 import { Root, buttonStyles, Container } from '../../_common/styles';
@@ -22,7 +22,7 @@ const numberOfRows = 25;
   deleteTvGuideEntries: bindActionCreators(actions.deleteTvGuideEntries, dispatch),
   deleteTvGuideEntry: bindActionCreators(actions.deleteTvGuideEntry, dispatch),
   load: bindActionCreators(actions.load, dispatch),
-  routerPush: bindActionCreators(routerPush, dispatch),
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch),
   selectEntity: bindActionCreators(actions.selectEntity, dispatch)
@@ -41,7 +41,7 @@ export default class TvGuideList extends Component {
       query: PropTypes.object.isRequired
     }),
     pageCount: PropTypes.number,
-    routerPush: PropTypes.func.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
     selectAllCheckboxes: PropTypes.func.isRequired,
     selectCheckbox: PropTypes.func.isRequired,
     selectEntity: PropTypes.func.isRequired,
@@ -117,7 +117,7 @@ export default class TvGuideList extends Component {
       sortDirection: determineSortDirection(sortField, this.props.location.query)
     };
     // props will be updated -> componentWillReceiveProps
-    this.props.routerPush({
+    this.props.routerPushWithReturnTo({
       ...this.props.location,
       query
     });
@@ -130,7 +130,7 @@ export default class TvGuideList extends Component {
       page: nextPage
     };
     // props will be updated -> componentWillReceiveProps
-    this.props.routerPush({
+    this.props.routerPushWithReturnTo({
       ...this.props.location,
       query
     });
@@ -138,10 +138,7 @@ export default class TvGuideList extends Component {
 
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPush({
-      pathname: 'tv-guide/create',
-      state: { returnTo: this.props.location }
-    });
+    this.props.routerPushWithReturnTo('tv-guide/create');
   }
 
   async onClickDeleteSelected (e) {
@@ -157,12 +154,12 @@ export default class TvGuideList extends Component {
   }
 
   render () {
-    const { children, isSelected, location: { pathname, query: { page, sortField, sortDirection } },
+    const { children, isSelected, location, location: { query: { page, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, selectedEntity, totalResultCount, tvGuideEntries } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
       <Root>
-        <Header currentPath={pathname} hideHomePageLinks />
+        <Header currentLocation={location} hideHomePageLinks />
         {/* selectedEntity is in development, it will not be used currently */}
         {selectedEntity.get('_status') === 'loaded' && <Container><EntityDetails
           image={selectedEntity.getIn([ 'medium', 'profileImage', 'url' ])}
@@ -216,7 +213,7 @@ export default class TvGuideList extends Component {
                       <CustomCel getValue={this.getLastUpdatedOn} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
                       <CustomCel style={{ flex: 1 }}>
                         <Dropdown
-                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPush(`tv-guide/edit/${tvGuideEntry.get('id')}`); }}>Edit</div>}>
+                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`tv-guide/edit/${tvGuideEntry.get('id')}`); }}>Edit</div>}>
                           <div key={1} style={[ dropdownStyles.option ]} onClick={(e) => { e.preventDefault(); this.deleteTvGuideEntry(tvGuideEntry.get('id')); }}>Remove</div>
                         </Dropdown>
                       </CustomCel>
