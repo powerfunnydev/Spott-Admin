@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { push as routerPush } from 'react-router-redux';
+import { routerPushWithReturnTo } from '../../actions/global';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
@@ -53,7 +53,7 @@ const renderField = Radium((props) => {
   validate
 })
 @connect(null, (dispatch) => ({
-  routerPush: bindActionCreators(routerPush, dispatch),
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   submit: bindActionCreators(forgotPassword, dispatch)
 }))
 @Radium
@@ -63,7 +63,7 @@ export default class ForgotPasswordModal extends Component {
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     location: PropTypes.object,
-    routerPush: PropTypes.func.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired
   };
@@ -102,7 +102,7 @@ export default class ForgotPasswordModal extends Component {
   }
 
   onCloseClick (e) {
-    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
+    this.props.routerPushWithReturnTo('/');
   }
 
   static styles = {

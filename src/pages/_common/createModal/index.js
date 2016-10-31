@@ -3,6 +3,7 @@ import ReactModal from 'react-modal';
 import Radium from 'radium';
 import localized from '../localized';
 import { buttonStyles, fontWeights, makeTextStyle } from '../styles';
+import Button from '../buttons/button';
 
 const crossImage = require('./cross.svg');
 
@@ -149,8 +150,8 @@ export default class CreateModal extends Component {
               </div>
               <div style={styles.footer}>
                 <div style={{ marginLeft: 'auto' }}>
-                  <button key='cancel' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white ]} type='button' onClick={(e) => { e.preventDefault(); onClose(); }}>Cancel</button>
-                  <button key='submit' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} type='submit'>Create</button>
+                  <Button key='cancel' style={[ buttonStyles.white ]} text='Cancel' type='button' onClick={(e) => { e.preventDefault(); onClose(); }} />
+                  <Button key='submit' style={[ buttonStyles.blue ]} text='Create' type='submit' />
                 </div>
               </div>
             </form>

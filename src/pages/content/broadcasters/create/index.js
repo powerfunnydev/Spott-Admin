@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
-import { push as routerPush } from 'react-router-redux';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,6 +9,7 @@ import localized from '../../../_common/localized';
 import CreateModal from '../../../_common/createModal';
 import { load } from '../list/actions';
 import * as actions from './actions';
+import { routerPushWithReturnTo } from '../../../../actions/global';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -23,7 +23,7 @@ function validate (values, { t }) {
 @connect(null, (dispatch) => ({
   load: bindActionCreators(load, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
-  routerPush: bindActionCreators(routerPush, dispatch)
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
   form: 'broadcastersCreateEntry',
@@ -37,7 +37,7 @@ export default class CreateBroadcasterEntryModal extends Component {
     handleSubmit: PropTypes.func.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    routerPush: PropTypes.func.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired
   };
@@ -63,7 +63,7 @@ export default class CreateBroadcasterEntryModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || 'content/broadcasters');
+    this.props.routerPushWithReturnTo('content/broadcasters', true);
   }
 
   render () {

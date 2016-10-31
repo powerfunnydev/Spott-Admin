@@ -14,6 +14,7 @@ import BroadcastersCreateEntry from './pages/content/broadcasters/create';
 import BroadcastersEditEntry from './pages/content/broadcasters/edit';
 import BroadcastersReadEntry from './pages/content/broadcasters/read';
 import BroadcastChannelCreateEntry from './pages/content/broadcastChannels/create';
+import BroadcastChannelEditEntry from './pages/content/broadcastChannels/edit';
 import ContentProducersList from './pages/content/contentProducers/list';
 import ContentProducersCreateEntry from './pages/content/contentProducers/create';
 import ContentProducersEditEntry from './pages/content/contentProducers/edit';
@@ -43,7 +44,7 @@ function getRoutes ({ getState }) {
     return (nextState, replace) => {
       const state = getState();
       if (!authenticationTokenSelector(state)) {
-        return replace({ pathname: '/login', state: { returnTo: nextState.location.pathname } });
+        return replace({ pathname: '/login', state: { returnTo: nextState.location } });
       }
       const currentRoles = userRolesSelector(state).toJS();
       let hasCorrectRoles = false;
@@ -52,7 +53,7 @@ function getRoutes ({ getState }) {
         hasCorrectRoles = hasCorrectRoles || roles.indexOf(role) > -1;
       }
       if (!hasCorrectRoles) {
-        return replace({ pathname: '/', state: { returnTo: nextState.location.pathname } });
+        return replace({ pathname: '/', state: { returnTo: nextState.location } });
       }
     };
   }
@@ -91,7 +92,7 @@ function getRoutes ({ getState }) {
           </Route>
         </Route>
         <Route path='broadcast-channels'>
-          <Route component={BroadcastChannelCreateEntry} path='create' />
+          <Route component={BroadcastChannelEditEntry} path='edit/:id' />
         </Route>
       </Route>
       <Route component={TvGuideList} path='tv-guide' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>

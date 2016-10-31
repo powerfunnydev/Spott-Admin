@@ -9,8 +9,8 @@ import { Root, FormSubtitle, colors, EditTemplate } from '../../../_common/style
 import localized from '../../../_common/localized';
 import * as actions from './actions';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import { styles as tabStyles } from '../../../_common/components/tabs';
 import Section from '../../../_common/components/section';
+import { styles as tabStyles } from '../../../_common/components/tabs';
 import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 
@@ -29,11 +29,11 @@ function validate (values, { t }) {
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
-  form: 'broadcastersEditEntry',
+  form: 'broadcastChannelEditEntry',
   validate
 })
 @Radium
-export default class EditBroadcastersEntry extends Component {
+export default class EditBroadcastChannelEntry extends Component {
 
   static propTypes = {
     error: PropTypes.any,
@@ -63,7 +63,6 @@ export default class EditBroadcastersEntry extends Component {
   }
 
   redirect () {
-    console.log('redirect');
     this.props.routerPushWithReturnTo('content/broadcasters', true);
   }
 
@@ -94,7 +93,7 @@ export default class EditBroadcastersEntry extends Component {
                   component={TextInput}
                   label='Name'
                   name='name'
-                  placeholder='Name broadcaster'
+                  placeholder='Name Broadcast Channel'
                   required/>
               </Section>
             </TabPanel>
@@ -105,3 +104,13 @@ export default class EditBroadcastersEntry extends Component {
   }
 
 }
+
+/*
+<ImageInput
+  disabled={localeDataFieldDisabled}
+  field={logo[_activeLocale.value]}
+  height={250}
+  label='Logo'
+  style={styles.logoImage}
+  width={250} />
+  */

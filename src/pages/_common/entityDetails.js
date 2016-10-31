@@ -14,18 +14,55 @@ export default class EntityDetails extends Component {
     onRemove: PropTypes.func
   }
 
+  static styles = {
+    root: {
+      display: 'flex',
+      flexDirection: 'row',
+      paddingTop: '20px',
+      paddingBottom: '20px',
+      width: '100%'
+    },
+    noImage: {
+      backgroundColor: colors.lightGray,
+      height: '80px',
+      width: '143px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    title: {
+      paddingBottom: '4px',
+      color: colors.black2,
+      ...makeTextStyle(fontWeights.medium, '18px', '0.5px')
+    },
+    subtitle: {
+      paddingBottom: '9px',
+      ...makeTextStyle(fontWeights.regular, '12px', '0.5px')
+    },
+    content: {
+      maxWidth: '443px',
+      lineHeight: '15px',
+      color: colors.darkGray2,
+      ...makeTextStyle(fontWeights.regular, '12px', '0.5px')
+    },
+    alignRight: {
+      marginLeft: 'auto'
+    }
+  }
+
   render () {
     const { image, title, subtitle, onEdit, onRemove } = this.props;
+    const { styles } = this.constructor;
     return (
-      <div style={{ display: 'flex', flexDirection: 'row', paddingTop: '20px', paddingBottom: '20px', width: '100%' }}>
-        {image && <img src={image} style={{ height: '80px' }}/> || <div style={{ height: '80px' }}>No image</div>}
+      <div style={styles.root}>
+        {image && <img src={image} style={{ height: '80px' }}/> || <div style={styles.noImage}>No image</div>}
         <div style={{ paddingLeft: '20px' }}>
-          <div style={{ paddingBottom: '4px', color: colors.black2, ...makeTextStyle(fontWeights.medium, '18px', '0.5px') }}>{title}</div>
-          <div style={{ paddingBottom: '9px', ...makeTextStyle(fontWeights.regular, '12px', '0.5px') }}>{subtitle}</div>
-          <div style={{ maxWidth: '443px', lineHeight: '15px', color: colors.darkGray2, ...makeTextStyle(fontWeights.regular, '12px', '0.5px') }}>This is the base language summary for this specific episode, no longer
+          <div style={styles.title}>{title}</div>
+          <div style={styles.subtitle}>{subtitle}</div>
+          <div style={styles.content}>This is the base language summary for this specific episode, no longer
 then 2 lines, if the text too long to fit in this are it gets cut of by 3 dots…</div>
         </div>
-        <div style={{ marginLeft: 'auto' }}>
+        <div style={styles.alignRight}>
           {onEdit && <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white ]} onClick={onEdit}>Edit</button>}
           {onRemove && <RemoveButton style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white, { minWidth: '30px' } ]} onClick={onRemove}/>}
         </div>

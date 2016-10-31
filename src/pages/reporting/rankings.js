@@ -3,7 +3,7 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { push as routerPush } from 'react-router-redux';
+import { routerPushWithReturnTo } from '../../actions/global';
 import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
 import { isLoading } from '../../constants/statusTypes';
 import { arraysEqual, slowdown } from '../../utils';
@@ -126,7 +126,7 @@ class RankingItem extends Component {
 
 @connect(rankingsSelector, (dispatch) => ({
   loadRankings: bindActionCreators(actions.loadRankings, dispatch),
-  routerPush: bindActionCreators(routerPush, dispatch)
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 export default class Rankings extends Component {
 
@@ -138,7 +138,7 @@ export default class Rankings extends Component {
     mediumSubscriptions: ImmutablePropTypes.map.isRequired,
     mediumSyncs: ImmutablePropTypes.map.isRequired,
     productViews: ImmutablePropTypes.map.isRequired,
-    routerPush: PropTypes.func.isRequired
+    routerPushWithReturnTo: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -163,7 +163,7 @@ export default class Rankings extends Component {
   }
 
   onChangeRankingsFilter (field, type, value) {
-    this.props.routerPush({
+    this.props.routerPushWithReturnTo({
       ...this.props.location,
       query: {
         ...this.props.location.query,

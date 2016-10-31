@@ -1,5 +1,5 @@
 import { del, get, post } from './request';
-import { transformBroadcaster } from './transformers';
+import { transformBroadcaster, transformBroadcastChannel } from './transformers';
 
 
 export async function fetchBroadcasters (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
@@ -20,10 +20,11 @@ export async function fetchBroadcasters (baseUrl, authenticationToken, locale, {
 export async function fetchBroadcasterChannels (baseUrl, authenticationToken, locale, { broadcastersEntryId }) {
   const url = `${baseUrl}/v004/media/broadcasters/${broadcastersEntryId}/channels`;
   const { body } = await get(authenticationToken, locale, url);
+  console.log('body', body);
   // console.log('before transform', { ...body });
-  const result = transformBroadcaster(body);
+  // const result = transformBroadcaster(body);
   // console.log('after tranform', result);
-  return result;
+  return body.data.map(transformBroadcastChannel);
 }
 
 export async function fetchBroadcasterEntry (baseUrl, authenticationToken, locale, { broadcastersEntryId }) {
@@ -40,7 +41,7 @@ export async function persistBroadcaster (baseUrl, authenticationToken, locale, 
   if (id) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/broadcasters/${id}`);
     broadcaster = body;
-    console.log('body', body);
+    // console.log('body', body);
   }
   const url = `${baseUrl}/v004/media/broadcasters`;
   await post(authenticationToken, locale, url, { ...broadcaster, uuid: id, name });

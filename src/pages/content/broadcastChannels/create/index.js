@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { push as routerPush } from 'react-router-redux';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -13,6 +12,7 @@ import CreateModal from '../../../_common/createModal';
 import * as actions from './actions';
 import SelectInput from '../../../_common/inputs/selectInput';
 import selector from './selector';
+import { routerPushWithReturnTo } from '../../../../actions/global';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -24,9 +24,10 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
+  loadBroadcastChannels: bindActionCreators(actions.loadBroadcastChannels, dispatch),
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
-  routerPush: bindActionCreators(routerPush, dispatch)
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
   form: 'broadcastChannelsCreateEntry',
@@ -40,9 +41,10 @@ export default class CreateBroadcasterEntryModal extends Component {
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
+    loadBroadcastChannels: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
-    routerPush: PropTypes.func.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
@@ -66,6 +68,9 @@ export default class CreateBroadcasterEntryModal extends Component {
   async submit (form) {
     try {
       await this.props.submit(form.toJS());
+      if (this.props.params.id) {
+        await this.props.loadBroadcastChannels(this.props.params.id);
+      }
       this.onCloseClick();
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
@@ -73,7 +78,7 @@ export default class CreateBroadcasterEntryModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || this.props.params.id && `content/broadcasters/read/${this.props.params.id}` || 'content/broadcasters');
+    this.props.routerPushWithReturnTo(this.props.params.id && `content/broadcasters/read/${this.props.params.id}` || 'content/broadcasters', true);
   }
 
   render () {

@@ -287,7 +287,7 @@ export class Row extends Component {
       borderTop: `1px solid ${colors.veryLightGray}`
     },
     odd: {
-      backgroundColor: 'rgba(230, 248, 253, 0.5)',
+      backgroundColor: 'rgba(230, 248, 253, 0.2)',
       transition: 'background-color .25s ease-in-out',
       ':hover': {
         backgroundColor: colors.lightBlue
