@@ -13,6 +13,7 @@ import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
+import BreadCrumbs from '../../../_common/breadCrumbs';
 
 const plusIcon = require('../../../../assets/images/plus-gray.svg');
 
@@ -130,9 +131,10 @@ export default class ReadBroadcastersEntry extends Component {
     const { children, currentBroadcaster, location, deleteBroadcastersEntry } = this.props;
     const { styles } = this.constructor;
     return (
-      <div style={{ paddingBottom: '50px' }}>
+      <div>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
+        <BreadCrumbs hierarchy={[ { title: 'List', url: '/content/broadcasters' }, { title: currentBroadcaster.get('name'), url: location.pathname } ]}/>
         <Container>
           {currentBroadcaster.get('_status') === 'loaded' && currentBroadcaster &&
             <EntityDetails image={currentBroadcaster.getIn([ 'logo', 'url' ])} title={currentBroadcaster.getIn([ 'name' ])}

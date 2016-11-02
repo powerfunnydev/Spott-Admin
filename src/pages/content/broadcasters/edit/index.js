@@ -63,7 +63,6 @@ export default class EditBroadcastersEntry extends Component {
   }
 
   redirect () {
-    console.log('redirect');
     this.props.routerPushWithReturnTo('content/broadcasters', true);
   }
 
@@ -79,7 +78,7 @@ export default class EditBroadcastersEntry extends Component {
   render () {
     const { location, handleSubmit } = this.props;
     return (
-      <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
+      <Root style={{ backgroundColor: colors.lightGray4 }}>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>

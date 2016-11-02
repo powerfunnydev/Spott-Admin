@@ -1,4 +1,4 @@
-import { del, get, post } from './request';
+import { del, get, post, postFormData } from './request';
 import { transformBroadcastChannel } from './transformers';
 
 export async function searchBroadcastChannels (baseUrl, authenticationToken, locale, { searchString }) {
@@ -53,4 +53,11 @@ export async function deleteBroadcastChannelEntries (baseUrl, authenticationToke
   for (const broadcastChannelEntryId of broadcastChannelEntryIds) {
     await deleteBroadcastChannelEntry(baseUrl, authenticationToken, locale, { broadcastChannelEntryId });
   }
+}
+
+export async function uploadBroadcastChannelImage (baseUrl, authenticationToken, locale, { broadcastChannelEntryId, image, callback }) {
+  const formData = new FormData();
+  formData.append('uuid', broadcastChannelEntryId);
+  formData.append('file', image);
+  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/broadcastChannels/${broadcastChannelEntryId}/logo`, formData, callback);
 }

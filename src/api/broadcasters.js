@@ -20,7 +20,7 @@ export async function fetchBroadcasters (baseUrl, authenticationToken, locale, {
 export async function fetchBroadcasterChannels (baseUrl, authenticationToken, locale, { broadcastersEntryId }) {
   const url = `${baseUrl}/v004/media/broadcasters/${broadcastersEntryId}/channels`;
   const { body } = await get(authenticationToken, locale, url);
-  console.log('body', body);
+  // console.log('body', body);
   // console.log('before transform', { ...body });
   // const result = transformBroadcaster(body);
   // console.log('after tranform', result);

@@ -13,6 +13,7 @@ import Section from '../../../_common/components/section';
 import { styles as tabStyles } from '../../../_common/components/tabs';
 import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
+import Dropzone from '../../../_common/dropzone';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -26,6 +27,7 @@ function validate (values, { t }) {
 @connect(null, (dispatch) => ({
   load: bindActionCreators(actions.load, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
+  uploadImage: bindActionCreators(actions.uploadImage, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
@@ -96,6 +98,12 @@ export default class EditBroadcastChannelEntry extends Component {
                   placeholder='Name Broadcast Channel'
                   required/>
               </Section>
+              <Dropzone
+                accept='image/*'
+                progress={this.state.progress}
+                total={this.state.total}
+                message={<span>Drag & drop the image</span>}
+                onChange={({ callback, file }) => { this.props.uploadImage({ broadcastChannelEntryId: this.props.params.id, image: file, callback }); console.log('file', file); }}/>
             </TabPanel>
           </Tabs>
         </EditTemplate>
