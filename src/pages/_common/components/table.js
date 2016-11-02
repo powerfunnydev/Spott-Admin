@@ -2,6 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { colors, makeTextStyle, fontWeights } from '../../_common/styles';
 import Spinner from '../../_common/spinner';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { push as routerPush } from 'react-router-redux';
 
 const arrowGray = require('../../../assets/images/arrow-gray.svg');
 const arrowLightGray = require('../../../assets/images/arrow-light-gray.svg');
@@ -38,10 +41,7 @@ export const headerStyles = {
   header: {
     minHeight: '32px',
     ...makeTextStyle(null, '11px', '0.50px'),
-    textTransform: 'uppercase',
-    ':hover': {
-      backgroundColor: colors.lightGray4
-    }
+    textTransform: 'uppercase'
   },
   firstHeader: {
     borderBottom: `1px solid ${colors.lightGray2}`
@@ -49,6 +49,11 @@ export const headerStyles = {
   notFirstHeader: {
     borderLeft: `1px solid ${colors.lightGray2}`,
     borderBottom: `1px solid ${colors.lightGray2}`
+  },
+  clickableHeader: {
+    ':hover': {
+      backgroundColor: colors.lightGray4
+    }
   }
 };
 
@@ -443,4 +448,76 @@ export class Table extends Component {
       </div>
     );
   }
+}
+
+export function tableDecorator (WrappedComponent) {
+  return (
+    @connect(null, (dispatch) => ({
+      routerPush: bindActionCreators(routerPush, dispatch)
+    }))
+    class TableDecorator extends Component {
+
+      static propTypes = {
+        location: PropTypes.shape({
+          pathname: PropTypes.string.isRequired,
+          query: PropTypes.object.isRequired
+        }),
+        routerPush: PropTypes.func.isRequired
+      };
+
+      constructor (props, context) {
+        super(props, context);
+        this.onChangePage = ::this.onChangePage;
+        this.onSortField = ::this.onSortField;
+        this.onChangeSearchString = ::this.onChangeSearchString;
+      }
+
+      onChangeSearchString (e) {
+        const query = {
+          ...this.props.location.query,
+          searchString: e.target.value
+        };
+        // props will be updated -> componentWillReceiveProps
+        this.props.routerPush({
+          ...this.props.location,
+          query
+        });
+      }
+
+      onChangePage (page, next = true) {
+        let currentPage = 0;
+        if (!isNaN(page) && typeof page === 'number') {
+          currentPage = page;
+        }
+        const nextPage = next ? currentPage + 1 : currentPage - 1;
+        const query = {
+          ...this.props.location.query,
+          page: nextPage
+        };
+        // props will be updated -> componentWillReceiveProps
+        this.props.routerPush({
+          ...this.props.location,
+          query
+        });
+      }
+
+      onSortField (sortField) {
+        const query = {
+          ...this.props.location.query,
+          page: 0,
+          sortField,
+          sortDirection: determineSortDirection(sortField, this.props.location.query)
+        };
+        // props will be updated -> componentWillReceiveProps
+        this.props.routerPush({
+          ...this.props.location,
+          query
+        });
+      }
+
+      render () {
+        return <WrappedComponent {...this.props} onChangePage={this.onChangePage} onChangeSearchString={this.onChangeSearchString} onSortField={this.onSortField} />;
+      }
+    }
+  );
 }
