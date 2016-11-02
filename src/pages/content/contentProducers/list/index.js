@@ -2,11 +2,10 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { push as routerPush } from 'react-router-redux';
 import moment from 'moment';
 import Header from '../../../app/header';
 import { Root, Container, buttonStyles } from '../../../_common/styles';
-import { generalStyles, TotalEntries, headerStyles, determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table';
+import { tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table';
 import Line from '../../../_common/components/line';
 import SearchInput from '../../../_common/inputs/searchInput';
 import Radium from 'radium';
@@ -18,11 +17,11 @@ import Dropdown, { styles as dropdownStyles } from '../../../_common/components/
 
 const numberOfRows = 25;
 
+@tableDecorator
 @connect(selector, (dispatch) => ({
   deleteContentProducersEntry: bindActionCreators(actions.deleteContentProducerEntry, dispatch),
   deleteContentProducersEntries: bindActionCreators(actions.deleteContentProducerEntries, dispatch),
   load: bindActionCreators(actions.load, dispatch),
-  routerPush: bindActionCreators(routerPush, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
 }))
@@ -44,12 +43,14 @@ export default class ContentProducers extends Component {
     routerPush: PropTypes.func.isRequired,
     selectAllCheckboxes: PropTypes.func.isRequired,
     selectCheckbox: PropTypes.func.isRequired,
-    totalResultCount: PropTypes.number.isRequired
+    totalResultCount: PropTypes.number.isRequired,
+    onChangePage: PropTypes.func.isRequired,
+    onChangeSearchString: PropTypes.func.isRequired,
+    onSortField: PropTypes.func.isRequired
   };
 
   constructor (props) {
     super(props);
-    this.onChangeSearchString = ::this.onChangeSearchString;
     this.onClickNewEntry = ::this.onClickNewEntry;
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
   }
@@ -86,45 +87,6 @@ export default class ContentProducers extends Component {
   getLastUpdatedOn (cp) {
     const date = new Date(cp.get('lastUpdatedOn'));
     return moment(date).format('YYYY-MM-DD HH:mm');
-  }
-
-  onSortField (sortField) {
-    const query = {
-      ...this.props.location.query,
-      page: 0,
-      sortField,
-      sortDirection: determineSortDirection(sortField, this.props.location.query)
-    };
-    // props will be updated -> componentWillReceiveProps
-    this.props.routerPush({
-      ...this.props.location,
-      query
-    });
-  }
-
-  onChangeSearchString (e) {
-    const query = {
-      ...this.props.location.query,
-      searchString: e.target.value
-    };
-    // props will be updated -> componentWillReceiveProps
-    this.props.routerPush({
-      ...this.props.location,
-      query
-    });
-  }
-
-  onChangePage (page = 0, next = true) {
-    const nextPage = next ? page + 1 : page - 1;
-    const query = {
-      ...this.props.location.query,
-      page: nextPage
-    };
-    // props will be updated -> componentWillReceiveProps
-    this.props.routerPush({
-      ...this.props.location,
-      query
-    });
   }
 
   onClickNewEntry (e) {
@@ -165,7 +127,7 @@ export default class ContentProducers extends Component {
         <SpecificHeader/>
         <div style={generalStyles.backgroundBar}>
           <Container style={styles.searchContainer}>
-            <SearchInput isLoading={contentProducers.get('_status') !== 'loaded'} value={searchString} onChange={this.onChangeSearchString}/>
+            <SearchInput isLoading={contentProducers.get('_status') !== 'loaded'} value={searchString} onChange={this.props.onChangeSearchString}/>
             <div style={generalStyles.floatRight}>
               <button key='delete' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} type='button' onClick={this.onClickDeleteSelected}>Delete {numberSelected}</button>
               <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='New Content Producer' onClick={this.onClickNewEntry} />
@@ -180,9 +142,9 @@ export default class ContentProducers extends Component {
               <Headers>
                 {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                 <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader, { flex: 0.25 } ]} onChange={selectAllCheckboxes}/>
-                <CustomCel sortColumn={this.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>NAME</CustomCel>
+                <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>NAME</CustomCel>
                 <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
-                <CustomCel sortColumn={this.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
+                <CustomCel sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
                 <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}/>
               </Headers>
               <Rows isLoading={contentProducers.get('_status') !== 'loaded'}>
@@ -205,7 +167,7 @@ export default class ContentProducers extends Component {
                 })}
               </Rows>
             </Table>
-            <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.onChangePage(parseInt(page, 10), true); }}/>
+            <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
           </Container>
         </div>
         {children}

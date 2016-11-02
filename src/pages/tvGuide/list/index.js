@@ -2,11 +2,10 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { push as routerPush } from 'react-router-redux';
 import moment from 'moment';
 import Header from '../../app/header';
 import { Root, buttonStyles, Container } from '../../_common/styles';
-import { generalStyles, TotalEntries, headerStyles, determineSortDirection, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table';
+import { tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table';
 import Line from '../../_common/components/line';
 import Radium from 'radium';
 import * as actions from './actions';
@@ -18,11 +17,11 @@ import EntityDetails from '../../_common/entityDetails';
 /* eslint-disable react/no-set-state*/
 const numberOfRows = 25;
 
+@tableDecorator
 @connect(selector, (dispatch) => ({
   deleteTvGuideEntries: bindActionCreators(actions.deleteTvGuideEntries, dispatch),
   deleteTvGuideEntry: bindActionCreators(actions.deleteTvGuideEntry, dispatch),
   load: bindActionCreators(actions.load, dispatch),
-  routerPush: bindActionCreators(routerPush, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch),
   selectEntity: bindActionCreators(actions.selectEntity, dispatch)
@@ -47,8 +46,11 @@ export default class TvGuideList extends Component {
     selectEntity: PropTypes.func.isRequired,
     selectedEntity: ImmutablePropTypes.map,
     totalResultCount: PropTypes.number.isRequired,
-    tvGuideEntries: ImmutablePropTypes.map.isRequired
-  };
+    tvGuideEntries: ImmutablePropTypes.map.isRequired,
+    onChangePage: PropTypes.func.isRequired,
+    onChangeSearchString: PropTypes.func.isRequired,
+    onSortField: PropTypes.func.isRequired
+  }
 
   constructor (props) {
     super(props);
@@ -109,33 +111,6 @@ export default class TvGuideList extends Component {
     await this.props.load(this.props.location.query);
   }
 
-  onSortField (sortField) {
-    const query = {
-      ...this.props.location.query,
-      page: 0,
-      sortField,
-      sortDirection: determineSortDirection(sortField, this.props.location.query)
-    };
-    // props will be updated -> componentWillReceiveProps
-    this.props.routerPush({
-      ...this.props.location,
-      query
-    });
-  }
-
-  onChangePage (page = 0, next = true) {
-    const nextPage = next ? page + 1 : page - 1;
-    const query = {
-      ...this.props.location.query,
-      page: nextPage
-    };
-    // props will be updated -> componentWillReceiveProps
-    this.props.routerPush({
-      ...this.props.location,
-      query
-    });
-  }
-
   onClickNewEntry (e) {
     e.preventDefault();
     this.props.routerPush({
@@ -187,17 +162,17 @@ export default class TvGuideList extends Component {
                 <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Channel</CustomCel>
                 <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Title</CustomCel>
                 <CustomCel
-                  sortColumn={this.onSortField.bind(this, 'START')}
+                  sortColumn={this.props.onSortField.bind(this, 'START')}
                   sortDirection={sortField === 'START' ? sortDirections[sortDirection] : NONE}
-                  style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>
+                  style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>
                   Start
                 </CustomCel>
                 <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>End</CustomCel>
                 <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 0.8 } ]}>Updated by</CustomCel>
                 <CustomCel
-                  sortColumn={this.onSortField.bind(this, 'LAST_MODIFIED')}
+                  sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')}
                   sortDirection={sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE}
-                  style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>
+                  style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>
                   Last updated on
                 </CustomCel>
                 <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}/>
@@ -225,7 +200,7 @@ export default class TvGuideList extends Component {
                 })}
               </Rows>
             </Table>
-            <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.onChangePage(parseInt(page, 10), true); }}/>
+            <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
           </Container>
         </div>
         {children}
