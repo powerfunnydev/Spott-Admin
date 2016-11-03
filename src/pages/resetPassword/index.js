@@ -7,7 +7,7 @@ import Radium from 'radium';
 import { buttonStyles } from '../_common/styles';
 import localized from '../_common/localized';
 import Modal from '../_common/modal';
-import { resetPassword } from '../../actions/users';
+import { resetPassword } from '../../actions/user';
 import { routerPushWithReturnTo } from '../../actions/global';
 
 function validate (values) {

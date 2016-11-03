@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { buttonStyles } from '../_common/styles';
 import localized from '../_common/localized';
 import Modal from '../_common/modal';
-import * as actions from '../../actions/users';
+import * as actions from '../../actions/user';
 import { routerPushWithReturnTo } from '../../actions/global';
 
 function validate (values) {

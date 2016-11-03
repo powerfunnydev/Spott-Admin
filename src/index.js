@@ -5,7 +5,7 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import { Provider } from 'react-redux';
 import createStore from './createStore';
 import { init } from './actions/global';
-import { LOGIN_SUCCESS } from './actions/users';
+import { LOGIN_SUCCESS } from './actions/user';
 import { ADMIN, BROADCASTER, CONTENT_MANAGER } from './constants/userRoles';
 
 import App from './pages/app';
@@ -33,6 +33,7 @@ import ReportingRankings from './pages/reporting/rankings';
 import TvGuideCreateEntry from './pages/tvGuide/create';
 import TvGuideEditEntry from './pages/tvGuide/edit';
 import TvGuideList from './pages/tvGuide/list';
+import UsersList from './pages/users/list';
 import { authenticationTokenSelector, userRolesSelector } from './selectors/global';
 import reducer from './reducers';
 
@@ -99,6 +100,9 @@ function getRoutes ({ getState }) {
           <Route component={BroadcastChannelEditEntry} path='edit/:id' />
         </Route>
       </Route>
+
+      <Route component={UsersList} path='users' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])} />
+
       <Route component={TvGuideList} path='tv-guide' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <Route component={TvGuideCreateEntry} path='create' />
       </Route>

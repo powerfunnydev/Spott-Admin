@@ -1,4 +1,4 @@
-import * as actions from '../../actions/users';
+import * as actions from '../../actions/user';
 
 export function loginWithAuthenticationToken (authenticationToken) {
   return async (dispatch, getState) => {
