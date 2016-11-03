@@ -32,7 +32,7 @@ import ReportingRankings from './pages/reporting/rankings';
 import TvGuideCreateEntry from './pages/tvGuide/create';
 import TvGuideEditEntry from './pages/tvGuide/edit';
 import TvGuideList from './pages/tvGuide/list';
-import { authenticationTokenSelector, locationsSelector, userRolesSelector } from './selectors/global';
+import { authenticationTokenSelector, userRolesSelector } from './selectors/global';
 import reducer from './reducers';
 
 /**
