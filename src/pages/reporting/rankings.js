@@ -139,6 +139,11 @@ export default class Rankings extends Component {
   static propTypes = {
     brandSubscriptions: ImmutablePropTypes.map.isRequired,
     characterSubscriptions: ImmutablePropTypes.map.isRequired,
+    currentBrandSubscriptionsPage: PropTypes.number.isRequired,
+    currentCharacterSubscriptionsPage: PropTypes.number.isRequired,
+    currentMediumSubscriptionsPage: PropTypes.number.isRequired,
+    currentMediumSyncsPage: PropTypes.number.isRequired,
+    currentProductViewsPage: PropTypes.number.isRequired,
     loadBrandSubscriptions: PropTypes.func.isRequired,
     loadCharacterSubscriptions: PropTypes.func.isRequired,
     loadMediumSubscriptions: PropTypes.func.isRequired,
@@ -238,7 +243,9 @@ export default class Rankings extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      brandSubscriptions, characterSubscriptions, loadBrandSubscriptions,
+      brandSubscriptions, currentBrandSubscriptionsPage, currentCharacterSubscriptionsPage,
+      currentMediumSubscriptionsPage, currentMediumSyncsPage, currentProductViewsPage,
+      characterSubscriptions, loadBrandSubscriptions,
       loadCharacterSubscriptions, loadMediumSubscriptions, loadMediumSyncs, loadProductViews,
       location: { query: { ages, genders } }, mediumSubscriptions, mediumSyncs, productViews } = this.props;
 
@@ -260,10 +267,11 @@ export default class Rankings extends Component {
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
+                  isLoading={isLoading(mediumSubscriptions)}
                   loadMore={loadMediumSubscriptions}
-                  offset={160}
-                  page={mediumSubscriptions.get('page')}>
-                   {mediumSubscriptions.get('data') && mediumSubscriptions.get('data').map((ms, i) => (
+                  offset={400}
+                  page={currentMediumSubscriptionsPage}>
+                   {mediumSubscriptions.get('data').map((ms, i) => (
                      <RankingItem
                        count={ms.count}
                        countLabel='Subscribers'
@@ -278,10 +286,11 @@ export default class Rankings extends Component {
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
+                  isLoading={isLoading(mediumSyncs)}
                   loadMore={loadMediumSyncs}
-                  offset={160}
-                  page={mediumSyncs.get('page')}>
-                  {mediumSyncs.get('data') && mediumSyncs.get('data').map((ms, i) => (
+                  offset={400}
+                  page={currentMediumSyncsPage}>
+                  {mediumSyncs.get('data').map((ms, i) => (
                     <RankingItem
                       count={ms.count}
                       countLabel='Syncs'
@@ -297,10 +306,11 @@ export default class Rankings extends Component {
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
+                  isLoading={isLoading(characterSubscriptions)}
                   loadMore={loadCharacterSubscriptions}
-                  offset={160}
-                  page={characterSubscriptions.get('page')}>
-                  {characterSubscriptions.get('data') && characterSubscriptions.get('data').map((cs, i) => (
+                  offset={400}
+                  page={currentCharacterSubscriptionsPage}>
+                  {characterSubscriptions.get('data').map((cs, i) => (
                     <RankingItem
                       count={cs.count}
                       countLabel='Subscribers'
@@ -315,15 +325,16 @@ export default class Rankings extends Component {
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
+                  isLoading={isLoading(productViews)}
                   loadMore={loadProductViews}
-                  offset={160}
-                  page={productViews.get('page')}>
-                {productViews.get('data') && productViews.get('data').map((pw, i) => (
+                  offset={400}
+                  page={currentProductViewsPage}>
+                {productViews.get('data').map((pw, i) => (
                   <RankingItem
                     count={pw.count}
-                    countLabel={pw.product.id}
+                    countLabel={'Views'}
                     imageUrl={pw.product.image && pw.product.image.url}
-                    key={i} // TODO use product id
+                    key={i}
                     position={i + 1}
                     title={pw.product.shortName} />
                 ))}
@@ -333,10 +344,11 @@ export default class Rankings extends Component {
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
+                  isLoading={isLoading(brandSubscriptions)}
                   loadMore={loadBrandSubscriptions}
-                  offset={160}
-                  page={brandSubscriptions.get('page')}>
-                  {brandSubscriptions.get('data') && brandSubscriptions.get('data').map((bs, i) => (
+                  offset={400}
+                  page={currentBrandSubscriptionsPage}>
+                  {brandSubscriptions.get('data').map((bs, i) => (
                     <RankingItem
                       count={bs.count}
                       countLabel='Subscribers'

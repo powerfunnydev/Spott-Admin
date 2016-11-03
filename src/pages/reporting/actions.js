@@ -6,6 +6,7 @@ import {
   fetchGenderData, fetchCharacterSubscriptions
 } from '../../actions/reporting';
 import { currentAgesSelector, currentGendersSelector, currentMediaSelector } from './selector';
+import { locationSelector } from '../../selectors/global';
 
 // Action types
 // ////////////
@@ -17,6 +18,7 @@ export const ACTIVITIES_FETCH_START = 'REPORTING/ACTIVITIES_FETCH_START';
 export const ACTIVITIES_FETCH_ERROR = 'REPORTING/ACTIVITIES_FETCH_ERROR';
 
 export const CLEAR_RANKINGS = 'REPORTING/CLEAR_RANKINGS';
+export const SAVE_FILTER_QUERY = 'REPORTING/SAVE_FILTER_QUERY';
 
 export function searchMedia (searchString = '') {
   return async (dispatch, getState) => {
@@ -56,14 +58,19 @@ export const loadGenders = fetchGenders;
 //   };
 // }
 
-export function loadActivities (query) {
-  return async (dispatch) => {
+export function loadActivities () {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const query = locationSelector(state).query;
+
     try {
-      if (query && query.endDate && query.event && query.startDate && query.media) {
+      dispatch({ type: SAVE_FILTER_QUERY, query });
+
+      if (query.endDate && query.event && query.startDate && query.media) {
         const endDate = moment(query.endDate);
         const startDate = moment(query.startDate);
         const eventType = query.event;
-        const mediumIds = typeof query.media === 'string' ? [ query.media ] : (query.media || []);
+        const mediumIds = currentMediaSelector(state);
 
         // We need to load the genders to show in the gender chart.
         await dispatch(loadGenders());
@@ -102,13 +109,16 @@ export function loadRankings () {
     const genders = currentGendersSelector(state);
     const mediumIds = currentMediaSelector(state);
 
+    const query = locationSelector(state).query;
+
     try {
+      dispatch({ type: SAVE_FILTER_QUERY, query });
       dispatch({ type: CLEAR_RANKINGS });
-      dispatch(fetchBrandSubscriptions({ ages, genders, mediumIds }));
-      dispatch(fetchCharacterSubscriptions({ ages, genders, mediumIds }));
-      dispatch(fetchMediumSubscriptions({ ages, genders, mediumIds }));
-      dispatch(fetchMediumSyncs({ ages, genders, mediumIds }));
-      dispatch(fetchProductViews({ ages, genders, mediumIds }));
+      dispatch(fetchBrandSubscriptions({ ages, genders, mediumIds, page: 0 }));
+      dispatch(fetchCharacterSubscriptions({ ages, genders, mediumIds, page: 0 }));
+      dispatch(fetchMediumSubscriptions({ ages, genders, mediumIds, page: 0 }));
+      dispatch(fetchMediumSyncs({ ages, genders, mediumIds, page: 0 }));
+      dispatch(fetchProductViews({ ages, genders, mediumIds, page: 0 }));
 
       // return await dispatch(dataSearchSeries({ searchString }));
     } catch (error) {
