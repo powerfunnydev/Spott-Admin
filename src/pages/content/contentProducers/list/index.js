@@ -4,18 +4,16 @@ import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import moment from 'moment';
 import Header from '../../../app/header';
-import { Root, Container, buttonStyles } from '../../../_common/styles';
-import { tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table';
+import { Root, Container } from '../../../_common/styles';
+import { isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
 import Line from '../../../_common/components/line';
-import SearchInput from '../../../_common/inputs/searchInput';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
 import SpecificHeader from '../../header';
-import PlusButton from '../../../_common/buttons/plusButton';
-import Button from '../../../_common/buttons/button';
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
+import UtilsBar from '../../../_common/components/table/utilsBar';
 
 const numberOfRows = 25;
 
@@ -58,20 +56,14 @@ export default class ContentProducers extends Component {
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
   }
 
-  componentWillMount () {
-    this.props.load(this.props.location.query);
+  async componentWillMount () {
+    await this.props.load(this.props.location.query);
   }
 
-  componentWillReceiveProps (nextProps) {
+  async componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
-    if (query.page !== nextQuery.page ||
-      query.pageSize !== nextQuery.pageSize ||
-      query.sortDirection !== nextQuery.sortDirection ||
-      query.sortField !== nextQuery.sortField ||
-      query.searchString !== nextQuery.searchString) {
-      this.props.load(nextProps.location.query);
-    }
+    await isQueryChanged(query, nextQuery) && this.props.load(nextProps.location.query);
   }
 
   async deleteContentProducersEntry (contentProducersEntryId) {
@@ -109,29 +101,24 @@ export default class ContentProducers extends Component {
     await this.props.load(this.props.location.query);
   }
 
-  static styles = {
-    searchContainer: {
-      minHeight: '70px',
-      display: 'flex',
-      alignItems: 'center' }
-  }
-
   render () {
     const { contentProducers, children, isSelected, location, location: { query: { page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount } = this.props;
-    const { styles } = this.constructor;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
       <Root>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <div style={generalStyles.backgroundBar}>
-          <Container style={styles.searchContainer}>
-            <SearchInput isLoading={contentProducers.get('_status') !== 'loaded'} value={searchString} onChange={this.props.onChangeSearchString}/>
-            <div style={generalStyles.floatRight}>
-              <Button key='delete' style={[ buttonStyles.blue ]} text={`Delete ${numberSelected}`} type='button' onClick={this.onClickDeleteSelected}/>
-              <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='New Content Producer' onClick={this.onClickNewEntry} />
-            </div>
+          <Container>
+            <UtilsBar
+              isLoading={contentProducers.get('_status') !== 'loaded'}
+              numberSelected={numberSelected}
+              searchString={searchString}
+              textCreateButton='New Content Producer'
+              onChangeSearchString={this.props.onChangeSearchString}
+              onClickDeleteSelected={this.onClickDeleteSelected}
+              onClickNewEntry={this.onClickNewEntry}/>
           </Container>
         </div>
         <Line/>
@@ -159,7 +146,7 @@ export default class ContentProducers extends Component {
                       <CustomCel style={{ flex: 1 }}>
                         <Dropdown
                           elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/content-producers/edit/${cp.get('id')}`); }}>Edit</div>}>
-                          <div key={1} style={[ dropdownStyles.option ]} onClick={(e) => { e.preventDefault(); this.deleteContentProducersEntry(cp.get('id')); }}>Remove</div>
+                          <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteContentProducersEntry(cp.get('id')); }}>Remove</div>
                         </Dropdown>
                       </CustomCel>
                     </Row>

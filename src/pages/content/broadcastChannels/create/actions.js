@@ -1,5 +1,6 @@
 import { persistBroadcastChannelEntry } from '../../../../actions/broadcastChannel';
 import { searchBroadcasters as dataSearchBroadcasters, fetchBroadcasterChannels as dataFetchBroadcasterChannels } from '../../../../actions/broadcasters';
+
 export const submit = persistBroadcastChannelEntry;
 
 export const BROADCASTERS_SEARCH_START = 'BROADCAST_CHANNELS_CREATE/BROADCASTERS_SEARCH_START';
@@ -16,7 +17,10 @@ export function searchBroadcasters (searchString) {
   };
 }
 
-export function loadBroadcastChannels (broadcastersEntryId) {
+/**
+ * Load Broadcast Channels of a broadcaster.
+ */
+export function loadBroadcasterChannels (broadcastersEntryId) {
   return async (dispatch, getState) => {
     return await dispatch(dataFetchBroadcasterChannels({ broadcastersEntryId }));
   };

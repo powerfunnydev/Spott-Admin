@@ -13,6 +13,7 @@ import * as actions from './actions';
 import SelectInput from '../../../_common/inputs/selectInput';
 import selector from './selector';
 import { routerPushWithReturnTo } from '../../../../actions/global';
+import { load as loadList } from '../list/actions';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -24,7 +25,8 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
-  loadBroadcastChannels: bindActionCreators(actions.loadBroadcastChannels, dispatch),
+  loadBroadcasterChannels: bindActionCreators(actions.loadBroadcasterChannels, dispatch),
+  loadList: bindActionCreators(loadList, dispatch),
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
@@ -41,7 +43,8 @@ export default class CreateBroadcasterEntryModal extends Component {
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
-    loadBroadcastChannels: PropTypes.func.isRequired,
+    loadBroadcasterChannels: PropTypes.func.isRequired,
+    loadList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
@@ -69,7 +72,13 @@ export default class CreateBroadcasterEntryModal extends Component {
     try {
       await this.props.submit(form.toJS());
       if (this.props.params.id) {
-        await this.props.loadBroadcastChannels(this.props.params.id);
+        await this.props.loadBroadcasterChannels(this.props.params.id);
+      } else {
+        // Load the new list of items, using the location query of the previous page.
+        const location = this.props.location && this.props.location.state && this.props.location.state.returnTo;
+        if (location && location.query) {
+          this.props.loadList(location.query);
+        }
       }
       this.onCloseClick();
     } catch (error) {

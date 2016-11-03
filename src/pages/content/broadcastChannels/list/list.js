@@ -2,35 +2,35 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import moment from 'moment';
-import Header from '../../../app/header';
-import { Root, Container } from '../../../_common/styles';
-import { UtilsBar, isQueryChanged, Tile, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
+import { Container } from '../../../_common/styles';
+import { isQueryChanged, Tile, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
 import Line from '../../../_common/components/line';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
-import SpecificHeader from '../../header';
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
+import { routerPushWithReturnTo } from '../../../../actions/global';
+import UtilsBar from '../../../_common/components/table/utilsBar';
 
 const numberOfRows = 25;
 
 @tableDecorator
 @connect(selector, (dispatch) => ({
-  deleteBroadcastersEntry: bindActionCreators(actions.deleteBroadcastersEntry, dispatch),
-  deleteBroadcastersEntries: bindActionCreators(actions.deleteBroadcastersEntries, dispatch),
+  deleteBroadcastChannelEntry: bindActionCreators(actions.deleteBroadcastChannelEntry, dispatch),
+  deleteBroadcastChannelEntries: bindActionCreators(actions.deleteBroadcastChannelEntries, dispatch),
   load: bindActionCreators(actions.load, dispatch),
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
 }))
 @Radium
-export default class Broadcasters extends Component {
+export default class BroadcastChannelList extends Component {
 
   static propTypes = {
-    broadcasters: ImmutablePropTypes.map.isRequired,
+    broadcastChannels: ImmutablePropTypes.map.isRequired,
     children: PropTypes.node,
-    deleteBroadcastersEntries: PropTypes.func.isRequired,
-    deleteBroadcastersEntry: PropTypes.func.isRequired,
+    deleteBroadcastChannelEntries: PropTypes.func.isRequired,
+    deleteBroadcastChannelEntry: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -64,58 +64,47 @@ export default class Broadcasters extends Component {
     await isQueryChanged(query, nextQuery) && this.props.load(nextProps.location.query);
   }
 
-  async deleteBroadcastersEntry (broadcastersEntryId) {
-    await this.props.deleteBroadcastersEntry(broadcastersEntryId);
+  async deleteBroadcastChannelEntry (broadcastChannelsEntryId) {
+    await this.props.deleteBroadcastChannelEntry(broadcastChannelsEntryId);
     await this.props.load(this.props.location.query);
   }
 
-  getName (broadcaster) {
-    return broadcaster.get('name');
-  }
-
-  getUpdatedBy (broadcaster) {
-    return broadcaster.get('lastUpdatedBy');
-  }
-
-  getLastUpdatedOn (broadcaster) {
-    const date = new Date(broadcaster.get('lastUpdatedOn'));
-    return moment(date).format('YYYY-MM-DD HH:mm');
+  getName (broadcastChannel) {
+    return broadcastChannel.get('name');
   }
 
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/broadcasters/create');
+    this.props.routerPushWithReturnTo('content/broadcast-channels/create');
   }
 
   async onClickDeleteSelected (e) {
     e.preventDefault();
-    const broadcastersEntryIds = [];
+    const broadcastChannelsEntryIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {
-        broadcastersEntryIds.push(key);
+        broadcastChannelsEntryIds.push(key);
       }
     });
-    await this.props.deleteBroadcastersEntries(broadcastersEntryIds);
+    await this.props.deleteBroadcastChannelEntries(broadcastChannelsEntryIds);
     await this.props.load(this.props.location.query);
   }
 
   render () {
-    const { broadcasters, children, isSelected, location, location: { query: { display, page, searchString, sortField, sortDirection } },
+    const { broadcastChannels, children, isSelected, location: { query: { display, page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount,
-    onChangeDisplay, onChangeSearchString } = this.props;
+      onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
-      <Root>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
+      <div>
         <div style={generalStyles.backgroundBar}>
-          <Container >
+          <Container>
             <UtilsBar
               display={display}
-              isLoading={broadcasters.get('_status') !== 'loaded'}
+              isLoading={broadcastChannels.get('_status') !== 'loaded'}
               numberSelected={numberSelected}
               searchString={searchString}
-              textCreateButton='New Broadcaster'
+              textCreateButton='New Broadcast Channel'
               onChangeDisplay={onChangeDisplay}
               onChangeSearchString={onChangeSearchString}
               onClickDeleteSelected={this.onClickDeleteSelected}
@@ -135,17 +124,17 @@ export default class Broadcasters extends Component {
                     <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 5 } ]}>NAME</CustomCel>
                     <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}/>
                   </Headers>
-                  <Rows isLoading={broadcasters.get('_status') !== 'loaded'}>
-                    {broadcasters.get('data').map((broadcaster, index) => {
+                  <Rows isLoading={broadcastChannels.get('_status') !== 'loaded'}>
+                    {broadcastChannels.get('data').map((broadcastChannel, index) => {
                       return (
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                          <CheckBoxCel checked={isSelected.get(broadcaster.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, broadcaster.get('id'))}/>
-                          <CustomCel getValue={this.getName} objectToRender={broadcaster} style={{ flex: 5 }} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcaster.get('id')}`); }}/>
+                          <CheckBoxCel checked={isSelected.get(broadcastChannel.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, broadcastChannel.get('id'))}/>
+                          <CustomCel getValue={this.getName} objectToRender={broadcastChannel} style={{ flex: 5 }} />
                           <CustomCel style={{ flex: 1 }}>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/edit/${broadcaster.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastersEntry(broadcaster.get('id')); }}>Remove</div>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}>Edit</div>}>
+                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastChannelEntry(broadcastChannel.get('id')); }}>Remove</div>
                             </Dropdown>
                           </CustomCel>
                         </Row>
@@ -158,16 +147,16 @@ export default class Broadcasters extends Component {
             }
             {display === 'grid' &&
               <div style={generalStyles.row}>
-                { broadcasters.get('data').map((broadcaster, index) => (
-                  <Tile imageUrl={broadcaster.getIn([ 'logo', 'url' ])} key={`broadcaster${index}`} text={broadcaster.get('name')} onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/broadcasters/edit/${broadcaster.get('id')}`); }}/>
+                { this.props.broadcastChannels.get('data').map((broadcastChannel, index) => (
+                  <Tile imageUrl={broadcastChannel.getIn([ 'logo', 'url' ])} key={`broadcastChannel${index}`} text={broadcastChannel.get('name')} onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}/>
                 ))}
-                <Tile key={'createBroadcaster'} onCreate={() => { this.props.routerPushWithReturnTo('content/broadcasters/create'); }}/>
+                <Tile key={'createBroadcastChannel'} onCreate={() => { this.props.routerPushWithReturnTo('content/broadcast-channels/create'); }}/>
               </div>
             }
           </Container>
         </div>
         {children}
-      </Root>
+      </div>
     );
   }
 }

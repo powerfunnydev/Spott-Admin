@@ -18,6 +18,10 @@ export function serializeFilterHasBroadcasters (query) {
   return serialize(query);
 }
 
+export function serializeFilterHasBroadcastChannels (query) {
+  return serialize(query);
+}
+
 export function serializeFilterHasTvGuideEntries ({ page = 0, pageSize = 25, sortDirection, sortField }) {
   let id = `page=${page}&pageSize=${pageSize}`;
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {

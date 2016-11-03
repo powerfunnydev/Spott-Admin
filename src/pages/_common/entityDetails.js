@@ -6,6 +6,7 @@ import RemoveButton from './buttons/removeButton';
 @Radium
 export default class EntityDetails extends Component {
   static propTypes = {
+    content: PropTypes.string,
     image: PropTypes.string,
     style: PropTypes.object,
     subtitle: PropTypes.string,
@@ -51,16 +52,15 @@ export default class EntityDetails extends Component {
   }
 
   render () {
-    const { image, title, subtitle, onEdit, onRemove } = this.props;
+    const { content, image, title, subtitle, onEdit, onRemove } = this.props;
     const { styles } = this.constructor;
     return (
       <div style={styles.root}>
-        {image && <img src={image} style={{ height: '80px' }}/> || <div style={styles.noImage}>No image</div>}
+        {(image && <img src={image} style={{ height: '80px' }}/>) || <div style={styles.noImage}>No image</div>}
         <div style={{ paddingLeft: '20px' }}>
           <div style={styles.title}>{title}</div>
           <div style={styles.subtitle}>{subtitle}</div>
-          <div style={styles.content}>This is the base language summary for this specific episode, no longer
-then 2 lines, if the text too long to fit in this are it gets cut of by 3 dots…</div>
+          <div style={styles.content}>{content}</div>
         </div>
         <div style={styles.alignRight}>
           {onEdit && <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white ]} onClick={onEdit}>Edit</button>}
