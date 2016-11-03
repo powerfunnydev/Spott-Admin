@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { routerPushWithReturnTo } from '../../actions/global';
 import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
+import InfiniteScroll from '../_common/components/infiniteScroll';
 import { isLoading } from '../../constants/statusTypes';
 import { arraysEqual, slowdown } from '../../utils';
 import * as actions from './actions';
@@ -125,6 +126,11 @@ class RankingItem extends Component {
 }
 
 @connect(rankingsSelector, (dispatch) => ({
+  loadBrandSubscriptions: bindActionCreators(actions.loadBrandSubscriptions, dispatch),
+  loadCharacterSubscriptions: bindActionCreators(actions.loadCharacterSubscriptions, dispatch),
+  loadMediumSubscriptions: bindActionCreators(actions.loadMediumSubscriptions, dispatch),
+  loadMediumSyncs: bindActionCreators(actions.loadMediumSyncs, dispatch),
+  loadProductViews: bindActionCreators(actions.loadProductViews, dispatch),
   loadRankings: bindActionCreators(actions.loadRankings, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
@@ -133,6 +139,11 @@ export default class Rankings extends Component {
   static propTypes = {
     brandSubscriptions: ImmutablePropTypes.map.isRequired,
     characterSubscriptions: ImmutablePropTypes.map.isRequired,
+    loadBrandSubscriptions: PropTypes.func.isRequired,
+    loadCharacterSubscriptions: PropTypes.func.isRequired,
+    loadMediumSubscriptions: PropTypes.func.isRequired,
+    loadMediumSyncs: PropTypes.func.isRequired,
+    loadProductViews: PropTypes.func.isRequired,
     loadRankings: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     mediumSubscriptions: ImmutablePropTypes.map.isRequired,
@@ -226,8 +237,11 @@ export default class Rankings extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { brandSubscriptions, characterSubscriptions, location: { query: { ages, genders } }, mediumSubscriptions, mediumSyncs, productViews } = this.props;
-    console.log('mediumSubscriptions', mediumSubscriptions.toJS());
+    const {
+      brandSubscriptions, characterSubscriptions, loadBrandSubscriptions,
+      loadCharacterSubscriptions, loadMediumSubscriptions, loadMediumSyncs, loadProductViews,
+      location: { query: { ages, genders } }, mediumSubscriptions, mediumSyncs, productViews } = this.props;
+
     return (
       <div>
         <Container>
@@ -243,60 +257,95 @@ export default class Rankings extends Component {
           <Container>
             <div style={styles.widgets}>
               <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(mediumSubscriptions)} title='Programs'>
-                {mediumSubscriptions.get('data').map((ms, i) => (
-                  <RankingItem
-                    count={ms.count}
-                    countLabel='Subscribers'
-                    imageUrl={ms.medium.posterImage && ms.medium.posterImage.url}
-                    key={ms.medium.id}
-                    position={i + 1}
-                    title={ms.medium.title} />
-                ))}
+                <InfiniteScroll
+                  containerHeight={260}
+                  elementHeight={40}
+                  loadMore={loadMediumSubscriptions}
+                  offset={160}
+                  page={mediumSubscriptions.get('page')}>
+                   {mediumSubscriptions.get('data') && mediumSubscriptions.get('data').map((ms, i) => (
+                     <RankingItem
+                       count={ms.count}
+                       countLabel='Subscribers'
+                       imageUrl={ms.medium.posterImage && ms.medium.posterImage.url}
+                       key={i}
+                       position={i + 1}
+                       title={ms.medium.title} />
+                   ))}
+                </InfiniteScroll>
               </Widget>
-              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(mediumSubscriptions)} title='Program syncs'>
-                {mediumSyncs.get('data').map((ms, i) => (
-                  <RankingItem
-                    count={ms.count}
-                    countLabel='Syncs'
-                    imageUrl={ms.medium.posterImage && ms.medium.posterImage.url}
-                    key={ms.medium.id}
-                    position={i + 1}
-                    title={ms.medium.title} />
-                ))}
+              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(mediumSyncs)} title='Program syncs'>
+                <InfiniteScroll
+                  containerHeight={260}
+                  elementHeight={40}
+                  loadMore={loadMediumSyncs}
+                  offset={160}
+                  page={mediumSyncs.get('page')}>
+                  {mediumSyncs.get('data') && mediumSyncs.get('data').map((ms, i) => (
+                    <RankingItem
+                      count={ms.count}
+                      countLabel='Syncs'
+                      imageUrl={ms.medium.posterImage && ms.medium.posterImage.url}
+                      key={i}
+                      position={i + 1}
+                      title={ms.medium.title} />
+                  ))}
+                </InfiniteScroll>
               </Widget>
               {/* <Widget contentStyle={styles.rankingWidget} title='Interactive commercials'>{content}</Widget> */}
               <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(characterSubscriptions)} title='Characters'>
-                {characterSubscriptions.get('data').map((cs, i) => (
-                  <RankingItem
-                    count={cs.count}
-                    countLabel='Subscribers'
-                    imageUrl={cs.character.portraitImage && cs.character.portraitImage.url}
-                    key={cs.character.id}
-                    position={i + 1}
-                    title={cs.character.name ? `${cs.character.name} - ${cs.medium.title}` : cs.medium.title} />
-                ))}
+                <InfiniteScroll
+                  containerHeight={260}
+                  elementHeight={40}
+                  loadMore={loadCharacterSubscriptions}
+                  offset={160}
+                  page={characterSubscriptions.get('page')}>
+                  {characterSubscriptions.get('data') && characterSubscriptions.get('data').map((cs, i) => (
+                    <RankingItem
+                      count={cs.count}
+                      countLabel='Subscribers'
+                      imageUrl={cs.character.portraitImage && cs.character.portraitImage.url}
+                      key={i}
+                      position={i + 1}
+                      title={cs.character.name ? `${cs.character.name} - ${cs.medium.title}` : cs.medium.title} />
+                  ))}
+                </InfiniteScroll>
               </Widget>
               <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(productViews)} title='Products'>
-                {productViews.get('data').map((pw, i) => (
+                <InfiniteScroll
+                  containerHeight={260}
+                  elementHeight={40}
+                  loadMore={loadProductViews}
+                  offset={160}
+                  page={productViews.get('page')}>
+                {productViews.get('data') && productViews.get('data').map((pw, i) => (
                   <RankingItem
                     count={pw.count}
-                    countLabel='Views'
+                    countLabel={pw.product.id}
                     imageUrl={pw.product.image && pw.product.image.url}
-                    key={pw.product.id}
+                    key={i} // TODO use product id
                     position={i + 1}
                     title={pw.product.shortName} />
                 ))}
+                </InfiniteScroll>
               </Widget>
               <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(brandSubscriptions)} title='Brands'>
-                {brandSubscriptions.get('data').map((bs, i) => (
-                  <RankingItem
-                    count={bs.count}
-                    countLabel='Subscribers'
-                    imageUrl={bs.brand.logo && bs.brand.logo.url}
-                    key={bs.brand.id}
-                    position={i + 1}
-                    title={bs.brand.name} />
-                ))}
+                <InfiniteScroll
+                  containerHeight={260}
+                  elementHeight={40}
+                  loadMore={loadBrandSubscriptions}
+                  offset={160}
+                  page={brandSubscriptions.get('page')}>
+                  {brandSubscriptions.get('data') && brandSubscriptions.get('data').map((bs, i) => (
+                    <RankingItem
+                      count={bs.count}
+                      countLabel='Subscribers'
+                      imageUrl={bs.brand.logo && bs.brand.logo.url}
+                      key={i}
+                      position={i + 1}
+                      title={bs.brand.name} />
+                  ))}
+                </InfiniteScroll>
               </Widget>
             </div>
           </Container>
