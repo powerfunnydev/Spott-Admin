@@ -23,6 +23,7 @@ export default class Menu extends Component {
 
   static propTypes = {
     currentLocation: PropTypes.object.isRequired,
+    filterQuery: PropTypes.object,
     hideHomePageLinks: PropTypes.bool,
     isAuthenticated: PropTypes.bool.isRequired,
     logout: PropTypes.func.isRequired,
@@ -68,7 +69,7 @@ export default class Menu extends Component {
   };
 
   render () {
-    const { hideHomePageLinks, isAuthenticated, neutral, t, userRoles } = this.props;
+    const { hideHomePageLinks, isAuthenticated, filterQuery, neutral, t, userRoles } = this.props;
     const { styles } = this.constructor;
     // ScrollLinks are wrapped because media queries (hiding button) won't work with Radium applied on the ScrollLink.
     return (
@@ -112,7 +113,7 @@ export default class Menu extends Component {
             <button key='tv-guide' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>TV Guide</button>
           </RouterLink>}
         {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER) || userRoles.includes(BROADCASTER)) &&
-          <RouterLink to='reporting'>
+          <RouterLink to={{ pathname: 'reporting/activity', query: filterQuery }}>
             <button key='reporting' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Reporting</button>
           </RouterLink>}
 
