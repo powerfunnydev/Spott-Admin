@@ -6,6 +6,7 @@ export const cmsNextBaseUrlSelector = (state) => state.getIn([ 'global', 'config
 export const currentLocaleSelector = (state) => state.getIn([ 'global', 'configuration', 'currentLocale' ]);
 export const currentModalSelector = (state) => state.getIn([ 'global', 'currentModal' ]);
 export const isAuthenticatedSelector = (state) => Boolean(state.getIn([ 'global', 'authentication', 'authenticationToken' ]));
+export const locationSelector = (state) => state.get('router').locationBeforeTransitions;
 export const taggerBaseUrlSelector = (state) => state.getIn([ 'global', 'configuration', 'urls', 'tagger' ]);
 export const usernameSelector = (state) => state.getIn([ 'global', 'username' ]);
 export const userRolesSelector = (state) => state.getIn([ 'global', 'authentication', 'user', 'roles' ]);

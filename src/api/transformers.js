@@ -245,3 +245,7 @@ export function transformSingleTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastU
     serie: season && season.serie && { id: season.serie.uuid, title: season.serie.title }
   };
 }
+
+export function transformPaging ({ page, pageCount, pageSize, totalResultCount }) {
+  return { page, pageCount, pageSize, totalResultCount };
+}
