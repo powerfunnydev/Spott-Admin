@@ -31,6 +31,10 @@ export default class EntityDetails extends Component {
       justifyContent: 'center',
       alignItems: 'center'
     },
+    image: {
+      height: '80px',
+      width: '143px'
+    },
     title: {
       paddingBottom: '4px',
       color: colors.black2,
@@ -48,6 +52,9 @@ export default class EntityDetails extends Component {
     },
     alignRight: {
       marginLeft: 'auto'
+    },
+    paddingLeft: {
+      paddingLeft: '20px'
     }
   }
 
@@ -56,8 +63,8 @@ export default class EntityDetails extends Component {
     const { styles } = this.constructor;
     return (
       <div style={styles.root}>
-        {(image && <img src={image} style={{ height: '80px' }}/>) || <div style={styles.noImage}>No image</div>}
-        <div style={{ paddingLeft: '20px' }}>
+        {(image && <img src={image} style={styles.image}/>) || <div style={styles.noImage}>No image</div>}
+        <div style={styles.paddingLeft}>
           <div style={styles.title}>{title}</div>
           <div style={styles.subtitle}>{subtitle}</div>
           <div style={styles.content}>{content}</div>

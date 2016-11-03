@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { bindActionCreators } from 'redux';
 import Header from '../../../app/header';
-import { Container } from '../../../_common/styles';
+import { Root, Container } from '../../../_common/styles';
 import localized from '../../../_common/localized';
 import * as actions from './actions';
 import SpecificHeader from '../../header';
@@ -45,6 +45,7 @@ export default class ReadBroadcastersEntry extends Component {
       pathname: PropTypes.string.isRequired,
       query: PropTypes.object.isRequired
     }),
+    numberSelected: PropTypes.number,
     pageCount: PropTypes.number,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
@@ -52,6 +53,7 @@ export default class ReadBroadcastersEntry extends Component {
     selectCheckbox: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired,
     totalResultCount: PropTypes.number.isRequired,
+    onChangeDisplay: PropTypes.func.isRequired,
     onChangePage: PropTypes.func.isRequired,
     onChangeSearchString: PropTypes.func.isRequired,
     onSortField: PropTypes.func.isRequired
@@ -60,6 +62,7 @@ export default class ReadBroadcastersEntry extends Component {
   constructor (props) {
     super(props);
     this.redirect = ::this.redirect;
+    this.onClickNewEntry = :: this.onClickNewEntry;
   }
 
   async componentWillMount () {
@@ -83,20 +86,29 @@ export default class ReadBroadcastersEntry extends Component {
     this.props.routerPushWithReturnTo('content/broadcasters', true);
   }
 
+  onClickNewEntry (e) {
+    e.preventDefault();
+    const broadcasterId = this.props.params.id;
+    if (broadcasterId) {
+      this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcasterId}/create/broadcast-channel`);
+    }
+  }
+
   render () {
     const { onChangeSearchString, onChangeDisplay, numberSelected, pageCount, selectAllCheckboxes, selectCheckbox, isSelected, totalResultCount, children, broadcastChannels, currentBroadcaster,
-       location: { query: { display, page, searchString, sortField, sortDirection } }, deleteBroadcastersEntry } = this.props;
+       location, location: { query: { display, page, searchString, sortField, sortDirection } }, deleteBroadcastersEntry } = this.props;
     return (
-      <div>
+      <Root>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[ { title: 'List', url: '/content/broadcasters' }, { title: currentBroadcaster.get('name'), url: location.pathname } ]}/>
         <Container>
           {currentBroadcaster.get('_status') === 'loaded' && currentBroadcaster &&
-            <EntityDetails image={currentBroadcaster.getIn([ 'logo', 'url' ])} title={currentBroadcaster.getIn([ 'name' ])}
+            <EntityDetails image={currentBroadcaster.get('logo') && currentBroadcaster.getIn([ 'logo', 'url' ])} title={currentBroadcaster.getIn([ 'name' ])}
               onEdit={() => { this.props.routerPushWithReturnTo(`content/broadcasters/edit/${currentBroadcaster.getIn([ 'id' ])}`); }}
               onRemove={async () => { await deleteBroadcastersEntry(currentBroadcaster.getIn([ 'id' ])); this.redirect(); }}/>}
         </Container>
+        <Line/>
         <div style={generalStyles.backgroundBar}>
           <Container >
             <UtilsBar
@@ -106,7 +118,8 @@ export default class ReadBroadcastersEntry extends Component {
               searchString={searchString}
               textCreateButton='New Broadcast Channel'
               onChangeDisplay={onChangeDisplay}
-              onChangeSearchString={onChangeSearchString}/>
+              onChangeSearchString={onChangeSearchString}
+              onClickNewEntry={this.onClickNewEntry}/>
           </Container>
         </div>
         <Line/>
@@ -148,13 +161,13 @@ export default class ReadBroadcastersEntry extends Component {
                 { this.props.broadcastChannels.get('data').map((broadcastChannel, index) => (
                   <Tile imageUrl={broadcastChannel.getIn([ 'logo', 'url' ])} key={`broadcastChannel${index}`} text={broadcastChannel.get('name')} onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}/>
                 ))}
-                <Tile key={'createBroadcastChannel'} onCreate={() => { this.props.routerPushWithReturnTo(`content/broadcasters/read/${currentBroadcaster.getIn([ 'id' ])}/create/broadcast-channel`); }}/>
+                <Tile key={'createBroadcastChannel'} onCreate={this.onClickNewEntry}/>
               </div>
             }
           </Container>
         </div>
         {children}
-      </div>
+      </Root>
     );
   }
 

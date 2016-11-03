@@ -50,7 +50,7 @@ export default class Dropzone extends Component {
   }
 
   onDrop (acceptedFiles) {
-    this.setState(...this.state, { file: acceptedFiles[0] });
+    this.setState(...this.state, { file: acceptedFiles[0], showImage: false });
     if (this.props.onChange) {
       this.props.onChange({ callback: this.callback, file: acceptedFiles[0] });
     }
