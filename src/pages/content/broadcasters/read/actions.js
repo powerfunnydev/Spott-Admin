@@ -1,23 +1,31 @@
 import { persistBroadcastersEntry, fetchBroadcastersEntry as dataFetchBroadcastersEntry, fetchBroadcasterChannels as dataFetchBroadcasterChannels } from '../../../../actions/broadcasters';
 
-export const BROADCASTER_FETCH_ENTRY_ERROR = 'BROADCASTER_READ/FETCH_ENTRY_ERROR';
+export const SELECT_ALL_CHECKBOXES = 'BROADCASTERS_READ/SELECT_ALL_CHECKBOXES';
+export const SELECT_CHECKBOX = 'BROADCASTERS_READ/SELECT_CHECKBOX';
 
-export const SELECT_ALL_CHECKBOXES = 'BROADCASTER_READ/SELECT_ALL_CHECKBOXES';
-export const SELECT_CHECKBOX = 'BROADCASTER_READ/SELECT_CHECKBOX';
+export const BROADCASTER_FETCH_ENTRY_ERROR = 'BROADCASTERS_READ/FETCH_ENTRY_ERROR';
 
 export const submit = persistBroadcastersEntry;
 
-export function load (queryWithBroadcasterId) {
+export function loadBroadcaster (broadcastersEntryId) {
   return async (dispatch, getState) => {
     try {
-      await dispatch(dataFetchBroadcasterChannels(queryWithBroadcasterId));
-      return await dispatch(dataFetchBroadcastersEntry(queryWithBroadcasterId));
+      return await dispatch(dataFetchBroadcastersEntry({ broadcastersEntryId }));
     } catch (error) {
       dispatch({ error, type: BROADCASTER_FETCH_ENTRY_ERROR });
     }
   };
 }
 
+export function loadBroadcasterChannels (queryWithBroadcasterId) {
+  return async (dispatch, getState) => {
+    try {
+      await dispatch(dataFetchBroadcasterChannels(queryWithBroadcasterId));
+    } catch (error) {
+      dispatch({ error, type: BROADCASTER_FETCH_ENTRY_ERROR });
+    }
+  };
+}
 export function selectAllCheckboxes () {
   return { type: SELECT_ALL_CHECKBOXES };
 }

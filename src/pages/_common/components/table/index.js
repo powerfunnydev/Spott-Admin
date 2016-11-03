@@ -10,6 +10,7 @@ export { Table } from './table';
 export { tableDecorator } from './tableDecorator';
 export { Tile } from './tile';
 export { TotalEntries } from './totalEntries';
+export UtilsBar from './utilsBar';
 
 export const generalStyles = {
   arrowUnder: { transform: 'rotateZ(180deg)' },

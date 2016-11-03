@@ -15,6 +15,7 @@ import BroadcastersEditEntry from './pages/content/broadcasters/edit';
 import BroadcastersReadEntry from './pages/content/broadcasters/read';
 import BroadcastChannelCreateEntry from './pages/content/broadcastChannels/create';
 import BroadcastChannelEditEntry from './pages/content/broadcastChannels/edit';
+import BroadcastChannelListEntry from './pages/content/broadcastChannels/list';
 import ContentProducersList from './pages/content/contentProducers/list';
 import ContentProducersCreateEntry from './pages/content/contentProducers/create';
 import ContentProducersEditEntry from './pages/content/contentProducers/edit';
@@ -90,6 +91,9 @@ function getRoutes ({ getState }) {
           <Route component={BroadcastersReadEntry} path='read/:id'>
             <Route component={BroadcastChannelCreateEntry} path='create/broadcast-channel'/>
           </Route>
+        </Route>
+        <Route component={BroadcastChannelListEntry} path='broadcast-channels'>
+          <Route component={BroadcastChannelCreateEntry} path='create'/>
         </Route>
         <Route path='broadcast-channels'>
           <Route component={BroadcastChannelEditEntry} path='edit/:id' />

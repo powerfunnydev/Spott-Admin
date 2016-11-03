@@ -15,7 +15,7 @@ export default class Line extends Component {
   static styles = {
     line: {
       width: '100%',
-      height: '1px',
+      minHeight: '1px',
       backgroundColor: colors.lightGray2
     }
   }

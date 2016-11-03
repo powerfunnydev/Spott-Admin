@@ -13,8 +13,9 @@ import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import BreadCrumbs from '../../../_common/breadCrumbs';
-import { isQueryChanged, Tile, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
+import { UtilsBar, isQueryChanged, Tile, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
+import Line from '../../../_common/components/line';
 
 const numberOfRows = 25;
 
@@ -22,7 +23,8 @@ const numberOfRows = 25;
 @localized
 @connect(selector, (dispatch) => ({
   deleteBroadcastersEntry: bindActionCreators(listActions.deleteBroadcastersEntry, dispatch),
-  load: bindActionCreators(actions.load, dispatch),
+  loadBroadcaster: bindActionCreators(actions.loadBroadcaster, dispatch),
+  loadBroadcasterChannels: bindActionCreators(actions.loadBroadcasterChannels, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
@@ -37,7 +39,8 @@ export default class ReadBroadcastersEntry extends Component {
     deleteBroadcastersEntry: PropTypes.func.isRequired,
     error: PropTypes.any,
     isSelected: ImmutablePropTypes.map.isRequired,
-    load: PropTypes.func.isRequired,
+    loadBroadcaster: PropTypes.func.isRequired,
+    loadBroadcasterChannels: PropTypes.func.isRequired,
     location: PropTypes.shape({
       pathname: PropTypes.string.isRequired,
       query: PropTypes.object.isRequired
@@ -61,14 +64,15 @@ export default class ReadBroadcastersEntry extends Component {
 
   async componentWillMount () {
     if (this.props.params.id) {
-      await this.props.load({ broadcastersEntryId: this.props.params.id });
+      await this.props.loadBroadcaster(this.props.params.id);
+      await this.props.loadBroadcasterChannels({ ...this.props.location.query, broadcastersEntryId: this.props.params.id });
     }
   }
 
   async componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
-    await isQueryChanged(query, nextQuery) && this.props.load({ ...nextProps.location.query, broadcastersEntryId: this.props.params.id });
+    await isQueryChanged(query, nextQuery) && this.props.loadBroadcasterChannels({ ...nextProps.location.query, broadcastersEntryId: this.props.params.id });
   }
 
   getName (broadcaster) {
@@ -79,16 +83,9 @@ export default class ReadBroadcastersEntry extends Component {
     this.props.routerPushWithReturnTo('content/broadcasters', true);
   }
 
-  static styles= {
-    row: {
-      display: 'flex',
-      flexDirection: 'row'
-    }
-  }
   render () {
-    const { pageCount, selectAllCheckboxes, selectCheckbox, isSelected, totalResultCount, children, broadcastChannels, currentBroadcaster,
-      location: { query: { sortField, display, page, sortDirection } }, deleteBroadcastersEntry } = this.props;
-    const { styles } = this.constructor;
+    const { onChangeSearchString, onChangeDisplay, numberSelected, pageCount, selectAllCheckboxes, selectCheckbox, isSelected, totalResultCount, children, broadcastChannels, currentBroadcaster,
+       location: { query: { display, page, searchString, sortField, sortDirection } }, deleteBroadcastersEntry } = this.props;
     return (
       <div>
         <Header currentLocation={location} hideHomePageLinks />
@@ -100,6 +97,19 @@ export default class ReadBroadcastersEntry extends Component {
               onEdit={() => { this.props.routerPushWithReturnTo(`content/broadcasters/edit/${currentBroadcaster.getIn([ 'id' ])}`); }}
               onRemove={async () => { await deleteBroadcastersEntry(currentBroadcaster.getIn([ 'id' ])); this.redirect(); }}/>}
         </Container>
+        <div style={generalStyles.backgroundBar}>
+          <Container >
+            <UtilsBar
+              display={display}
+              isLoading={broadcastChannels.get('_status') !== 'loaded'}
+              numberSelected={numberSelected}
+              searchString={searchString}
+              textCreateButton='New Broadcast Channel'
+              onChangeDisplay={onChangeDisplay}
+              onChangeSearchString={onChangeSearchString}/>
+          </Container>
+        </div>
+        <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
           <Container style={generalStyles.paddingTable}>
             <TotalEntries totalResultCount={totalResultCount}/>
@@ -138,19 +148,11 @@ export default class ReadBroadcastersEntry extends Component {
                 { this.props.broadcastChannels.get('data').map((broadcastChannel, index) => (
                   <Tile imageUrl={broadcastChannel.getIn([ 'logo', 'url' ])} key={`broadcastChannel${index}`} text={broadcastChannel.get('name')} onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}/>
                 ))}
-                <Tile key={'createBroadcastChannel'} onCreate={() => { this.props.routerPushWithReturnTo('content/broadcast-channels/create'); }}/>
+                <Tile key={'createBroadcastChannel'} onCreate={() => { this.props.routerPushWithReturnTo(`content/broadcasters/read/${currentBroadcaster.getIn([ 'id' ])}/create/broadcast-channel`); }}/>
               </div>
             }
           </Container>
         </div>
-        <Container>
-          <div style={styles.row}>
-            { this.props.broadcastChannels.get('data').map((broadcastChannel, index) => (
-              <Tile imageUrl={broadcastChannel.getIn([ 'logo', 'url' ])} key={`broadcastChannel${index}`} text={broadcastChannel.get('name')} onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}/>
-            ))}
-            <Tile key={'createBroadcastChannel'} onCreate={() => { this.props.routerPushWithReturnTo(`content/broadcasters/read/${currentBroadcaster.getIn([ 'id' ])}/create/broadcast-channel`); }}/>
-          </div>
-        </Container>
         {children}
       </div>
     );

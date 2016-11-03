@@ -25,7 +25,6 @@ export async function fetchBroadcasterChannels (baseUrl, authenticationToken, lo
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }
-  console.log('url', url);
   const { body } = await get(authenticationToken, locale, url);
   // There is also usable data in body (not only in data field).
   // We need also fields page, pageCount,...

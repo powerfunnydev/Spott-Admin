@@ -7,7 +7,7 @@ import * as broadcastersActions from '../actions/broadcasters';
 import * as contentProducersActions from '../actions/contentProducer';
 import * as reportingActions from '../actions/reporting';
 import * as tvGuideActions from '../actions/tvGuide';
-import { serializeFilterHasBroadcasters, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers, serializeFilterHasEpisodes, serializeFilterHasSeries, fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, fetchListSuccess, fetchListError } from './utils';
+import { serializeFilterHasBroadcastChannels, serializeFilterHasBroadcasters, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers, serializeFilterHasEpisodes, serializeFilterHasSeries, fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, fetchListSuccess, fetchListError } from './utils';
 
 export default (state = fromJS({
   entities: {
@@ -26,6 +26,7 @@ export default (state = fromJS({
     events: {},
     filterHasEpisodes: {},
     filterHasBroadcasters: {},
+    filterHasBroadcastChannels: {},
     filterHasContentProducers: {},
     filterHasSeasons: {},
     filterHasTvGuideEntries: {},
@@ -40,6 +41,19 @@ export default (state = fromJS({
 
     // Broadcaster Channels
     // /////////////////
+    case broadcastChannelActions.BROADCAST_CHANNEL_ENTRY_FETCH_START:
+      return fetchStart(state, [ 'entities', 'broadcastChannels', action.broadcastChannelEntryId ]);
+    case broadcastChannelActions.BROADCAST_CHANNEL_ENTRY_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'broadcastChannels', action.broadcastChannelEntryId ], action.data);
+    case broadcastChannelActions.BROADCAST_CHANNEL_ENTRY_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'broadcastChannels', action.broadcastChannelEntryId ], action.error);
+
+    case broadcastChannelActions.BROADCAST_CHANNEL_ENTRIES_FETCH_START:
+      return searchStart(state, 'filterHasBroadcastChannels', serializeFilterHasBroadcastChannels(action));
+    case broadcastChannelActions.BROADCAST_CHANNEL_ENTRIES_FETCH_SUCCESS:
+      return searchSuccess(state, 'broadcastChannels', 'filterHasBroadcastChannels', serializeFilterHasBroadcastChannels(action), action.data.data);
+    case broadcastChannelActions.BROADCAST_CHANNEL_ENTRIES_FETCH_ERROR:
+      return searchError(state, 'filterHasBroadcastChannels', serializeFilterHasBroadcastChannels(action), action.error);
 
     case broadcastChannelActions.BROADCAST_CHANNEL_SEARCH_START:
       return searchStart(state, 'searchStringHasBroadcastChannels', action.searchString);
