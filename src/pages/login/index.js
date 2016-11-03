@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
-import { push as routerPush } from 'react-router-redux';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -9,6 +8,7 @@ import { buttonStyles } from '../_common/styles';
 import localized from '../_common/localized';
 import Modal from '../_common/modal';
 import * as actions from '../../actions/users';
+import { routerPushWithReturnTo } from '../../actions/global';
 
 function validate (values) {
   const validationErrors = {};
@@ -53,7 +53,7 @@ const renderField = Radium((props) => {
 
 @localized
 @connect(null, (dispatch) => ({
-  routerPush: bindActionCreators(routerPush, dispatch),
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   submit: bindActionCreators(actions.login, dispatch)
 }))
 @reduxForm({
@@ -67,7 +67,7 @@ export default class LoginModal extends Component {
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    routerPush: PropTypes.func.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired
   };
@@ -90,7 +90,7 @@ export default class LoginModal extends Component {
   async submit (form) {
     try {
       await this.props.submit(form.toJS());
-      this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
+      this.props.routerPushWithReturnTo('/');
     } catch (error) {
       if (error === 'incorrect') {
         throw new SubmissionError({ _error: 'login.errors.incorrect' });
@@ -100,12 +100,11 @@ export default class LoginModal extends Component {
   }
 
   onCloseClick () {
-    console.log('props', this.props);
-    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || '/');
+    this.props.routerPushWithReturnTo('/', true);
   }
 
   onForgotPasswordClick () {
-    this.props.routerPush({ pathname: '/forgotpassword', returnTo: this.props.location.pathname });
+    this.props.routerPushWithReturnTo('/forgotpassword');
   }
 
   static styles = {

@@ -5,6 +5,7 @@ import {
   fetchAgeData, fetchBrandSubscriptions, fetchMediumSyncs, fetchMediumSubscriptions,
   fetchGenderData, fetchCharacterSubscriptions
 } from '../../actions/reporting';
+import { currentAgesSelector, currentGendersSelector, currentMediaSelector } from './selector';
 
 // Action types
 // ////////////
@@ -14,6 +15,8 @@ export const MEDIA_SEARCH_ERROR = 'REPORTING/MEDIA_SEARCH_ERROR';
 
 export const ACTIVITIES_FETCH_START = 'REPORTING/ACTIVITIES_FETCH_START';
 export const ACTIVITIES_FETCH_ERROR = 'REPORTING/ACTIVITIES_FETCH_ERROR';
+
+export const CLEAR_RANKINGS = 'REPORTING/CLEAR_RANKINGS';
 
 export function searchMedia (searchString = '') {
   return async (dispatch, getState) => {
@@ -91,27 +94,46 @@ export function loadActivities (query) {
 //   };
 // }
 
-export function loadRankings (query) {
+export function loadRankings () {
   return async (dispatch, getState) => {
-    if (query) {
-      const ages = typeof query.ages === 'string' ? [ query.ages ] : (query.ages || []);
-      const genders = typeof query.genders === 'string' ? [ query.genders ] : (query.genders || []);
-      const mediumIds = typeof query.media === 'string' ? [ query.media ] : (query.media || []);
+    const state = getState();
 
-      try {
-        dispatch(fetchBrandSubscriptions({ ages, genders, mediumIds }));
-        dispatch(fetchCharacterSubscriptions({ ages, genders, mediumIds }));
-        dispatch(fetchMediumSubscriptions({ ages, genders, mediumIds }));
-        dispatch(fetchMediumSyncs({ ages, genders, mediumIds }));
-        dispatch(fetchProductViews({ ages, genders, mediumIds }));
+    const ages = currentAgesSelector(state);
+    const genders = currentGendersSelector(state);
+    const mediumIds = currentMediaSelector(state);
 
-        // return await dispatch(dataSearchSeries({ searchString }));
-      } catch (error) {
-        dispatch({ error, type: ACTIVITIES_FETCH_ERROR });
-      }
+    try {
+      dispatch({ type: CLEAR_RANKINGS });
+      dispatch(fetchBrandSubscriptions({ ages, genders, mediumIds }));
+      dispatch(fetchCharacterSubscriptions({ ages, genders, mediumIds }));
+      dispatch(fetchMediumSubscriptions({ ages, genders, mediumIds }));
+      dispatch(fetchMediumSyncs({ ages, genders, mediumIds }));
+      dispatch(fetchProductViews({ ages, genders, mediumIds }));
+
+      // return await dispatch(dataSearchSeries({ searchString }));
+    } catch (error) {
+      dispatch({ error, type: ACTIVITIES_FETCH_ERROR });
     }
   };
 }
+
+function createLoadRankings (fetch) {
+  return (page = 0) => {
+    return async (dispatch, getState) => {
+      const state = getState();
+      const ages = currentAgesSelector(state);
+      const genders = currentGendersSelector(state);
+      const mediumIds = currentMediaSelector(state);
+      return await dispatch(fetch({ ages, genders, mediumIds, page }));
+    };
+  };
+}
+
+export const loadBrandSubscriptions = createLoadRankings(fetchBrandSubscriptions);
+export const loadCharacterSubscriptions = createLoadRankings(fetchCharacterSubscriptions);
+export const loadMediumSubscriptions = createLoadRankings(fetchMediumSubscriptions);
+export const loadMediumSyncs = createLoadRankings(fetchMediumSyncs);
+export const loadProductViews = createLoadRankings(fetchProductViews);
 
 // export function initializeRankingsFilterForm (ages, genders) {
 //   return async (dispatch, getState) => {

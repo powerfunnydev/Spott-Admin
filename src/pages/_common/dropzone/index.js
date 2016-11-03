@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import ReactDropzone from 'react-dropzone';
 import { fileSizeToString } from '../../../utils';
 import { colors, errorTextStyle } from '../styles';
+import ProgressBar from '../../_common/components/progressBar';
 
 const uploadIcon = require('./upload.svg');
 
@@ -11,15 +12,19 @@ const uploadIcon = require('./upload.svg');
 export default class Dropzone extends Component {
 
   static propTypes = {
-    input: PropTypes.object.isRequired,
+    accept: PropTypes.string,
+    input: PropTypes.object,
     message: PropTypes.node.isRequired,
-    meta: PropTypes.object.isRequired,
-    name: PropTypes.string.isRequired
+    meta: PropTypes.object,
+    name: PropTypes.string,
+    onChange: PropTypes.func
   };
 
   constructor (props) {
     super(props);
     this.onDrop = ::this.onDrop;
+    this.callback = ::this.callback;
+    this.state = { };
   }
 
   /**
@@ -31,10 +36,22 @@ export default class Dropzone extends Component {
     }, 0);
   }
 
-  onDrop (files) {
-    // Since we have set multiple to false during render, we can be sure that
-    // files is a singleton array. As such, we extract the single file inside files.
-    this.props.input.onChange(files[0]);
+  callback (progress, total) {
+    this.setState({ progress, total });
+    console.log('progress ', (progress / total) * 100, '%');
+  }
+
+  onDrop (acceptedFiles) {
+    // if we use redux form, update input field.
+    if (this.props.input) {
+      // Since we have set multiple to false during render, we can be sure that
+      // files is a singleton array. As such, we extract the single file inside files.
+      this.props.input.onChange(acceptedFiles[0]);
+    }
+    // if we don't use redux form, invoke onChange method.
+    if (this.props.onChange) {
+      this.props.onChange({ callback: this.callback, file: acceptedFiles[0] });
+    }
   }
 
   static styles = {
@@ -92,18 +109,26 @@ export default class Dropzone extends Component {
   };
 
   render () {
-    const { input: { value }, message, meta } = this.props;
+    const { input, message, meta } = this.props;
+    const value = input && input.value;
     const styles = this.constructor.styles;
     return (
       <div>
         {/* Render dropzone */}
-        <ReactDropzone activeStyle={styles.activeDropzone} disablePreview multiple={false} ref={(x) => { this.dropzone = x; }}
-          style={styles.dropzone} value={value} onDrop={this.onDrop}>
-          <img src={uploadIcon} />
-          <div style={styles.message}>
-            {message}
-          </div>
-          <span style={styles.browseButton}>Browse</span>
+        <ReactDropzone accept={this.props.accept} activeStyle={styles.activeDropzone} disablePreview multiple={false} ref={(x) => { this.dropzone = x; }}
+          value={value} onDrop={this.onDrop}>
+          {this.state.progress && this.state.total &&
+            <div style={styles.dropzone}>
+              <ProgressBar progress={this.state.progress} total={this.state.total} style={{ width: '200px' }}/>
+            </div> ||
+            <div style={styles.dropzone}>
+              <img src={uploadIcon} />
+              <div style={styles.message}>
+                {message}
+              </div>
+              <span style={styles.browseButton}>Browse</span>
+            </div>
+          }
         </ReactDropzone>
 
         {/* Render information about selected video. */}
@@ -113,7 +138,7 @@ export default class Dropzone extends Component {
             <div style={styles.file.size}>{fileSizeToString(value.size)}</div>
           </div>}
 
-        {meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
+        {meta && meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
       </div>
     );
   }

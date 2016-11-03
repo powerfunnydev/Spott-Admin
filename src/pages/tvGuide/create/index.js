@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { push as routerPush } from 'react-router-redux';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -16,6 +15,7 @@ import CreateModal from '../../_common/createModal';
 import { load } from '../list/actions';
 import * as actions from './actions';
 import selector from './selector';
+import { routerPushWithReturnTo } from '../../../actions/global';
 
 function validate (values, { medium, t }) {
   const validationErrors = {};
@@ -41,7 +41,7 @@ function validate (values, { medium, t }) {
 @localized
 @connect(selector, (dispatch) => ({
   load: bindActionCreators(load, dispatch),
-  routerPush: bindActionCreators(routerPush, dispatch),
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchBroadcastChannels: bindActionCreators(actions.searchBroadcastChannels, dispatch),
   searchEpisodes: bindActionCreators(actions.searchEpisodes, dispatch),
   searchMedia: bindActionCreators(actions.searchMedia, dispatch),
@@ -71,7 +71,7 @@ export default class CreateTvGuideEntryModal extends Component {
     location: PropTypes.object.isRequired,
     mediaById: ImmutablePropTypes.map.isRequired,
     medium: ImmutablePropTypes.map.isRequired,
-    routerPush: PropTypes.func.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcastChannels: PropTypes.func.isRequired,
     searchEpisodes: PropTypes.func.isRequired,
     searchMedia: PropTypes.func.isRequired,
@@ -106,7 +106,7 @@ export default class CreateTvGuideEntryModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || 'tv-guide');
+    this.props.routerPushWithReturnTo('tv-guide', true);
   }
 
   static styles = {

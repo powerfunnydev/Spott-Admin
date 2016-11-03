@@ -221,8 +221,8 @@ export function transformSeason ({ availabilities, characters, defaultLocale,
   return season;
 }
 
-export function transformBroadcastChannel ({ name, uuid: id }) {
-  return { id, name };
+export function transformBroadcastChannel ({ name, uuid: id, logo, broadcaster }) {
+  return { id, name, broadcaster: broadcaster && { id: broadcaster.uuid }, logo: logo && { url: logo.url } };
 }
 
 export function transformTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastUpdatedOn }, uuid: id, start, end, medium, medium: { season }, channel }) {
@@ -244,4 +244,8 @@ export function transformSingleTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastU
     season: season && { id: season.uuid, title: season.title },
     serie: season && season.serie && { id: season.serie.uuid, title: season.serie.title }
   };
+}
+
+export function transformPaging ({ page, pageCount, pageSize, totalResultCount }) {
+  return { page, pageCount, pageSize, totalResultCount };
 }

@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
-import { push as routerPush } from 'react-router-redux';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,8 +9,10 @@ import { Root, FormSubtitle, colors, EditTemplate } from '../../../_common/style
 import localized from '../../../_common/localized';
 import * as actions from './actions';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import { styles as tabStyles } from '../../../_common/components/tabs';
 import Section from '../../../_common/components/section';
 import SpecificHeader from '../../header';
+import { routerPushWithReturnTo } from '../../../../actions/global';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -25,7 +26,7 @@ function validate (values, { t }) {
 @connect(null, (dispatch) => ({
   load: bindActionCreators(actions.load, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
-  routerPush: bindActionCreators(routerPush, dispatch)
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
   form: 'contentProducersEditEntry',
@@ -41,7 +42,7 @@ export default class EditContentProducersEntry extends Component {
     load: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
-    routerPush: PropTypes.func.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired
   };
@@ -62,7 +63,7 @@ export default class EditContentProducersEntry extends Component {
   }
 
   redirect () {
-    this.props.routerPush((this.props.location && this.props.location.state && this.props.location.state.returnTo) || 'content/content-producers');
+    this.props.routerPushWithReturnTo('content/content-producers');
   }
 
   async submit (form) {
@@ -75,15 +76,15 @@ export default class EditContentProducersEntry extends Component {
   }
 
   render () {
-    const { location: { pathname }, handleSubmit } = this.props;
+    const { location, handleSubmit } = this.props;
     return (
       <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
-        <Header currentPath={pathname} hideHomePageLinks />
+        <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
           <Tabs>
-            <TabList style={{ marginBottom: 0, borderWidth: 0 }}>
-              <Tab style={{ fontSize: '12px', color: '#536970', borderColor: colors.lightGray3 }}>Details</Tab>
+            <TabList style={tabStyles.tabList}>
+              <Tab style={tabStyles.tab}>Details</Tab>
             </TabList>
             <TabPanel>
               <Section first>

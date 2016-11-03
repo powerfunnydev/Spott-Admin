@@ -9,7 +9,7 @@ const footerLogoImage = require('./footer.svg');
 export default class Footer extends Component {
 
   static propTypes = {
-    currentPath: PropTypes.string.isRequired
+    currentLocation: PropTypes.object.isRequired
   }
   static styles = {
     section: {
@@ -45,7 +45,7 @@ export default class Footer extends Component {
         {/* Logo */}
         <div style={styles.logo.wrapper}><img src={footerLogoImage} style={styles.logo.image} /></div>
         {/* Menu */}
-        <Menu currentPath={this.props.currentPath} neutral />
+        <Menu currentLocation={this.props.currentLocation} neutral />
       </Section>
     );
   }

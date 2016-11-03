@@ -11,6 +11,7 @@ import {
   agesListSelector,
   agesEntitiesSelector
 } from '../../selectors/data';
+import { locationSelector } from '../../selectors/global';
 import { ageConfig, genderConfig, timelineConfig } from './defaultHighchartsConfig';
 import { isLoading } from '../../constants/statusTypes';
 
@@ -196,6 +197,17 @@ export const activitySelector = createStructuredSelector({
 
 // Rankings tab
 // ////////////
+
+function createQueryStringArraySelector (field) {
+  return createSelector(
+    locationSelector,
+    ({ query }) => typeof query[field] === 'string' ? [ query[field] ] : (query[field] || [])
+  );
+}
+
+export const currentAgesSelector = createQueryStringArraySelector('ages');
+export const currentGendersSelector = createQueryStringArraySelector('genders');
+export const currentMediaSelector = createQueryStringArraySelector('media');
 
 export const rankingsFilterSelector = createStructuredSelector({
   ages: agesSelector,

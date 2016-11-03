@@ -9,10 +9,11 @@ import { Root, FormSubtitle, colors, EditTemplate } from '../../../_common/style
 import localized from '../../../_common/localized';
 import * as actions from './actions';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import { styles as tabStyles } from '../../../_common/components/tabs';
 import Section from '../../../_common/components/section';
+import { styles as tabStyles } from '../../../_common/components/tabs';
 import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
+import Dropzone from '../../../_common/dropzone';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -26,14 +27,15 @@ function validate (values, { t }) {
 @connect(null, (dispatch) => ({
   load: bindActionCreators(actions.load, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
+  uploadImage: bindActionCreators(actions.uploadImage, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
-  form: 'broadcastersEditEntry',
+  form: 'broadcastChannelEditEntry',
   validate
 })
 @Radium
-export default class EditBroadcastersEntry extends Component {
+export default class EditBroadcastChannelEntry extends Component {
 
   static propTypes = {
     error: PropTypes.any,
@@ -78,7 +80,7 @@ export default class EditBroadcastersEntry extends Component {
   render () {
     const { location, handleSubmit } = this.props;
     return (
-      <Root style={{ backgroundColor: colors.lightGray4 }}>
+      <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
@@ -93,9 +95,15 @@ export default class EditBroadcastersEntry extends Component {
                   component={TextInput}
                   label='Name'
                   name='name'
-                  placeholder='Name broadcaster'
+                  placeholder='Name Broadcast Channel'
                   required/>
               </Section>
+              <Dropzone
+                accept='image/*'
+                progress={this.state.progress}
+                total={this.state.total}
+                message={<span>Drag & drop the image</span>}
+                onChange={({ callback, file }) => { this.props.uploadImage({ broadcastChannelEntryId: this.props.params.id, image: file, callback }); console.log('file', file); }}/>
             </TabPanel>
           </Tabs>
         </EditTemplate>
@@ -104,3 +112,13 @@ export default class EditBroadcastersEntry extends Component {
   }
 
 }
+
+/*
+<ImageInput
+  disabled={localeDataFieldDisabled}
+  field={logo[_activeLocale.value]}
+  height={250}
+  label='Logo'
+  style={styles.logoImage}
+  width={250} />
+  */

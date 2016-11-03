@@ -24,9 +24,14 @@ export async function fetchContentProducerEntry (baseUrl, authenticationToken, l
 }
 
 export async function persistContentProducer (baseUrl, authenticationToken, locale, { id, name }) {
-  console.log('name', name);
+  let cp = {};
+  if (id) {
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/contentProducers/${id}`);
+    console.log('body', body);
+    cp = body;
+  }
   const url = `${baseUrl}/v004/media/contentProducers`;
-  await post(authenticationToken, locale, url, { uuid: id, name });
+  await post(authenticationToken, locale, url, { ...cp, uuid: id, name });
 }
 
 export async function deleteContentProducerEntry (baseUrl, authenticationToken, locale, { contentProducerEntryId }) {

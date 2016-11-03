@@ -13,7 +13,9 @@ import * as actions from './actions';
 import selector from './selector';
 import SpecificHeader from '../../header';
 import PlusButton from '../../../_common/buttons/plusButton';
+import Button from '../../../_common/buttons/button';
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
+import { routerPushWithReturnTo } from '../../../../actions/global';
 
 const numberOfRows = 25;
 
@@ -22,6 +24,7 @@ const numberOfRows = 25;
   deleteContentProducersEntry: bindActionCreators(actions.deleteContentProducerEntry, dispatch),
   deleteContentProducersEntries: bindActionCreators(actions.deleteContentProducerEntries, dispatch),
   load: bindActionCreators(actions.load, dispatch),
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
 }))
@@ -40,7 +43,7 @@ export default class ContentProducers extends Component {
       query: PropTypes.object.isRequired
     }),
     pageCount: PropTypes.number,
-    routerPush: PropTypes.func.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
     selectAllCheckboxes: PropTypes.func.isRequired,
     selectCheckbox: PropTypes.func.isRequired,
     totalResultCount: PropTypes.number.isRequired,
@@ -91,10 +94,7 @@ export default class ContentProducers extends Component {
 
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPush({
-      pathname: 'content/content-producers/create',
-      state: { returnTo: this.props.location }
-    });
+    this.props.routerPushWithReturnTo('content/content-producers/create');
   }
 
   async onClickDeleteSelected (e) {
@@ -117,19 +117,19 @@ export default class ContentProducers extends Component {
   }
 
   render () {
-    const { contentProducers, children, isSelected, location: { pathname, query: { page, searchString, sortField, sortDirection } },
+    const { contentProducers, children, isSelected, location, location: { query: { page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount } = this.props;
     const { styles } = this.constructor;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
       <Root>
-        <Header currentPath={pathname} hideHomePageLinks />
+        <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <div style={generalStyles.backgroundBar}>
           <Container style={styles.searchContainer}>
             <SearchInput isLoading={contentProducers.get('_status') !== 'loaded'} value={searchString} onChange={this.props.onChangeSearchString}/>
             <div style={generalStyles.floatRight}>
-              <button key='delete' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} type='button' onClick={this.onClickDeleteSelected}>Delete {numberSelected}</button>
+              <Button key='delete' style={[ buttonStyles.blue ]} text={`Delete ${numberSelected}`} type='button' onClick={this.onClickDeleteSelected}/>
               <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='New Content Producer' onClick={this.onClickNewEntry} />
             </div>
           </Container>
@@ -158,7 +158,7 @@ export default class ContentProducers extends Component {
                       <CustomCel getValue={this.getLastUpdatedOn} objectToRender={cp} style={{ flex: 2 }}/>
                       <CustomCel style={{ flex: 1 }}>
                         <Dropdown
-                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPush(`content/content-producers/edit/${cp.get('id')}`); }}>Edit</div>}>
+                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/content-producers/edit/${cp.get('id')}`); }}>Edit</div>}>
                           <div key={1} style={[ dropdownStyles.option ]} onClick={(e) => { e.preventDefault(); this.deleteContentProducersEntry(cp.get('id')); }}>Remove</div>
                         </Dropdown>
                       </CustomCel>

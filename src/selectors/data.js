@@ -23,7 +23,7 @@ export const searchStringHasBroadcastersRelationsSelector = (state) => state.get
 export const agesListSelector = (state) => state.getIn([ 'data', 'lists', 'ages' ]);
 export const eventsListSelector = (state) => state.getIn([ 'data', 'lists', 'events' ]);
 export const gendersListSelector = (state) => state.getIn([ 'data', 'lists', 'genders' ]);
-
+export const broadcastChannelsListSelector = (state) => state.getIn([ 'data', 'lists', 'broadcastChannels' ]);
 /**
  * Utility selector factory for accessing related id's.
  *
