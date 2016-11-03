@@ -1,6 +1,6 @@
 import { fromJS } from 'immutable';
 import * as actions from '../actions/global';
-import * as userActions from '../actions/users';
+import * as userActions from '../actions/user';
 
 /**
   * The global reducer is responsible for storing global aspects of this application.

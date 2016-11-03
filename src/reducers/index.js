@@ -5,14 +5,15 @@ import media from './media';
 import globalReducer from './global';
 import data from './data';
 import reporting from '../pages/reporting/reducer';
-import contentProducersList from '../pages/content/contentProducers/list/reducer';
-import broadcastersList from '../pages/content/broadcasters/list/reducer';
-import broadcastersRead from '../pages/content/broadcasters/read/reducer';
 import broadcastChannelsCreate from '../pages/content/broadcastChannels/create/reducer';
 import broadcastChannelsList from '../pages/content/broadcastChannels/list/reducer';
+import broadcastersList from '../pages/content/broadcasters/list/reducer';
+import broadcastersRead from '../pages/content/broadcasters/read/reducer';
+import contentProducersList from '../pages/content/contentProducers/list/reducer';
 import tvGuideCreate from '../pages/tvGuide/create/reducer';
 import tvGuideEdit from '../pages/tvGuide/edit/reducer';
 import tvGuideList from '../pages/tvGuide/list/reducer';
+import usersList from '../pages/users/list/reducer';
 
 /**
  * The application's main reducer
@@ -30,6 +31,9 @@ export default combineReducers({
     contentProducers: combineReducers({
       list: contentProducersList
     })
+  }),
+  users: combineReducers({
+    list: usersList
   }),
   data,
   form,

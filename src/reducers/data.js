@@ -5,9 +5,10 @@ import * as seasonActions from '../actions/season';
 import * as mediaActions from '../actions/media';
 import * as broadcastersActions from '../actions/broadcasters';
 import * as contentProducersActions from '../actions/contentProducer';
+import * as userActions from '../actions/user';
 import * as reportingActions from '../actions/reporting';
 import * as tvGuideActions from '../actions/tvGuide';
-import { serializeFilterHasBroadcastChannels, serializeFilterHasBroadcasters, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers, serializeFilterHasEpisodes, serializeFilterHasSeries, fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, fetchListSuccess, fetchListError } from './utils';
+import { serializeFilterHasUsers, serializeFilterHasBroadcastChannels, serializeFilterHasBroadcasters, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers, serializeFilterHasEpisodes, serializeFilterHasSeries, fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, fetchListSuccess, fetchListError } from './utils';
 
 export default (state = fromJS({
   entities: {
@@ -18,18 +19,20 @@ export default (state = fromJS({
     events: {},
     genders: {},
     listMedia: {},
-    tvGuideEntries: {}
+    tvGuideEntries: {},
+    users: {}
   },
   relations: {
     ages: {},
     broadcastChannels: {},
     events: {},
-    filterHasEpisodes: {},
-    filterHasBroadcasters: {},
     filterHasBroadcastChannels: {},
+    filterHasBroadcasters: {},
     filterHasContentProducers: {},
+    filterHasEpisodes: {},
     filterHasSeasons: {},
     filterHasTvGuideEntries: {},
+    filterHasUsers: {},
     genders: {},
     searchStringHasBroadcastChannels: {},
     searchStringHasBroadcasters: {},
@@ -40,7 +43,8 @@ export default (state = fromJS({
   switch (action.type) {
 
     // Broadcaster Channels
-    // /////////////////
+    // ////////////////////
+
     case broadcastChannelActions.BROADCAST_CHANNEL_ENTRY_FETCH_START:
       return fetchStart(state, [ 'entities', 'broadcastChannels', action.broadcastChannelEntryId ]);
     case broadcastChannelActions.BROADCAST_CHANNEL_ENTRY_FETCH_SUCCESS:
@@ -63,7 +67,7 @@ export default (state = fromJS({
       return searchError(state, 'searchStringHasBroadcastChannels', action.searchString, action.error);
 
     // Broadcasters
-    // /////////////////
+    // ////////////
 
     case broadcastersActions.BROADCASTER_CHANNELS_FETCH_START:
       return fetchListStart(state, 'broadcastChannels');
@@ -160,6 +164,23 @@ export default (state = fromJS({
       return fetchListSuccess(state, 'genders', 'genders', action.data);
     case reportingActions.GENDERS_FETCH_ERROR:
       return fetchListError(state, 'genders', action.error);
+
+    // Users
+    // /////
+
+    case userActions.USER_FETCH_START:
+      return fetchStart(state, [ 'entities', 'users', action.userId ]);
+    case userActions.USER_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'users', action.userId ], action.data);
+    case userActions.USER_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'users', action.userId ], action.error);
+
+    case userActions.USERS_FETCH_START:
+      return searchStart(state, 'filterHasUsers', serializeFilterHasUsers(action));
+    case userActions.USERS_FETCH_SUCCESS:
+      return searchSuccess(state, 'users', 'filterHasUsers', serializeFilterHasUsers(action), action.data.data);
+    case userActions.USERS_FETCH_ERROR:
+      return searchError(state, 'filterHasUsers', serializeFilterHasUsers(action), action.error);
 
     default:
       return state;
