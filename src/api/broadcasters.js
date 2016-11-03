@@ -1,4 +1,4 @@
-import { del, get, post } from './request';
+import { del, get, post, postFormData } from './request';
 import { transformBroadcaster, transformBroadcastChannel } from './transformers';
 
 
@@ -69,4 +69,11 @@ export async function searchBroadcasters (baseUrl, authenticationToken, locale, 
   }
   const { body: { data } } = await get(authenticationToken, locale, searchUrl);
   return data.map(transformBroadcaster);
+}
+
+export async function uploadBroadcasterImage (baseUrl, authenticationToken, locale, { broadcasterEntryId, image, callback }) {
+  const formData = new FormData();
+  formData.append('uuid', broadcasterEntryId);
+  formData.append('file', image);
+  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/broadcasters/${broadcasterEntryId}/logo`, formData, callback);
 }

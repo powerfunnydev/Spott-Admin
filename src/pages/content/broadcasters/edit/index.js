@@ -13,6 +13,8 @@ import { styles as tabStyles } from '../../../_common/components/tabs';
 import Section from '../../../_common/components/section';
 import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
+import Dropzone from '../../../_common/dropzone';
+import Label from '../../../_common/inputs/_label';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -26,6 +28,7 @@ function validate (values, { t }) {
 @connect(null, (dispatch) => ({
   load: bindActionCreators(actions.load, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
+  uploadImage: bindActionCreators(actions.uploadImage, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
@@ -44,7 +47,8 @@ export default class EditBroadcastersEntry extends Component {
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
-    t: PropTypes.func.isRequired
+    t: PropTypes.func.isRequired,
+    uploadImage: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -95,6 +99,13 @@ export default class EditBroadcastersEntry extends Component {
                   name='name'
                   placeholder='Name broadcaster'
                   required/>
+                <div style={{ paddingTop: '1.25em' }}>
+                  <Label text='Upload image' />
+                  <Dropzone
+                    accept='image/*'
+                    message={<span>Drag & drop the image</span>}
+                    onChange={({ callback, file }) => { this.props.uploadImage({ broadcasterEntryId: this.props.params.id, image: file, callback }); console.log('file', file); }}/>
+                </div>
               </Section>
             </TabPanel>
           </Tabs>

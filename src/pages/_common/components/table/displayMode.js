@@ -42,6 +42,9 @@ export default class DisplayMode extends Component {
     },
     clickable: {
       cursor: 'pointer'
+    },
+    paddingLeft: {
+      paddingLeft: '30px'
     }
   }
 
@@ -49,7 +52,7 @@ export default class DisplayMode extends Component {
     const { display, onChangeDisplay } = this.props;
     const { styles } = this.constructor;
     return (
-      <div>
+      <div style={styles.paddingLeft}>
         { onChangeDisplay && <div style={styles.row}>
           <div style={[ styles.center, onChangeDisplay && styles.clickable ]} onClick={onChangeDisplay.bind(this, 'list')}>
             <img src={(display === undefined || display === 'list') ? listBlueIcon : listGrayIcon} style={styles.imageList}/>
