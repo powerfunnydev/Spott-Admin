@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Container } from '../../../_common/styles';
-import { Tile, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
+import { isQueryChanged, Tile, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
 import Line from '../../../_common/components/line';
 import Radium from 'radium';
 import * as actions from './actions';
@@ -61,13 +61,7 @@ export default class BroadcastChannelList extends Component {
   async componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
-    if (query.page !== nextQuery.page ||
-      query.pageSize !== nextQuery.pageSize ||
-      query.sortDirection !== nextQuery.sortDirection ||
-      query.sortField !== nextQuery.sortField ||
-      query.searchString !== nextQuery.searchString) {
-      await this.props.load(nextProps.location.query);
-    }
+    await isQueryChanged(query, nextQuery) && this.props.load(nextProps.location.query);
   }
 
   async deleteBroadcastChannelEntry (broadcastChannelsEntryId) {

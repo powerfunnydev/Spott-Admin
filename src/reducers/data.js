@@ -54,7 +54,7 @@ export default (state = fromJS({
     case broadcastersActions.BROADCASTER_CHANNELS_FETCH_START:
       return fetchListStart(state, 'broadcastChannels');
     case broadcastersActions.BROADCASTER_CHANNELS_FETCH_SUCCESS:
-      return fetchListSuccess(state, 'broadcastChannels', 'broadcastChannels', action.data);
+      return fetchListSuccess(state, 'broadcastChannels', 'broadcastChannels', action.data.data);
     case broadcastersActions.BROADCASTER_CHANNELS_FETCH_ERROR:
       return fetchListError(state, 'broadcastChannels', action.error);
 

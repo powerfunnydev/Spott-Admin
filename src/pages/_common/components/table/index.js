@@ -88,3 +88,12 @@ export function determineSortDirection (sortField, query) {
   }
   return directionToString((sortDirection + 1) % 3);
 }
+
+export function isQueryChanged (query, nextQuery) {
+  return (query.page !== nextQuery.page ||
+    query.display !== nextQuery.display ||
+    query.pageSize !== nextQuery.pageSize ||
+    query.sortDirection !== nextQuery.sortDirection ||
+    query.sortField !== nextQuery.sortField ||
+    query.searchString !== nextQuery.searchString);
+}

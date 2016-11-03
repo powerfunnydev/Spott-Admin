@@ -1,11 +1,5 @@
-import { Map } from 'immutable';
-import { LOAD } from './actions';
+import { BROADCASTER_CHANNELS_FETCH_SUCCESS } from '../../../../actions/broadcasters';
+import { SELECT_ALL_CHECKBOXES, SELECT_CHECKBOX } from './actions';
+import createPageReducer from '../../../_common/createPageReducer';
 
-export default (state = Map({}), action) => {
-  switch (action.type) {
-    case LOAD:
-      return state.set('broadcastersEntryId', action.broadcastersEntryId);
-    default:
-      return state;
-  }
-};
+export default createPageReducer({ DATA_FETCH_SUCCESS: BROADCASTER_CHANNELS_FETCH_SUCCESS, SELECT_ALL_CHECKBOXES, SELECT_CHECKBOX });

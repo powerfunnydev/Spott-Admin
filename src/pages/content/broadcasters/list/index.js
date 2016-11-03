@@ -5,7 +5,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import moment from 'moment';
 import Header from '../../../app/header';
 import { Root, Container, buttonStyles } from '../../../_common/styles';
-import { tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table';
+import { isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
 import Line from '../../../_common/components/line';
 import SearchInput from '../../../_common/inputs/searchInput';
 import Radium from 'radium';
@@ -58,20 +58,14 @@ export default class Broadcasters extends Component {
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
   }
 
-  componentWillMount () {
-    this.props.load(this.props.location.query);
+  async componentWillMount () {
+    await this.props.load(this.props.location.query);
   }
 
-  componentWillReceiveProps (nextProps) {
+  async componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
-    if (query.page !== nextQuery.page ||
-      query.pageSize !== nextQuery.pageSize ||
-      query.sortDirection !== nextQuery.sortDirection ||
-      query.sortField !== nextQuery.sortField ||
-      query.searchString !== nextQuery.searchString) {
-      this.props.load(nextProps.location.query);
-    }
+    await isQueryChanged(query, nextQuery) && this.props.load(nextProps.location.query);
   }
 
   async deleteBroadcastersEntry (broadcastersEntryId) {

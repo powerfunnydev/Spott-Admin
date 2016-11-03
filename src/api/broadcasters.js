@@ -17,14 +17,20 @@ export async function fetchBroadcasters (baseUrl, authenticationToken, locale, {
   return body;
 }
 
-export async function fetchBroadcasterChannels (baseUrl, authenticationToken, locale, { broadcastersEntryId }) {
-  const url = `${baseUrl}/v004/media/broadcasters/${broadcastersEntryId}/channels`;
+export async function fetchBroadcasterChannels (baseUrl, authenticationToken, locale, { broadcastersEntryId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/media/broadcasters/${broadcastersEntryId}/channels?page=${page}&pageSize=${pageSize}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${searchString}`);
+  }
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  console.log('url', url);
   const { body } = await get(authenticationToken, locale, url);
-  // console.log('body', body);
-  // console.log('before transform', { ...body });
-  // const result = transformBroadcaster(body);
-  // console.log('after tranform', result);
-  return body.data.map(transformBroadcastChannel);
+  // There is also usable data in body (not only in data field).
+  // We need also fields page, pageCount,...
+  body.data = body.data.map(transformBroadcastChannel);
+  return body;
 }
 
 export async function fetchBroadcasterEntry (baseUrl, authenticationToken, locale, { broadcastersEntryId }) {

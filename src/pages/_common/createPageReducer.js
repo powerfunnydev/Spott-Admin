@@ -8,6 +8,7 @@ export default ({ DATA_FETCH_SUCCESS, SELECT_ALL_CHECKBOXES, SELECT_CHECKBOX, SE
 }), action) => {
   switch (action.type) {
     case DATA_FETCH_SUCCESS:
+      console.log('action', action);
       const arrayOfObjects = action.data.data;
       const initIsSelected = { ALL: false };
       for (const obj of arrayOfObjects) {

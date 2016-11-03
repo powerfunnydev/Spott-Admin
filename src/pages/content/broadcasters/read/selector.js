@@ -7,7 +7,11 @@ import {
   createEntityByIdSelector
 } from '../../../../selectors/data';
 
-export const currentBroadcasterIdSelector = (state) => state.getIn([ 'content', 'broadcasters', 'read', 'broadcastersEntryId' ]);
+export const isSelectedSelector = (state) => state.getIn([ 'content', 'broadcasters', 'read', 'isSelected' ]);
+export const pageCountSelector = (state) => state.getIn([ 'content', 'broadcasters', 'read', 'pageCount' ]);
+export const totalResultCountSelector = (state) => state.getIn([ 'content', 'broadcasters', 'read', 'totalResultCount' ]);
+
+export const currentBroadcasterIdSelector = (state, props) => { return props.params.id; };
 
 export const currentBroadcasterSelector = createEntityByIdSelector(broadcastersEntitiesSelector, currentBroadcasterIdSelector);
 
@@ -15,5 +19,8 @@ const broadcastChannelsSelector = createEntitiesByListSelector(broadcastChannels
 
 export default createStructuredSelector({
   broadcastChannels: broadcastChannelsSelector,
-  currentBroadcaster: currentBroadcasterSelector
+  currentBroadcaster: currentBroadcasterSelector,
+  isSelected: isSelectedSelector,
+  pageCount: pageCountSelector,
+  totalResultCount: totalResultCountSelector
 });

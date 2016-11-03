@@ -6,7 +6,7 @@ import { routerPushWithReturnTo } from '../../../actions/global';
 import moment from 'moment';
 import Header from '../../app/header';
 import { Root, buttonStyles, Container } from '../../_common/styles';
-import { tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table';
+import { isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table/index';
 import Line from '../../_common/components/line';
 import Radium from 'radium';
 import * as actions from './actions';
@@ -64,16 +64,10 @@ export default class TvGuideList extends Component {
     this.props.load(this.props.location.query);
   }
 
-  componentWillReceiveProps (nextProps) {
+  async componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
-    if (query.page !== nextQuery.page ||
-      query.pageSize !== nextQuery.pageSize ||
-      query.sortDirection !== nextQuery.sortDirection ||
-      query.sortField !== nextQuery.sortField ||
-      query.searchString !== nextQuery.searchString) {
-      this.props.load(nextProps.location.query);
-    }
+    await isQueryChanged(query, nextQuery) && this.props.load(nextProps.location.query);
   }
 
   getMediumTitle (tvGuideEntry) {
