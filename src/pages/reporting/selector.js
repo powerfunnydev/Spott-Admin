@@ -1,4 +1,5 @@
 import { createSelector, createStructuredSelector } from 'reselect';
+import { Map } from 'immutable';
 import {
   createEntityIdsByRelationSelector,
   createEntitiesByListSelector,
@@ -13,17 +14,52 @@ import {
 } from '../../selectors/data';
 import { locationSelector } from '../../selectors/global';
 import { ageConfig, genderConfig, timelineConfig } from './defaultHighchartsConfig';
-import { isLoading } from '../../constants/statusTypes';
+import { LAZY, isLoading } from '../../constants/statusTypes';
 
 export const ageDataSelector = (state) => state.getIn([ 'reporting', 'ageData' ]);
-export const brandSubscriptionsSelector = (state) => state.getIn([ 'reporting', 'brandSubscriptions' ]);
-export const characterSubscriptionsSelector = (state) => state.getIn([ 'reporting', 'characterSubscriptions' ]);
-export const currentMediaSearchStringSelector = (state) => state.getIn([ 'reporting', 'currentMediaSearchString' ]);
 export const genderDataSelector = (state) => state.getIn([ 'reporting', 'genderData' ]);
-export const mediumSubscriptionsSelector = (state) => state.getIn([ 'reporting', 'mediumSubscriptions' ]);
-export const mediumSyncsSelector = (state) => state.getIn([ 'reporting', 'mediumSyncs' ]);
-export const productViewsSelector = (state) => state.getIn([ 'reporting', 'productViews' ]);
 export const timelineDataSelector = (state) => state.getIn([ 'reporting', 'timelineData' ]);
+
+export const filterQuerySelector = (state) => state.getIn([ 'reporting', 'filterQuery' ]);
+
+function createInfiniteListSelector (dataSelector) {
+  return createSelector(
+    dataSelector,
+    (pageHasData) => {
+      let i = 0;
+      let result = [];
+      let status = LAZY;
+      while (true) {
+        const data = pageHasData.get(i++);
+        if (data) {
+          if (data.get('data')) {
+            result = result.concat(data.get('data'));
+          }
+          if (data.get('_status')) {
+            status = data.get('_status');
+          }
+        } else {
+          break;
+        }
+      }
+      return Map({ _status: status, data: result });
+    }
+  );
+}
+
+export const currentMediaSearchStringSelector = (state) => state.getIn([ 'reporting', 'currentMediaSearchString' ]);
+
+export const brandSubscriptionsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'brandSubscriptions' ]));
+export const characterSubscriptionsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'characterSubscriptions' ]));
+export const mediumSubscriptionsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'mediumSubscriptions' ]));
+export const mediumSyncsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'mediumSyncs' ]));
+export const productViewsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'productViews' ]));
+
+export const currentBrandSubscriptionsPageSelector = (state) => state.getIn([ 'reporting', 'currentBrandSubscriptionsPage' ]);
+export const currentCharacterSubscriptionsPageSelector = (state) => state.getIn([ 'reporting', 'currentCharacterSubscriptionsPage' ]);
+export const currentMediumSubscriptionsPageSelector = (state) => state.getIn([ 'reporting', 'currentMediumSubscriptionsPage' ]);
+export const currentMediumSyncsPageSelector = (state) => state.getIn([ 'reporting', 'currentMediumSyncsPage' ]);
+export const currentProductViewsPageSelector = (state) => state.getIn([ 'reporting', 'currentProductViewsPage' ]);
 
 export const searchedMediumIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediaRelationsSelector, currentMediaSearchStringSelector);
 
@@ -218,6 +254,11 @@ export const rankingsFilterSelector = createStructuredSelector({
 
 export const rankingsSelector = createStructuredSelector({
   brandSubscriptions: brandSubscriptionsSelector,
+  currentBrandSubscriptionsPage: currentBrandSubscriptionsPageSelector,
+  currentCharacterSubscriptionsPage: currentCharacterSubscriptionsPageSelector,
+  currentMediumSubscriptionsPage: currentMediumSubscriptionsPageSelector,
+  currentMediumSyncsPage: currentMediumSyncsPageSelector,
+  currentProductViewsPage: currentProductViewsPageSelector,
   characterSubscriptions: characterSubscriptionsSelector,
   mediumSubscriptions: mediumSubscriptionsSelector,
   mediumSyncs: mediumSyncsSelector,
