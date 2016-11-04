@@ -103,7 +103,6 @@ export default class EditBroadcastersEntry extends Component {
                   <Label text='Upload image' />
                   <Dropzone
                     accept='image/*'
-                    message={<span>Drag & drop the image</span>}
                     onChange={({ callback, file }) => { this.props.uploadImage({ broadcasterEntryId: this.props.params.id, image: file, callback }); console.log('file', file); }}/>
                 </div>
               </Section>

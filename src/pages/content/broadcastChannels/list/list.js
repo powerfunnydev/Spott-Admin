@@ -12,6 +12,8 @@ import Dropdown, { styles as dropdownStyles } from '../../../_common/components/
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import UtilsBar from '../../../_common/components/table/utilsBar';
 
+/* eslint-disable no-alert */
+
 const numberOfRows = 25;
 
 @tableDecorator
@@ -65,8 +67,11 @@ export default class BroadcastChannelList extends Component {
   }
 
   async deleteBroadcastChannelEntry (broadcastChannelsEntryId) {
-    await this.props.deleteBroadcastChannelEntry(broadcastChannelsEntryId);
-    await this.props.load(this.props.location.query);
+    const result = window.confirm('Are you sure you want to trigger this action?');
+    if (result) {
+      await this.props.deleteBroadcastChannelEntry(broadcastChannelsEntryId);
+      await this.props.load(this.props.location.query);
+    }
   }
 
   getName (broadcastChannel) {

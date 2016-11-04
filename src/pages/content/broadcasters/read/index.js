@@ -17,12 +17,15 @@ import { UtilsBar, isQueryChanged, Tile, tableDecorator, generalStyles, TotalEnt
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
 import Line from '../../../_common/components/line';
 
+/* eslint-disable no-alert */
+
 const numberOfRows = 25;
 
 @tableDecorator
 @localized
 @connect(selector, (dispatch) => ({
   deleteBroadcastersEntry: bindActionCreators(listActions.deleteBroadcastersEntry, dispatch),
+  deleteBroadcastChannelEntry: bindActionCreators(actions.deleteBroadcastChannelEntry, dispatch),
   loadBroadcaster: bindActionCreators(actions.loadBroadcaster, dispatch),
   loadBroadcasterChannels: bindActionCreators(actions.loadBroadcasterChannels, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
@@ -36,6 +39,7 @@ export default class ReadBroadcastersEntry extends Component {
     broadcastChannels: ImmutablePropTypes.map.isRequired,
     children: PropTypes.node,
     currentBroadcaster: PropTypes.object.isRequired,
+    deleteBroadcastChannelEntry: PropTypes.func.isRequired,
     deleteBroadcastersEntry: PropTypes.func.isRequired,
     error: PropTypes.any,
     isSelected: ImmutablePropTypes.map.isRequired,
@@ -76,6 +80,14 @@ export default class ReadBroadcastersEntry extends Component {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
     await isQueryChanged(query, nextQuery) && this.props.loadBroadcasterChannels({ ...nextProps.location.query, broadcastersEntryId: this.props.params.id });
+  }
+
+  async deleteBroadcastChannelEntry (broadcastChannelEntryId) {
+    const result = window.confirm('Are you sure you want to trigger this action?');
+    if (result) {
+      await this.props.deleteBroadcastChannelEntry(broadcastChannelEntryId);
+      await this.props.loadBroadcasterChannels({ ...this.props.location.query, broadcastersEntryId: this.props.params.id });
+    }
   }
 
   getName (broadcaster) {

@@ -13,6 +13,8 @@ import selector from './selector';
 import SpecificHeader from '../../header';
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
 
+/* eslint-disable no-alert */
+
 const numberOfRows = 25;
 
 @tableDecorator
@@ -65,8 +67,11 @@ export default class Broadcasters extends Component {
   }
 
   async deleteBroadcastersEntry (broadcastersEntryId) {
-    await this.props.deleteBroadcastersEntry(broadcastersEntryId);
-    await this.props.load(this.props.location.query);
+    const result = window.confirm('Are you sure you want to trigger this action?');
+    if (result) {
+      await this.props.deleteBroadcastersEntry(broadcastersEntryId);
+      await this.props.load(this.props.location.query);
+    }
   }
 
   getName (broadcaster) {
