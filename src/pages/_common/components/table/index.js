@@ -95,6 +95,5 @@ export function isQueryChanged (query, nextQuery) {
     query.display !== nextQuery.display ||
     query.pageSize !== nextQuery.pageSize ||
     query.sortDirection !== nextQuery.sortDirection ||
-    query.sortField !== nextQuery.sortField ||
-    query.searchString !== nextQuery.searchString);
+    query.sortField !== nextQuery.sortField);
 }

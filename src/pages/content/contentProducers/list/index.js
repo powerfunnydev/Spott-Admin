@@ -13,6 +13,7 @@ import selector from './selector';
 import SpecificHeader from '../../header';
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
+import { slowdown } from '../../../../utils';
 
 const numberOfRows = 25;
 
@@ -54,6 +55,7 @@ export default class ContentProducers extends Component {
     super(props);
     this.onClickNewEntry = ::this.onClickNewEntry;
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
+    this.slowSearch = slowdown(props.load, 300);
   }
 
   async componentWillMount () {
@@ -102,8 +104,8 @@ export default class ContentProducers extends Component {
   }
 
   render () {
-    const { contentProducers, children, isSelected, location, location: { query: { display, page, searchString, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay } = this.props;
+    const { contentProducers, children, isSelected, location, location: { query, query: { display, page, searchString, sortField, sortDirection } },
+      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
       <Root>
@@ -118,7 +120,7 @@ export default class ContentProducers extends Component {
               searchString={searchString}
               textCreateButton='New Content Producer'
               onChangeDisplay={onChangeDisplay}
-              onChangeSearchString={this.props.onChangeSearchString}
+              onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
               onClickDeleteSelected={this.onClickDeleteSelected}
               onClickNewEntry={this.onClickNewEntry}/>
           </Container>

@@ -248,6 +248,13 @@ export function transformPaging ({ page, pageCount, pageSize, totalResultCount }
   return { page, pageCount, pageSize, totalResultCount };
 }
 
-export function transformUser ({ disabled, profile: { email, firstName, gender, lastName }, uuid: id }) {
-  return { disabled, email, firstName, gender, id, lastName };
+export function transformUser ({ disabled, profile, userName, uuid: id }) {
+  return {
+    disabled,
+    userName,
+    email: profile && profile.email || null,
+    firstName: profile && profile.firstName || null,
+    lastName: profile && profile.lastName || null,
+    gender: profile && profile.gender || null,
+    id };
 }

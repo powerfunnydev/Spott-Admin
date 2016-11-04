@@ -16,6 +16,7 @@ import BreadCrumbs from '../../../_common/breadCrumbs';
 import { UtilsBar, isQueryChanged, Tile, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
 import Line from '../../../_common/components/line';
+import { slowdown } from '../../../../utils';
 
 /* eslint-disable no-alert */
 
@@ -67,6 +68,7 @@ export default class ReadBroadcastersEntry extends Component {
     super(props);
     this.redirect = ::this.redirect;
     this.onClickNewEntry = :: this.onClickNewEntry;
+    this.slowSearch = slowdown(props.loadBroadcasterChannels, 300);
   }
 
   async componentWillMount () {
@@ -108,7 +110,7 @@ export default class ReadBroadcastersEntry extends Component {
 
   render () {
     const { onChangeSearchString, onChangeDisplay, numberSelected, pageCount, selectAllCheckboxes, selectCheckbox, isSelected, totalResultCount, children, broadcastChannels, currentBroadcaster,
-       location, location: { query: { display, page, searchString, sortField, sortDirection } }, deleteBroadcastersEntry } = this.props;
+       location, location: { query, query: { display, page, searchString, sortField, sortDirection } }, deleteBroadcastersEntry } = this.props;
     return (
       <Root>
         <Header currentLocation={location} hideHomePageLinks />
@@ -130,7 +132,7 @@ export default class ReadBroadcastersEntry extends Component {
               searchString={searchString}
               textCreateButton='New Broadcast Channel'
               onChangeDisplay={onChangeDisplay}
-              onChangeSearchString={onChangeSearchString}
+              onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value, broadcastersEntryId: this.props.params.id }); }}
               onClickNewEntry={this.onClickNewEntry}/>
           </Container>
         </div>

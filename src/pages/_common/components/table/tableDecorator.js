@@ -39,10 +39,10 @@ export function tableDecorator (WrappedComponent) {
         });
       }
 
-      onChangeSearchString (e) {
+      onChangeSearchString (value) {
         const query = {
           ...this.props.location.query,
-          searchString: e.target.value
+          searchString: value
         };
         // props will be updated -> componentWillReceiveProps
         this.props.routerPushWithReturnTo({

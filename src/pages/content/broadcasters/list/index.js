@@ -12,6 +12,7 @@ import * as actions from './actions';
 import selector from './selector';
 import SpecificHeader from '../../header';
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
+import { slowdown } from '../../../../utils';
 
 /* eslint-disable no-alert */
 
@@ -54,6 +55,7 @@ export default class Broadcasters extends Component {
     super(props);
     this.onClickNewEntry = ::this.onClickNewEntry;
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
+    this.slowSearch = slowdown(props.load, 300);
   }
 
   async componentWillMount () {
@@ -105,7 +107,7 @@ export default class Broadcasters extends Component {
   }
 
   render () {
-    const { broadcasters, children, isSelected, location, location: { query: { display, page, searchString, sortField, sortDirection } },
+    const { broadcasters, children, isSelected, location, location: { query, query: { display, page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount,
     onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
@@ -122,7 +124,7 @@ export default class Broadcasters extends Component {
               searchString={searchString}
               textCreateButton='New Broadcaster'
               onChangeDisplay={onChangeDisplay}
-              onChangeSearchString={onChangeSearchString}
+              onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
               onClickDeleteSelected={this.onClickDeleteSelected}
               onClickNewEntry={this.onClickNewEntry}/>
           </Container>

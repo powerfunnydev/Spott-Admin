@@ -66,7 +66,7 @@ export default class SearchInput extends Component {
         <div style={styles.iconWrapper}>
           <img src={searchIcon} style={styles.icon}/>
         </div>
-        <input placeholder='Search' style={styles.input} value={value} onChange={onChange}/>
+        <input placeholder='Search' style={styles.input} value={value} onChange={(e) => onChange(e.target.value)}/>
         {value && <div style={{ fontSize: '11px', letterSpacing: '0.5px', color: colors.primaryBlue, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingRight: '10px' }}>
           {isLoading && <div>LOADING</div>}
         </div>}
