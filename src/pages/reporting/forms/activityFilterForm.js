@@ -28,7 +28,7 @@ export default class ActivityFilterForm extends Component {
       endDate: PropTypes.object,
       event: PropTypes.string,
       startDate: PropTypes.object
-    }),
+    }).isRequired,
     loadEvents: PropTypes.func.isRequired,
     style: PropTypes.object,
     onChange: PropTypes.func.isRequired
