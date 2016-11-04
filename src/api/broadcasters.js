@@ -62,6 +62,7 @@ export async function deleteBroadcasterEntries (baseUrl, authenticationToken, lo
   }
 }
 
+// Used for autocompletion.
 export async function searchBroadcasters (baseUrl, authenticationToken, locale, { searchString = '' }) {
   let searchUrl = `${baseUrl}/v004/media/broadcasters?pageSize=25`;
   if (searchString) {

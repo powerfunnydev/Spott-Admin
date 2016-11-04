@@ -247,3 +247,7 @@ export function transformSingleTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastU
 export function transformPaging ({ page, pageCount, pageSize, totalResultCount }) {
   return { page, pageCount, pageSize, totalResultCount };
 }
+
+export function transformUser ({ disabled, profile: { email, firstName, gender, lastName }, uuid: id }) {
+  return { disabled, email, firstName, gender, id, lastName };
+}
