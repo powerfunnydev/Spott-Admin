@@ -233,14 +233,14 @@ export function transformTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastUpdated
   };
 }
 
-export function transformSingleTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastUpdatedOn }, uuid: id, start, end,
-  medium: { uuid: mediumUuid }, mediumInfo, mediumInfo: { season }, channel: { uuid: channelUuid }, channelInfo }) {
+export function transformSingleTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastUpdatedOn }, uuid: id, start, end, mediumInfo,
+  mediumInfo: { season }, channel: { uuid: channelUuid }, channelInfo }) {
   return {
     start, end, id, lastUpdatedBy, lastUpdatedOn,
-    medium: { ...transformListMedium(mediumInfo), id: mediumUuid },
+    medium: { ...transformListMedium(mediumInfo) },
     channel: { ...transformBroadcastChannel(channelInfo), id: channelUuid },
-    season: season && { id: season.uuid, title: season.title },
-    serie: season && season.serie && { id: season.serie.uuid, title: season.serie.title }
+    season: season && { ...transformListMedium(season) },
+    serie: season && season.serie && { ...transformListMedium(season.serie) }
   };
 }
 

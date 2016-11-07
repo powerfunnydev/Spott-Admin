@@ -18,7 +18,7 @@ export default class UtilsBar extends Component {
     numberSelected: PropTypes.number,
     searchString: PropTypes.string,
     textCreateButton: PropTypes.string,
-    onChangeDisplay: PropTypes.func.isRequired,
+    onChangeDisplay: PropTypes.func,
     onChangeSearchString: PropTypes.func,
     onClickDeleteSelected: PropTypes.func,
     onClickNewEntry: PropTypes.func

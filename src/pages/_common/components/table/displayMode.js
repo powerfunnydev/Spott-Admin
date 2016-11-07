@@ -11,7 +11,7 @@ export default class DisplayMode extends Component {
 
   static propTypes = {
     display: PropTypes.string,
-    onChangeDisplay: PropTypes.func.isRequired
+    onChangeDisplay: PropTypes.func
   }
 
   static styles = {
