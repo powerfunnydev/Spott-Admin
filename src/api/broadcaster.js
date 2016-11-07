@@ -17,8 +17,8 @@ export async function fetchBroadcasters (baseUrl, authenticationToken, locale, {
   return body;
 }
 
-export async function fetchBroadcasterChannels (baseUrl, authenticationToken, locale, { broadcastersEntryId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
-  let url = `${baseUrl}/v004/media/broadcasters/${broadcastersEntryId}/channels?page=${page}&pageSize=${pageSize}`;
+export async function fetchBroadcasterChannels (baseUrl, authenticationToken, locale, { broadcasterId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/media/broadcasters/${broadcasterId}/channels?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${searchString}`);
   }
@@ -32,8 +32,8 @@ export async function fetchBroadcasterChannels (baseUrl, authenticationToken, lo
   return body;
 }
 
-export async function fetchBroadcasterEntry (baseUrl, authenticationToken, locale, { broadcastersEntryId }) {
-  const url = `${baseUrl}/v004/media/broadcasters/${broadcastersEntryId}`;
+export async function fetchBroadcaster (baseUrl, authenticationToken, locale, { broadcasterId }) {
+  const url = `${baseUrl}/v004/media/broadcasters/${broadcasterId}`;
   const { body } = await get(authenticationToken, locale, url);
   // console.log('before transform', { ...body });
   const result = transformBroadcaster(body);
@@ -52,13 +52,13 @@ export async function persistBroadcaster (baseUrl, authenticationToken, locale, 
   await post(authenticationToken, locale, url, { ...broadcaster, uuid: id, name });
 }
 
-export async function deleteBroadcasterEntry (baseUrl, authenticationToken, locale, { broadcastersEntryId }) {
-  await del(authenticationToken, locale, `${baseUrl}/v004/media/broadcasters/${broadcastersEntryId}`);
+export async function deleteBroadcaster (baseUrl, authenticationToken, locale, { broadcasterId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/broadcasters/${broadcasterId}`);
 }
 
-export async function deleteBroadcasterEntries (baseUrl, authenticationToken, locale, { broadcastersEntryIds }) {
-  for (const broadcastersEntryId of broadcastersEntryIds) {
-    await deleteBroadcasterEntry(baseUrl, authenticationToken, locale, { broadcastersEntryId });
+export async function deleteBroadcasters (baseUrl, authenticationToken, locale, { broadcasterIds }) {
+  for (const broadcasterId of broadcasterIds) {
+    await deleteBroadcaster(baseUrl, authenticationToken, locale, { broadcasterId });
   }
 }
 

@@ -1,4 +1,4 @@
-import { del, get, post } from './request';
+import { del, get, post, postFormData } from './request';
 import { transformPaging, transformUser } from './transformers';
 
 export async function login (baseUrl, { authenticationToken, email, password }) {
@@ -58,18 +58,27 @@ export async function fetchUsers (baseUrl, authenticationToken, locale, { search
 export async function fetchUser (baseUrl, authenticationToken, locale, { userId }) {
   const url = `${baseUrl}/v004/user/users/${userId}`;
   const { body } = await get(authenticationToken, locale, url);
+  console.log('body', body);
   return transformUser(body);
 }
 
-export async function persistUser (baseUrl, authenticationToken, locale, { id, name }) {
-  let broadcaster;
-  if (id) {
-    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/broadcasters/${id}`);
-    broadcaster = body;
-    // console.log('body', body);
+export async function persistUser (baseUrl, authenticationToken, locale, { userId, userName, email, firstName, lastName, dateOfBirth, gender }) {
+  let user = { profile: {} };
+  const url = `${baseUrl}/v004/user/users`;
+  if (userId) {
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/user/users/${userId}`);
+    user = body;
+    await post(authenticationToken, locale, url, { ...user });
   }
-  const url = `${baseUrl}/v004/media/broadcasters`;
-  await post(authenticationToken, locale, url, { ...broadcaster, uuid: id, name });
+  user.profile.email = email || user.profile.email || undefined;
+  user.profile.firstName = firstName || user.profile.firstName || undefined;
+  user.profile.lastName = lastName || user.profile.lastName || undefined;
+  user.profile.avatar = {};
+  user.disabled = false;
+  user.userName = userName;
+  // user.roles = [ { role: 'CONTENT_MANAGER' } ];
+  console.log('user', user);
+  await post(authenticationToken, locale, `${baseUrl}/v004/user/users`, user);
 }
 
 export async function deleteUser (baseUrl, authenticationToken, locale, { userId }) {
@@ -80,4 +89,14 @@ export async function deleteUsers (baseUrl, authenticationToken, locale, { userI
   for (const userId of userIds) {
     await deleteUser(baseUrl, authenticationToken, locale, { userId });
   }
+}
+
+/**
+ * TODO This sends formdata, but it expects base64. Back-end must be updated.
+ */
+export async function uploadUserImage (baseUrl, authenticationToken, locale, { userId, image, callback }) {
+  const formData = new FormData();
+  formData.append('userProfileUuid', userId);
+  formData.append('file', image);
+  await postFormData(authenticationToken, locale, `${baseUrl}/v004/user/userProfiles/${userId}/avatar`, formData, callback);
 }

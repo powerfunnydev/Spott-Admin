@@ -1,6 +1,6 @@
 import { fetchBroadcastChannels as dataFetchBroadcastChannels,
-  deleteBroadcastChannelEntry as dataDeleteBroadcastChannelEntry,
-  deleteBroadcastChannelEntries as dataDeleteBroadcastChannelEntries } from '../../../../actions/broadcastChannel';
+  deleteBroadcastChannel as dataDeleteBroadcastChannel,
+  deleteBroadcastChannels as dataDeleteBroadcastChannels } from '../../../../actions/broadcastChannel';
 
 // Action types
 // ////////////
@@ -26,20 +26,20 @@ export function load (query) {
   };
 }
 
-export function deleteBroadcastChannelEntries (broadcastChannelEntryIds) {
+export function deleteBroadcastChannels (broadcastChannelIds) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataDeleteBroadcastChannelEntries({ broadcastChannelEntryIds }));
+      return await dispatch(dataDeleteBroadcastChannels({ broadcastChannelIds }));
     } catch (error) {
       dispatch({ error, type: BROADCAST_CHANNEL_ENTRIES_DELETE_ERROR });
     }
   };
 }
 
-export function deleteBroadcastChannelEntry (broadcastChannelEntryId) {
+export function deleteBroadcastChannel (broadcastChannelId) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataDeleteBroadcastChannelEntry({ broadcastChannelEntryId }));
+      return await dispatch(dataDeleteBroadcastChannel({ broadcastChannelId }));
     } catch (error) {
       dispatch({ error, type: BROADCAST_CHANNEL_ENTRY_DELETE_ERROR });
     }

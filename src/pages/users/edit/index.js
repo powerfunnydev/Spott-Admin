@@ -3,17 +3,14 @@ import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import TextInput from '../../../_common/inputs/textInput';
-import Header from '../../../app/header';
-import { tabStyles, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
-import localized from '../../../_common/localized';
+import TextInput from '../../_common/inputs/textInput';
+import Header from '../../app/header';
+import { tabStyles, Root, FormSubtitle, colors, EditTemplate } from '../../_common/styles';
+import localized from '../../_common/localized';
 import * as actions from './actions';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import Section from '../../../_common/components/section';
-import SpecificHeader from '../../header';
-import { routerPushWithReturnTo } from '../../../../actions/global';
-import Dropzone from '../../../_common/dropzone';
-import Label from '../../../_common/inputs/_label';
+import Section from '../../_common/components/section';
+import { routerPushWithReturnTo } from '../../../actions/global';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -31,11 +28,11 @@ function validate (values, { t }) {
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
-  form: 'broadcastersEditEntry',
+  form: 'userEdit',
   validate
 })
 @Radium
-export default class EditBroadcaster extends Component {
+export default class EditUser extends Component {
 
   static propTypes = {
     error: PropTypes.any,
@@ -60,18 +57,21 @@ export default class EditBroadcaster extends Component {
     if (this.props.params.id) {
       const editObj = await this.props.load(this.props.params.id);
       this.props.initialize({
-        name: editObj.name
+        firstName: editObj.firstName,
+        lastName: editObj.lastName,
+        userName: editObj.userName,
+        email: editObj.email
       });
     }
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/broadcasters', true);
+    this.props.routerPushWithReturnTo('users', true);
   }
 
   async submit (form) {
     try {
-      await this.props.submit({ id: this.props.params.id, ...form.toJS() });
+      await this.props.submit({ userId: this.props.params.id, ...form.toJS() });
       this.redirect();
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
@@ -81,9 +81,8 @@ export default class EditBroadcaster extends Component {
   render () {
     const { location, handleSubmit } = this.props;
     return (
-      <Root style={{ backgroundColor: colors.lightGray4 }}>
+      <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
         <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
           <Tabs>
             <TabList style={tabStyles.tabList}>
@@ -94,16 +93,34 @@ export default class EditBroadcaster extends Component {
                 <FormSubtitle first>Content</FormSubtitle>
                 <Field
                   component={TextInput}
-                  label='Name'
-                  name='name'
-                  placeholder='Name broadcaster'
+                  label='Username'
+                  name='userName'
+                  placeholder='Username'
                   required/>
-                <div style={{ paddingTop: '1.25em' }}>
+                <Field
+                  component={TextInput}
+                  label='First Name'
+                  name='firstName'
+                  placeholder='First Name'
+                  required/>
+                <Field
+                  component={TextInput}
+                  label='Last Name'
+                  name='lastName'
+                  placeholder='Last Name'
+                  required/>
+                <Field
+                  component={TextInput}
+                  label='Email'
+                  name='email'
+                  placeholder='Email'
+                  required/>
+                {/* <div style={{ paddingTop: '1.25em' }}>
                   <Label text='Upload image' />
                   <Dropzone
                     accept='image/*'
-                    onChange={({ callback, file }) => { this.props.uploadImage({ broadcasterEntryId: this.props.params.id, image: file, callback }); console.log('file', file); }}/>
-                </div>
+                    onChange={({ callback, file }) => { this.props.uploadImage({ userId: this.props.params.id, image: file, callback }); }}/>
+                </div>*/}
               </Section>
             </TabPanel>
           </Tabs>
@@ -113,3 +130,13 @@ export default class EditBroadcaster extends Component {
   }
 
 }
+
+/*
+<ImageInput
+  disabled={localeDataFieldDisabled}
+  field={logo[_activeLocale.value]}
+  height={250}
+  label='Logo'
+  style={styles.logoImage}
+  width={250} />
+  */

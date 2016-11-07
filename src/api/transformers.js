@@ -3,17 +3,15 @@ export function transformBroadcaster ({ logo, name, uuid }) {
   return { logo: { url: logo && logo.url }, name, id: uuid };
 }
 
+export function transformContentProducer ({ uuid, name, auditInfo, logo }) {
+  return { id: uuid, name, createdOn: auditInfo && auditInfo.createdOn, lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+          lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn, logo: { url: logo && logo.url } };
+}
 export function transformContentProducers (body) {
   const contentProducers = body.data;
   const data = [];
   for (const cp of contentProducers) {
-    const newCp = {};
-    newCp.id = cp.uuid;
-    newCp.name = cp.name;
-    newCp.createdOn = cp.auditInfo.createdOn;
-    newCp.lastUpdatedBy = cp.auditInfo.lastUpdatedBy;
-    newCp.lastUpdatedOn = cp.auditInfo.lastUpdatedOn;
-    data.push(newCp);
+    data.push(transformContentProducer(cp));
   }
   body.data = data;
   return body;
@@ -250,6 +248,13 @@ export function transformPaging ({ page, pageCount, pageSize, totalResultCount }
   return { page, pageCount, pageSize, totalResultCount };
 }
 
-export function transformUser ({ disabled, profile: { email, firstName, gender, lastName }, uuid: id }) {
-  return { disabled, email, firstName, gender, id, lastName };
+export function transformUser ({ disabled, profile, userName, uuid: id }) {
+  return {
+    disabled,
+    userName,
+    email: profile && profile.email || null,
+    firstName: profile && profile.firstName || null,
+    lastName: profile && profile.lastName || null,
+    gender: profile && profile.gender || null,
+    id };
 }

@@ -14,7 +14,9 @@ import selector from './selector';
 import Dropdown, { styles as dropdownStyles } from '../../_common/components/dropdown';
 import UtilsBar from '../../_common/components/table/utilsBar';
 
+/* eslint-disable no-alert */
 /* eslint-disable react/no-set-state*/
+
 const numberOfRows = 25;
 
 @tableDecorator
@@ -100,8 +102,11 @@ export default class TvGuideList extends Component {
   }
 
   async deleteTvGuideEntry (tvGuideEntryId) {
-    await this.props.deleteTvGuideEntry(tvGuideEntryId);
-    await this.props.load(this.props.location.query);
+    const result = window.confirm('Are you sure you want to trigger this action?');
+    if (result) {
+      await this.props.deleteTvGuideEntry(tvGuideEntryId);
+      await this.props.load(this.props.location.query);
+    }
   }
 
   onClickNewEntry (e) {

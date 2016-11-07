@@ -25,8 +25,8 @@ export async function fetchBroadcastChannels (baseUrl, authenticationToken, loca
   return body;
 }
 
-export async function fetchBroadcastChannelEntry (baseUrl, authenticationToken, locale, { broadcastChannelEntryId }) {
-  const url = `${baseUrl}/v004/media/broadcastChannels/${broadcastChannelEntryId}`;
+export async function fetchBroadcastChannel (baseUrl, authenticationToken, locale, { broadcastChannelId }) {
+  const url = `${baseUrl}/v004/media/broadcastChannels/${broadcastChannelId}`;
   const { body } = await get(authenticationToken, locale, url);
   // console.log('before transform', { ...body });
   const result = transformBroadcastChannel(body);
@@ -45,19 +45,19 @@ export async function persistBroadcastChannel (baseUrl, authenticationToken, loc
   await post(authenticationToken, locale, url, { ...bc, uuid: id, name });
 }
 
-export async function deleteBroadcastChannelEntry (baseUrl, authenticationToken, locale, { broadcastChannelEntryId }) {
-  await del(authenticationToken, locale, `${baseUrl}/v004/media/broadcastChannels/${broadcastChannelEntryId}`);
+export async function deleteBroadcastChannel (baseUrl, authenticationToken, locale, { broadcastChannelId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/broadcastChannels/${broadcastChannelId}`);
 }
 
-export async function deleteBroadcastChannelEntries (baseUrl, authenticationToken, locale, { broadcastChannelEntryIds }) {
-  for (const broadcastChannelEntryId of broadcastChannelEntryIds) {
-    await deleteBroadcastChannelEntry(baseUrl, authenticationToken, locale, { broadcastChannelEntryId });
+export async function deleteBroadcastChannels (baseUrl, authenticationToken, locale, { broadcastChannelIds }) {
+  for (const broadcastChannelId of broadcastChannelIds) {
+    await deleteBroadcastChannel(baseUrl, authenticationToken, locale, { broadcastChannelId });
   }
 }
 
-export async function uploadBroadcastChannelImage (baseUrl, authenticationToken, locale, { broadcastChannelEntryId, image, callback }) {
+export async function uploadBroadcastChannelImage (baseUrl, authenticationToken, locale, { broadcastChannelId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', broadcastChannelEntryId);
+  formData.append('uuid', broadcastChannelId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/broadcastChannels/${broadcastChannelEntryId}/logo`, formData, callback);
+  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/broadcastChannels/${broadcastChannelId}/logo`, formData, callback);
 }

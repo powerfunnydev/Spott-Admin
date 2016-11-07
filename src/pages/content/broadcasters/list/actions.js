@@ -1,6 +1,6 @@
 import { fetchBroadcasters as dataFetchBroadcasters,
-  deleteBroadcastersEntry as dataDeleteBroadcastersEntry,
-  deleteBroadcastersEntries as dataDeleteBroadcastersEntries } from '../../../../actions/broadcasters';
+  deleteBroadcaster as dataDeleteBroadcaster,
+  deleteBroadcasters as dataDeleteBroadcasters } from '../../../../actions/broadcaster';
 
 // Action types
 // ////////////
@@ -8,8 +8,8 @@ import { fetchBroadcasters as dataFetchBroadcasters,
 export const BROADCASTERS_FETCH_START = 'BROADCASTERS/BROADCASTERS_FETCH_START';
 export const BROADCASTERS_FETCH_ERROR = 'BROADCASTERS/BROADCASTERS_FETCH_ERROR';
 
-export const BROADCASTERS_ENTRIES_DELETE_ERROR = 'BROADCASTERS/BROADCASTERS_ENTRIES_REMOVE_ERROR';
-export const BROADCASTERS_ENTRY_DELETE_ERROR = 'BROADCASTERS/BROADCASTERS_ENTRY_REMOVE_ERROR';
+export const BROADCASTERS_DELETE_ERROR = 'BROADCASTERS/BROADCASTERS_REMOVE_ERROR';
+export const BROADCASTER_DELETE_ERROR = 'BROADCASTERS/BROADCASTER_REMOVE_ERROR';
 
 export const SELECT_ALL_CHECKBOXES = 'BROADCASTERS/SELECT_ALL_CHECKBOXES';
 export const SELECT_CHECKBOX = 'BROADCASTERS/SELECT_CHECKBOX';
@@ -26,22 +26,22 @@ export function load (query) {
   };
 }
 
-export function deleteBroadcastersEntries (broadcastersEntryIds) {
+export function deleteBroadcasters (broadcasterIds) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataDeleteBroadcastersEntries({ broadcastersEntryIds }));
+      return await dispatch(dataDeleteBroadcasters({ broadcasterIds }));
     } catch (error) {
-      dispatch({ error, type: BROADCASTERS_ENTRIES_DELETE_ERROR });
+      dispatch({ error, type: BROADCASTERS_DELETE_ERROR });
     }
   };
 }
 
-export function deleteBroadcastersEntry (broadcastersEntryId) {
+export function deleteBroadcaster (broadcasterId) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataDeleteBroadcastersEntry({ broadcastersEntryId }));
+      return await dispatch(dataDeleteBroadcaster({ broadcasterId }));
     } catch (error) {
-      dispatch({ error, type: BROADCASTERS_ENTRY_DELETE_ERROR });
+      dispatch({ error, type: BROADCASTER_DELETE_ERROR });
     }
   };
 }

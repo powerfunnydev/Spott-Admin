@@ -2,8 +2,7 @@ import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import ReactDropzone from 'react-dropzone';
-import { fileSizeToString } from '../../../utils';
-import { colors, errorTextStyle, makeTextStyle, fontWeights } from '../styles';
+import { colors, makeTextStyle, fontWeights } from '../styles';
 import ProgressBar from '../components/progressBar';
 
  /* eslint-disable react/no-set-state */
@@ -17,7 +16,6 @@ export default class Dropzone extends Component {
   static propTypes = {
     accept: PropTypes.string,
     input: PropTypes.object,
-    message: PropTypes.node.isRequired,
     meta: PropTypes.object,
     name: PropTypes.string,
     onChange: PropTypes.func
@@ -101,8 +99,14 @@ export default class Dropzone extends Component {
       width: 'auto'
     },
     chosenImage: {
-      width: '200px',
-      height: '200px'
+      position: 'absolute',
+      maxWidth: '100%',
+      maxHeight: '100%',
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0,
+      margin: 'auto'
     }
   };
 

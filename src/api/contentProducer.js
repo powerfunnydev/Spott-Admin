@@ -1,5 +1,5 @@
-import { del, get, post } from './request';
-import { transformContentProducers } from './transformers';
+import { del, get, post, postFormData } from './request';
+import { transformContentProducers, transformContentProducer } from './transformers';
 
 
 export async function fetchContentProducers (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
@@ -18,7 +18,7 @@ export async function fetchContentProducerEntry (baseUrl, authenticationToken, l
   const url = `${baseUrl}/v004/media/contentProducers/${contentProducerEntryId}`;
   const { body } = await get(authenticationToken, locale, url);
   // console.log('before transform', { ...body });
-  const result = { name: body.name };
+  const result = transformContentProducer(body);
   // console.log('after tranform', result);
   return result;
 }
@@ -42,4 +42,11 @@ export async function deleteContentProducerEntries (baseUrl, authenticationToken
   for (const contentProducerEntryId of contentProducerEntryIds) {
     await deleteContentProducerEntry(baseUrl, authenticationToken, locale, { contentProducerEntryId });
   }
+}
+
+export async function uploadContentProducerImage (baseUrl, authenticationToken, locale, { contentProducerEntryId, image, callback }) {
+  const formData = new FormData();
+  formData.append('uuid', contentProducerEntryId);
+  formData.append('file', image);
+  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/contentProducers/${contentProducerEntryId}/logo`, formData, callback);
 }

@@ -10,6 +10,7 @@ import Line from '../../_common/components/line';
 import Dropdown, { styles as dropdownStyles } from '../../_common/components/dropdown';
 import * as actions from './actions';
 import selector from './selector';
+import { slowdown } from '../../../utils';
 
 const numberOfRows = 25;
 
@@ -50,6 +51,7 @@ export default class Users extends Component {
     super(props);
     this.onClickNewEntry = ::this.onClickNewEntry;
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
+    this.slowSearch = slowdown(props.load, 300);
   }
 
   async componentWillMount () {
@@ -60,13 +62,17 @@ export default class Users extends Component {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
     if (isQueryChanged(query, nextQuery)) {
-      await this.props.load(nextQuery);
+      await this.slowSearch(nextQuery);
     }
   }
 
   async deleteUser (usersEntryId) {
     await this.props.deleteUser(usersEntryId);
     await this.props.load(this.props.location.query);
+  }
+
+  getUserName (user) {
+    return user.get('userName');
   }
 
   getEmail (user) {
@@ -99,7 +105,7 @@ export default class Users extends Component {
   }
 
   render () {
-    const { users, children, isSelected, location, location: { query: { display, page, searchString, sortField, sortDirection } },
+    const { users, children, isSelected, location, location: { query, query: { display, page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
@@ -113,7 +119,7 @@ export default class Users extends Component {
               numberSelected={numberSelected}
               searchString={searchString}
               textCreateButton='New User'
-              onChangeSearchString={onChangeSearchString}
+              onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
               onClickDeleteSelected={this.onClickDeleteSelected}
               onClickNewEntry={this.onClickNewEntry}/>
           </Container>
@@ -128,9 +134,10 @@ export default class Users extends Component {
                   <Headers>
                     {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                     <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader, { flex: 0.25 } ]} onChange={selectAllCheckboxes}/>
-                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'USERNAME')} sortDirection = {sortField === 'USERNAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 3 } ]}>Email</CustomCel>
-                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>First Name</CustomCel>
-                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>Last Name</CustomCel>
+                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'USERNAME')} sortDirection = {sortField === 'USERNAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>Username</CustomCel>
+                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Email</CustomCel>
+                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>First Name</CustomCel>
+                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Last Name</CustomCel>
                     <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}/>
                   </Headers>
                   <Rows isLoading={users.get('_status') !== 'loaded'}>
@@ -139,7 +146,8 @@ export default class Users extends Component {
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                           <CheckBoxCel checked={isSelected.get(user.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, user.get('id'))}/>
-                          <CustomCel getValue={this.getEmail} objectToRender={user} style={{ flex: 3 }} onClick={() => { this.props.routerPushWithReturnTo(`users/read/${user.get('id')}`); }}/>
+                          <CustomCel getValue={this.getUserName} objectToRender={user} style={{ flex: 2 }}/>
+                          <CustomCel getValue={this.getEmail} objectToRender={user} style={{ flex: 2 }}/>
                           <CustomCel getValue={this.getFirstName} objectToRender={user} style={{ flex: 1 }} />
                           <CustomCel getValue={this.getLastName} objectToRender={user} style={{ flex: 1 }} />
                           <CustomCel style={{ flex: 1 }}>

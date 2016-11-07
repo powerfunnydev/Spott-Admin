@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
 import Header from '../../app/header';
-import { Root, FormSubtitle, colors, EditTemplate } from '../../_common/styles';
+import { tabStyles, Root, FormSubtitle, colors, EditTemplate } from '../../_common/styles';
 import DateInput from '../../_common/inputs/dateInput';
 import TimeInput from '../../_common/inputs/timeInput';
 import SelectInput from '../../_common/inputs/selectInput';
@@ -15,7 +15,6 @@ import { FETCHING } from '../../../constants/statusTypes';
 import * as actions from './actions';
 import selector from './selector';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import { styles as tabStyles } from '../../_common/components/tabs';
 import Section from '../../_common/components/section';
 import { routerPushWithReturnTo } from '../../../actions/global';
 

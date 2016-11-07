@@ -33,6 +33,8 @@ import ReportingRankings from './pages/reporting/rankings';
 import TvGuideCreateEntry from './pages/tvGuide/create';
 import TvGuideEditEntry from './pages/tvGuide/edit';
 import TvGuideList from './pages/tvGuide/list';
+import UsersCreate from './pages/users/create';
+import UsersEdit from './pages/users/edit';
 import UsersList from './pages/users/list';
 import { authenticationTokenSelector, userRolesSelector } from './selectors/global';
 import reducer from './reducers';
@@ -101,7 +103,11 @@ function getRoutes ({ getState }) {
         </Route>
       </Route>
 
-      <Route component={UsersList} path='users' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])} />
+      <Route component={UsersList} path='users' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
+        <Route component={UsersCreate} path='create'/>
+      </Route>
+
+      <Route component={UsersEdit} path='users/edit/:id'/>
 
       <Route component={TvGuideList} path='tv-guide' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <Route component={TvGuideCreateEntry} path='create' />

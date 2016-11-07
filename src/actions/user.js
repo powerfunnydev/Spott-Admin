@@ -2,6 +2,10 @@ import * as api from '../api/user';
 import { apiBaseUrlSelector } from '../selectors/global';
 import { makeApiActionCreator } from './utils';
 
+export const USER_UPLOAD_IMAGE_START = 'USERS/USER_UPLOAD_IMAGE_START';
+export const USER_UPLOAD_IMAGE_SUCCESS = 'USERS/USER_UPLOAD_IMAGE_SUCCESS';
+export const USER_UPLOAD_IMAGE_ERROR = 'USERS/USER_UPLOAD_IMAGE_ERROR';
+
 export const LOGIN_START = 'LOGIN_START';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_ERROR = 'LOGIN_ERROR';
@@ -78,3 +82,4 @@ export const fetchUser = makeApiActionCreator(api.fetchUser, USER_FETCH_START, U
 export const persistUser = makeApiActionCreator(api.persistUser, USER_PERSIST_START, USER_PERSIST_SUCCESS, USER_PERSIST_ERROR);
 export const deleteUsers = makeApiActionCreator(api.deleteUsers, USERS_ENTRIES_DELETE_START, USERS_ENTRIES_DELETE_SUCCESS, USERS_ENTRIES_DELETE_ERROR);
 export const deleteUser = makeApiActionCreator(api.deleteUser, USER_DELETE_START, USER_DELETE_SUCCESS, USER_DELETE_ERROR);
+export const uploadUserImage = makeApiActionCreator(api.uploadUserImage, USER_UPLOAD_IMAGE_START, USER_UPLOAD_IMAGE_SUCCESS, USER_UPLOAD_IMAGE_ERROR);

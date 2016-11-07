@@ -5,6 +5,8 @@ export const colors = {
   white: '#ffffff',
   primaryBlue: '#09bbf0',
   primaryBlue2: '#39D6FF',
+  blue: '#08a7d7',
+  blue2: '#0795c0',
   lightBlue: '#e6f8fd',
   secondaryPink: '#D31751',
   secondaryPink2: '#ED316B',
@@ -31,9 +33,25 @@ export const colors = {
 
 export const defaultSpacing = 15;
 
+export const tabStyles = {
+  tabList: {
+    marginBottom: 0,
+    borderWidth: 0
+  },
+  tab: {
+    fontSize: '12px',
+    color: '#536970',
+    borderColor: colors.lightGray3
+  }
+};
+
 const hoveredBlueButtonStyle = {
-  backgroundColor: colors.primaryBlue2,
-  border: `1px solid ${colors.primaryBlue2}`
+  backgroundColor: colors.blue,
+  border: `1px solid ${colors.blue}`
+};
+const focusedBlueButtonStyle = {
+  backgroundColor: colors.blue2,
+  border: `1px solid ${colors.blue2}`
 };
 const hoveredPinkButtonStyle = {
   backgroundColor: colors.secondaryPink2,
@@ -42,6 +60,16 @@ const hoveredPinkButtonStyle = {
 const hoveredBorderedButtonStyle = {
   backgroundColor: 'rgba(255, 255, 255, 0.20)',
   border: '1px solid rgb(250, 250, 250)'
+};
+const hoveredWhiteButtonStyle = {
+  color: colors.darkGray3,
+  backgroundColor: colors.white,
+  border: `solid 1px ${colors.lightGray3}`
+};
+const focusedWhiteButtonStyle = {
+  color: colors.darkGray3,
+  backgroundColor: colors.lightGray4,
+  border: `solid 1px ${colors.lightGray3}`
 };
 const hoveredGrayButtonStyle = {
   backgroundColor: 'rgba(255, 255, 255, 0.65)',
@@ -126,7 +154,7 @@ export const buttonStyles = {
     backgroundColor: colors.primaryBlue,
     border: `1px solid ${colors.primaryBlue}`, // To ensure size is equal with "bordered" buttons.
     ':hover': hoveredBlueButtonStyle,
-    ':focus': hoveredBlueButtonStyle
+    ':focus': focusedBlueButtonStyle
   },
   pink: {
     backgroundColor: colors.secondaryPink,
@@ -150,8 +178,8 @@ export const buttonStyles = {
     backgroundColor: 'white',
     border: '1px solid #ced6da',
     color: '#6d8791',
-    ':hover': hoveredGrayButtonStyle,
-    ':focus': hoveredGrayButtonStyle
+    ':hover': hoveredWhiteButtonStyle,
+    ':focus': focusedWhiteButtonStyle
   },
   // Disable left margin for the first button
   first: {
