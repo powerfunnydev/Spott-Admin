@@ -44,7 +44,6 @@ export default class MediaFilterForm extends Component {
           getOptions={searchMedia}
           input={{ value: fields.media }}
           isLoading={searchedMediumIds.get('_status') === FETCHING}
-          maxSelect={5}
           multiselect
           name='media'
           options={searchedMediumIds.get('data').toJS()}

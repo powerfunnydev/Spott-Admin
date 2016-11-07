@@ -60,7 +60,8 @@ export default class Reporting extends Component {
     },
     mediaFilterForm: {
       float: 'right',
-      width: '50%'
+      width: '50%',
+      paddingBottom: '1em'
     },
     wrapper: {
       display: 'flex',
