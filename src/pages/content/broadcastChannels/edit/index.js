@@ -5,15 +5,15 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import TextInput from '../../../_common/inputs/textInput';
 import Header from '../../../app/header';
-import { Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
+import { tabStyles, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import localized from '../../../_common/localized';
 import * as actions from './actions';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Section from '../../../_common/components/section';
-import { styles as tabStyles } from '../../../_common/components/tabs';
 import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Dropzone from '../../../_common/dropzone';
+import Label from '../../../_common/inputs/_label';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -31,11 +31,11 @@ function validate (values, { t }) {
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
-  form: 'broadcastChannelEditEntry',
+  form: 'broadcastChannelEdit',
   validate
 })
 @Radium
-export default class EditBroadcastChannelEntry extends Component {
+export default class EditBroadcastChannel extends Component {
 
   static propTypes = {
     error: PropTypes.any,
@@ -46,7 +46,8 @@ export default class EditBroadcastChannelEntry extends Component {
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
-    t: PropTypes.func.isRequired
+    t: PropTypes.func.isRequired,
+    uploadImage: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -97,13 +98,14 @@ export default class EditBroadcastChannelEntry extends Component {
                   name='name'
                   placeholder='Name Broadcast Channel'
                   required/>
+                <div style={{ paddingTop: '1.25em' }}>
+                  <Label text='Upload image' />
+                  <Dropzone
+                    accept='image/*'
+                    message={<span>Drag & drop the image</span>}
+                    onChange={({ callback, file }) => { this.props.uploadImage({ broadcastChannelId: this.props.params.id, image: file, callback }); console.log('file', file); }}/>
+                </div>
               </Section>
-              <Dropzone
-                accept='image/*'
-                progress={this.state.progress}
-                total={this.state.total}
-                message={<span>Drag & drop the image</span>}
-                onChange={({ callback, file }) => { this.props.uploadImage({ broadcastChannelEntryId: this.props.params.id, image: file, callback }); console.log('file', file); }}/>
             </TabPanel>
           </Tabs>
         </EditTemplate>

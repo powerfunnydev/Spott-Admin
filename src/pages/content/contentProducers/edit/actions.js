@@ -1,8 +1,9 @@
-import { persistContentProducerEntry, fetchContentProducerEntry as dataFetchContentProducerEntry } from '../../../../actions/contentProducer';
+import { uploadContentProducerImage, persistContentProducerEntry, fetchContentProducerEntry as dataFetchContentProducerEntry } from '../../../../actions/contentProducer';
 
 export const CONTENT_PRODUCERS_FETCH_ENTRY_ERROR = 'CONTENT_PRODUCERS_EDIT/FETCH_ENTRY_ERROR';
 
 export const submit = persistContentProducerEntry;
+export const uploadImage = uploadContentProducerImage;
 
 export function load (contentProducerEntryId) {
   return async (dispatch, getState) => {

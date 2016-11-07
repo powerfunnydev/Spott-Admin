@@ -10,13 +10,10 @@ function serialize ({ searchString = '', page = 0, pageSize = 25, sortDirection,
   return id;
 }
 
-export function serializeFilterHasContentProducers (query) {
-  return serialize(query);
-}
-
-export function serializeFilterHasBroadcasters (query) {
-  return serialize(query);
-}
+export const serializeFilterHasContentProducers = serialize;
+export const serializeFilterHasBroadcasters = serialize;
+export const serializeFilterHasBroadcastChannels = serialize;
+export const serializeFilterHasUsers = serialize;
 
 export function serializeFilterHasTvGuideEntries ({ page = 0, pageSize = 25, sortDirection, sortField }) {
   let id = `page=${page}&pageSize=${pageSize}`;
@@ -50,7 +47,7 @@ export function fetchStart (state, path) {
 }
 
 export function fetchSuccess (state, path, data) {
-  return state.setIn(path, Map({ ...data, _status: LOADED }));
+  return state.setIn(path, fromJS({ ...data, _error: null, _status: LOADED }));
 }
 
 export function fetchError (state, path, error) {

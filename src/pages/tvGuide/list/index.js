@@ -5,17 +5,18 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { routerPushWithReturnTo } from '../../../actions/global';
 import moment from 'moment';
 import Header from '../../app/header';
-import { Root, buttonStyles, Container } from '../../_common/styles';
-import { tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table';
+import { Root, Container } from '../../_common/styles';
+import { isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table/index';
 import Line from '../../_common/components/line';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
 import Dropdown, { styles as dropdownStyles } from '../../_common/components/dropdown';
-import PlusButton from '../../_common/buttons/plusButton';
-import EntityDetails from '../../_common/entityDetails';
+import UtilsBar from '../../_common/components/table/utilsBar';
 
+/* eslint-disable no-alert */
 /* eslint-disable react/no-set-state*/
+
 const numberOfRows = 25;
 
 @tableDecorator
@@ -45,8 +46,6 @@ export default class TvGuideList extends Component {
     routerPushWithReturnTo: PropTypes.func.isRequired,
     selectAllCheckboxes: PropTypes.func.isRequired,
     selectCheckbox: PropTypes.func.isRequired,
-    selectEntity: PropTypes.func.isRequired,
-    selectedEntity: ImmutablePropTypes.map,
     totalResultCount: PropTypes.number.isRequired,
     tvGuideEntries: ImmutablePropTypes.map.isRequired,
     onChangePage: PropTypes.func.isRequired,
@@ -60,20 +59,14 @@ export default class TvGuideList extends Component {
     this.onClickNewEntry = ::this.onClickNewEntry;
   }
 
-  componentWillMount () {
-    this.props.load(this.props.location.query);
+  async componentWillMount () {
+    await this.props.load(this.props.location.query);
   }
 
-  componentWillReceiveProps (nextProps) {
+  async componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
-    if (query.page !== nextQuery.page ||
-      query.pageSize !== nextQuery.pageSize ||
-      query.sortDirection !== nextQuery.sortDirection ||
-      query.sortField !== nextQuery.sortField ||
-      query.searchString !== nextQuery.searchString) {
-      this.props.load(nextProps.location.query);
-    }
+    await isQueryChanged(query, nextQuery) && this.props.load(nextProps.location.query);
   }
 
   getMediumTitle (tvGuideEntry) {
@@ -109,8 +102,11 @@ export default class TvGuideList extends Component {
   }
 
   async deleteTvGuideEntry (tvGuideEntryId) {
-    await this.props.deleteTvGuideEntry(tvGuideEntryId);
-    await this.props.load(this.props.location.query);
+    const result = window.confirm('Are you sure you want to trigger this action?');
+    if (result) {
+      await this.props.deleteTvGuideEntry(tvGuideEntryId);
+      await this.props.load(this.props.location.query);
+    }
   }
 
   onClickNewEntry (e) {
@@ -132,22 +128,18 @@ export default class TvGuideList extends Component {
 
   render () {
     const { children, isSelected, location, location: { query: { page, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, selectedEntity, totalResultCount, tvGuideEntries } = this.props;
+      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, tvGuideEntries } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
       <Root>
         <Header currentLocation={location} hideHomePageLinks />
-        {/* selectedEntity is in development, it will not be used currently */}
-        {selectedEntity.get('_status') === 'loaded' && <Container><EntityDetails
-          image={selectedEntity.getIn([ 'medium', 'profileImage', 'url' ])}
-          subtitle={selectedEntity.get('medium').get('title')}
-          title={selectedEntity.getIn([ 'serie', 'title' ]) || selectedEntity.get('medium').get('title')}/></Container>}
         <div style={generalStyles.backgroundBar}>
-          <Container style={generalStyles.searchContainer}>
-            <div style={generalStyles.floatRight}>
-              <button key='delete' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} type='button' onClick={this.onClickDeleteSelected}>Delete {numberSelected}</button>
-              <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='New Tv Guide Entry' onClick={this.onClickNewEntry} />
-            </div>
+          <Container>
+            <UtilsBar
+              numberSelected={numberSelected}
+              textCreateButton='New Tv Guide Entry'
+              onClickDeleteSelected={this.onClickDeleteSelected}
+              onClickNewEntry={this.onClickNewEntry}/>
           </Container>
         </div>
         <Line/>
@@ -191,7 +183,7 @@ export default class TvGuideList extends Component {
                       <CustomCel style={{ flex: 1 }}>
                         <Dropdown
                           elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`tv-guide/edit/${tvGuideEntry.get('id')}`); }}>Edit</div>}>
-                          <div key={1} style={[ dropdownStyles.option ]} onClick={(e) => { e.preventDefault(); this.deleteTvGuideEntry(tvGuideEntry.get('id')); }}>Remove</div>
+                          <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteTvGuideEntry(tvGuideEntry.get('id')); }}>Remove</div>
                         </Dropdown>
                       </CustomCel>
                     </Row>

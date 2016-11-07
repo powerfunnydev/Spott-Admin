@@ -4,153 +4,191 @@ import { connect } from 'react-redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { bindActionCreators } from 'redux';
 import Header from '../../../app/header';
-import { colors, Container } from '../../../_common/styles';
+import { Root, Container } from '../../../_common/styles';
 import localized from '../../../_common/localized';
 import * as actions from './actions';
 import SpecificHeader from '../../header';
 import selector from './selector';
 import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
-import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import BreadCrumbs from '../../../_common/breadCrumbs';
+import { UtilsBar, isQueryChanged, Tile, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
+import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
+import Line from '../../../_common/components/line';
+import { slowdown } from '../../../../utils';
+import { Tabs, Tab } from '../../../_common/components/tabs';
 
-const plusIcon = require('../../../../assets/images/plus-gray.svg');
+/* eslint-disable no-alert */
 
-@Radium
-class BroadcastChannelImage extends Component {
-  static propTypes={
-    imageUrl: PropTypes.string,
-    text: PropTypes.string,
-    onCreate: PropTypes.func,
-    onEdit: PropTypes.func
-  }
+const numberOfRows = 25;
 
-  static styles = {
-    imageContainer: {
-      position: 'relative',
-      height: '103px',
-      borderRadius: '2px',
-      // backgroundColor: colors.lightGray5,
-      border: `solid 1px ${colors.veryLightGray}`,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    },
-    image: {
-      width: '184px',
-      height: '103px'
-    },
-    dropdown: {
-      position: 'absolute',
-      top: '7px',
-      right: '7px'
-    },
-    broadcastChannel: {
-      display: 'flex',
-      justifyContent: 'center',
-      paddingTop: '10px'
-    },
-    darkGray: {
-      border: `solid 1px ${colors.lightGray2}`
-    },
-    clickable: {
-      cursor: 'pointer'
-    }
-  }
-  render () {
-    const { imageUrl, text, onCreate, onEdit } = this.props;
-    const { styles } = this.constructor;
-    return (
-      <div style={{ display: 'inline-block', paddingRight: '24px' }}>
-        {onEdit &&
-          <div>
-            <div style={[ styles.imageContainer, styles.image ]}>
-              {imageUrl && <img src={imageUrl} style={styles.image}/>}
-              {!imageUrl && <div>No image</div>}
-                <Dropdown style={styles.dropdown}>
-                  <div key={1} style={[ dropdownStyles.option ]} onClick={onEdit}>Edit</div>
-                </Dropdown>
-            </div>
-            <div style={styles.broadcastChannel}>{text}</div>
-          </div>
-        }
-        {onCreate &&
-          <div style={[ styles.imageContainer, styles.image, styles.darkGray, styles.clickable ]} onClick={onCreate}>
-            <img src={plusIcon}/>
-          </div>
-        }
-      </div>
-    );
-  }
-}
+@tableDecorator
 @localized
 @connect(selector, (dispatch) => ({
-  deleteBroadcastersEntry: bindActionCreators(listActions.deleteBroadcastersEntry, dispatch),
-  load: bindActionCreators(actions.load, dispatch),
-  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
+  deleteBroadcaster: bindActionCreators(listActions.deleteBroadcaster, dispatch),
+  deleteBroadcastChannel: bindActionCreators(actions.deleteBroadcastChannel, dispatch),
+  loadBroadcaster: bindActionCreators(actions.loadBroadcaster, dispatch),
+  loadBroadcasterChannels: bindActionCreators(actions.loadBroadcasterChannels, dispatch),
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
+  selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
+  selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
 }))
 @Radium
-export default class ReadBroadcastersEntry extends Component {
+export default class ReadBroadcaster extends Component {
 
   static propTypes = {
     broadcastChannels: ImmutablePropTypes.map.isRequired,
     children: PropTypes.node,
     currentBroadcaster: PropTypes.object.isRequired,
-    deleteBroadcastersEntry: PropTypes.func.isRequired,
+    deleteBroadcastChannel: PropTypes.func.isRequired,
+    deleteBroadcaster: PropTypes.func.isRequired,
     error: PropTypes.any,
-    load: PropTypes.func.isRequired,
-    location: PropTypes.object.isRequired,
+    isSelected: ImmutablePropTypes.map.isRequired,
+    loadBroadcaster: PropTypes.func.isRequired,
+    loadBroadcasterChannels: PropTypes.func.isRequired,
+    location: PropTypes.shape({
+      pathname: PropTypes.string.isRequired,
+      query: PropTypes.object.isRequired
+    }),
+    numberSelected: PropTypes.number,
+    pageCount: PropTypes.number,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
-    t: PropTypes.func.isRequired
+    selectAllCheckboxes: PropTypes.func.isRequired,
+    selectCheckbox: PropTypes.func.isRequired,
+    t: PropTypes.func.isRequired,
+    totalResultCount: PropTypes.number.isRequired,
+    onChangeDisplay: PropTypes.func.isRequired,
+    onChangePage: PropTypes.func.isRequired,
+    onChangeSearchString: PropTypes.func.isRequired,
+    onSortField: PropTypes.func.isRequired
   };
 
   constructor (props) {
     super(props);
     this.redirect = ::this.redirect;
+    this.onClickNewEntry = :: this.onClickNewEntry;
+    this.slowSearch = slowdown(props.loadBroadcasterChannels, 300);
   }
 
   async componentWillMount () {
     if (this.props.params.id) {
-      await this.props.load(this.props.params.id);
+      await this.props.loadBroadcaster(this.props.params.id);
+      await this.props.loadBroadcasterChannels({ ...this.props.location.query, broadcasterId: this.props.params.id });
     }
+  }
+
+  async componentWillReceiveProps (nextProps) {
+    const nextQuery = nextProps.location.query;
+    const query = this.props.location.query;
+    if (isQueryChanged(query, nextQuery)) {
+      await this.slowSearch({ ...nextProps.location.query, broadcasterId: this.props.params.id });
+    }
+  }
+
+  async deleteBroadcastChannel (broadcastChannelId) {
+    const result = window.confirm('Are you sure you want to trigger this action?');
+    if (result) {
+      await this.props.deleteBroadcastChannel(broadcastChannelId);
+      await this.props.loadBroadcasterChannels({ ...this.props.location.query, broadcasterId: this.props.params.id });
+    }
+  }
+
+  getName (broadcaster) {
+    return broadcaster.get('name');
   }
 
   redirect () {
     this.props.routerPushWithReturnTo('content/broadcasters', true);
   }
 
-  static styles= {
-    row: {
-      display: 'flex',
-      flexDirection: 'row'
+  onClickNewEntry (e) {
+    e.preventDefault();
+    const broadcasterId = this.props.params.id;
+    if (broadcasterId) {
+      this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcasterId}/create/broadcast-channel`);
     }
   }
+
   render () {
-    const { children, currentBroadcaster, location, deleteBroadcastersEntry } = this.props;
-    const { styles } = this.constructor;
+    const { onChangeSearchString, onChangeDisplay, numberSelected, pageCount, selectAllCheckboxes, selectCheckbox, isSelected, totalResultCount, children, broadcastChannels, currentBroadcaster,
+       location, location: { query, query: { display, page, searchString, sortField, sortDirection } }, deleteBroadcaster } = this.props;
     return (
-      <div>
+      <Root>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[ { title: 'List', url: '/content/broadcasters' }, { title: currentBroadcaster.get('name'), url: location.pathname } ]}/>
         <Container>
           {currentBroadcaster.get('_status') === 'loaded' && currentBroadcaster &&
-            <EntityDetails image={currentBroadcaster.getIn([ 'logo', 'url' ])} title={currentBroadcaster.getIn([ 'name' ])}
+            <EntityDetails image={currentBroadcaster.get('logo') && currentBroadcaster.getIn([ 'logo', 'url' ])} title={currentBroadcaster.getIn([ 'name' ])}
               onEdit={() => { this.props.routerPushWithReturnTo(`content/broadcasters/edit/${currentBroadcaster.getIn([ 'id' ])}`); }}
-              onRemove={() => { deleteBroadcastersEntry(currentBroadcaster.getIn([ 'id' ])); this.redirect(); }}/>}
+              onRemove={async () => { await deleteBroadcaster(currentBroadcaster.getIn([ 'id' ])); this.redirect(); }}/>}
         </Container>
-        <Container>
-          <div style={styles.row}>
-            { this.props.broadcastChannels.get('data').map((broadcastChannel, index) => (
-              <BroadcastChannelImage imageUrl={broadcastChannel.getIn([ 'logo', 'url' ])} key={`broadcastChannel${index}`} text={broadcastChannel.get('name')} onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}/>
-            ))}
-            <BroadcastChannelImage key={'createBroadcastChannel'} onCreate={() => { this.props.routerPushWithReturnTo(`content/broadcasters/read/${currentBroadcaster.getIn([ 'id' ])}/create/broadcast-channel`); }}/>
-          </div>
-        </Container>
+        <Line/>
+        <Tabs>
+          <Tab>Broadcast Channels</Tab>
+        </Tabs>
+        <Line/>
+        <div style={generalStyles.backgroundBar}>
+          <Container >
+            <UtilsBar
+              display={display}
+              isLoading={broadcastChannels.get('_status') !== 'loaded'}
+              numberSelected={numberSelected}
+              searchString={searchString}
+              textCreateButton='New Broadcast Channel'
+              onChangeDisplay={onChangeDisplay}
+              onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value, broadcasterId: this.props.params.id }); }}
+              onClickNewEntry={this.onClickNewEntry}/>
+          </Container>
+        </div>
+        <Line/>
+        <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
+          <Container style={generalStyles.paddingTable}>
+            <TotalEntries totalResultCount={totalResultCount}/>
+            {(display === undefined || display === 'list') &&
+              <div>
+                <Table>
+                  <Headers>
+                    {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                    <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader, { flex: 0.25 } ]} onChange={selectAllCheckboxes}/>
+                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 5 } ]}>NAME</CustomCel>
+                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}/>
+                  </Headers>
+                  <Rows isLoading={broadcastChannels.get('_status') !== 'loaded'}>
+                    {broadcastChannels.get('data').map((broadcastChannel, index) => {
+                      return (
+                        <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
+                          {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                          <CheckBoxCel checked={isSelected.get(broadcastChannel.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, broadcastChannel.get('id'))}/>
+                          <CustomCel getValue={this.getName} objectToRender={broadcastChannel} style={{ flex: 5 }} />
+                          <CustomCel style={{ flex: 1 }}>
+                            <Dropdown
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}>Edit</div>}>
+                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}>Remove</div>
+                            </Dropdown>
+                          </CustomCel>
+                        </Row>
+                      );
+                    })}
+                  </Rows>
+                </Table>
+                <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
+              </div>
+            }
+            {display === 'grid' &&
+              <div style={generalStyles.row}>
+                { this.props.broadcastChannels.get('data').map((broadcastChannel, index) => (
+                  <Tile imageUrl={broadcastChannel.getIn([ 'logo', 'url' ])} key={`broadcastChannel${index}`} text={broadcastChannel.get('name')} onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}/>
+                ))}
+                <Tile key={'createBroadcastChannel'} onCreate={this.onClickNewEntry}/>
+              </div>
+            }
+          </Container>
+        </div>
         {children}
-      </div>
+      </Root>
     );
   }
 

@@ -5,7 +5,7 @@ import { syncHistoryWithStore } from 'react-router-redux';
 import { Provider } from 'react-redux';
 import createStore from './createStore';
 import { init } from './actions/global';
-import { LOGIN_SUCCESS } from './actions/users';
+import { LOGIN_SUCCESS } from './actions/user';
 import { ADMIN, BROADCASTER, CONTENT_MANAGER } from './constants/userRoles';
 
 import App from './pages/app';
@@ -15,6 +15,7 @@ import BroadcastersEditEntry from './pages/content/broadcasters/edit';
 import BroadcastersReadEntry from './pages/content/broadcasters/read';
 import BroadcastChannelCreateEntry from './pages/content/broadcastChannels/create';
 import BroadcastChannelEditEntry from './pages/content/broadcastChannels/edit';
+import BroadcastChannelListEntry from './pages/content/broadcastChannels/list';
 import ContentProducersList from './pages/content/contentProducers/list';
 import ContentProducersCreateEntry from './pages/content/contentProducers/create';
 import ContentProducersEditEntry from './pages/content/contentProducers/edit';
@@ -32,6 +33,9 @@ import ReportingRankings from './pages/reporting/rankings';
 import TvGuideCreateEntry from './pages/tvGuide/create';
 import TvGuideEditEntry from './pages/tvGuide/edit';
 import TvGuideList from './pages/tvGuide/list';
+import UsersCreate from './pages/users/create';
+import UsersEdit from './pages/users/edit';
+import UsersList from './pages/users/list';
 import { authenticationTokenSelector, userRolesSelector } from './selectors/global';
 import reducer from './reducers';
 
@@ -91,10 +95,20 @@ function getRoutes ({ getState }) {
             <Route component={BroadcastChannelCreateEntry} path='create/broadcast-channel'/>
           </Route>
         </Route>
+        <Route component={BroadcastChannelListEntry} path='broadcast-channels'>
+          <Route component={BroadcastChannelCreateEntry} path='create'/>
+        </Route>
         <Route path='broadcast-channels'>
           <Route component={BroadcastChannelEditEntry} path='edit/:id' />
         </Route>
       </Route>
+
+      <Route component={UsersList} path='users' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
+        <Route component={UsersCreate} path='create'/>
+      </Route>
+
+      <Route component={UsersEdit} path='users/edit/:id'/>
+
       <Route component={TvGuideList} path='tv-guide' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <Route component={TvGuideCreateEntry} path='create' />
       </Route>
