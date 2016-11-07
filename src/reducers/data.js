@@ -117,6 +117,18 @@ export default (state = fromJS({
     case tvGuideActions.TV_GUIDE_ENTRIES_FETCH_ERROR:
       return searchError(state, 'filterHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.error);
 
+    case tvGuideActions.TV_GUIDE_ENTRY_FETCH_START:
+      return fetchStart(state, [ 'entities', 'tvGuideEntries', action.tvGuideEntryId ]);
+    case tvGuideActions.TV_GUIDE_ENTRY_FETCH_SUCCESS:
+      let newState = fetchSuccess(state, [ 'entities', 'tvGuideEntries', action.tvGuideEntryId ], action.data);
+      if (action.data.medium.type === 'TV_SERIE_EPISODE') {
+        newState = fetchSuccess(newState, [ 'entities', 'listMedia', action.data.serie.id ], action.data.serie);
+        newState = fetchSuccess(newState, [ 'entities', 'listMedia', action.data.season.id ], action.data.season);
+      }
+      return fetchSuccess(newState, [ 'entities', 'listMedia', action.data.medium.id ], action.data.medium);
+    case tvGuideActions.TV_GUIDE_ENTRY_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'tvGuideEntries', action.tvGuideEntryId ], action.error);
+
     // Media
     // /////
 
