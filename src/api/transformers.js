@@ -228,19 +228,20 @@ export function transformTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastUpdated
     start, end, id, lastUpdatedBy, lastUpdatedOn,
     medium: transformListMedium(medium),
     channel: transformBroadcastChannel(channel),
-    season: season && { title: season.title },
-    serie: season && season.serie && { title: season.serie.title }
+    season: season && transformListMedium(season),
+    serie: season && season.serie && transformListMedium(season.serie)
   };
 }
 
+// TODO channel and channelInfo must be one object (task for backend).
 export function transformSingleTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastUpdatedOn }, uuid: id, start, end, mediumInfo,
   mediumInfo: { season }, channel: { uuid: channelUuid }, channelInfo }) {
   return {
     start, end, id, lastUpdatedBy, lastUpdatedOn,
-    medium: { ...transformListMedium(mediumInfo) },
-    channel: { ...transformBroadcastChannel(channelInfo), id: channelUuid },
-    season: season && { ...transformListMedium(season) },
-    serie: season && season.serie && { ...transformListMedium(season.serie) }
+    medium: transformListMedium(mediumInfo),
+    channel: transformBroadcastChannel(channelInfo),
+    season: season && transformListMedium(season),
+    serie: season && season.serie && transformListMedium(season.serie)
   };
 }
 
