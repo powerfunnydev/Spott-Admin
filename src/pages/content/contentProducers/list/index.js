@@ -65,7 +65,9 @@ export default class ContentProducers extends Component {
   async componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
-    await isQueryChanged(query, nextQuery) && this.props.load(nextProps.location.query);
+    if (isQueryChanged(query, nextQuery)) {
+      this.slowSearch(nextQuery);
+    }
   }
 
   async deleteContentProducersEntry (contentProducersEntryId) {

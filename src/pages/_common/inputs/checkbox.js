@@ -22,7 +22,10 @@ export class Checkbox extends Component {
       display: 'flex',
       height: 14,
       justifyContent: 'center',
-      width: 14
+      width: 14,
+      ':hover': {
+        backgroundColor: colors.lightBlue
+      }
     },
     checked: {
       backgroundColor: colors.primaryBlue

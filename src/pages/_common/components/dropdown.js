@@ -29,20 +29,34 @@ export const styles = {
     cursor: 'pointer'
   },
   control: {
+    position: 'relative',
     display: 'inline-block',
-    backgroundColor: 'white',
-    border: '1px solid #ccc',
-    borderRadius: '2px',
-    color: '#333',
+    backgroundColor: colors.white,
+    boxSizing: 'borderBox',
+    border: `1px solid ${colors.lightGray2}`,
+    color: colors.darkGray2,
+    zIndex: 0,
     ':hover': {
-      boxShadow: '0 1px 0 rgba(0, 0, 0, 0.06)'
+      zIndex: 10,
+      border: `1px solid ${colors.lightGray3}`
+    },
+    ':active': {
+      backgroundColor: colors.veryLightGray
     }
+  },
+  borderLeft: {
+    borderTopLeftRadius: '2px',
+    borderBottomLeftRadius: '2px',
+    marginRight: '-1px'
+  },
+  borderRight: {
+    borderTopRightRadius: '2px',
+    borderBottomRightRadius: '2px'
   },
   menu: {
     textAlign: 'left',
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     border: '1px solid #ccc',
-    boxShadow: '0 1px 0 rgba(0, 0, 0, 0.06)',
     boxSizing: 'border-box',
     marginTop: '-1px',
     maxHeight: '200px',
@@ -59,11 +73,7 @@ export const styles = {
     display: 'flex',
     alignItems: 'center',
     boxSizing: 'border-box',
-    cursor: 'pointer',
-    ':hover': {
-      backgroundColor: '#f2f9fc',
-      color: '#333'
-    }
+    cursor: 'pointer'
   },
   arrowUnder: { transform: 'rotateZ(180deg)' },
   arrow: {
@@ -79,9 +89,6 @@ export const styles = {
   },
   paddingLeft: {
     paddingLeft: '10px'
-  },
-  seperator: {
-    borderLeft: '1px solid #ccc'
   }
 };
 
@@ -133,10 +140,12 @@ class Dropdown extends Component {
     const menu = this.state.isOpen ? <div style={styles.menu} onClick={this.toggleOpen}>{children}</div> : null;
 
     return (
-      <div style={[ styles.root, style, { minWidth: '100px' } ]}>
-        <div style={[ styles.control, elementShown && styles.paddingLeft ]}>
-          {elementShown}
-          <div style={[ styles.arrowContainer, styles.clickable, elementShown && styles.seperator ]} onMouseDown={this.handleMouseDown.bind(this)}>
+      <div key='dropdown' style={[ styles.root, style, { minWidth: '100px' } ]}>
+        <div>
+          <div style={[ elementShown && styles.paddingLeft, styles.control, elementShown && styles.borderLeft ]}>
+            {elementShown}
+          </div>
+          <div key='arrow' style={[ styles.borderRight, !elementShown && styles.borderLeft, styles.control, styles.arrowContainer, styles.clickable ]} onMouseDown={this.handleMouseDown.bind(this)}>
             <img src={arrowGray} style={[ styles.arrow, !this.state.isOpen && styles.arrowUnder ]} />
           </div>
         </div>

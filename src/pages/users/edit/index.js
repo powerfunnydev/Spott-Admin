@@ -5,15 +5,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import TextInput from '../../_common/inputs/textInput';
 import Header from '../../app/header';
-import { Root, FormSubtitle, colors, EditTemplate } from '../../_common/styles';
+import { tabStyles, Root, FormSubtitle, colors, EditTemplate } from '../../_common/styles';
 import localized from '../../_common/localized';
 import * as actions from './actions';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Section from '../../_common/components/section';
-import { styles as tabStyles } from '../../_common/components/tabs';
 import { routerPushWithReturnTo } from '../../../actions/global';
-import Dropzone from '../../_common/dropzone';
-import Label from '../../_common/inputs/_label';
 
 function validate (values, { t }) {
   const validationErrors = {};

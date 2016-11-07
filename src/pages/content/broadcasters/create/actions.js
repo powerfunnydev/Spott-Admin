@@ -1,3 +1,3 @@
-import { persistBroadcastersEntry } from '../../../../actions/broadcasters';
+import { persistBroadcaster } from '../../../../actions/broadcaster';
 
-export const submit = persistBroadcastersEntry;
+export const submit = persistBroadcaster;

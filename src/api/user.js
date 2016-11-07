@@ -76,7 +76,7 @@ export async function persistUser (baseUrl, authenticationToken, locale, { userI
   user.profile.avatar = {};
   user.disabled = false;
   user.userName = userName;
-  user.roles = [];
+  // user.roles = [ { role: 'CONTENT_MANAGER' } ];
   console.log('user', user);
   await post(authenticationToken, locale, `${baseUrl}/v004/user/users`, user);
 }

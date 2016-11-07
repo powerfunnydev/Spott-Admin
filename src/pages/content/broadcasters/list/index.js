@@ -20,8 +20,8 @@ const numberOfRows = 25;
 
 @tableDecorator
 @connect(selector, (dispatch) => ({
-  deleteBroadcastersEntry: bindActionCreators(actions.deleteBroadcastersEntry, dispatch),
-  deleteBroadcastersEntries: bindActionCreators(actions.deleteBroadcastersEntries, dispatch),
+  deleteBroadcaster: bindActionCreators(actions.deleteBroadcaster, dispatch),
+  deleteBroadcasters: bindActionCreators(actions.deleteBroadcasters, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
@@ -32,8 +32,8 @@ export default class Broadcasters extends Component {
   static propTypes = {
     broadcasters: ImmutablePropTypes.map.isRequired,
     children: PropTypes.node,
-    deleteBroadcastersEntries: PropTypes.func.isRequired,
-    deleteBroadcastersEntry: PropTypes.func.isRequired,
+    deleteBroadcaster: PropTypes.func.isRequired,
+    deleteBroadcasters: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -65,13 +65,15 @@ export default class Broadcasters extends Component {
   async componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
-    await isQueryChanged(query, nextQuery) && this.props.load(nextProps.location.query);
+    if (isQueryChanged(query, nextQuery)) {
+      await this.slowSearch(nextProps.location.query);
+    }
   }
 
-  async deleteBroadcastersEntry (broadcastersEntryId) {
+  async deleteBroadcaster (broadcasterId) {
     const result = window.confirm('Are you sure you want to trigger this action?');
     if (result) {
-      await this.props.deleteBroadcastersEntry(broadcastersEntryId);
+      await this.props.deleteBroadcaster(broadcasterId);
       await this.props.load(this.props.location.query);
     }
   }
@@ -96,13 +98,13 @@ export default class Broadcasters extends Component {
 
   async onClickDeleteSelected (e) {
     e.preventDefault();
-    const broadcastersEntryIds = [];
+    const broadcasterIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {
-        broadcastersEntryIds.push(key);
+        broadcasterIds.push(key);
       }
     });
-    await this.props.deleteBroadcastersEntries(broadcastersEntryIds);
+    await this.props.deleteBroadcasters(broadcasterIds);
     await this.props.load(this.props.location.query);
   }
 
@@ -152,7 +154,7 @@ export default class Broadcasters extends Component {
                           <CustomCel style={{ flex: 1 }}>
                             <Dropdown
                               elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/edit/${broadcaster.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastersEntry(broadcaster.get('id')); }}>Remove</div>
+                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcaster(broadcaster.get('id')); }}>Remove</div>
                             </Dropdown>
                           </CustomCel>
                         </Row>

@@ -19,8 +19,8 @@ const numberOfRows = 25;
 
 @tableDecorator
 @connect(selector, (dispatch) => ({
-  deleteBroadcastChannelEntry: bindActionCreators(actions.deleteBroadcastChannelEntry, dispatch),
-  deleteBroadcastChannelEntries: bindActionCreators(actions.deleteBroadcastChannelEntries, dispatch),
+  deleteBroadcastChannel: bindActionCreators(actions.deleteBroadcastChannel, dispatch),
+  deleteBroadcastChannels: bindActionCreators(actions.deleteBroadcastChannels, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
@@ -32,8 +32,8 @@ export default class BroadcastChannelList extends Component {
   static propTypes = {
     broadcastChannels: ImmutablePropTypes.map.isRequired,
     children: PropTypes.node,
-    deleteBroadcastChannelEntries: PropTypes.func.isRequired,
-    deleteBroadcastChannelEntry: PropTypes.func.isRequired,
+    deleteBroadcastChannel: PropTypes.func.isRequired,
+    deleteBroadcastChannels: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -53,7 +53,7 @@ export default class BroadcastChannelList extends Component {
 
   constructor (props) {
     super(props);
-    this.onClickNewEntry = ::this.onClickNewEntry;
+    this.onClickNew = ::this.onClickNew;
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
     this.slowSearch = slowdown(props.load, 300);
   }
@@ -65,13 +65,15 @@ export default class BroadcastChannelList extends Component {
   async componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
-    await isQueryChanged(query, nextQuery) && this.props.load(nextProps.location.query);
+    if (isQueryChanged(query, nextQuery)) {
+      await this.slowSearch(nextProps.location.query);
+    }
   }
 
-  async deleteBroadcastChannelEntry (broadcastChannelsEntryId) {
+  async deleteBroadcastChannel (broadcastChannelsId) {
     const result = window.confirm('Are you sure you want to trigger this action?');
     if (result) {
-      await this.props.deleteBroadcastChannelEntry(broadcastChannelsEntryId);
+      await this.props.deleteBroadcastChannel(broadcastChannelsId);
       await this.props.load(this.props.location.query);
     }
   }
@@ -80,20 +82,20 @@ export default class BroadcastChannelList extends Component {
     return broadcastChannel.get('name');
   }
 
-  onClickNewEntry (e) {
+  onClickNew (e) {
     e.preventDefault();
     this.props.routerPushWithReturnTo('content/broadcast-channels/create');
   }
 
   async onClickDeleteSelected (e) {
     e.preventDefault();
-    const broadcastChannelsEntryIds = [];
+    const broadcastChannelsIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {
-        broadcastChannelsEntryIds.push(key);
+        broadcastChannelsIds.push(key);
       }
     });
-    await this.props.deleteBroadcastChannelEntries(broadcastChannelsEntryIds);
+    await this.props.deleteBroadcastChannels(broadcastChannelsIds);
     await this.props.load(this.props.location.query);
   }
 
@@ -115,7 +117,7 @@ export default class BroadcastChannelList extends Component {
               onChangeDisplay={onChangeDisplay}
               onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
               onClickDeleteSelected={this.onClickDeleteSelected}
-              onClickNewEntry={this.onClickNewEntry}/>
+              onClickNew={this.onClickNew}/>
           </Container>
         </div>
         <Line/>
@@ -141,7 +143,7 @@ export default class BroadcastChannelList extends Component {
                           <CustomCel style={{ flex: 1 }}>
                             <Dropdown
                               elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastChannelEntry(broadcastChannel.get('id')); }}>Remove</div>
+                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}>Remove</div>
                             </Dropdown>
                           </CustomCel>
                         </Row>

@@ -17,6 +17,7 @@ import { UtilsBar, isQueryChanged, Tile, tableDecorator, generalStyles, TotalEnt
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
 import Line from '../../../_common/components/line';
 import { slowdown } from '../../../../utils';
+import { Tabs, Tab } from '../../../_common/components/tabs';
 
 /* eslint-disable no-alert */
 
@@ -25,8 +26,8 @@ const numberOfRows = 25;
 @tableDecorator
 @localized
 @connect(selector, (dispatch) => ({
-  deleteBroadcastersEntry: bindActionCreators(listActions.deleteBroadcastersEntry, dispatch),
-  deleteBroadcastChannelEntry: bindActionCreators(actions.deleteBroadcastChannelEntry, dispatch),
+  deleteBroadcaster: bindActionCreators(listActions.deleteBroadcaster, dispatch),
+  deleteBroadcastChannel: bindActionCreators(actions.deleteBroadcastChannel, dispatch),
   loadBroadcaster: bindActionCreators(actions.loadBroadcaster, dispatch),
   loadBroadcasterChannels: bindActionCreators(actions.loadBroadcasterChannels, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
@@ -34,14 +35,14 @@ const numberOfRows = 25;
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
 }))
 @Radium
-export default class ReadBroadcastersEntry extends Component {
+export default class ReadBroadcaster extends Component {
 
   static propTypes = {
     broadcastChannels: ImmutablePropTypes.map.isRequired,
     children: PropTypes.node,
     currentBroadcaster: PropTypes.object.isRequired,
-    deleteBroadcastChannelEntry: PropTypes.func.isRequired,
-    deleteBroadcastersEntry: PropTypes.func.isRequired,
+    deleteBroadcastChannel: PropTypes.func.isRequired,
+    deleteBroadcaster: PropTypes.func.isRequired,
     error: PropTypes.any,
     isSelected: ImmutablePropTypes.map.isRequired,
     loadBroadcaster: PropTypes.func.isRequired,
@@ -74,21 +75,23 @@ export default class ReadBroadcastersEntry extends Component {
   async componentWillMount () {
     if (this.props.params.id) {
       await this.props.loadBroadcaster(this.props.params.id);
-      await this.props.loadBroadcasterChannels({ ...this.props.location.query, broadcastersEntryId: this.props.params.id });
+      await this.props.loadBroadcasterChannels({ ...this.props.location.query, broadcasterId: this.props.params.id });
     }
   }
 
   async componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
-    await isQueryChanged(query, nextQuery) && this.props.loadBroadcasterChannels({ ...nextProps.location.query, broadcastersEntryId: this.props.params.id });
+    if (isQueryChanged(query, nextQuery)) {
+      await this.slowSearch({ ...nextProps.location.query, broadcasterId: this.props.params.id });
+    }
   }
 
-  async deleteBroadcastChannelEntry (broadcastChannelEntryId) {
+  async deleteBroadcastChannel (broadcastChannelId) {
     const result = window.confirm('Are you sure you want to trigger this action?');
     if (result) {
-      await this.props.deleteBroadcastChannelEntry(broadcastChannelEntryId);
-      await this.props.loadBroadcasterChannels({ ...this.props.location.query, broadcastersEntryId: this.props.params.id });
+      await this.props.deleteBroadcastChannel(broadcastChannelId);
+      await this.props.loadBroadcasterChannels({ ...this.props.location.query, broadcasterId: this.props.params.id });
     }
   }
 
@@ -110,7 +113,7 @@ export default class ReadBroadcastersEntry extends Component {
 
   render () {
     const { onChangeSearchString, onChangeDisplay, numberSelected, pageCount, selectAllCheckboxes, selectCheckbox, isSelected, totalResultCount, children, broadcastChannels, currentBroadcaster,
-       location, location: { query, query: { display, page, searchString, sortField, sortDirection } }, deleteBroadcastersEntry } = this.props;
+       location, location: { query, query: { display, page, searchString, sortField, sortDirection } }, deleteBroadcaster } = this.props;
     return (
       <Root>
         <Header currentLocation={location} hideHomePageLinks />
@@ -120,8 +123,12 @@ export default class ReadBroadcastersEntry extends Component {
           {currentBroadcaster.get('_status') === 'loaded' && currentBroadcaster &&
             <EntityDetails image={currentBroadcaster.get('logo') && currentBroadcaster.getIn([ 'logo', 'url' ])} title={currentBroadcaster.getIn([ 'name' ])}
               onEdit={() => { this.props.routerPushWithReturnTo(`content/broadcasters/edit/${currentBroadcaster.getIn([ 'id' ])}`); }}
-              onRemove={async () => { await deleteBroadcastersEntry(currentBroadcaster.getIn([ 'id' ])); this.redirect(); }}/>}
+              onRemove={async () => { await deleteBroadcaster(currentBroadcaster.getIn([ 'id' ])); this.redirect(); }}/>}
         </Container>
+        <Line/>
+        <Tabs>
+          <Tab>Broadcast Channels</Tab>
+        </Tabs>
         <Line/>
         <div style={generalStyles.backgroundBar}>
           <Container >
@@ -132,7 +139,7 @@ export default class ReadBroadcastersEntry extends Component {
               searchString={searchString}
               textCreateButton='New Broadcast Channel'
               onChangeDisplay={onChangeDisplay}
-              onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value, broadcastersEntryId: this.props.params.id }); }}
+              onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value, broadcasterId: this.props.params.id }); }}
               onClickNewEntry={this.onClickNewEntry}/>
           </Container>
         </div>
@@ -159,7 +166,7 @@ export default class ReadBroadcastersEntry extends Component {
                           <CustomCel style={{ flex: 1 }}>
                             <Dropdown
                               elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastChannelEntry(broadcastChannel.get('id')); }}>Remove</div>
+                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}>Remove</div>
                             </Dropdown>
                           </CustomCel>
                         </Row>

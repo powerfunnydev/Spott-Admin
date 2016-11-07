@@ -5,11 +5,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import TextInput from '../../../_common/inputs/textInput';
 import Header from '../../../app/header';
-import { Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
+import { tabStyles, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import localized from '../../../_common/localized';
 import * as actions from './actions';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import { styles as tabStyles } from '../../../_common/components/tabs';
 import Section from '../../../_common/components/section';
 import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
@@ -36,7 +35,7 @@ function validate (values, { t }) {
   validate
 })
 @Radium
-export default class EditBroadcastersEntry extends Component {
+export default class EditBroadcaster extends Component {
 
   static propTypes = {
     error: PropTypes.any,
