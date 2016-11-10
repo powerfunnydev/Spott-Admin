@@ -21,8 +21,6 @@ export const SORT_COLUMN = 'BROADCASTERS/SORT_COLUMN';
 export function load (query) {
   return async (dispatch, getState) => {
     try {
-      console.log('before query', query);
-      console.log('after query', getInformationFromQuery(query, prefix));
       return await dispatch(dataFetchBroadcasters(getInformationFromQuery(query, prefix)));
     } catch (error) {
       dispatch({ error, type: BROADCASTERS_FETCH_ERROR });
