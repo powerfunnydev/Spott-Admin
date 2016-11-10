@@ -11,3 +11,5 @@ export const taggerBaseUrlSelector = (state) => state.getIn([ 'global', 'configu
 export const usernameSelector = (state) => state.getIn([ 'global', 'username' ]);
 export const userRolesSelector = (state) => state.getIn([ 'global', 'authentication', 'user', 'roles' ]);
 export const versionSelector = (state) => state.getIn([ 'global', 'configuration', 'version' ]);
+export const gendersSelector = (state) => state.getIn([ 'global', 'configuration', 'genders' ]);
+export const localeNamesSelector = (state) => state.getIn([ 'global', 'configuration', 'localeNames' ]);

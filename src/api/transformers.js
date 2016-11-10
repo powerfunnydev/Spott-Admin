@@ -1,3 +1,4 @@
+import { ACTIVE, INACTIVE, ADMIN, CONTENT_MANAGER, CONTENT_PRODUCER, BROADCASTER } from '../constants/userRoles';
 
 export function transformBroadcaster ({ logo, name, uuid }) {
   return { logo: { url: logo && logo.url }, name, id: uuid };
@@ -249,13 +250,35 @@ export function transformPaging ({ page, pageCount, pageSize, totalResultCount }
   return { page, pageCount, pageSize, totalResultCount };
 }
 
-export function transformUser ({ disabled, profile, userName, uuid: id }) {
+export function transformUser ({ languages, dateOfBirth, disabled, disabledReason,
+  userName, gender, firstName, lastName, email, uuid: id, roles }) {
+  const obj = {};
+  const broadcasters = [];
+  const contentProducers = [];
+  roles && roles.map((role) => {
+    if (role.role === BROADCASTER) {
+      obj.broadcaster = true;
+      broadcasters.push(role.context.uuid);
+    } else
+    if (role.role === CONTENT_PRODUCER) {
+      obj.contentProducer = true;
+      contentProducers.push(role.context.uuid);
+    } else
+    if (role.role === ADMIN) { obj.sysAdmin = true; } else
+    if (role.role === CONTENT_MANAGER) { obj.contentManager = true; }
+  });
   return {
-    disabled,
+    ...obj,
+    broadcasters,
+    contentProducers,
+    userStatus: disabled && ACTIVE || INACTIVE,
+    languages,
+    disabledReason,
+    dateOfBirth,
     userName,
-    email: profile && profile.email || null,
-    firstName: profile && profile.firstName || null,
-    lastName: profile && profile.lastName || null,
-    gender: profile && profile.gender || null,
+    email,
+    firstName,
+    lastName,
+    gender,
     id };
 }

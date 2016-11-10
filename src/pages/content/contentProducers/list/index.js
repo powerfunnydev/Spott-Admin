@@ -14,10 +14,11 @@ import SpecificHeader from '../../header';
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { slowdown } from '../../../../utils';
+/* eslint-disable no-alert */
 
 const numberOfRows = 25;
 
-@tableDecorator
+@tableDecorator()
 @connect(selector, (dispatch) => ({
   deleteContentProducersEntry: bindActionCreators(actions.deleteContentProducerEntry, dispatch),
   deleteContentProducersEntries: bindActionCreators(actions.deleteContentProducerEntries, dispatch),
@@ -71,8 +72,11 @@ export default class ContentProducers extends Component {
   }
 
   async deleteContentProducersEntry (contentProducersEntryId) {
-    await this.props.deleteContentProducersEntry(contentProducersEntryId);
-    await this.props.load(this.props.location.query);
+    const result = window.confirm('Are you sure you want to trigger this action?');
+    if (result) {
+      await this.props.deleteContentProducersEntry(contentProducersEntryId);
+      await this.props.load(this.props.location.query);
+    }
   }
 
   getName (cp) {
@@ -168,7 +172,12 @@ export default class ContentProducers extends Component {
             {display === 'grid' &&
               <div style={generalStyles.row}>
                 { contentProducers.get('data').map((contentProducer, index) => (
-                  <Tile imageUrl={contentProducer.getIn([ 'logo', 'url' ])} key={`contentProducer${index}`} text={this.getName(contentProducer)} onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/content-producers/edit/${contentProducer.get('id')}`); }}/>
+                  <Tile
+                    imageUrl={contentProducer.getIn([ 'logo', 'url' ])}
+                    key={`contentProducer${index}`}
+                    text={this.getName(contentProducer)}
+                    onDelete={async (e) => { e.preventDefault(); await this.deleteContentProducersEntry(contentProducer.get('id')); }}
+                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/content-producers/edit/${contentProducer.get('id')}`); }}/>
                 ))}
                 <Tile key={'createBroadcaster'} onCreate={() => { this.props.routerPushWithReturnTo('content/contentProducers/create'); }}/>
               </div>

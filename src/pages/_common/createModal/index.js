@@ -13,6 +13,7 @@ const crossImage = require('./cross.svg');
  */
 const dialogStyle = {
   overlay: {
+    zIndex: 100,
     backgroundColor: 'rgba(0, 0, 0, 0.80)'
   },
   content: {
