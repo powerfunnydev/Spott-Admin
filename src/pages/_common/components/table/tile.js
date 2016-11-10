@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { colors } from '../../../_common/styles';
 import Dropdown, { styles as dropdownStyles } from '../dropdown';
+/* eslint-disable no-alert */
 
 const plusIcon = require('../../../../assets/images/plus-gray.svg');
 
@@ -11,7 +12,12 @@ export class Tile extends Component {
     imageUrl: PropTypes.string,
     text: PropTypes.string,
     onCreate: PropTypes.func,
+    onDelete: PropTypes.func,
     onEdit: PropTypes.func
+  }
+
+  constructor (props) {
+    super(props);
   }
 
   static styles = {
@@ -44,20 +50,27 @@ export class Tile extends Component {
     },
     clickable: {
       cursor: 'pointer'
+    },
+    wrapper: {
+      display: 'inline-block',
+      paddingRight: '24px',
+      paddingBottom: '24px'
     }
   }
+
   render () {
-    const { imageUrl, text, onCreate, onEdit } = this.props;
+    const { imageUrl, text, onCreate, onDelete, onEdit } = this.props;
     const { styles } = this.constructor;
     return (
-      <div style={{ display: 'inline-block', paddingRight: '24px', paddingBottom: '24px' }}>
+      <div style={styles.wrapper}>
         {onEdit &&
           <div>
             <div style={[ styles.imageContainer, styles.image ]}>
               {imageUrl && <img src={imageUrl} style={styles.image}/>}
               {!imageUrl && <div>No image</div>}
                 <Dropdown style={styles.dropdown}>
-                  <div key={1} style={[ dropdownStyles.option ]} onClick={onEdit}>Edit</div>
+                  {onEdit && <div key='onEdit' style={[ dropdownStyles.option ]} onClick={onEdit}>Edit</div>}
+                  {onDelete && <div key='onDelete' style={[ dropdownStyles.option ]} onClick={onDelete}>Remove</div>}
                 </Dropdown>
             </div>
             <div style={styles.broadcastChannel}>{text}</div>

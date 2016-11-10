@@ -9,36 +9,54 @@ export class Checkbox extends Component {
 
   static propTypes = {
     checked: PropTypes.bool,
+    input: PropTypes.object,
     onChange: PropTypes.func // Uses the field's onChange, and this one if provided.
   };
+
+  constructor (props) {
+    super(props);
+    this.onChange = ::this.onChange;
+  }
+
+  onChange () {
+    const { input } = this.props;
+    this.props.onChange && this.props.onChange();
+    if (input && input.onChange) {
+      input.onChange(!input.value);
+    }
+  }
 
   static styles = {
     checkbox: {
       backgroundColor: colors.white,
       alignItems: 'center',
       border: `1px solid ${colors.darkGray}`,
-      borderRadius: 2,
+      borderRadius: '2px',
       cursor: 'pointer',
       display: 'flex',
-      height: 14,
+      height: '14px',
       justifyContent: 'center',
-      width: 14,
+      minWidth: '14px',
       ':hover': {
         backgroundColor: colors.lightBlue
       }
     },
     checked: {
-      backgroundColor: colors.primaryBlue
+      border: `1px solid ${colors.primaryBlue}`,
+      backgroundColor: colors.primaryBlue,
+      ':hover': {
+        backgroundColor: colors.blue3
+      }
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { checked, onChange } = this.props;
+    const { checked, input } = this.props;
 
     return (
-      <span style={[ styles.checkbox, checked && styles.checked ]} onClick={onChange}>
-        {checked && <img src={checkIcon}/>}</span>
+      <span style={[ styles.checkbox, (checked || input && input.value) && styles.checked ]} onClick={this.onChange}>
+        {(checked || input && input.value) && <img src={checkIcon}/>}</span>
     );
   }
 }

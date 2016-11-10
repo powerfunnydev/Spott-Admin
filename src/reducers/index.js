@@ -13,6 +13,7 @@ import contentProducersList from '../pages/content/contentProducers/list/reducer
 import tvGuideCreate from '../pages/tvGuide/create/reducer';
 import tvGuideEdit from '../pages/tvGuide/edit/reducer';
 import tvGuideList from '../pages/tvGuide/list/reducer';
+import usersEdit from '../pages/users/edit/reducer';
 import usersList from '../pages/users/list/reducer';
 
 /**
@@ -33,6 +34,7 @@ export default combineReducers({
     })
   }),
   users: combineReducers({
+    edit: usersEdit,
     list: usersList
   }),
   data,

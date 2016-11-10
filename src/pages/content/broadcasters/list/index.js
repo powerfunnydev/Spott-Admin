@@ -168,7 +168,12 @@ export default class Broadcasters extends Component {
             {display === 'grid' &&
               <div style={generalStyles.row}>
                 { broadcasters.get('data').map((broadcaster, index) => (
-                  <Tile imageUrl={broadcaster.getIn([ 'logo', 'url' ])} key={`broadcaster${index}`} text={broadcaster.get('name')} onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/broadcasters/edit/${broadcaster.get('id')}`); }}/>
+                  <Tile
+                    imageUrl={broadcaster.getIn([ 'logo', 'url' ])}
+                    key={`broadcaster${index}`}
+                    text={broadcaster.get('name')}
+                    onDelete={async (e) => { e.preventDefault(); await this.deleteBroadcaster(broadcaster.get('id')); }}
+                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/broadcasters/edit/${broadcaster.get('id')}`); }}/>
                 ))}
                 <Tile key={'createBroadcaster'} onCreate={() => { this.props.routerPushWithReturnTo('content/broadcasters/create'); }}/>
               </div>

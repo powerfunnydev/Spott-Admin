@@ -180,7 +180,12 @@ export default class ReadBroadcaster extends Component {
             {display === 'grid' &&
               <div style={generalStyles.row}>
                 { this.props.broadcastChannels.get('data').map((broadcastChannel, index) => (
-                  <Tile imageUrl={broadcastChannel.getIn([ 'logo', 'url' ])} key={`broadcastChannel${index}`} text={broadcastChannel.get('name')} onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}/>
+                  <Tile
+                    imageUrl={broadcastChannel.getIn([ 'logo', 'url' ])}
+                    key={`broadcastChannel${index}`}
+                    text={broadcastChannel.get('name')}
+                    onDelete={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}
+                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}/>
                 ))}
                 <Tile key={'createBroadcastChannel'} onCreate={this.onClickNewEntry}/>
               </div>

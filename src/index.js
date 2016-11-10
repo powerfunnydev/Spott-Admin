@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { Provider } from 'react-redux';
 import createStore from './createStore';
-import { init } from './actions/global';
+import { getAuthorizedConfig, init } from './actions/global';
 import { LOGIN_SUCCESS } from './actions/user';
 import { ADMIN, BROADCASTER, CONTENT_MANAGER } from './constants/userRoles';
 
@@ -139,7 +139,6 @@ async function boot () {
 
   // Initialize configuration: save base urls in state, etc.
   await store.dispatch(init());
-
   // Load session from local storage.
   if (localStorage) {
     const session = localStorage.getItem('session');
@@ -147,6 +146,8 @@ async function boot () {
       store.dispatch({ data: JSON.parse(session), type: LOGIN_SUCCESS });
     }
   }
+  // if user is logged in, retrieve authorized config files (languages,...)
+  await store.dispatch(getAuthorizedConfig());
 
   // Render application
   ReactDOM.render(

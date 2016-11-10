@@ -33,7 +33,8 @@ class StandardComponent extends Component {
     color: PropTypes.string.isRequired,
     message: PropTypes.string.isRequired,
     stackTrace: PropTypes.string,
-    style: PropTypes.object
+    style: PropTypes.object,
+    onClose: PropTypes.func
   }
 
   constructor (props) {
@@ -49,6 +50,7 @@ class StandardComponent extends Component {
 
   onClose () {
     this.setState({ close: true });
+    this.props.onClose && this.props.onClose();
   }
 
   static styles = {
@@ -71,7 +73,8 @@ class StandardComponent extends Component {
       backgroundColor: colors.white,
       border: `solid 1px ${colors.lightRed}`,
       fontSize: '11px',
-      color: colors.errorColor
+      color: colors.errorColor,
+      fontFamily: 'Courier'
     },
     medium: {
       fontFamily: fontWeights.medium
@@ -120,7 +123,7 @@ export class HintComponent extends Component {
     const { message, style } = this.props;
 
     return (
-      <StandardComponent color='blue' message={message} style={style}/>
+      <StandardComponent color='blue' message={message} style={style} {...this.props}/>
     );
   }
 }
@@ -136,7 +139,7 @@ export class InfoComponent extends Component {
     const { message, style } = this.props;
 
     return (
-      <StandardComponent color='yellow' message={message} style={style}/>
+      <StandardComponent color='yellow' message={message} style={style} {...this.props}/>
     );
   }
 }
@@ -153,7 +156,7 @@ export class ErrorComponent extends Component {
     const { message, stackTrace, style } = this.props;
 
     return (
-      <StandardComponent color='red' message={message} stackTrace={stackTrace} style={style}/>
+      <StandardComponent color='red' message={message} stackTrace={stackTrace} style={style} {...this.props}/>
     );
   }
 }

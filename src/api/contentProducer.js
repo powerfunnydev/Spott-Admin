@@ -44,6 +44,16 @@ export async function deleteContentProducerEntries (baseUrl, authenticationToken
   }
 }
 
+// Used for autocompletion.
+export async function searchContentProducers (baseUrl, authenticationToken, locale, { searchString = '' }) {
+  let searchUrl = `${baseUrl}/v004/media/contentProducers?pageSize=25`;
+  if (searchString) {
+    searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
+  }
+  const { body: { data } } = await get(authenticationToken, locale, searchUrl);
+  return data.map(transformContentProducer);
+}
+
 export async function uploadContentProducerImage (baseUrl, authenticationToken, locale, { contentProducerEntryId, image, callback }) {
   const formData = new FormData();
   formData.append('uuid', contentProducerEntryId);

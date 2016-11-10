@@ -7,6 +7,7 @@ export const colors = {
   primaryBlue2: '#39D6FF',
   blue: '#08a7d7',
   blue2: '#0795c0',
+  blue3: '#9de4f9',
   lightBlue: '#e6f8fd',
   secondaryPink: '#D31751',
   secondaryPink2: '#ED316B',
@@ -190,7 +191,8 @@ export const buttonStyles = {
 const formSubtitleStyle = {
   ...makeTextStyle(fontWeights.medium, '0.75em'),
   color: colors.black,
-  marginTop: '1.875em'
+  marginTop: '30px',
+  fontWeight: 500
 };
 
 export const FormSubtitle = Radium((props) => (
@@ -241,7 +243,8 @@ Container.propTypes = {
 const rootStyles = {
   display: 'flex',
   flexDirection: 'column',
-  height: '100%'
+  flex: 1,
+  minHeight: '100%'
 };
 export const Root = Radium((props) => (
   <div {...props} style={[ rootStyles, props.style ]}>
@@ -249,8 +252,7 @@ export const Root = Radium((props) => (
   </div>
 ));
 Container.propTypes = {
-  children: PropTypes.node,
-  style: PropTypes.object
+  children: PropTypes.node
 };
 
 @Radium
@@ -258,6 +260,7 @@ export class EditTemplate extends Component {
 
   static propTypes = {
     children: PropTypes.node,
+    style: PropTypes.object,
     onCancel: PropTypes.func,
     onSubmit: PropTypes.func
   };
@@ -268,6 +271,8 @@ export class EditTemplate extends Component {
 
   static styles = {
     cancelAndSubmitComponent: {
+      borderBottomLeftRadius: '2px',
+      borderBottomRightRadius: '2px',
       paddingBottom: '10px',
       paddingTop: '10px',
       paddingRight: '22.5px',
@@ -278,14 +283,17 @@ export class EditTemplate extends Component {
       borderRight: `1px solid ${colors.lightGray3}`,
       backgroundColor: colors.veryLightGray,
       width: '100%'
+    },
+    container: {
+      marginTop: '1.3em'
     }
   };
 
   render () {
     const { styles } = this.constructor;
-    const { children, onCancel, onSubmit } = this.props;
+    const { children, style, onCancel, onSubmit } = this.props;
     return (
-      <Container style={{ marginTop: '1.3em' }}>
+      <Container style={[ styles.container, style ]}>
         {children}
         {(onCancel || onSubmit) && <div style={styles.cancelAndSubmitComponent}>
           {onCancel && <button

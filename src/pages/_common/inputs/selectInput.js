@@ -3,6 +3,7 @@ import Select from 'react-select';
 import Radium from 'radium';
 import { colors, errorTextStyle } from '../styles';
 import Label from './_label';
+import Immutable from 'immutable';
 
 require('./styles/selectInputStyle.css');
 
@@ -91,12 +92,18 @@ export default class SelectInput extends Component {
     const { disabled, first, getItemText, getOptions, input, isLoading, label, meta, maxSelect, multiselect, placeholder, required, style } = this.props;
     const options = this.props.options ? this.props.options.map((o) => ({ value: o, label: getItemText(o) })) : [];
     let value;
-    if (multiselect) {
-      value = (input.value || []).map((o) => ({ value: o, label: getItemText(o) })); // We fall back to [] because of https://github.com/erikras/redux-form/issues/621
+    // first time we initialize a multiselect, we retrieve a immutable List. The select components
+    // expects a classic array. So we invoke toJS on the list.
+    if (Immutable.Iterable.isIterable(input.value)) {
+      value = (input.value || []).map((o) => ({ value: o, label: getItemText(o) })).toJS();
     } else {
-      value = input.value && { value: input.value, label: getItemText(input.value) };
+      // if it isn't a immutable List, but a classic array.
+      if (multiselect) {
+        value = (input.value || []).map((o) => ({ value: o, label: getItemText(o) })); // We fall back to [] because of https://github.com/erikras/redux-form/issues/621
+      } else {
+        value = input.value && { value: input.value, label: getItemText(input.value) };
+      }
     }
-
     const maxSelected = maxSelect ? ((input.value && input.value.length) || 0) >= maxSelect : false;
 
     return (
