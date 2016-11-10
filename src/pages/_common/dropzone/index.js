@@ -15,9 +15,7 @@ export default class Dropzone extends Component {
 
   static propTypes = {
     accept: PropTypes.string,
-    input: PropTypes.object,
-    meta: PropTypes.object,
-    name: PropTypes.string,
+    type: PropTypes.string,
     onChange: PropTypes.func
   };
 
@@ -60,7 +58,7 @@ export default class Dropzone extends Component {
       textAlign: 'center',
       justifyContent: 'center',
       position: 'relative',
-      width: '200px',
+      width: '100%',
       height: '200px',
       alignItems: 'center',
       border: `1px dashed ${colors.lightGray2}`,
@@ -107,13 +105,23 @@ export default class Dropzone extends Component {
       bottom: 0,
       right: 0,
       margin: 'auto'
+    },
+    progressBar: {
+      width: '130px'
+    },
+    profileImage: {
+      width: '200px'
+    },
+    backgroundImage: {
+      width: '426px'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
+    const { type } = this.props;
     return (
-      <div>
+      <div style={type === 'backgroundImage' ? styles.backgroundImage : styles.profileImage}>
         {/* Render dropzone */}
         <ReactDropzone accept={this.props.accept} activeStyle={styles.activeDropzone} multiple={false} ref={(x) => { this.dropzone = x; }}
           style={styles.dropzone} onDrop={this.onDrop} >
@@ -121,7 +129,7 @@ export default class Dropzone extends Component {
             { /* Uploading */ (this.state.progress && this.state.total && this.state.progress !== this.state.total &&
                 <ProgressBar
                   progress={this.state.progress}
-                  style={{ width: '130px' }}
+                  style={styles.progressBar}
                   total={this.state.total}/>) ||
             /* Upload completed */ (this.state.progress && this.state.total && this.state.progress === this.state.total &&
                 <div>

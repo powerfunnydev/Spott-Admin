@@ -1,10 +1,15 @@
 import * as api from '../api/user';
 import { apiBaseUrlSelector } from '../selectors/global';
 import { makeApiActionCreator } from './utils';
+import { getAuthorizedConfig } from './global';
 
-export const USER_UPLOAD_IMAGE_START = 'USERS/USER_UPLOAD_IMAGE_START';
-export const USER_UPLOAD_IMAGE_SUCCESS = 'USERS/USER_UPLOAD_IMAGE_SUCCESS';
-export const USER_UPLOAD_IMAGE_ERROR = 'USERS/USER_UPLOAD_IMAGE_ERROR';
+export const USER_UPLOAD_BACKGROUND_IMAGE_START = 'USERS/USER_UPLOAD_BACKGROUND_IMAGE_START';
+export const USER_UPLOAD_BACKGROUND_IMAGE_SUCCESS = 'USERS/USER_UPLOAD_BACKGROUND_IMAGE_SUCCESS';
+export const USER_UPLOAD_BACKGROUND_IMAGE_ERROR = 'USERS/USER_UPLOAD_BACKGROUND_IMAGE_ERROR';
+
+export const USER_UPLOAD_PROFILE_IMAGE_START = 'USERS/USER_UPLOAD_PROFILE_IMAGE_START';
+export const USER_UPLOAD_PROFILE_IMAGE_SUCCESS = 'USERS/USER_UPLOAD_PROFILE_IMAGE_SUCCESS';
+export const USER_UPLOAD_PROFILE_IMAGE_ERROR = 'USERS/USER_UPLOAD_PROFILE_IMAGE_ERROR';
 
 export const LOGIN_START = 'LOGIN_START';
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
@@ -46,16 +51,17 @@ export const USERS_ENTRIES_DELETE_SUCCESS = 'USERS/USERS_ENTRIES_DELETE_SUCCESS'
 export const USERS_ENTRIES_DELETE_ERROR = 'USERS/USERS_ENTRIES_DELETE_ERROR';
 
 export function login ({ authenticationToken, email, password }) {
-  console.log(email, ' ', password);
   return async (dispatch, getState) => {
     dispatch({ type: LOGIN_START });
     try {
-      const baseUrl = apiBaseUrlSelector(getState());
+      const state = getState();
+      const baseUrl = apiBaseUrlSelector(state);
       const data = await api.login(baseUrl, { authenticationToken, email, password });
       dispatch({ data, type: LOGIN_SUCCESS });
       if (localStorage) {
         localStorage.setItem('session', JSON.stringify(data));
       }
+      await dispatch(getAuthorizedConfig());
       return data;
     } catch (error) {
       dispatch({ error, type: LOGIN_ERROR });
@@ -82,4 +88,5 @@ export const fetchUser = makeApiActionCreator(api.fetchUser, USER_FETCH_START, U
 export const persistUser = makeApiActionCreator(api.persistUser, USER_PERSIST_START, USER_PERSIST_SUCCESS, USER_PERSIST_ERROR);
 export const deleteUsers = makeApiActionCreator(api.deleteUsers, USERS_ENTRIES_DELETE_START, USERS_ENTRIES_DELETE_SUCCESS, USERS_ENTRIES_DELETE_ERROR);
 export const deleteUser = makeApiActionCreator(api.deleteUser, USER_DELETE_START, USER_DELETE_SUCCESS, USER_DELETE_ERROR);
-export const uploadUserImage = makeApiActionCreator(api.uploadUserImage, USER_UPLOAD_IMAGE_START, USER_UPLOAD_IMAGE_SUCCESS, USER_UPLOAD_IMAGE_ERROR);
+export const uploadProfileImage = makeApiActionCreator(api.uploadProfileImage, USER_UPLOAD_PROFILE_IMAGE_START, USER_UPLOAD_PROFILE_IMAGE_SUCCESS, USER_UPLOAD_PROFILE_IMAGE_ERROR);
+export const uploadBackgroundImage = makeApiActionCreator(api.uploadBackgroundImage, USER_UPLOAD_BACKGROUND_IMAGE_START, USER_UPLOAD_BACKGROUND_IMAGE_SUCCESS, USER_UPLOAD_BACKGROUND_IMAGE_ERROR);

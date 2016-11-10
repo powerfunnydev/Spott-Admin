@@ -22,6 +22,7 @@ export const filterHasUsersRelationsSelector = (state) => state.getIn([ 'data', 
 export const searchStringHasBroadcastChannelsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasBroadcastChannels' ]);
 export const searchStringHasMediaRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasMedia' ]);
 export const searchStringHasBroadcastersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasBroadcasters' ]);
+export const searchStringHasContentProducersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasContentProducers' ]);
 
 export const agesListSelector = (state) => state.getIn([ 'data', 'lists', 'ages' ]);
 export const eventsListSelector = (state) => state.getIn([ 'data', 'lists', 'events' ]);

@@ -7,12 +7,14 @@ import data from './data';
 import reporting from '../pages/reporting/reducer';
 import broadcastChannelsCreate from '../pages/content/broadcastChannels/create/reducer';
 import broadcastChannelsList from '../pages/content/broadcastChannels/list/reducer';
-import broadcastersList from '../pages/content/broadcasters/list/reducer';
-import broadcastersRead from '../pages/content/broadcasters/read/reducer';
+import broadcastersListBroadcasters from '../pages/content/broadcasters/list/broadcasters/reducer';
+import broadcastersReadBroadcastChannels from '../pages/content/broadcasters/read/broadcastChannels/reducer';
+import broadcastersReadUsers from '../pages/content/broadcasters/read/users/reducer';
 import contentProducersList from '../pages/content/contentProducers/list/reducer';
 import tvGuideCreate from '../pages/tvGuide/create/reducer';
 import tvGuideEdit from '../pages/tvGuide/edit/reducer';
 import tvGuideList from '../pages/tvGuide/list/reducer';
+import usersEdit from '../pages/users/edit/reducer';
 import usersList from '../pages/users/list/reducer';
 
 /**
@@ -25,14 +27,20 @@ export default combineReducers({
       list: broadcastChannelsList
     }),
     broadcasters: combineReducers({
-      list: broadcastersList,
-      read: broadcastersRead
+      list: combineReducers({
+        broadcasters: broadcastersListBroadcasters
+      }),
+      read: combineReducers({
+        broadcastChannels: broadcastersReadBroadcastChannels,
+        users: broadcastersReadUsers
+      })
     }),
     contentProducers: combineReducers({
       list: contentProducersList
     })
   }),
   users: combineReducers({
+    edit: usersEdit,
     list: usersList
   }),
   data,

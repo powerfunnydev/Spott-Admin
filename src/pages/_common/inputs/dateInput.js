@@ -15,6 +15,7 @@ export default class DateInput extends Component {
     first: PropTypes.bool,
     input: PropTypes.object.isRequired,
     label: PropTypes.string,
+    placeholder: PropTypes.string,
     required: PropTypes.bool,
     style: PropTypes.object,
     onChange: PropTypes.func
@@ -26,6 +27,7 @@ export default class DateInput extends Component {
   }
 
   onChange (date) {
+    console.log('date', date.format());
     const { input, onChange } = this.props;
     input.onChange && input.onChange(date);
     onChange && onChange(date);
@@ -66,7 +68,7 @@ export default class DateInput extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { dateFormat, first, input, label, required, style } = this.props;
+    const { placeholder, dateFormat, first, input, label, required, style } = this.props;
 
     // Format date.
     const format = dateFormat || 'DD/MM/YYYY';
@@ -82,6 +84,7 @@ export default class DateInput extends Component {
               type='text'
               value={input.value}/>}
             dateFormat={format}
+            placeholderText={placeholder}
             // Expects object, but redux form will force a render, even when data isn't fetched yet.
             // So redux form will set input.value on '' (empty string). We do a check if input.value is empty,
             // if so, we give null to DatePicker.

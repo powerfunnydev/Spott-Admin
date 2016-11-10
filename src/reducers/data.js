@@ -36,6 +36,7 @@ export default (state = fromJS({
     genders: {},
     searchStringHasBroadcastChannels: {},
     searchStringHasBroadcasters: {},
+    searchStringHasContentProducers: {},
     searchStringHasMedia: {},
     searchStringHasSeries: {}
   }
@@ -68,6 +69,13 @@ export default (state = fromJS({
 
     // Broadcasters
     // ////////////
+
+    case broadcastersActions.BROADCASTER_USERS_FETCH_START:
+      return searchStart(state, 'filterHasUsers', serializeFilterHasUsers(action, 'broadcasters'));
+    case broadcastersActions.BROADCASTER_USERS_FETCH_SUCCESS:
+      return searchSuccess(state, 'users', 'filterHasUsers', serializeFilterHasUsers(action, 'broadcasters'), action.data.data);
+    case broadcastersActions.BROADCASTER_USERS_FETCH_ERROR:
+      return searchError(state, 'filterHasUsers', serializeFilterHasUsers(action, 'broadcasters'), action.error);
 
     case broadcastersActions.BROADCASTER_CHANNELS_FETCH_START:
       return fetchListStart(state, 'broadcastChannels');
@@ -106,6 +114,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'contentProducers', 'filterHasContentProducers', serializeFilterHasContentProducers(action), action.data.data);
     case contentProducersActions.CONTENT_PRODUCER_FETCH_ERROR:
       return searchError(state, 'filterHasContentProducers', serializeFilterHasContentProducers(action), action.error);
+
+    case contentProducersActions.CONTENT_PRODUCER_SEARCH_START:
+      return searchStart(state, 'searchStringHasContentProducers', action.searchString);
+    case contentProducersActions.CONTENT_PRODUCER_SEARCH_SUCCESS:
+      return searchSuccess(state, 'contentProducers', 'searchStringHasContentProducers', action.searchString, action.data);
+    case contentProducersActions.CONTENT_PRODUCER_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasContentProducers', action.searchString, action.error);
 
     // Tv Guide
     // /////////////////

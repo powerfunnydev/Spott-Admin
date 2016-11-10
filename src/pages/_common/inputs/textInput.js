@@ -24,10 +24,12 @@ export default class TextInput extends Component {
   }
 
   onChange (text) {
-    const { input, onChange } = this.props;
-    input.onChange(text);
-    if (onChange) {
-      onChange(text);
+    const { disabled, input, onChange } = this.props;
+    if (!disabled) {
+      input.onChange(text);
+      if (onChange) {
+        onChange(text);
+      }
     }
   }
 

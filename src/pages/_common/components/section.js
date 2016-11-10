@@ -1,6 +1,7 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import { colors } from '../styles';
+import { ErrorComponent, HintComponent, InfoComponent } from './infoPopUps';
 
 const defaultSpacing = 15;
 @Radium
@@ -8,7 +9,9 @@ export default class Section extends Component {
 
   static propTypes = {
     children: PropTypes.node,
+    clearPopUpMessage: PropTypes.func,
     first: PropTypes.bool,
+    popUpObject: PropTypes.object,
     style: PropTypes.object,
     title: PropTypes.node
   };
@@ -19,9 +22,9 @@ export default class Section extends Component {
       borderStyle: 'solid',
       borderWidth: 1,
       backgroundColor: colors.white,
+      borderTopRightRadius: '2px',
       color: colors.black,
-      padding: `${defaultSpacing * 2}px ${defaultSpacing * 1.5}px`,
-      marginTop: defaultSpacing
+      marginTop: '-1px'
     },
     first: {
       marginTop: 0
@@ -29,17 +32,31 @@ export default class Section extends Component {
     title: {
       fontSize: '26px',
       marginBottom: defaultSpacing * 2
+    },
+    padding: {
+      padding: `${defaultSpacing * 2}px ${defaultSpacing * 1.5}px`
     }
   }
 
   render () {
     const { styles } = this.constructor;
-    const { children, first, style, title } = this.props;
+    const { children, first, style, title, popUpObject, clearPopUpMessage } = this.props;
     // Determine items
     return (
-      <div style={[ styles.container, first && styles.first, style ]}>
-        {title && <h2 style={styles.title}>{title}</h2>}
-        {children}
+      <div style={[ styles.container, style ]}>
+        {popUpObject && popUpObject.type === 'error' && popUpObject.message && popUpObject.stackTrace &&
+          <ErrorComponent message={popUpObject.message} stackTrace={popUpObject.stackTrace} onClose={clearPopUpMessage}/>
+        }
+        {popUpObject && popUpObject.type === 'hint' && popUpObject.message &&
+          <HintComponent message={popUpObject.message} onClose={clearPopUpMessage}/>
+        }
+        {popUpObject && popUpObject.type === 'info' && popUpObject.message &&
+          <InfoComponent message={popUpObject.message} onClose={clearPopUpMessage}/>
+        }
+        <div style={[ styles.padding, first && styles.first ]}>
+          {title && <h2 style={styles.title}>{title}</h2>}
+          {children}
+        </div>
       </div>
     );
   }

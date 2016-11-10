@@ -1,6 +1,8 @@
 import { fetchBroadcasters as dataFetchBroadcasters,
   deleteBroadcaster as dataDeleteBroadcaster,
-  deleteBroadcasters as dataDeleteBroadcasters } from '../../../../actions/broadcaster';
+  deleteBroadcasters as dataDeleteBroadcasters } from '../../../../../actions/broadcaster';
+import { getInformationFromQuery } from '../../../../_common/components/table/index';
+import { prefix } from './index';
 
 // Action types
 // ////////////
@@ -19,7 +21,9 @@ export const SORT_COLUMN = 'BROADCASTERS/SORT_COLUMN';
 export function load (query) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataFetchBroadcasters(query));
+      console.log('before query', query);
+      console.log('after query', getInformationFromQuery(query, prefix));
+      return await dispatch(dataFetchBroadcasters(getInformationFromQuery(query, prefix)));
     } catch (error) {
       dispatch({ error, type: BROADCASTERS_FETCH_ERROR });
     }

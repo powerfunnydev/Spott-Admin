@@ -20,7 +20,6 @@ export async function getConfiguration () {
   const { body: { environment, urls } } = await get(null, null, '/config.json');
   const { body: version } = await get(null, null, '/version.json');
   const { body: { version: apiVersion } } = await get(null, null, `${urls.api}/v003/system/info`);
-
   return {
     environment,
     urls,
@@ -30,5 +29,48 @@ export async function getConfiguration () {
       version: version.version,
       versionFull: `${version.version} build ${version.build} (${version.timestamp})`
     }
+  };
+}
+
+/**
+ * GET /system/configuration
+ */
+export async function getAuthorizedConfiguration (baseUrl, authenticationToken, locale) {
+  const { body: { supportedLanguages } } = await get(authenticationToken, locale, `${baseUrl}/v003/system/configuration`);
+  const { body: countries } = await get(authenticationToken, locale, `${baseUrl}/v003/system/countries`);
+  const { body: currencies } = await get(authenticationToken, locale, `${baseUrl}/v003/system/currencies`);
+  const { body: feedEntryTypes } = await get(authenticationToken, locale, `${baseUrl}/v003/feed/entryTypes`);
+  const { body: { data: applications } } = await get(authenticationToken, locale, `${baseUrl}/v003/system/mobileApplications?pageSize=1000`);
+  const { body: { value: pushWindowSizeInMinutes } } = await get(authenticationToken, locale, `${baseUrl}/v003/system/properties/push.default.window.in.minutes.`);
+  const { body: actionTypes } = await get(authenticationToken, locale, `${baseUrl}/v003/push/actionTypes`);
+  const genders = await get(authenticationToken, locale, `${baseUrl}/v003/system/genders`);
+  return {
+    actionTypes,
+    applications: applications.map(({ name, uuid, platforms }) => ({ id: uuid, name, deviceTypes: platforms.map(({ type }) => type) })),
+    countries: countries.reduce((obj, current) => {
+        // Note the iso2Code acts as uuid for the backend.
+      obj[current.iso2Code] = { id: current.iso2Code, name: current.name };
+      return obj;
+    }, {}),
+    currencies: currencies.reduce((obj, current) => {
+        // Note the code acts as uuid for the backend.
+      obj[current.code] = { description: current.description, id: current.code, symbol: current.symbol };
+      return obj;
+    }, {}),
+    defaultPushWindowSizeInMinutes: parseInt(pushWindowSizeInMinutes, 10),
+    feedEntryTypes: feedEntryTypes.reduce((obj, current) => {
+        // Note thet the type acts as 'uuid' for the backend.
+      obj[current.type] = current;
+      return obj;
+    }, {}),
+    locales: supportedLanguages.map((current) => current.locale),
+    localeNames: supportedLanguages.reduce((obj, current) => {
+      obj[current.locale] = current.name;
+      return obj;
+    }, {}),
+    genders: genders.body.reduce((obj, current) => {
+      obj[current.gender] = current.description;
+      return obj;
+    }, {})
   };
 }

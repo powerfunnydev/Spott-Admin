@@ -1,5 +1,6 @@
-import { getConfiguration } from '../api/config';
+import { getConfiguration, getAuthorizedConfiguration } from '../api/config';
 import { push as routerPush } from 'react-router-redux';
+import { authenticationTokenSelector, apiBaseUrlSelector, currentLocaleSelector } from '../selectors/global';
 
 export const CONFIGURE = 'CONFIGURE';
 
@@ -20,6 +21,20 @@ export function routerPushWithReturnTo (newUrlOrLocationObject, goBack) {
     }
     // If there is no object or we didn't want to the previous page, go to newUrlOrLocationObject.
     return dispatch(routerPush({ pathname: newUrlOrLocationObject, state: { returnTo: location } }));
+  };
+}
+
+export function getAuthorizedConfig () {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const apiBaseUrl = apiBaseUrlSelector(state);
+    const authenticationToken = authenticationTokenSelector(state);
+    const locale = currentLocaleSelector(state);
+    if (authenticationToken) {
+      // Get backend configuration
+      const configuration = await getAuthorizedConfiguration(apiBaseUrl, authenticationToken, locale);
+      dispatch({ configuration, type: CONFIGURE });
+    }
   };
 }
 
