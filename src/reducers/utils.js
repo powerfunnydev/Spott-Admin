@@ -2,8 +2,13 @@
 import { fromJS, List, Map } from 'immutable';
 import { FETCHING, UPDATING, ERROR, LOADED } from '../constants/statusTypes';
 
-function serialize ({ searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
-  let id = `page=${page}&pageSize=${pageSize}`;
+/**
+ * uniqueKey is used to distinguish multiple tables with the same queries, but different key.
+ * example: global users with searchString='abc' aren't the same as users of
+ * a broadcaster with the same searchString.
+ */
+function serialize ({ searchString = '', page = 0, pageSize = 25, sortDirection, sortField }, uniqueKey) {
+  let id = `uniqueKey=${uniqueKey}&page=${page}&pageSize=${pageSize}`;
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     id = id.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }

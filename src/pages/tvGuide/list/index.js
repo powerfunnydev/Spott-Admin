@@ -19,7 +19,7 @@ import UtilsBar from '../../_common/components/table/utilsBar';
 
 const numberOfRows = 25;
 
-@tableDecorator
+@tableDecorator()
 @connect(selector, (dispatch) => ({
   deleteTvGuideEntries: bindActionCreators(actions.deleteTvGuideEntries, dispatch),
   deleteTvGuideEntry: bindActionCreators(actions.deleteTvGuideEntry, dispatch),

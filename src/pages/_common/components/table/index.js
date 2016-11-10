@@ -13,6 +13,10 @@ export { TotalEntries } from './totalEntries';
 export UtilsBar from './utilsBar';
 
 export const generalStyles = {
+  border: {
+    marginTop: '-1px',
+    border: `solid 1px ${colors.lightGray3}`
+  },
   arrowUnder: { transform: 'rotateZ(180deg)' },
   arrowLeft: { transform: 'rotateZ(270deg)' },
   arrowRight: { transform: 'rotateZ(90deg)' },
@@ -20,6 +24,10 @@ export const generalStyles = {
     minHeight: '70px',
     display: 'flex',
     alignItems: 'center'
+  },
+  paddingLeftAndRight: {
+    paddingLeft: '24px',
+    paddingRight: '24px'
   },
   paddingTable: {
     paddingTop: '50px',
@@ -41,6 +49,11 @@ export const generalStyles = {
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap'
+  },
+  tableFillPage: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1
   }
 };
 
@@ -64,6 +77,13 @@ export const headerStyles = {
   }
 };
 
+export function concatCamelCase (word, prefix) {
+  if (typeof prefix === 'string') {
+    return `${prefix}${word.charAt(0).toUpperCase()}${word.substr(1)}`;
+  }
+  return word;
+}
+
 export const sortDirections = {
   ASC: 1,
   DESC: 2
@@ -81,20 +101,41 @@ export function directionToString (direction) {
   return '';
 }
 
-export function determineSortDirection (sortField, query) {
+export function determineSortDirection (sortField, querySortField, querySortDirection) {
+  console.log(sortField, querySortField, querySortDirection);
   let sortDirection = NONE;
-  if (query.sortField === sortField && query.sortDirection) {
+  if (querySortField === sortField && querySortDirection) {
     // map string to number
-    sortDirection = sortDirections[query.sortDirection];
+    sortDirection = sortDirections[querySortDirection];
   }
+  console.log('direction', directionToString((sortDirection + 1) % 3));
   return directionToString((sortDirection + 1) % 3);
 }
 
-export function isQueryChanged (query, nextQuery) {
-  return (query.page !== nextQuery.page ||
-    query.searchString !== nextQuery.searchString ||
-    query.display !== nextQuery.display ||
-    query.pageSize !== nextQuery.pageSize ||
-    query.sortDirection !== nextQuery.sortDirection ||
-    query.sortField !== nextQuery.sortField);
+export function isQueryChanged (query, nextQuery, prefix) {
+  const prefixPage = concatCamelCase('page', prefix);
+  const prefixSearchString = concatCamelCase('searchString', prefix);
+  const prefixDisplay = concatCamelCase('display', prefix);
+  const prefixPageSize = concatCamelCase('pageSize', prefix);
+  const prefixSortDirection = concatCamelCase('sortDirection', prefix);
+  const prefixSortField = concatCamelCase('sortField', prefix);
+
+  return (
+    (query[prefixPage] !== nextQuery[prefixPage]) ||
+    (query[prefixSearchString] !== nextQuery[prefixSearchString]) ||
+    (query[prefixDisplay] !== nextQuery[prefixDisplay]) ||
+    (query[prefixPageSize] !== nextQuery[prefixPageSize]) ||
+    (query[prefixSortDirection] !== nextQuery[prefixSortDirection]) ||
+    (query[prefixSortField] !== nextQuery[prefixSortField]));
+}
+
+export function getInformationFromQuery (query, prefix) {
+  return {
+    page: query[concatCamelCase('page', prefix)],
+    searchString: query[concatCamelCase('searchString', prefix)],
+    display: query[concatCamelCase('display', prefix)],
+    pageSize: query[concatCamelCase('pageSize', prefix)],
+    sortDirection: query[concatCamelCase('sortDirection', prefix)],
+    sortField: query[concatCamelCase('sortField', prefix)]
+  };
 }

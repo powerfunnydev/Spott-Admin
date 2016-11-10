@@ -1,97 +1,52 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { connect } from 'react-redux';
-import ImmutablePropTypes from 'react-immutable-proptypes';
 import { bindActionCreators } from 'redux';
 import Header from '../../../app/header';
-import { Root, Container } from '../../../_common/styles';
-import localized from '../../../_common/localized';
+import { Root, Container, colors } from '../../../_common/styles';
 import * as actions from './actions';
 import SpecificHeader from '../../header';
 import selector from './selector';
 import EntityDetails from '../../../_common/entityDetails';
-import * as listActions from '../list/actions';
+import * as listActions from '../list/broadcasters/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import BreadCrumbs from '../../../_common/breadCrumbs';
-import { UtilsBar, isQueryChanged, Tile, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
-import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
 import Line from '../../../_common/components/line';
-import { slowdown } from '../../../../utils';
-import { Tabs, Tab } from '../../../_common/components/tabs';
+import BroadcastChannelList from './broadcastChannels';
+import UserList from './users';
+import { Tabs, Tab } from '../../../_common/components/formTabs';
+import { generalStyles } from '../../../_common/components/table/index';
 
 /* eslint-disable no-alert */
 
-const numberOfRows = 25;
-
-@tableDecorator
-@localized
 @connect(selector, (dispatch) => ({
   deleteBroadcaster: bindActionCreators(listActions.deleteBroadcaster, dispatch),
-  deleteBroadcastChannel: bindActionCreators(actions.deleteBroadcastChannel, dispatch),
   loadBroadcaster: bindActionCreators(actions.loadBroadcaster, dispatch),
-  loadBroadcasterChannels: bindActionCreators(actions.loadBroadcasterChannels, dispatch),
-  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
-  selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
-  selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @Radium
 export default class ReadBroadcaster extends Component {
 
   static propTypes = {
-    broadcastChannels: ImmutablePropTypes.map.isRequired,
     children: PropTypes.node,
     currentBroadcaster: PropTypes.object.isRequired,
-    deleteBroadcastChannel: PropTypes.func.isRequired,
     deleteBroadcaster: PropTypes.func.isRequired,
     error: PropTypes.any,
-    isSelected: ImmutablePropTypes.map.isRequired,
     loadBroadcaster: PropTypes.func.isRequired,
-    loadBroadcasterChannels: PropTypes.func.isRequired,
-    location: PropTypes.shape({
-      pathname: PropTypes.string.isRequired,
-      query: PropTypes.object.isRequired
-    }),
-    numberSelected: PropTypes.number,
-    pageCount: PropTypes.number,
+    location: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
-    routerPushWithReturnTo: PropTypes.func.isRequired,
-    selectAllCheckboxes: PropTypes.func.isRequired,
-    selectCheckbox: PropTypes.func.isRequired,
-    t: PropTypes.func.isRequired,
-    totalResultCount: PropTypes.number.isRequired,
-    onChangeDisplay: PropTypes.func.isRequired,
-    onChangePage: PropTypes.func.isRequired,
-    onChangeSearchString: PropTypes.func.isRequired,
-    onSortField: PropTypes.func.isRequired
+    routerPushWithReturnTo: PropTypes.func.isRequired
   };
 
   constructor (props) {
     super(props);
     this.redirect = ::this.redirect;
     this.onClickNewEntry = :: this.onClickNewEntry;
-    this.slowSearch = slowdown(props.loadBroadcasterChannels, 300);
   }
 
   async componentWillMount () {
     if (this.props.params.id) {
       await this.props.loadBroadcaster(this.props.params.id);
-      await this.props.loadBroadcasterChannels({ ...this.props.location.query, broadcasterId: this.props.params.id });
-    }
-  }
-
-  async componentWillReceiveProps (nextProps) {
-    const nextQuery = nextProps.location.query;
-    const query = this.props.location.query;
-    if (isQueryChanged(query, nextQuery)) {
-      await this.slowSearch({ ...nextProps.location.query, broadcasterId: this.props.params.id });
-    }
-  }
-
-  async deleteBroadcastChannel (broadcastChannelId) {
-    const result = window.confirm('Are you sure you want to trigger this action?');
-    if (result) {
-      await this.props.deleteBroadcastChannel(broadcastChannelId);
-      await this.props.loadBroadcasterChannels({ ...this.props.location.query, broadcasterId: this.props.params.id });
     }
   }
 
@@ -111,9 +66,17 @@ export default class ReadBroadcaster extends Component {
     }
   }
 
+  static styles= {
+    table: {
+      backgroundColor: colors.lightGray4,
+      paddingTop: '20px'
+    }
+  }
+
   render () {
-    const { onChangeSearchString, onChangeDisplay, numberSelected, pageCount, selectAllCheckboxes, selectCheckbox, isSelected, totalResultCount, children, broadcastChannels, currentBroadcaster,
-       location, location: { query, query: { display, page, searchString, sortField, sortDirection } }, deleteBroadcaster } = this.props;
+    const { children, currentBroadcaster,
+       location, deleteBroadcaster } = this.props;
+    const { styles } = this.constructor;
     return (
       <Root>
         <Header currentLocation={location} hideHomePageLinks />
@@ -126,72 +89,19 @@ export default class ReadBroadcaster extends Component {
               onRemove={async () => { await deleteBroadcaster(currentBroadcaster.getIn([ 'id' ])); this.redirect(); }}/>}
         </Container>
         <Line/>
-        <Tabs>
-          <Tab>Broadcast Channels</Tab>
-        </Tabs>
-        <Line/>
-        <div style={generalStyles.backgroundBar}>
-          <Container >
-            <UtilsBar
-              display={display}
-              isLoading={broadcastChannels.get('_status') !== 'loaded'}
-              numberSelected={numberSelected}
-              searchString={searchString}
-              textCreateButton='New Broadcast Channel'
-              onChangeDisplay={onChangeDisplay}
-              onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value, broadcasterId: this.props.params.id }); }}
-              onClickNewEntry={this.onClickNewEntry}/>
+        <div style={[ generalStyles.fillPage, styles.table ]}>
+          <Container>
+            <Tabs>
+              <Tab title='Broadcast Channels'>
+                <BroadcastChannelList {...this.props}/>
+              </Tab>
+              <Tab title='Users'>
+                <UserList {...this.props}/>
+              </Tab>
+            </Tabs>
           </Container>
         </div>
         <Line/>
-        <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
-          <Container style={generalStyles.paddingTable}>
-            <TotalEntries totalResultCount={totalResultCount}/>
-            {(display === undefined || display === 'list') &&
-              <div>
-                <Table>
-                  <Headers>
-                    {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                    <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader, { flex: 0.25 } ]} onChange={selectAllCheckboxes}/>
-                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 5 } ]}>NAME</CustomCel>
-                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}/>
-                  </Headers>
-                  <Rows isLoading={broadcastChannels.get('_status') !== 'loaded'}>
-                    {broadcastChannels.get('data').map((broadcastChannel, index) => {
-                      return (
-                        <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
-                          {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                          <CheckBoxCel checked={isSelected.get(broadcastChannel.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, broadcastChannel.get('id'))}/>
-                          <CustomCel getValue={this.getName} objectToRender={broadcastChannel} style={{ flex: 5 }} />
-                          <CustomCel style={{ flex: 1 }}>
-                            <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}>Remove</div>
-                            </Dropdown>
-                          </CustomCel>
-                        </Row>
-                      );
-                    })}
-                  </Rows>
-                </Table>
-                <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
-              </div>
-            }
-            {display === 'grid' &&
-              <div style={generalStyles.row}>
-                { this.props.broadcastChannels.get('data').map((broadcastChannel, index) => (
-                  <Tile
-                    imageUrl={broadcastChannel.getIn([ 'logo', 'url' ])}
-                    key={`broadcastChannel${index}`}
-                    text={broadcastChannel.get('name')}
-                    onDelete={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}
-                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}/>
-                ))}
-                <Tile key={'createBroadcastChannel'} onCreate={this.onClickNewEntry}/>
-              </div>
-            }
-          </Container>
-        </div>
         {children}
       </Root>
     );

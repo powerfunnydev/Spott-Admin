@@ -18,7 +18,7 @@ import { slowdown } from '../../../../utils';
 
 const numberOfRows = 25;
 
-@tableDecorator
+@tableDecorator()
 @connect(selector, (dispatch) => ({
   deleteContentProducersEntry: bindActionCreators(actions.deleteContentProducerEntry, dispatch),
   deleteContentProducersEntries: bindActionCreators(actions.deleteContentProducerEntries, dispatch),

@@ -1,6 +1,21 @@
 import { del, get, post, postFormData } from './request';
-import { transformBroadcaster, transformBroadcastChannel } from './transformers';
+import { transformUser, transformBroadcaster, transformBroadcastChannel } from './transformers';
 
+
+export async function fetchBroadcasterUsers (baseUrl, authenticationToken, locale, { broadcasterId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/media/broadcasters/${broadcasterId}/users?page=${page}&pageSize=${pageSize}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${searchString}`);
+  }
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  const { body } = await get(authenticationToken, locale, url);
+  // There is also usable data in body (not only in data field).
+  // We need also fields page, pageCount,...
+  body.data = body.data.map(transformUser);
+  return body;
+}
 
 export async function fetchBroadcasters (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/broadcasters?page=${page}&pageSize=${pageSize}`;
@@ -72,9 +87,9 @@ export async function searchBroadcasters (baseUrl, authenticationToken, locale, 
   return data.map(transformBroadcaster);
 }
 
-export async function uploadBroadcasterImage (baseUrl, authenticationToken, locale, { broadcasterEntryId, image, callback }) {
+export async function uploadBroadcasterImage (baseUrl, authenticationToken, locale, { broadcasterId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', broadcasterEntryId);
+  formData.append('uuid', broadcasterId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/broadcasters/${broadcasterEntryId}/logo`, formData, callback);
+  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/broadcasters/${broadcasterId}/logo`, formData, callback);
 }
