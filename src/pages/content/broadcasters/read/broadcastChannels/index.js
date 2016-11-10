@@ -65,7 +65,6 @@ export default class List extends Component {
   async componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
-    console.log('query changed', isQueryChanged(query, nextQuery));
     if (isQueryChanged(query, nextQuery, prefix)) {
       await this.slowSearch(nextProps.location.query, this.props.params.id);
     }

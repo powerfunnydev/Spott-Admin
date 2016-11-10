@@ -22,7 +22,6 @@ export function tableDecorator (prefix) {
 
         constructor (props, context) {
           super(props, context);
-          console.log('prefix', prefix);
           this.onChangePage = ::this.onChangePage;
           this.onSortField = ::this.onSortField;
           this.onChangeSearchString = ::this.onChangeSearchString;

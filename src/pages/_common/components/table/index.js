@@ -108,11 +108,10 @@ export function determineSortDirection (sortField, querySortField, querySortDire
     // map string to number
     sortDirection = sortDirections[querySortDirection];
   }
-  console.log('direction', directionToString((sortDirection + 1) % 3));
   return directionToString((sortDirection + 1) % 3);
 }
 
-export function isQueryChanged (query, nextQuery, prefix) {
+export const isQueryChanged = (query, nextQuery, prefix) => {
   const prefixPage = concatCamelCase('page', prefix);
   const prefixSearchString = concatCamelCase('searchString', prefix);
   const prefixDisplay = concatCamelCase('display', prefix);
@@ -127,7 +126,7 @@ export function isQueryChanged (query, nextQuery, prefix) {
     (query[prefixPageSize] !== nextQuery[prefixPageSize]) ||
     (query[prefixSortDirection] !== nextQuery[prefixSortDirection]) ||
     (query[prefixSortField] !== nextQuery[prefixSortField]));
-}
+};
 
 export function getInformationFromQuery (query, prefix) {
   return {

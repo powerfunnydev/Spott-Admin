@@ -112,7 +112,6 @@ export default class Broadcasters extends Component {
       broadcastersSearchString, broadcastersSortField, broadcastersSortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount,
     onChangeDisplay, onChangeSearchString } = this.props;
-    console.log('broadcasters', broadcasters.toJS());
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
       <div style={generalStyles.tableFillPage}>
