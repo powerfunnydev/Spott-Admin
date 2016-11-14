@@ -120,7 +120,6 @@ export default class EditUser extends Component {
 
   async submit (form) {
     try {
-      console.log('form', form.toJS());
       await this.props.submit({ userId: this.props.params.id, ...form.toJS() });
       this.redirect();
     } catch (error) {

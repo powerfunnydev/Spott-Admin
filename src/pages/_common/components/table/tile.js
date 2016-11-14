@@ -32,6 +32,7 @@ export class Tile extends Component {
       justifyContent: 'center'
     },
     image: {
+      objectFit: 'scale-down',
       width: '184px',
       height: '103px'
     },

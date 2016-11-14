@@ -10,12 +10,16 @@ export { Table } from './table';
 export { tableDecorator } from './tableDecorator';
 export { Tile } from './tile';
 export { TotalEntries } from './totalEntries';
+export { DropdownCel } from './dropdownCel';
 export UtilsBar from './utilsBar';
 
 export const generalStyles = {
   border: {
     marginTop: '-1px',
-    border: `solid 1px ${colors.lightGray3}`
+    border: `solid 1px ${colors.lightGray3}`,
+    borderBottomLeftRadius: '2px',
+    borderTopRightRadius: '2px',
+    borderBottomRightRadius: '2px'
   },
   arrowUnder: { transform: 'rotateZ(180deg)' },
   arrowLeft: { transform: 'rotateZ(270deg)' },
@@ -102,13 +106,11 @@ export function directionToString (direction) {
 }
 
 export function determineSortDirection (sortField, querySortField, querySortDirection) {
-  console.log(sortField, querySortField, querySortDirection);
   let sortDirection = NONE;
   if (querySortField === sortField && querySortDirection) {
     // map string to number
     sortDirection = sortDirections[querySortDirection];
   }
-  console.log('direction', directionToString((sortDirection + 1) % 3));
   return directionToString((sortDirection + 1) % 3);
 }
 

@@ -208,8 +208,7 @@ FormSubtitle.propTypes = {
 
 // Container component
 // ///////////////////
-
-const containerStyles = {
+/* const containerStyles = {
   marginLeft: 'auto',
   marginRight: 'auto',
   width: '100%',
@@ -226,6 +225,14 @@ const containerStyles = {
   [mediaQueries.extraLarge]: {
     width: 1170
   }
+};*/
+
+// Container component
+// ///////////////////
+const containerStyles = {
+  width: '100%',
+  paddingLeft: '40px',
+  paddingRight: '40px'
 };
 export const Container = Radium((props) => (
   <div {...props} style={[ containerStyles, props.style ]}>
