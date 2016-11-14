@@ -102,7 +102,7 @@ export default class EditBroadcaster extends Component {
                   <Label text='Upload image' />
                   <Dropzone
                     accept='image/*'
-                    onChange={({ callback, file }) => { this.props.uploadImage({ broadcasterId: this.props.params.id, image: file, callback }); console.log('file', file); }}/>
+                    onChange={({ callback, file }) => { this.props.uploadImage({ broadcasterId: this.props.params.id, image: file, callback }); }}/>
                 </div>
               </Section>
             </TabPanel>

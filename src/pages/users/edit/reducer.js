@@ -12,6 +12,7 @@ export default (state = Map({}), action) => {
     case FORGOT_PASSWORD_SUCCESS:
       return state.set('popUpMessage', { message: 'Password is successful reset!', type: 'hint' });
     case (FORGOT_PASSWORD_ERROR || BROADCASTERS_SEARCH_ERROR || CONTENT_PRODUCERS_SEARCH_ERROR || USER_FETCH_ENTRY_ERROR):
+      console.log('error', action);
       let stackTrace;
       if (typeof action.error === 'string') {
         stackTrace = action.error;

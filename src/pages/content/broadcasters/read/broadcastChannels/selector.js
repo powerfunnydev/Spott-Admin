@@ -18,7 +18,7 @@ export const currentBroadcasterSelector = createEntityByIdSelector(broadcastersE
 const broadcastChannelsSelector = createEntitiesByListSelector(broadcastChannelsListSelector, broadcastChannelsEntitiesSelector);
 
 export default createStructuredSelector({
-  broadcastChannels: broadcastChannelsSelector,
+  broadcasterChannels: broadcastChannelsSelector,
   currentBroadcaster: currentBroadcasterSelector,
   isSelected: isSelectedSelector,
   pageCount: pageCountSelector,

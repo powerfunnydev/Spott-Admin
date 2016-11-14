@@ -27,7 +27,6 @@ export default class DateInput extends Component {
   }
 
   onChange (date) {
-    console.log('date', date.format());
     const { input, onChange } = this.props;
     input.onChange && input.onChange(date);
     onChange && onChange(date);
