@@ -103,7 +103,7 @@ export default class EditBroadcastChannel extends Component {
                   <Dropzone
                     accept='image/*'
                     message={<span>Drag & drop the image</span>}
-                    onChange={({ callback, file }) => { this.props.uploadImage({ broadcastChannelId: this.props.params.id, image: file, callback }); console.log('file', file); }}/>
+                    onChange={({ callback, file }) => { this.props.uploadImage({ broadcastChannelId: this.props.params.id, image: file, callback }); }}/>
                 </div>
               </Section>
             </TabPanel>

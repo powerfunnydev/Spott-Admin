@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import Radium from 'radium';
 import { fontWeights, makeTextStyle, colors } from '../../_common/styles';
-const arrowGray = require('../../../assets/images/arrow-gray.svg');
+import ArrowSVG from '../images/arrow';
 
 /* eslint-disable react/prop-types */
 /* eslint-disable react/no-set-state */
@@ -47,8 +47,7 @@ export const styles = {
   },
   borderLeft: {
     borderTopLeftRadius: '2px',
-    borderBottomLeftRadius: '2px',
-    marginRight: '-1px'
+    borderBottomLeftRadius: '2px'
   },
   borderRight: {
     borderTopRightRadius: '2px',
@@ -59,11 +58,10 @@ export const styles = {
     backgroundColor: colors.white,
     border: '1px solid #ccc',
     boxSizing: 'border-box',
+    right: 0,
     marginTop: '-1px',
     maxHeight: '200px',
     position: 'absolute',
-    top: '100%',
-    width: '100%',
     zIndex: 1000
   },
   option: {
@@ -74,13 +72,10 @@ export const styles = {
     display: 'flex',
     alignItems: 'center',
     boxSizing: 'border-box',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    minWidth: '110px'
   },
   arrowUnder: { transform: 'rotateZ(180deg)' },
-  arrow: {
-    width: '8px',
-    height: '6px'
-  },
   arrowContainer: {
     display: 'inline-block',
     paddingTop: '3px',
@@ -88,8 +83,9 @@ export const styles = {
     paddingRight: '6px',
     paddingLeft: '6px'
   },
-  paddingLeft: {
-    paddingLeft: '10px'
+  elementShown: {
+    paddingLeft: '10px',
+    marginRight: '-1px'
   }
 };
 
@@ -141,13 +137,13 @@ class Dropdown extends Component {
     const menu = this.state.isOpen ? <div style={styles.menu} onClick={this.toggleOpen}>{children}</div> : null;
 
     return (
-      <div key='dropdown' style={[ styles.root, style, { minWidth: '100px' } ]}>
+      <div key='dropdown' style={[ styles.root, style ]}>
         <div>
-          <div style={[ styles.control, elementShown && styles.borderLeft ]}>
+          {elementShown && <div style={[ styles.control, styles.elementShown ]}>
             {elementShown}
-          </div>
+          </div>}
           <div key='arrow' style={[ styles.borderRight, !elementShown && styles.borderLeft, styles.control, styles.arrowContainer, styles.clickable ]} onMouseDown={this.handleMouseDown.bind(this)}>
-            <img src={arrowGray} style={[ styles.arrow, !this.state.isOpen && styles.arrowUnder ]} />
+            <ArrowSVG color={colors.darkGray2} style={[ !this.state.isOpen && styles.arrowUnder ]} />
           </div>
         </div>
         {menu}

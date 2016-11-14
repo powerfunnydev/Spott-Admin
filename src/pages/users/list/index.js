@@ -5,7 +5,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
 import Header from '../../app/header';
 import { Root, Container } from '../../_common/styles';
-import { UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table/index';
+import { DropdownCel, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table/index';
 import Line from '../../_common/components/line';
 import Dropdown, { styles as dropdownStyles } from '../../_common/components/dropdown';
 import * as actions from './actions';
@@ -133,29 +133,29 @@ export default class Users extends Component {
                 <Table>
                   <Headers>
                     {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                    <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader, { flex: 0.25 } ]} onChange={selectAllCheckboxes}/>
+                    <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
                     <CustomCel sortColumn={this.props.onSortField.bind(this, 'USERNAME')} sortDirection = {sortField === 'USERNAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>Username</CustomCel>
                     <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Email</CustomCel>
                     <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>First Name</CustomCel>
                     <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Last Name</CustomCel>
-                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}/>
+                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: '0 0 110px' } ]}/>
                   </Headers>
                   <Rows isLoading={users.get('_status') !== 'loaded'}>
                     {users.get('data').map((user, index) => {
                       return (
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                          <CheckBoxCel checked={isSelected.get(user.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, user.get('id'))}/>
+                          <CheckBoxCel checked={isSelected.get(user.get('id'))} onChange={selectCheckbox.bind(this, user.get('id'))}/>
                           <CustomCel getValue={this.getUserName} objectToRender={user} style={{ flex: 2 }}/>
                           <CustomCel getValue={this.getEmail} objectToRender={user} style={{ flex: 2 }}/>
                           <CustomCel getValue={this.getFirstName} objectToRender={user} style={{ flex: 1 }} />
                           <CustomCel getValue={this.getLastName} objectToRender={user} style={{ flex: 1 }} />
-                          <CustomCel style={{ flex: 1 }}>
+                          <DropdownCel>
                             <Dropdown
                               elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`users/edit/${user.get('id')}`); }}>Edit</div>}>
                               <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteUser(user.get('id')); }}>Remove</div>
                             </Dropdown>
-                          </CustomCel>
+                          </DropdownCel>
                         </Row>
                       );
                     })}

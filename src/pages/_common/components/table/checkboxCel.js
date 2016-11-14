@@ -16,7 +16,8 @@ export class CheckBoxCel extends Component {
       alignItems: 'center',
       display: 'flex',
       minHeight: '2.625em',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      flex: '0 0  56px'
     }
   }
 

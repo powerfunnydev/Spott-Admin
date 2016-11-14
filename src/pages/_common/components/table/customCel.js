@@ -24,6 +24,8 @@ export class CustomCel extends Component {
 
   static styles = {
     cell: {
+      wordBreak: 'break-word',
+
       alignItems: 'center',
       color: colors.darkGray2,
       display: 'flex',
@@ -56,16 +58,16 @@ export class CustomCel extends Component {
 
     return (
       <div style={[ styles.cell, (sortColumn || onClick) && styles.pointer,
-            sortDirection && sortDirection !== NONE && styles.headerSelected,
-            onClick && styles.clickable, style ]} onClick={sortColumn || onClick}>
+        sortDirection && sortDirection !== NONE && styles.headerSelected,
+        onClick && styles.clickable, style ]} onClick={sortColumn || onClick}>
         <div>
           {children}
           {getValue && objectToRender && getValue(objectToRender)}
         </div>
-        <div style={styles.arrowRight}>
+        { (sortDirection === ASC || sortDirection === DESC) && <div style={styles.arrowRight}>
           {sortDirection === ASC && <img src={arrowGray}/>}
           {sortDirection === DESC && <img src={arrowGray} style={generalStyles.arrowUnder} />}
-        </div>
+        </div>}
       </div>
     );
   }

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Container } from '../../../_common/styles';
-import { isQueryChanged, Tile, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
+import { DropdownCel, isQueryChanged, Tile, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
 import Line from '../../../_common/components/line';
 import Radium from 'radium';
 import * as actions from './actions';
@@ -129,23 +129,23 @@ export default class BroadcastChannelList extends Component {
                 <Table>
                   <Headers>
                     {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                    <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader, { flex: 0.25 } ]} onChange={selectAllCheckboxes}/>
+                    <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
                     <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 5 } ]}>NAME</CustomCel>
-                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}/>
+                    <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
                   </Headers>
                   <Rows isLoading={broadcastChannels.get('_status') !== 'loaded'}>
                     {broadcastChannels.get('data').map((broadcastChannel, index) => {
                       return (
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                          <CheckBoxCel checked={isSelected.get(broadcastChannel.get('id'))} style={{ flex: 0.25 }} onChange={selectCheckbox.bind(this, broadcastChannel.get('id'))}/>
+                          <CheckBoxCel checked={isSelected.get(broadcastChannel.get('id'))} onChange={selectCheckbox.bind(this, broadcastChannel.get('id'))}/>
                           <CustomCel getValue={this.getName} objectToRender={broadcastChannel} style={{ flex: 5 }} />
-                          <CustomCel style={{ flex: 1 }}>
+                          <DropdownCel>
                             <Dropdown
                               elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}>Edit</div>}>
                               <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}>Remove</div>
                             </Dropdown>
-                          </CustomCel>
+                          </DropdownCel>
                         </Row>
                       );
                     })}
