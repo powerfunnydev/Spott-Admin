@@ -21,7 +21,7 @@ export default class Label extends Component {
       color: '#536970',
       display: 'block',
       fontSize: '0.625em',
-      paddingBottom: '0.625em',
+      paddingBottom: '1em',
       textTransform: 'uppercase'
     }
   };

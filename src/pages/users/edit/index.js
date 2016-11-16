@@ -233,10 +233,10 @@ export default class EditUser extends Component {
                       onChange={({ callback, file }) => { this.props.uploadProfileImage({ userId: this.props.params.id, image: file, callback }); }}/>
                   </div>
                   <div style={styles.paddingLeftBackgroudImage}>
-                    <Label text='Background image' />
+                    <Label text='Avatar image' />
                     <Dropzone
                       accept='image/*'
-                      type='backgroundImage'
+                      // type='backgroundImage'
                       onChange={({ callback, file }) => { this.props.uploadBackgroundImage({ userId: this.props.params.id, image: file, callback }); }}/>
                   </div>
                 </div>

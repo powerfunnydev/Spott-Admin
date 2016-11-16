@@ -12,6 +12,7 @@ const crossImage = require('./cross.svg');
  * Note: get merged with defaults by react-modal
  */
 const dialogStyle = {
+  /*
   overlay: {
     zIndex: 100,
     backgroundColor: 'rgba(0, 0, 0, 0.80)'
@@ -31,6 +32,35 @@ const dialogStyle = {
     bottom: 'auto',
     top: '50%',
     transform: 'translateY(-50%)',
+    overflow: 'visible'
+  }*/
+
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 100,
+    backgroundColor: 'rgba(0, 0, 0, 0.80)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  content: {
+    position: 'relative',
+    backgroundColor: 'transparent',
+    border: 'none',
+    fontFamily: 'Rubik-Regular',
+    fontWeight: 'normal',
+    width: '100%',
+    // Set width and center horizontally
+    minWidth: 200,
+    maxWidth: 430,
+    // Internal padding
+    padding: 0,
+    // Fit height to content, centering vertically
+    bottom: 'auto',
     overflow: 'visible'
   }
 };
@@ -73,7 +103,7 @@ export default class CreateModal extends Component {
       backgroundColor: '#eaeced',
       display: 'flex',
       justifyContent: 'space-between',
-      paddingBottom: '0.625em',
+      paddingBottom: '1em',
       paddingLeft: '1.5em',
       paddingRight: '1.5em',
       paddingTop: '0.625em',
