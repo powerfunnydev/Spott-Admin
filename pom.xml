@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>appiness.mobi</groupId>
 		<artifactId>appiness.root</artifactId>
-		<version>08</version>
+		<version>09</version>
 	</parent>
 	<artifactId>apptvate.website</artifactId>
 	<packaging>pom</packaging>
@@ -16,7 +16,7 @@
 	<repositories>
 		<repository>
 			<id>appiness</id>
-			<url>https://nexus.appiness.mobi/nexus/content/groups/public</url>
+			<url>https://nexus.appiness.mobi/nexus/repository/maven-public</url>
 		</repository>
 	</repositories>
 	<properties>
