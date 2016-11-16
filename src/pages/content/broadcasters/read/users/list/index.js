@@ -89,7 +89,7 @@ export default class Users extends Component {
 
   async onDeleteLinkUser (userId) {
     await this.props.deleteLinkUser(this.props.params.id, userId);
-    await this.props.load(this.props.location.query);
+    await this.props.load(this.props.location.query, this.props.params.id);
   }
 
   onEditEntry (userId) {
