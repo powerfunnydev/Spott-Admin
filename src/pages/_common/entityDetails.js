@@ -24,12 +24,15 @@ export default class EntityDetails extends Component {
       width: '100%'
     },
     noImage: {
-      backgroundColor: colors.lightGray,
+      ...makeTextStyle(fontWeights.regular, '11px', '0.4px'),
+      color: colors.lightGray3,
       height: '80px',
       width: '143px',
       display: 'flex',
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
+      borderRadius: '2px',
+      border: `solid 1px ${colors.veryLightGray}`
     },
     image: {
       height: '80px',

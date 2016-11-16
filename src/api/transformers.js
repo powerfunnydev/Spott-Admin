@@ -6,7 +6,7 @@ export function transformBroadcaster ({ logo, name, uuid }) {
 
 export function transformContentProducer ({ uuid, name, auditInfo, logo }) {
   return { id: uuid, name, createdOn: auditInfo && auditInfo.createdOn, lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
-          lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn, logo: { url: logo && logo.url } };
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn, logo: { url: logo && logo.url } };
 }
 export function transformContentProducers (body) {
   const contentProducers = body.data;
@@ -250,8 +250,8 @@ export function transformPaging ({ page, pageCount, pageSize, totalResultCount }
   return { page, pageCount, pageSize, totalResultCount };
 }
 
-export function transformUser ({ languages, dateOfBirth, disabled, disabledReason,
-  userName, gender, firstName, lastName, email, uuid: id, roles }) {
+export function transformUser ({ avatar, languages, dateOfBirth, disabled, disabledReason,
+  userName, gender, firstName, lastName, email, uuid: id, roles, ...restProps }) {
   const obj = {};
   const broadcasters = [];
   const contentProducers = [];
@@ -271,6 +271,7 @@ export function transformUser ({ languages, dateOfBirth, disabled, disabledReaso
     ...obj,
     broadcasters,
     contentProducers,
+    avatar: avatar && { url: avatar.url } || {},
     userStatus: disabled && ACTIVE || INACTIVE,
     languages,
     disabledReason,

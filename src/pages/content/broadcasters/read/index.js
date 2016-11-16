@@ -13,7 +13,7 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 import BreadCrumbs from '../../../_common/breadCrumbs';
 import Line from '../../../_common/components/line';
 import BroadcastChannelList from './broadcastChannels';
-import UserList from './users';
+import UserList from './users/list';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
 
@@ -42,6 +42,7 @@ export default class ReadBroadcaster extends Component {
     super(props);
     this.redirect = ::this.redirect;
     this.onClickNewEntry = :: this.onClickNewEntry;
+    this.onChangeTab = :: this.onChangeTab;
   }
 
   async componentWillMount () {
@@ -56,6 +57,10 @@ export default class ReadBroadcaster extends Component {
 
   redirect () {
     this.props.routerPushWithReturnTo('content/broadcasters', true);
+  }
+
+  onChangeTab (index) {
+    this.props.routerPushWithReturnTo({ ...this.props.location, query: { ...this.props.location.query, tabIndex: index } });
   }
 
   onClickNewEntry (e) {
@@ -75,7 +80,7 @@ export default class ReadBroadcaster extends Component {
 
   render () {
     const { children, currentBroadcaster,
-       location, deleteBroadcaster } = this.props;
+       location, deleteBroadcaster, location: { query: { tabIndex } } } = this.props;
     const { styles } = this.constructor;
     return (
       <Root>
@@ -91,7 +96,7 @@ export default class ReadBroadcaster extends Component {
         <Line/>
         <div style={[ generalStyles.fillPage, styles.table ]}>
           <Container>
-            <Tabs>
+            <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
               <Tab title='Broadcast Channels'>
                 <BroadcastChannelList {...this.props}/>
               </Tab>

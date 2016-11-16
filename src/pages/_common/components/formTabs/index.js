@@ -6,12 +6,21 @@ import ReactTabs from 'react-simpletabs';
 @Radium
 export class Tabs extends Component {
   static propTypes = {
-    children: PropTypes.node.isRequired
+    activeTab: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number
+    ]),
+    children: PropTypes.node.isRequired,
+    onChange: PropTypes.func
   }
   render () {
-    const { children } = this.props;
+    const { children, activeTab, onChange } = this.props;
+    let tabActive = activeTab;
+    if (typeof tabActive === 'string') {
+      tabActive = parseInt(tabActive, 10);
+    }
     return (
-      <ReactTabs>
+      <ReactTabs tabActive={tabActive} onAfterChange={onChange}>
         {React.Children.toArray(children)}
       </ReactTabs>
     );

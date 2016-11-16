@@ -2,23 +2,37 @@ import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import { Link } from 'react-scroll';
 import Header from '../../../app/header';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { buttonStyles } from '../../../_common/styles';
+import { menuSelector } from '../selectors';
+import * as globalActions from '../../../../actions/global';
 
 const backgroundImage = require('./background.jpg');
 
+@connect(menuSelector, (dispatch) => ({
+  routerPushWithReturnTo: bindActionCreators(globalActions.routerPushWithReturnTo, dispatch)
+}))
 @Radium
 export default class Hero extends Component {
 
   static propTypes={
-    currentLocation: PropTypes.object.isRequired
+    currentLocation: PropTypes.object.isRequired,
+    isAuthenticated: PropTypes.bool,
+    routerPushWithReturnTo: PropTypes.func.isRequired
   }
   constructor (props) {
     super(props);
     this._updateHeight = ::this._updateHeight;
+    this.goToLogin = ::this.goToLogin;
   }
 
   componentDidMount () {
     this._updateHeight();
+  }
+
+  goToLogin () {
+    this.props.routerPushWithReturnTo('/login');
   }
 
   _updateHeight () {
@@ -67,14 +81,15 @@ export default class Hero extends Component {
         marginBottom: 60
       },
       subtitleUnderline: {
-        textDecoration: 'underline'
+        textDecoration: 'underline',
+        cursor: 'pointer'
       }
     }
   }
 
   render () {
     const { styles } = this.constructor;
-
+    const { isAuthenticated } = this.props;
     return (
       <div ref={(x) => { this.hero = x; }} style={styles.container}>
         <Header currentLocation={this.props.currentLocation}/>
@@ -86,7 +101,8 @@ export default class Hero extends Component {
               We make video content shoppable
             </div>
             <div style={styles.body.subtitle}>
-              <span style={styles.body.subtitleUnderline}>Sign in</span>, upload your video and we make it interactive
+              {!isAuthenticated && <div><span style={styles.body.subtitleUnderline} onClick={this.goToLogin}>Sign in</span>, upload your video and we make it interactive</div>}
+              {isAuthenticated && <div>Upload your video and we make it interactive</div>}
             </div>
             <div>
               {/* TODO: should be a button "request access", but temporarily replaced by "contact us" link */}

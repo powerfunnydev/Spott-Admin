@@ -1,7 +1,6 @@
 import { del, get, post, postFormData } from './request';
 import { transformUser, transformBroadcaster, transformBroadcastChannel } from './transformers';
 
-
 export async function fetchBroadcasterUsers (baseUrl, authenticationToken, locale, { broadcasterId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/broadcasters/${broadcasterId}/users?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
@@ -85,6 +84,16 @@ export async function searchBroadcasters (baseUrl, authenticationToken, locale, 
   }
   const { body: { data } } = await get(authenticationToken, locale, searchUrl);
   return data.map(transformBroadcaster);
+}
+
+export async function persistLinkUser (baseUrl, authenticationToken, locale, { broadcasterId, userId }) {
+  const url = `${baseUrl}/v004/media/broadcasters/${broadcasterId}/users/${userId}`;
+  return await post(authenticationToken, locale, url);
+}
+
+export async function deleteLinkUser (baseUrl, authenticationToken, locale, { broadcasterId, userId }) {
+  const url = `${baseUrl}/v004/media/broadcasters/${broadcasterId}/users/${userId}`;
+  return await del(authenticationToken, locale, url);
 }
 
 export async function uploadBroadcasterImage (baseUrl, authenticationToken, locale, { broadcasterId, image, callback }) {

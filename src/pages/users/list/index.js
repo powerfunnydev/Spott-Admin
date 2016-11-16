@@ -5,7 +5,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
 import Header from '../../app/header';
 import { Root, Container } from '../../_common/styles';
-import { DropdownCel, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table/index';
+import { Tile, DropdownCel, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table/index';
 import Line from '../../_common/components/line';
 import Dropdown, { styles as dropdownStyles } from '../../_common/components/dropdown';
 import * as actions from './actions';
@@ -66,11 +66,6 @@ export default class Users extends Component {
     }
   }
 
-  async deleteUser (usersEntryId) {
-    await this.props.deleteUser(usersEntryId);
-    await this.props.load(this.props.location.query);
-  }
-
   getUserName (user) {
     return user.get('userName');
   }
@@ -85,6 +80,15 @@ export default class Users extends Component {
 
   getLastName (user) {
     return user.get('lastName');
+  }
+
+  async onDeleteUser (userId) {
+    await this.props.deleteUser(userId);
+    await this.props.load(this.props.location.query);
+  }
+
+  onEditEntry (userId) {
+    this.props.routerPushWithReturnTo(`users/edit/${userId}`);
   }
 
   onClickNewEntry (e) {
@@ -106,7 +110,7 @@ export default class Users extends Component {
 
   render () {
     const { users, children, isSelected, location, location: { query, query: { display, page, searchString, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeSearchString } = this.props;
+      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeSearchString, onChangeDisplay } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
       <Root>
@@ -119,6 +123,7 @@ export default class Users extends Component {
               numberSelected={numberSelected}
               searchString={searchString}
               textCreateButton='New User'
+              onChangeDisplay={onChangeDisplay}
               onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
               onClickDeleteSelected={this.onClickDeleteSelected}
               onClickNewEntry={this.onClickNewEntry}/>
@@ -152,8 +157,8 @@ export default class Users extends Component {
                           <CustomCel getValue={this.getLastName} objectToRender={user} style={{ flex: 1 }} />
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`users/edit/${user.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteUser(user.get('id')); }}>Remove</div>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={this.onEditEntry.bind(this, user.get('id'))}>Edit</div>}>
+                              <div key={1} style={[ dropdownStyles.option ]} onClick={this.onDeleteUser.bind(this, user.get('id'))}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>
@@ -166,6 +171,20 @@ export default class Users extends Component {
                   pageCount={pageCount}
                   onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }}
                   onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
+              </div>
+            }
+            {display === 'grid' &&
+              <div style={generalStyles.row}>
+                { users.get('data').map((user, index) => (
+                  <Tile
+                    deleteText='Remove'
+                    imageUrl={user.getIn([ 'avatar', 'url' ])}
+                    key={`user${index}`}
+                    text={this.getUserName(user)}
+                    onDelete={this.onDeleteUser.bind(this, user.get('id'))}
+                    onEdit={this.onEditEntry.bind(this, user.get('id'))}/>
+                ))}
+                <Tile key={'createBroadcaster'} onCreate={this.onClickNewEntry}/>
               </div>
             }
           </Container>

@@ -26,11 +26,11 @@ function validate (values, { t }) {
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
-  form: 'contentProducersCreateEntry',
+  form: 'contentProducersCreate',
   validate
 })
 @Radium
-export default class CreateContentProducerEntryModal extends Component {
+export default class CreateContentProducerModal extends Component {
 
   static propTypes = {
     error: PropTypes.any,

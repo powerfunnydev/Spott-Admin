@@ -37,6 +37,7 @@ export default (state = fromJS({
     searchStringHasBroadcastChannels: {},
     searchStringHasBroadcasters: {},
     searchStringHasContentProducers: {},
+    searchStringHasUsers: {},
     searchStringHasMedia: {},
     searchStringHasSeries: {}
   }
@@ -108,11 +109,25 @@ export default (state = fromJS({
     // Content producers
     // /////////////////
 
+    case contentProducersActions.CONTENT_PRODUCER_USERS_FETCH_START:
+      return searchStart(state, 'filterHasUsers', serializeFilterHasUsers(action, 'contentProducers'));
+    case contentProducersActions.CONTENT_PRODUCER_USERS_FETCH_SUCCESS:
+      return searchSuccess(state, 'users', 'filterHasUsers', serializeFilterHasUsers(action, 'contentProducers'), action.data.data);
+    case contentProducersActions.CONTENT_PRODUCER_USERS_FETCH_ERROR:
+      return searchError(state, 'filterHasUsers', serializeFilterHasUsers(action, 'contentProducers'), action.error);
+
     case contentProducersActions.CONTENT_PRODUCER_FETCH_START:
-      return searchStart(state, 'filterHasContentProducers', serializeFilterHasContentProducers(action));
+      return fetchStart(state, [ 'entities', 'contentProducers', action.contentProducerId ]);
     case contentProducersActions.CONTENT_PRODUCER_FETCH_SUCCESS:
-      return searchSuccess(state, 'contentProducers', 'filterHasContentProducers', serializeFilterHasContentProducers(action), action.data.data);
+      return fetchSuccess(state, [ 'entities', 'contentProducers', action.contentProducerId ], action.data);
     case contentProducersActions.CONTENT_PRODUCER_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'contentProducers', action.contentProducerId ], action.error);
+
+    case contentProducersActions.CONTENT_PRODUCERS_FETCH_START:
+      return searchStart(state, 'filterHasContentProducers', serializeFilterHasContentProducers(action));
+    case contentProducersActions.CONTENT_PRODUCERS_FETCH_SUCCESS:
+      return searchSuccess(state, 'contentProducers', 'filterHasContentProducers', serializeFilterHasContentProducers(action), action.data.data);
+    case contentProducersActions.CONTENT_PRODUCERS_FETCH_ERROR:
       return searchError(state, 'filterHasContentProducers', serializeFilterHasContentProducers(action), action.error);
 
     case contentProducersActions.CONTENT_PRODUCER_SEARCH_START:
@@ -208,6 +223,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'users', 'filterHasUsers', serializeFilterHasUsers(action), action.data.data);
     case userActions.USERS_FETCH_ERROR:
       return searchError(state, 'filterHasUsers', serializeFilterHasUsers(action), action.error);
+
+    case userActions.USER_SEARCH_START:
+      return searchStart(state, 'searchStringHasUsers', action.searchString);
+    case userActions.USER_SEARCH_SUCCESS:
+      return searchSuccess(state, 'users', 'searchStringHasUsers', action.searchString, action.data);
+    case userActions.USER_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasUsers', action.searchString, action.error);
 
     default:
       return state;

@@ -12,6 +12,7 @@ import Dropdown, { styles as dropdownStyles } from '../../../_common/components/
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import UtilsBar from '../../../_common/components/table/utilsBar';
 import { slowdown } from '../../../../utils';
+import { confirmation } from '../../../_common/askConfirmation';
 
 /* eslint-disable no-alert */
 
@@ -71,7 +72,7 @@ export default class BroadcastChannelList extends Component {
   }
 
   async deleteBroadcastChannel (broadcastChannelsId) {
-    const result = window.confirm('Are you sure you want to trigger this action?');
+    const result = await confirmation();
     if (result) {
       await this.props.deleteBroadcastChannel(broadcastChannelsId);
       await this.props.load(this.props.location.query);

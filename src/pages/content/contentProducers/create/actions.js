@@ -1,3 +1,3 @@
-import { persistContentProducerEntry } from '../../../../actions/contentProducer';
+import { persistContentProducer } from '../../../../actions/contentProducer';
 
-export const submit = persistContentProducerEntry;
+export const submit = persistContentProducer;

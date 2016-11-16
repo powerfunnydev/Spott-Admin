@@ -55,11 +55,14 @@ export default class CreateUserModal extends Component {
   }
 
   async componentWillMount () {
+    const init = {};
     if (this.props.params.id) {
-      this.props.initialize({
-        broadcasterId: this.props.params.id
-      });
+      init.broadcasterId = this.props.params.id;
     }
+    if (this.props.location && this.props.location.query && this.props.location.query.userName) {
+      init.userName = this.props.location.query.userName;
+    }
+    this.props.initialize(init);
   }
 
   async submit (form) {
