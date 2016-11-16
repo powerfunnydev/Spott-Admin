@@ -14,6 +14,12 @@ export { DropdownCel } from './dropdownCel';
 export UtilsBar from './utilsBar';
 
 export const generalStyles = {
+  lightGrayBorder: {
+    border: `1px solid ${colors.lightGray2}`
+  },
+  whiteBackground: {
+    backgroundColor: colors.white
+  },
   border: {
     marginTop: '-1px',
     border: `solid 1px ${colors.lightGray3}`,

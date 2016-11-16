@@ -23,7 +23,6 @@ export class Table extends Component {
   render () {
     const { styles } = this.constructor;
     const { children, style } = this.props;
-
     return (
       <div>
         <div style={[ styles.table, style ]}>

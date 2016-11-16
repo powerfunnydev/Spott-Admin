@@ -10,8 +10,7 @@ import { DropdownCel, UtilsBar, isQueryChanged, Tile, tableDecorator, generalSty
 import Dropdown, { styles as dropdownStyles } from '../../../../_common/components/dropdown';
 import Line from '../../../../_common/components/line';
 import { slowdown } from '../../../../../utils';
-
-/* eslint-disable no-alert */
+import { confirmation } from '../../../../_common/askConfirmation';
 
 const numberOfRows = 25;
 export const prefix = 'broadcasterChannels';
@@ -71,7 +70,7 @@ export default class List extends Component {
   }
 
   async deleteBroadcastChannel (broadcastChannelId) {
-    const result = window.confirm('Are you sure you want to trigger this action?');
+    const result = await confirmation();
     if (result) {
       await this.props.deleteBroadcastChannel(broadcastChannelId);
       await this.props.loadBroadcasterChannels(this.props.location.query, this.props.params.id);
@@ -114,12 +113,12 @@ export default class List extends Component {
           </div>
         </div>
         <Line/>
-        <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
+        <div style={[ generalStyles.backgroundTable, generalStyles.fillPage, generalStyles.whiteBackground ]}>
           <div style={[ generalStyles.paddingTable, generalStyles.paddingLeftAndRight ]}>
             <TotalEntries totalResultCount={totalResultCount}/>
             {(broadcasterChannelsDisplay === undefined || broadcasterChannelsDisplay === 'list') &&
               <div>
-                <Table>
+                <Table style={generalStyles.lightGrayBorder}>
                   <Headers>
                     {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                     <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>

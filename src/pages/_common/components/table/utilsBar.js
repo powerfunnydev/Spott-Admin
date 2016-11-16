@@ -6,8 +6,7 @@ import PlusButton from '../../buttons/plusButton';
 import { generalStyles } from './index';
 import { buttonStyles } from '../../../_common/styles';
 import DisplayMode from './displayMode';
-
-/* eslint-disable no-alert */
+import { confirmation } from '../../../_common/askConfirmation';
 
 @Radium
 export default class UtilsBar extends Component {
@@ -30,7 +29,7 @@ export default class UtilsBar extends Component {
   }
 
   async onRemove (e) {
-    const result = window.confirm('Are you sure you want to trigger this action?');
+    const result = await confirmation();
     if (result) {
       await this.props.onClickDeleteSelected(e);
     }

@@ -1,16 +1,17 @@
-import { uploadContentProducerImage, persistContentProducerEntry, fetchContentProducerEntry as dataFetchContentProducerEntry } from '../../../../actions/contentProducer';
+import { uploadContentProducerImage, persistContentProducer, fetchContentProducer as dataFetchContentProducer } from '../../../../actions/contentProducer';
 
-export const CONTENT_PRODUCERS_FETCH_ENTRY_ERROR = 'CONTENT_PRODUCERS_EDIT/FETCH_ENTRY_ERROR';
+export const CONTENT_PRODUCER_FETCH_ERROR = 'CONTENT_PRODUCER_EDIT/FETCH_ERROR';
 
-export const submit = persistContentProducerEntry;
+export const submit = persistContentProducer;
 export const uploadImage = uploadContentProducerImage;
 
-export function load (contentProducerEntryId) {
+export function load (contentProducerId) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataFetchContentProducerEntry({ contentProducerEntryId }));
+      const result = await dispatch(dataFetchContentProducer({ contentProducerId }));
+      return result;
     } catch (error) {
-      dispatch({ error, type: CONTENT_PRODUCERS_FETCH_ENTRY_ERROR });
+      dispatch({ error, type: CONTENT_PRODUCER_FETCH_ERROR });
     }
   };
 }

@@ -9,6 +9,14 @@ require('./styles/selectInputStyle.css');
 
 const WrappedSelect = Radium(Select);
 
+function mergeStyles (array) {
+  let styles = {};
+  for (const style of array) {
+    styles = { ...styles, ...style };
+  }
+  return styles;
+}
+
 /**
  * Reusable component for selecting one or more items from a list, using items autocompleted.
  */
@@ -30,12 +38,14 @@ export default class SelectInput extends Component {
     placeholder: PropTypes.string,
     required: PropTypes.bool,
     style: PropTypes.object,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    onCreateOption: PropTypes.func
   };
 
   constructor (props) {
     super(props);
     this.onInternalChange = ::this.onInternalChange;
+    this.state = { value: '' };
   }
 
   componentWillMount () {
@@ -49,9 +59,13 @@ export default class SelectInput extends Component {
     const newValue = multiselect
       ? internalValue.map((v) => v.value)
       : internalValue.value;
-
-    input.onChange && input.onChange(newValue);
-    onChange && onChange(newValue);
+    // when the user clicked on 'Create option ...'
+    if (internalValue.className === 'Select-create-option-placeholder') {
+      this.props.onCreateOption(internalValue.value);
+    } else {
+      input.onChange && input.onChange(newValue);
+      onChange && onChange(newValue);
+    }
   }
 
   static styles = {
@@ -89,8 +103,9 @@ export default class SelectInput extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { disabled, first, getItemText, getOptions, input, isLoading, label, meta, maxSelect, multiselect, placeholder, required, style } = this.props;
+    const { onCreateOption, disabled, first, getItemText, getOptions, input, isLoading, label, meta, maxSelect, multiselect, placeholder, required, style } = this.props;
     const options = this.props.options ? this.props.options.map((o) => ({ value: o, label: getItemText(o) })) : [];
+    onCreateOption && this.state.value && options.push({ value: this.state.value, label: `Add ${this.state.value}`, className: 'Select-create-option-placeholder' });
     let value;
     // first time we initialize a multiselect, we retrieve a immutable List. The select components
     // expects a classic array. So we invoke toJS on the list.
@@ -105,7 +120,6 @@ export default class SelectInput extends Component {
       }
     }
     const maxSelected = maxSelect ? ((input.value && input.value.length) || 0) >= maxSelect : false;
-
     return (
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
@@ -119,11 +133,11 @@ export default class SelectInput extends Component {
           multi={multiselect}
           options={maxSelected ? [] : options}
           placeholder={placeholder}
-          style={[ styles.base, disabled && styles.disabled, meta && meta.touched && meta.error && styles.error, styles.text ]}
+          style={mergeStyles([ styles.base, disabled && styles.disabled, meta && meta.touched && meta.error && styles.error, styles.text ])}
           value={value} // Overides value of of {...field}
-          onBlur={() => input.onBlur && input.onBlur(input.value)} // Overides onBlur of of {...field}
-          onChange={this.onInternalChange}  // Overides onChange of of {...field};
-          onInputChange={getOptions}
+          onBlur={() => input.onBlur && input.onBlur(input.value)} // Overides onBlur of {...field}
+          onChange={this.onInternalChange}  // Overides onChange of {...field};
+          onInputChange={(val) => { this.setState({ value: val }); getOptions(val); }}
           onOpen={getOptions} />
         {typeof maxSelect === 'number' && <span style={styles.info}>{(input.value && input.value.length) || 0}/{maxSelect} selected</span>}
         {meta && meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}

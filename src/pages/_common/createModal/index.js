@@ -60,6 +60,7 @@ export default class CreateModal extends Component {
     error: PropTypes.any,
     isOpen: PropTypes.bool.isRequired,
     style: PropTypes.object,
+    submitButtonText: PropTypes.string,
     t: PropTypes.func.isRequired,
     title: PropTypes.string,
     onClose: PropTypes.func.isRequired,
@@ -121,7 +122,7 @@ export default class CreateModal extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { children, error, isOpen, style, t, title, onClose, onSubmit } = this.props;
+    const { children, error, isOpen, style, t, title, onClose, onSubmit, submitButtonText } = this.props;
     return (
       <ReactModal
         isOpen={isOpen}
@@ -152,7 +153,7 @@ export default class CreateModal extends Component {
               <div style={styles.footer}>
                 <div style={{ marginLeft: 'auto' }}>
                   <Button key='cancel' style={[ buttonStyles.white ]} text='Cancel' type='button' onClick={(e) => { e.preventDefault(); onClose(); }} />
-                  <Button key='submit' style={[ buttonStyles.blue ]} text='Create' type='submit' />
+                  <Button key='submit' style={[ buttonStyles.blue ]} text={submitButtonText || 'Create'} type='submit' />
                 </div>
               </div>
             </form>

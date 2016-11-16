@@ -14,14 +14,14 @@ import SpecificHeader from '../../header';
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { slowdown } from '../../../../utils';
-/* eslint-disable no-alert */
+import { confirmation } from '../../../_common/askConfirmation';
 
 const numberOfRows = 25;
 
 @tableDecorator()
 @connect(selector, (dispatch) => ({
-  deleteContentProducersEntry: bindActionCreators(actions.deleteContentProducerEntry, dispatch),
-  deleteContentProducersEntries: bindActionCreators(actions.deleteContentProducerEntries, dispatch),
+  deleteContentProducer: bindActionCreators(actions.deleteContentProducer, dispatch),
+  deleteContentProducers: bindActionCreators(actions.deleteContentProducers, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
@@ -33,8 +33,8 @@ export default class ContentProducers extends Component {
   static propTypes = {
     children: PropTypes.node,
     contentProducers: ImmutablePropTypes.map.isRequired,
-    deleteContentProducersEntries: PropTypes.func.isRequired,
-    deleteContentProducersEntry: PropTypes.func.isRequired,
+    deleteContentProducer: PropTypes.func.isRequired,
+    deleteContentProducers: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -71,10 +71,10 @@ export default class ContentProducers extends Component {
     }
   }
 
-  async deleteContentProducersEntry (contentProducersEntryId) {
-    const result = window.confirm('Are you sure you want to trigger this action?');
+  async deleteContentProducer (contentProducersId) {
+    const result = await confirmation();
     if (result) {
-      await this.props.deleteContentProducersEntry(contentProducersEntryId);
+      await this.props.deleteContentProducer(contentProducersId);
       await this.props.load(this.props.location.query);
     }
   }
@@ -99,13 +99,13 @@ export default class ContentProducers extends Component {
 
   async onClickDeleteSelected (e) {
     e.preventDefault();
-    const contentProducersEntryIds = [];
+    const contentProducersIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {
-        contentProducersEntryIds.push(key);
+        contentProducersIds.push(key);
       }
     });
-    await this.props.deleteContentProducersEntries(contentProducersEntryIds);
+    await this.props.deleteContentProducers(contentProducersIds);
     await this.props.load(this.props.location.query);
   }
 
@@ -152,13 +152,13 @@ export default class ContentProducers extends Component {
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                           <CheckBoxCel checked={isSelected.get(cp.get('id'))} onChange={selectCheckbox.bind(this, cp.get('id'))}/>
-                          <CustomCel getValue={this.getName} objectToRender={cp} style={{ flex: 2 }} />
+                          <CustomCel getValue={this.getName} objectToRender={cp} style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/content-producers/read/${cp.get('id')}`); }}/>
                           <CustomCel getValue={this.getUpdatedBy} objectToRender={cp} style={{ flex: 2 }}/>
                           <CustomCel getValue={this.getLastUpdatedOn} objectToRender={cp} style={{ flex: 2 }}/>
                           <DropdownCel>
                             <Dropdown
                               elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/content-producers/edit/${cp.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteContentProducersEntry(cp.get('id')); }}>Remove</div>
+                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteContentProducer(cp.get('id')); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>
@@ -176,7 +176,7 @@ export default class ContentProducers extends Component {
                     imageUrl={contentProducer.getIn([ 'logo', 'url' ])}
                     key={`contentProducer${index}`}
                     text={this.getName(contentProducer)}
-                    onDelete={async (e) => { e.preventDefault(); await this.deleteContentProducersEntry(contentProducer.get('id')); }}
+                    onDelete={async (e) => { e.preventDefault(); await this.deleteContentProducer(contentProducer.get('id')); }}
                     onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/content-producers/edit/${contentProducer.get('id')}`); }}/>
                 ))}
                 <Tile key={'createBroadcaster'} onCreate={() => { this.props.routerPushWithReturnTo('content/contentProducers/create'); }}/>

@@ -1,6 +1,6 @@
 import { fetchContentProducers as dataFetchContentProducers,
-  deleteContentProducerEntry as dataDeleteContentProducerEntry,
-  deleteContentProducerEntries as dataDeleteContentProducerEntries } from '../../../../actions/contentProducer';
+  deleteContentProducer as dataDeleteContentProducer,
+  deleteContentProducers as dataDeleteContentProducers } from '../../../../actions/contentProducer';
 
 // Action types
 // ////////////
@@ -8,8 +8,8 @@ import { fetchContentProducers as dataFetchContentProducers,
 export const CONTENT_PRODUCER_FETCH_START = 'CONTENT_PRODUCER/CONTENT_PRODUCER_FETCH_START';
 export const CONTENT_PRODUCER_FETCH_ERROR = 'CONTENT_PRODUCER/CONTENT_PRODUCER_FETCH_ERROR';
 
-export const CONTENT_PRODUCER_ENTRIES_DELETE_ERROR = 'CONTENT_PRODUCER/CONTENT_PRODUCER_ENTRIES_REMOVE_ERROR';
-export const CONTENT_PRODUCER_ENTRY_DELETE_ERROR = 'CONTENT_PRODUCER/CONTENT_PRODUCER_ENTRY_REMOVE_ERROR';
+export const CONTENT_PRODUCERS_DELETE_ERROR = 'CONTENT_PRODUCER/CONTENT_PRODUCERS_REMOVE_ERROR';
+export const CONTENT_PRODUCER__DELETE_ERROR = 'CONTENT_PRODUCER/CONTENT_PRODUCER__REMOVE_ERROR';
 
 export const SELECT_ALL_CHECKBOXES = 'CONTENT_PRODUCER/SELECT_ALL_CHECKBOXES';
 export const SELECT_CHECKBOX = 'CONTENT_PRODUCER/SELECT_CHECKBOX';
@@ -26,22 +26,22 @@ export function load (query) {
   };
 }
 
-export function deleteContentProducerEntries (contentProducerEntryIds) {
+export function deleteContentProducers (contentProducerIds) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataDeleteContentProducerEntries({ contentProducerEntryIds }));
+      return await dispatch(dataDeleteContentProducers({ contentProducerIds }));
     } catch (error) {
-      dispatch({ error, type: CONTENT_PRODUCER_ENTRIES_DELETE_ERROR });
+      dispatch({ error, type: CONTENT_PRODUCERS_DELETE_ERROR });
     }
   };
 }
 
-export function deleteContentProducerEntry (contentProducerEntryId) {
+export function deleteContentProducer (contentProducerId) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataDeleteContentProducerEntry({ contentProducerEntryId }));
+      return await dispatch(dataDeleteContentProducer({ contentProducerId }));
     } catch (error) {
-      dispatch({ error, type: CONTENT_PRODUCER_ENTRY_DELETE_ERROR });
+      dispatch({ error, type: CONTENT_PRODUCER__DELETE_ERROR });
     }
   };
 }

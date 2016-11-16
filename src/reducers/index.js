@@ -9,18 +9,23 @@ import broadcastChannelsCreate from '../pages/content/broadcastChannels/create/r
 import broadcastChannelsList from '../pages/content/broadcastChannels/list/reducer';
 import broadcastersListBroadcasters from '../pages/content/broadcasters/list/broadcasters/reducer';
 import broadcastersReadBroadcastChannels from '../pages/content/broadcasters/read/broadcastChannels/reducer';
-import broadcastersReadUsers from '../pages/content/broadcasters/read/users/reducer';
+import broadcastersReadUsers from '../pages/content/broadcasters/read/users/list/reducer';
 import contentProducersList from '../pages/content/contentProducers/list/reducer';
+import contentProducersReadUsers from '../pages/content/contentProducers/read/users/list/reducer';
 import tvGuideCreate from '../pages/tvGuide/create/reducer';
 import tvGuideEdit from '../pages/tvGuide/edit/reducer';
 import tvGuideList from '../pages/tvGuide/list/reducer';
 import usersEdit from '../pages/users/edit/reducer';
 import usersList from '../pages/users/list/reducer';
+import LinkUserModal from '../pages/_common/linkUserModal/reducer';
 
 /**
  * The application's main reducer
  */
 export default combineReducers({
+  common: combineReducers({
+    linkUserModal: LinkUserModal
+  }),
   content: combineReducers({
     broadcastChannels: combineReducers({
       create: broadcastChannelsCreate,
@@ -36,7 +41,10 @@ export default combineReducers({
       })
     }),
     contentProducers: combineReducers({
-      list: contentProducersList
+      list: contentProducersList,
+      read: combineReducers({
+        users: contentProducersReadUsers
+      })
     })
   }),
   users: combineReducers({
