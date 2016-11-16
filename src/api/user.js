@@ -59,7 +59,6 @@ export async function fetchUsers (baseUrl, authenticationToken, locale, { search
 export async function fetchUser (baseUrl, authenticationToken, locale, { userId }) {
   const url = `${baseUrl}/v004/user/users/${userId}`;
   const { body } = await get(authenticationToken, locale, url);
-  console.log('user', body);
   return transformUser(body);
 }
 
@@ -115,6 +114,16 @@ export async function deleteUsers (baseUrl, authenticationToken, locale, { userI
   for (const userId of userIds) {
     await deleteUser(baseUrl, authenticationToken, locale, { userId });
   }
+}
+
+// Used for autocompletion.
+export async function searchUsers (baseUrl, authenticationToken, locale, { searchString = '' }) {
+  let searchUrl = `${baseUrl}/v004/user/users?pageSize=25`;
+  if (searchString) {
+    searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
+  }
+  const { body: { data } } = await get(authenticationToken, locale, searchUrl);
+  return data.map(transformUser);
 }
 
 export async function uploadProfileImage (baseUrl, authenticationToken, locale, { userId, image, callback }) {

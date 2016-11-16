@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
+import { confirmation } from '../../_common/askConfirmation';
 
 const removeIcon = require('../../../assets/images/garbage.svg');
-/* eslint-disable no-alert */
 
 @Radium
 export default class RemoveButton extends Component {
@@ -18,7 +18,7 @@ export default class RemoveButton extends Component {
   }
 
   async remove () {
-    const result = window.confirm('Are you sure you want to trigger this action?');
+    const result = await confirmation();
     if (result) {
       await this.props.onClick();
     }

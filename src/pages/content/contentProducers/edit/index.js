@@ -31,11 +31,11 @@ function validate (values, { t }) {
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
-  form: 'contentProducersEditEntry',
+  form: 'contentProducersEdit',
   validate
 })
 @Radium
-export default class EditContentProducersEntry extends Component {
+export default class EditContentProducers extends Component {
 
   static propTypes = {
     error: PropTypes.any,
@@ -102,7 +102,7 @@ export default class EditContentProducersEntry extends Component {
                   <Label text='Upload image' />
                   <Dropzone
                     accept='image/*'
-                    onChange={({ callback, file }) => { this.props.uploadImage({ contentProducerEntryId: this.props.params.id, image: file, callback }); }}/>
+                    onChange={({ callback, file }) => { this.props.uploadImage({ contentProducerId: this.props.params.id, image: file, callback }); }}/>
                 </div>
               </Section>
             </TabPanel>

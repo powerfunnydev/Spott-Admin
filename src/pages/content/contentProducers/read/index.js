@@ -8,11 +8,10 @@ import * as actions from './actions';
 import SpecificHeader from '../../header';
 import selector from './selector';
 import EntityDetails from '../../../_common/entityDetails';
-import * as listActions from '../list/broadcasters/actions';
+import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import BreadCrumbs from '../../../_common/breadCrumbs';
 import Line from '../../../_common/components/line';
-import BroadcastChannelList from './broadcastChannels';
 import UserList from './users/list';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
@@ -20,19 +19,19 @@ import { generalStyles } from '../../../_common/components/table/index';
 /* eslint-disable no-alert */
 
 @connect(selector, (dispatch) => ({
-  deleteBroadcaster: bindActionCreators(listActions.deleteBroadcaster, dispatch),
-  loadBroadcaster: bindActionCreators(actions.loadBroadcaster, dispatch),
+  deleteContentProducer: bindActionCreators(listActions.deleteContentProducer, dispatch),
+  loadContentProducer: bindActionCreators(actions.loadContentProducer, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @Radium
-export default class ReadBroadcaster extends Component {
+export default class ReadContentProducer extends Component {
 
   static propTypes = {
     children: PropTypes.node,
-    currentBroadcaster: PropTypes.object.isRequired,
-    deleteBroadcaster: PropTypes.func.isRequired,
+    currentContentProducer: PropTypes.object.isRequired,
+    deleteContentProducer: PropTypes.func.isRequired,
     error: PropTypes.any,
-    loadBroadcaster: PropTypes.func.isRequired,
+    loadContentProducer: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired
@@ -41,34 +40,25 @@ export default class ReadBroadcaster extends Component {
   constructor (props) {
     super(props);
     this.redirect = ::this.redirect;
-    this.onClickNewEntry = :: this.onClickNewEntry;
     this.onChangeTab = :: this.onChangeTab;
   }
 
   async componentWillMount () {
     if (this.props.params.id) {
-      await this.props.loadBroadcaster(this.props.params.id);
+      await this.props.loadContentProducer(this.props.params.id);
     }
   }
 
-  getName (broadcaster) {
-    return broadcaster.get('name');
+  getName (contentProducer) {
+    return contentProducer.get('name');
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/broadcasters', true);
+    this.props.routerPushWithReturnTo('content/contentProducers', true);
   }
 
   onChangeTab (index) {
     this.props.routerPushWithReturnTo({ ...this.props.location, query: { ...this.props.location.query, tabIndex: index } });
-  }
-
-  onClickNewEntry (e) {
-    e.preventDefault();
-    const broadcasterId = this.props.params.id;
-    if (broadcasterId) {
-      this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcasterId}/create/broadcast-channel`);
-    }
   }
 
   static styles= {
@@ -79,27 +69,24 @@ export default class ReadBroadcaster extends Component {
   }
 
   render () {
-    const { children, currentBroadcaster,
-       location, deleteBroadcaster, location: { query: { tabIndex } } } = this.props;
+    const { children, currentContentProducer,
+       location, deleteContentProducer, location: { query: { tabIndex } } } = this.props;
     const { styles } = this.constructor;
     return (
       <Root>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
-        <BreadCrumbs hierarchy={[ { title: 'List', url: '/content/broadcasters' }, { title: currentBroadcaster.get('name'), url: location.pathname } ]}/>
+        <BreadCrumbs hierarchy={[ { title: 'List', url: '/content/content-producers' }, { title: currentContentProducer.get('name'), url: location.pathname } ]}/>
         <Container>
-          {currentBroadcaster.get('_status') === 'loaded' && currentBroadcaster &&
-            <EntityDetails image={currentBroadcaster.get('logo') && currentBroadcaster.getIn([ 'logo', 'url' ])} title={currentBroadcaster.getIn([ 'name' ])}
-              onEdit={() => { this.props.routerPushWithReturnTo(`content/broadcasters/edit/${currentBroadcaster.getIn([ 'id' ])}`); }}
-              onRemove={async () => { await deleteBroadcaster(currentBroadcaster.getIn([ 'id' ])); this.redirect(); }}/>}
+          {currentContentProducer.get('_status') === 'loaded' && currentContentProducer &&
+            <EntityDetails image={currentContentProducer.get('logo') && currentContentProducer.getIn([ 'logo', 'url' ])} title={currentContentProducer.getIn([ 'name' ])}
+              onEdit={() => { this.props.routerPushWithReturnTo(`content/content-producers/edit/${currentContentProducer.getIn([ 'id' ])}`); }}
+              onRemove={async () => { await deleteContentProducer(currentContentProducer.getIn([ 'id' ])); this.redirect(); }}/>}
         </Container>
         <Line/>
         <div style={[ generalStyles.fillPage, styles.table ]}>
           <Container>
             <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
-              <Tab title='Broadcast Channels'>
-                <BroadcastChannelList {...this.props}/>
-              </Tab>
               <Tab title='Users'>
                 <UserList {...this.props}/>
               </Tab>

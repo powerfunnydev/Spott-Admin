@@ -1,8 +1,6 @@
-import { persistBroadcaster, fetchBroadcaster as dataFetchBroadcaster } from '../../../../actions/broadcaster';
+import { fetchBroadcaster as dataFetchBroadcaster } from '../../../../actions/broadcaster';
 
 export const BROADCASTER_FETCH_ENTRY_ERROR = 'BROADCASTERS_READ/FETCH_ENTRY_ERROR';
-
-export const submit = persistBroadcaster;
 
 export function loadBroadcaster (broadcasterId) {
   return async (dispatch, getState) => {

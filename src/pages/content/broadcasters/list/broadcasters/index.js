@@ -11,8 +11,7 @@ import * as actions from './actions';
 import selector from './selector';
 import Dropdown, { styles as dropdownStyles } from '../../../../_common/components/dropdown';
 import { slowdown } from '../../../../../utils';
-
-/* eslint-disable no-alert */
+import { confirmation } from '../../../../_common/askConfirmation';
 
 const numberOfRows = 25;
 
@@ -70,7 +69,7 @@ export default class Broadcasters extends Component {
   }
 
   async deleteBroadcaster (broadcasterId) {
-    const result = window.confirm('Are you sure you want to trigger this action?');
+    const result = await confirmation();
     if (result) {
       await this.props.deleteBroadcaster(broadcasterId);
       await this.props.load(this.props.location.query);
@@ -112,7 +111,6 @@ export default class Broadcasters extends Component {
       broadcastersSearchString, broadcastersSortField, broadcastersSortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount,
     onChangeDisplay, onChangeSearchString } = this.props;
-    console.log('broadcasters', broadcasters.toJS());
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
       <div style={generalStyles.tableFillPage}>

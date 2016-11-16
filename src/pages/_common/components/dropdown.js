@@ -18,8 +18,7 @@ export const styles = {
     display: 'inline-block',
     paddingRight: '12px',
     paddingTop: '3px',
-    paddingBottom: '3px',
-    paddingLeft: '10px'
+    paddingBottom: '3px'
   },
   center: {
     display: 'flex',
@@ -73,7 +72,7 @@ export const styles = {
     alignItems: 'center',
     boxSizing: 'border-box',
     cursor: 'pointer',
-    minWidth: '110px'
+    minWidth: '90px'
   },
   arrowUnder: { transform: 'rotateZ(180deg)' },
   arrowContainer: {
@@ -139,7 +138,7 @@ class Dropdown extends Component {
     return (
       <div key='dropdown' style={[ styles.root, style ]}>
         <div>
-          {elementShown && <div style={[ styles.control, styles.elementShown ]}>
+          {elementShown && <div style={[ styles.control, styles.elementShown, styles.borderLeft ]}>
             {elementShown}
           </div>}
           <div key='arrow' style={[ styles.borderRight, !elementShown && styles.borderLeft, styles.control, styles.arrowContainer, styles.clickable ]} onMouseDown={this.handleMouseDown.bind(this)}>

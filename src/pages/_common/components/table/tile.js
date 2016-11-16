@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { colors } from '../../../_common/styles';
+import { colors, makeTextStyle, fontWeights } from '../../../_common/styles';
 import Dropdown, { styles as dropdownStyles } from '../dropdown';
 /* eslint-disable no-alert */
 
@@ -9,6 +9,7 @@ const plusIcon = require('../../../../assets/images/plus-gray.svg');
 @Radium
 export class Tile extends Component {
   static propTypes={
+    deleteText: PropTypes.string,
     imageUrl: PropTypes.string,
     text: PropTypes.string,
     onCreate: PropTypes.func,
@@ -41,10 +42,12 @@ export class Tile extends Component {
       top: '7px',
       right: '7px'
     },
-    broadcastChannel: {
+    title: {
       display: 'flex',
       justifyContent: 'center',
-      paddingTop: '10px'
+      paddingTop: '10px',
+      ...makeTextStyle(fontWeights.regular, '12px', '0.5px'),
+      color: colors.black2
     },
     darkGray: {
       border: `solid 1px ${colors.lightGray2}`
@@ -56,11 +59,15 @@ export class Tile extends Component {
       display: 'inline-block',
       paddingRight: '24px',
       paddingBottom: '24px'
+    },
+    noImage: {
+      ...makeTextStyle(fontWeights.regular, '11px', '0.4px'),
+      color: colors.lightGray3
     }
   }
 
   render () {
-    const { imageUrl, text, onCreate, onDelete, onEdit } = this.props;
+    const { imageUrl, text, onCreate, deleteText, onDelete, onEdit } = this.props;
     const { styles } = this.constructor;
     return (
       <div style={styles.wrapper}>
@@ -68,13 +75,13 @@ export class Tile extends Component {
           <div>
             <div style={[ styles.imageContainer, styles.image ]}>
               {imageUrl && <img src={imageUrl} style={styles.image}/>}
-              {!imageUrl && <div>No image</div>}
-                <Dropdown style={styles.dropdown}>
-                  {onEdit && <div key='onEdit' style={[ dropdownStyles.option ]} onClick={onEdit}>Edit</div>}
-                  {onDelete && <div key='onDelete' style={[ dropdownStyles.option ]} onClick={onDelete}>Remove</div>}
-                </Dropdown>
+              {!imageUrl && <div style={styles.noImage}>No image</div>}
+              <Dropdown style={styles.dropdown}>
+                {onEdit && <div key='onEdit' style={[ dropdownStyles.option ]} onClick={onEdit}>Edit</div>}
+                {onDelete && <div key='onDelete' style={[ dropdownStyles.option ]} onClick={onDelete}>{deleteText || 'Remove'}</div>}
+              </Dropdown>
             </div>
-            <div style={styles.broadcastChannel}>{text}</div>
+            <div style={styles.title}>{text}</div>
           </div>
         }
         {onCreate &&

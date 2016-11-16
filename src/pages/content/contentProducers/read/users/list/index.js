@@ -2,22 +2,24 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
+import { Tile, DropdownCel, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../../../_common/components/table/index';
+import Line from '../../../../../_common/components/line';
 import Radium from 'radium';
-import Header from '../../app/header';
-import { Root, Container } from '../../_common/styles';
-import { Tile, DropdownCel, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table/index';
-import Line from '../../_common/components/line';
-import Dropdown, { styles as dropdownStyles } from '../../_common/components/dropdown';
 import * as actions from './actions';
 import selector from './selector';
-import { slowdown } from '../../../utils';
+import Dropdown, { styles as dropdownStyles } from '../../../../../_common/components/dropdown';
+import { slowdown } from '../../../../../../utils';
+
+/* eslint-disable no-alert */
 
 const numberOfRows = 25;
 
-@tableDecorator()
+export const prefix = 'users';
+
+@tableDecorator(prefix)
 @connect(selector, (dispatch) => ({
-  deleteUser: bindActionCreators(actions.deleteUser, dispatch),
-  deleteUsers: bindActionCreators(actions.deleteUsers, dispatch),
+  deleteLinkUser: bindActionCreators(actions.deleteLinkUser, dispatch),
+  // deleteLinkUsers: bindActionCreators(actions.deleteLinkUsers, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
@@ -26,9 +28,8 @@ const numberOfRows = 25;
 export default class Users extends Component {
 
   static propTypes = {
-    children: PropTypes.node,
-    deleteUser: PropTypes.func.isRequired,
-    deleteUsers: PropTypes.func.isRequired,
+    deleteLinkUser: PropTypes.func.isRequired,
+    // deleteLinkUsers: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -36,6 +37,7 @@ export default class Users extends Component {
       query: PropTypes.object.isRequired
     }),
     pageCount: PropTypes.number,
+    params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     selectAllCheckboxes: PropTypes.func.isRequired,
     selectCheckbox: PropTypes.func.isRequired,
@@ -49,20 +51,23 @@ export default class Users extends Component {
 
   constructor (props) {
     super(props);
+    // this.deleteLinkUser = ::this.deleteLinkUser;
     this.onClickNewEntry = ::this.onClickNewEntry;
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
     this.slowSearch = slowdown(props.load, 300);
   }
 
   async componentWillMount () {
-    await this.props.load(this.props.location.query);
+    const contentProducerId = this.props.params.id;
+    await this.props.load(this.props.location.query, contentProducerId);
   }
 
   async componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
-    if (isQueryChanged(query, nextQuery)) {
-      await this.slowSearch(nextQuery);
+    if (isQueryChanged(query, nextQuery, prefix)) {
+      const contentProducerId = this.props.params.id;
+      await this.slowSearch(nextProps.location.query, contentProducerId);
     }
   }
 
@@ -82,68 +87,68 @@ export default class Users extends Component {
     return user.get('lastName');
   }
 
-  async onDeleteUser (userId) {
-    await this.props.deleteUser(userId);
+  async onDeleteLinkUser (userId) {
+    await this.props.deleteLinkUser(this.props.params.id, userId);
     await this.props.load(this.props.location.query);
+  }
+
+  onClickNewEntry (e) {
+    e.preventDefault();
+    this.props.routerPushWithReturnTo(`content/content-producers/read/${this.props.params.id}/link/user`);
   }
 
   onEditEntry (userId) {
     this.props.routerPushWithReturnTo(`users/edit/${userId}`);
   }
 
-  onClickNewEntry (e) {
-    e.preventDefault();
-    this.props.routerPushWithReturnTo('users/create');
-  }
-
   async onClickDeleteSelected (e) {
     e.preventDefault();
-    const usersEntryIds = [];
+    const userIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {
-        usersEntryIds.push(key);
+        userIds.push(key);
       }
     });
-    await this.props.deleteUsers(usersEntryIds);
-    await this.props.load(this.props.location.query);
+    // await this.props.deleteLinkUsers(userIds);
+    await this.props.load(this.props.location.query, this.props.params.id);
   }
 
   render () {
-    const { users, children, isSelected, location, location: { query, query: { display, page, searchString, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeSearchString, onChangeDisplay } = this.props;
+    const { users, isSelected, location: { query: { usersDisplay, usersPage,
+      usersSearchString, usersSortField, usersSortDirection } },
+      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount,
+      onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
-      <Root>
-        <Header currentLocation={location} hideHomePageLinks />
+      <div style={generalStyles.border}>
         <div style={generalStyles.backgroundBar}>
-          <Container >
+          <div style={generalStyles.paddingLeftAndRight}>
             <UtilsBar
-              display={display}
+              display={usersDisplay}
               isLoading={users.get('_status') !== 'loaded'}
               numberSelected={numberSelected}
-              searchString={searchString}
-              textCreateButton='New User'
+              searchString={usersSearchString}
+              textCreateButton='Link user'
               onChangeDisplay={onChangeDisplay}
-              onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
-              onClickDeleteSelected={this.onClickDeleteSelected}
+              onChangeSearchString={onChangeSearchString}
               onClickNewEntry={this.onClickNewEntry}/>
-          </Container>
+          </div>
         </div>
         <Line/>
-        <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
-          <Container style={generalStyles.paddingTable}>
+        <div style={[ generalStyles.backgroundTable, generalStyles.fillPage, generalStyles.whiteBackground ]}>
+          <div style={[ generalStyles.paddingTable, generalStyles.paddingLeftAndRight ]}>
             <TotalEntries totalResultCount={totalResultCount}/>
-            {(!display || display === 'list') &&
+            {(!usersDisplay || usersDisplay === 'list') &&
               <div>
-                <Table>
+                <Table style={generalStyles.lightGrayBorder}>
                   <Headers>
                     {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                     <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'USERNAME')} sortDirection = {sortField === 'USERNAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>Username</CustomCel>
+                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'USERNAME')} sortDirection = {usersSortField === 'USERNAME' ? sortDirections[usersSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>Username</CustomCel>
                     <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Email</CustomCel>
                     <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>First Name</CustomCel>
                     <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Last Name</CustomCel>
-                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: '0 0 110px' } ]}/>
+                    <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
                   </Headers>
                   <Rows isLoading={users.get('_status') !== 'loaded'}>
                     {users.get('data').map((user, index) => {
@@ -158,7 +163,7 @@ export default class Users extends Component {
                           <DropdownCel>
                             <Dropdown
                               elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={this.onEditEntry.bind(this, user.get('id'))}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={this.onDeleteUser.bind(this, user.get('id'))}>Remove</div>
+                              <div key={1} style={[ dropdownStyles.option ]} onClick={this.onDeleteLinkUser.bind(this, user.get('id'))}>Remove link</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>
@@ -167,30 +172,28 @@ export default class Users extends Component {
                   </Rows>
                 </Table>
                 <Pagination
-                  currentPage={(page && (parseInt(page, 10) + 1) || 1)}
+                  currentPage={(usersPage && (parseInt(usersPage, 10) + 1) || 1)}
                   pageCount={pageCount}
-                  onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }}
-                  onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
+                  onLeftClick={() => { this.props.onChangePage(parseInt(usersPage, 10), false); }}
+                  onRightClick={() => { this.props.onChangePage(parseInt(usersPage, 10), true); }}/>
               </div>
             }
-            {display === 'grid' &&
+            {usersDisplay === 'grid' &&
               <div style={generalStyles.row}>
                 { users.get('data').map((user, index) => (
                   <Tile
-                    deleteText='Remove'
                     imageUrl={user.getIn([ 'avatar', 'url' ])}
                     key={`user${index}`}
                     text={this.getUserName(user)}
-                    onDelete={this.onDeleteUser.bind(this, user.get('id'))}
+                    onDelete={this.onDeleteLinkUser.bind(this, user.get('id'))}
                     onEdit={this.onEditEntry.bind(this, user.get('id'))}/>
                 ))}
                 <Tile key={'createBroadcaster'} onCreate={this.onClickNewEntry}/>
               </div>
             }
-          </Container>
+          </div>
         </div>
-        {children}
-      </Root>
+      </div>
     );
   }
 }

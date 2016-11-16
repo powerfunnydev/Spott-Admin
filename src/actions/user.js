@@ -3,6 +3,10 @@ import { apiBaseUrlSelector } from '../selectors/global';
 import { makeApiActionCreator } from './utils';
 import { getAuthorizedConfig } from './global';
 
+export const USER_SEARCH_START = 'USERS/USER_SEARCH_START';
+export const USER_SEARCH_SUCCESS = 'USERS/USER_SEARCH_SUCCESS';
+export const USER_SEARCH_ERROR = 'USERS/USER_SEARCH_ERROR';
+
 export const USER_UPLOAD_BACKGROUND_IMAGE_START = 'USERS/USER_UPLOAD_BACKGROUND_IMAGE_START';
 export const USER_UPLOAD_BACKGROUND_IMAGE_SUCCESS = 'USERS/USER_UPLOAD_BACKGROUND_IMAGE_SUCCESS';
 export const USER_UPLOAD_BACKGROUND_IMAGE_ERROR = 'USERS/USER_UPLOAD_BACKGROUND_IMAGE_ERROR';
@@ -88,5 +92,6 @@ export const fetchUser = makeApiActionCreator(api.fetchUser, USER_FETCH_START, U
 export const persistUser = makeApiActionCreator(api.persistUser, USER_PERSIST_START, USER_PERSIST_SUCCESS, USER_PERSIST_ERROR);
 export const deleteUsers = makeApiActionCreator(api.deleteUsers, USERS_ENTRIES_DELETE_START, USERS_ENTRIES_DELETE_SUCCESS, USERS_ENTRIES_DELETE_ERROR);
 export const deleteUser = makeApiActionCreator(api.deleteUser, USER_DELETE_START, USER_DELETE_SUCCESS, USER_DELETE_ERROR);
+export const searchUsers = makeApiActionCreator(api.searchUsers, USER_SEARCH_START, USER_SEARCH_SUCCESS, USER_SEARCH_ERROR);
 export const uploadProfileImage = makeApiActionCreator(api.uploadProfileImage, USER_UPLOAD_PROFILE_IMAGE_START, USER_UPLOAD_PROFILE_IMAGE_SUCCESS, USER_UPLOAD_PROFILE_IMAGE_ERROR);
 export const uploadBackgroundImage = makeApiActionCreator(api.uploadBackgroundImage, USER_UPLOAD_BACKGROUND_IMAGE_START, USER_UPLOAD_BACKGROUND_IMAGE_SUCCESS, USER_UPLOAD_BACKGROUND_IMAGE_ERROR);

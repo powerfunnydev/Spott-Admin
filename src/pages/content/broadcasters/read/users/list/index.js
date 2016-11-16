@@ -2,13 +2,13 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { DropdownCel, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../../_common/components/table/index';
-import Line from '../../../../_common/components/line';
+import { Tile, DropdownCel, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../../../_common/components/table/index';
+import Line from '../../../../../_common/components/line';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
-import Dropdown, { styles as dropdownStyles } from '../../../../_common/components/dropdown';
-import { slowdown } from '../../../../../utils';
+import Dropdown, { styles as dropdownStyles } from '../../../../../_common/components/dropdown';
+import { slowdown } from '../../../../../../utils';
 
 /* eslint-disable no-alert */
 
@@ -18,8 +18,8 @@ export const prefix = 'users';
 
 @tableDecorator(prefix)
 @connect(selector, (dispatch) => ({
-  deleteUser: bindActionCreators(actions.deleteUser, dispatch),
-  deleteUsers: bindActionCreators(actions.deleteUsers, dispatch),
+  deleteLinkUser: bindActionCreators(actions.deleteLinkUser, dispatch),
+  // deleteLinkUsers: bindActionCreators(actions.deleteLinkUsers, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
@@ -28,8 +28,8 @@ export const prefix = 'users';
 export default class Users extends Component {
 
   static propTypes = {
-    deleteUser: PropTypes.func.isRequired,
-    deleteUsers: PropTypes.func.isRequired,
+    deleteLinkUser: PropTypes.func.isRequired,
+    // deleteLinkUsers: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -51,6 +51,7 @@ export default class Users extends Component {
 
   constructor (props) {
     super(props);
+    // this.deleteLinkUser = ::this.deleteLinkUser;
     this.onClickNewEntry = ::this.onClickNewEntry;
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
     this.slowSearch = slowdown(props.load, 300);
@@ -70,10 +71,6 @@ export default class Users extends Component {
     }
   }
 
-  async deleteUser (usersEntryId) {
-    await this.props.deleteUser(usersEntryId);
-    await this.props.load(this.props.location.query);
-  }
   getUserName (user) {
     return user.get('userName');
   }
@@ -90,9 +87,18 @@ export default class Users extends Component {
     return user.get('lastName');
   }
 
+  async onDeleteLinkUser (userId) {
+    await this.props.deleteLinkUser(this.props.params.id, userId);
+    await this.props.load(this.props.location.query);
+  }
+
+  onEditEntry (userId) {
+    this.props.routerPushWithReturnTo(`users/edit/${userId}`);
+  }
+
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('users/create');
+    this.props.routerPushWithReturnTo(`content/broadcasters/read/${this.props.params.id}/link/user`);
   }
 
   async onClickDeleteSelected (e) {
@@ -103,7 +109,7 @@ export default class Users extends Component {
         userIds.push(key);
       }
     });
-    await this.props.deleteUsers(userIds);
+    // await this.props.deleteLinkUsers(userIds);
     await this.props.load(this.props.location.query, this.props.params.id);
   }
 
@@ -111,29 +117,30 @@ export default class Users extends Component {
     const { users, isSelected, location: { query: { usersDisplay, usersPage,
       usersSearchString, usersSortField, usersSortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount,
-      onChangeSearchString } = this.props;
+      onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
       <div style={generalStyles.border}>
         <div style={generalStyles.backgroundBar}>
           <div style={generalStyles.paddingLeftAndRight}>
             <UtilsBar
+              display={usersDisplay}
               isLoading={users.get('_status') !== 'loaded'}
               numberSelected={numberSelected}
               searchString={usersSearchString}
-              textCreateButton='New User'
+              textCreateButton='Link user'
+              onChangeDisplay={onChangeDisplay}
               onChangeSearchString={onChangeSearchString}
-              onClickDeleteSelected={this.onClickDeleteSelected}
               onClickNewEntry={this.onClickNewEntry}/>
           </div>
         </div>
         <Line/>
-        <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
+        <div style={[ generalStyles.backgroundTable, generalStyles.fillPage, generalStyles.whiteBackground ]}>
           <div style={[ generalStyles.paddingTable, generalStyles.paddingLeftAndRight ]}>
             <TotalEntries totalResultCount={totalResultCount}/>
             {(!usersDisplay || usersDisplay === 'list') &&
               <div>
-                <Table>
+                <Table style={generalStyles.lightGrayBorder}>
                   <Headers>
                     {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                     <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
@@ -155,8 +162,8 @@ export default class Users extends Component {
                           <CustomCel getValue={this.getLastName} objectToRender={user} style={{ flex: 1 }} />
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`users/edit/${user.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteUser(user.get('id')); }}>Remove</div>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={this.onEditEntry.bind(this, user.get('id'))}>Edit</div>}>
+                              <div key={1} style={[ dropdownStyles.option ]} onClick={this.onDeleteLinkUser.bind(this, user.get('id'))}>Remove link</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>
@@ -169,6 +176,20 @@ export default class Users extends Component {
                   pageCount={pageCount}
                   onLeftClick={() => { this.props.onChangePage(parseInt(usersPage, 10), false); }}
                   onRightClick={() => { this.props.onChangePage(parseInt(usersPage, 10), true); }}/>
+              </div>
+            }
+            {usersDisplay === 'grid' &&
+              <div style={generalStyles.row}>
+                { users.get('data').map((user, index) => (
+                  <Tile
+                    deleteText='Remove link'
+                    imageUrl={user.getIn([ 'avatar', 'url' ])}
+                    key={`user${index}`}
+                    text={this.getUserName(user)}
+                    onDelete={this.onDeleteLinkUser.bind(this, user.get('id'))}
+                    onEdit={this.onEditEntry.bind(this, user.get('id'))}/>
+                ))}
+                <Tile key={'createBroadcaster'} onCreate={this.onClickNewEntry}/>
               </div>
             }
           </div>

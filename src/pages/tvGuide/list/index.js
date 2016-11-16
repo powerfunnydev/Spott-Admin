@@ -13,8 +13,8 @@ import * as actions from './actions';
 import selector from './selector';
 import Dropdown, { styles as dropdownStyles } from '../../_common/components/dropdown';
 import UtilsBar from '../../_common/components/table/utilsBar';
+import { confirmation } from '../../_common/askConfirmation';
 
-/* eslint-disable no-alert */
 /* eslint-disable react/no-set-state*/
 
 const numberOfRows = 25;
@@ -102,7 +102,7 @@ export default class TvGuideList extends Component {
   }
 
   async deleteTvGuideEntry (tvGuideEntryId) {
-    const result = window.confirm('Are you sure you want to trigger this action?');
+    const result = await confirmation();
     if (result) {
       await this.props.deleteTvGuideEntry(tvGuideEntryId);
       await this.props.load(this.props.location.query);

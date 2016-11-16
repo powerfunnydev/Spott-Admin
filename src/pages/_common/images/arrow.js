@@ -3,21 +3,13 @@ import Radium from 'radium';
 
 export function renderSVG (fill = '#17262b', style) {
   return (
-    <svg style={style} width='8px' height='5px' viewBox='0 0 8 5' version='1.1' xmlns='http://www.w3.org/2000/svg'>
+    <svg style={style} width='8' height='5' viewBox='0 0 8 5' xmlns='http://www.w3.org/2000/svg'>
       <title>71A9D509-326D-42CF-8D8C-D98C8FA3003D</title>
-      <desc>Created with sketchtool.</desc>
-      <defs />
-      <g id='Page-1' stroke='none' strokeWidth='1' fill='none' fillRule='evenodd'>
-          <g id='Guide---Icons' transform='translate(-454.000000, -352.000000)'>
-              <g id='Icons/Arrow-Up-Gray' transform='translate(449.000000, 346.000000)'>
-                  <g id='Icon-Up'>
-                      <polygon id='Bounds' points='0 0 18 0 18 18 0 18' />
-                      <path d='M6.5,4.91229082 L6.5,12.0877289 C6.5,12.4355268 6.90071504,12.6264917 7.16629033,12.4052836 L11.2709467,8.98865514 C11.5762941,8.73461145 11.5762941,8.26195193 11.2709467,8.00790824 L7.16629033,4.5947362 C6.90028739,4.37352809 6.5,4.56449291 6.5,4.91229082' id='Shape' fill={fill} transform='translate(9.000000, 8.500000) rotate(-90.000000) translate(-9.000000, -8.500000) ' />
-                  </g>
-              </g>
-          </g>
+      <g fill='none' fillRule='evenodd'>
+        <path d='M-5-6h18v18H-5z'/>
+        <path d='M.412 5h7.176c.348 0 .538-.4.317-.666L4.49.229a.64.64 0 0 0-.981 0L.095 4.334A.407.407 0 0 0 .412 5' fill={fill}/>
       </g>
-  </svg>);
+    </svg>);
 }
 
 @Radium
