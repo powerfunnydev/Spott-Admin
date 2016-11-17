@@ -89,7 +89,6 @@ export async function persistUser (baseUrl, authenticationToken, locale, { dateO
   if (userId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/user/users/${userId}`);
     user = body;
-    await post(authenticationToken, locale, url, { ...user });
   }
   user.email = email || user.email;
   user.firstName = firstName || user.firstName;
@@ -102,8 +101,9 @@ export async function persistUser (baseUrl, authenticationToken, locale, { dateO
   user.languages = languages || user.languages;
   user.roles = roles || user.roles;
   // user.roles = [ { role: 'CONTENT_MANAGER' } ];
-  console.log('user', user);
-  await post(authenticationToken, locale, `${baseUrl}/v004/user/users`, user);
+  const response = await post(authenticationToken, locale, url, user);
+  const transformedResponse = transformUser(response.body);
+  return transformedResponse;
 }
 
 export async function deleteUser (baseUrl, authenticationToken, locale, { userId }) {

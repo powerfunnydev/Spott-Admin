@@ -42,7 +42,8 @@ export async function persistBroadcastChannel (baseUrl, authenticationToken, loc
   }
   const url = `${baseUrl}/v004/media/broadcastChannels`;
   bc.broadcaster = broadcasterId && { uuid: broadcasterId } || bc.broadcaster;
-  await post(authenticationToken, locale, url, { ...bc, uuid: id, name });
+  const result = await post(authenticationToken, locale, url, { ...bc, uuid: id, name });
+  return transformBroadcastChannel(result.body);
 }
 
 export async function deleteBroadcastChannel (baseUrl, authenticationToken, locale, { broadcastChannelId }) {

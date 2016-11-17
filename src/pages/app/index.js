@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { StyleRoot } from 'radium';
 import { init, pageView } from './googleAnalytics';
+import Toast from '../_common/components/toast';
 
 // Require application-global stylesheets
 require('./reset.css');
@@ -42,6 +43,7 @@ export default class Application extends Component {
   render () {
     return (
       <StyleRoot style={{ height: '100%' }}>
+        <Toast/>
         {this.props.children}
       </StyleRoot>
     );

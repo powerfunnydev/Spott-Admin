@@ -151,7 +151,7 @@ export default class Users extends Component {
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                           <CheckBoxCel checked={isSelected.get(user.get('id'))} onChange={selectCheckbox.bind(this, user.get('id'))}/>
-                          <CustomCel getValue={this.getUserName} objectToRender={user} style={{ flex: 2 }}/>
+                          <CustomCel getValue={this.getUserName} objectToRender={user} style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`users/read/${user.get('id')}`); }}/>
                           <CustomCel getValue={this.getEmail} objectToRender={user} style={{ flex: 2 }}/>
                           <CustomCel getValue={this.getFirstName} objectToRender={user} style={{ flex: 1 }} />
                           <CustomCel getValue={this.getLastName} objectToRender={user} style={{ flex: 1 }} />

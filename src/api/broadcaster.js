@@ -63,7 +63,8 @@ export async function persistBroadcaster (baseUrl, authenticationToken, locale, 
     // console.log('body', body);
   }
   const url = `${baseUrl}/v004/media/broadcasters`;
-  await post(authenticationToken, locale, url, { ...broadcaster, uuid: id, name });
+  const result = await post(authenticationToken, locale, url, { ...broadcaster, uuid: id, name });
+  return transformBroadcaster(result.body);
 }
 
 export async function deleteBroadcaster (baseUrl, authenticationToken, locale, { broadcasterId }) {

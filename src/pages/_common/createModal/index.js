@@ -12,7 +12,7 @@ const crossImage = require('./cross.svg');
  * Note: get merged with defaults by react-modal
  */
 const dialogStyle = {
-  /*
+  /* previous solution, but it gave some blur issues
   overlay: {
     zIndex: 100,
     backgroundColor: 'rgba(0, 0, 0, 0.80)'
@@ -48,6 +48,9 @@ const dialogStyle = {
     alignItems: 'center'
   },
   content: {
+    top: 0,
+    left: 0,
+    right: 0,
     position: 'relative',
     backgroundColor: 'transparent',
     border: 'none',

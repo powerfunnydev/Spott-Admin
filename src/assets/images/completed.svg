@@ -1,17 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="8px" height="6px" viewBox="0 0 8 6" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: sketchtool 40.3 (33839) - http://www.bohemiancoding.com/sketch -->
-    <title>52F879BD-8298-4B77-8A45-4CB2BF3BC1F1</title>
-    <desc>Created with sketchtool.</desc>
-    <defs></defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="Guide---Icons" transform="translate(-526.000000, -352.000000)">
-            <g id="Icons/Checker-Gray" transform="translate(521.000000, 346.000000)">
-                <g id="Icon-Checker">
-                    <polygon id="Bounds" points="0 0 18 0 18 18 0 18"></polygon>
-                    <path d="M11.293,6.2925 L8,9.5855 L6.707,8.2925 C6.526,8.1115 6.276,7.9995 6,7.9995 C5.4475,7.9995 5,8.4475 5,9 C5,9.276 5.112,9.526 5.293,9.707 L7.293,11.707 C7.4735,11.888 7.724,11.9995 8,11.9995 C8.276,11.9995 8.526,11.888 8.707,11.707 L12.707,7.707 C12.888,7.526 13,7.276 13,6.9995 C13,6.4475 12.552,6 12,6 C11.724,6 11.4735,6.1115 11.293,6.2925 Z" id="Imported-Layers" fill="#aacc6b"></path>
-                </g>
-            </g>
-        </g>
-    </g>
+<svg width="8" height="6" viewBox="0 0 8 6" xmlns="http://www.w3.org/2000/svg">
+  <title>52F879BD-8298-4B77-8A45-4CB2BF3BC1F1</title>
+  <g fill="none" fill-rule="evenodd">
+    <path d="M-5-6h18v18H-5z"/>
+    <path d="M6.293.293L3 3.585 1.707 2.293A1 1 0 0 0 .293 3.708l2 1.999c.18.181.431.292.707.292a.996.996 0 0 0 .707-.292l4-4A1 1 0 1 0 6.293.293z" fill="#aacc6b"/>
+  </g>
 </svg>

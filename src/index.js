@@ -39,6 +39,7 @@ import TvGuideList from './pages/tvGuide/list';
 import UsersCreate from './pages/users/create';
 import UsersEdit from './pages/users/edit';
 import UsersList from './pages/users/list';
+import UsersRead from './pages/users/read';
 import { authenticationTokenSelector, userRolesSelector } from './selectors/global';
 import reducer from './reducers';
 
@@ -115,8 +116,10 @@ function getRoutes ({ getState }) {
       <Route component={UsersList} path='users' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <Route component={UsersCreate} path='create'/>
       </Route>
-
-      <Route component={UsersEdit} path='users/edit/:id'/>
+      <Route path='users'>
+        <Route component={UsersEdit} path='edit/:id'/>
+        <Route component={UsersRead} path='read/:id'/>
+      </Route>
 
       <Route component={TvGuideList} path='tv-guide' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <Route component={TvGuideCreateEntry} path='create' />
