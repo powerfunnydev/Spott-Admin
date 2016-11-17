@@ -18,7 +18,7 @@ import tvGuideList from '../pages/tvGuide/list/reducer';
 import usersEdit from '../pages/users/edit/reducer';
 import usersList from '../pages/users/list/reducer';
 import LinkUserModal from '../pages/_common/linkUserModal/reducer';
-
+import Toast from './toast';
 /**
  * The application's main reducer
  */
@@ -61,5 +61,6 @@ export default combineReducers({
     create: tvGuideCreate,
     edit: tvGuideEdit,
     list: tvGuideList
-  })
+  }),
+  toast: Toast
 });

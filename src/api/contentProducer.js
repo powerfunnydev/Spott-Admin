@@ -45,7 +45,8 @@ export async function persistContentProducer (baseUrl, authenticationToken, loca
     cp = body;
   }
   const url = `${baseUrl}/v004/media/contentProducers`;
-  await post(authenticationToken, locale, url, { ...cp, uuid: id, name });
+  const result = await post(authenticationToken, locale, url, { ...cp, uuid: id, name });
+  return transformContentProducer(result.body);
 }
 
 export async function deleteContentProducer (baseUrl, authenticationToken, locale, { contentProducerId }) {
