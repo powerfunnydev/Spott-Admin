@@ -35,8 +35,10 @@ export default class EntityDetails extends Component {
       border: `solid 1px ${colors.veryLightGray}`
     },
     image: {
+      // objectFit: 'scale-down',
       height: '80px',
-      width: '143px'
+      width: '143px',
+      borderRadius: '2px'
     },
     title: {
       paddingBottom: '4px',
