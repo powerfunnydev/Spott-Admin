@@ -1,6 +1,6 @@
 import { getConfiguration, getAuthorizedConfiguration } from '../api/config';
 import { push as routerPush } from 'react-router-redux';
-import { authenticationTokenSelector, apiBaseUrlSelector, currentLocaleSelector } from '../selectors/global';
+import { userRolesSelector, authenticationTokenSelector, apiBaseUrlSelector, currentLocaleSelector } from '../selectors/global';
 
 export const CONFIGURE = 'CONFIGURE';
 
@@ -30,9 +30,10 @@ export function getAuthorizedConfig () {
     const apiBaseUrl = apiBaseUrlSelector(state);
     const authenticationToken = authenticationTokenSelector(state);
     const locale = currentLocaleSelector(state);
+    const roles = userRolesSelector(state);
     if (authenticationToken) {
       // Get backend configuration
-      const configuration = await getAuthorizedConfiguration(apiBaseUrl, authenticationToken, locale);
+      const configuration = await getAuthorizedConfiguration(apiBaseUrl, authenticationToken, locale, roles);
       dispatch({ configuration, type: CONFIGURE });
     }
   };
