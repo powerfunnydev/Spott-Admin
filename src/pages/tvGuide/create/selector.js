@@ -31,9 +31,9 @@ export const currentSeasonsSearchStringSelector = (state) => state.getIn([ 'tvGu
 export const currentMediaSearchStringSelector = (state) => state.getIn([ 'tvGuide', 'create', 'currentMediaSearchString' ]);
 // export const currentContentProducersSearchStringSelector = (state) => state.getIn([ 'content', 'editEpisodes', 'currentContentProducersSearchString' ]);
 // export const currentSeriesFilterHasSeasonsStringSelector = createSelector(
-//   currentSeriesIdSelector,
+//   currentseriesEntryIdSelector,
 //   currentSeasonsSearchStringSelector,
-//   (seriesId, searchString) => `searchString=${encodeURIComponent(searchString || '')}&seriesId=${seriesId || ''}`
+//   (seriesEntryId, searchString) => `searchString=${encodeURIComponent(searchString || '')}&seriesEntryId=${seriesEntryId || ''}`
 
 // );
 
@@ -45,7 +45,7 @@ const currentEpisodesFilterSelector = createSelector(
 const currentSeasonsFilterSelector = createSelector(
   currentSeasonsSearchStringSelector,
   currentMediumIdSelector,
-  (searchString, seriesId) => serializeFilterHasSeries({ searchString, seriesId })
+  (searchString, seriesEntryId) => serializeFilterHasSeries({ searchString, seriesEntryId })
 );
 export const searchedEpisodeIdsSelector = createEntityIdsByRelationSelector(filterHasEpisodesRelationsSelector, currentEpisodesFilterSelector);
 export const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(filterHasSeasonsRelationsSelector, currentSeasonsFilterSelector);

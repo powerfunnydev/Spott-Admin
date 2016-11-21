@@ -7,7 +7,7 @@ import { FETCHING, UPDATING, ERROR, LOADED } from '../constants/statusTypes';
  * example: global users with searchString='abc' aren't the same as users of
  * a broadcaster with the same searchString.
  */
-function serialize ({ searchString = '', page = 0, pageSize = 25, sortDirection, sortField }, uniqueKey) {
+export function serialize ({ searchString = '', page = 0, pageSize = 25, sortDirection, sortField }, uniqueKey) {
   let id = `uniqueKey=${uniqueKey}&page=${page}&pageSize=${pageSize}`;
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     id = id.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
@@ -19,6 +19,8 @@ export const serializeFilterHasContentProducers = serialize;
 export const serializeFilterHasBroadcasters = serialize;
 export const serializeFilterHasBroadcastChannels = serialize;
 export const serializeFilterHasUsers = serialize;
+export const serializeFilterHasSeriesEntries = serialize;
+export const serializeFilterHasSeasons = serialize;
 
 export function serializeFilterHasTvGuideEntries ({ page = 0, pageSize = 25, sortDirection, sortField }) {
   let id = `page=${page}&pageSize=${pageSize}`;
@@ -32,8 +34,8 @@ export function serializeFilterHasEpisodes ({ searchString = '', seasonId = '' }
   return `searchString=${searchString}&seasonId=${seasonId}`;
 }
 
-export function serializeFilterHasSeries ({ searchString = '', seriesId = '' }) {
-  return `searchString=${searchString}&seriesId=${seriesId}`;
+export function serializeFilterHasSeries ({ searchString = '', seriesEntryId = '' }) {
+  return `searchString=${searchString}&seriesEntryId=${seriesEntryId}`;
 }
 
 // path is e.g., [ 'relations', type, id ]

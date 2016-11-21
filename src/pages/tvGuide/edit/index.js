@@ -180,7 +180,7 @@ export default class EditTvGuideEntry extends Component {
                 <div>
                   <Field
                     component={SelectInput}
-                    getItemText={(id) => mediaById.getIn([ id, 'title', mediaById.getIn([ id, 'defaultLocale' ]) ])}
+                    getItemText={(id) => mediaById.getIn([ id, 'title' ])}
                     getOptions={searchSeasons}
                     isLoading={searchedSeasonIds.get('_status') === FETCHING}
                     label='Season'
@@ -193,7 +193,7 @@ export default class EditTvGuideEntry extends Component {
                     }} />
                   <Field
                     component={SelectInput}
-                    getItemText={(id) => mediaById.getIn([ id, 'title', mediaById.getIn([ id, 'defaultLocale' ]) ])}
+                    getItemText={(id) => mediaById.getIn([ id, 'title' ])}
                     getOptions={searchEpisodes}
                     isLoading={searchedEpisodeIds.get('_status') === FETCHING}
                     label='Episode'

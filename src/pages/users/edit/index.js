@@ -20,7 +20,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import Dropzone from '../../_common/dropzone';
 import { Tabs, Tab } from '../../_common/components/formTabs';
 import { Checkbox } from '../../_common/inputs/checkbox';
-import { disabledReasons, userStatus as userStates } from '../../../constants/userRoles';
+import { INACTIVE, disabledReasons, userStatus as userStates } from '../../../constants/userRoles';
 import { FETCHING } from '../../../constants/statusTypes';
 
 function validate (values, { t }) {
@@ -59,6 +59,7 @@ export default class EditUser extends Component {
     clearPopUpMessage: PropTypes.func,
     contentProducersById: ImmutablePropTypes.map.isRequired,
     currentEmail: PropTypes.string,
+    currentUserStatus: PropTypes.string,
     error: PropTypes.any,
     genders: ImmutablePropTypes.map.isRequired,
     handleSubmit: PropTypes.func.isRequired,
@@ -162,7 +163,7 @@ export default class EditUser extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { contentProducersById, searchedContentProducerIds, searchContentProducers,
+    const { currentUserStatus, contentProducersById, searchedContentProducerIds, searchContentProducers,
       broadcastersById, searchedBroadcasterIds, searchBroadcasters, location, handleSubmit, localeNames, genders } = this.props;
     return (
       <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
@@ -254,14 +255,14 @@ export default class EditUser extends Component {
                   options={Object.keys(userStates)}
                   placeholder='User status'
                   required/>
-                <Field
+                {currentUserStatus === INACTIVE && <Field
                   component={SelectInput}
                   getItemText={(reason) => disabledReasons[reason]}
                   getOptions={() => Object.keys(disabledReasons)}
                   label='Reason'
                   name='disabledReason'
                   options={Object.keys(disabledReasons)}
-                  placeholder='Reason'/>
+                  placeholder='Reason'/>}
                 <FormSubtitle>Roles</FormSubtitle>
                 <div style={styles.paddingTop}>
                   <div style={styles.row}>

@@ -137,7 +137,7 @@ export default class Toast extends Component {
       top: 40,
       minHeight: 60, // Matches the flex-basis in icon.base style
       zIndex: 2,
-      boxShadow: '0 2px 4px 0 #00000040'
+      boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.25)'
     },
     icon: {
       base: {
@@ -182,7 +182,7 @@ export default class Toast extends Component {
       paddingBottom: '13px',
       paddingLeft: '19px',
       backgroundColor: colors.white,
-      border: `1px solid ${colors.white}`,
+      border: '1px solid rgb(206, 214, 218)',
       borderTopRightRadius: '2px',
       borderBottomRightRadius: '2px'
     },

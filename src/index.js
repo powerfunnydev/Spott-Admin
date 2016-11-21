@@ -21,6 +21,9 @@ import ContentProducersList from './pages/content/contentProducers/list';
 import ContentProducersCreate from './pages/content/contentProducers/create';
 import ContentProducersEdit from './pages/content/contentProducers/edit';
 import ContentProducersRead from './pages/content/contentProducers/read';
+import EpisodeList from './pages/content/episodes/list';
+import EpisodeRead from './pages/content/episodes/read';
+import EpisodeCreate from './pages/content/episodes/create';
 import LinkUserToContentProducer from './pages/content/contentProducers/read/users/linkUser';
 import Error404 from './pages/error404/main';
 import MediaSinglePage from './pages/media/singlePage';
@@ -33,6 +36,12 @@ import ResetPassword from './pages/resetPassword';
 import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
 import ReportingRankings from './pages/reporting/rankings';
+import SeasonList from './pages/content/seasons/list';
+import SeasonRead from './pages/content/seasons/read';
+import SeasonCreate from './pages/content/seasons/create';
+import SeriesList from './pages/content/series/list';
+import SeriesRead from './pages/content/series/read';
+import SeriesCreate from './pages/content/series/create';
 import TvGuideCreateEntry from './pages/tvGuide/create';
 import TvGuideEditEntry from './pages/tvGuide/edit';
 import TvGuideList from './pages/tvGuide/list';
@@ -111,9 +120,35 @@ function getRoutes ({ getState }) {
         <Route path='broadcast-channels'>
           <Route component={BroadcastChannelEdit} path='edit/:id' />
         </Route>
+        <Route component={SeriesList} path='series'>
+          <Route component={SeriesCreate} path='create'/>
+        </Route>
+        <Route path='series'>
+          <Route component={SeriesRead} path='read/:seriesEntryId'>
+            <Route component={SeasonCreate} path='create/season'/>
+          </Route>
+          <Route path='read/:seriesEntryId'>
+            <Route path='seasons'>
+              <Route component={SeasonRead} path='read/:seasonId'>
+                <Route component={EpisodeCreate} path='create/episode'/>
+              </Route>
+              <Route path='read/:seasonId'>
+                <Route path='episodes'>
+                  <Route component={EpisodeRead} path='read/:episodeId'/>
+                </Route>
+              </Route>
+            </Route>
+          </Route>
+        </Route>
+        <Route component={SeasonList} path='seasons'>
+          <Route component={SeasonCreate} path='create'/>
+        </Route>
+        <Route component={EpisodeList} path='episodes'>
+          <Route component={EpisodeCreate} path='create'/>
+        </Route>
       </Route>
 
-      <Route component={UsersList} path='users' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
+      <Route component={UsersList} path='users' onEnter={requireOneRole([ ADMIN ])}>
         <Route component={UsersCreate} path='create'/>
       </Route>
       <Route path='users'>

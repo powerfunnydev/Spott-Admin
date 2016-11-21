@@ -20,6 +20,11 @@ export const currentEmailSelector = createSelector(
   (form) => (form && form.get('email'))
 );
 
+export const currentUserStatusSelector = createSelector(
+  formSelector,
+  (form) => (form && form.get('userStatus'))
+);
+
 export const currentBroadcastersSearchStringSelector = (state) => state.getIn([ 'users', 'edit', 'currentBroadcastersSearchString' ]);
 export const currentContentProducersSearchStringSelector = (state) => state.getIn([ 'users', 'edit', 'currentContentProducersSearchString' ]);
 export const popUpMessageSelector = (state) => state.getIn([ 'users', 'edit', 'popUpMessage' ]);
@@ -28,6 +33,7 @@ export const searchedBroadcasterIdsSelector = createEntityIdsByRelationSelector(
 export const searchedContentProducerIdsSelector = createEntityIdsByRelationSelector(searchStringHasContentProducersRelationsSelector, currentBroadcastersSearchStringSelector);
 
 export default createStructuredSelector({
+  currentUserStatus: currentUserStatusSelector,
   currentEmail: currentEmailSelector,
   popUpMessage: popUpMessageSelector,
   genders: gendersSelector,

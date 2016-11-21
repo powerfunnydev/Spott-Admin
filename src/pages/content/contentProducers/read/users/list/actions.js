@@ -22,7 +22,6 @@ export const LINK_USER_DELETE_ERROR = 'CONTENT_PRODUCER/LINK_USER_DELETE_ERROR';
 export function deleteLinkUser (contentProducerId, userId) {
   return async (dispatch, getState) => {
     try {
-      console.log('contentProducerId', contentProducerId, 'userId', userId);
       return await dispatch(dataDeleteLinkUser({ contentProducerId, userId }));
     } catch (error) {
       dispatch({ error, type: LINK_USER_DELETE_ERROR });
