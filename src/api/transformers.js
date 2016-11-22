@@ -65,8 +65,9 @@ export function transformListMedium ({ auditInfo, title, type, posterImage, prof
 /**
  *  Complete version of a medium. Locales includes.
  */
-export function transformMedium ({ auditInfo, type, defaultLocale, externalReference, uuid: id, publishStatus, defaultTitle, localeData }) {
+export function transformMedium ({ number, auditInfo, type, defaultLocale, externalReference, uuid: id, publishStatus, defaultTitle, localeData }) {
   const seriesEntry = {
+    number,
     basedOnDefaultLocale: {},
     description: {},
     startYear: {},
@@ -82,15 +83,17 @@ export function transformMedium ({ auditInfo, type, defaultLocale, externalRefer
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
   };
-  for (const { basedOnDefaultLocale, description, locale,
-    posterImage, profileCover, startYear, title } of localeData) {
-    seriesEntry.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
-    seriesEntry.description[locale] = description;
-    seriesEntry.startYear[locale] = startYear;
-    seriesEntry.title[locale] = title;
-    seriesEntry.locales.push(locale);
-    seriesEntry.profileImage[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
-    seriesEntry.posterImage[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
+  if (localeData) {
+    for (const { basedOnDefaultLocale, description, locale,
+      posterImage, profileCover, startYear, title } of localeData) {
+      seriesEntry.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      seriesEntry.description[locale] = description;
+      seriesEntry.startYear[locale] = startYear;
+      seriesEntry.title[locale] = title;
+      seriesEntry.locales.push(locale);
+      seriesEntry.profileImage[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
+      seriesEntry.posterImage[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
+    }
   }
   return seriesEntry;
 }

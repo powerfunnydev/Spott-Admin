@@ -1,5 +1,5 @@
 import { fetchSeasonEpisodes as dataFetchSeasonEpisodes } from '../../../../../actions/season';
-import { deleteEpisode as dataDeleteEpisode } from '../../../../../actions/episode';
+import { deleteEpisode as dataDeleteEpisode, deleteEpisodes as dataDeleteEpisodes } from '../../../../../actions/episode';
 import { getInformationFromQuery } from '../../../../_common/components/table/index';
 import { prefix } from './index';
 
@@ -8,6 +8,8 @@ export const SELECT_CHECKBOX = 'SEASON_EPISODES_READ/SELECT_CHECKBOX';
 
 export const SEASON_EPISODES_FETCH_ENTRY_ERROR = 'SEASON_EPISODES_READ/SEASON_EPISODES_FETCH_ENTRY_ERROR';
 export const EPISODE_DELETE_ENTRY_ERROR = 'SEASON_EPISODES_READ/EPISODE_DELETE_ENTRY_ERROR';
+
+export const EPISODES_DELETE_ERROR = 'SEASON_EPISODES_READ/EPISODES_DELETE_ERROR';
 
 export function loadEpisodes (query, seasonId) {
   return async (dispatch, getState) => {
@@ -25,6 +27,16 @@ export function deleteEpisode (episodeId) {
       await dispatch(dataDeleteEpisode({ episodeId }));
     } catch (error) {
       dispatch({ error, type: EPISODE_DELETE_ENTRY_ERROR });
+    }
+  };
+}
+
+export function deleteEpisodes (episodeIds) {
+  return async (dispatch, getState) => {
+    try {
+      return await dispatch(dataDeleteEpisodes({ episodeIds }));
+    } catch (error) {
+      dispatch({ error, type: EPISODES_DELETE_ERROR });
     }
   };
 }

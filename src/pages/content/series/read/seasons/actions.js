@@ -1,5 +1,5 @@
 import { fetchSeriesEntrySeasons as dataFetchSeriesEntrySeasons } from '../../../../../actions/series';
-import { deleteSeason as dataDeleteSeason } from '../../../../../actions/season';
+import { deleteSeasons as dataDeleteSeasons, deleteSeason as dataDeleteSeason } from '../../../../../actions/season';
 import { getInformationFromQuery } from '../../../../_common/components/table/index';
 import { prefix } from './index';
 
@@ -7,7 +7,8 @@ export const SELECT_ALL_CHECKBOXES = 'SERIES_ENTRY_SEASONS_READ/SELECT_ALL_CHECK
 export const SELECT_CHECKBOX = 'SERIES_ENTRY_SEASONS_READ/SELECT_CHECKBOX';
 
 export const SERIES_ENTRY_SEASONS_FETCH_ENTRY_ERROR = 'SERIES_ENTRY_SEASONS_READ/SERIES_ENTRY_SEASONS_FETCH_ENTRY_ERROR';
-export const SEASON_DELETE_ENTRY_ERROR = 'SERIES_ENTRY_SEASONS_READ/SEASON_DELETE_ENTRY_ERROR';
+export const SEASON_DELETE_ERROR = 'SERIES_ENTRY_SEASONS_READ/SEASON_DELETE_ERROR';
+export const SEASONS_DELETE_ERROR = 'SERIES_ENTRY_SEASONS_READ/SEASONS_DELETE_ERROR';
 
 export function loadSeasons (query, seriesEntryId) {
   return async (dispatch, getState) => {
@@ -24,7 +25,17 @@ export function deleteSeason (seasonId) {
     try {
       await dispatch(dataDeleteSeason({ seasonId }));
     } catch (error) {
-      dispatch({ error, type: SEASON_DELETE_ENTRY_ERROR });
+      dispatch({ error, type: SEASON_DELETE_ERROR });
+    }
+  };
+}
+
+export function deleteSeasons (seasonIds) {
+  return async (dispatch, getState) => {
+    try {
+      return await dispatch(dataDeleteSeasons({ seasonIds }));
+    } catch (error) {
+      dispatch({ error, type: SEASONS_DELETE_ERROR });
     }
   };
 }

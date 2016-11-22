@@ -18,6 +18,7 @@ export const prefix = 'seasons';
 @tableDecorator(prefix)
 @connect(selector, (dispatch) => ({
   deleteSeason: bindActionCreators(actions.deleteSeason, dispatch),
+  deleteSeasons: bindActionCreators(actions.deleteSeasons, dispatch),
   loadSeasons: bindActionCreators(actions.loadSeasons, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
@@ -28,6 +29,7 @@ export default class List extends Component {
 
   static propTypes = {
     deleteSeason: PropTypes.func.isRequired,
+    deleteSeasons: PropTypes.func.isRequired,
     error: PropTypes.any,
     isSelected: ImmutablePropTypes.map.isRequired,
     loadSeasons: PropTypes.func.isRequired,
@@ -53,6 +55,7 @@ export default class List extends Component {
     super(props);
     this.redirect = ::this.redirect;
     this.onClickNewEntry = :: this.onClickNewEntry;
+    this.onClickDeleteSelected = ::this.onClickDeleteSelected;
     this.slowSearch = slowdown(props.loadSeasons, 300);
   }
 
@@ -103,10 +106,23 @@ export default class List extends Component {
     }
   }
 
+  async onClickDeleteSelected (e) {
+    e.preventDefault();
+    const seasonIds = [];
+    this.props.isSelected.forEach((selected, key) => {
+      if (selected && key !== 'ALL') {
+        seasonIds.push(key);
+      }
+    });
+    await this.props.deleteSeasons(seasonIds);
+    await this.props.loadSeasons(this.props.location.query, this.props.params.seriesEntryId);
+  }
+
   render () {
-    const { params, onChangeSearchString, onChangeDisplay, numberSelected, pageCount, selectAllCheckboxes, selectCheckbox, isSelected, totalResultCount, seasons,
+    const { params, onChangeSearchString, onChangeDisplay, pageCount, selectAllCheckboxes, selectCheckbox, isSelected, totalResultCount, seasons,
        location: { query: { seasonsDisplay, seasonsPage,
          seasonsSearchString, seasonsSortField, seasonsSortDirection } } } = this.props;
+    const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
       <div style={generalStyles.border}>
         <div style={generalStyles.backgroundBar}>
@@ -119,6 +135,7 @@ export default class List extends Component {
               textCreateButton='New season'
               onChangeDisplay={onChangeDisplay}
               onChangeSearchString={onChangeSearchString}
+              onClickDeleteSelected={this.onClickDeleteSelected}
               onClickNewEntry={this.onClickNewEntry}/>
           </div>
         </div>

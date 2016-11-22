@@ -1,5 +1,5 @@
 import { get } from './request';
-import { ADMIN, BROADCASTER, CONTENT_MANAGER } from '../constants/userRoles';
+import { ADMIN, CONTENT_MANAGER } from '../constants/userRoles';
 
 /**
  * GET /config.json

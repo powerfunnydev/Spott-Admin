@@ -99,13 +99,13 @@ export default class SeriesEntries extends Component {
 
   async onClickDeleteSelected (e) {
     e.preventDefault();
-    const seriesEntrysIds = [];
+    const seriesEntryIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {
-        seriesEntrysIds.push(key);
+        seriesEntryIds.push(key);
       }
     });
-    await this.props.deleteSeriesEntries(seriesEntrysIds);
+    await this.props.deleteSeriesEntries(seriesEntryIds);
     await this.props.load(this.props.location.query);
   }
 
