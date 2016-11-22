@@ -8,10 +8,10 @@
 	<artifactId>apptvate.website</artifactId>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
-	<version>01.00.03</version>
+	<version>01.00.04-SNAPSHOT</version>
 	<scm>
 		<connection>scm:git:https://bitbucket.org/appiness/apptvate.website</connection>
-		<tag>apptvate.website-01.00.03</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<repositories>
 		<repository>
