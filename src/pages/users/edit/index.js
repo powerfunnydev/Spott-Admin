@@ -59,6 +59,7 @@ export default class EditUser extends Component {
     clearPopUpMessage: PropTypes.func,
     contentProducersById: ImmutablePropTypes.map.isRequired,
     currentEmail: PropTypes.string,
+    currentUser: PropTypes.object.isRequired,
     currentUserStatus: PropTypes.string,
     error: PropTypes.any,
     genders: ImmutablePropTypes.map.isRequired,
@@ -92,21 +93,8 @@ export default class EditUser extends Component {
     if (this.props.params.id) {
       const editObj = await this.props.load(this.props.params.id);
       this.props.initialize({
-        broadcaster: editObj.broadcaster,
-        broadcasters: editObj.broadcasters,
-        contentManager: editObj.contentManager,
-        contentProducer: editObj.contentProducer,
-        contentProducers: editObj.contentProducers,
-        dateOfBirth: editObj.dateOfBirth && moment(editObj.dateOfBirth),
-        disabledReason: editObj.disabledReason,
-        email: editObj.email,
-        firstName: editObj.firstName,
-        gender: editObj.gender,
-        languages: editObj.languages,
-        lastName: editObj.lastName,
-        sysAdmin: editObj.sysAdmin,
-        userName: editObj.userName,
-        userStatus: editObj.userStatus
+        ...editObj,
+        dateOfBirth: editObj.dateOfBirth && moment(editObj.dateOfBirth)
       });
     }
   }
@@ -163,7 +151,7 @@ export default class EditUser extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { currentUserStatus, contentProducersById, searchedContentProducerIds, searchContentProducers,
+    const { currentUser, currentUserStatus, contentProducersById, searchedContentProducerIds, searchContentProducers,
       broadcastersById, searchedBroadcasterIds, searchBroadcasters, location, handleSubmit, localeNames, genders } = this.props;
     return (
       <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
@@ -231,13 +219,14 @@ export default class EditUser extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
+                      imageUrl={currentUser.getIn([ 'profileImage', 'url' ])}
                       onChange={({ callback, file }) => { this.props.uploadProfileImage({ userId: this.props.params.id, image: file, callback }); }}/>
                   </div>
                   <div style={styles.paddingLeftBackgroudImage}>
                     <Label text='Avatar image' />
                     <Dropzone
                       accept='image/*'
-                      // type='backgroundImage'
+                      imageUrl={currentUser.getIn([ 'avatar', 'url' ])}
                       onChange={({ callback, file }) => { this.props.uploadBackgroundImage({ userId: this.props.params.id, image: file, callback }); }}/>
                   </div>
                 </div>

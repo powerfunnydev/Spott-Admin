@@ -310,7 +310,7 @@ export function transformPaging ({ page, pageCount, pageSize, totalResultCount }
   return { page, pageCount, pageSize, totalResultCount };
 }
 
-export function transformUser ({ avatar, languages, dateOfBirth, disabled, disabledReason,
+export function transformUser ({ profileImage, avatar, languages, dateOfBirth, disabled, disabledReason,
   userName, gender, firstName, lastName, email, uuid: id, roles, ...restProps }) {
   const obj = {};
   const broadcasters = [];
@@ -332,6 +332,7 @@ export function transformUser ({ avatar, languages, dateOfBirth, disabled, disab
     broadcasters,
     contentProducers,
     avatar: avatar && { url: avatar.url } || {},
+    profileImage: profileImage && { url: profileImage.url } || {},
     userStatus: disabled && ACTIVE || INACTIVE,
     languages,
     disabledReason,

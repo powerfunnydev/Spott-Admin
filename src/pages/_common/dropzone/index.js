@@ -15,6 +15,7 @@ export default class Dropzone extends Component {
 
   static propTypes = {
     accept: PropTypes.string,
+    imageUrl: PropTypes.string,
     type: PropTypes.string,
     onChange: PropTypes.func
   };
@@ -119,19 +120,21 @@ export default class Dropzone extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { type } = this.props;
+    const { accept, type, imageUrl } = this.props;
     return (
       <div style={type === 'backgroundImage' ? styles.backgroundImage : styles.profileImage}>
         {/* Render dropzone */}
-        <ReactDropzone accept={this.props.accept} activeStyle={styles.activeDropzone} multiple={false} ref={(x) => { this.dropzone = x; }}
+        <ReactDropzone accept={accept} activeStyle={styles.activeDropzone} multiple={false} ref={(x) => { this.dropzone = x; }}
           style={styles.dropzone} onDrop={this.onDrop} >
           <div >
-            { /* Uploading */ (this.state.progress && this.state.total && this.state.progress !== this.state.total &&
+            { /* Uploading */
+              (this.state.progress && this.state.total && this.state.progress !== this.state.total &&
                 <ProgressBar
                   progress={this.state.progress}
                   style={styles.progressBar}
                   total={this.state.total}/>) ||
-            /* Upload completed */ (this.state.progress && this.state.total && this.state.progress === this.state.total &&
+            /* Upload completed */
+            (this.state.progress && this.state.total && this.state.progress === this.state.total &&
                 <div>
                   {!this.state.showImage && <div style={styles.completed}>
                     <img src={completedIcon} style={styles.completedImage}/>
@@ -139,7 +142,12 @@ export default class Dropzone extends Component {
                   </div>}
                   {this.state.showImage && this.state.file && this.state.file.type.startsWith('image') && <div style={styles.chosenImage}><img src={this.state.file.preview} style={styles.chosenImage}/></div>}
                 </div>) ||
-            /* Idle state, user has to chose a image */ (<img src={uploadIcon} style={styles.uploadImage}/>)
+            /* When there was already an image uploaded */
+            (imageUrl && <div style={styles.chosenImage}>
+              <img src={imageUrl} style={styles.chosenImage}/>
+              </div>) ||
+            /* Idle state, user has to chose a image */
+            (<img src={uploadIcon} style={styles.uploadImage}/>)
             }
           </div>
         </ReactDropzone>
