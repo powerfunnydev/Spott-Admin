@@ -11,6 +11,7 @@ export default class Section extends Component {
     children: PropTypes.node,
     clearPopUpMessage: PropTypes.func,
     first: PropTypes.bool,
+    noPadding: PropTypes.bool,
     popUpObject: PropTypes.object,
     style: PropTypes.object,
     title: PropTypes.node
@@ -34,13 +35,13 @@ export default class Section extends Component {
       marginBottom: defaultSpacing * 2
     },
     padding: {
-      padding: `${defaultSpacing * 2}px ${defaultSpacing * 1.5}px`
+      padding: '30px 22.5px'
     }
   }
 
   render () {
     const { styles } = this.constructor;
-    const { children, first, style, title, popUpObject, clearPopUpMessage } = this.props;
+    const { children, first, style, title, popUpObject, clearPopUpMessage, noPadding } = this.props;
     // Determine items
     return (
       <div style={[ styles.container, style ]}>
@@ -53,7 +54,7 @@ export default class Section extends Component {
         {popUpObject && popUpObject.type === 'info' && popUpObject.message &&
           <InfoComponent message={popUpObject.message} onClose={clearPopUpMessage}/>
         }
-        <div style={[ styles.padding, first && styles.first ]}>
+        <div style={[ !noPadding && styles.padding, first && styles.first ]}>
           {title && <h2 style={styles.title}>{title}</h2>}
           {children}
         </div>

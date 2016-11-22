@@ -25,15 +25,44 @@ export async function fetchEpisode (baseUrl, authenticationToken, locale, { epis
   return result;
 }
 
-export async function persistEpisode (baseUrl, authenticationToken, locale, { episodeId, name }) {
-  let cp = {};
+export async function persistEpisode (baseUrl, authenticationToken, locale, { number, hasTitle, basedOnDefaultLocale,
+  locales, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title, seasonId, episodeId }) {
+  let episode = {};
   if (episodeId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/serieEpisodes/${episodeId}`);
-    // console.log('body', body);
-    cp = body;
+    episode = body;
   }
+  // series.availabilities = transformAvailabilitiesToApi(availabilityFrom, availabilityTo, availabilityPlannedToMakeInteractive, availabilityPlatforms, availabilityVideoStatusType);
+  // series.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
+  episode.defaultLocale = defaultLocale;
+  episode.defaultTitle = defaultTitle;
+  // series.externalReference.reference = externalReference;
+  // series.externalReference.source = externalReferenceSource;
+  // series.publishStatus = publishStatus;
+  episode.season = { uuid: seasonId };
+  episode.serie = { uuid: seriesEntryId };
+  episode.type = 'TV_SERIE_SEASON';
+  episode.number = number;
+  // Update locale data.
+  episode.localeData = episode.localeData || []; // Ensure we have locale data
+  locales.forEach((locale) => {
+    // Get localeData, create if necessary in O(n^2)
+    let localeData = episode.localeData.find((ld) => ld.locale === locale);
+    if (!localeData) {
+      localeData = { locale };
+      episode.localeData.push(localeData);
+    }
+    // basedOnDefaultLocale is always provided, no check needed
+    localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
+    localeData.description = description && description[locale];
+    localeData.endYear = endYear && endYear[locale];
+    localeData.startYear = startYear && startYear[locale];
+    localeData.hasTitle = hasTitle && hasTitle[locale];
+    localeData.title = title && title[locale];
+  });
+  console.log('episode', episode);
   const url = `${baseUrl}/v004/media/serieEpisodes`;
-  await post(authenticationToken, locale, url, { ...cp, uuid: episodeId, name });
+  await post(authenticationToken, locale, url, episode);
 }
 
 export async function deleteEpisode (baseUrl, authenticationToken, locale, { episodeId }) {

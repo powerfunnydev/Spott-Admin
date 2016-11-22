@@ -5,6 +5,10 @@ import {
   createEntityIdsByRelationSelector,
   searchStringHasSeriesEntriesRelationsSelector
 } from '../../../../selectors/data';
+import {
+  localeNamesSelector,
+  currentLocaleSelector
+} from '../../../../selectors/global';
 
 const formSelector = getFormValues('seasonsCreateEntry');
 
@@ -18,6 +22,8 @@ export const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([
 export const searchedSeriesEntryIdsSelector = createEntityIdsByRelationSelector(searchStringHasSeriesEntriesRelationsSelector, currentSeriesEntriesSearchStringSelector);
 
 export default createStructuredSelector({
+  currentLocale: currentLocaleSelector,
+  localeNames: localeNamesSelector,
   seriesEntriesById: listMediaEntitiesSelector,
   searchedSeriesEntryIds: searchedSeriesEntryIdsSelector,
   currentSeriesEntryId: currentSeriesEntryIdSelector

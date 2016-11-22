@@ -18,6 +18,7 @@ export const prefix = 'episodes';
 @tableDecorator(prefix)
 @connect(selector, (dispatch) => ({
   deleteEpisode: bindActionCreators(actions.deleteEpisode, dispatch),
+  deleteEpisodes: bindActionCreators(actions.deleteEpisodes, dispatch),
   loadEpisodes: bindActionCreators(actions.loadEpisodes, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
@@ -28,6 +29,7 @@ export default class List extends Component {
 
   static propTypes = {
     deleteEpisode: PropTypes.func.isRequired,
+    deleteEpisodes: PropTypes.func.isRequired,
     episodes: ImmutablePropTypes.map.isRequired,
     error: PropTypes.any,
     isSelected: ImmutablePropTypes.map.isRequired,
@@ -54,6 +56,7 @@ export default class List extends Component {
     this.redirect = ::this.redirect;
     this.onClickNewEntry = :: this.onClickNewEntry;
     this.slowSearch = slowdown(props.loadEpisodes, 300);
+    this.onClickDeleteSelected = ::this.onClickDeleteSelected;
   }
 
   async componentWillMount () {
@@ -95,6 +98,18 @@ export default class List extends Component {
     this.props.routerPushWithReturnTo('content/episodes', true);
   }
 
+  async onClickDeleteSelected (e) {
+    e.preventDefault();
+    const episodesIds = [];
+    this.props.isSelected.forEach((selected, key) => {
+      if (selected && key !== 'ALL') {
+        episodesIds.push(key);
+      }
+    });
+    await this.props.deleteEpisodes(episodesIds);
+    await this.props.loadEpisodes(this.props.location.query, this.props.params.seasonId);
+  }
+
   onClickNewEntry (e) {
     e.preventDefault();
     const seasonId = this.props.params.seasonId;
@@ -105,9 +120,10 @@ export default class List extends Component {
   }
 
   render () {
-    const { params, onChangeSearchString, onChangeDisplay, numberSelected, pageCount, selectAllCheckboxes, selectCheckbox, isSelected, totalResultCount, episodes,
+    const { params, onChangeSearchString, onChangeDisplay, pageCount, selectAllCheckboxes, selectCheckbox, isSelected, totalResultCount, episodes,
        location: { query: { episodesDisplay, episodesPage,
          episodesSearchString, episodesSortField, episodesSortDirection } } } = this.props;
+    const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
       <div style={generalStyles.border}>
         <div style={generalStyles.backgroundBar}>
@@ -120,6 +136,7 @@ export default class List extends Component {
               textCreateButton='New episode'
               onChangeDisplay={onChangeDisplay}
               onChangeSearchString={onChangeSearchString}
+              onClickDeleteSelected={this.onClickDeleteSelected}
               onClickNewEntry={this.onClickNewEntry}/>
           </div>
         </div>

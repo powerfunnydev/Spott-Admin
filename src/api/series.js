@@ -40,15 +40,40 @@ export async function fetchSeriesEntry (baseUrl, authenticationToken, locale, { 
   return result;
 }
 
-export async function persistSeriesEntry (baseUrl, authenticationToken, locale, { id, title }) {
+export async function persistSeriesEntry (baseUrl, authenticationToken, locale, { basedOnDefaultLocale,
+  locales, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title }) {
   let seriesEntry = {};
-  if (id) {
-    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/series/${id}`);
-    // console.log('body', body);
+  if (seriesEntryId) {
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/series/${seriesEntryId}`);
     seriesEntry = body;
   }
+  // series.availabilities = transformAvailabilitiesToApi(availabilityFrom, availabilityTo, availabilityPlannedToMakeInteractive, availabilityPlatforms, availabilityVideoStatusType);
+  // series.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
+  seriesEntry.defaultLocale = defaultLocale;
+  seriesEntry.defaultTitle = defaultTitle;
+  // series.externalReference.reference = externalReference;
+  // series.externalReference.source = externalReferenceSource;
+  // series.publishStatus = publishStatus;
+
+  // Update locale data.
+  seriesEntry.localeData = seriesEntry.localeData || []; // Ensure we have locale data
+  locales.forEach((locale) => {
+    // Get localeData, create if necessary in O(n^2)
+    let localeData = seriesEntry.localeData.find((ld) => ld.locale === locale);
+    if (!localeData) {
+      localeData = { locale };
+      seriesEntry.localeData.push(localeData);
+    }
+    // basedOnDefaultLocale is always provided, no check needed
+    localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
+    localeData.description = description && description[locale];
+    localeData.endYear = endYear && endYear[locale];
+    localeData.startYear = startYear && startYear[locale];
+    // title is always provided, no check needed
+    localeData.title = title[locale];
+  });
   const url = `${baseUrl}/v004/media/series`;
-  await post(authenticationToken, locale, url, { ...seriesEntry, uuid: id, defaultLocale: 'nl' });
+  await post(authenticationToken, locale, url, seriesEntry);
 }
 
 export async function deleteSeriesEntry (baseUrl, authenticationToken, locale, { seriesEntryId }) {
@@ -72,7 +97,6 @@ export async function searchSeriesEntries (baseUrl, authenticationToken, locale,
 }
 
 export async function searchSeasons (baseUrl, authenticationToken, locale, { searchString, seriesEntryId }) {
-  console.log('seriesEntryId', seriesEntryId);
   if (!seriesEntryId) {
     return [];
   }

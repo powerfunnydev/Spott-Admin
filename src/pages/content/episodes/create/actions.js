@@ -1,11 +1,13 @@
 import { persistEpisode } from '../../../../actions/episode';
 import { searchSeasons as dataSearchSeasons, searchSeriesEntries as dataSearchSeriesEntries } from '../../../../actions/series';
 
-export const SERIES_ENTRIES_SEARCH_START = 'SEASON_CREATE/SERIES_ENTRIES_SEARCH_START';
-export const SERIES_ENTRIES_SEARCH_ERROR = 'SEASON_CREATE/SERIES_ENTRIES_SEARCH_ERROR';
+export const SERIES_ENTRIES_SEARCH_START = 'EPISODE_CREATE/SERIES_ENTRIES_SEARCH_START';
+export const SERIES_ENTRIES_SEARCH_ERROR = 'EPISODE_CREATE/SERIES_ENTRIES_SEARCH_ERROR';
 
-export const SERIES_ENTRY_SEASONS_SEARCH_START = 'SEASON_CREATE/SERIES_ENTRY_SEASONS_SEARCH_START';
-export const SERIES_ENTRY_SEASONS_SEARCH_ERROR = 'SEASON_CREATE/SERIES_ENTRY_SEASONS_SEARCH_ERROR';
+export const SERIES_ENTRY_SEASONS_SEARCH_START = 'EPISODE_CREATE/SERIES_ENTRY_SEASONS_SEARCH_START';
+export const SERIES_ENTRY_SEASONS_SEARCH_ERROR = 'EPISODE_CREATE/SERIES_ENTRY_SEASONS_SEARCH_ERROR';
+
+export const EPISODE_PERSIST_ERROR = 'EPISODE_CREATE/EPISODE_PERSIST_ERROR';
 
 export function searchSeriesEntries (searchString) {
   return async (dispatch, getState) => {
@@ -30,4 +32,21 @@ export function searchSeasons (searchString, seriesEntryId) {
   };
 }
 
-export const submit = persistEpisode;
+export function submit ({ seriesEntryId, seasonId, number, defaultLocale }) {
+  return async (dispatch, getState) => {
+    try {
+      const seriesEntry = {
+        defaultLocale,
+        locales: [ defaultLocale ],
+        number,
+        basedOnDefaultLocale: { [defaultLocale]: true },
+        hasTitle: { [defaultLocale]: false },
+        seasonId,
+        seriesEntryId
+      };
+      return await dispatch(persistEpisode(seriesEntry));
+    } catch (error) {
+      dispatch({ error, type: EPISODE_PERSIST_ERROR });
+    }
+  };
+}

@@ -5,22 +5,26 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { FormSubtitle } from '../../../_common/styles';
 import TextInput from '../../../_common/inputs/textInput';
+import SelectInput from '../../../_common/inputs/selectInput';
 import localized from '../../../_common/localized';
 import CreateModal from '../../../_common/createModal';
 import { load } from '../list/actions';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import * as actions from './actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
+import selector from './selector';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { name } = values.toJS();
-  if (!name) { validationErrors.name = t('common.errors.required'); }
+  const { defaultLocale, title } = values.toJS();
+  if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
+  if (!title) { validationErrors.title = t('common.errors.required'); }
   // Done
   return validationErrors;
 }
 
 @localized
-@connect(null, (dispatch) => ({
+@connect(selector, (dispatch) => ({
   load: bindActionCreators(load, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
@@ -33,9 +37,12 @@ function validate (values, { t }) {
 export default class CreateSeriesEntryModal extends Component {
 
   static propTypes = {
+    currentLocale: PropTypes.string.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
+    initialize: PropTypes.func.isRequired,
     load: PropTypes.func.isRequired,
+    localeNames: ImmutablePropTypes.map.isRequired,
     location: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
@@ -48,6 +55,11 @@ export default class CreateSeriesEntryModal extends Component {
     this.submit = ::this.submit;
   }
 
+  componentWillMount () {
+    this.props.initialize({
+      defaultLocale: this.props.currentLocale
+    });
+  }
   async submit (form) {
     try {
       await this.props.submit(form.toJS());
@@ -67,16 +79,24 @@ export default class CreateSeriesEntryModal extends Component {
   }
 
   render () {
-    const { handleSubmit } = this.props;
+    const { localeNames, handleSubmit } = this.props;
     return (
       <CreateModal isOpen title='Create Series Entry' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={TextInput}
-          label='Title'
+          label='Series title'
           name='title'
-          placeholder='Title series entry'
+          placeholder='Series title'
           required/>
+        <Field
+          component={SelectInput}
+          getItemText={(language) => localeNames.get(language)}
+          getOptions={(language) => localeNames.keySeq().toArray()}
+          label='Default language'
+          name='defaultLocale'
+          options={localeNames.keySeq().toArray()}
+          placeholder='Default language'/>
       </CreateModal>
     );
   }

@@ -8,7 +8,7 @@ import { FormSubtitle } from '../../../_common/styles';
 import TextInput from '../../../_common/inputs/textInput';
 import localized from '../../../_common/localized';
 import CreateModal from '../../../_common/createModal';
-import { load } from '../list/actions';
+import { loadEpisodes } from '../../seasons/read/episodes/actions';
 import * as actions from './actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import selector from './selector';
@@ -17,15 +17,18 @@ import { FETCHING } from '../../../../constants/statusTypes';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { name } = values.toJS();
-  if (!name) { validationErrors.name = t('common.errors.required'); }
+  const { seriesEntryId, seasonId, defaultLocale, title } = values.toJS();
+  if (!seriesEntryId) { validationErrors.seriesEntryId = t('common.errors.required'); }
+  if (!seasonId) { validationErrors.seasonId = t('common.errors.required'); }
+  if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
+  if (!title) { validationErrors.title = t('common.errors.required'); }
   // Done
   return validationErrors;
 }
 
 @localized
 @connect(selector, (dispatch) => ({
-  load: bindActionCreators(load, dispatch),
+  loadEpisodes: bindActionCreators(loadEpisodes, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchSeasons: bindActionCreators(actions.searchSeasons, dispatch),
@@ -40,13 +43,15 @@ export default class CreateEpisodentryModal extends Component {
 
   static propTypes = {
     change: PropTypes.func.isRequired,
+    currentLocale: PropTypes.string.isRequired,
     currentSeasonId: PropTypes.string,
     currentSeriesEntryId: PropTypes.string,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
-    load: PropTypes.func.isRequired,
+    loadEpisodes: PropTypes.func.isRequired,
+    localeNames: ImmutablePropTypes.map.isRequired,
     location: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
@@ -73,7 +78,8 @@ export default class CreateEpisodentryModal extends Component {
     await this.props.searchSeasons(null, this.props.params.seriesEntryId);
     await this.props.initialize({
       seriesEntryId: this.props.params.seriesEntryId,
-      seasonId: this.props.params.seasonId
+      seasonId: this.props.params.seasonId,
+      defaultLocale: this.props.currentLocale
     });
   }
 
@@ -83,7 +89,7 @@ export default class CreateEpisodentryModal extends Component {
       // Load the new list of items, using the location query of the previous page.
       const location = this.props.location && this.props.location.state && this.props.location.state.returnTo;
       if (location && location.query) {
-        this.props.load(location.query);
+        this.props.loadEpisodes(location.query, this.props.params.seasonId);
       }
       this.onCloseClick();
     } catch (error) {
@@ -96,20 +102,28 @@ export default class CreateEpisodentryModal extends Component {
   }
 
   render () {
-    const { currentSeasonId, currentSeriesEntryId, searchSeriesEntries, seriesEntriesById, searchedSeriesEntryIds,
+    const { localeNames, currentSeasonId, currentSeriesEntryId, searchSeriesEntries, seriesEntriesById, searchedSeriesEntryIds,
         searchSeasons, seasonsById, searchedSeasonIds, handleSubmit } = this.props;
     return (
       <CreateModal isOpen title='Create Episode Entry' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}
+          getItemText={(language) => localeNames.get(language)}
+          getOptions={(language) => localeNames.keySeq().toArray()}
+          label='Default language'
+          name='defaultLocale'
+          options={localeNames.keySeq().toArray()}
+          placeholder='Default language'/>
+        <Field
+          component={SelectInput}
           getItemText={(id) => seriesEntriesById.getIn([ id, 'title' ])}
           getOptions={searchSeriesEntries}
           isLoading={searchedSeriesEntryIds.get('_status') === FETCHING}
-          label='Serie'
+          label='Series title'
           name='seriesEntryId'
           options={searchedSeriesEntryIds.get('data').toJS()}
-          placeholder='Title serie'
+          placeholder='Series title'
           onChange={() => {
             this.props.dispatch(this.props.change('seasonId', null));
           }} />
@@ -118,18 +132,18 @@ export default class CreateEpisodentryModal extends Component {
           getItemText={(id) => seasonsById.getIn([ id, 'title' ])}
           getOptions={(searchString) => { searchSeasons(searchString, currentSeriesEntryId); }}
           isLoading={searchedSeasonIds.get('_status') === FETCHING}
-          label='Season'
+          label='Season title'
           name='seasonId'
           options={searchedSeasonIds.get('data').toJS()}
-          placeholder='Title season'
+          placeholder='Season title'
           onChange={() => {
             this.props.dispatch(this.props.change('title', null));
           }} />}
         {currentSeasonId && <Field
           component={TextInput}
-          label='Title'
-          name='title'
-          placeholder='Title episode'
+          label='Episode number'
+          name='number'
+          placeholder='Episode number'
           required/>}
       </CreateModal>
     );

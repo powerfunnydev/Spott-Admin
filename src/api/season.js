@@ -1,5 +1,5 @@
 import { del, get, post } from './request';
-import { transformSeason004, transformSeason, transformEpisode, transformListEpisode } from './transformers';
+import { transformSeason004, transformEpisode, transformListEpisode } from './transformers';
 
 export async function fetchSeasonEpisodes (baseUrl, authenticationToken, locale, { seasonId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/serieSeasons/${seasonId}/episodes?page=${page}&pageSize=${pageSize}`;
@@ -39,7 +39,7 @@ export async function fetchSeasons (baseUrl, authenticationToken, locale, { sear
   const { body } = await get(authenticationToken, locale, url);
   // There is also usable data in body (not only in data field).
   // We need also fields page, pageCount,...
-  body.data = body.data.map(transformSeason);
+  body.data = body.data.map(transformSeason004);
   return body;
 }
 
@@ -52,15 +52,45 @@ export async function fetchSeason (baseUrl, authenticationToken, locale, { seaso
   return result;
 }
 
-export async function persistSeason (baseUrl, authenticationToken, locale, { seasonId, name, seriesEntryId }) {
-  let cp = {};
+export async function persistSeason (baseUrl, authenticationToken, locale, { number, hasTitle, basedOnDefaultLocale,
+  locales, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title, seasonId }) {
+  let season = {};
   if (seasonId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/serieSeasons/${seasonId}`);
-    // console.log('body', body);
-    cp = body;
+    season = body;
   }
+  // series.availabilities = transformAvailabilitiesToApi(availabilityFrom, availabilityTo, availabilityPlannedToMakeInteractive, availabilityPlatforms, availabilityVideoStatusType);
+  // series.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
+  season.defaultLocale = defaultLocale;
+  season.defaultTitle = defaultTitle;
+  // series.externalReference.reference = externalReference;
+  // series.externalReference.source = externalReferenceSource;
+  // series.publishStatus = publishStatus;
+  season.serie = { uuid: seriesEntryId };
+  season.type = 'TV_SERIE_SEASON';
+  season.number = number;
+
+  // Update locale data.
+  season.localeData = season.localeData || []; // Ensure we have locale data
+  locales.forEach((locale) => {
+    // Get localeData, create if necessary in O(n^2)
+    let localeData = season.localeData.find((ld) => ld.locale === locale);
+    if (!localeData) {
+      localeData = { locale };
+      season.localeData.push(localeData);
+    }
+    // basedOnDefaultLocale is always provided, no check needed
+    localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
+    localeData.description = description && description[locale];
+    localeData.endYear = endYear && endYear[locale];
+    localeData.startYear = startYear && startYear[locale];
+    localeData.hasTitle = hasTitle && hasTitle[locale];
+    // title is always provided, no check needed
+    localeData.title = title && title[locale];
+  });
+  console.log('season', season);
   const url = `${baseUrl}/v004/media/serieSeasons`;
-  await post(authenticationToken, locale, url, { ...cp, uuid: seasonId, name, serie: { uuid: seriesEntryId }, defaultLocale: 'en' });
+  await post(authenticationToken, locale, url, season);
 }
 
 export async function deleteSeason (baseUrl, authenticationToken, locale, { seasonId }) {
