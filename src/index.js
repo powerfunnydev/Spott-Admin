@@ -42,6 +42,7 @@ import SeasonCreate from './pages/content/seasons/create';
 import SeriesList from './pages/content/series/list';
 import SeriesRead from './pages/content/series/read';
 import SeriesCreate from './pages/content/series/create';
+import SeriesEdit from './pages/content/series/edit';
 import TvGuideCreateEntry from './pages/tvGuide/create';
 import TvGuideEditEntry from './pages/tvGuide/edit';
 import TvGuideList from './pages/tvGuide/list';
@@ -127,6 +128,7 @@ function getRoutes ({ getState }) {
           <Route component={SeriesRead} path='read/:seriesEntryId'>
             <Route component={SeasonCreate} path='create/season'/>
           </Route>
+          <Route component={SeriesEdit} path='edit/:seriesEntryId'/>
           <Route path='read/:seriesEntryId'>
             <Route path='seasons'>
               <Route component={SeasonRead} path='read/:seasonId'>
