@@ -81,6 +81,7 @@ export function logout () {
     if (localStorage) {
       localStorage.removeItem('session');
     }
+    window.location.reload();
   };
 }
 
