@@ -47,15 +47,52 @@ export function transformCharacterSubscription ({
     medium: { id: mediumId, title }
   };
 }
-
-export function transformListMedium ({ title, type, posterImage, profileImage, uuid: id }) {
+/**
+ *  Light version of a medium. No locales includes.
+ */
+export function transformListMedium ({ auditInfo, title, type, posterImage, profileImage, uuid: id }) {
   return {
     id,
     title,
     type,
     posterImage: posterImage && { id: posterImage.uuid, url: posterImage. url },
-    profileImage: profileImage && { id: profileImage.uuid, url: profileImage. url }
+    profileImage: profileImage && { id: profileImage.uuid, url: profileImage. url },
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
   };
+}
+
+/**
+ *  Complete version of a medium. Locales includes.
+ */
+export function transformMedium ({ auditInfo, type, defaultLocale, externalReference, uuid: id, publishStatus, defaultTitle, localeData }) {
+  const seriesEntry = {
+    basedOnDefaultLocale: {},
+    description: {},
+    startYear: {},
+    title: {},
+    locales: [],
+    posterImage: {},
+    profileImage: {},
+    defaultLocale,
+    externalReference,
+    id,
+    publishStatus,
+    type,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
+  };
+  for (const { basedOnDefaultLocale, description, locale,
+    posterImage, profileCover, startYear, title } of localeData) {
+    seriesEntry.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+    seriesEntry.description[locale] = description;
+    seriesEntry.startYear[locale] = startYear;
+    seriesEntry.title[locale] = title;
+    seriesEntry.locales.push(locale);
+    seriesEntry.profileImage[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
+    seriesEntry.posterImage[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
+  }
+  return seriesEntry;
 }
 
 // Can transforms medium subscriptions and medium syncs.
@@ -117,7 +154,7 @@ export function transformActivityData (dataList, transformer) {
   *   relatedCharacterIds: [ '1234', '1235', ... ]
   *   relatedVideoId: '1234',
   *   seasonId: 'abc12',
-  *   seriesId: 'bca12',
+  *   seriesEntryId: 'bca12',
   *   title: { en: 'Pilot', fr: 'Pilot', nl: 'Pilot' }
   * }
   */
@@ -141,7 +178,7 @@ export function transformEpisode ({ availabilities, characters, contentProducers
     relatedCharacterIds: characters.map((c) => c.character.uuid),
     relatedVideoId: video && video.uuid,
     seasonId: season.uuid,
-    seriesId: serie.uuid,
+    seriesEntryId: serie.uuid,
     title: {} // Locale data
   };
   for (const { basedOnDefaultLocale, description, hasTitle, locale, posterImage, profileCover, title } of localeData) {
@@ -177,7 +214,7 @@ export function transformEpisode ({ availabilities, characters, contentProducers
   *   [poster]: { en: ..., fr: ..., nl: ... },
   *   publishStatus: 'DRAFT' || 'PUBLISH',
   *   relatedCharacterIds: [ '1234', '1235', ... ],
-  *   seriesId: 'abc123',
+  *   seriesEntryId: 'abc123',
   *   startYear: { en: 1991, fr: 1991, nl: 1991 },
   *   title: { en: 'Home', fr: 'A la maison', nl: 'Thuis' }
   * }
@@ -201,7 +238,7 @@ export function transformSeason ({ availabilities, characters, defaultLocale,
     poster: {}, // Locale data
     publishStatus,
     relatedCharacterIds: characters.map((c) => c.character.uuid),
-    seriesId: serie.uuid,
+    seriesEntryId: serie.uuid,
     startYear: {}, // Locale data
     title: {} // Locale data
   };
@@ -218,6 +255,29 @@ export function transformSeason ({ availabilities, characters, defaultLocale,
     season.poster[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
   }
   return season;
+}
+export function transformSeriesEntry004 (serieEntry) {
+  return transformMedium(serieEntry);
+}
+
+export function transformSeason004 (season) {
+  return transformMedium(season);
+}
+
+export function transformEpisode004 (episode) {
+  return transformMedium(episode);
+}
+
+export function transformListEpisode (episode) {
+  return transformListMedium(episode);
+}
+
+export function transformListSeason (season) {
+  return transformListMedium(season);
+}
+
+export function transformSeriesEntry (series) {
+  return transformListMedium(series);
 }
 
 export function transformBroadcastChannel ({ name, uuid: id, logo, broadcaster }) {
@@ -250,7 +310,7 @@ export function transformPaging ({ page, pageCount, pageSize, totalResultCount }
   return { page, pageCount, pageSize, totalResultCount };
 }
 
-export function transformUser ({ avatar, languages, dateOfBirth, disabled, disabledReason,
+export function transformUser ({ profileImage, avatar, languages, dateOfBirth, disabled, disabledReason,
   userName, gender, firstName, lastName, email, uuid: id, roles, ...restProps }) {
   const obj = {};
   const broadcasters = [];
@@ -272,6 +332,7 @@ export function transformUser ({ avatar, languages, dateOfBirth, disabled, disab
     broadcasters,
     contentProducers,
     avatar: avatar && { url: avatar.url } || {},
+    profileImage: profileImage && { url: profileImage.url } || {},
     userStatus: disabled && ACTIVE || INACTIVE,
     languages,
     disabledReason,

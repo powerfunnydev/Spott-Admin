@@ -1,4 +1,5 @@
 import { get } from './request';
+import { ADMIN, BROADCASTER, CONTENT_MANAGER } from '../constants/userRoles';
 
 /**
  * GET /config.json
@@ -35,14 +36,14 @@ export async function getConfiguration () {
 /**
  * GET /system/configuration
  */
-export async function getAuthorizedConfiguration (baseUrl, authenticationToken, locale) {
+export async function getAuthorizedConfiguration (baseUrl, authenticationToken, locale, roles) {
   const { body: { supportedLanguages } } = await get(authenticationToken, locale, `${baseUrl}/v003/system/configuration`);
   const { body: countries } = await get(authenticationToken, locale, `${baseUrl}/v003/system/countries`);
   const { body: currencies } = await get(authenticationToken, locale, `${baseUrl}/v003/system/currencies`);
-  const { body: feedEntryTypes } = await get(authenticationToken, locale, `${baseUrl}/v003/feed/entryTypes`);
+  const { body: feedEntryTypes } = (roles.includes(ADMIN) || roles.includes(CONTENT_MANAGER)) && await get(authenticationToken, locale, `${baseUrl}/v003/feed/entryTypes`);
   const { body: { data: applications } } = await get(authenticationToken, locale, `${baseUrl}/v003/system/mobileApplications?pageSize=1000`);
-  const { body: { value: pushWindowSizeInMinutes } } = await get(authenticationToken, locale, `${baseUrl}/v003/system/properties/push.default.window.in.minutes.`);
-  const { body: actionTypes } = await get(authenticationToken, locale, `${baseUrl}/v003/push/actionTypes`);
+  const { body: { value: pushWindowSizeInMinutes } } = roles.includes(ADMIN) && await get(authenticationToken, locale, `${baseUrl}/v003/system/properties/push.default.window.in.minutes.`) || { body: { value: undefined } };
+  const { body: actionTypes } = (roles.includes(ADMIN) || roles.includes(CONTENT_MANAGER)) && await get(authenticationToken, locale, `${baseUrl}/v003/push/actionTypes`) || { body: undefined };
   const genders = await get(authenticationToken, locale, `${baseUrl}/v003/system/genders`);
   return {
     actionTypes,
@@ -57,8 +58,8 @@ export async function getAuthorizedConfiguration (baseUrl, authenticationToken, 
       obj[current.code] = { description: current.description, id: current.code, symbol: current.symbol };
       return obj;
     }, {}),
-    defaultPushWindowSizeInMinutes: parseInt(pushWindowSizeInMinutes, 10),
-    feedEntryTypes: feedEntryTypes.reduce((obj, current) => {
+    defaultPushWindowSizeInMinutes: pushWindowSizeInMinutes && parseInt(pushWindowSizeInMinutes, 10),
+    feedEntryTypes: feedEntryTypes && feedEntryTypes.reduce((obj, current) => {
         // Note thet the type acts as 'uuid' for the backend.
       obj[current.type] = current;
       return obj;

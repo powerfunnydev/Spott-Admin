@@ -1,24 +1,26 @@
 import { fromJS } from 'immutable';
+import { serializeFilterHasSeriesEntries, serializeFilterHasUsers, serializeFilterHasBroadcastChannels, serializeFilterHasBroadcasters, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers, serializeFilterHasEpisodes, fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, fetchListSuccess, fetchListError } from './utils';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
-import * as episodeActions from '../actions/episode';
-import * as seasonActions from '../actions/season';
-import * as mediaActions from '../actions/media';
 import * as broadcastersActions from '../actions/broadcaster';
 import * as contentProducersActions from '../actions/contentProducer';
-import * as userActions from '../actions/user';
+import * as episodeActions from '../actions/episode';
+import * as mediaActions from '../actions/media';
 import * as reportingActions from '../actions/reporting';
+import * as seasonActions from '../actions/season';
+import * as seriesActions from '../actions/series';
 import * as tvGuideActions from '../actions/tvGuide';
-import { serializeFilterHasUsers, serializeFilterHasBroadcastChannels, serializeFilterHasBroadcasters, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers, serializeFilterHasEpisodes, serializeFilterHasSeries, fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, fetchListSuccess, fetchListError } from './utils';
+import * as userActions from '../actions/user';
 
 export default (state = fromJS({
   entities: {
     ages: {},
-    broadcasters: {},
     broadcastChannels: {},
+    broadcasters: {},
     contentProducers: {},
     events: {},
     genders: {},
-    listMedia: {},
+    listMedia: {}, // listMedia is the light version of media, without locales
+    media: {}, // completed version of media, with locales
     tvGuideEntries: {},
     users: {}
   },
@@ -26,20 +28,26 @@ export default (state = fromJS({
     ages: {},
     broadcastChannels: {},
     events: {},
+    genders: {},
+
     filterHasBroadcastChannels: {},
     filterHasBroadcasters: {},
     filterHasContentProducers: {},
     filterHasEpisodes: {},
     filterHasSeasons: {},
+    filterHasSeriesEntries: {},
     filterHasTvGuideEntries: {},
     filterHasUsers: {},
-    genders: {},
+
     searchStringHasBroadcastChannels: {},
     searchStringHasBroadcasters: {},
     searchStringHasContentProducers: {},
-    searchStringHasUsers: {},
     searchStringHasMedia: {},
-    searchStringHasSeries: {}
+    searchStringHasSeriesEntries: {},
+    searchStringHasUsers: {},
+
+    seriesEntryHasSeasons: {},
+    seasonHasEpisodes: {}
   }
 }), action) => {
   switch (action.type) {
@@ -137,6 +145,78 @@ export default (state = fromJS({
     case contentProducersActions.CONTENT_PRODUCER_SEARCH_ERROR:
       return searchError(state, 'searchStringHasContentProducers', action.searchString, action.error);
 
+    // Seasons
+    // /////////////////
+
+    case episodeActions.EPISODE_FETCH_START:
+      return fetchStart(state, [ 'entities', 'media', action.episodeId ]);
+    case episodeActions.EPISODE_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.episodeId ], action.data);
+    case episodeActions.EPISODE_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'media', action.episodeId ], action.error);
+
+    // Seasons
+    // /////////////////
+
+    case seasonActions.SEASON_FETCH_START:
+      return fetchStart(state, [ 'entities', 'media', action.seasonId ]);
+    case seasonActions.SEASON_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.seasonId ], action.data);
+    case seasonActions.SEASON_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'media', action.seasonId ], action.error);
+
+    case seasonActions.EPISODES_SEARCH_START:
+      return searchStart(state, 'filterHasEpisodes', serializeFilterHasEpisodes(action));
+    case seasonActions.EPISODES_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'filterHasEpisodes', serializeFilterHasEpisodes(action), action.data);
+    case seasonActions.EPISODES_SEARCH_ERROR:
+      return searchError(state, 'filterHasEpisodes', serializeFilterHasEpisodes(action), action.error);
+
+    case seasonActions.SEASON_EPISODES_FETCH_START:
+      return searchStart(state, 'seasonHasEpisodes', action.seasonId);
+    case seasonActions.SEASON_EPISODES_FETCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'seasonHasEpisodes', action.seasonId, action.data.data);
+    case seasonActions.SEASON_EPISODES_FETCH_ERROR:
+      return searchError(state, 'seasonHasEpisodes', action.seasonId, action.error);
+
+    // Series Entries
+    // /////////////////
+
+    case seriesActions.SERIES_ENTRY_FETCH_START:
+      return fetchStart(state, [ 'entities', 'media', action.seriesEntryId ]);
+    case seriesActions.SERIES_ENTRY_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.seriesEntryId ], action.data);
+    case seriesActions.SERIES_ENTRY_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'media', action.seriesEntryId ], action.error);
+
+    case seriesActions.SERIES_ENTRY_SEASONS_FETCH_START:
+      return searchStart(state, 'seriesEntryHasSeasons', action.seriesEntryId);
+    case seriesActions.SERIES_ENTRY_SEASONS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'seriesEntryHasSeasons', action.seriesEntryId, action.data.data);
+    case seriesActions.SERIES_ENTRY_SEASONS_FETCH_ERROR:
+      return searchError(state, 'seriesEntryHasSeasons', action.seriesEntryId, action.error);
+
+    case seriesActions.SERIES_ENTRIES_FETCH_START:
+      return searchStart(state, 'filterHasSeriesEntries', serializeFilterHasSeriesEntries(action));
+    case seriesActions.SERIES_ENTRIES_FETCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'filterHasSeriesEntries', serializeFilterHasSeriesEntries(action), action.data.data);
+    case seriesActions.SERIES_ENTRIES_FETCH_ERROR:
+      return searchError(state, 'filterHasSeriesEntries', serializeFilterHasSeriesEntries(action), action.error);
+
+    case seriesActions.SERIES_ENTRIES_SEARCH_START:
+      return searchStart(state, 'searchStringHasSeriesEntries', action.searchString);
+    case seriesActions.SERIES_ENTRIES_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'searchStringHasSeriesEntries', action.searchString, action.data);
+    case seriesActions.SERIES_ENTRIES_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasSeriesEntries', action.searchString, action.error);
+
+    case seriesActions.SEASONS_SEARCH_START:
+      return searchStart(state, 'seriesEntryHasSeasons', action.seriesEntryId);
+    case seriesActions.SEASONS_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'seriesEntryHasSeasons', action.seriesEntryId, action.data);
+    case seriesActions.SEASONS_SEARCH_ERROR:
+      return searchError(state, 'seriesEntryHasSeasons', action.seriesEntryId, action.error);
+
     // Tv Guide
     // /////////////////
 
@@ -162,26 +242,12 @@ export default (state = fromJS({
     // Media
     // /////
 
-    case episodeActions.EPISODES_SEARCH_START:
-      return searchStart(state, 'filterHasSeasons', serializeFilterHasEpisodes(action));
-    case episodeActions.EPISODES_SEARCH_SUCCESS:
-      return searchSuccess(state, 'listMedia', 'filterHasEpisodes', serializeFilterHasEpisodes(action), action.data);
-    case episodeActions.EPISODES_SEARCH_ERROR:
-      return searchError(state, 'filterHasSeasons', serializeFilterHasEpisodes(action), action.error);
-
     case mediaActions.MEDIA_SEARCH_START:
       return searchStart(state, 'searchStringHasMedia', action.searchString);
     case mediaActions.MEDIA_SEARCH_SUCCESS:
       return searchSuccess(state, 'listMedia', 'searchStringHasMedia', action.searchString, action.data);
     case mediaActions.MEDIA_SEARCH_ERROR:
       return searchError(state, 'searchStringHasMedia', action.searchString, action.error);
-
-    case seasonActions.SEASONS_SEARCH_START:
-      return searchStart(state, 'filterHasSeasons', serializeFilterHasSeries(action));
-    case seasonActions.SEASONS_SEARCH_SUCCESS:
-      return searchSuccess(state, 'listMedia', 'filterHasSeasons', serializeFilterHasSeries(action), action.data);
-    case seasonActions.SEASONS_SEARCH_ERROR:
-      return searchError(state, 'filterHasSeasons', serializeFilterHasSeries(action), action.error);
 
     // Reporting
     // /////////

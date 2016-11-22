@@ -112,7 +112,7 @@ export default class Menu extends Component {
           <RouterLink to='tv-guide'>
             <button key='tv-guide' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>TV Guide</button>
           </RouterLink>}
-          {hideHomePageLinks && isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
+          {hideHomePageLinks && isAuthenticated && (userRoles.includes(ADMIN)) &&
             <RouterLink to='users'>
               <button key='users' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Users</button>
             </RouterLink>}

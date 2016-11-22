@@ -1,8 +1,8 @@
-import { del, get, post, postFormData } from './request';
-import { transformUser, transformContentProducers, transformContentProducer } from './transformers';
+import { del, get, post } from './request';
+import { transformSeriesEntry, transformSeriesEntry004, transformListSeason } from './transformers';
 
-export async function fetchContentProducerUsers (baseUrl, authenticationToken, locale, { contentProducerId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
-  let url = `${baseUrl}/v004/media/contentProducers/${contentProducerId}/users?page=${page}&pageSize=${pageSize}`;
+export async function fetchSeriesEntrySeasons (baseUrl, authenticationToken, locale, { seriesEntryId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/media/series/${seriesEntryId}/seasons?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${searchString}`);
   }
@@ -12,12 +12,12 @@ export async function fetchContentProducerUsers (baseUrl, authenticationToken, l
   const { body } = await get(authenticationToken, locale, url);
   // There is also usable data in body (not only in data field).
   // We need also fields page, pageCount,...
-  body.data = body.data.map(transformUser);
+  body.data = body.data.map(transformListSeason);
   return body;
 }
 
-export async function fetchContentProducers (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
-  let url = `${baseUrl}/v004/media/contentProducers?page=${page}&pageSize=${pageSize}`;
+export async function fetchSeriesEntries (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/media/series?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${searchString}`);
   }
@@ -25,62 +25,62 @@ export async function fetchContentProducers (baseUrl, authenticationToken, local
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }
   const { body } = await get(authenticationToken, locale, url);
-  return transformContentProducers(body);
+  // There is also usable data in body (not only in data field).
+  // We need also fields page, pageCount,...
+  body.data = body.data.map(transformSeriesEntry);
+  return body;
 }
 
-export async function fetchContentProducer (baseUrl, authenticationToken, locale, { contentProducerId }) {
-  const url = `${baseUrl}/v004/media/contentProducers/${contentProducerId}`;
+export async function fetchSeriesEntry (baseUrl, authenticationToken, locale, { seriesEntryId }) {
+  const url = `${baseUrl}/v004/media/series/${seriesEntryId}`;
   const { body } = await get(authenticationToken, locale, url);
   // console.log('before transform', { ...body });
-  const result = transformContentProducer(body);
+  const result = transformSeriesEntry004(body);
   // console.log('after tranform', result);
   return result;
 }
 
-export async function persistContentProducer (baseUrl, authenticationToken, locale, { id, name }) {
-  let cp = {};
+export async function persistSeriesEntry (baseUrl, authenticationToken, locale, { id, title }) {
+  let seriesEntry = {};
   if (id) {
-    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/contentProducers/${id}`);
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/series/${id}`);
     // console.log('body', body);
-    cp = body;
+    seriesEntry = body;
   }
-  const url = `${baseUrl}/v004/media/contentProducers`;
-  await post(authenticationToken, locale, url, { ...cp, uuid: id, name });
+  const url = `${baseUrl}/v004/media/series`;
+  await post(authenticationToken, locale, url, { ...seriesEntry, uuid: id, defaultLocale: 'nl' });
 }
 
-export async function deleteContentProducer (baseUrl, authenticationToken, locale, { contentProducerId }) {
-  await del(authenticationToken, locale, `${baseUrl}/v004/media/contentProducers/${contentProducerId}`);
+export async function deleteSeriesEntry (baseUrl, authenticationToken, locale, { seriesEntryId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/series/${seriesEntryId}`);
 }
 
-export async function deleteContentProducers (baseUrl, authenticationToken, locale, { contentProducerIds }) {
-  for (const contentProducerId of contentProducerIds) {
-    await deleteContentProducer(baseUrl, authenticationToken, locale, { contentProducerId });
+export async function deleteSeriesEntries (baseUrl, authenticationToken, locale, { seriesEntryIds }) {
+  for (const seriesEntryId of seriesEntryIds) {
+    await deleteSeriesEntry(baseUrl, authenticationToken, locale, { seriesEntryId });
   }
 }
 
 // Used for autocompletion.
-export async function searchContentProducers (baseUrl, authenticationToken, locale, { searchString = '' }) {
-  let searchUrl = `${baseUrl}/v004/media/contentProducers?pageSize=25`;
+export async function searchSeriesEntries (baseUrl, authenticationToken, locale, { searchString = '' }) {
+  let searchUrl = `${baseUrl}/v004/media/series?pageSize=25`;
   if (searchString) {
     searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
   }
   const { body: { data } } = await get(authenticationToken, locale, searchUrl);
-  return data.map(transformContentProducer);
+  return data.map(transformSeriesEntry);
 }
 
-export async function persistLinkUser (baseUrl, authenticationToken, locale, { contentProducerId, userId }) {
-  const url = `${baseUrl}/v004/media/contentProducers/${contentProducerId}/users/${userId}`;
-  return await post(authenticationToken, locale, url);
-}
-
-export async function deleteLinkUser (baseUrl, authenticationToken, locale, { contentProducerId, userId }) {
-  const url = `${baseUrl}/v004/media/contentProducers/${contentProducerId}/users/${userId}`;
-  return await del(authenticationToken, locale, url);
-}
-
-export async function uploadContentProducerImage (baseUrl, authenticationToken, locale, { contentProducerId, image, callback }) {
-  const formData = new FormData();
-  formData.append('uuid', contentProducerId);
-  formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/contentProducers/${contentProducerId}/logo`, formData, callback);
+export async function searchSeasons (baseUrl, authenticationToken, locale, { searchString, seriesEntryId }) {
+  console.log('seriesEntryId', seriesEntryId);
+  if (!seriesEntryId) {
+    return [];
+  }
+  let searchUrl = `${baseUrl}/v004/media/series/${seriesEntryId}/seasons?pageSize=25`;
+  if (searchString) {
+    searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
+  }
+  console.log('url', searchUrl);
+  const { body: { data } } = await get(authenticationToken, locale, searchUrl);
+  return data.map(transformListSeason);
 }
