@@ -42,6 +42,10 @@ function validate (values, { t }) {
 export default class EditSeriesEntries extends Component {
 
   static propTypes = {
+    change: PropTypes.func.isRequired,
+    currentDefaultLocale: PropTypes.string,
+    currentSeriesEntry: ImmutablePropTypes.map.isRequired,
+    dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
@@ -58,13 +62,15 @@ export default class EditSeriesEntries extends Component {
     super(props);
     this.submit = ::this.submit;
     this.redirect = ::this.redirect;
+    this.onChangeDefaultLocale = ::this.onChangeDefaultLocale;
   }
 
   async componentWillMount () {
-    if (this.props.params.id) {
-      const editObj = await this.props.loadSeriesEntry(this.props.params.id);
+    if (this.props.params.seriesEntryId) {
+      const editObj = await this.props.loadSeriesEntry(this.props.params.seriesEntryId);
       this.props.initialize({
-        name: editObj.name
+        ...editObj,
+        title: editObj.title[editObj.defaultLocale]
       });
     }
   }
@@ -82,8 +88,37 @@ export default class EditSeriesEntries extends Component {
     }
   }
 
+  onChangeDefaultLocale (locale) {
+    const { currentSeriesEntry, change, dispatch } = this.props;
+    dispatch(change('title', currentSeriesEntry.getIn([ 'title', locale ]) || ''));
+    dispatch(change('startYear', currentSeriesEntry.getIn([ 'startYear', locale ]) || ''));
+    dispatch(change('endYear', currentSeriesEntry.getIn([ 'endYear', locale ]) || ''));
+    dispatch(change('summary', currentSeriesEntry.getIn([ 'summary', locale ]) || ''));
+  }
+
+  static styles = {
+    selectInput: {
+      paddingTop: '20px',
+      paddingBottom: '20px',
+      paddingLeft: '22.5px',
+      paddingRight: '22.5px',
+      width: '180px'
+    },
+    background: {
+      backgroundColor: colors.lightGray4
+    },
+    paddingTop: {
+      paddingTop: '1.25em'
+    },
+    row: {
+      display: 'flex',
+      flexDirection: 'row'
+    }
+  }
+
   render () {
-    const { localeNames, location, handleSubmit } = this.props;
+    const { localeNames, currentDefaultLocale, currentSeriesEntry, location, handleSubmit } = this.props;
+    const { styles } = this.constructor;
     return (
       <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
         <Header currentLocation={location} hideHomePageLinks />
@@ -91,17 +126,16 @@ export default class EditSeriesEntries extends Component {
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
           <Tabs>
             <Tab title='Details'>
-              <Section noPadding style={{ backgroundColor: colors.lightGray4 }}>
+              <Section noPadding style={styles.background}>
                 <Field
                   component={SelectInput}
-                  getItemText={(language) => localeNames.get(language)}
+                  getItemText={(language) => { const locale = localeNames.get(language); return currentSeriesEntry.get('defaultLocale') === language ? `${locale} (Base)` : locale; }}
                   getOptions={(language) => localeNames.keySeq().toArray()}
                   name='defaultLocale'
                   options={localeNames.keySeq().toArray()}
-                  placeholder='Default language' style={{
-                    padding: '20px 22.5px'
-                  }}/>
-                  <Line/>
+                  placeholder='Default language'
+                  style={styles.selectInput}
+                  onChange={this.onChangeDefaultLocale}/>
               </Section>
               <Section>
                 <FormSubtitle first>General</FormSubtitle>
@@ -111,6 +145,54 @@ export default class EditSeriesEntries extends Component {
                   name='title'
                   placeholder='Series title'
                   required/>
+                <Field
+                  component={TextInput}
+                  label='Start year'
+                  name='startYear'
+                  placeholder='Start year'
+                  type='number'/>
+                <Field
+                  component={TextInput}
+                  label='End year'
+                  name='endYear'
+                  placeholder='End year'
+                  type='number'/>
+                <Field
+                  component={TextInput}
+                  label='Summary'
+                  name='summary'
+                  placeholder='Summary'
+                  type='multiline'/>
+                <FormSubtitle>Images</FormSubtitle>
+                <div style={[ styles.paddingTop, styles.row ]}>
+                  <div>
+                    <Label text='Profile image' />
+                    <Dropzone
+                      accept='image/*'
+                      imageUrl={currentSeriesEntry.getIn([ 'profileImage', currentSeriesEntry.get('defaultLocale'), 'url' ])}/>
+                  </div>
+                </div>
+              </Section>
+            </Tab>
+            <Tab title='Helpers'>
+              {/* TODO */}
+              <Section>
+                <FormSubtitle first>Content</FormSubtitle>
+                ...
+              </Section>
+            </Tab>
+            <Tab title='Interactive video'>
+              {/* TODO */}
+              <Section>
+                <FormSubtitle first>Content</FormSubtitle>
+                ...
+              </Section>
+            </Tab>
+            <Tab title='Availability'>
+              {/* TODO */}
+              <Section>
+                <FormSubtitle first>Content</FormSubtitle>
+                ...
               </Section>
             </Tab>
           </Tabs>

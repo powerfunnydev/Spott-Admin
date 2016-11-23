@@ -145,7 +145,7 @@ export default (state = fromJS({
     case contentProducersActions.CONTENT_PRODUCER_SEARCH_ERROR:
       return searchError(state, 'searchStringHasContentProducers', action.searchString, action.error);
 
-    // Seasons
+    // Episodes
     // /////////////////
 
     case episodeActions.EPISODE_FETCH_START:
