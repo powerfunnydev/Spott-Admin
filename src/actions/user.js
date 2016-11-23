@@ -81,6 +81,8 @@ export function logout () {
     if (localStorage) {
       localStorage.removeItem('session');
     }
+    // Go to home page and reload.
+    window.location.href = '/';
   };
 }
 
