@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import TextInput from '../../../_common/inputs/textInput';
 import Header from '../../../app/header';
-import { Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
+import { Root, FormDescription, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import Line from '../../../_common/components/line';
 import localized from '../../../_common/localized';
 import * as actions from './actions';
@@ -190,10 +190,7 @@ export default class EditSeriesEntries extends Component {
             </Tab>
             <Tab title='Availability'>
               {/* TODO */}
-              <Section>
-                <FormSubtitle first>Content</FormSubtitle>
-                ...
-              </Section>
+
             </Tab>
           </Tabs>
         </EditTemplate>
