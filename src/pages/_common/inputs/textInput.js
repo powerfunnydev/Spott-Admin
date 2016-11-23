@@ -15,6 +15,7 @@ export default class TextInput extends Component {
     placeholder: PropTypes.string,
     required: PropTypes.bool,
     style: PropTypes.object,
+    type: PropTypes.string,
     onChange: PropTypes.func
   };
 
@@ -57,19 +58,42 @@ export default class TextInput extends Component {
     text: {
       paddingLeft: '10px',
       paddingRight: '10px',
-      lineHeight: '30px',
       fontSize: '0.688em',
       color: colors.veryDarkGray
+    },
+    lineHeight: {
+      lineHeight: '30px'
+    },
+    textArea: {
+      paddingTop: '8px',
+      height: '60px'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { placeholder, disabled, first, input, label, meta, required, style } = this.props;
+    const { placeholder, disabled, first, input, label, meta, required, style, type } = this.props;
     return (
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
-        <input {...input} placeholder={placeholder} style={[ styles.base, disabled && styles.disabled, meta.touched && meta.error && styles.error, styles.text, style ]} onChange={this.onChange} />
+        {type !== 'multiline' &&
+          <input
+            {...input}
+            disabled={disabled}
+            placeholder={placeholder}
+            required={required}
+            style={[ styles.base, disabled && styles.disabled, meta.touched && meta.error && styles.error, styles.text, styles.lineHeight, style ]}
+            type={type}
+            onChange={this.onChange} />}
+        {type === 'multiline' &&
+          <textarea
+            {...input}
+            cols={4}
+            disabled={disabled}
+            placeholder={placeholder}
+            required={required}
+            style={[ styles.base, styles.textArea, disabled && styles.disabled, meta.touched && meta.error && styles.error, styles.text, style ]}
+            onChange={this.onChange} />}
         {meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
       </div>
     );
