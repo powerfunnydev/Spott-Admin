@@ -1,6 +1,6 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
-import Dropzone from '../../../../_common/dropzone';
+import Dropzone from '../../../../_common/dropzone/old';
 import { reduxForm, Field } from 'redux-form/immutable';
 import { buttonStyles } from '../../../../_common/styles';
 import createMediaStyles from '../styles';

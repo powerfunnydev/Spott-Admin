@@ -104,7 +104,6 @@ const hookedHttpinvoke = httpinvoke.hook('finished', (err, output, statusCode, h
       case 400:
         responseError = new BadRequestError(newOutput); break;
       case 401:
-        responseError = new UnauthorizedError(newOutput); break;
       case 403:
         // We received 403 Forbidden. We are not authorized. This can be due to an invalid
         // expired authentication token. We do a hard reload of the application, which will
