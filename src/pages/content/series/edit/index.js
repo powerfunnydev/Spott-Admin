@@ -18,6 +18,7 @@ import Dropzone from '../../../_common/dropzone';
 import Label from '../../../_common/inputs/_label';
 import selector from './selector';
 import ImmutablePropTypes from 'react-immutable-proptypes';
+import Availabilities from '../../_availabilities/list';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -117,8 +118,10 @@ export default class EditSeriesEntries extends Component {
   }
 
   render () {
-    const { localeNames, currentDefaultLocale, currentSeriesEntry, location, handleSubmit } = this.props;
+    const { children, localeNames, currentDefaultLocale, currentSeriesEntry, location, handleSubmit } = this.props;
     const { styles } = this.constructor;
+
+    console.warn('currentSeriesEntry', currentSeriesEntry.toJS());
     return (
       <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
         <Header currentLocation={location} hideHomePageLinks />
@@ -189,11 +192,13 @@ export default class EditSeriesEntries extends Component {
               </Section>
             </Tab>
             <Tab title='Availability'>
-              {/* TODO */}
-
+              <Availabilities
+                availabilities={currentSeriesEntry.get('availabilities')}
+                location={location} />
             </Tab>
           </Tabs>
         </EditTemplate>
+        {children}
       </Root>
     );
   }

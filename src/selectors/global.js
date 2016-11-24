@@ -3,6 +3,7 @@ export const apptvateWebsiteBaseUrlSelector = (state) => state.getIn([ 'global',
 export const authenticationTokenSelector = (state) => state.getIn([ 'global', 'authentication', 'authenticationToken' ]);
 export const cmsBaseUrlSelector = (state) => state.getIn([ 'global', 'configuration', 'urls', 'cms' ]);
 export const cmsNextBaseUrlSelector = (state) => state.getIn([ 'global', 'configuration', 'urls', 'cmsNext' ]);
+export const countriesSelector = (state) => state.getIn([ 'global', 'configuration', 'countries' ]);
 export const currentLocaleSelector = (state) => state.getIn([ 'global', 'configuration', 'currentLocale' ]);
 export const currentModalSelector = (state) => state.getIn([ 'global', 'currentModal' ]);
 export const isAuthenticatedSelector = (state) => Boolean(state.getIn([ 'global', 'authentication', 'authenticationToken' ]));

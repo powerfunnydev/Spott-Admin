@@ -9,32 +9,10 @@ const crossImage = require('./cross.svg');
 
 /**
  * Dialog style used for this modal.
- * Note: get merged with defaults by react-modal
+ * Note: we don't use react-modal because it gave some blur issues when
+ * we vertically allign transform: 'translateY(-50%)'
  */
 const dialogStyle = {
-  /* previous solution, but it gave some blur issues
-  overlay: {
-    zIndex: 100,
-    backgroundColor: 'rgba(0, 0, 0, 0.80)'
-  },
-  content: {
-    backgroundColor: 'transparent',
-    border: 'none',
-    fontFamily: 'Rubik-Regular',
-    fontWeight: 'normal',
-    // Set width and center horizontally
-    margin: 'auto',
-    minWidth: 200,
-    maxWidth: 430,
-    // Internal padding
-    padding: 0,
-    // Fit height to content, centering vertically
-    bottom: 'auto',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    overflow: 'visible'
-  }*/
-
   overlay: {
     position: 'fixed',
     top: 0,
@@ -146,7 +124,8 @@ export default class CreateModal extends Component {
     },
     title: {
       ...makeTextStyle(fontWeights.regular, '1.125em', 0.5),
-      color: '#536970'
+      color: '#536970',
+      fontWeight: 'normal'
     },
     wrapper: {
       boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)'
