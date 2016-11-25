@@ -1,5 +1,5 @@
 import { del, get, post } from './request';
-import { transformSeriesEntry, transformSeriesEntry004, transformListSeason } from './transformers';
+import { transformListSeriesEntry, transformSeriesEntry004, transformListSeason } from './transformers';
 
 export async function fetchSeriesEntrySeasons (baseUrl, authenticationToken, locale, { seriesEntryId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/series/${seriesEntryId}/seasons?page=${page}&pageSize=${pageSize}`;
@@ -27,7 +27,7 @@ export async function fetchSeriesEntries (baseUrl, authenticationToken, locale, 
   const { body } = await get(authenticationToken, locale, url);
   // There is also usable data in body (not only in data field).
   // We need also fields page, pageCount,...
-  body.data = body.data.map(transformSeriesEntry);
+  body.data = body.data.map(transformListSeriesEntry);
   return body;
 }
 
@@ -95,7 +95,7 @@ export async function searchSeriesEntries (baseUrl, authenticationToken, locale,
     searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
   }
   const { body: { data } } = await get(authenticationToken, locale, searchUrl);
-  return data.map(transformSeriesEntry);
+  return data.map(transformListSeriesEntry);
 }
 
 export async function searchSeasons (baseUrl, authenticationToken, locale, { searchString, seriesEntryId }) {

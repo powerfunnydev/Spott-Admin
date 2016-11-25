@@ -17,6 +17,7 @@ import Dropzone from '../../../_common/dropzone';
 import Label from '../../../_common/inputs/_label';
 import selector from './selector';
 import ImmutablePropTypes from 'react-immutable-proptypes';
+import Availabilities from '../../_availabilities/list';
 import { SERIES_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import LanguageBar from '../../../_common/components/languageBar';
@@ -210,17 +211,14 @@ export default class EditSeriesEntries extends Component {
               </Section>
             </Tab>
             <Tab title='Availability'>
-              {/* TODO */}
-              <Section>
-                <FormSubtitle first>Content</FormSubtitle>
-                ...
-              </Section>
+              <Availabilities
+                availabilities={currentSeriesEntry.get('availabilities')}
+                location={location} />
             </Tab>
             <Tab title='Audience'>
               {/* TODO */}
               <Section>
-                <FormSubtitle first>Location</FormSubtitle>
-                ...
+                <FormSubtitle first>Audience</FormSubtitle>
               </Section>
             </Tab>
           </Tabs>

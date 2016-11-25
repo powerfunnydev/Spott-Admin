@@ -25,14 +25,13 @@ export class CustomCel extends Component {
   static styles = {
     cell: {
       wordBreak: 'break-word',
-
       alignItems: 'center',
       color: colors.darkGray2,
       display: 'flex',
       fontSize: '0.75em',
       paddingLeft: '1em',
       paddingRight: '1em',
-      minHeight: '2.625em',
+      minHeight: 45,
       paddingTop: '1em',
       paddingBottom: '1em'
     },
