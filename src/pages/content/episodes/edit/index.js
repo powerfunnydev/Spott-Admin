@@ -20,7 +20,7 @@ import selector from './selector';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { FETCHING } from '../../../../constants/statusTypes';
 import SelectionDropdown from '../../../_common/components/selectionDropdown';
-import AddLanguage from '../../_addLanguage';
+import AddLanguage from '../../language/create';
 
 function validate (values, { t }) {
   const validationErrors = {};

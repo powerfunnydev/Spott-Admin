@@ -9,7 +9,6 @@ import { LOGIN_SUCCESS } from './actions/user';
 import { ADMIN, BROADCASTER, CONTENT_MANAGER } from './constants/userRoles';
 
 import App from './pages/app';
-import AddLanguageModal from './pages/content/_addLanguage';
 import BroadcastersList from './pages/content/broadcasters/list';
 import BroadcastersCreate from './pages/content/broadcasters/create';
 import BroadcastersEdit from './pages/content/broadcasters/edit';

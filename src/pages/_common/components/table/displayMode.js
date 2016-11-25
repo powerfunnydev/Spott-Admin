@@ -18,9 +18,15 @@ export default class DisplayMode extends Component {
     row: {
       display: 'flex',
       flexDirection: 'row',
-      borderRadius: '2px',
-      backgroundColor: colors.white,
-      border: `solid 1px ${colors.lightGray2}`
+      backgroundColor: colors.white
+    },
+    first: {
+      borderTopLeftRadius: '2px',
+      borderBottomLeftRadius: '2px'
+    },
+    last: {
+      borderTopRightRadius: '2px',
+      borderBottomRightRadius: '2px'
     },
     center: {
       height: '30px',
@@ -38,10 +44,18 @@ export default class DisplayMode extends Component {
       height: '10px'
     },
     notFirst: {
-      borderLeft: `solid 1px ${colors.lightGray2}`
+      marginLeft: '-1px'
     },
     clickable: {
-      cursor: 'pointer'
+      cursor: 'pointer',
+      border: `solid 1px ${colors.lightGray2}`,
+      ':hover': {
+        border: `solid 1px ${colors.lightGray3}`,
+        zIndex: 4
+      },
+      ':active': {
+        backgroundColor: colors.lightGray4
+      }
     },
     paddingLeft: {
       paddingLeft: '30px'
@@ -54,10 +68,10 @@ export default class DisplayMode extends Component {
     return (
       <div style={styles.paddingLeft}>
         { onChangeDisplay && <div style={styles.row}>
-          <div style={[ styles.center, onChangeDisplay && styles.clickable ]} onClick={onChangeDisplay.bind(this, 'list')}>
+          <div key='list' style={[ styles.center, onChangeDisplay && styles.clickable, styles.first ]} onClick={onChangeDisplay.bind(this, 'list')}>
             <img src={(display === undefined || display === 'list') ? listBlueIcon : listGrayIcon} style={styles.imageList}/>
           </div>
-          <div style={[ styles.center, onChangeDisplay && styles.clickable, styles.notFirst ]} onClick={onChangeDisplay.bind(this, 'grid')}>
+          <div key='grid' style={[ styles.center, onChangeDisplay && styles.clickable, styles.last, styles.notFirst ]} onClick={onChangeDisplay.bind(this, 'grid')}>
             <img src={(display === 'grid') ? gridBlueIcon : gridGrayIcon} style={styles.imageGrid}/>
           </div>
         </div>}
