@@ -73,6 +73,7 @@ export function transformMedium ({ number, auditInfo, type, defaultLocale, exter
     description: {},
     startYear: {},
     endYear: {},
+    hasTitle: {},
     title: {},
     locales: [],
     posterImage: {},
@@ -88,12 +89,13 @@ export function transformMedium ({ number, auditInfo, type, defaultLocale, exter
     seasonId: season && season.uuid
   };
   if (localeData) {
-    for (const { basedOnDefaultLocale, description, locale,
+    for (const { hasTitle, basedOnDefaultLocale, description, locale,
       posterImage, profileCover, endYear, startYear, title } of localeData) {
       seriesEntry.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
       seriesEntry.description[locale] = description;
       seriesEntry.startYear[locale] = startYear;
       seriesEntry.endYear[locale] = endYear;
+      seriesEntry.hasTitle[locale] = hasTitle;
       seriesEntry.title[locale] = title;
       seriesEntry.locales.push(locale);
       seriesEntry.profileImage[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;

@@ -8,7 +8,7 @@ import { makeTextStyle, fontWeights, Root, FormSubtitle, colors, EditTemplate } 
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import * as actions from './actions';
-import { EPISODE_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
+import { SEASON_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import Dropzone from '../../../_common/dropzone';
 import Header from '../../../app/header';
@@ -24,10 +24,9 @@ import LanguageBar from '../../../_common/components/languageBar';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { _activeLocale, defaultLocale, seriesEntryId, seasonId, title, hasTitle } = values.toJS();
+  const { _activeLocale, defaultLocale, seriesEntryId, title, hasTitle } = values.toJS();
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
   if (!seriesEntryId) { validationErrors.seriesEntryId = t('common.errors.required'); }
-  if (!seasonId) { validationErrors.seasonId = t('common.errors.required'); }
   if (hasTitle && title && hasTitle[_activeLocale] && !title[_activeLocale]) { validationErrors.title = validationErrors.title || {}; validationErrors.title[_activeLocale] = t('common.errors.required'); }
   // Done
   return validationErrors;
@@ -35,16 +34,15 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
-  loadEpisode: bindActionCreators(actions.loadEpisode, dispatch),
+  loadSeason: bindActionCreators(actions.loadSeason, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   closeModal: bindActionCreators(actions.closeModal, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
-  searchSeasons: bindActionCreators(actions.searchSeasons, dispatch),
   searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch)
 }))
 @reduxForm({
-  form: 'episodeEdit',
+  form: 'seasonEdit',
   validate
 })
 @Radium
@@ -55,8 +53,8 @@ export default class EditEpisodes extends Component {
     change: PropTypes.func.isRequired,
     children: PropTypes.node,
     closeModal: PropTypes.func.isRequired,
-    currentEpisode: ImmutablePropTypes.map.isRequired,
     currentModal: PropTypes.string,
+    currentSeason: ImmutablePropTypes.map.isRequired,
     currentSeasonId: PropTypes.string,
     currentSeriesEntryId: PropTypes.string,
     defaultLocale: PropTypes.string,
@@ -66,16 +64,13 @@ export default class EditEpisodes extends Component {
     handleSubmit: PropTypes.func.isRequired,
     hasTitle: ImmutablePropTypes.map,
     initialize: PropTypes.func.isRequired,
-    loadEpisode: PropTypes.func.isRequired,
+    loadSeason: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
-    searchSeasons: PropTypes.func.isRequired,
     searchSeriesEntries: PropTypes.func.isRequired,
-    searchedSeasonIds: ImmutablePropTypes.map.isRequired,
     searchedSeriesEntryIds: ImmutablePropTypes.map.isRequired,
-    seasonsById: ImmutablePropTypes.map.isRequired,
     seriesEntriesById: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
@@ -93,8 +88,8 @@ export default class EditEpisodes extends Component {
   }
 
   async componentWillMount () {
-    if (this.props.params.episodeId) {
-      const editObj = await this.props.loadEpisode(this.props.params.episodeId);
+    if (this.props.params.seasonId) {
+      const editObj = await this.props.loadSeason(this.props.params.seasonId);
       console.log('editObj', editObj);
       this.props.initialize({
         ...editObj,
@@ -128,16 +123,16 @@ export default class EditEpisodes extends Component {
   }
 
   openCreateLanguageModal () {
-    this.props.openModal(EPISODE_CREATE_LANGUAGE);
+    this.props.openModal(SEASON_CREATE_LANGUAGE);
   }
 
   async submit (form) {
-    const { supportedLocales, params: { episodeId } } = this.props;
+    const { supportedLocales, params: { seasonId } } = this.props;
     try {
       await this.props.submit({
         locales: supportedLocales.toArray(),
-        episodeId,
-        ...form.toJS()
+        ...form.toJS(),
+        seasonId
       });
       this.redirect();
     } catch (error) {
@@ -150,12 +145,6 @@ export default class EditEpisodes extends Component {
     dispatch(change(`basedOnDefaultLocale.${defaultLocale}`, false));
     dispatch(change(`basedOnDefaultLocale.${_activeLocale}`, false));
     dispatch(change('defaultLocale', _activeLocale));
-/*
-    if (basedOnDefaultLocale[defaultLocale.value]) {
-      basedOnDefaultLocale[defaultLocale.value].onChange(false);
-    }
-    defaultLocale.onChange(_activeLocale.value);
-    basedOnDefaultLocale[_activeLocale.value].onChange(false);*/
   }
   static styles = {
     topBar: {
@@ -203,15 +192,15 @@ export default class EditEpisodes extends Component {
   }
 
   render () {
-    const { closeModal, currentModal, _activeLocale, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
-        hasTitle, location, currentEpisode, seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
-        searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors } = this.props;
+    const { closeModal, currentModal, _activeLocale, currentSeriesEntryId, searchSeriesEntries,
+        hasTitle, location, currentSeason, seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
+        handleSubmit, supportedLocales, errors } = this.props;
     const { styles } = this.constructor;
     return (
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
-        {currentModal === EPISODE_CREATE_LANGUAGE &&
+        {currentModal === SEASON_CREATE_LANGUAGE &&
           <CreateLanguageModal
             supportedLocales={supportedLocales}
             onCloseClick={closeModal}
@@ -245,32 +234,19 @@ export default class EditEpisodes extends Component {
                     this.props.dispatch(this.props.change('seasonId', null));
                   }} />
                 {currentSeriesEntryId && <Field
-                  component={SelectInput}
-                  getItemText={(id) => seasonsById.getIn([ id, 'title' ])}
-                  getOptions={(searchString) => { searchSeasons(searchString, currentSeriesEntryId); }}
-                  isLoading={searchedSeasonIds.get('_status') === FETCHING}
-                  label='Season title'
-                  name='seasonId'
-                  options={searchedSeasonIds.get('data').toJS()}
-                  placeholder='Season title'
-                  required
-                  onChange={() => {
-                    this.props.dispatch(this.props.change('title', null));
-                  }} />}
-                {currentSeriesEntryId && currentSeasonId && <Field
                   component={TextInput}
-                  label='Episode number'
+                  label='Season number'
                   name='number'
-                  placeholder='Episode number'
+                  placeholder='Season number'
                   required/>}
-                {currentSeriesEntryId && currentSeasonId && <Field
+                {currentSeriesEntryId && <Field
                   _activeLocale={_activeLocale}
                   component={TextInput}
                   disabled={hasTitle && !hasTitle.get(_activeLocale)}
                   hasTitle={hasTitle}
-                  label='Episode title'
+                  label='Season title'
                   name={`title.${_activeLocale}`}
-                  placeholder='Episode title'
+                  placeholder='Season title'
                   required={hasTitle && hasTitle.get(_activeLocale)}/>}
                 <Field
                   component={TextInput}
@@ -286,7 +262,7 @@ export default class EditEpisodes extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
-                      imageUrl={currentEpisode.getIn([ 'profileImage', currentEpisode.get('defaultLocale'), 'url' ])}/>
+                      imageUrl={currentSeason.getIn([ 'profileImage', currentSeason.get('defaultLocale'), 'url' ])}/>
                   </div>
                 </div>
               </Section>

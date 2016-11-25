@@ -17,6 +17,7 @@ import episodesEdit from '../pages/content/episodes/edit/reducer';
 import LinkUserModal from '../pages/_common/linkUserModal/reducer';
 import reporting from '../pages/reporting/reducer';
 import seasonsCreate from '../pages/content/seasons/create/reducer';
+import seasonsEdit from '../pages/content/seasons/edit/reducer';
 import seasonsList from '../pages/content/seasons/list/reducer';
 import seasonsReadEpisodes from '../pages/content/seasons/read/episodes/reducer';
 import seriesList from '../pages/content/series/list/reducer';
@@ -61,6 +62,7 @@ export default combineReducers({
     }),
     seasons: combineReducers({
       create: seasonsCreate,
+      edit: seasonsEdit,
       list: seasonsList,
       read: combineReducers({
         episodes: seasonsReadEpisodes
