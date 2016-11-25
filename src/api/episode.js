@@ -1,5 +1,5 @@
 import { del, get, post } from './request';
-import { transformEpisode } from './transformers';
+import { transformEpisode, transformEpisode004 } from './transformers';
 
 export async function fetchEpisodes (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/serieEpisodes?page=${page}&pageSize=${pageSize}`;
@@ -20,7 +20,7 @@ export async function fetchEpisode (baseUrl, authenticationToken, locale, { epis
   const url = `${baseUrl}/v004/media/serieEpisodes/${episodeId}`;
   const { body } = await get(authenticationToken, locale, url);
   // console.log('before transform', { ...body });
-  const result = transformEpisode(body);
+  const result = transformEpisode004(body);
   // console.log('after tranform', result);
   return result;
 }

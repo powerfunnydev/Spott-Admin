@@ -15,12 +15,22 @@ export const currentDefaultLocaleSelector = createSelector(
   formSelector,
   (form) => (form && form.get('defaultLocale'))
 );
+export const _activeDefaultLocaleSelector = createSelector(
+  formSelector,
+  (form) => (form && form.get('_activeLocale'))
+);
+export const copyFromBaseSelector = createSelector(
+  formSelector,
+  (form) => (form && form.get('copyFromBase'))
+);
 
 export const currentSeriesEntryIdSelector = (state, props) => { return props.params.seriesEntryId; };
 export const currentSeriesEntrySelector = createEntityByIdSelector(mediaEntitiesSelector, currentSeriesEntryIdSelector);
 
 export default createStructuredSelector({
-  currentDefaultLocale: currentDefaultLocaleSelector,
+  _activeLocale: _activeDefaultLocaleSelector,
+  copyFromBase: copyFromBaseSelector,
+  defaultLocale: currentDefaultLocaleSelector,
   currentSeriesEntry: currentSeriesEntrySelector,
   currentLocale: currentLocaleSelector,
   localeNames: localeNamesSelector

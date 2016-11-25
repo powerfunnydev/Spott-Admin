@@ -118,7 +118,7 @@ export const buttonStyles = {
     borderRadius: '2px',
     color: 'white',
     display: 'inline-block',
-    ...makeTextStyle(fontWeights.medium, '14px'),
+    ...makeTextStyle(fontWeights.regular, '14px'),
     marginLeft: '10px',
     paddingTop: '8px',
     paddingBottom: '8px',
@@ -177,7 +177,7 @@ export const buttonStyles = {
     ':focus': hoveredGrayButtonStyle
   },
   white: {
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     border: '1px solid #ced6da',
     color: '#6d8791',
     ':hover': hoveredWhiteButtonStyle,
