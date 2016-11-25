@@ -50,7 +50,7 @@ export async function persistSeriesEntry (baseUrl, authenticationToken, locale, 
   // series.availabilities = transformAvailabilitiesToApi(availabilityFrom, availabilityTo, availabilityPlannedToMakeInteractive, availabilityPlatforms, availabilityVideoStatusType);
   // series.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
   seriesEntry.defaultLocale = defaultLocale;
-  seriesEntry.defaultTitle = defaultTitle;
+  seriesEntry.defaultTitle = title[defaultLocale];
   // series.externalReference.reference = externalReference;
   // series.externalReference.source = externalReferenceSource;
   // series.publishStatus = publishStatus;
@@ -65,7 +65,7 @@ export async function persistSeriesEntry (baseUrl, authenticationToken, locale, 
       seriesEntry.localeData.push(localeData);
     }
     // basedOnDefaultLocale is always provided, no check needed
-    localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
+    localeData.basedOnDefaultLocale = locale !== defaultLocale;
     localeData.description = description && description[locale];
     localeData.endYear = endYear && endYear[locale];
     localeData.startYear = startYear && startYear[locale];

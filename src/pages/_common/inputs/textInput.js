@@ -1,12 +1,16 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { colors, errorTextStyle } from '../styles';
+import { makeTextStyle, fontWeights, colors, errorTextStyle } from '../styles';
 import Label from './_label';
+import { Checkbox } from './checkbox';
+import { Field } from 'redux-form/immutable';
 
 @Radium
 export default class TextInput extends Component {
 
   static propTypes = {
+    copyFromBase: PropTypes.bool,
+    customTitle: PropTypes.bool,
     disabled: PropTypes.bool,
     first: PropTypes.bool,
     input: PropTypes.object.isRequired,
@@ -67,15 +71,51 @@ export default class TextInput extends Component {
     textArea: {
       paddingTop: '8px',
       height: '60px'
+    },
+    checkboxText: {
+      ...makeTextStyle(fontWeights.regular, '11px'),
+      color: colors.darkGray2,
+      paddingLeft: '8px'
+    },
+    checkboxRow: {
+      display: 'flex',
+      flexDirection: 'row',
+      paddingBottom: '10px'
+    },
+    checkBox: {
+      display: 'inline-block'
+    },
+    checkboxWithText: {
+      display: 'flex',
+      flexDirection: 'row',
+      paddingRight: '10px'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { placeholder, disabled, first, input, label, meta, required, style, type } = this.props;
+    const { placeholder, disabled, first, input, label, meta, required, style, type, copyFromBase, customTitle } = this.props;
     return (
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
+        { (copyFromBase || customTitle) && <div style={styles.checkboxRow}>
+          { customTitle && <div style={styles.checkboxWithText}>
+            <Field
+              component={Checkbox}
+              name={`customTitle.${input.name}`}/>
+            <div style={styles.checkboxText}>
+              Custom title
+            </div>
+          </div>}
+          { copyFromBase && <div style={styles.checkboxWithText}>
+            <Field
+              component={Checkbox}
+              name={`copyFromBase.${input.name}`}/>
+            <div style={styles.checkboxText}>
+              Copy from base language
+            </div>
+          </div>}
+        </div>}
         {type !== 'multiline' &&
           <input
             {...input}

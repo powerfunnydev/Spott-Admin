@@ -98,7 +98,7 @@ export default class CreateEpisodentryModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo('content/seasons', true);
+    this.props.routerPushWithReturnTo('content/series', true);
   }
 
   render () {
@@ -139,7 +139,7 @@ export default class CreateEpisodentryModal extends Component {
           onChange={() => {
             this.props.dispatch(this.props.change('title', null));
           }} />}
-        {currentSeasonId && <Field
+        {currentSeriesEntryId && currentSeasonId && <Field
           component={TextInput}
           label='Episode number'
           name='number'
