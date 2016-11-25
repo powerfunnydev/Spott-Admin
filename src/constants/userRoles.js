@@ -11,6 +11,7 @@ export const disabledReasons = {
   DEACTIVATED: 'Deactivated'
 };
 
-export const userStatus = {};
-userStatus[ACTIVE] = 'Active';
-userStatus[INACTIVE] = 'Inactive';
+export const userStatus = {
+  [ACTIVE]: 'Active',
+  [INACTIVE]: 'Inactive'
+};

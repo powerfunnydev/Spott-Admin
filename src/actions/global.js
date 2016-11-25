@@ -4,8 +4,8 @@ import { userRolesSelector, authenticationTokenSelector, apiBaseUrlSelector, cur
 
 export const CONFIGURE = 'CONFIGURE';
 
-export const MODAL_OPEN_LOGIN = 'MODAL_OPEN_LOGIN';
-export const MODAL_OPEN_FORGOT_PASSWORD = 'MODAL_OPEN_FORGOT_PASSWORD';
+export const MODAL_OPEN = 'MODAL_OPEN';
+export const MODAL_CLOSE = 'MODAL_CLOSE';
 
 export function routerPushWithReturnTo (newUrlOrLocationObject, goBack) {
   return async (dispatch, getState) => {
@@ -46,10 +46,10 @@ export function init () {
   };
 }
 
-export function openLoginModal () {
-  return { type: MODAL_OPEN_LOGIN };
+export function openModal (modal) {
+  return { modal, type: MODAL_OPEN };
 }
 
-export function openForgotPasswordModal () {
-  return { type: MODAL_OPEN_FORGOT_PASSWORD };
+export function closeModal () {
+  return { type: MODAL_CLOSE };
 }

@@ -62,11 +62,16 @@ export function transformListMedium ({ auditInfo, title, type, posterImage, prof
   };
 }
 
+export function transformAvailability ({ country, endTimeStamp, startTimeStamp, videoStatus }) {
+  return { countryId: country && country.uuid, availabilityFrom: startTimeStamp, availabilityTo: endTimeStamp, videoStatus };
+}
+
 /**
  *  Complete version of a medium. Locales includes.
  */
-export function transformMedium ({ number, auditInfo, type, defaultLocale, externalReference, uuid: id, publishStatus, defaultTitle, localeData }) {
+export function transformMedium ({ availabilities, number, auditInfo, type, defaultLocale, externalReference, uuid: id, publishStatus, defaultTitle, localeData }) {
   const seriesEntry = {
+    availabilities: availabilities && availabilities.map(transformAvailability),
     number,
     basedOnDefaultLocale: {},
     description: {},
@@ -259,29 +264,13 @@ export function transformSeason ({ availabilities, characters, defaultLocale,
   }
   return season;
 }
-export function transformSeriesEntry004 (serieEntry) {
-  return transformMedium(serieEntry);
-}
+export const transformSeriesEntry004 = transformMedium;
+export const transformSeason004 = transformMedium;
+export const transformEpisode004 = transformMedium;
 
-export function transformSeason004 (season) {
-  return transformMedium(season);
-}
-
-export function transformEpisode004 (episode) {
-  return transformMedium(episode);
-}
-
-export function transformListEpisode (episode) {
-  return transformListMedium(episode);
-}
-
-export function transformListSeason (season) {
-  return transformListMedium(season);
-}
-
-export function transformSeriesEntry (series) {
-  return transformListMedium(series);
-}
+export const transformListEpisode = transformListMedium;
+export const transformListSeason = transformListMedium;
+export const transformListSeriesEntry = transformListMedium;
 
 export function transformBroadcastChannel ({ name, uuid: id, logo, broadcaster }) {
   return { id, name, broadcaster: broadcaster && { id: broadcaster.uuid }, logo: logo && { url: logo.url } };
