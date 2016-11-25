@@ -39,6 +39,7 @@ import ReportingActivity from './pages/reporting/activity';
 import ReportingRankings from './pages/reporting/rankings';
 import SeasonList from './pages/content/seasons/list';
 import SeasonRead from './pages/content/seasons/read';
+import SeasonEdit from './pages/content/seasons/edit';
 import SeasonCreate from './pages/content/seasons/create';
 import SeriesList from './pages/content/series/list';
 import SeriesRead from './pages/content/series/read';
@@ -135,12 +136,11 @@ function getRoutes ({ getState }) {
               <Route component={SeasonRead} path='read/:seasonId'>
                 <Route component={EpisodeCreate} path='create/episode'/>
               </Route>
+              <Route component={SeasonEdit} path='edit/:seasonId'/>
               <Route path='read/:seasonId'>
                 <Route path='episodes'>
                   <Route component={EpisodeRead} path='read/:episodeId'/>
-                  <Route component={EpisodeEdit} path='edit/:episodeId'>
-                    {/* <Route component={AddLanguageModal} path='add-language'/>*/}
-                  </Route>
+                  <Route component={EpisodeEdit} path='edit/:episodeId'/>
                 </Route>
               </Route>
             </Route>

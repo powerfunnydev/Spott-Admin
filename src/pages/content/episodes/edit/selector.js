@@ -1,7 +1,6 @@
 import { createSelector, createStructuredSelector } from 'reselect';
 import {
-  localeNamesSelector,
-  currentLocaleSelector
+  currentModalSelector
 } from '../../../../selectors/global';
 import {
   mediaEntitiesSelector,
@@ -13,7 +12,9 @@ import {
 } from '../../../../selectors/data';
 import { getFormValues } from 'redux-form/immutable';
 
-const formSelector = getFormValues('episodeEdit');
+const formName = 'episodeEdit';
+const formSelector = getFormValues(formName);
+const formErrorsSelector = (state) => { return state.getIn([ 'form', formName, 'syncErrors' ]); };
 
 export const currentSeriesEntryIdSelector = createSelector(
   formSelector,
@@ -31,9 +32,13 @@ export const _activeDefaultLocaleSelector = createSelector(
   formSelector,
   (form) => (form && form.get('_activeLocale'))
 );
-export const copyFromBaseSelector = createSelector(
+export const supportedLocalesSelector = createSelector(
   formSelector,
-  (form) => (form && form.get('copyFromBase'))
+  (form) => (form && form.get('locales'))
+);
+export const hasTitleSelector = createSelector(
+  formSelector,
+  (form) => (form && form.get('hasTitle'))
 );
 
 export const currentEpisodeIdSelector = (state, props) => { return props.params.episodeId; };
@@ -45,15 +50,16 @@ export const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(serie
 
 export default createStructuredSelector({
   _activeLocale: _activeDefaultLocaleSelector,
-  copyFromBase: copyFromBaseSelector,
   currentEpisode: currentEpisodeSelector,
-  currentLocale: currentLocaleSelector,
+  currentModal: currentModalSelector,
   currentSeasonId: currentSeasonIdSelector,
   currentSeriesEntryId: currentSeriesEntryIdSelector,
   defaultLocale: currentDefaultLocaleSelector,
-  localeNames: localeNamesSelector,
+  errors: formErrorsSelector,
+  hasTitle: hasTitleSelector,
   searchedSeasonIds: searchedSeasonIdsSelector,
   searchedSeriesEntryIds: searchedSeriesEntryIdsSelector,
   seasonsById: listMediaEntitiesSelector,
-  seriesEntriesById: listMediaEntitiesSelector
+  seriesEntriesById: listMediaEntitiesSelector,
+  supportedLocales: supportedLocalesSelector
 });

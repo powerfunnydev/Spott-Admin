@@ -77,10 +77,10 @@ export default class Dropdown extends Component {
   }
 
   renderTopElement () {
-    const { placeholder, getItemText, input } = this.props;
+    const { disabled, placeholder, getItemText, input } = this.props;
     const { styles } = this.constructor;
     return (
-      <div key='dropdownTopElement' style={[ styles.topElement, this.state.isOpen && styles.isOpen ]} onMouseDown={this.handleMouseDown.bind(this)}>
+      <div key='dropdownTopElement' style={[ styles.topElement, this.state.isOpen && styles.isOpen, disabled && styles.disabled ]} onMouseDown={!disabled && this.handleMouseDown.bind(this)}>
         { // get label of selected item
           input && input.value && <div style={styles.topElementText}>{getItemText(input.value)}</div> ||
          // if there is not an item selected, show placeholder
@@ -135,6 +135,10 @@ export default class Dropdown extends Component {
     },
     isOpen: {
       backgroundColor: colors.veryLightGray
+    },
+    disabled: {
+      color: colors.lightGray2,
+      border: `1px solid ${colors.lightGray2}`
     },
     topElement: {
       width: '120px',

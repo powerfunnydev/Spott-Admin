@@ -9,8 +9,8 @@ import { Field } from 'redux-form/immutable';
 export default class TextInput extends Component {
 
   static propTypes = {
+    _activeLocale: PropTypes.string,
     copyFromBase: PropTypes.bool,
-    customTitle: PropTypes.bool,
     disabled: PropTypes.bool,
     first: PropTypes.bool,
     input: PropTypes.object.isRequired,
@@ -94,15 +94,16 @@ export default class TextInput extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { placeholder, disabled, first, input, label, meta, required, style, type, copyFromBase, customTitle } = this.props;
+    const { placeholder, disabled, first, input, label, meta, required, style,
+        type, copyFromBase, _activeLocale } = this.props;
     return (
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
-        { (copyFromBase || customTitle) && <div style={styles.checkboxRow}>
-          { customTitle && <div style={styles.checkboxWithText}>
+        { (_activeLocale) && <div style={styles.checkboxRow}>
+          { _activeLocale && <div style={styles.checkboxWithText}>
             <Field
               component={Checkbox}
-              name={`customTitle.${input.name}`}/>
+              name={`hasTitle.${_activeLocale}`}/>
             <div style={styles.checkboxText}>
               Custom title
             </div>

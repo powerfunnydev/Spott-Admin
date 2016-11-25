@@ -7,6 +7,7 @@ const removeIcon = require('../../../assets/images/garbage.svg');
 @Radium
 export default class RemoveButton extends Component {
   static propTypes = {
+    noCofirmation: PropTypes.bool,
     style: PropTypes.object,
     text: PropTypes.string,
     onClick: PropTypes.func.isRequired
@@ -18,9 +19,13 @@ export default class RemoveButton extends Component {
   }
 
   async remove () {
-    const result = await confirmation();
-    if (result) {
+    if (this.props.noCofirmation) {
       await this.props.onClick();
+    } else {
+      const result = await confirmation();
+      if (result) {
+        await this.props.onClick();
+      }
     }
   }
 
@@ -28,7 +33,7 @@ export default class RemoveButton extends Component {
     const { style, text } = this.props;
     return (
 
-      <button style={style} onClick={() => { this.remove(); }} ><span><img src={removeIcon}/></span>{text}</button>
+      <button style={style} onClick={() => { this.remove(); }} ><img src={removeIcon}/>{text}</button>
     );
   }
 }
