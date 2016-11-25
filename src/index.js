@@ -9,6 +9,7 @@ import { LOGIN_SUCCESS } from './actions/user';
 import { ADMIN, BROADCASTER, CONTENT_MANAGER } from './constants/userRoles';
 
 import App from './pages/app';
+import AddLanguageModal from './pages/content/_addLanguage';
 import BroadcastersList from './pages/content/broadcasters/list';
 import BroadcastersCreate from './pages/content/broadcasters/create';
 import BroadcastersEdit from './pages/content/broadcasters/edit';
@@ -23,6 +24,7 @@ import ContentProducersEdit from './pages/content/contentProducers/edit';
 import ContentProducersRead from './pages/content/contentProducers/read';
 import EpisodeList from './pages/content/episodes/list';
 import EpisodeRead from './pages/content/episodes/read';
+import EpisodeEdit from './pages/content/episodes/edit';
 import EpisodeCreate from './pages/content/episodes/create';
 import LinkUserToContentProducer from './pages/content/contentProducers/read/users/linkUser';
 import Error404 from './pages/error404/main';
@@ -137,6 +139,9 @@ function getRoutes ({ getState }) {
               <Route path='read/:seasonId'>
                 <Route path='episodes'>
                   <Route component={EpisodeRead} path='read/:episodeId'/>
+                  <Route component={EpisodeEdit} path='edit/:episodeId'>
+                    {/* <Route component={AddLanguageModal} path='add-language'/>*/}
+                  </Route>
                 </Route>
               </Route>
             </Route>

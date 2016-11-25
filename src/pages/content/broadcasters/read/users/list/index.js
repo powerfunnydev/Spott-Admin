@@ -7,7 +7,7 @@ import Line from '../../../../../_common/components/line';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
-import Dropdown, { styles as dropdownStyles } from '../../../../../_common/components/dropdown';
+import Dropdown, { styles as dropdownStyles } from '../../../../../_common/components/actionDropdown';
 import { slowdown } from '../../../../../../utils';
 
 /* eslint-disable no-alert */

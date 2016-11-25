@@ -7,7 +7,7 @@ import * as actions from './actions';
 import selector from './selector';
 import { routerPushWithReturnTo } from '../../../../../actions/global';
 import { DropdownCel, UtilsBar, isQueryChanged, Tile, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../../_common/components/table/index';
-import Dropdown, { styles as dropdownStyles } from '../../../../_common/components/dropdown';
+import Dropdown, { styles as dropdownStyles } from '../../../../_common/components/actionDropdown';
 import Line from '../../../../_common/components/line';
 import { slowdown } from '../../../../../utils';
 import { confirmation } from '../../../../_common/askConfirmation';

@@ -8,7 +8,7 @@ import Line from '../../../_common/components/line';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
-import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
+import Dropdown, { styles as dropdownStyles } from '../../../_common/components/actionDropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import UtilsBar from '../../../_common/components/table/utilsBar';
 import { slowdown } from '../../../../utils';

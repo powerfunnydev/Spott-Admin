@@ -11,7 +11,7 @@ import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
 import SpecificHeader from '../../header';
-import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
+import Dropdown, { styles as dropdownStyles } from '../../../_common/components/actionDropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';

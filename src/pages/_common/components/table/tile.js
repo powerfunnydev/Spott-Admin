@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { colors, makeTextStyle, fontWeights } from '../../../_common/styles';
-import Dropdown, { styles as dropdownStyles } from '../dropdown';
+import Dropdown, { styles as dropdownStyles } from '../actionDropdown';
 /* eslint-disable no-alert */
 
 const plusIcon = require('../../../../assets/images/plus-gray.svg');

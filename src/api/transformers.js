@@ -69,13 +69,15 @@ export function transformAvailability ({ country, endTimeStamp, startTimeStamp, 
 /**
  *  Complete version of a medium. Locales includes.
  */
-export function transformMedium ({ availabilities, number, auditInfo, type, defaultLocale, externalReference, uuid: id, publishStatus, defaultTitle, localeData }) {
+export function transformMedium ({ availabilities, number, auditInfo, type, defaultLocale, externalReference,
+    serie, season, uuid: id, publishStatus, defaultTitle, localeData }) {
   const seriesEntry = {
     availabilities: availabilities && availabilities.map(transformAvailability),
     number,
     basedOnDefaultLocale: {},
     description: {},
     startYear: {},
+    endYear: {},
     title: {},
     locales: [],
     posterImage: {},
@@ -86,14 +88,17 @@ export function transformMedium ({ availabilities, number, auditInfo, type, defa
     publishStatus,
     type,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
-    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    seriesEntryId: serie && serie.uuid,
+    seasonId: season && season.uuid
   };
   if (localeData) {
     for (const { basedOnDefaultLocale, description, locale,
-      posterImage, profileCover, startYear, title } of localeData) {
+      posterImage, profileCover, endYear, startYear, title } of localeData) {
       seriesEntry.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
       seriesEntry.description[locale] = description;
       seriesEntry.startYear[locale] = startYear;
+      seriesEntry.endYear[locale] = endYear;
       seriesEntry.title[locale] = title;
       seriesEntry.locales.push(locale);
       seriesEntry.profileImage[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
