@@ -1,7 +1,8 @@
 import { createSelector, createStructuredSelector } from 'reselect';
 import {
   localeNamesSelector,
-  currentLocaleSelector
+  currentLocaleSelector,
+  currentModalSelector
 } from '../../../../selectors/global';
 import {
   mediaEntitiesSelector,
@@ -19,9 +20,10 @@ export const _activeDefaultLocaleSelector = createSelector(
   formSelector,
   (form) => (form && form.get('_activeLocale'))
 );
-export const copyFromBaseSelector = createSelector(
+
+export const availabilitiesSelector = createSelector(
   formSelector,
-  (form) => (form && form.get('copyFromBase'))
+  (form) => (form && form.get('availabilities'))
 );
 
 export const currentSeriesEntryIdSelector = (state, props) => { return props.params.seriesEntryId; };
@@ -29,9 +31,10 @@ export const currentSeriesEntrySelector = createEntityByIdSelector(mediaEntities
 
 export default createStructuredSelector({
   _activeLocale: _activeDefaultLocaleSelector,
-  copyFromBase: copyFromBaseSelector,
-  defaultLocale: currentDefaultLocaleSelector,
-  currentSeriesEntry: currentSeriesEntrySelector,
+  availabilities: availabilitiesSelector,
   currentLocale: currentLocaleSelector,
+  currentModal: currentModalSelector,
+  currentSeriesEntry: currentSeriesEntrySelector,
+  defaultLocale: currentDefaultLocaleSelector,
   localeNames: localeNamesSelector
 });

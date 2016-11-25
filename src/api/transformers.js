@@ -63,7 +63,7 @@ export function transformListMedium ({ auditInfo, title, type, posterImage, prof
 }
 
 export function transformAvailability ({ country, endTimeStamp, startTimeStamp, videoStatus }) {
-  return { countryId: country && country.uuid, availabilityFrom: startTimeStamp, availabilityTo: endTimeStamp, videoStatus };
+  return { countryId: country && country.uuid, availabilityFrom: startTimeStamp && new Date(startTimeStamp), availabilityTo: endTimeStamp && new Date(endTimeStamp), videoStatus };
 }
 
 /**

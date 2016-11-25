@@ -1,8 +1,9 @@
 import React, { Component, PropTypes } from 'react';
-import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
+import { reduxForm, Field, FieldArray, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
 import Header from '../../../app/header';
 // import Line from '../../../_common/components/line';
@@ -18,7 +19,6 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 import Dropzone from '../../../_common/dropzone';
 import Label from '../../../_common/inputs/_label';
 import selector from './selector';
-import ImmutablePropTypes from 'react-immutable-proptypes';
 import Availabilities from '../../_availabilities/list';
 
 function validate (values, { t }) {
@@ -47,6 +47,7 @@ export default class EditSeriesEntries extends Component {
     _activeLocale: PropTypes.string,
     change: PropTypes.func.isRequired,
     copyFromBase: PropTypes.object,
+    currentModal: PropTypes.string,
     currentSeriesEntry: ImmutablePropTypes.map.isRequired,
     defaultLocale: PropTypes.string,
     dispatch: PropTypes.func.isRequired,
@@ -106,7 +107,6 @@ export default class EditSeriesEntries extends Component {
 
   async submit (form) {
     const { localeNames, params: { seriesEntryId } } = this.props;
-    console.log('form', form.toJS());
     try {
       await this.props.submit({
         locales: localeNames.keySeq().toArray(),
@@ -124,13 +124,8 @@ export default class EditSeriesEntries extends Component {
     dispatch(change(`basedOnDefaultLocale.${defaultLocale}`, false));
     dispatch(change(`basedOnDefaultLocale.${_activeLocale}`, false));
     dispatch(change('defaultLocale', _activeLocale));
-/*
-    if (basedOnDefaultLocale[defaultLocale.value]) {
-      basedOnDefaultLocale[defaultLocale.value].onChange(false);
-    }
-    defaultLocale.onChange(_activeLocale.value);
-    basedOnDefaultLocale[_activeLocale.value].onChange(false);*/
   }
+
   static styles = {
     topBar: {
       display: 'flex',
@@ -236,9 +231,7 @@ export default class EditSeriesEntries extends Component {
               </Section>
             </Tab>
             <Tab title='Availability'>
-              <Availabilities
-                availabilities={currentSeriesEntry.get('availabilities')}
-                location={location} />
+              <FieldArray availabilities={this.props.availabilities} component={Availabilities} name='availabilities' />
             </Tab>
             <Tab title='Audience'>
               {/* TODO */}

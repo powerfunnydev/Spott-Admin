@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { FormSubtitle } from '../../../_common/styles';
 import TextInput from '../../../_common/inputs/textInput';
 import localized from '../../../_common/localized';
-import CreateModal from '../../../_common/createModal';
+import PersistModal from '../../../_common/persistModal';
 import { loadEpisodes } from '../../seasons/read/episodes/actions';
 import * as actions from './actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
@@ -105,7 +105,7 @@ export default class CreateEpisodentryModal extends Component {
     const { localeNames, currentSeasonId, currentSeriesEntryId, searchSeriesEntries, seriesEntriesById, searchedSeriesEntryIds,
         searchSeasons, seasonsById, searchedSeasonIds, handleSubmit } = this.props;
     return (
-      <CreateModal isOpen title='Create Episode Entry' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal isOpen title='Create Episode Entry' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}
@@ -145,7 +145,7 @@ export default class CreateEpisodentryModal extends Component {
           name='number'
           placeholder='Episode number'
           required/>}
-      </CreateModal>
+      </PersistModal>
     );
   }
 

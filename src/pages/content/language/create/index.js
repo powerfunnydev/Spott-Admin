@@ -4,7 +4,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { FormSubtitle } from '../../../_common/styles';
-import CreateModal from '../../../_common/createModal';
+import PersistModal from '../../../_common/persistModal';
 import SelectInput from '../../../_common/inputs/selectInput';
 import selector from './selector';
 import localized from '../../../_common/localized';
@@ -52,7 +52,7 @@ export default class CreateBroadcasterEntryModal extends Component {
   render () {
     const { localeNames, handleSubmit } = this.props;
     return (
-      <CreateModal isOpen title='Add language' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal isOpen title='Add language' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <Field
           component={SelectInput}
           getItemText={(language) => (localeNames.get(language))}
@@ -61,7 +61,7 @@ export default class CreateBroadcasterEntryModal extends Component {
           name='language'
           options={localeNames.keySeq().toArray()}
           placeholder='Language'/>
-      </CreateModal>
+      </PersistModal>
     );
   }
 
