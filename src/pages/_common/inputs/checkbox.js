@@ -10,6 +10,7 @@ export class Checkbox extends Component {
   static propTypes = {
     checked: PropTypes.bool,
     input: PropTypes.object,
+    style: PropTypes.object,
     onChange: PropTypes.func // Uses the field's onChange, and this one if provided.
   };
 
@@ -52,11 +53,13 @@ export class Checkbox extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { checked, input } = this.props;
+    const { checked, input, style } = this.props;
 
     return (
-      <span style={[ styles.checkbox, (checked || input && input.value) && styles.checked ]} onClick={this.onChange}>
-        {(checked || input && input.value) && <img src={checkIcon}/>}</span>
+      <div style={style}>
+        <span style={[ styles.checkbox, (checked || input && input.value) && styles.checked ]} onClick={this.onChange}>
+          {(checked || input && input.value) && <img src={checkIcon}/>}</span>
+      </div>
     );
   }
 }

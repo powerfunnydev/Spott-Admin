@@ -7,7 +7,7 @@ import Header from '../../app/header';
 import { Root, Container } from '../../_common/styles';
 import { Tile, DropdownCel, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table/index';
 import Line from '../../_common/components/line';
-import Dropdown, { styles as dropdownStyles } from '../../_common/components/dropdown';
+import Dropdown, { styles as dropdownStyles } from '../../_common/components/actionDropdown';
 import * as actions from './actions';
 import selector from './selector';
 import { slowdown } from '../../../utils';

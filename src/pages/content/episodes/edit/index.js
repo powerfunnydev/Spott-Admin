@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import TextInput from '../../../_common/inputs/textInput';
 import Header from '../../../app/header';
-// import Line from '../../../_common/components/line';
 import { makeTextStyle, fontWeights, buttonStyles, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import Button from '../../../_common/buttons/button';
 import localized from '../../../_common/localized';
@@ -19,7 +18,9 @@ import Dropzone from '../../../_common/dropzone';
 import Label from '../../../_common/inputs/_label';
 import selector from './selector';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import Availabilities from '../../_availabilities/list';
+import { FETCHING } from '../../../../constants/statusTypes';
+import SelectionDropdown from '../../../_common/components/selectionDropdown';
+import AddLanguage from '../../language/create';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -32,32 +33,43 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
-  loadSeriesEntry: bindActionCreators(actions.loadSeriesEntry, dispatch),
+  loadEpisode: bindActionCreators(actions.loadEpisode, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
-  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
+  searchSeasons: bindActionCreators(actions.searchSeasons, dispatch),
+  searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch)
 }))
 @reduxForm({
-  form: 'seriesEntryEdit',
+  form: 'episodeEdit',
   validate
 })
 @Radium
-export default class EditSeriesEntries extends Component {
+export default class EditEpisodes extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
     change: PropTypes.func.isRequired,
+    children: PropTypes.node,
     copyFromBase: PropTypes.object,
-    currentSeriesEntry: ImmutablePropTypes.map.isRequired,
+    currentEpisode: ImmutablePropTypes.map.isRequired,
+    currentSeasonId: PropTypes.string,
+    currentSeriesEntryId: PropTypes.string,
     defaultLocale: PropTypes.string,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
-    loadSeriesEntry: PropTypes.func.isRequired,
+    loadEpisode: PropTypes.func.isRequired,
     localeNames: ImmutablePropTypes.map.isRequired,
     location: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
+    searchSeasons: PropTypes.func.isRequired,
+    searchSeriesEntries: PropTypes.func.isRequired,
+    searchedSeasonIds: ImmutablePropTypes.map.isRequired,
+    searchedSeriesEntryIds: ImmutablePropTypes.map.isRequired,
+    seasonsById: ImmutablePropTypes.map.isRequired,
+    seriesEntriesById: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired
   };
@@ -67,12 +79,13 @@ export default class EditSeriesEntries extends Component {
     this.submit = ::this.submit;
     this.redirect = ::this.redirect;
     this.onSetDefaultLocale = ::this.onSetDefaultLocale;
+    this.addLanguage = :: this.addLanguage;
   }
 
   async componentWillMount () {
-    if (this.props.params.seriesEntryId) {
+    if (this.props.params.episodeId) {
       const { localeNames } = this.props;
-      const editObj = await this.props.loadSeriesEntry(this.props.params.seriesEntryId);
+      const editObj = await this.props.loadEpisode(this.props.params.episodeId);
       console.log('editObj', editObj);
       // initialize customTitle and copyFromBase
       const customTitle = {};
@@ -104,13 +117,18 @@ export default class EditSeriesEntries extends Component {
     this.props.routerPushWithReturnTo('content/series', true);
   }
 
+  addLanguage () {
+    const { params: { seriesEntryId, seasonId, episodeId } } = this.props;
+    this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/seasons/read/${seasonId}/episodes/edit/${episodeId}/add-language`);
+  }
+
   async submit (form) {
-    const { localeNames, params: { seriesEntryId } } = this.props;
+    const { localeNames, params: { episodeId } } = this.props;
     console.log('form', form.toJS());
     try {
       await this.props.submit({
         locales: localeNames.keySeq().toArray(),
-        seriesEntryId,
+        episodeId,
         ...form.toJS()
       });
       this.redirect();
@@ -159,15 +177,18 @@ export default class EditSeriesEntries extends Component {
       paddingBottom: '50px'
     },
     baseLanguageButton: {
-      height: '32px',
+      paddingTop: '3px',
+      paddingBottom: '3px',
       ...makeTextStyle(fontWeights.regular, '11px')
     }
   }
 
   render () {
+    const { children, _activeLocale, copyFromBase, localeNames, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
+        location, currentEpisode, seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
+        searchSeasons, seasonsById, searchedSeasonIds, handleSubmit } = this.props;
     const { styles } = this.constructor;
-    const { _activeLocale, localeNames, defaultLocale, currentSeriesEntry, location, handleSubmit } = this.props;
-
+    // const isDefaultLocaleSelected = _activeLocale === defaultLocale;
     return (
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />
@@ -178,16 +199,16 @@ export default class EditSeriesEntries extends Component {
               <Section noPadding style={styles.background}>
                 <div style={[ styles.topBar ]}>
                   <Field
-                    component={SelectInput}
+                    component={SelectionDropdown}
+                    createOption= {this.addLanguage}
+                    createOptionText= 'Add language'
                     getItemText={(language) => {
                       const locale = localeNames.get(language);
                       return defaultLocale === language ? `${locale} (Base)` : locale;
                     }}
-                    getOptions={(language) => localeNames.keySeq().toArray()}
                     name='_activeLocale'
                     options={localeNames.keySeq().toArray()}
-                    placeholder='Default language'
-                    style={styles.selectInput}/>
+                    placeholder='Language'/>
                   {_activeLocale !== defaultLocale &&
                     <Button
                       style={[ buttonStyles.white, styles.baseLanguageButton ]}
@@ -199,23 +220,41 @@ export default class EditSeriesEntries extends Component {
               <Section>
                 <FormSubtitle first>General</FormSubtitle>
                 <Field
-                  component={TextInput}
+                  component={SelectInput}
+                  getItemText={(id) => seriesEntriesById.getIn([ id, 'title' ])}
+                  getOptions={searchSeriesEntries}
+                  isLoading={searchedSeriesEntryIds.get('_status') === FETCHING}
                   label='Series title'
-                  name={`title.${_activeLocale}`}
+                  name='seriesEntryId'
+                  options={searchedSeriesEntryIds.get('data').toJS()}
                   placeholder='Series title'
-                  required/>
-                <Field
+                  onChange={() => {
+                    this.props.dispatch(this.props.change('seasonId', null));
+                  }} />
+                {currentSeriesEntryId && <Field
+                  component={SelectInput}
+                  getItemText={(id) => seasonsById.getIn([ id, 'title' ])}
+                  getOptions={(searchString) => { searchSeasons(searchString, currentSeriesEntryId); }}
+                  isLoading={searchedSeasonIds.get('_status') === FETCHING}
+                  label='Season title'
+                  name='seasonId'
+                  options={searchedSeasonIds.get('data').toJS()}
+                  placeholder='Season title'
+                  onChange={() => {
+                    this.props.dispatch(this.props.change('title', null));
+                  }} />}
+                {currentSeriesEntryId && currentSeasonId && <Field
                   component={TextInput}
-                  label='Start year'
-                  name={`startYear.${_activeLocale}`}
-                  placeholder='Start year'
-                  type='number'/>
-                <Field
+                  label='Episode number'
+                  name='number'
+                  placeholder='Episode number'
+                  required/>}
+                {currentSeriesEntryId && currentSeasonId && <Field
                   component={TextInput}
-                  label='End year'
-                  name={`endYear.${_activeLocale}`}
-                  placeholder='End year'
-                  type='number'/>
+                  label='Episode title'
+                  name={`title.${_activeLocale}`}
+                  placeholder='Episode title'
+                  required/>}
                 <Field
                   component={TextInput}
                   // copyFromBase={!isDefaultLocaleSelected}
@@ -230,24 +269,28 @@ export default class EditSeriesEntries extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
-                      imageUrl={currentSeriesEntry.getIn([ 'profileImage', currentSeriesEntry.get('defaultLocale'), 'url' ])}/>
+                      imageUrl={currentEpisode.getIn([ 'profileImage', currentEpisode.get('defaultLocale'), 'url' ])}/>
                   </div>
                 </div>
               </Section>
             </Tab>
             <Tab title='Availability'>
-              <Availabilities
-                availabilities={currentSeriesEntry.get('availabilities')}
-                location={location} />
+              {/* TODO */}
+              <Section>
+                <FormSubtitle first>Content</FormSubtitle>
+                ...
+              </Section>
             </Tab>
             <Tab title='Audience'>
               {/* TODO */}
               <Section>
-                <FormSubtitle first>Audience</FormSubtitle>
+                <FormSubtitle first>Location</FormSubtitle>
+                ...
               </Section>
             </Tab>
           </Tabs>
         </EditTemplate>
+        {children}
       </Root>
     );
   }

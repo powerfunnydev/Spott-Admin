@@ -7,7 +7,7 @@ import * as actions from './actions';
 import selector from './selector';
 import { routerPushWithReturnTo } from '../../../../../actions/global';
 import { DropdownCel, UtilsBar, isQueryChanged, Tile, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../../_common/components/table/index';
-import Dropdown, { styles as dropdownStyles } from '../../../../_common/components/dropdown';
+import Dropdown, { styles as dropdownStyles } from '../../../../_common/components/actionDropdown';
 import Line from '../../../../_common/components/line';
 import { slowdown } from '../../../../../utils';
 import { confirmation } from '../../../../_common/askConfirmation';
@@ -95,7 +95,7 @@ export default class List extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/episodes', true);
+    this.props.routerPushWithReturnTo('content/series', true);
   }
 
   async onClickDeleteSelected (e) {
@@ -166,7 +166,7 @@ export default class List extends Component {
                           <CustomCel getValue={this.getLastUpdatedOn} objectToRender={episode} style={{ flex: 2 }}/>
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/episodes/edit/${episode.get('id')}`); }}>Edit</div>}>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/edit/${episode.get('id')}`); }}>Edit</div>}>
                               <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteEpisode(episode.get('id')); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
