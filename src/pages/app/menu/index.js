@@ -15,7 +15,6 @@ import { ADMIN, BROADCASTER, CONTENT_MANAGER } from '../../../constants/userRole
 @localized
 @connect(menuSelector, (dispatch) => ({
   logout: bindActionCreators(actions.logout, dispatch),
-  openLoginModal: bindActionCreators(globalActions.openLoginModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(globalActions.routerPushWithReturnTo, dispatch)
 }))
 @Radium
@@ -28,7 +27,6 @@ export default class Menu extends Component {
     isAuthenticated: PropTypes.bool.isRequired,
     logout: PropTypes.func.isRequired,
     neutral: PropTypes.bool,
-    openLoginModal: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired,
     userRoles: ImmutablePropTypes.list

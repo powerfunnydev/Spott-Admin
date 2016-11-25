@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { FormSubtitle } from '../../../_common/styles';
 import TextInput from '../../../_common/inputs/textInput';
+import DateInput from '../../../_common/inputs/dateInput';
+import TimeInput from '../../../_common/inputs/timeInput';
 import SelectInput from '../../../_common/inputs/selectInput';
 import CreateModal from '../../../_common/createModal';
 // import { load } from '../list/actions';
@@ -82,7 +84,15 @@ export default class CreateAvailabilityModal extends Component {
     }, true);
   }
 
+  static styles = {
+    col2: {
+      display: 'flex',
+      flexDirection: 'row'
+    }
+  };
+
   render () {
+    const styles = this.constructor.styles;
     const { countries, handleSubmit } = this.props;
     return (
       <CreateModal isOpen title='Add Availability' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
@@ -103,7 +113,32 @@ export default class CreateAvailabilityModal extends Component {
           options={timezoneKeys}
           placeholder='Country'
           required />
-
+        <div style={styles.col2}>
+          <Field
+            component={DateInput}
+            label='Start'
+            name='startDate'
+            required
+            style={{ flex: 1, paddingRight: '0.313em' }} />
+          <Field
+            component={TimeInput}
+            name='startTime'
+            required
+            style={{ flex: 1, paddingLeft: '0.313em' }} />
+        </div>
+        <div style={styles.col2}>
+          <Field
+            component={DateInput}
+            label='End'
+            name='endDate'
+            required
+            style={{ flex: 1, paddingRight: '0.313em' }} />
+          <Field
+            component={TimeInput}
+            name='endTime'
+            required
+            style={{ flex: 1, paddingLeft: '0.313em' }} />
+        </div>
       </CreateModal>
     );
   }

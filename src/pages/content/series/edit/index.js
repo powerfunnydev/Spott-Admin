@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import TextInput from '../../../_common/inputs/textInput';
 import Header from '../../../app/header';
 import { Root, FormDescription, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
-import Line from '../../../_common/components/line';
+// import Line from '../../../_common/components/line';
 import localized from '../../../_common/localized';
 import * as actions from './actions';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
@@ -198,7 +198,6 @@ export default class EditSeriesEntries extends Component {
             </Tab>
           </Tabs>
         </EditTemplate>
-        {children}
       </Root>
     );
   }

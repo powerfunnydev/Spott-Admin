@@ -9,7 +9,6 @@ import { LOGIN_SUCCESS } from './actions/user';
 import { ADMIN, BROADCASTER, CONTENT_MANAGER } from './constants/userRoles';
 
 import App from './pages/app';
-import AvailabilityCreate from './pages/content/_availabilities/create';
 import BroadcastersList from './pages/content/broadcasters/list';
 import BroadcastersCreate from './pages/content/broadcasters/create';
 import BroadcastersEdit from './pages/content/broadcasters/edit';
@@ -129,9 +128,7 @@ function getRoutes ({ getState }) {
           <Route component={SeriesRead} path='read/:seriesEntryId'>
             <Route component={SeasonCreate} path='create/season'/>
           </Route>
-          <Route component={SeriesEdit} path='edit/:seriesEntryId'>
-            <Route component={AvailabilityCreate} path='create/availability'/>
-          </Route>
+          <Route component={SeriesEdit} path='edit/:seriesEntryId' />
           <Route path='read/:seriesEntryId'>
             <Route path='seasons'>
               <Route component={SeasonRead} path='read/:seasonId'>
