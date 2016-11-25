@@ -207,6 +207,17 @@ FormSubtitle.propTypes = {
   style: PropTypes.object
 };
 
+const formDescriptionStyle = {
+  ...makeTextStyle(fontWeights.regular, '0.75em'),
+  color: colors.lightGray3,
+  marginTop: '0.313em'
+};
+export const FormDescription = Radium((props) => (
+  <p style={[ formDescriptionStyle, props.style, props.first && { marginTop: '0px' } ]}>
+    {props.children}
+  </p>
+));
+
 // Container component
 // ///////////////////
 /* const containerStyles = {

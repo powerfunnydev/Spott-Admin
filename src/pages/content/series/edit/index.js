@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import TextInput from '../../../_common/inputs/textInput';
 import Header from '../../../app/header';
+// import Line from '../../../_common/components/line';
 import { makeTextStyle, fontWeights, buttonStyles, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import Button from '../../../_common/buttons/button';
 import localized from '../../../_common/localized';
@@ -18,6 +19,7 @@ import Dropzone from '../../../_common/dropzone';
 import Label from '../../../_common/inputs/_label';
 import selector from './selector';
 import ImmutablePropTypes from 'react-immutable-proptypes';
+import Availabilities from '../../_availabilities/list';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -163,9 +165,9 @@ export default class EditSeriesEntries extends Component {
   }
 
   render () {
-    const { _activeLocale, copyFromBase, localeNames, defaultLocale, currentSeriesEntry, location, handleSubmit } = this.props;
     const { styles } = this.constructor;
-    // const isDefaultLocaleSelected = _activeLocale === defaultLocale;
+    const { _activeLocale, localeNames, defaultLocale, currentSeriesEntry, location, handleSubmit } = this.props;
+
     return (
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />
@@ -198,8 +200,6 @@ export default class EditSeriesEntries extends Component {
                 <FormSubtitle first>General</FormSubtitle>
                 <Field
                   component={TextInput}
-                  // copyFromBase={!isDefaultLocaleSelected}
-                  // disabled={copyFromBase && copyFromBase.getIn([ 'title', _activeLocale ])}
                   label='Series title'
                   name={`title.${_activeLocale}`}
                   placeholder='Series title'
@@ -236,17 +236,14 @@ export default class EditSeriesEntries extends Component {
               </Section>
             </Tab>
             <Tab title='Availability'>
-              {/* TODO */}
-              <Section>
-                <FormSubtitle first>Content</FormSubtitle>
-                ...
-              </Section>
+              <Availabilities
+                availabilities={currentSeriesEntry.get('availabilities')}
+                location={location} />
             </Tab>
             <Tab title='Audience'>
               {/* TODO */}
               <Section>
-                <FormSubtitle first>Location</FormSubtitle>
-                ...
+                <FormSubtitle first>Audience</FormSubtitle>
               </Section>
             </Tab>
           </Tabs>

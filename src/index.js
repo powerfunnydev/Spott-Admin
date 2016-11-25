@@ -129,7 +129,7 @@ function getRoutes ({ getState }) {
           <Route component={SeriesRead} path='read/:seriesEntryId'>
             <Route component={SeasonCreate} path='create/season'/>
           </Route>
-          <Route component={SeriesEdit} path='edit/:seriesEntryId'/>
+          <Route component={SeriesEdit} path='edit/:seriesEntryId' />
           <Route path='read/:seriesEntryId'>
             <Route path='seasons'>
               <Route component={SeasonRead} path='read/:seasonId'>
