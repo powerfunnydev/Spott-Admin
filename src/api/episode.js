@@ -26,7 +26,7 @@ export async function fetchEpisode (baseUrl, authenticationToken, locale, { epis
 }
 
 export async function persistEpisode (baseUrl, authenticationToken, locale, { availabilities, number, hasTitle, basedOnDefaultLocale,
-  locales, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title, seasonId, episodeId,
+  locales, publishStatus, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title, seasonId, episodeId,
   contentProducers, broadcasters }) {
   let episode = {};
   if (episodeId) {
@@ -43,7 +43,7 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, { av
   episode.defaultTitle = defaultTitle;
   // episode.externalReference.reference = externalReference;
   // episode.externalReference.source = externalReferenceSource;
-  // episode.publishStatus = publishStatus;
+  episode.publishStatus = publishStatus;
   episode.season = { uuid: seasonId };
   episode.serie = { uuid: seriesEntryId };
   episode.type = 'TV_SERIE_SEASON';
@@ -65,10 +65,8 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, { av
     localeData.hasTitle = hasTitle && hasTitle[locale];
     localeData.title = title && title[locale];
   });
-  console.log('episode', episode);
   const url = `${baseUrl}/v004/media/serieEpisodes`;
   const result = await post(authenticationToken, locale, url, episode);
-  console.log('result', result);
   return transformEpisode004(result.body);
 }
 

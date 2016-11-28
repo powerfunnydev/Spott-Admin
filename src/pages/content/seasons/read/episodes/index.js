@@ -150,20 +150,30 @@ export default class List extends Component {
                   <Headers>
                     {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                     <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'TITLE')} sortDirection = {episodesSortField === 'TITLE' ? sortDirections[episodesSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 5 } ]}>TITLE</CustomCel>
+                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'TITLE')} sortDirection = {episodesSortField === 'TITLE' ? sortDirections[episodesSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 5 } ]}>Title</CustomCel>
+                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'NUMBER')} sortDirection = {episodesSortField === 'NUMBER' ? sortDirections[episodesSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>Number</CustomCel>
                     <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
                     <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
                     <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
                   </Headers>
                   <Rows isLoading={episodes.get('_status') !== 'loaded'}>
                     {episodes.get('data').map((episode, index) => {
+                      console.log('episode', episode.toJS());
                       return (
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                           <CheckBoxCel checked={isSelected.get(episode.get('id'))} onChange={selectCheckbox.bind(this, episode.get('id'))}/>
-                          <CustomCel getValue={this.getTitle} objectToRender={episode} style={{ flex: 5 }} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/read/${episode.get('id')}`); }}/>
-                          <CustomCel getValue={this.getUpdatedBy} objectToRender={episode} style={{ flex: 2 }}/>
-                          <CustomCel getValue={this.getLastUpdatedOn} objectToRender={episode} style={{ flex: 2 }}/>
+                          <CustomCel
+                            style={{ flex: 5 }}
+                            onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/read/${episode.get('id')}`); }}>
+                              {episode.get('title')}
+                          </CustomCel>
+                          <CustomCel
+                            style={{ flex: 1 }}>
+                              {episode.get('number')}
+                          </CustomCel>
+                          <CustomCel style={{ flex: 2 }}>{episode.get('lastUpdatedBy')}</CustomCel>
+                          <CustomCel style={{ flex: 2 }}>{episode.get('lastUpdatedOn')}</CustomCel>
                           <DropdownCel>
                             <Dropdown
                               elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/edit/${episode.get('id')}`); }}>Edit</div>}>

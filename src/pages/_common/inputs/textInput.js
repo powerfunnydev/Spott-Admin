@@ -95,7 +95,7 @@ export default class TextInput extends Component {
   render () {
     const styles = this.constructor.styles;
     const { placeholder, disabled, first, input, label, meta, required, style,
-        type, copyFromBase, _activeLocale } = this.props;
+        type, _activeLocale } = this.props;
     return (
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
@@ -106,14 +106,6 @@ export default class TextInput extends Component {
               name={`hasTitle.${_activeLocale}`}/>
             <div style={styles.checkboxText}>
               Custom title
-            </div>
-          </div>}
-          { copyFromBase && <div style={styles.checkboxWithText}>
-            <Field
-              component={Checkbox}
-              name={`copyFromBase.${input.name}`}/>
-            <div style={styles.checkboxText}>
-              Copy from base language
             </div>
           </div>}
         </div>}

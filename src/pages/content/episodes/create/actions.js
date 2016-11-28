@@ -40,7 +40,6 @@ export function fetchLastEpisode (seasonId) {
 export function submit ({ defaultLocale, ...restProps }) {
   return async (dispatch, getState) => {
     try {
-      console.log('restProps', restProps);
       // contains defaultLocale (from previous), locales, number (from previous) , basedOnDefaultLocale, hasTitle
       // seasonId, seriesEntryId, broadcasters (from previous) and content producers (from previous)
       const seriesEntry = {

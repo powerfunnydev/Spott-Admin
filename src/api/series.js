@@ -40,8 +40,9 @@ export async function fetchSeriesEntry (baseUrl, authenticationToken, locale, { 
   return result;
 }
 
-export async function persistSeriesEntry (baseUrl, authenticationToken, locale, { basedOnDefaultLocale,
-  locales, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title }) {
+export async function persistSeriesEntry (baseUrl, authenticationToken, locale, {
+  basedOnDefaultLocale, defaultLocale, defaultTitle, description, endYear, locales, publishStatus,
+  seriesEntryId, startYear, title }) {
   let seriesEntry = {};
   if (seriesEntryId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/series/${seriesEntryId}`);
@@ -53,7 +54,7 @@ export async function persistSeriesEntry (baseUrl, authenticationToken, locale, 
   seriesEntry.defaultTitle = title[defaultLocale];
   // series.externalReference.reference = externalReference;
   // series.externalReference.source = externalReferenceSource;
-  // series.publishStatus = publishStatus;
+  seriesEntry.publishStatus = publishStatus;
 
   // Update locale data.
   seriesEntry.localeData = seriesEntry.localeData || []; // Ensure we have locale data
