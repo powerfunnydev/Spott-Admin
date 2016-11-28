@@ -21,7 +21,7 @@ export default class Availabilities extends Component {
 
   static propTypes = {
     availabilities: ImmutablePropTypes.list.isRequired,
-    countries: ImmutablePropTypes.list.isRequired,
+    countries: ImmutablePropTypes.map.isRequired,
     fields: PropTypes.object.isRequired
   };
 

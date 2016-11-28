@@ -48,7 +48,8 @@ export default class EditSeriesEntries extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
-    availabilities: ImmutablePropTypes.list.isRequired,
+    // Form field.
+    availabilities: ImmutablePropTypes.list,
     change: PropTypes.func.isRequired,
     closeModal: PropTypes.func.isRequired,
     currentModal: PropTypes.string,
