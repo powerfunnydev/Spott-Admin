@@ -9,7 +9,6 @@ export default class RemoveButton extends Component {
   static propTypes = {
     noCofirmation: PropTypes.bool,
     style: PropTypes.object,
-    text: PropTypes.string,
     onClick: PropTypes.func.isRequired
   }
 
@@ -30,10 +29,11 @@ export default class RemoveButton extends Component {
   }
 
   render () {
-    const { style, text } = this.props;
+    const { style } = this.props;
     return (
-
-      <button style={style} onClick={() => { this.remove(); }} ><img src={removeIcon}/>{text}</button>
+      <button style={style} onClick={() => this.remove()}>
+        <img src={removeIcon}/>
+      </button>
     );
   }
 }

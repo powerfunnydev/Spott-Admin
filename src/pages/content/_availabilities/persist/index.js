@@ -3,17 +3,12 @@ import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { FormSubtitle } from '../../../_common/styles';
-import TextInput from '../../../_common/inputs/textInput';
 import DateInput from '../../../_common/inputs/dateInput';
 import TimeInput from '../../../_common/inputs/timeInput';
 import SelectInput from '../../../_common/inputs/selectInput';
-import CreateModal from '../../../_common/createModal';
-// import { load } from '../list/actions';
-// import * as actions from './actions';
-import { routerPushWithReturnTo } from '../../../../actions/global';
+import PersistModal from '../../../_common/persistModal';
 import timezones, { timezoneKeys } from '../../../../constants/timezones';
+import videoStatusTypes from '../../../../constants/videoStatusTypes';
 import selector from './selector';
 
 // function validate (values, { t }) {
@@ -24,30 +19,22 @@ import selector from './selector';
 //   // Done
 //   return validationErrors;
 // }
-const noop = () => 'test';
 
-@connect(selector, (dispatch) => ({
-  load: noop, // bindActionCreators(load, dispatch),
-  submit: noop, // bindActionCreators(actions.submit, dispatch),
-  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
-}))
+@connect(selector)
 @reduxForm({
-  form: 'createAvailability'
+  form: 'availability'
   // validate
 })
 @Radium
-export default class CreateAvailabilityModal extends Component {
+export default class AvailabilityModal extends Component {
 
   static propTypes = {
     countries: ImmutablePropTypes.map.isRequired,
+    edit: PropTypes.bool.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
-    initialize: PropTypes.func.isRequired,
-    load: PropTypes.func.isRequired,
-    location: PropTypes.object.isRequired,
-    routerPushWithReturnTo: PropTypes.func.isRequired,
-    submit: PropTypes.func.isRequired,
-    t: PropTypes.func.isRequired
+    onClose: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -56,20 +43,9 @@ export default class CreateAvailabilityModal extends Component {
     this.submit = ::this.submit;
   }
 
-  componentWillMount () {
-    this.props.initialize({
-      defaultLocale: this.props.currentLocale
-    });
-  }
-
   async submit (form) {
     try {
-      await this.props.submit(form.toJS());
-      // Load the new list of items, using the location query of the previous page.
-      const location = this.props.location && this.props.location.state && this.props.location.state.returnTo;
-      if (location && location.query) {
-        this.props.load(location.query);
-      }
+      await this.props.onSubmit(form.toJS());
       this.onCloseClick();
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
@@ -77,11 +53,7 @@ export default class CreateAvailabilityModal extends Component {
   }
 
   onCloseClick () {
-    const location = this.props.location;
-    this.props.routerPushWithReturnTo({
-      ...this.props.location,
-      pathname: location.pathname.substring(0, location.pathname.indexOf('/create/availability'))
-    }, true);
+    this.props.onClose();
   }
 
   static styles = {
@@ -93,15 +65,15 @@ export default class CreateAvailabilityModal extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { countries, handleSubmit } = this.props;
+    const { countries, edit, handleSubmit } = this.props;
     return (
-      <CreateModal isOpen title='Add Availability' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal isOpen submitButtonText={edit ? 'Save' : 'Add'} title={edit ? 'Edit Availability' : 'Add Availability'} onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <Field
           component={SelectInput}
           first
           getItemText={(countryId) => countries.getIn([ countryId, 'name' ])}
           label='Country'
-          name='country'
+          name='countryId'
           options={countries.keySeq().toArray()}
           placeholder='Country'
           required />
@@ -118,6 +90,7 @@ export default class CreateAvailabilityModal extends Component {
             component={DateInput}
             label='Start'
             name='startDate'
+            placeholder='DD/MM/YYYY'
             required
             style={{ flex: 1, paddingRight: '0.313em' }} />
           <Field
@@ -131,6 +104,7 @@ export default class CreateAvailabilityModal extends Component {
             component={DateInput}
             label='End'
             name='endDate'
+            placeholder='DD/MM/YYYY'
             required
             style={{ flex: 1, paddingRight: '0.313em' }} />
           <Field
@@ -139,7 +113,15 @@ export default class CreateAvailabilityModal extends Component {
             required
             style={{ flex: 1, paddingLeft: '0.313em' }} />
         </div>
-      </CreateModal>
+        <Field
+          component={SelectInput}
+          getItemText={(videoStatus) => videoStatusTypes[videoStatus]}
+          label='Sync state'
+          name='videoStatus'
+          options={Object.keys(videoStatusTypes)}
+          placeholder='Sync state'
+          required />
+      </PersistModal>
     );
   }
 

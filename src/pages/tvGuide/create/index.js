@@ -11,7 +11,7 @@ import TimeInput from '../../_common/inputs/timeInput';
 import SelectInput from '../../_common/inputs/selectInput';
 import localized from '../../_common/localized';
 import { FETCHING } from '../../../constants/statusTypes';
-import CreateModal from '../../_common/createModal';
+import PersistModal from '../../_common/persistModal';
 import { load } from '../list/actions';
 import * as actions from './actions';
 import selector from './selector';
@@ -125,7 +125,7 @@ export default class CreateTvGuideEntryModal extends Component {
     } = this.props;
 
     return (
-      <CreateModal isOpen title='New TV guide entry' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal isOpen title='New TV guide entry' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}
@@ -204,7 +204,7 @@ export default class CreateTvGuideEntryModal extends Component {
             required
             style={{ flex: 1, paddingLeft: '0.313em' }} />
         </div>
-      </CreateModal>
+      </PersistModal>
     );
   }
 

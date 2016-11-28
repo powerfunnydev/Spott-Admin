@@ -61,7 +61,8 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, { nu
     localeData.title = title && title[locale];
   });
   const url = `${baseUrl}/v004/media/serieEpisodes`;
-  await post(authenticationToken, locale, url, episode);
+  const result = await post(authenticationToken, locale, url, episode);
+  return transformEpisode004(result.body);
 }
 
 export async function deleteEpisode (baseUrl, authenticationToken, locale, { episodeId }) {
