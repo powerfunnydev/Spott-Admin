@@ -56,8 +56,9 @@ export default class List extends Component {
   }
 
   async componentWillMount () {
-    if (this.props.params.id) {
-      await this.props.loadBroadcasterChannels(this.props.location.query, this.props.params.id);
+    const broadcasterId = this.props.params.broadcasterId;
+    if (broadcasterId) {
+      await this.props.loadBroadcasterChannels(this.props.location.query, broadcasterId);
     }
   }
 
@@ -65,7 +66,7 @@ export default class List extends Component {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
     if (isQueryChanged(query, nextQuery, prefix)) {
-      await this.slowSearch(nextProps.location.query, this.props.params.id);
+      await this.slowSearch(nextProps.location.query, this.props.params.broadcasterId);
     }
   }
 
@@ -73,7 +74,7 @@ export default class List extends Component {
     const result = await confirmation();
     if (result) {
       await this.props.deleteBroadcastChannel(broadcastChannelId);
-      await this.props.loadBroadcasterChannels(this.props.location.query, this.props.params.id);
+      await this.props.loadBroadcasterChannels(this.props.location.query, this.props.params.broadcasterId);
     }
   }
 
@@ -87,7 +88,7 @@ export default class List extends Component {
 
   onClickNewEntry (e) {
     e.preventDefault();
-    const broadcasterId = this.props.params.id;
+    const broadcasterId = this.props.params.broadcasterId;
     if (broadcasterId) {
       this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcasterId}/create/broadcast-channel`);
     }
@@ -153,8 +154,14 @@ export default class List extends Component {
                     imageUrl={broadcastChannel.get('logo') && `${broadcastChannel.getIn([ 'logo', 'url' ])}?height=310&width=310`}
                     key={`broadcastChannel${index}`}
                     text={broadcastChannel.get('name')}
-                    onDelete={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}
-                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}/>
+                    onDelete={async (e) => {
+                      e.preventDefault();
+                      await this.deleteBroadcastChannel(broadcastChannel.get('id'));
+                    }}
+                    onEdit={(e) => {
+                      e.preventDefault();
+                      this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`);
+                    }}/>
                 ))}
                 <Tile key={'createBroadcastChannel'} onCreate={this.onClickNewEntry}/>
               </div>
