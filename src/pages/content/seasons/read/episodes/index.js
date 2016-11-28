@@ -180,13 +180,19 @@ export default class List extends Component {
             }
             {episodesDisplay === 'grid' &&
               <div style={generalStyles.row}>
-                { this.props.episodes.get('data').map((episode, index) => (
+                {this.props.episodes.get('data').map((episode, index) => (
                   <Tile
-                    imageUrl={episode.getIn([ 'profileImage', 'url' ])}
+                    imageUrl={episode.get('profileImage') && `${episode.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                     key={`episode${index}`}
                     text={episode.get('title')}
-                    onDelete={async (e) => { e.preventDefault(); await this.deleteEpisode(episode.get('id')); }}
-                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/episodes/edit/${episode.get('id')}`); }}/>
+                    onDelete={async (e) => {
+                      e.preventDefault();
+                      await this.deleteEpisode(episode.get('id'));
+                    }}
+                    onEdit={(e) => {
+                      e.preventDefault();
+                      this.props.routerPushWithReturnTo(`content/episodes/edit/${episode.get('id')}`);
+                    }}/>
                 ))}
                 <Tile key={'createEpisode'} onCreate={this.onClickNewEntry}/>
               </div>

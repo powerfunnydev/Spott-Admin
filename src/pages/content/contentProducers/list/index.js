@@ -171,13 +171,19 @@ export default class ContentProducers extends Component {
             }
             {display === 'grid' &&
               <div style={generalStyles.row}>
-                { contentProducers.get('data').map((contentProducer, index) => (
+                {contentProducers.get('data').map((contentProducer, index) => (
                   <Tile
-                    imageUrl={contentProducer.getIn([ 'logo', 'url' ])}
+                    imageUrl={contentProducer.get('logo') && `${contentProducer.getIn([ 'logo', 'url' ])}?height=310&width=310`}
                     key={`contentProducer${index}`}
                     text={this.getName(contentProducer)}
-                    onDelete={async (e) => { e.preventDefault(); await this.deleteContentProducer(contentProducer.get('id')); }}
-                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/content-producers/edit/${contentProducer.get('id')}`); }}/>
+                    onDelete={async (e) => {
+                      e.preventDefault();
+                      await this.deleteContentProducer(contentProducer.get('id'));
+                    }}
+                    onEdit={(e) => {
+                      e.preventDefault();
+                      this.props.routerPushWithReturnTo(`content/content-producers/edit/${contentProducer.get('id')}`);
+                    }}/>
                 ))}
                 <Tile key={'createBroadcaster'} onCreate={() => { this.props.routerPushWithReturnTo('content/contentProducers/create'); }}/>
               </div>

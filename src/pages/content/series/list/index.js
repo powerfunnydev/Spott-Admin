@@ -173,13 +173,13 @@ export default class SeriesEntries extends Component {
               <div style={generalStyles.row}>
                 { seriesEntries.get('data').map((seriesEntry, index) => (
                   <Tile
-                    imageUrl={seriesEntry.getIn([ 'profileImage', 'url' ])}
+                    imageUrl={seriesEntry.get('profileImage') && `${seriesEntry.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                     key={`seriesEntry${index}`}
                     text={this.getTitle(seriesEntry)}
                     onDelete={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}
                     onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/series/edit/${seriesEntry.get('id')}`); }}/>
                 ))}
-                <Tile key={'createSeriesEntry'} onCreate={() => { this.props.routerPushWithReturnTo('content/seriesEntrys/create'); }}/>
+                <Tile key={'createSeriesEntry'} onCreate={() => { this.props.routerPushWithReturnTo('content/series/create'); }}/>
               </div>
             }
           </Container>

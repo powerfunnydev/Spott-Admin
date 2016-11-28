@@ -160,8 +160,9 @@ export default class EditSeriesEntries extends Component {
   };
 
   render () {
-    const { styles } = this.constructor;
+    const styles = this.constructor.styles;
     const { _activeLocale, errors, closeModal, currentModal, supportedLocales, defaultLocale, currentSeriesEntry, location, handleSubmit } = this.props;
+
     return (
         <Root style={styles.backgroundRoot}>
           <Header currentLocation={location} hideHomePageLinks />
@@ -204,7 +205,8 @@ export default class EditSeriesEntries extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
-                      imageUrl={currentSeriesEntry.getIn([ 'profileImage', currentSeriesEntry.get('defaultLocale'), 'url' ])}/>
+                      imageUrl={currentSeriesEntry.getIn([ 'profileImage', defaultLocale ]) &&
+                        `${currentSeriesEntry.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`} />
                   </div>
                 </div>
               </Section>

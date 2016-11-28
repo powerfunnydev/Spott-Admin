@@ -75,20 +75,24 @@ export default class ReadUser extends Component {
   }
 
   render () {
-    const { children, currentUser,
-       location, deleteUser, location: { query: { tabIndex } } } = this.props;
-    const { styles } = this.constructor;
+    const styles = this.constructor.styles;
+    const { children, currentUser, location, deleteUser } = this.props;
+
     return (
       <Root>
         <Header currentLocation={location} hideHomePageLinks />
-        <BreadCrumbs hierarchy={[ { title: 'List', url: '/users' }, { title: currentUser.get('userName'), url: location.pathname } ]}/>
+        <BreadCrumbs
+          hierarchy={[
+            { title: 'List', url: '/users' },
+            { title: currentUser.get('userName'), url: location.pathname }
+          ]}/>
         <Container>
           {currentUser.get('_status') === 'loaded' && currentUser &&
             <EntityDetails
-              image={currentUser.get('avatar') && currentUser.getIn([ 'avatar', 'url' ])}
-              subtitle={`${currentUser.getIn([ 'email' ])}`}
-              title={`${currentUser.getIn([ 'firstName' ])} ${currentUser.getIn([ 'lastName' ])}`}
-              onEdit={() => { this.props.routerPushWithReturnTo(`users/edit/${currentUser.getIn([ 'id' ])}`); }}
+              imageUrl={currentUser.get('avatar') && `${currentUser.getIn([ 'avatar', 'url' ])}?height=310&width=310`}
+              subtitle={currentUser.get('email')}
+              title={`${currentUser.get('firstName')} ${currentUser.get('lastName')}`}
+              onEdit={() => this.props.routerPushWithReturnTo(`users/edit/${currentUser.get('id')}`)}
               onRemove={async () => { await deleteUser(currentUser.getIn([ 'id' ])); this.redirect(); }}/>}
         </Container>
         <Line/>

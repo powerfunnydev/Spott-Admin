@@ -84,7 +84,9 @@ export default class ReadEpisode extends Component {
         <SpecificHeader/>
         <Container>
           {currentEpisode.get('_status') === 'loaded' && currentEpisode &&
-            <EntityDetails image={currentEpisode.getIn([ 'profileImage', defaultLocale, 'url' ])} title={currentEpisode.getIn([ 'title', defaultLocale ])}
+            <EntityDetails
+              imageUrl={currentEpisode.getIn([ 'profileImage', defaultLocale ]) && `${currentEpisode.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
+              title={currentEpisode.getIn([ 'title', defaultLocale ])}
               onEdit={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/edit/${currentEpisode.get('id')}`); }}
               onRemove={async () => { await deleteEpisode(currentEpisode.getIn([ 'id' ])); this.redirect(); }}/>}
         </Container>

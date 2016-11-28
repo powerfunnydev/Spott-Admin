@@ -171,13 +171,19 @@ export default class Seasons extends Component {
             }
             {display === 'grid' &&
               <div style={generalStyles.row}>
-                { seasons.get('data').map((season, index) => (
+                {seasons.get('data').map((season, index) => (
                   <Tile
-                    imageUrl={season.getIn([ 'profileImage', 'url' ])}
+                    imageUrl={season.get('profileImage') && `${season.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                     key={`season${index}`}
                     text={this.getTitle(season)}
-                    onDelete={async (e) => { e.preventDefault(); await this.deleteSeason(season.get('id')); }}
-                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/seasons/edit/${season.get('id')}`); }}/>
+                    onDelete={async (e) => {
+                      e.preventDefault();
+                      await this.deleteSeason(season.get('id'));
+                    }}
+                    onEdit={(e) => {
+                      e.preventDefault();
+                      this.props.routerPushWithReturnTo(`content/seasons/edit/${season.get('id')}`);
+                    }}/>
                 ))}
                 <Tile key={'createSeason'} onCreate={() => { this.props.routerPushWithReturnTo('content/seasons/create'); }}/>
               </div>

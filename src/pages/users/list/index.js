@@ -178,7 +178,7 @@ export default class Users extends Component {
                 { users.get('data').map((user, index) => (
                   <Tile
                     deleteText='Remove'
-                    imageUrl={user.getIn([ 'avatar', 'url' ])}
+                    imageUrl={user.get('avatar') && `${user.getIn([ 'avatar', 'url' ])}?height=310&width=310`}
                     key={`user${index}`}
                     text={this.getUserName(user)}
                     onDelete={this.onDeleteUser.bind(this, user.get('id'))}

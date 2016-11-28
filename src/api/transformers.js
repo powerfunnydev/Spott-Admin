@@ -1,21 +1,18 @@
 import { ACTIVE, INACTIVE, ADMIN, CONTENT_MANAGER, CONTENT_PRODUCER, BROADCASTER } from '../constants/userRoles';
 
 export function transformBroadcaster ({ logo, name, uuid }) {
-  return { logo: { url: logo && logo.url }, name, id: uuid };
+  return { logo: logo && { id: logo.uuid, url: logo.url }, name, id: uuid };
 }
 
 export function transformContentProducer ({ uuid, name, auditInfo, logo }) {
-  return { id: uuid, name, createdOn: auditInfo && auditInfo.createdOn, lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
-    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn, logo: { url: logo && logo.url } };
-}
-export function transformContentProducers (body) {
-  const contentProducers = body.data;
-  const data = [];
-  for (const cp of contentProducers) {
-    data.push(transformContentProducer(cp));
-  }
-  body.data = data;
-  return body;
+  return {
+    createdOn: auditInfo && auditInfo.createdOn,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    logo: logo && { id: logo.uuid, url: logo.url },
+    name
+  };
 }
 
 export function transformBrandSubscription ({
@@ -280,7 +277,12 @@ export const transformListSeason = transformListMedium;
 export const transformListSeriesEntry = transformListMedium;
 
 export function transformBroadcastChannel ({ name, uuid: id, logo, broadcaster }) {
-  return { id, name, broadcaster: broadcaster && { id: broadcaster.uuid }, logo: logo && { url: logo.url } };
+  return {
+    broadcaster: broadcaster && { id: broadcaster.uuid },
+    id,
+    logo: logo && { id: logo.uuid, url: logo.url },
+    name
+  };
 }
 
 export function transformTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastUpdatedOn }, uuid: id, start, end, medium, medium: { season }, channel }) {
@@ -330,8 +332,8 @@ export function transformUser ({ profileImage, avatar, languages, dateOfBirth, d
     ...obj,
     broadcasters,
     contentProducers,
-    avatar: avatar && { url: avatar.url } || {},
-    profileImage: profileImage && { url: profileImage.url } || {},
+    avatar: avatar && { id: avatar.uuid, url: avatar.url },
+    profileImage: profileImage && { id: profileImage.uuid, url: profileImage.url },
     userStatus: disabled && ACTIVE || INACTIVE,
     languages,
     disabledReason,
@@ -341,5 +343,6 @@ export function transformUser ({ profileImage, avatar, languages, dateOfBirth, d
     firstName,
     lastName,
     gender,
-    id };
+    id
+  };
 }
