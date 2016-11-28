@@ -1,5 +1,5 @@
 import { del, get, post } from './request';
-import { transformSeason004, transformEpisode, transformListEpisode } from './transformers';
+import { transformEpisode004, transformSeason004, transformEpisode, transformListEpisode } from './transformers';
 
 export async function fetchSeasonEpisodes (baseUrl, authenticationToken, locale, { seasonId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/serieSeasons/${seasonId}/episodes?page=${page}&pageSize=${pageSize}`;
@@ -49,6 +49,15 @@ export async function fetchSeason (baseUrl, authenticationToken, locale, { seaso
   // console.log('before transform', { ...body });
   const result = transformSeason004(body);
   // console.log('after tranform', result);
+  return result;
+}
+
+export async function fetchLastEpisode (baseUrl, authenticationToken, locale, { seasonId }) {
+  const url = `${baseUrl}/v004/media/serieSeasons/${seasonId}/lastEpisode`;
+  const { body } = await get(authenticationToken, locale, url);
+  console.log('before transform', { ...body });
+  const result = transformEpisode004(body);
+  console.log('after tranform', result);
   return result;
 }
 

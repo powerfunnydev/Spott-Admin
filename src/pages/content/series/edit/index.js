@@ -132,9 +132,7 @@ export default class EditSeriesEntries extends Component {
   }
 
   onSetDefaultLocale (locale) {
-    const { change, dispatch, _activeLocale, defaultLocale } = this.props;
-    dispatch(change(`basedOnDefaultLocale.${defaultLocale}`, false));
-    dispatch(change(`basedOnDefaultLocale.${_activeLocale}`, false));
+    const { change, dispatch, _activeLocale } = this.props;
     dispatch(change('defaultLocale', _activeLocale));
   }
 

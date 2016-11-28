@@ -5,7 +5,7 @@ BROADCASTERS_SEARCH_ERROR, CONTENT_PRODUCERS_SEARCH_ERROR, USER_FETCH_ENTRY_ERRO
 
 export default (state = Map({}), action) => {
   switch (action.type) {
-    case BROADCASTERS_SEARCH_START: // Autocompletion field of broadcast channel
+    case BROADCASTERS_SEARCH_START: // Autocompletion field of broadcasters
       return state.set('currentBroadcastersSearchString', action.searchString);
     case CONTENT_PRODUCERS_SEARCH_START: // Autocompletion field of content producers
       return state.set('currentContentProducersSearchString', action.searchString);
