@@ -112,7 +112,6 @@ export default class CreateEpisodentryModal extends Component {
 
   async submit (form) {
     try {
-      console.log('form', form.toJS());
       await this.props.submit(form.toJS());
       // Load the new list of items, using the location query of the previous page.
       const location = this.props.location && this.props.location.state && this.props.location.state.returnTo;

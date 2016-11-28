@@ -171,7 +171,7 @@ export default class EditSeriesEntries extends Component {
               onCloseClick={closeModal}
               onCreate={this.languageAdded}/>}
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-            <Tabs>
+            <Tabs showPublishStatus>
               <Tab title='Details'>
                 <Section noPadding style={styles.background}>
                   <LanguageBar

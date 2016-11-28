@@ -131,7 +131,8 @@ export default class Dropdown extends Component {
     root: {
       position: 'relative',
       ...makeTextStyle(fontWeights.regular, '11px'),
-      color: colors.darkGray2
+      color: colors.darkGray2,
+      minWidth: '120px'
     },
     isOpen: {
       backgroundColor: colors.veryLightGray
@@ -141,7 +142,7 @@ export default class Dropdown extends Component {
       border: `1px solid ${colors.lightGray2}`
     },
     topElement: {
-      width: '120px',
+      width: '100%',
       paddingTop: '3px',
       paddingBottom: '3px',
       paddingLeft: '10px',
@@ -158,10 +159,10 @@ export default class Dropdown extends Component {
       }
     },
     topElementText: {
-      width: '100px'
+      width: '80%'
     },
     arrow: {
-      width: '20px',
+      width: '20%',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center'
@@ -209,7 +210,7 @@ export default class Dropdown extends Component {
       position: 'absolute',
       left: -15,
       top: 30,
-      width: '160px',
+      minWidth: '140px',
       borderRadius: '2px',
       backgroundColor: colors.white,
       boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)',
@@ -223,24 +224,7 @@ export default class Dropdown extends Component {
       paddingRight: '6px'
     }
   };
-  /*
-  <WrappedSelect
-    {...input}
-    cache={false}
-    clearable={false}
-    disabled={disabled}
-    filterOption={() => true}
-    isLoading={isLoading}
-    multi={multiselect}
-    options={maxSelected ? [] : options}
-    placeholder={placeholder}
-    style={mergeStyles([ styles.base, disabled && styles.disabled, meta && meta.touched && meta.error && styles.error, styles.text ])}
-    value={value} // Overides value of of {...field}
-    onBlur={() => input.onBlur && input.onBlur(input.value)} // Overides onBlur of {...field}
-    onChange={this.onInternalChange}  // Overides onChange of {...field};
-    onInputChange={(val) => { this.setState({ value: val }); getOptions(val); }}
-    onOpen={getOptions} />
-    */
+
   render () {
     const { style } = this.props;
     const { styles } = this.constructor;

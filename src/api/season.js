@@ -12,8 +12,8 @@ export async function fetchSeasonEpisodes (baseUrl, authenticationToken, locale,
   const { body } = await get(authenticationToken, locale, url);
   // There is also usable data in body (not only in data field).
   // We need also fields page, pageCount,...
-  body.data = body.data.map(transformListEpisode);
-  return body;
+  const data = body.data.map(transformListEpisode);
+  return { ...body, data };
 }
 
 export async function searchEpisodes (baseUrl, authenticationToken, locale, { searchString, seasonId }) {
@@ -55,14 +55,12 @@ export async function fetchSeason (baseUrl, authenticationToken, locale, { seaso
 export async function fetchLastEpisode (baseUrl, authenticationToken, locale, { seasonId }) {
   const url = `${baseUrl}/v004/media/serieSeasons/${seasonId}/lastEpisode`;
   const { body } = await get(authenticationToken, locale, url);
-  console.log('before transform', { ...body });
   const result = transformEpisode004(body);
-  console.log('after tranform', result);
   return result;
 }
 
 export async function persistSeason (baseUrl, authenticationToken, locale, { number, hasTitle, basedOnDefaultLocale,
-  locales, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title, seasonId }) {
+  locales, publishStatus, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title, seasonId }) {
   let season = {};
   if (seasonId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/serieSeasons/${seasonId}`);
@@ -74,7 +72,7 @@ export async function persistSeason (baseUrl, authenticationToken, locale, { num
   season.defaultTitle = defaultTitle;
   // series.externalReference.reference = externalReference;
   // series.externalReference.source = externalReferenceSource;
-  // series.publishStatus = publishStatus;
+  season.publishStatus = publishStatus;
   season.serie = { uuid: seriesEntryId };
   season.type = 'TV_SERIE_SEASON';
   season.number = number;
