@@ -1,4 +1,4 @@
-import { createSelector, createStructuredSelector } from 'reselect';
+import { createStructuredSelector } from 'reselect';
 import {
   currentModalSelector
 } from '../../../../selectors/global';
@@ -7,45 +7,26 @@ import {
   createEntityByIdSelector,
   listMediaEntitiesSelector,
   createEntityIdsByRelationSelector,
-  searchStringHasSeriesEntriesRelationsSelector,
-  seriesEntryHasSeasonsSelector
+  searchStringHasSeriesEntriesRelationsSelector
 } from '../../../../selectors/data';
-import { getFormValues } from 'redux-form/immutable';
+import { createFormValueSelector } from '../../../../utils';
 
 const formName = 'seasonEdit';
-const formSelector = getFormValues(formName);
 const formErrorsSelector = (state) => { return state.getIn([ 'form', formName, 'syncErrors' ]); };
 
-export const currentSeriesEntryIdSelector = createSelector(
-  formSelector,
-  (form) => form && form.get('seriesEntryId')
-);
-export const currentDefaultLocaleSelector = createSelector(
-  formSelector,
-  (form) => (form && form.get('defaultLocale'))
-);
-export const _activeDefaultLocaleSelector = createSelector(
-  formSelector,
-  (form) => (form && form.get('_activeLocale'))
-);
-export const supportedLocalesSelector = createSelector(
-  formSelector,
-  (form) => (form && form.get('locales'))
-);
-export const hasTitleSelector = createSelector(
-  formSelector,
-  (form) => (form && form.get('hasTitle'))
-);
+const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
+const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultLocale');
+const currentSeriesEntryIdSelector = createFormValueSelector(formName, 'seriesEntryId');
+const hasTitleSelector = createFormValueSelector(formName, 'hasTitle');
+const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 
-export const currentSeasonIdSelector = (state, props) => { return props.params.seasonId; };
-export const currentSeasonSelector = createEntityByIdSelector(mediaEntitiesSelector, currentSeasonIdSelector);
-export const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentSeriesEntrySearchString' ]);
-
-export const searchedSeriesEntryIdsSelector = createEntityIdsByRelationSelector(searchStringHasSeriesEntriesRelationsSelector, currentSeriesEntriesSearchStringSelector);
-export const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(seriesEntryHasSeasonsSelector, currentSeriesEntryIdSelector);
+const currentSeasonIdSelector = (state, props) => { return props.params.seasonId; };
+const currentSeasonSelector = createEntityByIdSelector(mediaEntitiesSelector, currentSeasonIdSelector);
+const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentSeriesEntrySearchString' ]);
+const searchedSeriesEntryIdsSelector = createEntityIdsByRelationSelector(searchStringHasSeriesEntriesRelationsSelector, currentSeriesEntriesSearchStringSelector);
 
 export default createStructuredSelector({
-  _activeLocale: _activeDefaultLocaleSelector,
+  _activeLocale: _activeLocaleSelector,
   currentSeason: currentSeasonSelector,
   currentModal: currentModalSelector,
   currentSeriesEntryId: currentSeriesEntryIdSelector,

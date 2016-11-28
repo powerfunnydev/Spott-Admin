@@ -207,7 +207,7 @@ export default class EditEpisodes extends Component {
   }
 
   render () {
-    const { availabilities, closeModal, currentModal, _activeLocale, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
+    const { _activeLocale, availabilities, closeModal, currentModal, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
         contentProducersById, searchContentProducers, searchedContentProducerIds, broadcastersById,
         searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
         seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
@@ -312,8 +312,8 @@ export default class EditEpisodes extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
-                      imageUrl={currentEpisode.getIn([ 'profileImage', currentEpisode.get('defaultLocale') ]) &&
-                        `${currentEpisode.getIn([ 'profileImage', currentEpisode.get('defaultLocale'), 'url' ])}?height=203&width=360`}/>
+                      imageUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
+                        `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}/>
                   </div>
                 </div>
               </Section>

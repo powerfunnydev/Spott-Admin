@@ -24,8 +24,9 @@ export async function fetchContentProducers (baseUrl, authenticationToken, local
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }
-  const { body: { data } } = await get(authenticationToken, locale, url);
-  return { data: data.map(transformContentProducer) };
+  const { body } = await get(authenticationToken, locale, url);
+  body.data = body.data.map(transformContentProducer);
+  return body;
 }
 
 export async function fetchContentProducer (baseUrl, authenticationToken, locale, { contentProducerId }) {

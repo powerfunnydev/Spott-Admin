@@ -203,8 +203,8 @@ export default class EditSeriesEntries extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
-                      imageUrl={currentSeriesEntry.getIn([ 'profileImage', defaultLocale ]) &&
-                        `${currentSeriesEntry.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`} />
+                      imageUrl={currentSeriesEntry.getIn([ 'profileImage', _activeLocale ]) &&
+                        `${currentSeriesEntry.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`} />
                   </div>
                 </div>
               </Section>
