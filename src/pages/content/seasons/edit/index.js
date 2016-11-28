@@ -268,27 +268,19 @@ export default class EditEpisodes extends Component {
                 </div>
               </Section>
             </Tab>
+            {/* TODO
             <Tab title='Helpers'>
-              {/* TODO */}
-              <Section>
-                <FormSubtitle first>Content</FormSubtitle>
-                ...
-              </Section>
-            </Tab>
-            <Tab title='Availability'>
-              {/* TODO */}
               <Section>
                 <FormSubtitle first>Content</FormSubtitle>
                 ...
               </Section>
             </Tab>
             <Tab title='Audience'>
-              {/* TODO */}
               <Section>
                 <FormSubtitle first>Location</FormSubtitle>
                 ...
               </Section>
-            </Tab>
+            </Tab>*/}
           </Tabs>
         </EditTemplate>
       </Root>

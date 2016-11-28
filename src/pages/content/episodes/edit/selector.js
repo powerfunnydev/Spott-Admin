@@ -40,6 +40,10 @@ export const hasTitleSelector = createSelector(
   formSelector,
   (form) => (form && form.get('hasTitle'))
 );
+export const availabilitiesSelector = createSelector(
+  formSelector,
+  (form) => (form && form.get('availabilities'))
+);
 
 export const currentEpisodeIdSelector = (state, props) => { return props.params.episodeId; };
 export const currentEpisodeSelector = createEntityByIdSelector(mediaEntitiesSelector, currentEpisodeIdSelector);
@@ -50,6 +54,7 @@ export const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(serie
 
 export default createStructuredSelector({
   _activeLocale: _activeDefaultLocaleSelector,
+  availabilities: availabilitiesSelector,
   currentEpisode: currentEpisodeSelector,
   currentModal: currentModalSelector,
   currentSeasonId: currentSeasonIdSelector,

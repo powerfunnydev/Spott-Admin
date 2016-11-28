@@ -1,26 +1,27 @@
 import React, { Component, PropTypes } from 'react';
-import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
+import { reduxForm, Field, FieldArray, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import { FETCHING } from '../../../../constants/statusTypes';
 import { makeTextStyle, fontWeights, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
-import * as actions from './actions';
 import { EPISODE_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import Dropzone from '../../../_common/dropzone';
 import Header from '../../../app/header';
-import ImmutablePropTypes from 'react-immutable-proptypes';
 import Label from '../../../_common/inputs/_label';
 import localized from '../../../_common/localized';
 import Section from '../../../_common/components/section';
 import SelectInput from '../../../_common/inputs/selectInput';
-import selector from './selector';
 import SpecificHeader from '../../header';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
+import Availabilities from '../../_availabilities/list';
+import * as actions from './actions';
+import selector from './selector';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -52,6 +53,8 @@ export default class EditEpisodes extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
+    // Form field.
+    availabilities: ImmutablePropTypes.list,
     change: PropTypes.func.isRequired,
     children: PropTypes.node,
     closeModal: PropTypes.func.isRequired,
@@ -203,7 +206,7 @@ export default class EditEpisodes extends Component {
   }
 
   render () {
-    const { closeModal, currentModal, _activeLocale, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
+    const { availabilities, closeModal, currentModal, _activeLocale, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
         hasTitle, location, currentEpisode, seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
         searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors } = this.props;
     const { styles } = this.constructor;
@@ -292,27 +295,22 @@ export default class EditEpisodes extends Component {
                 </div>
               </Section>
             </Tab>
+            {/* TODO
             <Tab title='Helpers'>
-              {/* TODO */}
               <Section>
                 <FormSubtitle first>Content</FormSubtitle>
-                ...
               </Section>
-            </Tab>
+            </Tab>*/}
             <Tab title='Availability'>
-              {/* TODO */}
-              <Section>
-                <FormSubtitle first>Content</FormSubtitle>
-                ...
-              </Section>
+              <FieldArray availabilities={availabilities} component={Availabilities} name='availabilities' />
             </Tab>
+            {/* TODO
             <Tab title='Audience'>
-              {/* TODO */}
               <Section>
                 <FormSubtitle first>Location</FormSubtitle>
                 ...
               </Section>
-            </Tab>
+            </Tab>*/}
           </Tabs>
         </EditTemplate>
       </Root>
