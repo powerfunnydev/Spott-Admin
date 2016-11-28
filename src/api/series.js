@@ -40,7 +40,7 @@ export async function fetchSeriesEntry (baseUrl, authenticationToken, locale, { 
   return result;
 }
 
-export async function persistSeriesEntry (baseUrl, authenticationToken, locale, { availabilities, basedOnDefaultLocale,
+export async function persistSeriesEntry (baseUrl, authenticationToken, locale, { basedOnDefaultLocale,
   locales, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title }) {
   let seriesEntry = {};
   if (seriesEntryId) {
@@ -48,9 +48,6 @@ export async function persistSeriesEntry (baseUrl, authenticationToken, locale, 
     seriesEntry = body;
   }
 
-  seriesEntry.availabilities = availabilities && availabilities.map(({ availabilityFrom, availabilityTo, countryId, videoStatus }) => ({
-    country: countryId && { uuid: countryId }, startTimeStamp: availabilityFrom, endTimeStamp: availabilityTo, videoStatus
-  }));
   // series.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
   seriesEntry.defaultLocale = defaultLocale;
   seriesEntry.defaultTitle = title[defaultLocale];

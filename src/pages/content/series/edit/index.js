@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { reduxForm, Field, FieldArray, SubmissionError } from 'redux-form/immutable';
+import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -17,7 +17,6 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 import Dropzone from '../../../_common/dropzone';
 import Label from '../../../_common/inputs/_label';
 import selector from './selector';
-import Availabilities from '../../_availabilities/list';
 import { SERIES_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import LanguageBar from '../../../_common/components/languageBar';
@@ -48,8 +47,6 @@ export default class EditSeriesEntries extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
-    // Form field.
-    availabilities: ImmutablePropTypes.list,
     change: PropTypes.func.isRequired,
     closeModal: PropTypes.func.isRequired,
     currentModal: PropTypes.string,
@@ -164,7 +161,7 @@ export default class EditSeriesEntries extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { _activeLocale, availabilities, errors, closeModal, currentModal, supportedLocales, defaultLocale, currentSeriesEntry, location, handleSubmit } = this.props;
+    const { _activeLocale, errors, closeModal, currentModal, supportedLocales, defaultLocale, currentSeriesEntry, location, handleSubmit } = this.props;
     return (
         <Root style={styles.backgroundRoot}>
           <Header currentLocation={location} hideHomePageLinks />
@@ -212,15 +209,12 @@ export default class EditSeriesEntries extends Component {
                 </div>
               </Section>
             </Tab>
-            <Tab title='Availability'>
-              <FieldArray availabilities={availabilities} component={Availabilities} name='availabilities' />
-            </Tab>
+            {/* TODO
             <Tab title='Audience'>
-              {/* TODO */}
               <Section>
                 <FormSubtitle first>Audience</FormSubtitle>
               </Section>
-            </Tab>
+            </Tab>*/}
           </Tabs>
         </EditTemplate>
       </Root>
