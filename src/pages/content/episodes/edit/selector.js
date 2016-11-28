@@ -7,7 +7,11 @@ import {
   createEntityByIdSelector,
   listMediaEntitiesSelector,
   createEntityIdsByRelationSelector,
+  searchStringHasBroadcastersRelationsSelector,
+  searchStringHasContentProducersRelationsSelector,
   searchStringHasSeriesEntriesRelationsSelector,
+  broadcastersEntitiesSelector,
+  contentProducersEntitiesSelector,
   seriesEntryHasSeasonsSelector
 } from '../../../../selectors/data';
 import { getFormValues } from 'redux-form/immutable';
@@ -52,9 +56,17 @@ export const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([
 export const searchedSeriesEntryIdsSelector = createEntityIdsByRelationSelector(searchStringHasSeriesEntriesRelationsSelector, currentSeriesEntriesSearchStringSelector);
 export const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(seriesEntryHasSeasonsSelector, currentSeriesEntryIdSelector);
 
+export const currentBroadcastersSearchStringSelector = (state) => state.getIn([ 'users', 'edit', 'currentBroadcastersSearchString' ]);
+export const currentContentProducersSearchStringSelector = (state) => state.getIn([ 'users', 'edit', 'currentContentProducersSearchString' ]);
+
+export const searchedBroadcasterIdsSelector = createEntityIdsByRelationSelector(searchStringHasBroadcastersRelationsSelector, currentBroadcastersSearchStringSelector);
+export const searchedContentProducerIdsSelector = createEntityIdsByRelationSelector(searchStringHasContentProducersRelationsSelector, currentBroadcastersSearchStringSelector);
+
 export default createStructuredSelector({
   _activeLocale: _activeDefaultLocaleSelector,
   availabilities: availabilitiesSelector,
+  broadcastersById: broadcastersEntitiesSelector,
+  contentProducersById: contentProducersEntitiesSelector,
   currentEpisode: currentEpisodeSelector,
   currentModal: currentModalSelector,
   currentSeasonId: currentSeasonIdSelector,
@@ -62,6 +74,8 @@ export default createStructuredSelector({
   defaultLocale: currentDefaultLocaleSelector,
   errors: formErrorsSelector,
   hasTitle: hasTitleSelector,
+  searchedBroadcasterIds: searchedBroadcasterIdsSelector,
+  searchedContentProducerIds: searchedContentProducerIdsSelector,
   searchedSeasonIds: searchedSeasonIdsSelector,
   searchedSeriesEntryIds: searchedSeriesEntryIdsSelector,
   seasonsById: listMediaEntitiesSelector,
