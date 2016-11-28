@@ -3,7 +3,7 @@ import { reduxForm, Field } from 'redux-form/immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
 import { connect } from 'react-redux';
-import CreateModal from '../../../_common/createModal';
+import PersistModal from '../../../_common/persistModal';
 import SelectInput from '../../../_common/inputs/selectInput';
 import selector from './selector';
 import localized from '../../../_common/localized';
@@ -42,7 +42,7 @@ export default class CreateLanguageModal extends Component {
   render () {
     const { onCloseClick, onCreate, localeNames, handleSubmit, filteredLocales } = this.props;
     return (
-      <CreateModal isOpen title='Add language' onClose={onCloseClick} onSubmit={handleSubmit(onCreate)}>
+      <PersistModal isOpen title='Add language' onClose={onCloseClick} onSubmit={handleSubmit(onCreate)}>
         <Field
           component={SelectInput}
           getItemText={(language) => (localeNames.get(language))}
@@ -50,8 +50,8 @@ export default class CreateLanguageModal extends Component {
           name='language'
           options={filteredLocales}
           placeholder='Language'
-          required/>
-      </CreateModal>
+          required />
+      </PersistModal>
     );
   }
 

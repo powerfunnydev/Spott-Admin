@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { FETCHING } from '../../../constants/statusTypes';
 import { FormSubtitle } from '../../_common/styles';
 import localized from '../../_common/localized';
-import CreateModal from '../../_common/createModal';
+import PersistModal from '../../_common/persistModal';
 import * as actions from './actions';
 import SelectInput from '../../_common/inputs/selectInput';
 import selector from './selector';
@@ -63,7 +63,7 @@ export default class LinkUser extends Component {
   render () {
     const { title, submitButtonText, usersById, handleSubmit, searchUsers, searchedUserIds, onCreateOption, onSubmit } = this.props;
     return (
-      <CreateModal isOpen submitButtonText={submitButtonText} title={title} onClose={this.onCloseClick} onSubmit={handleSubmit(onSubmit)}>
+      <PersistModal isOpen submitButtonText={submitButtonText} title={title} onClose={this.onCloseClick} onSubmit={handleSubmit(onSubmit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}
@@ -75,7 +75,7 @@ export default class LinkUser extends Component {
           options={searchedUserIds.get('data').toJS()}
           placeholder='User'
           onCreateOption={onCreateOption}/>
-      </CreateModal>
+      </PersistModal>
     );
   }
 

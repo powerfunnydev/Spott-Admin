@@ -1,7 +1,5 @@
 import { createSelector, createStructuredSelector } from 'reselect';
-import {
-  currentModalSelector
-} from '../../../../selectors/global';
+import { currentModalSelector } from '../../../../selectors/global';
 import {
   mediaEntitiesSelector,
   createEntityByIdSelector
@@ -20,6 +18,10 @@ export const _activeDefaultLocaleSelector = createSelector(
   formSelector,
   (form) => (form && form.get('_activeLocale'))
 );
+export const availabilitiesSelector = createSelector(
+  formSelector,
+  (form) => (form && form.get('availabilities'))
+);
 export const supportedLocalesSelector = createSelector(
   formSelector,
   (form) => (form && form.get('locales'))
@@ -29,6 +31,7 @@ export const currentSeriesEntrySelector = createEntityByIdSelector(mediaEntities
 
 export default createStructuredSelector({
   _activeLocale: _activeDefaultLocaleSelector,
+  availabilities: availabilitiesSelector,
   defaultLocale: currentDefaultLocaleSelector,
   errors: formErrorsSelector,
   currentModal: currentModalSelector,

@@ -8,7 +8,7 @@ import { FETCHING } from '../../../../constants/statusTypes';
 import { FormSubtitle } from '../../../_common/styles';
 import TextInput from '../../../_common/inputs/textInput';
 import localized from '../../../_common/localized';
-import CreateModal from '../../../_common/createModal';
+import PersistModal from '../../../_common/persistModal';
 import * as actions from './actions';
 import SelectInput from '../../../_common/inputs/selectInput';
 import selector from './selector';
@@ -93,7 +93,7 @@ export default class CreateBroadcasterEntryModal extends Component {
   render () {
     const { broadcastersById, handleSubmit, searchBroadcasters, searchedBroadcasterIds } = this.props;
     return (
-      <CreateModal isOpen title='Create Broadcast Channel' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal isOpen title='Create Broadcast Channel' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={TextInput}
@@ -110,7 +110,7 @@ export default class CreateBroadcasterEntryModal extends Component {
           name='broadcasterId'
           options={searchedBroadcasterIds.get('data').toJS()}
           placeholder='Broadcaster'/>
-      </CreateModal>
+      </PersistModal>
     );
   }
 

@@ -1,115 +1,73 @@
+/* eslint-disable react/no-set-state */
 import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import ImmutablePropTypes from 'react-immutable-proptypes';
-import moment from 'moment';
-// import Header from '../../../app/header';
-// import { Root, Container } from '../../../_common/styles';
-import { DropdownCel, Tile, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
-import Section from '../../../_common/components/section';
-import { colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../_common/styles';
-// import Line from '../../../_common/components/line';
 import Radium from 'radium';
-// import * as actions from './actions';
-// import selector from './selector';
-// import SpecificHeader from '../../header';
-// import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
-import { routerPushWithReturnTo } from '../../../../actions/global';
-// import { slowdown } from '../../../../utils';
-// import { confirmation } from '../../../_common/askConfirmation';
-import selector from './selector';
+import { connect } from 'react-redux';
+import ImmutablePropTypes from 'react-immutable-proptypes';
+import { Field } from 'redux-form/immutable';
+import moment from 'moment';
+import { fromJS } from 'immutable';
+import Section from '../../../_common/components/section';
+import { headerStyles, Table, Headers, CustomCel, Rows, Row } from '../../../_common/components/table/index';
+import { colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../_common/styles';
 import Plus from '../../../_common/images/plus';
+import EditButton from '../../../_common/buttons/editButton';
+import RemoveButton from '../../../_common/buttons/removeButton';
+import PersistAvailabilityModal from '../persist';
+import selector from './selector';
 
-// @tableDecorator('availabilities')
-@connect(selector, (dispatch) => ({
-  // deleteAvailability: bindActionCreators(actions.deleteAvailability, dispatch),
-  // deleteAvailabilities: bindActionCreators(actions.deleteAvailabilities, dispatch),
-  // load: bindActionCreators(actions.load, dispatch),
-  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
-  // selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
-  // selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
-}))
+@connect(selector)
 @Radium
 export default class Availabilities extends Component {
 
   static propTypes = {
     availabilities: ImmutablePropTypes.list.isRequired,
-    // children: PropTypes.node,
-    // deleteAvailabilities: PropTypes.func.isRequired,
-    // deleteAvailability: PropTypes.func.isRequired,
-    // isSelected: ImmutablePropTypes.map.isRequired,
-    // load: PropTypes.func.isRequired,
-    location: PropTypes.shape({
-      pathname: PropTypes.string.isRequired,
-      query: PropTypes.object.isRequired
-    })
-    // pageCount: PropTypes.number,
-    // routerPushWithReturnTo: PropTypes.func.isRequired,
-    // selectAllCheckboxes: PropTypes.func.isRequired,
-    // selectCheckbox: PropTypes.func.isRequired,
-    // totalResultCount: PropTypes.number.isRequired,
-    // onSortField: PropTypes.func.isRequired
+    countries: ImmutablePropTypes.map.isRequired,
+    fields: PropTypes.object.isRequired
   };
 
   constructor (props) {
     super(props);
+    this.persistAvailiability = ::this.persistAvailiability;
     this.onClickNewEntry = ::this.onClickNewEntry;
-    // this.onClickDeleteSelected = ::this.onClickDeleteSelected;
-    // this.slowSearch = slowdown(props.load, 300);
+    this.getAvailability = ::this.getAvailability;
+    this.state = {
+      create: false,
+      edit: false
+    };
   }
 
-  // async componentWillMount () {
-  //   await this.props.load(this.props.location.query);
-  // }
-  //
-  // async componentWillReceiveProps (nextProps) {
-  //   const nextQuery = nextProps.location.query;
-  //   const query = this.props.location.query;
-  //   if (isQueryChanged(query, nextQuery)) {
-  //     this.slowSearch(nextQuery);
-  //   }
-  // }
+  // Transform the date + time + timezone to one date
+  transformAvailability ({ countryId, endDate, endTime, startDate, startTime, timezone, videoStatus }) {
+    return {
+      availabilityFrom: moment(`${startDate.format('YYYY-MM-DD')} ${startTime.format('HH:mm')} ${timezone}`, 'YYYY-MM-DD HH:mm Z').utc().toDate(),
+      availabilityTo: endDate && endTime && moment(`${endDate.format('YYYY-MM-DD')} ${endTime.format('HH:mm')} ${timezone}`, 'YYYY-MM-DD HH:mm Z').utc().toDate(),
+      countryId,
+      videoStatus
+    };
+  }
 
-  // async deleteAvailability (availabilityId) {
-  //   const result = await confirmation();
-  //   if (result) {
-  //     await this.props.deleteAvailability(availabilityId);
-  //     await this.props.load(this.props.location.query);
-  //   }
-  // }
-  //
-  // getTitle (seriesEntry) {
-  //   return seriesEntry.get('title');
-  // }
-  //
-  // getUpdatedBy (seriesEntry) {
-  //   return seriesEntry.get('lastUpdatedBy');
-  // }
-  //
-  // getLastUpdatedOn (seriesEntry) {
-  //   const date = new Date(seriesEntry.get('lastUpdatedOn'));
-  //   return moment(date).format('YYYY-MM-DD HH:mm');
-  // }
-  //
-  // async onClickDeleteSelected (e) {
-  //   e.preventDefault();
-  //   const seriesEntryIds = [];
-  //   this.props.isSelected.forEach((selected, key) => {
-  //     if (selected && key !== 'ALL') {
-  //       seriesEntryIds.push(key);
-  //     }
-  //   });
-  //   await this.props.deleteAvailabilities(seriesEntryIds);
-  //   await this.props.load(this.props.location.query);
-  // }
+  persistAvailiability (index, data) {
+    const availability = this.transformAvailability(data);
+    this.props.fields.remove(index);
+    this.props.fields.insert(index, fromJS(availability));
+  }
+
+  getAvailability (index) {
+    const { availabilityFrom, availabilityTo, countryId, videoStatus } = this.props.availabilities.get(index).toJS();
+    return {
+      countryId,
+      endDate: moment(availabilityTo).startOf('day'),
+      endTime: moment(availabilityTo),
+      startDate: moment(availabilityFrom).startOf('day'),
+      startTime: moment(availabilityFrom),
+      timezone: '+00:00',
+      videoStatus
+    };
+  }
 
   onClickNewEntry (e) {
     e.preventDefault();
-    const location = this.props.location;
-    this.props.routerPushWithReturnTo({
-      ...location,
-      pathname: `${location.pathname}/create/availability`
-    });
+    this.setState({ create: true });
   }
 
   static styles = {
@@ -120,6 +78,9 @@ export default class Availabilities extends Component {
       justifyContent: 'center',
       backgroundColor: 'rgba(244, 245, 245, 0.5)'
     },
+    editButton: {
+      marginRight: '0.75em'
+    },
     description: {
       marginBottom: '1.25em'
     }
@@ -127,7 +88,7 @@ export default class Availabilities extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { availabilities, countries } = this.props;
+    const { fields, countries } = this.props;
 
     return (
       <Section>
@@ -136,9 +97,8 @@ export default class Availabilities extends Component {
         <Table>
           <Headers>
             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-            {/* <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/> */}
             <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>
-              Countries
+              Country
             </CustomCel>
             <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>
               Start
@@ -149,41 +109,64 @@ export default class Availabilities extends Component {
             <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>
               Sync state
             </CustomCel>
-            {/* <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/> */}
+            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]} />
           </Headers>
           <Rows>
-            {availabilities.map((availability, index) => {
+            {fields.map((availability, index) => {
               return (
                 <Row index={index} isFirst={index === 0} key={index} >
-                  {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                  {/* <CheckBoxCel checked={isSelected.get(seriesEntry.get('id'))} onChange={selectCheckbox.bind(this, seriesEntry.get('id'))}/>*/}
                   <CustomCel style={{ flex: 2 }}>
-                    {countries.getIn([ availability.get('countryId'), 'name' ]) || '-'}
+                    <Field
+                      component={({ input: { value: countryId } }) => <span>{countries.getIn([ countryId, 'name' ]) || '-'}</span>}
+                      name={`${availability}.countryId`} />
                   </CustomCel>
                   <CustomCel style={{ flex: 2 }}>
-                    {availability.get('availabilityFrom') ? moment(new Date(availability.get('availabilityFrom'))).format('YYYY-MM-DD HH:mm') : '-'}
+                    <Field
+                      component={({ input: { value: availabilityFrom } }) => <span>{availabilityFrom ? moment(availabilityFrom).format('DD/MM/YYYY HH:mm') : '-'}</span>}
+                      name={`${availability}.availabilityFrom`} />
                   </CustomCel>
                   <CustomCel style={{ flex: 2 }}>
-                    {availability.get('availabilityTo') ? moment(new Date(availability.get('availabilityTo'))).format('YYYY-MM-DD HH:mm') : '-'}
+                    <Field
+                      component={({ input: { value: availabilityTo } }) => <span>{availabilityTo ? moment(availabilityTo).format('DD/MM/YYYY HH:mm') : '-'}</span>}
+                      name={`${availability}.availabilityTo`} />
                   </CustomCel>
                   <CustomCel style={{ flex: 2 }}>
-                    {availability.get('videoStatus')}
+                    <Field
+                      component={({ input: { value: videoStatus } }) => <span>{videoStatus}</span>}
+                      name={`${availability}.videoStatus`} />
                   </CustomCel>
-                  {/* <DropdownCel>
-                    <Dropdown
-                      elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/series/edit/${seriesEntry.get('id')}`); }}>Edit</div>}>
-                      <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}>Remove</div>
-                    </Dropdown>
-                  </DropdownCel> */}
+                  <CustomCel style={{ flex: 1 }}>
+                    <EditButton style={styles.editButton} onClick={() => this.setState({ edit: index })} />
+                    <RemoveButton onClick={() => fields.remove(index)} />
+                  </CustomCel>
                 </Row>
               );
             })}
-            <Row index={availabilities.size} key={availabilities.size}>
+            <Row index={fields.length} key={fields.length}>
               <CustomCel style={styles.add} onClick={this.onClickNewEntry}>
                 <Plus color={colors.primaryBlue} />&nbsp;&nbsp;&nbsp;Add availability
               </CustomCel>
             </Row>
           </Rows>
+          {this.state.create &&
+            <PersistAvailabilityModal
+              initialValues={{
+                countryId: 'BE',
+                endDate: moment().startOf('day'),
+                endTime: moment(),
+                startDate: moment().startOf('day'),
+                startTime: moment(),
+                timezone: '+01:00',
+                videoStatus: 'DISABLED'
+              }}
+              onClose={() => this.setState({ create: false })}
+              onSubmit={this.persistAvailiability.bind(this, this.props.fields.length)} />}
+          {typeof this.state.edit === 'number' &&
+            <PersistAvailabilityModal
+              edit
+              initialValues={this.getAvailability(this.state.edit)}
+              onClose={() => this.setState({ edit: false })}
+              onSubmit={this.persistAvailiability.bind(this, this.state.edit)} />}
         </Table>
       </Section>
     );

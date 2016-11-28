@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux';
 import { FormSubtitle } from '../../../_common/styles';
 import TextInput from '../../../_common/inputs/textInput';
 import localized from '../../../_common/localized';
-import CreateModal from '../../../_common/createModal';
+import PersistModal from '../../../_common/persistModal';
 import { load } from '../list/broadcasters/actions';
 import * as actions from './actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
@@ -69,7 +69,7 @@ export default class CreateBroadcasterEntryModal extends Component {
   render () {
     const { handleSubmit } = this.props;
     return (
-      <CreateModal isOpen title='Create Broadcaster' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal isOpen title='Create Broadcaster' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={TextInput}
@@ -77,7 +77,7 @@ export default class CreateBroadcasterEntryModal extends Component {
           name='name'
           placeholder='Name broadcaster'
           required/>
-      </CreateModal>
+      </PersistModal>
     );
   }
 
