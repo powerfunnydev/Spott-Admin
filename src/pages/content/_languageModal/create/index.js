@@ -39,10 +39,6 @@ export default class CreateLanguageModal extends Component {
     onCreate: PropTypes.func.isRequired
   };
 
-  constructor (props) {
-    super(props);
-  }
-
   render () {
     const { onCloseClick, onCreate, localeNames, handleSubmit, filteredLocales } = this.props;
     return (

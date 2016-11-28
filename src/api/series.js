@@ -74,7 +74,8 @@ export async function persistSeriesEntry (baseUrl, authenticationToken, locale, 
   });
   // console.log('seriesEntry', seriesEntry);
   const url = `${baseUrl}/v004/media/series`;
-  await post(authenticationToken, locale, url, seriesEntry);
+  const result = await post(authenticationToken, locale, url, seriesEntry);
+  return transformSeriesEntry004(result.body);
 }
 
 export async function deleteSeriesEntry (baseUrl, authenticationToken, locale, { seriesEntryId }) {

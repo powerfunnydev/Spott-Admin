@@ -70,6 +70,39 @@ export class SuccessMessage extends Component {
     );
   }
 
+  episodePersistSuccess (episode) {
+    const { styles } = this.constructor;
+    return (
+      <span>
+        Episode <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/series/read/${episode.seriesEntryId}/seasons/read/${episode.seasonId}/episodes/read/${episode.id}`)}>
+          {episode.title[episode.defaultLocale]}
+        </span> has been succesfully persisted.
+      </span>
+    );
+  }
+
+  seasonPersistSuccess (season) {
+    const { styles } = this.constructor;
+    return (
+      <span>
+        Season <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/series/read/${season.seriesEntryId}/seasons/read/${season.id}`)}>
+          {season.title[season.defaultLocale]}
+        </span> has been succesfully persisted.
+      </span>
+    );
+  }
+
+  seriesEntryPersistSuccess (seriesEntry) {
+    const { styles } = this.constructor;
+    return (
+      <span>
+        Series <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/series/read/${seriesEntry.id}`)}>
+          {seriesEntry.title[seriesEntry.defaultLocale]}
+        </span> has been succesfully persisted.
+      </span>
+    );
+  }
+
   userPersistSuccess (user) {
     const { styles } = this.constructor;
     return (
@@ -100,6 +133,12 @@ export class SuccessMessage extends Component {
       return this.broadcasterPersistSuccess(entity);
     } else if (entityType === 'contentProducer') {
       return this.contentProducerPersistSuccess(entity);
+    } else if (entityType === 'episode') {
+      return this.episodePersistSuccess(entity);
+    } else if (entityType === 'season') {
+      return this.seasonPersistSuccess(entity);
+    } else if (entityType === 'seriesEntry') {
+      return this.seriesEntryPersistSuccess(entity);
     } else if (entityType === 'user') {
       return this.userPersistSuccess(entity);
     }
@@ -123,7 +162,7 @@ export default class Toast extends Component {
     if (this.props.currentToast) {
       setTimeout(() => {
         this.props.popToast();
-      }, 3000);
+      }, 5000);
     }
   }
 

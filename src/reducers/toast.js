@@ -4,6 +4,9 @@ import * as userActions from '../actions/user';
 import * as contentProducerActions from '../actions/contentProducer';
 import * as broadcasterActions from '../actions/broadcaster';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
+import * as episodeActions from '../actions/episode';
+import * as seasonActions from '../actions/season';
+import * as seriesActions from '../actions/series';
 
 function pushError (state, entity, entityType) {
   return state.push(Map({ type: 'error', entity, entityType }));
@@ -35,6 +38,12 @@ export default (state = List(), action) => {
       return pushSuccess(state, action.data, 'user');
     case contentProducerActions.CONTENT_PRODUCER_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, 'contentProducer');
+    case episodeActions.EPISODE_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, 'episode');
+    case seasonActions.SEASON_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, 'season');
+    case seriesActions.SERIES_ENTRY_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, 'seriesEntry');
     case toastActions.TOAST_POP:
       return pop(state);
     default:
