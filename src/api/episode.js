@@ -60,7 +60,6 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, { nu
     localeData.hasTitle = hasTitle && hasTitle[locale];
     localeData.title = title && title[locale];
   });
-  console.log('episode', episode);
   const url = `${baseUrl}/v004/media/serieEpisodes`;
   await post(authenticationToken, locale, url, episode);
 }

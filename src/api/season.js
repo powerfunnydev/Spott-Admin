@@ -55,12 +55,10 @@ export async function fetchSeason (baseUrl, authenticationToken, locale, { seaso
 export async function persistSeason (baseUrl, authenticationToken, locale, { number, hasTitle, basedOnDefaultLocale,
   locales, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title, seasonId }) {
   let season = {};
-  console.log('seasonId', seasonId);
   if (seasonId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/serieSeasons/${seasonId}`);
     season = body;
   }
-  console.log('fetched season', season);
   // series.availabilities = transformAvailabilitiesToApi(availabilityFrom, availabilityTo, availabilityPlannedToMakeInteractive, availabilityPlatforms, availabilityVideoStatusType);
   // series.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
   season.defaultLocale = defaultLocale;
@@ -90,7 +88,6 @@ export async function persistSeason (baseUrl, authenticationToken, locale, { num
     // title is always provided, no check needed
     localeData.title = title && title[locale];
   });
-  console.log('season', season);
   const url = `${baseUrl}/v004/media/serieSeasons`;
   await post(authenticationToken, locale, url, season);
 }

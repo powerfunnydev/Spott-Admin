@@ -43,7 +43,6 @@ export async function fetchSeriesEntry (baseUrl, authenticationToken, locale, { 
 export async function persistSeriesEntry (baseUrl, authenticationToken, locale, { basedOnDefaultLocale,
   locales, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title }) {
   let seriesEntry = {};
-  console.log('seriesEntryId', seriesEntryId);
   if (seriesEntryId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/series/${seriesEntryId}`);
     seriesEntry = body;
@@ -73,7 +72,7 @@ export async function persistSeriesEntry (baseUrl, authenticationToken, locale, 
     // title is always provided, no check needed
     localeData.title = title[locale];
   });
-  console.log('seriesEntry', seriesEntry);
+  // console.log('seriesEntry', seriesEntry);
   const url = `${baseUrl}/v004/media/series`;
   await post(authenticationToken, locale, url, seriesEntry);
 }
@@ -106,7 +105,6 @@ export async function searchSeasons (baseUrl, authenticationToken, locale, { sea
   if (searchString) {
     searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
   }
-  console.log('url', searchUrl);
   const { body: { data } } = await get(authenticationToken, locale, searchUrl);
   return data.map(transformListSeason);
 }
