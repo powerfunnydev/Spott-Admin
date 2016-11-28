@@ -48,7 +48,7 @@ export async function persistSeriesEntry (baseUrl, authenticationToken, locale, 
     seriesEntry = body;
   }
 
-  seriesEntry.availabilities = availabilities.map(({ availabilityFrom, availabilityTo, countryId, videoStatus }) => ({
+  seriesEntry.availabilities = availabilities && availabilities.map(({ availabilityFrom, availabilityTo, countryId, videoStatus }) => ({
     country: countryId && { uuid: countryId }, startTimeStamp: availabilityFrom, endTimeStamp: availabilityTo, videoStatus
   }));
   // series.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
