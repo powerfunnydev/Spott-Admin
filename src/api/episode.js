@@ -25,20 +25,22 @@ export async function fetchEpisode (baseUrl, authenticationToken, locale, { epis
   return result;
 }
 
-export async function persistEpisode (baseUrl, authenticationToken, locale, { number, hasTitle, basedOnDefaultLocale,
+export async function persistEpisode (baseUrl, authenticationToken, locale, { availabilities, number, hasTitle, basedOnDefaultLocale,
   locales, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title, seasonId, episodeId }) {
   let episode = {};
   if (episodeId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/serieEpisodes/${episodeId}`);
     episode = body;
   }
-  // series.availabilities = transformAvailabilitiesToApi(availabilityFrom, availabilityTo, availabilityPlannedToMakeInteractive, availabilityPlatforms, availabilityVideoStatusType);
-  // series.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
+  episode.availabilities = availabilities && availabilities.map(({ availabilityFrom, availabilityTo, countryId, videoStatus }) => ({
+    country: countryId && { uuid: countryId }, startTimeStamp: availabilityFrom, endTimeStamp: availabilityTo, videoStatus
+  }));
+  // episode.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
   episode.defaultLocale = defaultLocale;
   episode.defaultTitle = defaultTitle;
-  // series.externalReference.reference = externalReference;
-  // series.externalReference.source = externalReferenceSource;
-  // series.publishStatus = publishStatus;
+  // episode.externalReference.reference = externalReference;
+  // episode.externalReference.source = externalReferenceSource;
+  // episode.publishStatus = publishStatus;
   episode.season = { uuid: seasonId };
   episode.serie = { uuid: seriesEntryId };
   episode.type = 'TV_SERIE_SEASON';
@@ -61,7 +63,8 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, { nu
     localeData.title = title && title[locale];
   });
   const url = `${baseUrl}/v004/media/serieEpisodes`;
-  await post(authenticationToken, locale, url, episode);
+  const result = await post(authenticationToken, locale, url, episode);
+  return transformEpisode004(result.body);
 }
 
 export async function deleteEpisode (baseUrl, authenticationToken, locale, { episodeId }) {

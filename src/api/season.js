@@ -89,7 +89,8 @@ export async function persistSeason (baseUrl, authenticationToken, locale, { num
     localeData.title = title && title[locale];
   });
   const url = `${baseUrl}/v004/media/serieSeasons`;
-  await post(authenticationToken, locale, url, season);
+  const result = await post(authenticationToken, locale, url, season);
+  return transformSeason004(result.body);
 }
 
 export async function deleteSeason (baseUrl, authenticationToken, locale, { seasonId }) {
