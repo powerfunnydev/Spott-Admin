@@ -40,14 +40,17 @@ export async function fetchSeriesEntry (baseUrl, authenticationToken, locale, { 
   return result;
 }
 
-export async function persistSeriesEntry (baseUrl, authenticationToken, locale, { basedOnDefaultLocale,
+export async function persistSeriesEntry (baseUrl, authenticationToken, locale, { availabilities, basedOnDefaultLocale,
   locales, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title }) {
   let seriesEntry = {};
   if (seriesEntryId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/series/${seriesEntryId}`);
     seriesEntry = body;
   }
-  // series.availabilities = transformAvailabilitiesToApi(availabilityFrom, availabilityTo, availabilityPlannedToMakeInteractive, availabilityPlatforms, availabilityVideoStatusType);
+
+  seriesEntry.availabilities = availabilities.map(({ availabilityFrom, availabilityTo, countryId, videoStatus }) => ({
+    country: countryId && { uuid: countryId }, startTimeStamp: availabilityFrom, endTimeStamp: availabilityTo, videoStatus
+  }));
   // series.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
   seriesEntry.defaultLocale = defaultLocale;
   seriesEntry.defaultTitle = title[defaultLocale];
