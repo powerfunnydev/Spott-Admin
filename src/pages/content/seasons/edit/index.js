@@ -141,9 +141,7 @@ export default class EditEpisodes extends Component {
   }
 
   onSetDefaultLocale (locale) {
-    const { change, dispatch, _activeLocale, defaultLocale } = this.props;
-    dispatch(change(`basedOnDefaultLocale.${defaultLocale}`, false));
-    dispatch(change(`basedOnDefaultLocale.${_activeLocale}`, false));
+    const { change, dispatch, _activeLocale } = this.props;
     dispatch(change('defaultLocale', _activeLocale));
   }
   static styles = {
@@ -235,6 +233,7 @@ export default class EditEpisodes extends Component {
                   }} />
                 {currentSeriesEntryId && <Field
                   component={TextInput}
+                  disabled={_activeLocale !== defaultLocale}
                   label='Season number'
                   name='number'
                   placeholder='Season number'

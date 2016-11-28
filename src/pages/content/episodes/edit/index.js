@@ -41,6 +41,8 @@ function validate (values, { t }) {
   closeModal: bindActionCreators(actions.closeModal, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
+  searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
+  searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
   searchSeasons: bindActionCreators(actions.searchSeasons, dispatch),
   searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch)
 }))
@@ -55,9 +57,11 @@ export default class EditEpisodes extends Component {
     _activeLocale: PropTypes.string,
     // Form field.
     availabilities: ImmutablePropTypes.list,
+    broadcastersById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
     children: PropTypes.node,
     closeModal: PropTypes.func.isRequired,
+    contentProducersById: ImmutablePropTypes.map.isRequired,
     currentEpisode: ImmutablePropTypes.map.isRequired,
     currentModal: PropTypes.string,
     currentSeasonId: PropTypes.string,
@@ -74,8 +78,12 @@ export default class EditEpisodes extends Component {
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
+    searchBroadcasters: PropTypes.func.isRequired,
+    searchContentProducers: PropTypes.func.isRequired,
     searchSeasons: PropTypes.func.isRequired,
     searchSeriesEntries: PropTypes.func.isRequired,
+    searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
+    searchedContentProducerIds: ImmutablePropTypes.map.isRequired,
     searchedSeasonIds: ImmutablePropTypes.map.isRequired,
     searchedSeriesEntryIds: ImmutablePropTypes.map.isRequired,
     seasonsById: ImmutablePropTypes.map.isRequired,
@@ -83,6 +91,7 @@ export default class EditEpisodes extends Component {
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired
+
   };
 
   constructor (props) {
@@ -148,17 +157,10 @@ export default class EditEpisodes extends Component {
   }
 
   onSetDefaultLocale (locale) {
-    const { change, dispatch, _activeLocale, defaultLocale } = this.props;
-    dispatch(change(`basedOnDefaultLocale.${defaultLocale}`, false));
-    dispatch(change(`basedOnDefaultLocale.${_activeLocale}`, false));
+    const { change, dispatch, _activeLocale } = this.props;
     dispatch(change('defaultLocale', _activeLocale));
-/*
-    if (basedOnDefaultLocale[defaultLocale.value]) {
-      basedOnDefaultLocale[defaultLocale.value].onChange(false);
-    }
-    defaultLocale.onChange(_activeLocale.value);
-    basedOnDefaultLocale[_activeLocale.value].onChange(false);*/
   }
+
   static styles = {
     topBar: {
       display: 'flex',
@@ -206,7 +208,9 @@ export default class EditEpisodes extends Component {
 
   render () {
     const { availabilities, closeModal, currentModal, _activeLocale, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
-        hasTitle, location, currentEpisode, seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
+        contentProducersById, searchContentProducers, searchedContentProducerIds, broadcastersById,
+        searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
+        seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
         searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors } = this.props;
     const { styles } = this.constructor;
     return (
@@ -261,6 +265,7 @@ export default class EditEpisodes extends Component {
                   }} />}
                 {currentSeriesEntryId && currentSeasonId && <Field
                   component={TextInput}
+                  disabled={_activeLocale !== defaultLocale}
                   label='Episode number'
                   name='number'
                   placeholder='Episode number'
@@ -277,12 +282,30 @@ export default class EditEpisodes extends Component {
                   required={hasTitle && hasTitle.get(_activeLocale)}/>}
                 <Field
                   component={TextInput}
-                  // copyFromBase={!isDefaultLocaleSelected}
-                  // disabled={copyFromBase && copyFromBase.getIn([ 'description', _activeLocale ])}
                   label='Description'
                   name={`description.${_activeLocale}`}
                   placeholder='Description'
                   type='multiline'/>
+                <Field
+                  component={SelectInput}
+                  getItemText={(contentProducerId) => contentProducersById.getIn([ contentProducerId, 'name' ])}
+                  getOptions={searchContentProducers}
+                  isLoading={searchedContentProducerIds.get('_status') === FETCHING}
+                  label='Content producers'
+                  multiselect
+                  name='contentProducers'
+                  options={searchedContentProducerIds.get('data').toJS()}
+                  placeholder='Content producers'/>
+                <Field
+                  component={SelectInput}
+                  getItemText={(broadcasterId) => broadcastersById.getIn([ broadcasterId, 'name' ])}
+                  getOptions={searchBroadcasters}
+                  isLoading={searchedBroadcasterIds.get('_status') === FETCHING}
+                  label='Broadcasters'
+                  multiselect
+                  name='broadcasters'
+                  options={searchedBroadcasterIds.get('data').toJS()}
+                  placeholder='Broadcaster companies'/>
                 <FormSubtitle>Images</FormSubtitle>
                 <div style={[ styles.paddingTop, styles.row ]}>
                   <div>
