@@ -1,8 +1,9 @@
 import React, { Component, PropTypes } from 'react';
-import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
+import { reduxForm, Field, FieldArray, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
 import Header from '../../../app/header';
 // import Line from '../../../_common/components/line';
@@ -16,7 +17,6 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 import Dropzone from '../../../_common/dropzone';
 import Label from '../../../_common/inputs/_label';
 import selector from './selector';
-import ImmutablePropTypes from 'react-immutable-proptypes';
 import Availabilities from '../../_availabilities/list';
 import { SERIES_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
@@ -48,6 +48,7 @@ export default class EditSeriesEntries extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
+    availabilities: ImmutablePropTypes.list.isRequired,
     change: PropTypes.func.isRequired,
     closeModal: PropTypes.func.isRequired,
     currentModal: PropTypes.string,
@@ -119,7 +120,7 @@ export default class EditSeriesEntries extends Component {
 
   async submit (form) {
     const { supportedLocales, params: { seriesEntryId } } = this.props;
-    console.log('supportedLocales', supportedLocales.toArray());
+
     try {
       await this.props.submit({
         ...form.toJS(),
@@ -138,6 +139,7 @@ export default class EditSeriesEntries extends Component {
     dispatch(change(`basedOnDefaultLocale.${_activeLocale}`, false));
     dispatch(change('defaultLocale', _activeLocale));
   }
+
   static styles = {
     selectInput: {
       paddingTop: 0,
@@ -157,12 +159,11 @@ export default class EditSeriesEntries extends Component {
       backgroundColor: colors.lightGray4,
       paddingBottom: '50px'
     }
-
-  }
+  };
 
   render () {
     const { styles } = this.constructor;
-    const { errors, _activeLocale, closeModal, currentModal, supportedLocales, defaultLocale, currentSeriesEntry, location, handleSubmit } = this.props;
+    const { _activeLocale, availabilities, errors, closeModal, currentModal, supportedLocales, defaultLocale, currentSeriesEntry, location, handleSubmit } = this.props;
     return (
         <Root style={styles.backgroundRoot}>
           <Header currentLocation={location} hideHomePageLinks />
@@ -211,9 +212,7 @@ export default class EditSeriesEntries extends Component {
               </Section>
             </Tab>
             <Tab title='Availability'>
-              <Availabilities
-                availabilities={currentSeriesEntry.get('availabilities')}
-                location={location} />
+              <FieldArray availabilities={availabilities} component={Availabilities} name='availabilities' />
             </Tab>
             <Tab title='Audience'>
               {/* TODO */}

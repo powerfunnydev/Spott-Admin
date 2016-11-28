@@ -7,7 +7,7 @@ import { FormSubtitle } from '../../../_common/styles';
 import TextInput from '../../../_common/inputs/textInput';
 import SelectInput from '../../../_common/inputs/selectInput';
 import localized from '../../../_common/localized';
-import CreateModal from '../../../_common/createModal';
+import PersistModal from '../../../_common/persistModal';
 import { load } from '../list/actions';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import * as actions from './actions';
@@ -81,7 +81,7 @@ export default class CreateSeriesEntryModal extends Component {
   render () {
     const { localeNames, handleSubmit } = this.props;
     return (
-      <CreateModal isOpen title='Create Series Entry' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal isOpen title='Create Series Entry' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={TextInput}
@@ -97,7 +97,7 @@ export default class CreateSeriesEntryModal extends Component {
           name='defaultLocale'
           options={localeNames.keySeq().toArray()}
           placeholder='Default language'/>
-      </CreateModal>
+      </PersistModal>
     );
   }
 
