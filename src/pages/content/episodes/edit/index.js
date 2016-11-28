@@ -255,14 +255,15 @@ export default class EditEpisodes extends Component {
                   placeholder='Season title'
                   required
                   onChange={() => {
-                    this.props.dispatch(this.props.change('title', null));
+                    this.props.dispatch(this.props.change('title', {}));
                   }} />}
                 {currentSeriesEntryId && currentSeasonId && <Field
                   component={TextInput}
                   label='Episode number'
                   name='number'
                   placeholder='Episode number'
-                  required/>}
+                  required
+                  type='number'/>}
                 {currentSeriesEntryId && currentSeasonId && <Field
                   _activeLocale={_activeLocale}
                   component={TextInput}

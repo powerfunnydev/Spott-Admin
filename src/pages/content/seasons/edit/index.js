@@ -238,7 +238,8 @@ export default class EditEpisodes extends Component {
                   label='Season number'
                   name='number'
                   placeholder='Season number'
-                  required/>}
+                  required
+                  type='number'/>}
                 {currentSeriesEntryId && <Field
                   _activeLocale={_activeLocale}
                   component={TextInput}
