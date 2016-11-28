@@ -10,8 +10,6 @@ import selector from './selector';
 import Dropdown, { styles as dropdownStyles } from '../../../../../_common/components/actionDropdown';
 import { slowdown } from '../../../../../../utils';
 
-/* eslint-disable no-alert */
-
 const numberOfRows = 25;
 
 export const prefix = 'users';
@@ -58,7 +56,7 @@ export default class Users extends Component {
   }
 
   async componentWillMount () {
-    const broadcasterId = this.props.params.id;
+    const broadcasterId = this.props.params.broadcasterId;
     await this.props.load(this.props.location.query, broadcasterId);
   }
 
@@ -66,7 +64,7 @@ export default class Users extends Component {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
     if (isQueryChanged(query, nextQuery, prefix)) {
-      const broadcasterId = this.props.params.id;
+      const broadcasterId = this.props.params.broadcasterId;
       await this.slowSearch(nextProps.location.query, broadcasterId);
     }
   }
@@ -88,8 +86,8 @@ export default class Users extends Component {
   }
 
   async onDeleteLinkUser (userId) {
-    await this.props.deleteLinkUser(this.props.params.id, userId);
-    await this.props.load(this.props.location.query, this.props.params.id);
+    await this.props.deleteLinkUser(this.props.params.broadcasterId, userId);
+    await this.props.load(this.props.location.query, this.props.params.broadcasterId);
   }
 
   onEditEntry (userId) {
@@ -98,7 +96,7 @@ export default class Users extends Component {
 
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo(`content/broadcasters/read/${this.props.params.id}/link/user`);
+    this.props.routerPushWithReturnTo(`content/broadcasters/read/${this.props.params.broadcasterId}/link/user`);
   }
 
   async onClickDeleteSelected (e) {
@@ -110,7 +108,7 @@ export default class Users extends Component {
       }
     });
     // await this.props.deleteLinkUsers(userIds);
-    await this.props.load(this.props.location.query, this.props.params.id);
+    await this.props.load(this.props.location.query, this.props.params.broadcasterId);
   }
 
   render () {

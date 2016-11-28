@@ -1,3 +1,19 @@
+import { createSelector } from 'reselect';
+import { getFormValues } from 'redux-form/immutable';
+
+// Cache form selectors.
+const formSelectors = {};
+export function createFormValueSelector (form, field) {
+  if (!formSelectors[form]) {
+    // Insert in cache.
+    formSelectors[form] = getFormValues(form);
+  }
+  return createSelector(
+    formSelectors[form],
+    (f) => f && f.get(field)
+  );
+}
+
 /**
  * Helper function to pad zeros.
  */

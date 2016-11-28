@@ -169,7 +169,7 @@ export default class Broadcasters extends Component {
               }
               {broadcastersDisplay === 'grid' &&
                 <div style={generalStyles.row}>
-                  { broadcasters.get('data').map((broadcaster, index) => (
+                  {broadcasters.get('data').map((broadcaster, index) => (
                     <Tile
                       imageUrl={broadcaster.get('logo') && `${broadcaster.getIn([ 'logo', 'url' ])}?height=310&width=310`}
                       key={`broadcaster${index}`}

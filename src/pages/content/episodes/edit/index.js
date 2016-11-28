@@ -98,7 +98,6 @@ export default class EditEpisodes extends Component {
   async componentWillMount () {
     if (this.props.params.episodeId) {
       const editObj = await this.props.loadEpisode(this.props.params.episodeId);
-      console.log('editObj', editObj);
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale
