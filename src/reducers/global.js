@@ -23,10 +23,10 @@ export default (state = fromJS({ authentication: {}, configuration: { currentLoc
     // //////////////
     case actions.CONFIGURE:
       return state.mergeIn([ 'configuration' ], fromJS(action.configuration));
-    case actions.MODAL_OPEN_LOGIN:
-      return state.set('currentModal', 'login');
-    case actions.MODAL_OPEN_FORGOT_PASSWORD:
-      return state.set('currentModal', 'forgotPassword');
+    case actions.MODAL_OPEN:
+      return state.set('currentModal', action.modal);
+    case actions.MODAL_CLOSE:
+      return state.delete('currentModal');
     default:
       return state;
   }

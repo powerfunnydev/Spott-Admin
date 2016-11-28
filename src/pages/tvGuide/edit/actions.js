@@ -1,8 +1,8 @@
 import { searchMedia as dataSearchMedia } from '../../../actions/media';
 import { searchBroadcastChannels as dataSearchBroadcastChannels } from '../../../actions/broadcastChannel';
 import { persistTvGuideEntry, fetchTvGuideEntry as dataFetchTvGuideEntry } from '../../../actions/tvGuide';
-import { searchSeasons as dataSearchSeasons } from '../../../actions/season';
-import { searchEpisodes as dataSearchEpisodes } from '../../../actions/episode';
+import { searchSeasons as dataSearchSeasons } from '../../../actions/series';
+import { searchEpisodes as dataSearchEpisodes } from '../../../actions/season';
 import { currentSeasonIdSelector, currentMediumIdSelector } from './selector';
 
 export const BROADCAST_CHANNELS_SEARCH_START = 'TV_GUIDE_EDIT/BROADCAST_CHANNELS_SEARCH_START';
@@ -49,4 +49,4 @@ function editSearchAction (dataAction, startActionType, errorActionType, selecto
 export const searchBroadcastChannels = editSearchAction(dataSearchBroadcastChannels, BROADCAST_CHANNELS_SEARCH_START, BROADCAST_CHANNELS_SEARCH_ERROR, (state) => ({ seasonId: currentSeasonIdSelector(state) }));
 export const searchEpisodes = editSearchAction(dataSearchEpisodes, EPISODES_SEARCH_START, EPISODES_SEARCH_ERROR, (state) => ({ seasonId: currentSeasonIdSelector(state) }));
 export const searchMedia = editSearchAction(dataSearchMedia, MEDIA_SEARCH_START, MEDIA_SEARCH_ERROR);
-export const searchSeasons = editSearchAction(dataSearchSeasons, SEASONS_SEARCH_START, SEASONS_SEARCH_ERROR, (state) => ({ seriesId: currentMediumIdSelector(state) }));
+export const searchSeasons = editSearchAction(dataSearchSeasons, SEASONS_SEARCH_START, SEASONS_SEARCH_ERROR, (state) => ({ seriesEntryId: currentMediumIdSelector(state) }));

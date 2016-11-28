@@ -14,6 +14,7 @@ export const colors = {
   red: '#da5454',
   lightRed: '#f0bbbb',
   veryLightRed: '#fbeeee',
+  lightGreen: '#aacc6b',
   darkYellow: '#cca644',
   lightYellow: '#fffaee',
   black: '#121e22',
@@ -117,7 +118,7 @@ export const buttonStyles = {
     borderRadius: '2px',
     color: 'white',
     display: 'inline-block',
-    ...makeTextStyle(fontWeights.medium, '14px'),
+    ...makeTextStyle(fontWeights.regular, '14px'),
     marginLeft: '10px',
     paddingTop: '8px',
     paddingBottom: '8px',
@@ -176,7 +177,7 @@ export const buttonStyles = {
     ':focus': hoveredGrayButtonStyle
   },
   white: {
-    backgroundColor: 'white',
+    backgroundColor: colors.white,
     border: '1px solid #ced6da',
     color: '#6d8791',
     ':hover': hoveredWhiteButtonStyle,
@@ -205,6 +206,17 @@ FormSubtitle.propTypes = {
   first: PropTypes.bool,
   style: PropTypes.object
 };
+
+const formDescriptionStyle = {
+  ...makeTextStyle(fontWeights.regular, '0.75em'),
+  color: colors.lightGray3,
+  marginTop: '0.313em'
+};
+export const FormDescription = Radium((props) => (
+  <p style={[ formDescriptionStyle, props.style, props.first && { marginTop: '0px' } ]}>
+    {props.children}
+  </p>
+));
 
 // Container component
 // ///////////////////

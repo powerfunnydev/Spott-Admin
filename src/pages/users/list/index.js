@@ -7,7 +7,7 @@ import Header from '../../app/header';
 import { Root, Container } from '../../_common/styles';
 import { Tile, DropdownCel, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table/index';
 import Line from '../../_common/components/line';
-import Dropdown, { styles as dropdownStyles } from '../../_common/components/dropdown';
+import Dropdown, { styles as dropdownStyles } from '../../_common/components/actionDropdown';
 import * as actions from './actions';
 import selector from './selector';
 import { slowdown } from '../../../utils';
@@ -151,7 +151,7 @@ export default class Users extends Component {
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                           <CheckBoxCel checked={isSelected.get(user.get('id'))} onChange={selectCheckbox.bind(this, user.get('id'))}/>
-                          <CustomCel getValue={this.getUserName} objectToRender={user} style={{ flex: 2 }}/>
+                          <CustomCel getValue={this.getUserName} objectToRender={user} style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`users/read/${user.get('id')}`); }}/>
                           <CustomCel getValue={this.getEmail} objectToRender={user} style={{ flex: 2 }}/>
                           <CustomCel getValue={this.getFirstName} objectToRender={user} style={{ flex: 1 }} />
                           <CustomCel getValue={this.getLastName} objectToRender={user} style={{ flex: 1 }} />

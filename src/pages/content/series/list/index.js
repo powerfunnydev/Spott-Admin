@@ -11,7 +11,7 @@ import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
 import SpecificHeader from '../../header';
-import Dropdown, { styles as dropdownStyles } from '../../../_common/components/dropdown';
+import Dropdown, { styles as dropdownStyles } from '../../../_common/components/actionDropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
@@ -20,21 +20,20 @@ const numberOfRows = 25;
 
 @tableDecorator()
 @connect(selector, (dispatch) => ({
-  deleteContentProducer: bindActionCreators(actions.deleteContentProducer, dispatch),
-  deleteContentProducers: bindActionCreators(actions.deleteContentProducers, dispatch),
+  deleteSeriesEntry: bindActionCreators(actions.deleteSeriesEntry, dispatch),
+  deleteSeriesEntries: bindActionCreators(actions.deleteSeriesEntries, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
 }))
 @Radium
-export default class ContentProducers extends Component {
+export default class SeriesEntries extends Component {
 
   static propTypes = {
     children: PropTypes.node,
-    contentProducers: ImmutablePropTypes.map.isRequired,
-    deleteContentProducer: PropTypes.func.isRequired,
-    deleteContentProducers: PropTypes.func.isRequired,
+    deleteSeriesEntries: PropTypes.func.isRequired,
+    deleteSeriesEntry: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -45,6 +44,7 @@ export default class ContentProducers extends Component {
     routerPushWithReturnTo: PropTypes.func.isRequired,
     selectAllCheckboxes: PropTypes.func.isRequired,
     selectCheckbox: PropTypes.func.isRequired,
+    seriesEntries: ImmutablePropTypes.map.isRequired,
     totalResultCount: PropTypes.number.isRequired,
     onChangeDisplay: PropTypes.func.isRequired,
     onChangePage: PropTypes.func.isRequired,
@@ -71,46 +71,46 @@ export default class ContentProducers extends Component {
     }
   }
 
-  async deleteContentProducer (contentProducersId) {
+  async deleteSeriesEntry (seriesEntrysId) {
     const result = await confirmation();
     if (result) {
-      await this.props.deleteContentProducer(contentProducersId);
+      await this.props.deleteSeriesEntry(seriesEntrysId);
       await this.props.load(this.props.location.query);
     }
   }
 
-  getName (cp) {
-    return cp.get('name');
+  getTitle (seriesEntry) {
+    return seriesEntry.get('title');
   }
 
-  getUpdatedBy (cp) {
-    return cp.get('lastUpdatedBy');
+  getUpdatedBy (seriesEntry) {
+    return seriesEntry.get('lastUpdatedBy');
   }
 
-  getLastUpdatedOn (cp) {
-    const date = new Date(cp.get('lastUpdatedOn'));
+  getLastUpdatedOn (seriesEntry) {
+    const date = new Date(seriesEntry.get('lastUpdatedOn'));
     return moment(date).format('YYYY-MM-DD HH:mm');
   }
 
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/content-producers/create');
+    this.props.routerPushWithReturnTo('content/series/create');
   }
 
   async onClickDeleteSelected (e) {
     e.preventDefault();
-    const contentProducersIds = [];
+    const seriesEntryIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {
-        contentProducersIds.push(key);
+        seriesEntryIds.push(key);
       }
     });
-    await this.props.deleteContentProducers(contentProducersIds);
+    await this.props.deleteSeriesEntries(seriesEntryIds);
     await this.props.load(this.props.location.query);
   }
 
   render () {
-    const { contentProducers, children, isSelected, location, location: { query, query: { display, page, searchString, sortField, sortDirection } },
+    const { seriesEntries, children, isSelected, location, location: { query, query: { display, page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
@@ -121,10 +121,10 @@ export default class ContentProducers extends Component {
           <Container>
             <UtilsBar
               display={display}
-              isLoading={contentProducers.get('_status') !== 'loaded'}
+              isLoading={seriesEntries.get('_status') !== 'loaded'}
               numberSelected={numberSelected}
               searchString={searchString}
-              textCreateButton='New Content Producer'
+              textCreateButton='New Series Entry'
               onChangeDisplay={onChangeDisplay}
               onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
               onClickDeleteSelected={this.onClickDeleteSelected}
@@ -141,24 +141,24 @@ export default class ContentProducers extends Component {
                   <Headers>
                     {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                     <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>NAME</CustomCel>
+                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'TITLE')} sortDirection = {sortField === 'TITLE' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>TITLE</CustomCel>
                     <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
-                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
+                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
                     <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
                   </Headers>
-                  <Rows isLoading={contentProducers.get('_status') !== 'loaded'}>
-                    {contentProducers.get('data').map((cp, index) => {
+                  <Rows isLoading={seriesEntries.get('_status') !== 'loaded'}>
+                    {seriesEntries.get('data').map((seriesEntry, index) => {
                       return (
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                          <CheckBoxCel checked={isSelected.get(cp.get('id'))} onChange={selectCheckbox.bind(this, cp.get('id'))}/>
-                          <CustomCel getValue={this.getName} objectToRender={cp} style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/content-producers/read/${cp.get('id')}`); }}/>
-                          <CustomCel getValue={this.getUpdatedBy} objectToRender={cp} style={{ flex: 2 }}/>
-                          <CustomCel getValue={this.getLastUpdatedOn} objectToRender={cp} style={{ flex: 2 }}/>
+                          <CheckBoxCel checked={isSelected.get(seriesEntry.get('id'))} onChange={selectCheckbox.bind(this, seriesEntry.get('id'))}/>
+                          <CustomCel getValue={this.getTitle} objectToRender={seriesEntry} style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${seriesEntry.get('id')}`); }}/>
+                          <CustomCel getValue={this.getUpdatedBy} objectToRender={seriesEntry} style={{ flex: 2 }}/>
+                          <CustomCel getValue={this.getLastUpdatedOn} objectToRender={seriesEntry} style={{ flex: 2 }}/>
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/content-producers/edit/${cp.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteContentProducer(cp.get('id')); }}>Remove</div>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/series/edit/${seriesEntry.get('id')}`); }}>Edit</div>}>
+                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>
@@ -171,15 +171,15 @@ export default class ContentProducers extends Component {
             }
             {display === 'grid' &&
               <div style={generalStyles.row}>
-                { contentProducers.get('data').map((contentProducer, index) => (
+                { seriesEntries.get('data').map((seriesEntry, index) => (
                   <Tile
-                    imageUrl={contentProducer.getIn([ 'logo', 'url' ])}
-                    key={`contentProducer${index}`}
-                    text={this.getName(contentProducer)}
-                    onDelete={async (e) => { e.preventDefault(); await this.deleteContentProducer(contentProducer.get('id')); }}
-                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/content-producers/edit/${contentProducer.get('id')}`); }}/>
+                    imageUrl={seriesEntry.getIn([ 'profileImage', 'url' ])}
+                    key={`seriesEntry${index}`}
+                    text={this.getTitle(seriesEntry)}
+                    onDelete={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}
+                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/series/edit/${seriesEntry.get('id')}`); }}/>
                 ))}
-                <Tile key={'createBroadcaster'} onCreate={() => { this.props.routerPushWithReturnTo('content/contentProducers/create'); }}/>
+                <Tile key={'createSeriesEntry'} onCreate={() => { this.props.routerPushWithReturnTo('content/seriesEntrys/create'); }}/>
               </div>
             }
           </Container>

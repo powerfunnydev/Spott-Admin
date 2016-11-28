@@ -47,15 +47,67 @@ export function transformCharacterSubscription ({
     medium: { id: mediumId, title }
   };
 }
-
-export function transformListMedium ({ title, type, posterImage, profileImage, uuid: id }) {
+/**
+ *  Light version of a medium. No locales includes.
+ */
+export function transformListMedium ({ auditInfo, title, type, posterImage, profileImage, uuid: id }) {
   return {
     id,
     title,
     type,
     posterImage: posterImage && { id: posterImage.uuid, url: posterImage. url },
-    profileImage: profileImage && { id: profileImage.uuid, url: profileImage. url }
+    profileImage: profileImage && { id: profileImage.uuid, url: profileImage. url },
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
   };
+}
+
+export function transformAvailability ({ country, endTimeStamp, startTimeStamp, videoStatus }) {
+  return { countryId: country && country.uuid, availabilityFrom: startTimeStamp && new Date(startTimeStamp), availabilityTo: endTimeStamp && new Date(endTimeStamp), videoStatus };
+}
+
+/**
+ *  Complete version of a medium. Locales includes.
+ */
+export function transformMedium ({ availabilities, number, auditInfo, type, defaultLocale, externalReference,
+    serie, season, uuid: id, publishStatus, defaultTitle, localeData }) {
+  const seriesEntry = {
+    availabilities: availabilities && availabilities.map(transformAvailability),
+    number,
+    basedOnDefaultLocale: {},
+    description: {},
+    startYear: {},
+    endYear: {},
+    hasTitle: {},
+    title: {},
+    locales: [],
+    posterImage: {},
+    profileImage: {},
+    defaultLocale,
+    externalReference,
+    id,
+    publishStatus,
+    type,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    seriesEntryId: serie && serie.uuid,
+    seasonId: season && season.uuid
+  };
+  if (localeData) {
+    for (const { hasTitle, basedOnDefaultLocale, description, locale,
+      posterImage, profileCover, endYear, startYear, title } of localeData) {
+      seriesEntry.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      seriesEntry.description[locale] = description;
+      seriesEntry.startYear[locale] = startYear;
+      seriesEntry.endYear[locale] = endYear;
+      seriesEntry.hasTitle[locale] = hasTitle;
+      seriesEntry.title[locale] = title;
+      seriesEntry.locales.push(locale);
+      seriesEntry.profileImage[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
+      seriesEntry.posterImage[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
+    }
+  }
+  return seriesEntry;
 }
 
 // Can transforms medium subscriptions and medium syncs.
@@ -117,7 +169,7 @@ export function transformActivityData (dataList, transformer) {
   *   relatedCharacterIds: [ '1234', '1235', ... ]
   *   relatedVideoId: '1234',
   *   seasonId: 'abc12',
-  *   seriesId: 'bca12',
+  *   seriesEntryId: 'bca12',
   *   title: { en: 'Pilot', fr: 'Pilot', nl: 'Pilot' }
   * }
   */
@@ -141,7 +193,7 @@ export function transformEpisode ({ availabilities, characters, contentProducers
     relatedCharacterIds: characters.map((c) => c.character.uuid),
     relatedVideoId: video && video.uuid,
     seasonId: season.uuid,
-    seriesId: serie.uuid,
+    seriesEntryId: serie.uuid,
     title: {} // Locale data
   };
   for (const { basedOnDefaultLocale, description, hasTitle, locale, posterImage, profileCover, title } of localeData) {
@@ -177,7 +229,7 @@ export function transformEpisode ({ availabilities, characters, contentProducers
   *   [poster]: { en: ..., fr: ..., nl: ... },
   *   publishStatus: 'DRAFT' || 'PUBLISH',
   *   relatedCharacterIds: [ '1234', '1235', ... ],
-  *   seriesId: 'abc123',
+  *   seriesEntryId: 'abc123',
   *   startYear: { en: 1991, fr: 1991, nl: 1991 },
   *   title: { en: 'Home', fr: 'A la maison', nl: 'Thuis' }
   * }
@@ -201,7 +253,7 @@ export function transformSeason ({ availabilities, characters, defaultLocale,
     poster: {}, // Locale data
     publishStatus,
     relatedCharacterIds: characters.map((c) => c.character.uuid),
-    seriesId: serie.uuid,
+    seriesEntryId: serie.uuid,
     startYear: {}, // Locale data
     title: {} // Locale data
   };
@@ -219,6 +271,13 @@ export function transformSeason ({ availabilities, characters, defaultLocale,
   }
   return season;
 }
+export const transformSeriesEntry004 = transformMedium;
+export const transformSeason004 = transformMedium;
+export const transformEpisode004 = transformMedium;
+
+export const transformListEpisode = transformListMedium;
+export const transformListSeason = transformListMedium;
+export const transformListSeriesEntry = transformListMedium;
 
 export function transformBroadcastChannel ({ name, uuid: id, logo, broadcaster }) {
   return { id, name, broadcaster: broadcaster && { id: broadcaster.uuid }, logo: logo && { url: logo.url } };
@@ -250,7 +309,7 @@ export function transformPaging ({ page, pageCount, pageSize, totalResultCount }
   return { page, pageCount, pageSize, totalResultCount };
 }
 
-export function transformUser ({ avatar, languages, dateOfBirth, disabled, disabledReason,
+export function transformUser ({ profileImage, avatar, languages, dateOfBirth, disabled, disabledReason,
   userName, gender, firstName, lastName, email, uuid: id, roles, ...restProps }) {
   const obj = {};
   const broadcasters = [];
@@ -272,6 +331,7 @@ export function transformUser ({ avatar, languages, dateOfBirth, disabled, disab
     broadcasters,
     contentProducers,
     avatar: avatar && { url: avatar.url } || {},
+    profileImage: profileImage && { url: profileImage.url } || {},
     userStatus: disabled && ACTIVE || INACTIVE,
     languages,
     disabledReason,

@@ -15,7 +15,6 @@ import { ADMIN, BROADCASTER, CONTENT_MANAGER } from '../../../constants/userRole
 @localized
 @connect(menuSelector, (dispatch) => ({
   logout: bindActionCreators(actions.logout, dispatch),
-  openLoginModal: bindActionCreators(globalActions.openLoginModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(globalActions.routerPushWithReturnTo, dispatch)
 }))
 @Radium
@@ -28,7 +27,6 @@ export default class Menu extends Component {
     isAuthenticated: PropTypes.bool.isRequired,
     logout: PropTypes.func.isRequired,
     neutral: PropTypes.bool,
-    openLoginModal: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired,
     userRoles: ImmutablePropTypes.list
@@ -112,7 +110,7 @@ export default class Menu extends Component {
           <RouterLink to='tv-guide'>
             <button key='tv-guide' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>TV Guide</button>
           </RouterLink>}
-          {hideHomePageLinks && isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
+          {hideHomePageLinks && isAuthenticated && (userRoles.includes(ADMIN)) &&
             <RouterLink to='users'>
               <button key='users' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Users</button>
             </RouterLink>}

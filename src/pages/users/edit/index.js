@@ -20,7 +20,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import Dropzone from '../../_common/dropzone';
 import { Tabs, Tab } from '../../_common/components/formTabs';
 import { Checkbox } from '../../_common/inputs/checkbox';
-import { disabledReasons, userStatus as userStates } from '../../../constants/userRoles';
+import { INACTIVE, disabledReasons, userStatus as userStates } from '../../../constants/userRoles';
 import { FETCHING } from '../../../constants/statusTypes';
 
 function validate (values, { t }) {
@@ -59,6 +59,8 @@ export default class EditUser extends Component {
     clearPopUpMessage: PropTypes.func,
     contentProducersById: ImmutablePropTypes.map.isRequired,
     currentEmail: PropTypes.string,
+    currentUser: PropTypes.object.isRequired,
+    currentUserStatus: PropTypes.string,
     error: PropTypes.any,
     genders: ImmutablePropTypes.map.isRequired,
     handleSubmit: PropTypes.func.isRequired,
@@ -91,21 +93,8 @@ export default class EditUser extends Component {
     if (this.props.params.id) {
       const editObj = await this.props.load(this.props.params.id);
       this.props.initialize({
-        broadcaster: editObj.broadcaster,
-        broadcasters: editObj.broadcasters,
-        contentManager: editObj.contentManager,
-        contentProducer: editObj.contentProducer,
-        contentProducers: editObj.contentProducers,
-        dateOfBirth: editObj.dateOfBirth && moment(editObj.dateOfBirth),
-        disabledReason: editObj.disabledReason,
-        email: editObj.email,
-        firstName: editObj.firstName,
-        gender: editObj.gender,
-        languages: editObj.languages,
-        lastName: editObj.lastName,
-        sysAdmin: editObj.sysAdmin,
-        userName: editObj.userName,
-        userStatus: editObj.userStatus
+        ...editObj,
+        dateOfBirth: editObj.dateOfBirth && moment(editObj.dateOfBirth)
       });
     }
   }
@@ -162,7 +151,7 @@ export default class EditUser extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { contentProducersById, searchedContentProducerIds, searchContentProducers,
+    const { currentUser, currentUserStatus, contentProducersById, searchedContentProducerIds, searchContentProducers,
       broadcastersById, searchedBroadcasterIds, searchBroadcasters, location, handleSubmit, localeNames, genders } = this.props;
     return (
       <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
@@ -230,13 +219,14 @@ export default class EditUser extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
+                      imageUrl={currentUser.getIn([ 'profileImage', 'url' ])}
                       onChange={({ callback, file }) => { this.props.uploadProfileImage({ userId: this.props.params.id, image: file, callback }); }}/>
                   </div>
                   <div style={styles.paddingLeftBackgroudImage}>
                     <Label text='Avatar image' />
                     <Dropzone
                       accept='image/*'
-                      // type='backgroundImage'
+                      imageUrl={currentUser.getIn([ 'avatar', 'url' ])}
                       onChange={({ callback, file }) => { this.props.uploadBackgroundImage({ userId: this.props.params.id, image: file, callback }); }}/>
                   </div>
                 </div>
@@ -254,14 +244,14 @@ export default class EditUser extends Component {
                   options={Object.keys(userStates)}
                   placeholder='User status'
                   required/>
-                <Field
+                {currentUserStatus === INACTIVE && <Field
                   component={SelectInput}
                   getItemText={(reason) => disabledReasons[reason]}
                   getOptions={() => Object.keys(disabledReasons)}
                   label='Reason'
                   name='disabledReason'
                   options={Object.keys(disabledReasons)}
-                  placeholder='Reason'/>
+                  placeholder='Reason'/>}
                 <FormSubtitle>Roles</FormSubtitle>
                 <div style={styles.paddingTop}>
                   <div style={styles.row}>

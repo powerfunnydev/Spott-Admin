@@ -1,21 +1,21 @@
 import { createStructuredSelector } from 'reselect';
-import { createEntitiesByRelationSelector, contentProducersEntitiesSelector, filterHasContentProducersRelationsSelector } from '../../../../selectors/data';
-import { serializeFilterHasContentProducers } from '../../../../../src/reducers/utils';
+import { createEntitiesByRelationSelector, listMediaEntitiesSelector, filterHasSeriesEntriesRelationsSelector } from '../../../../selectors/data';
+import { serializeFilterHasSeriesEntries } from '../../../../../src/reducers/utils';
 
-export const isSelectedSelector = (state) => state.getIn([ 'content', 'contentProducers', 'list', 'isSelected' ]);
-export const pageCountSelector = (state) => state.getIn([ 'content', 'contentProducers', 'list', 'pageCount' ]);
-export const totalResultCountSelector = (state) => state.getIn([ 'content', 'contentProducers', 'list', 'totalResultCount' ]);
+export const isSelectedSelector = (state) => state.getIn([ 'content', 'series', 'list', 'isSelected' ]);
+export const pageCountSelector = (state) => state.getIn([ 'content', 'series', 'list', 'pageCount' ]);
+export const totalResultCountSelector = (state) => state.getIn([ 'content', 'series', 'list', 'totalResultCount' ]);
 
-export const contentProducersFilterKeySelector = (state, props) => { return serializeFilterHasContentProducers(props.location.query); };
+export const seriesEntriesFilterKeySelector = (state, props) => { return serializeFilterHasSeriesEntries(props.location.query); };
 
-export const contentProducersSelector = createEntitiesByRelationSelector(
-  filterHasContentProducersRelationsSelector,
-  contentProducersFilterKeySelector,
-  contentProducersEntitiesSelector
+export const seriesEntriesSelector = createEntitiesByRelationSelector(
+  filterHasSeriesEntriesRelationsSelector,
+  seriesEntriesFilterKeySelector,
+  listMediaEntitiesSelector
 );
 
 export default createStructuredSelector({
-  contentProducers: contentProducersSelector,
+  seriesEntries: seriesEntriesSelector,
   isSelected: isSelectedSelector,
   pageCount: pageCountSelector,
   totalResultCount: totalResultCountSelector
