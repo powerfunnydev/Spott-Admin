@@ -1,7 +1,7 @@
 import { createStructuredSelector } from 'reselect';
-import { createEntitiesByRelationSelector, broadcastersEntitiesSelector, filterHasBroadcastersRelationsSelector } from '../../../../../selectors/data';
-import { serializeFilterHasBroadcasters } from '../../../../../../src/reducers/utils';
-import { getInformationFromQuery } from '../../../../_common/components/table/index';
+import { createEntitiesByRelationSelector, broadcastersEntitiesSelector, filterHasBroadcastersRelationsSelector } from '../../../../selectors/data';
+import { serializeFilterHasBroadcasters } from '../../../../../src/reducers/utils';
+import { getInformationFromQuery } from '../../../_common/components/table/index';
 import { prefix } from './index';
 
 export const isSelectedSelector = (state) => state.getIn([ 'content', 'broadcasters', 'list', 'broadcasters', 'isSelected' ]);

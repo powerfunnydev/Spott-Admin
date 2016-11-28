@@ -313,7 +313,8 @@ export default class EditEpisodes extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
-                      imageUrl={currentEpisode.getIn([ 'profileImage', currentEpisode.get('defaultLocale'), 'url' ])}/>
+                      imageUrl={currentEpisode.getIn([ 'profileImage', currentEpisode.get('defaultLocale') ]) &&
+                        `${currentEpisode.getIn([ 'profileImage', currentEpisode.get('defaultLocale'), 'url' ])}?height=203&width=360`}/>
                   </div>
                 </div>
               </Section>

@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformUser, transformContentProducers, transformContentProducer } from './transformers';
+import { transformUser, transformContentProducer } from './transformers';
 
 export async function fetchContentProducerUsers (baseUrl, authenticationToken, locale, { contentProducerId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/contentProducers/${contentProducerId}/users?page=${page}&pageSize=${pageSize}`;
@@ -24,17 +24,14 @@ export async function fetchContentProducers (baseUrl, authenticationToken, local
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }
-  const { body } = await get(authenticationToken, locale, url);
-  return transformContentProducers(body);
+  const { body: { data } } = await get(authenticationToken, locale, url);
+  return { data: data.map(transformContentProducer) };
 }
 
 export async function fetchContentProducer (baseUrl, authenticationToken, locale, { contentProducerId }) {
   const url = `${baseUrl}/v004/media/contentProducers/${contentProducerId}`;
   const { body } = await get(authenticationToken, locale, url);
-  // console.log('before transform', { ...body });
-  const result = transformContentProducer(body);
-  // console.log('after tranform', result);
-  return result;
+  return transformContentProducer(body);
 }
 
 export async function persistContentProducer (baseUrl, authenticationToken, locale, { id, name }) {
@@ -45,8 +42,8 @@ export async function persistContentProducer (baseUrl, authenticationToken, loca
     cp = body;
   }
   const url = `${baseUrl}/v004/media/contentProducers`;
-  const result = await post(authenticationToken, locale, url, { ...cp, uuid: id, name });
-  return transformContentProducer(result.body);
+  const { body } = await post(authenticationToken, locale, url, { ...cp, uuid: id, name });
+  return transformContentProducer(body);
 }
 
 export async function deleteContentProducer (baseUrl, authenticationToken, locale, { contentProducerId }) {

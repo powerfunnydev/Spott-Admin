@@ -14,6 +14,7 @@ import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Dropzone from '../../../_common/dropzone';
 import Label from '../../../_common/inputs/_label';
+import selector from './selector';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -24,14 +25,14 @@ function validate (values, { t }) {
 }
 
 @localized
-@connect(null, (dispatch) => ({
+@connect(selector, (dispatch) => ({
   load: bindActionCreators(actions.load, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadImage: bindActionCreators(actions.uploadImage, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
-  form: 'broadcastersEditEntry',
+  form: 'broadcasterEdit',
   validate
 })
 @Radium
@@ -102,6 +103,8 @@ export default class EditBroadcaster extends Component {
                   <Label text='Upload image' />
                   <Dropzone
                     accept='image/*'
+                    // imageUrl={currentBroadcaster.getIn([ 'log', defaultLocale ]) &&
+                    //   `${currentBroadcaster.getIn([ 'log', currentBroadcaster.get('defaultLocale'), 'url' ])}?height=203&width=360`}/>
                     onChange={({ callback, file }) => { this.props.uploadImage({ broadcasterId: this.props.params.id, image: file, callback }); }}/>
                 </div>
               </Section>

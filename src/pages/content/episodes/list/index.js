@@ -171,9 +171,9 @@ export default class Episodes extends Component {
             }
             {display === 'grid' &&
               <div style={generalStyles.row}>
-                { seasons.get('data').map((season, index) => (
+                {seasons.get('data').map((season, index) => (
                   <Tile
-                    imageUrl={season.getIn([ 'profileImage', 'url' ])}
+                    imageUrl={season.get('profileImage') && `${season.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                     key={`season${index}`}
                     text={this.getTitle(season)}
                     onDelete={async (e) => { e.preventDefault(); await this.deleteEpisode(season.get('id')); }}

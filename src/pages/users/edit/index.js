@@ -219,14 +219,14 @@ export default class EditUser extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
-                      imageUrl={currentUser.getIn([ 'profileImage', 'url' ])}
+                      imageUrl={currentUser.get('profileImage') && `${currentUser.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                       onChange={({ callback, file }) => { this.props.uploadProfileImage({ userId: this.props.params.id, image: file, callback }); }}/>
                   </div>
                   <div style={styles.paddingLeftBackgroudImage}>
                     <Label text='Avatar image' />
                     <Dropzone
                       accept='image/*'
-                      imageUrl={currentUser.getIn([ 'avatar', 'url' ])}
+                      imageUrl={currentUser.get('avatar') && `${currentUser.getIn([ 'avatar', 'url' ])}?height=310&width=310`}
                       onChange={({ callback, file }) => { this.props.uploadBackgroundImage({ userId: this.props.params.id, image: file, callback }); }}/>
                   </div>
                 </div>

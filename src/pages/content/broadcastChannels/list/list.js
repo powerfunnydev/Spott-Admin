@@ -153,17 +153,22 @@ export default class BroadcastChannelList extends Component {
                   </Rows>
                 </Table>
                 <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
-              </div>
-            }
+              </div>}
             {display === 'grid' &&
               <div style={generalStyles.row}>
-                { this.props.broadcastChannels.get('data').map((broadcastChannel, index) => (
+                {this.props.broadcastChannels.get('data').map((broadcastChannel, index) => (
                   <Tile
-                    imageUrl={broadcastChannel.getIn([ 'logo', 'url' ])}
+                    imageUrl={broadcastChannel.get('logo') && `${broadcastChannel.getIn([ 'logo', 'url' ])}?height=310&width=310`}
                     key={`broadcastChannel${index}`}
                     text={broadcastChannel.get('name')}
-                    onDelete={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}
-                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}/>
+                    onDelete={async (e) => {
+                      e.preventDefault();
+                      await this.deleteBroadcastChannel(broadcastChannel.get('id'));
+                    }}
+                    onEdit={(e) => {
+                      e.preventDefault();
+                      this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`);
+                    }}/>
                 ))}
                 <Tile key={'createBroadcastChannel'} onCreate={() => { this.props.routerPushWithReturnTo('content/broadcast-channels/create'); }}/>
               </div>

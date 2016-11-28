@@ -15,8 +15,6 @@ import SeasonEpisodesList from './episodes';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
 
-/* eslint-disable no-alert */
-
 @connect(selector, (dispatch) => ({
   deleteSeason: bindActionCreators(listActions.deleteSeason, dispatch),
   loadSeason: bindActionCreators(actions.loadSeason, dispatch),
@@ -74,7 +72,7 @@ export default class ReadSeason extends Component {
       backgroundColor: colors.lightGray4,
       paddingTop: '20px'
     }
-  }
+  };
 
   render () {
     const { children, currentSeason,
@@ -87,9 +85,14 @@ export default class ReadSeason extends Component {
         <SpecificHeader/>
         <Container>
           {currentSeason.get('_status') === 'loaded' && currentSeason &&
-            <EntityDetails image={currentSeason.getIn([ 'profileImage', defaultLocale, 'url' ])} title={currentSeason.getIn([ 'title', defaultLocale ])}
-              onEdit={() => { this.props.routerPushWithReturnTo(`content/series/read/${this.props.params.seriesEntryId}/seasons/edit/${currentSeason.getIn([ 'id' ])}`); }}
-              onRemove={async () => { await deleteSeason(currentSeason.getIn([ 'id' ])); this.redirect(); }}/>}
+            <EntityDetails
+              imageUrl={currentSeason.getIn([ 'profileImage', defaultLocale ]) && `${currentSeason.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
+              title={currentSeason.getIn([ 'title', defaultLocale ])}
+              onEdit={() => this.props.routerPushWithReturnTo(`content/series/read/${this.props.params.seriesEntryId}/seasons/edit/${currentSeason.get('id')}`)}
+              onRemove={async () => {
+                await deleteSeason(currentSeason.get('id'));
+                this.redirect();
+              }}/>}
         </Container>
         <Line/>
         <div style={[ generalStyles.fillPage, styles.table ]}>
