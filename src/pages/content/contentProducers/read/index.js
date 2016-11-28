@@ -16,8 +16,6 @@ import UserList from './users/list';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
 
-/* eslint-disable no-alert */
-
 @connect(selector, (dispatch) => ({
   deleteContentProducer: bindActionCreators(listActions.deleteContentProducer, dispatch),
   loadContentProducer: bindActionCreators(actions.loadContentProducer, dispatch),
@@ -66,7 +64,7 @@ export default class ReadContentProducer extends Component {
       backgroundColor: colors.lightGray4,
       paddingTop: '20px'
     }
-  }
+  };
 
   render () {
     const { children, currentContentProducer,
@@ -79,9 +77,14 @@ export default class ReadContentProducer extends Component {
         <BreadCrumbs hierarchy={[ { title: 'List', url: '/content/content-producers' }, { title: currentContentProducer.get('name'), url: location.pathname } ]}/>
         <Container>
           {currentContentProducer.get('_status') === 'loaded' && currentContentProducer &&
-            <EntityDetails image={currentContentProducer.get('logo') && currentContentProducer.getIn([ 'logo', 'url' ])} title={currentContentProducer.getIn([ 'name' ])}
-              onEdit={() => { this.props.routerPushWithReturnTo(`content/content-producers/edit/${currentContentProducer.getIn([ 'id' ])}`); }}
-              onRemove={async () => { await deleteContentProducer(currentContentProducer.getIn([ 'id' ])); this.redirect(); }}/>}
+            <EntityDetails
+              imageUrl={currentContentProducer.get('logo') && `${currentContentProducer.getIn([ 'logo', 'url' ])}?height=310&width=310`}
+              title={currentContentProducer.getIn([ 'name' ])}
+              onEdit={() => this.props.routerPushWithReturnTo(`content/content-producers/edit/${currentContentProducer.getIn([ 'id' ])}`)}
+              onRemove={async () => {
+                await deleteContentProducer(currentContentProducer.getIn([ 'id' ]));
+                this.redirect();
+              }}/>}
         </Container>
         <Line/>
         <div style={[ generalStyles.fillPage, styles.table ]}>

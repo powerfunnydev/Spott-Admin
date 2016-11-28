@@ -5,15 +5,16 @@ import RemoveButton from './buttons/removeButton';
 
 @Radium
 export default class EntityDetails extends Component {
+
   static propTypes = {
     content: PropTypes.string,
-    image: PropTypes.string,
+    imageUrl: PropTypes.string,
     style: PropTypes.object,
     subtitle: PropTypes.string,
     title: PropTypes.string.isRequired,
     onEdit: PropTypes.func,
     onRemove: PropTypes.func
-  }
+  };
 
   static styles = {
     root: {
@@ -35,10 +36,10 @@ export default class EntityDetails extends Component {
       border: `solid 1px ${colors.veryLightGray}`
     },
     image: {
-      // objectFit: 'scale-down',
+      borderRadius: '2px',
       height: '80px',
-      width: '143px',
-      borderRadius: '2px'
+      objectFit: 'scale-down',
+      width: '143px'
     },
     title: {
       paddingBottom: '4px',
@@ -61,14 +62,17 @@ export default class EntityDetails extends Component {
     paddingLeft: {
       paddingLeft: '20px'
     }
-  }
+  };
 
   render () {
-    const { content, image, title, subtitle, onEdit, onRemove } = this.props;
-    const { styles } = this.constructor;
+    const styles = this.constructor.styles;
+    const { content, imageUrl, title, subtitle, onEdit, onRemove } = this.props;
+
     return (
       <div style={styles.root}>
-        {(image && <img src={image} style={styles.image}/>) || <div style={styles.noImage}>No image</div>}
+        {imageUrl
+          ? <img src={imageUrl} style={styles.image} />
+          : <div style={styles.noImage}>No image</div>}
         <div style={styles.paddingLeft}>
           <div style={styles.title}>{title}</div>
           <div style={styles.subtitle}>{subtitle}</div>

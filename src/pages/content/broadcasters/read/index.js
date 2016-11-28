@@ -8,7 +8,7 @@ import * as actions from './actions';
 import SpecificHeader from '../../header';
 import selector from './selector';
 import EntityDetails from '../../../_common/entityDetails';
-import * as listActions from '../list/broadcasters/actions';
+import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import BreadCrumbs from '../../../_common/breadCrumbs';
 import Line from '../../../_common/components/line';
@@ -16,8 +16,6 @@ import BroadcastChannelList from './broadcastChannels';
 import UserList from './users/list';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
-
-/* eslint-disable no-alert */
 
 @connect(selector, (dispatch) => ({
   deleteBroadcaster: bindActionCreators(listActions.deleteBroadcaster, dispatch),
@@ -76,22 +74,32 @@ export default class ReadBroadcaster extends Component {
       backgroundColor: colors.lightGray4,
       paddingTop: '20px'
     }
-  }
+  };
 
   render () {
+    const styles = this.constructor.styles;
     const { children, currentBroadcaster,
        location, deleteBroadcaster, location: { query: { tabIndex } } } = this.props;
-    const { styles } = this.constructor;
+
     return (
       <Root>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
-        <BreadCrumbs hierarchy={[ { title: 'List', url: '/content/broadcasters' }, { title: currentBroadcaster.get('name'), url: location.pathname } ]}/>
+        <BreadCrumbs
+          hierarchy={[
+            { title: 'List', url: '/content/broadcasters' },
+            { title: currentBroadcaster.get('name'), url: location.pathname }
+          ]}/>
         <Container>
           {currentBroadcaster.get('_status') === 'loaded' && currentBroadcaster &&
-            <EntityDetails image={currentBroadcaster.get('logo') && currentBroadcaster.getIn([ 'logo', 'url' ])} title={currentBroadcaster.getIn([ 'name' ])}
-              onEdit={() => { this.props.routerPushWithReturnTo(`content/broadcasters/edit/${currentBroadcaster.getIn([ 'id' ])}`); }}
-              onRemove={async () => { await deleteBroadcaster(currentBroadcaster.getIn([ 'id' ])); this.redirect(); }}/>}
+            <EntityDetails
+              imageUrl={currentBroadcaster.get('logo') && `${currentBroadcaster.getIn([ 'logo', 'url' ])}?height=310&width=310`}
+              title={currentBroadcaster.getIn([ 'name' ])}
+              onEdit={() => this.props.routerPushWithReturnTo(`content/broadcasters/edit/${currentBroadcaster.getIn([ 'id' ])}`)}
+              onRemove={async () => {
+                await deleteBroadcaster(currentBroadcaster.getIn([ 'id' ]));
+                this.redirect();
+              }}/>}
         </Container>
         <Line/>
         <div style={[ generalStyles.fillPage, styles.table ]}>

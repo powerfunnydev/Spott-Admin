@@ -150,7 +150,7 @@ export default class List extends Component {
               <div style={generalStyles.row}>
                 { this.props.broadcasterChannels.get('data').map((broadcastChannel, index) => (
                   <Tile
-                    imageUrl={broadcastChannel.getIn([ 'logo', 'url' ])}
+                    imageUrl={broadcastChannel.get('logo') && `${broadcastChannel.getIn([ 'logo', 'url' ])}?height=310&width=310`}
                     key={`broadcastChannel${index}`}
                     text={broadcastChannel.get('name')}
                     onDelete={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}

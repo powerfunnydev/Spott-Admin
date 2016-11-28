@@ -6,7 +6,7 @@ import globalReducer from './global';
 import data from './data';
 import broadcastChannelsCreate from '../pages/content/broadcastChannels/create/reducer';
 import broadcastChannelsList from '../pages/content/broadcastChannels/list/reducer';
-import broadcastersListBroadcasters from '../pages/content/broadcasters/list/broadcasters/reducer';
+import broadcastersListBroadcasters from '../pages/content/broadcasters/list/reducer';
 import broadcastersReadBroadcastChannels from '../pages/content/broadcasters/read/broadcastChannels/reducer';
 import broadcastersReadUsers from '../pages/content/broadcasters/read/users/list/reducer';
 import contentProducersList from '../pages/content/contentProducers/list/reducer';

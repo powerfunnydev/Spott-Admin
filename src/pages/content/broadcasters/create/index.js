@@ -7,7 +7,7 @@ import { FormSubtitle } from '../../../_common/styles';
 import TextInput from '../../../_common/inputs/textInput';
 import localized from '../../../_common/localized';
 import PersistModal from '../../../_common/persistModal';
-import { load } from '../list/broadcasters/actions';
+import { load } from '../list/actions';
 import * as actions from './actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 
