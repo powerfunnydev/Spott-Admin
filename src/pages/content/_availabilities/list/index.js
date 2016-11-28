@@ -21,6 +21,7 @@ export default class Availabilities extends Component {
 
   static propTypes = {
     availabilities: ImmutablePropTypes.list.isRequired,
+    countries: ImmutablePropTypes.list.isRequired,
     fields: PropTypes.object.isRequired
   };
 
@@ -39,7 +40,7 @@ export default class Availabilities extends Component {
   transformAvailability ({ countryId, endDate, endTime, startDate, startTime, timezone, videoStatus }) {
     return {
       availabilityFrom: moment(`${startDate.format('YYYY-MM-DD')} ${startTime.format('HH:mm')} ${timezone}`, 'YYYY-MM-DD HH:mm Z').utc().toDate(),
-      availabilityTo: endDate && endTime && moment(`${startDate.format('YYYY-MM-DD')} ${startTime.format('HH:mm')} ${timezone}`, 'YYYY-MM-DD HH:mm Z').utc().toDate(),
+      availabilityTo: endDate && endTime && moment(`${endDate.format('YYYY-MM-DD')} ${endTime.format('HH:mm')} ${timezone}`, 'YYYY-MM-DD HH:mm Z').utc().toDate(),
       countryId,
       videoStatus
     };
@@ -88,8 +89,6 @@ export default class Availabilities extends Component {
   render () {
     const styles = this.constructor.styles;
     const { fields, countries } = this.props;
-
-    console.warn('FIELDS', fields);
 
     return (
       <Section>

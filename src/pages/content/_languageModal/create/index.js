@@ -3,7 +3,6 @@ import { reduxForm, Field } from 'redux-form/immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
 import { connect } from 'react-redux';
-import { FormSubtitle } from '../../../_common/styles';
 import PersistModal from '../../../_common/persistModal';
 import SelectInput from '../../../_common/inputs/selectInput';
 import selector from './selector';
@@ -14,7 +13,7 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 function validate (values, { t }) {
   const validationErrors = {};
   const { language } = values.toJS();
-  if (!language) { validationErrors.name = t('common.errors.required'); }
+  if (!language) { validationErrors.language = t('common.errors.required'); }
   // Done
   return validationErrors;
 }
@@ -28,39 +27,30 @@ function validate (values, { t }) {
   validate
 })
 @Radium
-export default class CreateBroadcasterEntryModal extends Component {
+export default class CreateLanguageModal extends Component {
 
   static propTypes = {
+    filteredLocales: PropTypes.array.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     localeNames: ImmutablePropTypes.map.isRequired,
-    routerPushWithReturnTo: PropTypes.func.isRequired
+    routerPushWithReturnTo: PropTypes.func.isRequired,
+    supportedLocales: ImmutablePropTypes.list.isRequired,
+    onCloseClick: PropTypes.func.isRequired,
+    onCreate: PropTypes.func.isRequired
   };
 
-  constructor (props) {
-    super(props);
-    this.onCloseClick = ::this.onCloseClick;
-  }
-
-  async submit (form) {
-
-  }
-
-  onCloseClick () {
-    this.props.routerPushWithReturnTo('/', true);
-  }
-
   render () {
-    const { localeNames, handleSubmit } = this.props;
+    const { onCloseClick, onCreate, localeNames, handleSubmit, filteredLocales } = this.props;
     return (
-      <PersistModal isOpen title='Add language' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal isOpen title='Add language' onClose={onCloseClick} onSubmit={handleSubmit(onCreate)}>
         <Field
           component={SelectInput}
           getItemText={(language) => (localeNames.get(language))}
-          getOptions={(language) => localeNames.keySeq().toArray()}
           label= 'Add language'
           name='language'
-          options={localeNames.keySeq().toArray()}
-          placeholder='Language'/>
+          options={filteredLocales}
+          placeholder='Language'
+          required />
       </PersistModal>
     );
   }

@@ -68,13 +68,14 @@ export async function persistSeriesEntry (baseUrl, authenticationToken, locale, 
       seriesEntry.localeData.push(localeData);
     }
     // basedOnDefaultLocale is always provided, no check needed
-    localeData.basedOnDefaultLocale = locale !== defaultLocale;
+    localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
     localeData.description = description && description[locale];
     localeData.endYear = endYear && endYear[locale];
     localeData.startYear = startYear && startYear[locale];
     // title is always provided, no check needed
     localeData.title = title[locale];
   });
+  // console.log('seriesEntry', seriesEntry);
   const url = `${baseUrl}/v004/media/series`;
   await post(authenticationToken, locale, url, seriesEntry);
 }
@@ -107,7 +108,6 @@ export async function searchSeasons (baseUrl, authenticationToken, locale, { sea
   if (searchString) {
     searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
   }
-  console.log('url', searchUrl);
   const { body: { data } } = await get(authenticationToken, locale, searchUrl);
   return data.map(transformListSeason);
 }

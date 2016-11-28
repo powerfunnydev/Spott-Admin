@@ -88,7 +88,6 @@ export async function persistSeason (baseUrl, authenticationToken, locale, { num
     // title is always provided, no check needed
     localeData.title = title && title[locale];
   });
-  console.log('season', season);
   const url = `${baseUrl}/v004/media/serieSeasons`;
   await post(authenticationToken, locale, url, season);
 }

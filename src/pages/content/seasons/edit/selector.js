@@ -12,17 +12,13 @@ import {
 } from '../../../../selectors/data';
 import { getFormValues } from 'redux-form/immutable';
 
-const formName = 'episodeEdit';
+const formName = 'seasonEdit';
 const formSelector = getFormValues(formName);
 const formErrorsSelector = (state) => { return state.getIn([ 'form', formName, 'syncErrors' ]); };
 
 export const currentSeriesEntryIdSelector = createSelector(
   formSelector,
   (form) => form && form.get('seriesEntryId')
-);
-export const currentSeasonIdSelector = createSelector(
-  formSelector,
-  (form) => form && form.get('seasonId')
 );
 export const currentDefaultLocaleSelector = createSelector(
   formSelector,
@@ -41,8 +37,8 @@ export const hasTitleSelector = createSelector(
   (form) => (form && form.get('hasTitle'))
 );
 
-export const currentEpisodeIdSelector = (state, props) => { return props.params.episodeId; };
-export const currentEpisodeSelector = createEntityByIdSelector(mediaEntitiesSelector, currentEpisodeIdSelector);
+export const currentSeasonIdSelector = (state, props) => { return props.params.seasonId; };
+export const currentSeasonSelector = createEntityByIdSelector(mediaEntitiesSelector, currentSeasonIdSelector);
 export const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentSeriesEntrySearchString' ]);
 
 export const searchedSeriesEntryIdsSelector = createEntityIdsByRelationSelector(searchStringHasSeriesEntriesRelationsSelector, currentSeriesEntriesSearchStringSelector);
@@ -50,16 +46,13 @@ export const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(serie
 
 export default createStructuredSelector({
   _activeLocale: _activeDefaultLocaleSelector,
-  currentEpisode: currentEpisodeSelector,
+  currentSeason: currentSeasonSelector,
   currentModal: currentModalSelector,
-  currentSeasonId: currentSeasonIdSelector,
   currentSeriesEntryId: currentSeriesEntryIdSelector,
   defaultLocale: currentDefaultLocaleSelector,
   errors: formErrorsSelector,
   hasTitle: hasTitleSelector,
-  searchedSeasonIds: searchedSeasonIdsSelector,
   searchedSeriesEntryIds: searchedSeriesEntryIdsSelector,
-  seasonsById: listMediaEntitiesSelector,
   seriesEntriesById: listMediaEntitiesSelector,
   supportedLocales: supportedLocalesSelector
 });

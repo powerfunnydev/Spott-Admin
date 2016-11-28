@@ -1,16 +1,14 @@
 import { createSelector, createStructuredSelector } from 'reselect';
-import {
-  localeNamesSelector,
-  currentLocaleSelector,
-  currentModalSelector
-} from '../../../../selectors/global';
+import { currentModalSelector } from '../../../../selectors/global';
 import {
   mediaEntitiesSelector,
   createEntityByIdSelector
 } from '../../../../selectors/data';
 import { getFormValues } from 'redux-form/immutable';
 
-const formSelector = getFormValues('seriesEntryEdit');
+const formName = 'seriesEntryEdit';
+const formSelector = getFormValues(formName);
+const formErrorsSelector = (state) => { return state.getIn([ 'form', formName, 'syncErrors' ]); };
 
 export const currentDefaultLocaleSelector = createSelector(
   formSelector,
@@ -20,21 +18,23 @@ export const _activeDefaultLocaleSelector = createSelector(
   formSelector,
   (form) => (form && form.get('_activeLocale'))
 );
-
 export const availabilitiesSelector = createSelector(
   formSelector,
   (form) => (form && form.get('availabilities'))
 );
-
+export const supportedLocalesSelector = createSelector(
+  formSelector,
+  (form) => (form && form.get('locales'))
+);
 export const currentSeriesEntryIdSelector = (state, props) => { return props.params.seriesEntryId; };
 export const currentSeriesEntrySelector = createEntityByIdSelector(mediaEntitiesSelector, currentSeriesEntryIdSelector);
 
 export default createStructuredSelector({
   _activeLocale: _activeDefaultLocaleSelector,
   availabilities: availabilitiesSelector,
-  currentLocale: currentLocaleSelector,
+  defaultLocale: currentDefaultLocaleSelector,
+  errors: formErrorsSelector,
   currentModal: currentModalSelector,
   currentSeriesEntry: currentSeriesEntrySelector,
-  defaultLocale: currentDefaultLocaleSelector,
-  localeNames: localeNamesSelector
+  supportedLocales: supportedLocalesSelector
 });

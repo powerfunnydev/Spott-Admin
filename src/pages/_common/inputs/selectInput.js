@@ -137,7 +137,7 @@ export default class SelectInput extends Component {
           value={value} // Overides value of of {...field}
           onBlur={() => input.onBlur && input.onBlur(input.value)} // Overides onBlur of {...field}
           onChange={this.onInternalChange}  // Overides onChange of {...field};
-          onInputChange={(val) => { this.setState({ value: val }); getOptions(val); }}
+          onInputChange={(val) => { this.setState({ value: val }); getOptions && getOptions(val); }}
           onOpen={getOptions} />
         {typeof maxSelect === 'number' && <span style={styles.info}>{(input.value && input.value.length) || 0}/{maxSelect} selected</span>}
         {meta && meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
