@@ -138,6 +138,7 @@ export default class Users extends Component {
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage, generalStyles.whiteBackground ]}>
           <div style={[ generalStyles.paddingTable, generalStyles.paddingLeftAndRight ]}>
             <TotalEntries
+              entityType='Users'
               numberSelected={numberSelected}
               totalResultCount={totalResultCount}
               onDeleteSelected={this.onClickDeleteSelected}/>

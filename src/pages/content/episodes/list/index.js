@@ -125,6 +125,7 @@ export default class Episodes extends Component {
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
           <Container style={generalStyles.paddingTable}>
             <TotalEntries
+              entityType='Episodes'
               numberSelected={numberSelected}
               totalResultCount={totalResultCount}
               onDeleteSelected={this.onClickDeleteSelected}/>

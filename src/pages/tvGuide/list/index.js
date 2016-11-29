@@ -144,6 +144,7 @@ export default class TvGuideList extends Component {
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
           <Container style={generalStyles.paddingTable}>
             <TotalEntries
+              entityType='TV Guide'
               numberSelected={numberSelected}
               totalResultCount={totalResultCount}
               onDeleteSelected={this.onClickDeleteSelected}/>

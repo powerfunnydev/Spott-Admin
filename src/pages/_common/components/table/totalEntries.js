@@ -7,10 +7,11 @@ import BulkOperationDropdown from './bulkOperationDropdown';
 export class TotalEntries extends Component {
 
   static propTypes = {
+    entityType: PropTypes.string.isRequired,
     numberSelected: PropTypes.number,
     totalResultCount: PropTypes.number.isRequired,
     onDeleteSelected: PropTypes.func
-  }
+  };
 
   static styles = {
     base: {
@@ -42,11 +43,11 @@ export class TotalEntries extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { totalResultCount, numberSelected, onDeleteSelected } = this.props;
+    const { onDeleteSelected, numberSelected, entityType, totalResultCount } = this.props;
     return (
       <div style={styles.row}>
         <div style={styles.base}>
-          <span style={styles.entity}>Entries</span><span style={styles.count}>&nbsp;&nbsp;{totalResultCount} <span style={styles.entries}>Entries</span></span>
+          <span style={styles.entity}>{entityType}</span><span style={styles.count}>&nbsp;&nbsp;{totalResultCount} <span style={styles.entries}>Entries</span></span>
         </div>
         <div style={styles.paddingLeft}>
           <BulkOperationDropdown numberSelected={numberSelected} onDeleteSelected={onDeleteSelected}/>

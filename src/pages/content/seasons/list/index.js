@@ -134,6 +134,7 @@ export default class Seasons extends Component {
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
           <Container style={generalStyles.paddingTable}>
             <TotalEntries
+              entityType='Seasons'
               numberSelected={numberSelected}
               totalResultCount={totalResultCount}
               onDeleteSelected={this.onClickDeleteSelected}/>

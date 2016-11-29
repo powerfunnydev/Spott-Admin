@@ -134,6 +134,7 @@ export default class ContentProducers extends Component {
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
           <Container style={generalStyles.paddingTable}>
             <TotalEntries
+              entityType='Content Producers'
               numberSelected={numberSelected}
               totalResultCount={totalResultCount}
               onDeleteSelected={this.onClickDeleteSelected}/>

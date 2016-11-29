@@ -134,6 +134,7 @@ export default class SeriesEntries extends Component {
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
           <Container style={generalStyles.paddingTable}>
             <TotalEntries
+              entityType='Series'
               numberSelected={numberSelected}
               totalResultCount={totalResultCount}
               onDeleteSelected={this.onClickDeleteSelected}/>
@@ -173,7 +174,7 @@ export default class SeriesEntries extends Component {
             }
             {display === 'grid' &&
               <div style={generalStyles.row}>
-                { seriesEntries.get('data').map((seriesEntry, index) => (
+                {seriesEntries.get('data').map((seriesEntry, index) => (
                   <Tile
                     imageUrl={seriesEntry.get('profileImage') && `${seriesEntry.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                     key={`seriesEntry${index}`}

@@ -39,7 +39,7 @@ export default class Availabilities extends Component {
   // Transform the date + time + timezone to one date
   transformAvailability ({ countryId, endDate, endTime, startDate, startTime, timezone, videoStatus }) {
     return {
-      availabilityFrom: moment(`${startDate.format('YYYY-MM-DD')} ${startTime.format('HH:mm')} ${timezone}`, 'YYYY-MM-DD HH:mm Z').utc().toDate(),
+      availabilityFrom: startDate && startTime && moment(`${startDate.format('YYYY-MM-DD')} ${startTime.format('HH:mm')} ${timezone}`, 'YYYY-MM-DD HH:mm Z').utc().toDate(),
       availabilityTo: endDate && endTime && moment(`${endDate.format('YYYY-MM-DD')} ${endTime.format('HH:mm')} ${timezone}`, 'YYYY-MM-DD HH:mm Z').utc().toDate(),
       countryId,
       videoStatus

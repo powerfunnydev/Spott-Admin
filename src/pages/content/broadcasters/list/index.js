@@ -136,6 +136,7 @@ export default class Broadcasters extends Component {
           <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
             <Container style={generalStyles.paddingTable}>
               <TotalEntries
+                entityType='Broadcasters'
                 numberSelected={numberSelected}
                 totalResultCount={totalResultCount}
                 onDeleteSelected={this.onClickDeleteSelected}/>
