@@ -97,6 +97,13 @@ export async function deleteLinkUser (baseUrl, authenticationToken, locale, { br
   return await del(authenticationToken, locale, url);
 }
 
+export async function deleteLinkUsers (baseUrl, authenticationToken, locale, { broadcasterId, userIds }) {
+  console.log('userIds', userIds);
+  for (const userId of userIds) {
+    await deleteLinkUser(baseUrl, authenticationToken, locale, { broadcasterId, userId });
+  }
+}
+
 export async function uploadBroadcasterImage (baseUrl, authenticationToken, locale, { broadcasterId, image, callback }) {
   const formData = new FormData();
   formData.append('uuid', broadcasterId);

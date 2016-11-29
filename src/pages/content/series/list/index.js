@@ -79,14 +79,6 @@ export default class SeriesEntries extends Component {
     }
   }
 
-  getTitle (seriesEntry) {
-    return seriesEntry.get('title');
-  }
-
-  getUpdatedBy (seriesEntry) {
-    return seriesEntry.get('lastUpdatedBy');
-  }
-
   getLastUpdatedOn (seriesEntry) {
     const date = new Date(seriesEntry.get('lastUpdatedOn'));
     return moment(date).format('YYYY-MM-DD HH:mm');
@@ -127,14 +119,17 @@ export default class SeriesEntries extends Component {
               textCreateButton='New Series Entry'
               onChangeDisplay={onChangeDisplay}
               onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
-              onClickDeleteSelected={this.onClickDeleteSelected}
               onClickNewEntry={this.onClickNewEntry}/>
           </Container>
         </div>
         <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
           <Container style={generalStyles.paddingTable}>
-            <TotalEntries totalResultCount={totalResultCount}/>
+            <TotalEntries
+              entityType='Series'
+              numberSelected={numberSelected}
+              totalResultCount={totalResultCount}
+              onDeleteSelected={this.onClickDeleteSelected}/>
             {(display === undefined || display === 'list') &&
               <div>
                 <Table>
@@ -152,13 +147,17 @@ export default class SeriesEntries extends Component {
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                           <CheckBoxCel checked={isSelected.get(seriesEntry.get('id'))} onChange={selectCheckbox.bind(this, seriesEntry.get('id'))}/>
-                          <CustomCel getValue={this.getTitle} objectToRender={seriesEntry} style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${seriesEntry.get('id')}`); }}/>
-                          <CustomCel getValue={this.getUpdatedBy} objectToRender={seriesEntry} style={{ flex: 2 }}/>
+                          <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${seriesEntry.get('id')}`); }}>
+                            {seriesEntry.get('title')}
+                          </CustomCel>
+                          <CustomCel style={{ flex: 2 }}>
+                            {seriesEntry.get('updatedBy')}
+                          </CustomCel>
                           <CustomCel getValue={this.getLastUpdatedOn} objectToRender={seriesEntry} style={{ flex: 2 }}/>
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/series/edit/${seriesEntry.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}>Remove</div>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/series/edit/${seriesEntry.get('id')}`); }}>Edit</div>}>
+                              <div key={1} style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>
@@ -170,16 +169,20 @@ export default class SeriesEntries extends Component {
               </div>
             }
             {display === 'grid' &&
-              <div style={generalStyles.row}>
-                { seriesEntries.get('data').map((seriesEntry, index) => (
-                  <Tile
-                    imageUrl={seriesEntry.get('profileImage') && `${seriesEntry.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
-                    key={`seriesEntry${index}`}
-                    text={this.getTitle(seriesEntry)}
-                    onDelete={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}
-                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/series/edit/${seriesEntry.get('id')}`); }}/>
-                ))}
-                <Tile key={'createSeriesEntry'} onCreate={() => { this.props.routerPushWithReturnTo('content/series/create'); }}/>
+              <div>
+                <div style={generalStyles.row}>
+                  {seriesEntries.get('data').map((seriesEntry, index) => (
+                    <Tile
+                      imageUrl={seriesEntry.get('profileImage') && `${seriesEntry.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
+                      key={`seriesEntry${index}`}
+                      text={seriesEntry.get('title')}
+                      onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${seriesEntry.get('id')}`); }}
+                      onDelete={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}
+                      onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/series/edit/${seriesEntry.get('id')}`); }}/>
+                  ))}
+                  <Tile key={'createSeriesEntry'} onCreate={() => { this.props.routerPushWithReturnTo('content/series/create'); }}/>
+                </div>
+                <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
               </div>
             }
           </Container>

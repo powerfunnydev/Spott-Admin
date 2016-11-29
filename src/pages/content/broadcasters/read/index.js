@@ -44,8 +44,8 @@ export default class ReadBroadcaster extends Component {
   }
 
   async componentWillMount () {
-    if (this.props.params.id) {
-      await this.props.loadBroadcaster(this.props.params.id);
+    if (this.props.params.broadcasterId) {
+      await this.props.loadBroadcaster(this.props.params.broadcasterId);
     }
   }
 
@@ -63,7 +63,7 @@ export default class ReadBroadcaster extends Component {
 
   onClickNewEntry (e) {
     e.preventDefault();
-    const broadcasterId = this.props.params.id;
+    const broadcasterId = this.props.params.broadcasterId;
     if (broadcasterId) {
       this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcasterId}/create/broadcast-channel`);
     }

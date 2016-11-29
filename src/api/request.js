@@ -104,6 +104,16 @@ const hookedHttpinvoke = httpinvoke.hook('finished', (err, output, statusCode, h
       case 400:
         responseError = new BadRequestError(newOutput); break;
       case 401:
+        // Login failed.
+        if (newOutput.code === 'SEC-001') {
+          responseError = new UnauthorizedError(newOutput);
+          break;
+        }
+        // We received 403 Forbidden. We are not authorized. This can be due to an invalid
+        // expired authentication token. We do a hard reload of the application, which will
+        // redirect us to login. Ugly, but effective!
+        window.localStorage.removeItem('session');
+        return window.location.reload();
       case 403:
         // We received 403 Forbidden. We are not authorized. This can be due to an invalid
         // expired authentication token. We do a hard reload of the application, which will

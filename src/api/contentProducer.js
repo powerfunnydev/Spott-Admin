@@ -24,8 +24,9 @@ export async function fetchContentProducers (baseUrl, authenticationToken, local
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }
-  const { body: { data } } = await get(authenticationToken, locale, url);
-  return { data: data.map(transformContentProducer) };
+  const { body } = await get(authenticationToken, locale, url);
+  body.data = body.data.map(transformContentProducer);
+  return body;
 }
 
 export async function fetchContentProducer (baseUrl, authenticationToken, locale, { contentProducerId }) {
@@ -74,6 +75,12 @@ export async function persistLinkUser (baseUrl, authenticationToken, locale, { c
 export async function deleteLinkUser (baseUrl, authenticationToken, locale, { contentProducerId, userId }) {
   const url = `${baseUrl}/v004/media/contentProducers/${contentProducerId}/users/${userId}`;
   return await del(authenticationToken, locale, url);
+}
+
+export async function deleteLinkUsers (baseUrl, authenticationToken, locale, { contentProducerId, userIds }) {
+  for (const userId of userIds) {
+    await deleteLinkUser(baseUrl, authenticationToken, locale, { contentProducerId, userId });
+  }
 }
 
 export async function uploadContentProducerImage (baseUrl, authenticationToken, locale, { contentProducerId, image, callback }) {

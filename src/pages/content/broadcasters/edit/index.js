@@ -3,6 +3,7 @@ import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
 import Header from '../../../app/header';
 import { tabStyles, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
@@ -39,6 +40,7 @@ function validate (values, { t }) {
 export default class EditBroadcaster extends Component {
 
   static propTypes = {
+    currentBroadcaster: ImmutablePropTypes.map.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
@@ -58,11 +60,10 @@ export default class EditBroadcaster extends Component {
   }
 
   async componentWillMount () {
-    if (this.props.params.id) {
-      const editObj = await this.props.load(this.props.params.id);
-      this.props.initialize({
-        name: editObj.name
-      });
+    const broadcasterId = this.props.params.broadcasterId;
+    if (broadcasterId) {
+      const { name } = await this.props.load(broadcasterId);
+      this.props.initialize({ name });
     }
   }
 
@@ -72,7 +73,7 @@ export default class EditBroadcaster extends Component {
 
   async submit (form) {
     try {
-      await this.props.submit({ id: this.props.params.id, ...form.toJS() });
+      await this.props.submit({ ...form.toJS(), id: this.props.params.broadcasterId });
       this.redirect();
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
@@ -80,7 +81,7 @@ export default class EditBroadcaster extends Component {
   }
 
   render () {
-    const { location, handleSubmit } = this.props;
+    const { currentBroadcaster, location, handleSubmit } = this.props;
     return (
       <Root style={{ backgroundColor: colors.lightGray4 }}>
         <Header currentLocation={location} hideHomePageLinks />
@@ -103,9 +104,9 @@ export default class EditBroadcaster extends Component {
                   <Label text='Upload image' />
                   <Dropzone
                     accept='image/*'
-                    // imageUrl={currentBroadcaster.getIn([ 'log', defaultLocale ]) &&
-                    //   `${currentBroadcaster.getIn([ 'log', currentBroadcaster.get('defaultLocale'), 'url' ])}?height=203&width=360`}/>
-                    onChange={({ callback, file }) => { this.props.uploadImage({ broadcasterId: this.props.params.id, image: file, callback }); }}/>
+                    imageUrl={currentBroadcaster.get('logo') &&
+                      `${currentBroadcaster.getIn([ 'logo', 'url' ])}?height=310&width=310`}
+                    onChange={({ callback, file }) => this.props.uploadImage({ broadcasterId: this.props.params.broadcasterId, image: file, callback })}/>
                 </div>
               </Section>
             </TabPanel>

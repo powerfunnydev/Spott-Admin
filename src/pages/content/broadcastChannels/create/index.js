@@ -61,9 +61,9 @@ export default class CreateBroadcasterEntryModal extends Component {
   }
 
   async componentWillMount () {
-    if (this.props.params.id) {
+    if (this.props.params.broadcasterId) {
       this.props.initialize({
-        broadcasterId: this.props.params.id
+        broadcasterId: this.props.params.broadcasterId
       });
     }
   }
@@ -71,8 +71,8 @@ export default class CreateBroadcasterEntryModal extends Component {
   async submit (form) {
     try {
       await this.props.submit(form.toJS());
-      if (this.props.params.id) {
-        await this.props.loadBroadcasterChannels(this.props.params.id);
+      if (this.props.params.broadcasterId) {
+        await this.props.loadBroadcasterChannels(this.props.params.broadcasterId);
       } else {
         // Load the new list of items, using the location query of the previous page.
         const location = this.props.location && this.props.location.state && this.props.location.state.returnTo;
@@ -87,7 +87,7 @@ export default class CreateBroadcasterEntryModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo(this.props.params.id && `content/broadcasters/read/${this.props.params.id}` || 'content/broadcasters', true);
+    this.props.routerPushWithReturnTo(this.props.params.broadcasterId && `content/broadcasters/read/${this.props.params.broadcasterId}` || 'content/broadcasters', true);
   }
 
   render () {

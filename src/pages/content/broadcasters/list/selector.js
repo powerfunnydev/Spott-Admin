@@ -8,7 +8,7 @@ export const isSelectedSelector = (state) => state.getIn([ 'content', 'broadcast
 export const pageCountSelector = (state) => state.getIn([ 'content', 'broadcasters', 'list', 'broadcasters', 'pageCount' ]);
 export const totalResultCountSelector = (state) => state.getIn([ 'content', 'broadcasters', 'list', 'broadcasters', 'totalResultCount' ]);
 
-export const broadcastersFilterKeySelector = (state, props) => { return serializeFilterHasBroadcasters(getInformationFromQuery(props.location.query, prefix)); };
+export const broadcastersFilterKeySelector = (state, props) => serializeFilterHasBroadcasters(getInformationFromQuery(props.location.query, prefix));
 
 export const broadcastersSelector = createEntitiesByRelationSelector(
   filterHasBroadcastersRelationsSelector,

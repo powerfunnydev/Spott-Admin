@@ -66,22 +66,6 @@ export default class Users extends Component {
     }
   }
 
-  getUserName (user) {
-    return user.get('userName');
-  }
-
-  getEmail (user) {
-    return user.get('email');
-  }
-
-  getFirstName (user) {
-    return user.get('firstName');
-  }
-
-  getLastName (user) {
-    return user.get('lastName');
-  }
-
   async onDeleteUser (userId) {
     await this.props.deleteUser(userId);
     await this.props.load(this.props.location.query);
@@ -120,19 +104,21 @@ export default class Users extends Component {
             <UtilsBar
               display={display}
               isLoading={users.get('_status') !== 'loaded'}
-              numberSelected={numberSelected}
               searchString={searchString}
               textCreateButton='New User'
               onChangeDisplay={onChangeDisplay}
               onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
-              onClickDeleteSelected={this.onClickDeleteSelected}
               onClickNewEntry={this.onClickNewEntry}/>
           </Container>
         </div>
         <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
           <Container style={generalStyles.paddingTable}>
-            <TotalEntries totalResultCount={totalResultCount}/>
+            <TotalEntries
+              entityType='Users'
+              numberSelected={numberSelected}
+              totalResultCount={totalResultCount}
+              onDeleteSelected={this.onClickDeleteSelected}/>
             {(!display || display === 'list') &&
               <div>
                 <Table>
@@ -151,14 +137,14 @@ export default class Users extends Component {
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                           <CheckBoxCel checked={isSelected.get(user.get('id'))} onChange={selectCheckbox.bind(this, user.get('id'))}/>
-                          <CustomCel getValue={this.getUserName} objectToRender={user} style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`users/read/${user.get('id')}`); }}/>
-                          <CustomCel getValue={this.getEmail} objectToRender={user} style={{ flex: 2 }}/>
-                          <CustomCel getValue={this.getFirstName} objectToRender={user} style={{ flex: 1 }} />
-                          <CustomCel getValue={this.getLastName} objectToRender={user} style={{ flex: 1 }} />
+                          <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`users/read/${user.get('id')}`); }}>{user.get('userName')}</CustomCel>
+                          <CustomCel style={{ flex: 2 }}>{user.get('email')}</CustomCel>
+                          <CustomCel style={{ flex: 1 }}>{user.get('firstName')}</CustomCel>
+                          <CustomCel style={{ flex: 1 }}>{user.get('lastName')}</CustomCel>
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={this.onEditEntry.bind(this, user.get('id'))}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={this.onDeleteUser.bind(this, user.get('id'))}>Remove</div>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={this.onEditEntry.bind(this, user.get('id'))}>Edit</div>}>
+                              <div key={1} style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={this.onDeleteUser.bind(this, user.get('id'))}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>
@@ -174,17 +160,25 @@ export default class Users extends Component {
               </div>
             }
             {display === 'grid' &&
-              <div style={generalStyles.row}>
-                { users.get('data').map((user, index) => (
-                  <Tile
-                    deleteText='Remove'
-                    imageUrl={user.get('avatar') && `${user.getIn([ 'avatar', 'url' ])}?height=310&width=310`}
-                    key={`user${index}`}
-                    text={this.getUserName(user)}
-                    onDelete={this.onDeleteUser.bind(this, user.get('id'))}
-                    onEdit={this.onEditEntry.bind(this, user.get('id'))}/>
-                ))}
-                <Tile key={'createBroadcaster'} onCreate={this.onClickNewEntry}/>
+              <div>
+                <div style={generalStyles.row}>
+                  { users.get('data').map((user, index) => (
+                    <Tile
+                      deleteText='Remove'
+                      imageUrl={user.get('avatar') && `${user.getIn([ 'avatar', 'url' ])}?height=310&width=310`}
+                      key={`user${index}`}
+                      text={user.get('name')}
+                      onClick={() => { this.props.routerPushWithReturnTo(`users/read/${user.get('id')}`); }}
+                      onDelete={this.onDeleteUser.bind(this, user.get('id'))}
+                      onEdit={this.onEditEntry.bind(this, user.get('id'))}/>
+                  ))}
+                  <Tile key={'createBroadcaster'} onCreate={this.onClickNewEntry}/>
+                </div>
+                <Pagination
+                  currentPage={(page && (parseInt(page, 10) + 1) || 1)}
+                  pageCount={pageCount}
+                  onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }}
+                  onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
               </div>
             }
           </Container>

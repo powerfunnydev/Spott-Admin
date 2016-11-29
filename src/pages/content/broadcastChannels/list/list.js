@@ -79,11 +79,7 @@ export default class BroadcastChannelList extends Component {
     }
   }
 
-  getName (broadcastChannel) {
-    return broadcastChannel.get('name');
-  }
-
-  onClickNew (e) {
+  onClickNewEntry (e) {
     e.preventDefault();
     this.props.routerPushWithReturnTo('content/broadcast-channels/create');
   }
@@ -112,19 +108,21 @@ export default class BroadcastChannelList extends Component {
             <UtilsBar
               display={display}
               isLoading={broadcastChannels.get('_status') !== 'loaded'}
-              numberSelected={numberSelected}
               searchString={searchString}
               textCreateButton='New Broadcast Channel'
               onChangeDisplay={onChangeDisplay}
               onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
-              onClickDeleteSelected={this.onClickDeleteSelected}
-              onClickNew={this.onClickNew}/>
+              onClickNewEntry={this.onClickNewEntry}/>
           </Container>
         </div>
         <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
           <Container style={generalStyles.paddingTable}>
-            <TotalEntries totalResultCount={totalResultCount}/>
+            <TotalEntries
+              entityType='Broadcast Channels'
+              numberSelected={numberSelected}
+              totalResultCount={totalResultCount}
+              onDeleteSelected={this.onClickDeleteSelected}/>
             {(display === undefined || display === 'list') &&
               <div>
                 <Table>
@@ -140,11 +138,11 @@ export default class BroadcastChannelList extends Component {
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                           <CheckBoxCel checked={isSelected.get(broadcastChannel.get('id'))} onChange={selectCheckbox.bind(this, broadcastChannel.get('id'))}/>
-                          <CustomCel getValue={this.getName} objectToRender={broadcastChannel} style={{ flex: 5 }} />
+                          <CustomCel style={{ flex: 5 }}>{broadcastChannel.get('name')}</CustomCel>
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}>Remove</div>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]}onClick={() => { this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}>Edit</div>}>
+                              <div key={1} style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>
@@ -155,22 +153,25 @@ export default class BroadcastChannelList extends Component {
                 <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
               </div>}
             {display === 'grid' &&
-              <div style={generalStyles.row}>
-                {this.props.broadcastChannels.get('data').map((broadcastChannel, index) => (
-                  <Tile
-                    imageUrl={broadcastChannel.get('logo') && `${broadcastChannel.getIn([ 'logo', 'url' ])}?height=310&width=310`}
-                    key={`broadcastChannel${index}`}
-                    text={broadcastChannel.get('name')}
-                    onDelete={async (e) => {
-                      e.preventDefault();
-                      await this.deleteBroadcastChannel(broadcastChannel.get('id'));
-                    }}
-                    onEdit={(e) => {
-                      e.preventDefault();
-                      this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`);
-                    }}/>
-                ))}
-                <Tile key={'createBroadcastChannel'} onCreate={() => { this.props.routerPushWithReturnTo('content/broadcast-channels/create'); }}/>
+              <div>
+                <div style={generalStyles.row}>
+                  {this.props.broadcastChannels.get('data').map((broadcastChannel, index) => (
+                    <Tile
+                      imageUrl={broadcastChannel.get('logo') && `${broadcastChannel.getIn([ 'logo', 'url' ])}?height=310&width=310`}
+                      key={`broadcastChannel${index}`}
+                      text={broadcastChannel.get('name')}
+                      onDelete={async (e) => {
+                        e.preventDefault();
+                        await this.deleteBroadcastChannel(broadcastChannel.get('id'));
+                      }}
+                      onEdit={(e) => {
+                        e.preventDefault();
+                        this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`);
+                      }}/>
+                  ))}
+                  <Tile key={'createBroadcastChannel'} onCreate={() => { this.props.routerPushWithReturnTo('content/broadcast-channels/create'); }}/>
+                </div>
+                <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
               </div>
             }
           </Container>

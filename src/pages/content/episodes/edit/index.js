@@ -22,6 +22,7 @@ import LanguageBar from '../../../_common/components/languageBar';
 import Availabilities from '../../_availabilities/list';
 import * as actions from './actions';
 import selector from './selector';
+import Characters from '../../_helpers/_characters/list';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -59,6 +60,7 @@ export default class EditEpisodes extends Component {
     availabilities: ImmutablePropTypes.list,
     broadcastersById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
+    characters: ImmutablePropTypes.list,
     children: PropTypes.node,
     closeModal: PropTypes.func.isRequired,
     contentProducersById: ImmutablePropTypes.map.isRequired,
@@ -208,7 +210,7 @@ export default class EditEpisodes extends Component {
   }
 
   render () {
-    const { availabilities, closeModal, currentModal, _activeLocale, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
+    const { _activeLocale, availabilities, characters, closeModal, currentModal, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
         contentProducersById, searchContentProducers, searchedContentProducerIds, broadcastersById,
         searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
         seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
@@ -289,6 +291,7 @@ export default class EditEpisodes extends Component {
                   type='multiline'/>
                 <Field
                   component={SelectInput}
+                  disabled={_activeLocale !== defaultLocale}
                   getItemText={(contentProducerId) => contentProducersById.getIn([ contentProducerId, 'name' ])}
                   getOptions={searchContentProducers}
                   isLoading={searchedContentProducerIds.get('_status') === FETCHING}
@@ -299,6 +302,7 @@ export default class EditEpisodes extends Component {
                   placeholder='Content producers'/>
                 <Field
                   component={SelectInput}
+                  disabled={_activeLocale !== defaultLocale}
                   getItemText={(broadcasterId) => broadcastersById.getIn([ broadcasterId, 'name' ])}
                   getOptions={searchBroadcasters}
                   isLoading={searchedBroadcasterIds.get('_status') === FETCHING}
@@ -313,17 +317,14 @@ export default class EditEpisodes extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
-                      imageUrl={currentEpisode.getIn([ 'profileImage', currentEpisode.get('defaultLocale') ]) &&
-                        `${currentEpisode.getIn([ 'profileImage', currentEpisode.get('defaultLocale'), 'url' ])}?height=203&width=360`}/>
+                      imageUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
+                        `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}/>
                   </div>
                 </div>
               </Section>
             </Tab>
-            {/* TODO
-            <Tab title='Helpers'>
-              <Section>
-                <FormSubtitle first>Content</FormSubtitle>
-              </Section>
+            {/* <Tab title='Helpers'>
+              <FieldArray characters={characters} component={Characters} name='characters'/>
             </Tab>*/}
             <Tab title='Availability'>
               <FieldArray availabilities={availabilities} component={Availabilities} name='availabilities' />

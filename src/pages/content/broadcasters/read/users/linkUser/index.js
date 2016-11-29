@@ -30,16 +30,15 @@ export default class LinkUserToBroadcaster extends Component {
   }
 
   onCreateOption (userName) {
-    this.props.routerPushWithReturnTo({ ...this.props.location, pathname: `/content/broadcasters/read/${this.props.params.id}/create/user`, query: { ...this.props.location.query, userName } });
+    this.props.routerPushWithReturnTo({ ...this.props.location, pathname: `/content/broadcasters/read/${this.props.params.broadcasterId}/create/user`, query: { ...this.props.location.query, userName } });
   }
 
   async onSubmit (userForm) {
-    const form = userForm.toJS();
-    const userId = form.userId;
-    const broadcasterId = this.props.params.id;
+    const { userId } = userForm.toJS();
+    const broadcasterId = this.props.params.broadcasterId;
     await this.props.persistLinkUser(broadcasterId, userId);
     await this.props.load(this.props.location.query, broadcasterId);
-    this.props.routerPushWithReturnTo(`/content/broadcasters/read/${this.props.params.id}`, true);
+    this.props.routerPushWithReturnTo(`/content/broadcasters/read/${broadcasterId}`, true);
   }
 
   render () {

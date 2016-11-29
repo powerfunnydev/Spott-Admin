@@ -110,8 +110,8 @@ function getRoutes ({ getState }) {
           <Route component={BroadcastersCreate} path='create'/>
         </Route>
         <Route path='broadcasters'>
-          <Route component={BroadcastersEdit} path='edit/:id'/>
-          <Route component={BroadcastersRead} path='read/:id'>
+          <Route component={BroadcastersEdit} path='edit/:broadcasterId'/>
+          <Route component={BroadcastersRead} path='read/:broadcasterId'>
             <Route component={BroadcastChannelCreate} path='create/broadcast-channel'/>
             <Route component={LinkUserToBroadcaster} path='link/user'/>
             <Route component={UsersCreate} path='create/user'/>
