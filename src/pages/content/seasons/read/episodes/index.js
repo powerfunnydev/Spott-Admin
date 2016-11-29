@@ -183,22 +183,26 @@ export default class List extends Component {
               </div>
             }
             {episodesDisplay === 'grid' &&
-              <div style={generalStyles.row}>
-                {this.props.episodes.get('data').map((episode, index) => (
-                  <Tile
-                    imageUrl={episode.get('profileImage') && `${episode.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
-                    key={`episode${index}`}
-                    text={episode.get('title')}
-                    onDelete={async (e) => {
-                      e.preventDefault();
-                      await this.deleteEpisode(episode.get('id'));
-                    }}
-                    onEdit={(e) => {
-                      e.preventDefault();
-                      this.props.routerPushWithReturnTo(`content/episodes/edit/${episode.get('id')}`);
-                    }}/>
-                ))}
-                <Tile key={'createEpisode'} onCreate={this.onClickNewEntry}/>
+              <div>
+                <div style={generalStyles.row}>
+                  {this.props.episodes.get('data').map((episode, index) => (
+                    <Tile
+                      imageUrl={episode.get('profileImage') && `${episode.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
+                      key={`episode${index}`}
+                      text={episode.get('title')}
+                      onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/read/${episode.get('id')}`); }}
+                      onDelete={async (e) => {
+                        e.preventDefault();
+                        await this.deleteEpisode(episode.get('id'));
+                      }}
+                      onEdit={(e) => {
+                        e.preventDefault();
+                        this.props.routerPushWithReturnTo(`content/episodes/edit/${episode.get('id')}`);
+                      }}/>
+                  ))}
+                  <Tile key={'createEpisode'} onCreate={this.onClickNewEntry}/>
+                </div>
+                <Pagination currentPage={(episodesPage && (parseInt(episodesPage, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(episodesPage, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(episodesPage, 10), true); }}/>
               </div>
             }
           </div>

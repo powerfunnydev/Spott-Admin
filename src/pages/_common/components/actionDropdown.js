@@ -153,7 +153,13 @@ class Dropdown extends Component {
           {elementShown && <div style={[ styles.elementShown ]}>
             {elementShown}
           </div>}
-          <div key='arrow' style={[ styles.borderRight, !elementShown && styles.borderLeft, styles.control, styles.arrowContainer, styles.clickable, color === 'blue' && styles.blue ]} onMouseDown={this.handleMouseDown.bind(this)}>
+          <div
+            key='arrow'
+            style={[ styles.borderRight, !elementShown && styles.borderLeft, styles.control, styles.arrowContainer, styles.clickable, color === 'blue' && styles.blue ]}
+            // we need to stop the propagation, cause in components like Tile, we do not want
+            // to trigger multiple onClick events. Dropdown has priority.
+            onClick={(e) => { e.stopPropagation(); e.preventDefault(); }}
+            onMouseDown={this.handleMouseDown.bind(this)}>
             <ArrowSVG color={color === 'blue' && colors.white || colors.darkGray2} style={[ !this.state.isOpen && styles.arrowUnder ]} />
           </div>
         </div>

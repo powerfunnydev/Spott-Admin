@@ -71,22 +71,6 @@ export default class Users extends Component {
     }
   }
 
-  getUserName (user) {
-    return user.get('userName');
-  }
-
-  getEmail (user) {
-    return user.get('email');
-  }
-
-  getFirstName (user) {
-    return user.get('firstName');
-  }
-
-  getLastName (user) {
-    return user.get('lastName');
-  }
-
   async onDeleteLinkUser (userId) {
     await this.props.deleteLinkUser(this.props.params.id, userId);
     await this.props.load(this.props.location.query, this.props.params.id);
@@ -160,10 +144,10 @@ export default class Users extends Component {
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                           <CheckBoxCel checked={isSelected.get(user.get('id'))} onChange={selectCheckbox.bind(this, user.get('id'))}/>
-                          <CustomCel getValue={this.getUserName} objectToRender={user} style={{ flex: 2 }}/>
-                          <CustomCel getValue={this.getEmail} objectToRender={user} style={{ flex: 2 }}/>
-                          <CustomCel getValue={this.getFirstName} objectToRender={user} style={{ flex: 1 }} />
-                          <CustomCel getValue={this.getLastName} objectToRender={user} style={{ flex: 1 }} />
+                          <CustomCel style={{ flex: 2 }}>{user.get('userName')}</CustomCel>
+                          <CustomCel style={{ flex: 2 }}>{user.get('email')}</CustomCel>
+                          <CustomCel style={{ flex: 1 }}>{user.get('firstName')}</CustomCel>
+                          <CustomCel style={{ flex: 1 }}>{user.get('lastName')}</CustomCel>
                           <DropdownCel>
                             <Dropdown
                               elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={this.onEditEntry.bind(this, user.get('id'))}>Edit</div>}>

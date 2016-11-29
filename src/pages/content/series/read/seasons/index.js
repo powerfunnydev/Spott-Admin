@@ -174,16 +174,20 @@ export default class List extends Component {
               </div>
             }
             {seasonsDisplay === 'grid' &&
-              <div style={generalStyles.row}>
-                {seasons.get('data').map((season, index) => (
-                  <Tile
-                    imageUrl={season.get('profileImage') && `${season.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
-                    key={`season${index}`}
-                    text={season.get('title')}
-                    onDelete={async (e) => { e.preventDefault(); await this.deleteSeason(season.get('id')); }}
-                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/edit/${season.get('id')}`); }}/>
-                ))}
-                <Tile key={'createSeason'} onCreate={this.onClickNewEntry}/>
+              <div>
+                <div style={generalStyles.row}>
+                  {seasons.get('data').map((season, index) => (
+                    <Tile
+                      imageUrl={season.get('profileImage') && `${season.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
+                      key={`season${index}`}
+                      text={season.get('title')}
+                      onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${season.get('id')}`); }}
+                      onDelete={async (e) => { e.preventDefault(); await this.deleteSeason(season.get('id')); }}
+                      onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/edit/${season.get('id')}`); }}/>
+                  ))}
+                  <Tile key={'createSeason'} onCreate={this.onClickNewEntry}/>
+                </div>
+                <Pagination currentPage={(seasonsPage && (parseInt(seasonsPage, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(seasonsPage, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(seasonsPage, 10), true); }}/>
               </div>
             }
           </div>

@@ -64,14 +64,18 @@ export function transformAvailability ({ country, endTimeStamp, startTimeStamp, 
   return { countryId: country && country.uuid, availabilityFrom: startTimeStamp && new Date(startTimeStamp), availabilityTo: endTimeStamp && new Date(endTimeStamp), videoStatus };
 }
 
+export function transformCharacter () {
+  // TODO
+}
 /**
  *  Complete version of a medium. Locales includes.
  */
-export function transformMedium ({ availabilities, broadcasters, contentProducers, number,
+export function transformMedium ({ availabilities, broadcasters, characters, contentProducers, number,
   auditInfo, type, defaultLocale, externalReference, serie, season, uuid: id, publishStatus,
   defaultTitle, localeData }) {
   const seriesEntry = {
     availabilities: availabilities && availabilities.map(transformAvailability),
+    characters: characters && characters.map(transformCharacter),
     contentProducers: contentProducers && contentProducers.map((cp) => cp.uuid),
     broadcasters: broadcasters && broadcasters.map((bc) => bc.uuid),
     number,

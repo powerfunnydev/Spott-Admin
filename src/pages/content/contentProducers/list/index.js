@@ -79,14 +79,6 @@ export default class ContentProducers extends Component {
     }
   }
 
-  getName (cp) {
-    return cp.get('name');
-  }
-
-  getUpdatedBy (cp) {
-    return cp.get('lastUpdatedBy');
-  }
-
   getLastUpdatedOn (cp) {
     const date = new Date(cp.get('lastUpdatedOn'));
     return moment(date).format('YYYY-MM-DD HH:mm');
@@ -155,8 +147,8 @@ export default class ContentProducers extends Component {
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                           <CheckBoxCel checked={isSelected.get(cp.get('id'))} onChange={selectCheckbox.bind(this, cp.get('id'))}/>
-                          <CustomCel getValue={this.getName} objectToRender={cp} style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/content-producers/read/${cp.get('id')}`); }}/>
-                          <CustomCel getValue={this.getUpdatedBy} objectToRender={cp} style={{ flex: 2 }}/>
+                          <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/content-producers/read/${cp.get('id')}`); }}>{cp.get('name')}</CustomCel>
+                          <CustomCel style={{ flex: 2 }}>{cp.get('updatedBy')}</CustomCel>
                           <CustomCel getValue={this.getLastUpdatedOn} objectToRender={cp} style={{ flex: 2 }}/>
                           <DropdownCel>
                             <Dropdown
@@ -173,22 +165,26 @@ export default class ContentProducers extends Component {
               </div>
             }
             {display === 'grid' &&
-              <div style={generalStyles.row}>
-                {contentProducers.get('data').map((contentProducer, index) => (
-                  <Tile
-                    imageUrl={contentProducer.get('logo') && `${contentProducer.getIn([ 'logo', 'url' ])}?height=310&width=310`}
-                    key={`contentProducer${index}`}
-                    text={this.getName(contentProducer)}
-                    onDelete={async (e) => {
-                      e.preventDefault();
-                      await this.deleteContentProducer(contentProducer.get('id'));
-                    }}
-                    onEdit={(e) => {
-                      e.preventDefault();
-                      this.props.routerPushWithReturnTo(`content/content-producers/edit/${contentProducer.get('id')}`);
-                    }}/>
-                ))}
-                <Tile key={'createBroadcaster'} onCreate={() => { this.props.routerPushWithReturnTo('content/content-producers/create'); }}/>
+              <div>
+                <div style={generalStyles.row}>
+                  {contentProducers.get('data').map((contentProducer, index) => (
+                    <Tile
+                      imageUrl={contentProducer.get('logo') && `${contentProducer.getIn([ 'logo', 'url' ])}?height=310&width=310`}
+                      key={`contentProducer${index}`}
+                      text={contentProducer.get('name')}
+                      onClick={() => { this.props.routerPushWithReturnTo(`content/content-producers/read/${contentProducer.get('id')}`); }}
+                      onDelete={async (e) => {
+                        e.preventDefault();
+                        await this.deleteContentProducer(contentProducer.get('id'));
+                      }}
+                      onEdit={(e) => {
+                        e.preventDefault();
+                        this.props.routerPushWithReturnTo(`content/content-producers/edit/${contentProducer.get('id')}`);
+                      }}/>
+                  ))}
+                  <Tile key={'createBroadcaster'} onCreate={() => { this.props.routerPushWithReturnTo('content/content-producers/create'); }}/>
+                </div>
+                <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
               </div>
             }
           </Container>

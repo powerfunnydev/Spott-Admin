@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Radium from 'radium';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import moment from 'moment';
 import { Container, Root } from '../../../_common/styles';
 import { DropdownCel, UtilsBar, isQueryChanged, Tile, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
 import Line from '../../../_common/components/line';
@@ -78,19 +77,6 @@ export default class Broadcasters extends Component {
     }
   }
 
-  getName (broadcaster) {
-    return broadcaster.get('name');
-  }
-
-  getUpdatedBy (broadcaster) {
-    return broadcaster.get('lastUpdatedBy');
-  }
-
-  getLastUpdatedOn (broadcaster) {
-    const date = new Date(broadcaster.get('lastUpdatedOn'));
-    return moment(date).format('YYYY-MM-DD HH:mm');
-  }
-
   onClickNewEntry (e) {
     e.preventDefault();
     this.props.routerPushWithReturnTo('content/broadcasters/create');
@@ -155,7 +141,7 @@ export default class Broadcasters extends Component {
                           <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                             <CheckBoxCel checked={isSelected.get(broadcaster.get('id'))} onChange={selectCheckbox.bind(this, broadcaster.get('id'))}/>
-                            <CustomCel getValue={this.getName} objectToRender={broadcaster} style={{ flex: 5 }} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcaster.get('id')}`); }}/>
+                            <CustomCel style={{ flex: 5 }} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcaster.get('id')}`); }}>{broadcaster.get('name')}</CustomCel>
                             <DropdownCel>
                               <Dropdown
                                 elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/edit/${broadcaster.get('id')}`); }}>Edit</div>}>
@@ -171,12 +157,14 @@ export default class Broadcasters extends Component {
                 </div>
               }
               {broadcastersDisplay === 'grid' &&
+              <div>
                 <div style={generalStyles.row}>
                   {broadcasters.get('data').map((broadcaster, index) => (
                     <Tile
                       imageUrl={broadcaster.get('logo') && `${broadcaster.getIn([ 'logo', 'url' ])}?height=310&width=310`}
                       key={`broadcaster${index}`}
                       text={broadcaster.get('name')}
+                      onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcaster.get('id')}`); }}
                       onDelete={async (e) => {
                         e.preventDefault();
                         await this.deleteBroadcaster(broadcaster.get('id'));
@@ -188,6 +176,8 @@ export default class Broadcasters extends Component {
                   ))}
                   <Tile key={'createBroadcaster'} onCreate={() => this.props.routerPushWithReturnTo('content/broadcasters/create')}/>
                 </div>
+                <Pagination currentPage={(broadcastersPage && (parseInt(broadcastersPage, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(broadcastersPage, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(broadcastersPage, 10), true); }}/>
+              </div>
               }
             </Container>
           </div>

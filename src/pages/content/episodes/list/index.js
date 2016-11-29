@@ -164,16 +164,20 @@ export default class Episodes extends Component {
               </div>
             }
             {display === 'grid' &&
-              <div style={generalStyles.row}>
-                {seasons.get('data').map((season, index) => (
-                  <Tile
-                    imageUrl={season.get('profileImage') && `${season.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
-                    key={`season${index}`}
-                    text={this.getTitle(season)}
-                    onDelete={async (e) => { e.preventDefault(); await this.deleteEpisode(season.get('id')); }}
-                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/seasons/edit/${season.get('id')}`); }}/>
-                ))}
-                <Tile key={'createEpisode'} onCreate={() => { this.props.routerPushWithReturnTo('content/seasons/create'); }}/>
+              <div>
+                <div style={generalStyles.row}>
+                  {seasons.get('data').map((season, index) => (
+                    <Tile
+                      imageUrl={season.get('profileImage') && `${season.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
+                      key={`season${index}`}
+                      text={this.getTitle(season)}
+                      onClick={() => { this.props.routerPushWithReturnTo(`content/seasons/read/${season.get('id')}`); }}
+                      onDelete={async (e) => { e.preventDefault(); await this.deleteEpisode(season.get('id')); }}
+                      onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/seasons/edit/${season.get('id')}`); }}/>
+                  ))}
+                  <Tile key={'createEpisode'} onCreate={() => { this.props.routerPushWithReturnTo('content/seasons/create'); }}/>
+                </div>
+                <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
               </div>
             }
           </Container>

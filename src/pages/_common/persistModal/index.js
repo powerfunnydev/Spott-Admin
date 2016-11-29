@@ -2,9 +2,10 @@ import React, { Component, PropTypes } from 'react';
 import ReactModal from 'react-modal';
 import Radium from 'radium';
 import localized from '../localized';
-import { buttonStyles, fontWeights, makeTextStyle } from '../styles';
+import { colors, buttonStyles, fontWeights, makeTextStyle } from '../styles';
 import Button from '../buttons/button';
-
+import { Checkbox } from '../inputs/checkbox';
+import { Field } from 'redux-form/immutable';
 const crossImage = require('./cross.svg');
 
 /**
@@ -68,6 +69,7 @@ export default class PersistModal extends Component {
 
   static propTypes = {
     children: PropTypes.node,
+    createAnother: PropTypes.bool,
     error: PropTypes.any,
     isOpen: PropTypes.bool.isRequired,
     style: PropTypes.object,
@@ -129,12 +131,27 @@ export default class PersistModal extends Component {
     },
     wrapper: {
       boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)'
+    },
+    alignRight: {
+      display: 'flex',
+      marginLeft: 'auto'
+    },
+    row: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center'
+    },
+    text: {
+      ...makeTextStyle(fontWeights.regular, '12px'),
+      color: colors.darkGray2,
+      paddingRight: '5px'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { children, error, isOpen, style, t, title, onClose, onSubmit, submitButtonText } = this.props;
+    const { createAnother, children, error, isOpen, style, t, title, onClose,
+      onSubmit, submitButtonText } = this.props;
     return (
       <ReactModal
         isOpen={isOpen}
@@ -163,7 +180,15 @@ export default class PersistModal extends Component {
                 {children}
               </div>
               <div style={styles.footer}>
-                <div style={{ marginLeft: 'auto' }}>
+                <div style={styles.alignRight}>
+                  {createAnother &&
+                    <div style={styles.row}>
+                      <div style={styles.text}>Create another</div>
+                      <Field
+                        component={Checkbox}
+                        name='createAnother'/>
+                    </div>
+                  }
                   <Button key='cancel' style={[ buttonStyles.white ]} text='Cancel' type='button' onClick={(e) => { e.preventDefault(); onClose(); }} />
                   <Button key='submit' style={[ buttonStyles.blue ]} text={submitButtonText || 'Create'} type='submit' />
                 </div>

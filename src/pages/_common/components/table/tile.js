@@ -12,6 +12,7 @@ export class Tile extends Component {
     deleteText: PropTypes.string,
     imageUrl: PropTypes.string,
     text: PropTypes.string,
+    onClick: PropTypes.func,
     onCreate: PropTypes.func,
     onDelete: PropTypes.func,
     onEdit: PropTypes.func
@@ -67,14 +68,14 @@ export class Tile extends Component {
   }
 
   render () {
-    const { imageUrl, text, onCreate, deleteText, onDelete, onEdit } = this.props;
+    const { imageUrl, text, onCreate, deleteText, onDelete, onEdit, onClick } = this.props;
     const { styles } = this.constructor;
     return (
       <div style={styles.wrapper}>
         {onEdit &&
           <div>
-            <div style={[ styles.imageContainer, styles.image ]}>
-              {imageUrl && <img src={imageUrl} style={styles.image}/>}
+            <div style={[ styles.imageContainer, styles.image, onClick && styles.clickable ]} onClick={onClick}>
+              {imageUrl && <img src={imageUrl} style={styles.image} />}
               {!imageUrl && <div style={styles.noImage}>No image</div>}
               <Dropdown style={styles.dropdown}>
                 {onEdit && <div key='onEdit' style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={onEdit}>Edit</div>}
