@@ -124,7 +124,7 @@ export default class BroadcastChannelList extends Component {
         <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
           <Container style={generalStyles.paddingTable}>
-            <TotalEntries totalResultCount={totalResultCount}/>
+            <TotalEntries entityType='Broadcast Channels' totalResultCount={totalResultCount}/>
             {(display === undefined || display === 'list') &&
               <div>
                 <Table>

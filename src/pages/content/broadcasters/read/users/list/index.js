@@ -135,7 +135,7 @@ export default class Users extends Component {
         <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage, generalStyles.whiteBackground ]}>
           <div style={[ generalStyles.paddingTable, generalStyles.paddingLeftAndRight ]}>
-            <TotalEntries totalResultCount={totalResultCount}/>
+            <TotalEntries entityType='Users' totalResultCount={totalResultCount}/>
             {(!usersDisplay || usersDisplay === 'list') &&
               <div>
                 <Table style={generalStyles.lightGrayBorder}>

@@ -116,7 +116,7 @@ export default class List extends Component {
         <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage, generalStyles.whiteBackground ]}>
           <div style={[ generalStyles.paddingTable, generalStyles.paddingLeftAndRight ]}>
-            <TotalEntries totalResultCount={totalResultCount}/>
+            <TotalEntries entityType='Broadcast Channels' totalResultCount={totalResultCount}/>
             {(broadcasterChannelsDisplay === undefined || broadcasterChannelsDisplay === 'list') &&
               <div>
                 <Table style={generalStyles.lightGrayBorder}>

@@ -6,8 +6,9 @@ import { colors, makeTextStyle, fontWeights } from '../../../_common/styles';
 export class TotalEntries extends Component {
 
   static propTypes = {
+    entityType: PropTypes.string.isRequired,
     totalResultCount: PropTypes.number.isRequired
-  }
+  };
 
   static styles = {
     base: {
@@ -28,10 +29,10 @@ export class TotalEntries extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { totalResultCount } = this.props;
+    const { entityType, totalResultCount } = this.props;
     return (
       <div style={styles.base}>
-        <span style={styles.entity}>Entries</span><span style={styles.count}>&nbsp;&nbsp;{totalResultCount} <span style={styles.entries}>Entries</span></span>
+        <span style={styles.entity}>{entityType}</span><span style={styles.count}>&nbsp;&nbsp;{totalResultCount} <span style={styles.entries}>Entries</span></span>
       </div>
     );
   }

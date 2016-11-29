@@ -134,7 +134,7 @@ export default class Seasons extends Component {
         <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
           <Container style={generalStyles.paddingTable}>
-            <TotalEntries totalResultCount={totalResultCount}/>
+            <TotalEntries entityType='Seasons' totalResultCount={totalResultCount}/>
             {(display === undefined || display === 'list') &&
               <div>
                 <Table>

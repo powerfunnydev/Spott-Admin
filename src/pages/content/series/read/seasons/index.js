@@ -142,7 +142,7 @@ export default class List extends Component {
         <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage, generalStyles.whiteBackground ]}>
           <div style={[ generalStyles.paddingTable, generalStyles.paddingLeftAndRight ]}>
-            <TotalEntries totalResultCount={totalResultCount}/>
+            <TotalEntries entityType='Seasons' totalResultCount={totalResultCount}/>
             {(seasonsDisplay === undefined || seasonsDisplay === 'list') &&
               <div>
                 <Table style={generalStyles.lightGrayBorder}>

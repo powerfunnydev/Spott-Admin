@@ -134,7 +134,7 @@ export default class SeriesEntries extends Component {
         <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
           <Container style={generalStyles.paddingTable}>
-            <TotalEntries totalResultCount={totalResultCount}/>
+            <TotalEntries entityType='Series' totalResultCount={totalResultCount}/>
             {(display === undefined || display === 'list') &&
               <div>
                 <Table>
@@ -171,7 +171,7 @@ export default class SeriesEntries extends Component {
             }
             {display === 'grid' &&
               <div style={generalStyles.row}>
-                { seriesEntries.get('data').map((seriesEntry, index) => (
+                {seriesEntries.get('data').map((seriesEntry, index) => (
                   <Tile
                     imageUrl={seriesEntry.get('profileImage') && `${seriesEntry.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                     key={`seriesEntry${index}`}
