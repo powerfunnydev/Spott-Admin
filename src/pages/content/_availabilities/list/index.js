@@ -28,7 +28,7 @@ export default class Availabilities extends Component {
   constructor (props) {
     super(props);
     this.persistAvailiability = ::this.persistAvailiability;
-    this.onClickNewEntry = ::this.onClickNewEntry;
+    this.onClickCreate = ::this.onClickCreate;
     this.getAvailability = ::this.getAvailability;
     this.state = {
       create: false,
@@ -65,7 +65,7 @@ export default class Availabilities extends Component {
     };
   }
 
-  onClickNewEntry (e) {
+  onClickCreate (e) {
     e.preventDefault();
     this.setState({ create: true });
   }
@@ -143,7 +143,7 @@ export default class Availabilities extends Component {
               );
             })}
             <Row index={fields.length} key={fields.length}>
-              <CustomCel style={styles.add} onClick={this.onClickNewEntry}>
+              <CustomCel style={styles.add} onClick={this.onClickCreate}>
                 <Plus color={colors.primaryBlue} />&nbsp;&nbsp;&nbsp;Add availability
               </CustomCel>
             </Row>

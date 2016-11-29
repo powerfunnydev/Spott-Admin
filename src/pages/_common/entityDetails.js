@@ -7,7 +7,7 @@ import RemoveButton from './buttons/removeButton';
 export default class EntityDetails extends Component {
 
   static propTypes = {
-    content: PropTypes.string,
+    content: PropTypes.node,
     imageUrl: PropTypes.string,
     style: PropTypes.object,
     subtitle: PropTypes.string,

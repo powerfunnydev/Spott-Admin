@@ -20,6 +20,7 @@ import SpecificHeader from '../../header';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
 import Availabilities from '../../_availabilities/list';
+import RelatedVideo from '../../../content/_relatedVideo/read';
 import * as actions from './actions';
 import selector from './selector';
 
@@ -207,12 +208,18 @@ export default class EditEpisodes extends Component {
   }
 
   render () {
-    const { _activeLocale, availabilities, closeModal, currentModal, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
-        contentProducersById, searchContentProducers, searchedContentProducerIds, broadcastersById,
-        searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
-        seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
-        searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors } = this.props;
-    const { styles } = this.constructor;
+    const styles = this.constructor.styles;
+    const {
+      _activeLocale, availabilities, closeModal, currentModal, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
+      contentProducersById, searchContentProducers, searchedContentProducerIds, broadcastersById,
+      searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
+      seriesEntriesById, searchedSeriesEntryIds, defaultLocale, params,
+      searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors
+    } = this.props;
+
+    const imageUrl = currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
+      `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`;
+
     return (
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />
@@ -312,8 +319,7 @@ export default class EditEpisodes extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
-                      imageUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
-                        `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}/>
+                      imageUrl={imageUrl} />
                   </div>
                 </div>
               </Section>
@@ -324,16 +330,17 @@ export default class EditEpisodes extends Component {
                 <FormSubtitle first>Content</FormSubtitle>
               </Section>
             </Tab>*/}
+            <Tab title='Interactive video'>
+              <Section>
+                <FormSubtitle first>Interactive video</FormSubtitle>
+                <Field
+                  component={RelatedVideo}
+                  name='videoId' />
+              </Section>
+            </Tab>
             <Tab title='Availability'>
               <FieldArray availabilities={availabilities} component={Availabilities} name='availabilities' />
             </Tab>
-            {/* TODO
-            <Tab title='Audience'>
-              <Section>
-                <FormSubtitle first>Location</FormSubtitle>
-                ...
-              </Section>
-            </Tab>*/}
           </Tabs>
         </EditTemplate>
       </Root>
