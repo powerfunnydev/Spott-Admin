@@ -1,5 +1,6 @@
 import { fetchBroadcasterChannels as dataFetchBroadcasterChannels } from '../../../../../actions/broadcaster';
-import { deleteBroadcastChannel as dataDeleteBroadcastChannel } from '../../../../../actions/broadcastChannel';
+import { deleteBroadcastChannels as dataDeleteBroadcastChannels,
+    deleteBroadcastChannel as dataDeleteBroadcastChannel } from '../../../../../actions/broadcastChannel';
 import { getInformationFromQuery } from '../../../../_common/components/table/index';
 import { prefix } from './index';
 
@@ -8,6 +9,7 @@ export const SELECT_CHECKBOX = 'BROADCASTERS_READ/SELECT_CHECKBOX';
 
 export const BROADCASTER_CHANNELS_FETCH_ENTRY_ERROR = 'BROADCASTERS_READ/BROADCASTER_CHANNELS_FETCH_ENTRY_ERROR';
 export const BROADCAST_CHANNEL_DELETE_ENTRY_ERROR = 'BROADCASTERS_READ/BROADCAST_CHANNEL_DELETE_ENTRY_ERROR';
+export const BROADCAST_CHANNELS_DELETE_ENTRY_ERROR = 'BROADCASTERS_READ/BROADCAST_CHANNELS_DELETE_ENTRY_ERROR';
 
 export function loadBroadcasterChannels (query, broadcasterId) {
   return async (dispatch, getState) => {
@@ -15,6 +17,16 @@ export function loadBroadcasterChannels (query, broadcasterId) {
       return await dispatch(dataFetchBroadcasterChannels({ ...getInformationFromQuery(query, prefix), broadcasterId }));
     } catch (error) {
       dispatch({ error, type: BROADCASTER_CHANNELS_FETCH_ENTRY_ERROR });
+    }
+  };
+}
+
+export function deleteBroadcastChannels (broadcastChannelIds) {
+  return async (dispatch, getState) => {
+    try {
+      return await dispatch(dataDeleteBroadcastChannels({ broadcastChannelIds }));
+    } catch (error) {
+      dispatch({ error, type: BROADCAST_CHANNELS_DELETE_ENTRY_ERROR });
     }
   };
 }

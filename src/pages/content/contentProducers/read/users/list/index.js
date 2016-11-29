@@ -19,7 +19,7 @@ export const prefix = 'users';
 @tableDecorator(prefix)
 @connect(selector, (dispatch) => ({
   deleteLinkUser: bindActionCreators(actions.deleteLinkUser, dispatch),
-  // deleteLinkUsers: bindActionCreators(actions.deleteLinkUsers, dispatch),
+  deleteLinkUsers: bindActionCreators(actions.deleteLinkUsers, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
@@ -29,7 +29,7 @@ export default class Users extends Component {
 
   static propTypes = {
     deleteLinkUser: PropTypes.func.isRequired,
-    // deleteLinkUsers: PropTypes.func.isRequired,
+    deleteLinkUsers: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -109,7 +109,7 @@ export default class Users extends Component {
         userIds.push(key);
       }
     });
-    // await this.props.deleteLinkUsers(userIds);
+    await this.props.deleteLinkUsers(this.props.params.id, userIds);
     await this.props.load(this.props.location.query, this.props.params.id);
   }
 
@@ -137,7 +137,10 @@ export default class Users extends Component {
         <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage, generalStyles.whiteBackground ]}>
           <div style={[ generalStyles.paddingTable, generalStyles.paddingLeftAndRight ]}>
-            <TotalEntries totalResultCount={totalResultCount}/>
+            <TotalEntries
+              numberSelected={numberSelected}
+              totalResultCount={totalResultCount}
+              onDeleteSelected={this.onClickDeleteSelected}/>
             {(!usersDisplay || usersDisplay === 'list') &&
               <div>
                 <Table style={generalStyles.lightGrayBorder}>
@@ -162,8 +165,8 @@ export default class Users extends Component {
                           <CustomCel getValue={this.getLastName} objectToRender={user} style={{ flex: 1 }} />
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={this.onEditEntry.bind(this, user.get('id'))}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={this.onDeleteLinkUser.bind(this, user.get('id'))}>Remove link</div>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={this.onEditEntry.bind(this, user.get('id'))}>Edit</div>}>
+                              <div key={1} style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={this.onDeleteLinkUser.bind(this, user.get('id'))}>Remove link</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>

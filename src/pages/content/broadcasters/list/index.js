@@ -129,14 +129,16 @@ export default class Broadcasters extends Component {
                 textCreateButton='New Broadcaster'
                 onChangeDisplay={onChangeDisplay}
                 onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, broadcastersSearchString: value }); }}
-                onClickDeleteSelected={this.onClickDeleteSelected}
                 onClickNewEntry={this.onClickNewEntry}/>
             </Container>
           </div>
           <Line/>
           <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
             <Container style={generalStyles.paddingTable}>
-              <TotalEntries totalResultCount={totalResultCount}/>
+              <TotalEntries
+                numberSelected={numberSelected}
+                totalResultCount={totalResultCount}
+                onDeleteSelected={this.onClickDeleteSelected}/>
               {(broadcastersDisplay === undefined || broadcastersDisplay === 'list') &&
                 <div>
                   <Table>
@@ -155,8 +157,8 @@ export default class Broadcasters extends Component {
                             <CustomCel getValue={this.getName} objectToRender={broadcaster} style={{ flex: 5 }} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcaster.get('id')}`); }}/>
                             <DropdownCel>
                               <Dropdown
-                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/edit/${broadcaster.get('id')}`); }}>Edit</div>}>
-                                <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcaster(broadcaster.get('id')); }}>Remove</div>
+                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/edit/${broadcaster.get('id')}`); }}>Edit</div>}>
+                                <div key={1} style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcaster(broadcaster.get('id')); }}>Remove</div>
                               </Dropdown>
                             </DropdownCel>
                           </Row>

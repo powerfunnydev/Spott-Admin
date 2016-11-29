@@ -1,18 +1,24 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { colors, makeTextStyle, fontWeights } from '../../../_common/styles';
+import BulkOperationDropdown from './bulkOperationDropdown';
 
 @Radium
 export class TotalEntries extends Component {
 
   static propTypes = {
-    totalResultCount: PropTypes.number.isRequired
+    numberSelected: PropTypes.number,
+    totalResultCount: PropTypes.number.isRequired,
+    onDeleteSelected: PropTypes.func
   }
 
   static styles = {
     base: {
       ...makeTextStyle(fontWeights.medium, '0.75em'),
-      paddingBottom: '1.25em'
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '20px'
     },
     entries: {
       ...makeTextStyle(fontWeights.regular)
@@ -23,15 +29,28 @@ export class TotalEntries extends Component {
     },
     count: {
       color: '#536970'
+    },
+    row: {
+      display: 'flex',
+      flexDirection: 'row',
+      paddingBottom: '1.25em'
+    },
+    paddingLeft: {
+      paddingLeft: '10px'
     }
   }
 
   render () {
     const { styles } = this.constructor;
-    const { totalResultCount } = this.props;
+    const { totalResultCount, numberSelected, onDeleteSelected } = this.props;
     return (
-      <div style={styles.base}>
-        <span style={styles.entity}>Entries</span><span style={styles.count}>&nbsp;&nbsp;{totalResultCount} <span style={styles.entries}>Entries</span></span>
+      <div style={styles.row}>
+        <div style={styles.base}>
+          <span style={styles.entity}>Entries</span><span style={styles.count}>&nbsp;&nbsp;{totalResultCount} <span style={styles.entries}>Entries</span></span>
+        </div>
+        <div style={styles.paddingLeft}>
+          <BulkOperationDropdown numberSelected={numberSelected} onDeleteSelected={onDeleteSelected}/>
+        </div>
       </div>
     );
   }

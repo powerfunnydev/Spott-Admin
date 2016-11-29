@@ -47,11 +47,12 @@ export function transformCharacterSubscription ({
 /**
  *  Light version of a medium. No locales includes.
  */
-export function transformListMedium ({ auditInfo, title, type, posterImage, profileImage, uuid: id }) {
+export function transformListMedium ({ number, auditInfo, title, type, posterImage, profileImage, uuid: id }) {
   return {
     id,
     title,
     type,
+    number,
     posterImage: posterImage && { id: posterImage.uuid, url: posterImage. url },
     profileImage: profileImage && { id: profileImage.uuid, url: profileImage. url },
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,

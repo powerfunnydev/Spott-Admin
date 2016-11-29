@@ -81,14 +81,6 @@ export default class List extends Component {
     }
   }
 
-  getTitle (episode) {
-    return episode.get('title');
-  }
-
-  getUpdatedBy (seriesEntry) {
-    return seriesEntry.get('lastUpdatedBy');
-  }
-
   getLastUpdatedOn (seriesEntry) {
     const date = new Date(seriesEntry.get('lastUpdatedOn'));
     return moment(date).format('YYYY-MM-DD HH:mm');
@@ -136,14 +128,16 @@ export default class List extends Component {
               textCreateButton='New episode'
               onChangeDisplay={onChangeDisplay}
               onChangeSearchString={onChangeSearchString}
-              onClickDeleteSelected={this.onClickDeleteSelected}
               onClickNewEntry={this.onClickNewEntry}/>
           </div>
         </div>
         <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage, generalStyles.whiteBackground ]}>
           <div style={[ generalStyles.paddingTable, generalStyles.paddingLeftAndRight ]}>
-            <TotalEntries totalResultCount={totalResultCount}/>
+            <TotalEntries
+              numberSelected={numberSelected}
+              totalResultCount={totalResultCount}
+              onDeleteSelected={this.onClickDeleteSelected}/>
             {(episodesDisplay === undefined || episodesDisplay === 'list') &&
               <div>
                 <Table style={generalStyles.lightGrayBorder}>
@@ -151,14 +145,13 @@ export default class List extends Component {
                     {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                     <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
                     <CustomCel sortColumn={this.props.onSortField.bind(this, 'TITLE')} sortDirection = {episodesSortField === 'TITLE' ? sortDirections[episodesSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 5 } ]}>Title</CustomCel>
-                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'NUMBER')} sortDirection = {episodesSortField === 'NUMBER' ? sortDirections[episodesSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>Number</CustomCel>
+                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'NUMBER')} sortDirection = {episodesSortField === 'NUMBER' ? sortDirections[episodesSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { minWidth: 60 } ]}>#</CustomCel>
                     <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
                     <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
                     <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
                   </Headers>
                   <Rows isLoading={episodes.get('_status') !== 'loaded'}>
                     {episodes.get('data').map((episode, index) => {
-                      console.log('episode', episode.toJS());
                       return (
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
@@ -169,15 +162,15 @@ export default class List extends Component {
                               {episode.get('title')}
                           </CustomCel>
                           <CustomCel
-                            style={{ flex: 1 }}>
+                            style={{ minWidth: 60 }}>
                               {episode.get('number')}
                           </CustomCel>
                           <CustomCel style={{ flex: 2 }}>{episode.get('lastUpdatedBy')}</CustomCel>
-                          <CustomCel style={{ flex: 2 }}>{episode.get('lastUpdatedOn')}</CustomCel>
+                          <CustomCel style={{ flex: 2 }}>{this.getLastUpdatedOn(episode)}</CustomCel>
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/edit/${episode.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteEpisode(episode.get('id')); }}>Remove</div>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]}onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/edit/${episode.get('id')}`); }}>Edit</div>}>
+                              <div key={1} style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={async (e) => { e.preventDefault(); await this.deleteEpisode(episode.get('id')); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>

@@ -1,15 +1,21 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { colors } from '../../_common/styles';
+import { colors } from '../styles';
+import CheckedSVG from '../images/completed';
 
-const checkIcon = require('../../../assets/images/check.svg');
+let counter = 0;
+function newId () {
+  return `checkbox${counter++}`;
+}
 
 @Radium
 export class Checkbox extends Component {
 
   static propTypes = {
     checked: PropTypes.bool,
+    color: PropTypes.string,
     input: PropTypes.object,
+    key: PropTypes.string,
     style: PropTypes.object,
     onChange: PropTypes.func // Uses the field's onChange, and this one if provided.
   };
@@ -35,7 +41,7 @@ export class Checkbox extends Component {
       borderRadius: '2px',
       cursor: 'pointer',
       display: 'flex',
-      height: '14px',
+      minHeight: '14px',
       justifyContent: 'center',
       minWidth: '14px',
       ':hover': {
@@ -48,17 +54,37 @@ export class Checkbox extends Component {
       ':hover': {
         backgroundColor: colors.blue3
       }
+    },
+    blueCheckbox: {
+      backgroundColor: colors.white,
+      border: `1px solid ${colors.primaryBlue}`
+    },
+    blueChecked: {
+      border: `1px solid ${colors.primaryBlue}`,
+      backgroundColor: colors.white,
+      ':hover': {
+        backgroundColor: colors.blue3
+      }
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { checked, input, style } = this.props;
+    const { checked, input, style, color } = this.props;
 
     return (
-      <div style={style}>
-        <span style={[ styles.checkbox, (checked || input && input.value) && styles.checked ]} onClick={this.onChange}>
-          {(checked || input && input.value) && <img src={checkIcon}/>}</span>
+      <div key={newId()} style={style}>
+        <span
+          style={[
+            styles.checkbox,
+            // overwrite styles.checkbox
+            color === 'blue' && styles.blueCheckbox,
+            (checked || input && input.value) && styles.checked,
+            // overwrite styles.checked
+            color === 'blue' && (checked || input && input.value) && styles.blueChecked
+          ]}
+          onClick={this.onChange}>
+          {(checked || input && input.value) && <CheckedSVG color={color === 'blue' && colors.primaryBlue || colors.white}/>}</span>
       </div>
     );
   }

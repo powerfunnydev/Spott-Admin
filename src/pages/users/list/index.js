@@ -120,19 +120,20 @@ export default class Users extends Component {
             <UtilsBar
               display={display}
               isLoading={users.get('_status') !== 'loaded'}
-              numberSelected={numberSelected}
               searchString={searchString}
               textCreateButton='New User'
               onChangeDisplay={onChangeDisplay}
               onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
-              onClickDeleteSelected={this.onClickDeleteSelected}
               onClickNewEntry={this.onClickNewEntry}/>
           </Container>
         </div>
         <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
           <Container style={generalStyles.paddingTable}>
-            <TotalEntries totalResultCount={totalResultCount}/>
+            <TotalEntries
+              numberSelected={numberSelected}
+              totalResultCount={totalResultCount}
+              onDeleteSelected={this.onClickDeleteSelected}/>
             {(!display || display === 'list') &&
               <div>
                 <Table>
@@ -157,8 +158,8 @@ export default class Users extends Component {
                           <CustomCel getValue={this.getLastName} objectToRender={user} style={{ flex: 1 }} />
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={this.onEditEntry.bind(this, user.get('id'))}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={this.onDeleteUser.bind(this, user.get('id'))}>Remove</div>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={this.onEditEntry.bind(this, user.get('id'))}>Edit</div>}>
+                              <div key={1} style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={this.onDeleteUser.bind(this, user.get('id'))}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>
