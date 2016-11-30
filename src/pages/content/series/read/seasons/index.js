@@ -54,7 +54,8 @@ export default class List extends Component {
   constructor (props) {
     super(props);
     this.redirect = ::this.redirect;
-    this.onClickNewEntry = :: this.onClickNewEntry;
+    this.onCreateSeason = :: this.onCreateSeason;
+    this.onCreateEpisode = :: this.onCreateEpisode;
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
     this.slowSearch = slowdown(props.loadSeasons, 300);
   }
@@ -90,7 +91,15 @@ export default class List extends Component {
     this.props.routerPushWithReturnTo('content/seasons', true);
   }
 
-  onClickNewEntry (e) {
+  onCreateEpisode (e) {
+    e.preventDefault();
+    const seriesEntryId = this.props.params.seriesEntryId;
+    if (seriesEntryId) {
+      this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/create/episode`);
+    }
+  }
+
+  onCreateSeason (e) {
     e.preventDefault();
     const seriesEntryId = this.props.params.seriesEntryId;
     if (seriesEntryId) {
@@ -122,11 +131,17 @@ export default class List extends Component {
             <UtilsBar
               display={seasonsDisplay}
               isLoading={seasons.get('_status') !== 'loaded'}
+              menu= {<div style={dropdownStyles.floatOptions}>
+                <div key='menuElementEpisode' style={[ dropdownStyles.floatOption ]} onClick={this.onCreateEpisode}>
+                  Add Episode
+                </div>
+              </div>}
               searchString={seasonsSearchString}
               textCreateButton='New season'
+              topElement={<div onClick={this.onCreateSeason}>Add Season</div>}
               onChangeDisplay={onChangeDisplay}
               onChangeSearchString={onChangeSearchString}
-              onClickNewEntry={this.onClickNewEntry}/>
+              onClickNewEntry={this.onCreateSeason}/>
           </div>
         </div>
         <Line/>

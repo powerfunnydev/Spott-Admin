@@ -242,6 +242,7 @@ export default class EditEpisodes extends Component {
                 <FormSubtitle first>General</FormSubtitle>
                 <Field
                   component={SelectInput}
+                  disabled={_activeLocale !== defaultLocale}
                   getItemText={(id) => seriesEntriesById.getIn([ id, 'title' ])}
                   getOptions={searchSeriesEntries}
                   isLoading={searchedSeriesEntryIds.get('_status') === FETCHING}
@@ -255,6 +256,7 @@ export default class EditEpisodes extends Component {
                   }} />
                 {currentSeriesEntryId && <Field
                   component={SelectInput}
+                  disabled={_activeLocale !== defaultLocale}
                   getItemText={(id) => seasonsById.getIn([ id, 'title' ])}
                   getOptions={(searchString) => { searchSeasons(searchString, currentSeriesEntryId); }}
                   isLoading={searchedSeasonIds.get('_status') === FETCHING}

@@ -220,6 +220,7 @@ export default class EditEpisodes extends Component {
                 <FormSubtitle first>General</FormSubtitle>
                 <Field
                   component={SelectInput}
+                  disabled={_activeLocale !== defaultLocale}
                   getItemText={(id) => seriesEntriesById.getIn([ id, 'title' ])}
                   getOptions={searchSeriesEntries}
                   isLoading={searchedSeriesEntryIds.get('_status') === FETCHING}
