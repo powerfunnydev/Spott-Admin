@@ -99,7 +99,7 @@ export default class TextInput extends Component {
     return (
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
-        { (_activeLocale) && <div style={styles.checkboxRow}>
+        {(_activeLocale) && <div style={styles.checkboxRow}>
           { _activeLocale && <div style={styles.checkboxWithText}>
             <Field
               component={Checkbox}

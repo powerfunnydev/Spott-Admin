@@ -4,6 +4,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import TextInput from '../../../_common/inputs/textInput';
+import FileInput from '../../../_common/inputs/fileInput';
 import SelectInput from '../../../_common/inputs/selectInput';
 import PersistModal from '../../../_common/persistModal';
 import timezones, { timezoneKeys } from '../../../../constants/timezones';
@@ -72,6 +73,13 @@ export default class VideoModal extends Component {
           label='Interactive video name'
           name='name'
           placeholder='Interactive video name'
+          required />
+        <Field
+          component={FileInput}
+          first
+          label='Select file'
+          name='file'
+          placeholder='Select file (mp4/mov/avi/mxf)'
           required />
       </PersistModal>
     );
