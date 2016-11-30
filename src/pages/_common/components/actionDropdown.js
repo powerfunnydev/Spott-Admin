@@ -114,14 +114,14 @@ export const styles = {
     color: colors.white,
     ':hover': {
       zIndex: 10,
-      backgroundColor: colors.blue,
-      borderTop: `1px solid ${colors.blue}`,
-      borderLeft: `1px solid ${colors.blue}`,
-      borderRight: `1px solid ${colors.blue}`,
-      borderBottom: `1px solid ${colors.blue}`
+      backgroundColor: colors.primaryBlue,
+      borderTop: `1px solid ${colors.primaryBlue}`,
+      borderLeft: `1px solid ${colors.primaryBlue}`,
+      borderRight: `1px solid ${colors.primaryBlue}`,
+      borderBottom: `1px solid ${colors.primaryBlue}`
     },
     ':active': {
-      backgroundColor: colors.blue
+      backgroundColor: colors.primaryBlue
     }
   },
   bigOption: {
