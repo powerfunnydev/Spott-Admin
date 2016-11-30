@@ -14,6 +14,8 @@ import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Dropzone from '../../../_common/dropzone';
 import Label from '../../../_common/inputs/_label';
+import ImmutablePropTypes from 'react-immutable-proptypes';
+import selector from './selector';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -24,7 +26,7 @@ function validate (values, { t }) {
 }
 
 @localized
-@connect(null, (dispatch) => ({
+@connect(selector, (dispatch) => ({
   load: bindActionCreators(actions.load, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadImage: bindActionCreators(actions.uploadImage, dispatch),
@@ -38,6 +40,7 @@ function validate (values, { t }) {
 export default class EditContentProducers extends Component {
 
   static propTypes = {
+    currentContentProducer: ImmutablePropTypes.map.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
@@ -66,7 +69,7 @@ export default class EditContentProducers extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/content-producers');
+    this.props.routerPushWithReturnTo('content/content-producers', true);
   }
 
   async submit (form) {
@@ -79,7 +82,7 @@ export default class EditContentProducers extends Component {
   }
 
   render () {
-    const { location, handleSubmit } = this.props;
+    const { currentContentProducer, location, handleSubmit } = this.props;
     return (
       <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
         <Header currentLocation={location} hideHomePageLinks />
@@ -102,6 +105,8 @@ export default class EditContentProducers extends Component {
                   <Label text='Upload image' />
                   <Dropzone
                     accept='image/*'
+                    imageUrl={currentContentProducer.get('logo') &&
+                      `${currentContentProducer.getIn([ 'logo', 'url' ])}?height=310&width=310`}
                     onChange={({ callback, file }) => { this.props.uploadImage({ contentProducerId: this.props.params.id, image: file, callback }); }}/>
                 </div>
               </Section>

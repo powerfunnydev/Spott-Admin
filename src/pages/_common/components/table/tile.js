@@ -44,11 +44,13 @@ export class Tile extends Component {
       right: '7px'
     },
     title: {
-      display: 'flex',
-      justifyContent: 'center',
+      textAlign: 'center',
       paddingTop: '10px',
       ...makeTextStyle(fontWeights.regular, '12px', '0.5px'),
-      color: colors.black2
+      color: colors.black2,
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+      whiteSpace: 'nowrap'
     },
     darkGray: {
       border: `solid 1px ${colors.lightGray2}`
@@ -64,6 +66,9 @@ export class Tile extends Component {
     noImage: {
       ...makeTextStyle(fontWeights.regular, '11px', '0.4px'),
       color: colors.lightGray3
+    },
+    width: {
+      width: '184px'
     }
   }
 
@@ -73,7 +78,7 @@ export class Tile extends Component {
     return (
       <div style={styles.wrapper}>
         {onEdit &&
-          <div>
+          <div style={styles.width}>
             <div style={[ styles.imageContainer, styles.image, onClick && styles.clickable ]} onClick={onClick}>
               {imageUrl && <img src={imageUrl} style={styles.image} />}
               {!imageUrl && <div style={styles.noImage}>No image</div>}

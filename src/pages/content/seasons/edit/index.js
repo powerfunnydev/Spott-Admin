@@ -34,12 +34,14 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
+  closeModal: bindActionCreators(actions.closeModal, dispatch),
   loadSeason: bindActionCreators(actions.loadSeason, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
-  closeModal: bindActionCreators(actions.closeModal, dispatch),
-  submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
-  searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch)
+  searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch),
+  submit: bindActionCreators(actions.submit, dispatch),
+  uploadPosterImage: bindActionCreators(actions.uploadPosterImage, dispatch),
+  uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch)
 }))
 @reduxForm({
   form: 'seasonEdit',
@@ -74,7 +76,9 @@ export default class EditEpisodes extends Component {
     seriesEntriesById: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
-    t: PropTypes.func.isRequired
+    t: PropTypes.func.isRequired,
+    uploadPosterImage: PropTypes.func.isRequired,
+    uploadProfileImage: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -186,6 +190,9 @@ export default class EditEpisodes extends Component {
     },
     removeLanguageButtonPadding: {
       paddingLeft: '10px'
+    },
+    paddingLeftUploadImage: {
+      paddingLeft: '24px'
     }
   }
 
@@ -264,7 +271,16 @@ export default class EditEpisodes extends Component {
                     <Dropzone
                       accept='image/*'
                       imageUrl={currentSeason.getIn([ 'profileImage', _activeLocale ]) &&
-                        `${currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}/>
+                        `${currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ seasonId: this.props.params.seasonId, image: file, callback }); }}/>
+                  </div>
+                  <div style={styles.paddingLeftUploadImage}>
+                    <Label text='Poster image' />
+                    <Dropzone
+                      accept='image/*'
+                      imageUrl={currentSeason.getIn([ 'posterImage', _activeLocale ]) &&
+                        `${currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ seasonId: this.props.params.seasonId, image: file, callback }); }}/>
                   </div>
                 </div>
               </Section>
