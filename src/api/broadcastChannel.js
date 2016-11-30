@@ -2,7 +2,7 @@ import { del, get, post, postFormData } from './request';
 import { transformBroadcastChannel } from './transformers';
 
 export async function searchBroadcastChannels (baseUrl, authenticationToken, locale, { searchString }) {
-  let searchUrl = `${baseUrl}/v004/media/broadcastChannels?pageSize=30`;
+  let searchUrl = `${baseUrl}/v004/media/broadcastChannels?pageSize=25`;
   if (searchString) {
     searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
   }

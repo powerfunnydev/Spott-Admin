@@ -151,7 +151,7 @@ export default class SeriesEntries extends Component {
                             {seriesEntry.get('title')}
                           </CustomCel>
                           <CustomCel style={{ flex: 2 }}>
-                            {seriesEntry.get('updatedBy')}
+                            {seriesEntry.get('lastUpdatedBy')}
                           </CustomCel>
                           <CustomCel getValue={this.getLastUpdatedOn} objectToRender={seriesEntry} style={{ flex: 2 }}/>
                           <DropdownCel>

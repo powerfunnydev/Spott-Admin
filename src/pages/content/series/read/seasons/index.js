@@ -157,7 +157,7 @@ export default class List extends Component {
                           <CheckBoxCel checked={isSelected.get(season.get('id'))} onChange={selectCheckbox.bind(this, season.get('id'))}/>
                           <CustomCel style={{ flex: 5 }} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${season.get('id')}`); }}>{season.get('title')}</CustomCel>
                           <CustomCel style={{ minWidth: 60 }}>{season.get('number')}</CustomCel>
-                          <CustomCel style={{ flex: 2 }}>{season.get('updatedBy')}</CustomCel>
+                          <CustomCel style={{ flex: 2 }}>{season.get('lastUpdatedBy')}</CustomCel>
                           <CustomCel style={{ flex: 2 }}>{this.getLastUpdatedOn(season)}</CustomCel>
                           <DropdownCel>
                             <Dropdown
