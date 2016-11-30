@@ -148,7 +148,7 @@ export default class ContentProducers extends Component {
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                           <CheckBoxCel checked={isSelected.get(cp.get('id'))} onChange={selectCheckbox.bind(this, cp.get('id'))}/>
                           <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/content-producers/read/${cp.get('id')}`); }}>{cp.get('name')}</CustomCel>
-                          <CustomCel style={{ flex: 2 }}>{cp.get('updatedBy')}</CustomCel>
+                          <CustomCel style={{ flex: 2 }}>{cp.get('lastUpdatedBy')}</CustomCel>
                           <CustomCel getValue={this.getLastUpdatedOn} objectToRender={cp} style={{ flex: 2 }}/>
                           <DropdownCel>
                             <Dropdown

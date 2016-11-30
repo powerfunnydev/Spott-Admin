@@ -124,7 +124,8 @@ export default class CreateSeasonEntryModal extends Component {
           label='Season number'
           name='number'
           placeholder='Season number'
-          required/>}
+          required
+          type='number'/>}
       </PersistModal>
     );
   }

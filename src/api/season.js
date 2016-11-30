@@ -20,7 +20,7 @@ export async function searchEpisodes (baseUrl, authenticationToken, locale, { se
   if (!seasonId) {
     return [];
   }
-  let searchUrl = `${baseUrl}/v003/media/serieSeasons/${seasonId}/episodes?pageSize=30`;
+  let searchUrl = `${baseUrl}/v003/media/serieSeasons/${seasonId}/episodes?pageSize=25`;
   if (searchString) {
     searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
   }
