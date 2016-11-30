@@ -125,10 +125,13 @@ function getRoutes ({ getState }) {
         </Route>
         <Route component={SeriesList} path='series'>
           <Route component={SeriesCreate} path='create'/>
+          <Route component={SeasonCreate} path='create/season'/>
+          <Route component={EpisodeCreate} path='create/episode'/>
         </Route>
         <Route path='series'>
           <Route component={SeriesRead} path='read/:seriesEntryId'>
             <Route component={SeasonCreate} path='create/season'/>
+            <Route component={EpisodeCreate} path='create/episode'/>
           </Route>
           <Route component={SeriesEdit} path='edit/:seriesEntryId' />
           <Route path='read/:seriesEntryId'>

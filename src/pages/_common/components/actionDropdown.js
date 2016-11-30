@@ -11,10 +11,22 @@ export const styles = {
     position: 'relative',
     ...makeTextStyle(fontWeights.regular, '11px', '0.3px')
   },
+  // same as floatOptions, but sticked to the dropdown
+  menu: {
+    position: 'absolute',
+    backgroundColor: colors.white,
+    right: 0,
+    minWidth: '100px',
+    zIndex: 9
+  },
+  // Option sticked to the dropdown
   option: {
     position: 'relative',
     backgroundColor: colors.white,
-    border: `1px solid ${colors.lightGray2}`,
+    borderTop: `1px solid ${colors.lightGray2}`,
+    borderLeft: `1px solid ${colors.lightGray2}`,
+    borderRight: `1px solid ${colors.lightGray2}`,
+    borderBottom: `1px solid ${colors.lightGray2}`,
     color: colors.darkGray2,
     paddingRight: '12px',
     paddingTop: '3px',
@@ -23,7 +35,10 @@ export const styles = {
     cursor: 'pointer',
     ':hover': {
       zIndex: 10,
-      border: `1px solid ${colors.lightGray3}`
+      borderTop: `1px solid ${colors.lightGray3}`,
+      borderLeft: `1px solid ${colors.lightGray3}`,
+      borderRight: `1px solid ${colors.lightGray3}`,
+      borderBottom: `1px solid ${colors.lightGray3}`
     },
     ':active': {
       backgroundColor: colors.veryLightGray
@@ -32,34 +47,45 @@ export const styles = {
   clickable: {
     cursor: 'pointer'
   },
+  // same as option, but without padding
   control: {
     position: 'relative',
     backgroundColor: colors.white,
-    border: `1px solid ${colors.lightGray2}`,
+    borderTop: `1px solid ${colors.lightGray2}`,
+    borderLeft: `1px solid ${colors.lightGray2}`,
+    borderRight: `1px solid ${colors.lightGray2}`,
+    borderBottom: `1px solid ${colors.lightGray2}`,
     color: colors.darkGray2,
     zIndex: 0,
     ':hover': {
       zIndex: 10,
-      border: `1px solid ${colors.lightGray3}`
+      borderTop: `1px solid ${colors.lightGray3}`,
+      borderLeft: `1px solid ${colors.lightGray3}`,
+      borderRight: `1px solid ${colors.lightGray3}`,
+      borderBottom: `1px solid ${colors.lightGray3}`
     },
     ':active': {
       backgroundColor: colors.veryLightGray
     }
   },
+  // radius of left border
   borderLeft: {
     borderTopLeftRadius: '2px',
     borderBottomLeftRadius: '2px'
   },
+  // radius of right border
   borderRight: {
     borderTopRightRadius: '2px',
     borderBottomRightRadius: '2px'
   },
-  menu: {
-    position: 'absolute',
-    backgroundColor: colors.white,
-    right: 0,
-    minWidth: '100px',
-    zIndex: 9
+  // higher zIndex, for the seperator feeling
+  borderRightSeperator: {
+    zIndex: 11,
+    borderRight: `1px solid ${colors.white}`,
+    ':hover': {
+      zIndex: 11,
+      borderRight: `1px solid ${colors.white}`
+    }
   },
   arrowUnder: { transform: 'rotateZ(180deg)' },
   arrowContainer: {
@@ -81,15 +107,60 @@ export const styles = {
   },
   blue: {
     backgroundColor: colors.primaryBlue,
-    border: `1px solid ${colors.primaryBlue}`,
+    borderTop: `1px solid ${colors.primaryBlue}`,
+    borderLeft: `1px solid ${colors.primaryBlue}`,
+    borderRight: `1px solid ${colors.primaryBlue}`,
+    borderBottom: `1px solid ${colors.primaryBlue}`,
     color: colors.white,
     ':hover': {
       zIndex: 10,
-      border: `1px solid ${colors.primaryBlue}`
+      backgroundColor: colors.blue,
+      borderTop: `1px solid ${colors.blue}`,
+      borderLeft: `1px solid ${colors.blue}`,
+      borderRight: `1px solid ${colors.blue}`,
+      borderBottom: `1px solid ${colors.blue}`
     },
     ':active': {
-      backgroundColor: colors.primaryBlue
+      backgroundColor: colors.blue
     }
+  },
+  bigOption: {
+    paddingRight: '12px',
+    paddingTop: '8px',
+    paddingBottom: '8px',
+    paddingLeft: '10px',
+    ...makeTextStyle(fontWeights.medium, '12px')
+  },
+  bigArrowContainer: {
+    minWidth: '30px',
+    minHeight: '30px'
+  },
+  // floatOptions and floatOption is the same as in selectionDropdown.
+  // The idea is that we have options sticked to the dropdown and options
+  // that are floated from the dropdown.
+  floatOption: {
+    color: colors.black2,
+    paddingTop: '8px',
+    paddingBottom: '8px',
+    paddingLeft: '10px',
+    backgroundColor: colors.white,
+    display: 'flex',
+    flexDirection: 'row',
+    ':hover': {
+      backgroundColor: colors.lightGray4
+    },
+    cursor: 'pointer'
+  },
+  floatOptions: {
+    zIndex: 10,
+    position: 'absolute',
+    right: 0,
+    top: 40,
+    minWidth: '180px',
+    borderRadius: '2px',
+    backgroundColor: colors.white,
+    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)',
+    border: `solid 1px ${colors.lightGray2}`
   }
 };
 
@@ -97,9 +168,11 @@ export const styles = {
 class Dropdown extends Component {
 
   static propTypes = {
+    arrowStyle: PropTypes.object,
     children: PropTypes.node,
     color: PropTypes.string,
     elementShown: PropTypes.node,
+    floatedDropdown: PropTypes.bool,
     style: PropTypes.object
   }
 
@@ -145,7 +218,7 @@ class Dropdown extends Component {
   }
 
   render () {
-    const { color, children, elementShown, style } = this.props;
+    const { color, children, elementShown, style, arrowStyle, floatedDropdown } = this.props;
 
     return (
       <div key='dropdown' style={[ styles.root, style ]}>
@@ -155,7 +228,14 @@ class Dropdown extends Component {
           </div>}
           <div
             key='arrow'
-            style={[ styles.borderRight, !elementShown && styles.borderLeft, styles.control, styles.arrowContainer, styles.clickable, color === 'blue' && styles.blue ]}
+            style={[
+              styles.borderRight,
+              !elementShown && styles.borderLeft,
+              styles.control,
+              styles.arrowContainer,
+              styles.clickable, color === 'blue' && styles.blue,
+              arrowStyle
+            ]}
             // we need to stop the propagation, cause in components like Tile, we do not want
             // to trigger multiple onClick events. Dropdown has priority.
             onClick={(e) => { e.stopPropagation(); e.preventDefault(); }}
@@ -165,7 +245,7 @@ class Dropdown extends Component {
         </div>
         {/* menu */}
         { this.state.isOpen &&
-          <div style={styles.menu} onClick={this.toggleOpen}>{children}</div>
+          <div style={[ !floatedDropdown && styles.menu ]} onClick={this.toggleOpen}>{children}</div>
         }
       </div>
     );
