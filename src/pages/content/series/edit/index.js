@@ -35,6 +35,8 @@ function validate (values, { t }) {
   loadSeriesEntry: bindActionCreators(actions.loadSeriesEntry, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   closeModal: bindActionCreators(actions.closeModal, dispatch),
+  uploadPosterImage: bindActionCreators(actions.uploadPosterImage, dispatch),
+  uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
@@ -64,7 +66,9 @@ export default class EditSeriesEntries extends Component {
     routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
-    t: PropTypes.func.isRequired
+    t: PropTypes.func.isRequired,
+    uploadPosterImage: PropTypes.func.isRequired,
+    uploadProfileImage: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -154,6 +158,9 @@ export default class EditSeriesEntries extends Component {
     backgroundRoot: {
       backgroundColor: colors.lightGray4,
       paddingBottom: '50px'
+    },
+    paddingLeftUploadImage: {
+      paddingLeft: '24px'
     }
   };
 
@@ -204,7 +211,16 @@ export default class EditSeriesEntries extends Component {
                     <Dropzone
                       accept='image/*'
                       imageUrl={currentSeriesEntry.getIn([ 'profileImage', _activeLocale ]) &&
-                        `${currentSeriesEntry.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`} />
+                        `${currentSeriesEntry.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ seriesEntryId: this.props.params.seriesEntryId, image: file, callback }); }}/>
+                  </div>
+                  <div style={styles.paddingLeftUploadImage}>
+                    <Label text='Poster image' />
+                    <Dropzone
+                      accept='image/*'
+                      imageUrl={currentSeriesEntry.getIn([ 'posterImage', _activeLocale ]) &&
+                        `${currentSeriesEntry.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ seriesEntryId: this.props.params.seriesEntryId, image: file, callback }); }}/>
                   </div>
                 </div>
               </Section>

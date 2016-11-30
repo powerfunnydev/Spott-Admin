@@ -1,4 +1,4 @@
-import { del, get, post } from './request';
+import { del, get, post, postFormData } from './request';
 import { transformEpisode004, transformSeason004, transformEpisode, transformListEpisode } from './transformers';
 
 export async function fetchSeasonEpisodes (baseUrl, authenticationToken, locale, { seasonId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
@@ -108,4 +108,18 @@ export async function deleteSeasons (baseUrl, authenticationToken, locale, { sea
   for (const seasonId of seasonIds) {
     await deleteSeason(baseUrl, authenticationToken, locale, { seasonId });
   }
+}
+
+export async function uploadProfileImage (baseUrl, authenticationToken, locale, { seasonId, image, callback }) {
+  const formData = new FormData();
+  formData.append('uuid', seasonId);
+  formData.append('file', image);
+  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${seasonId}/profileCover`, formData, callback);
+}
+
+export async function uploadPosterImage (baseUrl, authenticationToken, locale, { seasonId, image, callback }) {
+  const formData = new FormData();
+  formData.append('uuid', seasonId);
+  formData.append('file', image);
+  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${seasonId}/posterImage`, formData, callback);
 }
