@@ -54,7 +54,9 @@ export default class SeriesEntries extends Component {
 
   constructor (props) {
     super(props);
-    this.onClickNewEntry = ::this.onClickNewEntry;
+    this.onCreateSeriesEntry = ::this.onCreateSeriesEntry;
+    this.onCreateSeason = ::this.onCreateSeason;
+    this.onCreateEpisode = ::this.onCreateEpisode;
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
     this.slowSearch = slowdown(props.load, 300);
   }
@@ -84,9 +86,19 @@ export default class SeriesEntries extends Component {
     return moment(date).format('YYYY-MM-DD HH:mm');
   }
 
-  onClickNewEntry (e) {
+  onCreateSeriesEntry (e) {
     e.preventDefault();
     this.props.routerPushWithReturnTo('content/series/create');
+  }
+
+  onCreateSeason (e) {
+    e.preventDefault();
+    this.props.routerPushWithReturnTo('content/series/create/season');
+  }
+
+  onCreateEpisode (e) {
+    e.preventDefault();
+    this.props.routerPushWithReturnTo('content/series/create/episode');
   }
 
   async onClickDeleteSelected (e) {
@@ -114,12 +126,21 @@ export default class SeriesEntries extends Component {
             <UtilsBar
               display={display}
               isLoading={seriesEntries.get('_status') !== 'loaded'}
+              menu= {<div style={dropdownStyles.floatOptions}>
+                <div key='menuElementSeason' style={[ dropdownStyles.floatOption ]} onClick={this.onCreateSeason}>
+                  Add Season
+                </div>
+                <div key='menuElementEpisode' style={[ dropdownStyles.floatOption ]} onClick={this.onCreateEpisode}>
+                  Add Episode
+                </div>
+              </div>}
               numberSelected={numberSelected}
               searchString={searchString}
               textCreateButton='New Series Entry'
+              topElement={<div onClick={this.onCreateSeriesEntry}>Add Series</div>}
               onChangeDisplay={onChangeDisplay}
               onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
-              onClickNewEntry={this.onClickNewEntry}/>
+              onClickNewEntry={this.onCreateSeriesEntry}/>
           </Container>
         </div>
         <Line/>
