@@ -1,4 +1,6 @@
-import { deleteLinkUser as dataDeleteLinkUser, fetchContentProducerUsers as dataFetchContentProducerUsers } from '../../../../../../actions/contentProducer';
+import { deleteLinkUser as dataDeleteLinkUser,
+  deleteLinkUsers as dataDeleteLinkUsers,
+  fetchContentProducerUsers as dataFetchContentProducerUsers } from '../../../../../../actions/contentProducer';
 import { getInformationFromQuery } from '../../../../../_common/components/table/index';
 import { prefix } from './index';
 // import { deleteUser as dataDeleteUser, deleteUsers as dataDeleteUsers } from '../../../../../actions/user';
@@ -9,15 +11,13 @@ import { prefix } from './index';
 export const USERS_FETCH_START = 'CONTENT_PRODUCER/USERS_FETCH_START';
 export const USERS_FETCH_ERROR = 'CONTENT_PRODUCER/USERS_FETCH_ERROR';
 
-export const USERS_DELETE_ERROR = 'CONTENT_PRODUCER/USERS_DELETE_ERROR';
-export const USER_DELETE_ERROR = 'CONTENT_PRODUCER/USER_DELETE_ERROR';
-
 export const SELECT_ALL_CHECKBOXES = 'CONTENT_PRODUCER/USERS_SELECT_ALL_CHECKBOXES';
 export const SELECT_CHECKBOX = 'CONTENT_PRODUCER/USERS_SELECT_CHECKBOX';
 
 export const SORT_COLUMN = 'CONTENT_PRODUCER/USERS_SORT_COLUMN';
 
 export const LINK_USER_DELETE_ERROR = 'CONTENT_PRODUCER/LINK_USER_DELETE_ERROR';
+export const LINK_USERS_DELETE_ERROR = 'CONTENT_PRODUCER/LINK_USERS_DELETE_ERROR';
 
 export function deleteLinkUser (contentProducerId, userId) {
   return async (dispatch, getState) => {
@@ -38,16 +38,16 @@ export function load (query, contentProducerId) {
     }
   };
 }
-/*
-export function deleteUsers (userIds) {
+
+export function deleteLinkUsers (contentProducerId, userIds) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataDeleteUsers({ userIds }));
+      return await dispatch(dataDeleteLinkUsers({ contentProducerId, userIds }));
     } catch (error) {
-      dispatch({ error, type: USERS_DELETE_ERROR });
+      dispatch({ error, type: LINK_USERS_DELETE_ERROR });
     }
   };
-}*/
+}
 
 export function selectAllCheckboxes () {
   return { type: SELECT_ALL_CHECKBOXES };

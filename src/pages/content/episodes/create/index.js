@@ -28,6 +28,7 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
+  fetchLastEpisode: bindActionCreators(actions.fetchLastEpisode, dispatch),
   loadEpisodes: bindActionCreators(loadEpisodes, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
@@ -48,6 +49,7 @@ export default class CreateEpisodentryModal extends Component {
     currentSeriesEntryId: PropTypes.string,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
+    fetchLastEpisode: PropTypes.func.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
     loadEpisodes: PropTypes.func.isRequired,
@@ -69,32 +71,76 @@ export default class CreateEpisodentryModal extends Component {
     super(props);
     this.onCloseClick = ::this.onCloseClick;
     this.submit = ::this.submit;
+    this.onChangeSeason = ::this.onChangeSeason;
   }
 
   async componentWillMount () {
+    const { fetchLastEpisode, searchSeasons, initialize,
+        params: { seriesEntryId, seasonId }, currentLocale } = this.props;
     // We need to fetch seasons of a certain series. SelectInput component
     // will not do this automatically (cause we render first, and then initialize
     // our seasonId of our redux form).
-    await this.props.searchSeasons(null, this.props.params.seriesEntryId);
-    await this.props.initialize({
-      seriesEntryId: this.props.params.seriesEntryId,
-      seasonId: this.props.params.seasonId,
-      defaultLocale: this.props.currentLocale
+    await searchSeasons(null, seriesEntryId);
+    // 404 error when there is no last episode. We go further with the default value of
+    // defaultLocale, content producers, broadcasters and number of an episode.
+    let episodeNumber;
+    let contentProducers;
+    let broadcasters;
+    let defaultLocale;
+    try {
+      const lastEpisode = await fetchLastEpisode(seasonId);
+      contentProducers = lastEpisode.contentProducers;
+      broadcasters = lastEpisode.broadcasters;
+      episodeNumber = lastEpisode.number + 1;
+      defaultLocale = lastEpisode.defaultLocale;
+    } catch (e) {
+      contentProducers = [];
+      broadcasters = [];
+      episodeNumber = 1;
+      // We will use the locale of the current user as default locale.
+      defaultLocale = currentLocale;
+    }
+    await initialize({
+      number: episodeNumber,
+      broadcasters,
+      contentProducers,
+      seriesEntryId,
+      seasonId,
+      defaultLocale
     });
   }
 
   async submit (form) {
     try {
-      await this.props.submit(form.toJS());
+      const { params, location, submit, dispatch, change } = this.props;
+      await submit(form.toJS());
+      const createAnother = form.get('createAnother');
       // Load the new list of items, using the location query of the previous page.
-      const location = this.props.location && this.props.location.state && this.props.location.state.returnTo;
-      if (location && location.query) {
-        this.props.loadEpisodes(location.query, this.props.params.seasonId);
+      const loc = location && location.state && location.state.returnTo;
+      if (loc && loc.query) {
+        this.props.loadEpisodes(loc.query, params.seasonId);
       }
-      this.onCloseClick();
+      if (createAnother) {
+        form.get('number') && dispatch(change('number', form.get('number') + 1));
+      } else {
+        this.onCloseClick();
+      }
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
+  }
+
+  async onChangeSeason (currentSeasonId) {
+    const { fetchLastEpisode, change, dispatch } = this.props;
+    // 404 error when there is no last episode. We go further with the default value of
+    // 1 for a episode number.
+    let episodeNumber;
+    try {
+      const lastEpisode = await fetchLastEpisode(currentSeasonId);
+      episodeNumber = lastEpisode.number + 1;
+    } catch (e) { episodeNumber = 1; }
+    dispatch(change('number', episodeNumber));
+    dispatch(change('title', null));
   }
 
   onCloseClick () {
@@ -102,10 +148,12 @@ export default class CreateEpisodentryModal extends Component {
   }
 
   render () {
-    const { localeNames, currentSeasonId, currentSeriesEntryId, searchSeriesEntries, seriesEntriesById, searchedSeriesEntryIds,
-        searchSeasons, seasonsById, searchedSeasonIds, handleSubmit } = this.props;
+    const { localeNames, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
+        seriesEntriesById, searchedSeriesEntryIds, searchSeasons, seasonsById,
+        searchedSeasonIds, handleSubmit } = this.props;
     return (
-      <PersistModal isOpen title='Create Episode Entry' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal createAnother isOpen title='Create Episode Entry'
+        onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}
@@ -136,15 +184,14 @@ export default class CreateEpisodentryModal extends Component {
           name='seasonId'
           options={searchedSeasonIds.get('data').toJS()}
           placeholder='Season title'
-          onChange={() => {
-            this.props.dispatch(this.props.change('title', null));
-          }} />}
+          onChange={this.onChangeSeason} />}
         {currentSeriesEntryId && currentSeasonId && <Field
           component={TextInput}
           label='Episode number'
           name='number'
           placeholder='Episode number'
-          required/>}
+          required
+          type='number'/>}
       </PersistModal>
     );
   }

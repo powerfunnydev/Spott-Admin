@@ -1,7 +1,7 @@
 import { fetchBroadcasters as dataFetchBroadcasters,
   deleteBroadcaster as dataDeleteBroadcaster,
-  deleteBroadcasters as dataDeleteBroadcasters } from '../../../../../actions/broadcaster';
-import { getInformationFromQuery } from '../../../../_common/components/table/index';
+  deleteBroadcasters as dataDeleteBroadcasters } from '../../../../actions/broadcaster';
+import { getInformationFromQuery } from '../../../_common/components/table/index';
 import { prefix } from './index';
 
 // Action types

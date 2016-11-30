@@ -89,9 +89,14 @@ export default class ReadSeriesEntry extends Component {
         <BreadCrumbs hierarchy={[ { title: 'List', url: '/content/series' }, { title: currentSeriesEntry.getIn([ 'title', defaultLocale ]), url: location.pathname } ]}/>
         <Container>
           {currentSeriesEntry.get('_status') === 'loaded' && currentSeriesEntry &&
-            <EntityDetails image={currentSeriesEntry.getIn([ 'profileImage', defaultLocale, 'url' ])} title={currentSeriesEntry.getIn([ 'title', defaultLocale ])}
-              onEdit={() => { this.props.routerPushWithReturnTo(`content/series/edit/${currentSeriesEntry.getIn([ 'id' ])}`); }}
-              onRemove={async () => { await deleteSeriesEntry(currentSeriesEntry.getIn([ 'id' ])); this.redirect(); }}/>}
+            <EntityDetails
+              imageUrl={currentSeriesEntry.getIn([ 'profileImage', defaultLocale ]) && `${currentSeriesEntry.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
+              title={currentSeriesEntry.getIn([ 'title', defaultLocale ])}
+              onEdit={() => this.props.routerPushWithReturnTo(`content/series/edit/${currentSeriesEntry.getIn([ 'id' ])}`)}
+              onRemove={async () => {
+                await deleteSeriesEntry(currentSeriesEntry.getIn([ 'id' ]));
+                this.redirect();
+              }}/>}
         </Container>
         <Line/>
         <div style={[ generalStyles.fillPage, styles.table ]}>

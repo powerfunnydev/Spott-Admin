@@ -1,21 +1,18 @@
 import { ACTIVE, INACTIVE, ADMIN, CONTENT_MANAGER, CONTENT_PRODUCER, BROADCASTER } from '../constants/userRoles';
 
 export function transformBroadcaster ({ logo, name, uuid }) {
-  return { logo: { url: logo && logo.url }, name, id: uuid };
+  return { logo: logo && { id: logo.uuid, url: logo.url }, name, id: uuid };
 }
 
 export function transformContentProducer ({ uuid, name, auditInfo, logo }) {
-  return { id: uuid, name, createdOn: auditInfo && auditInfo.createdOn, lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
-    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn, logo: { url: logo && logo.url } };
-}
-export function transformContentProducers (body) {
-  const contentProducers = body.data;
-  const data = [];
-  for (const cp of contentProducers) {
-    data.push(transformContentProducer(cp));
-  }
-  body.data = data;
-  return body;
+  return {
+    createdOn: auditInfo && auditInfo.createdOn,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    logo: logo && { id: logo.uuid, url: logo.url },
+    name
+  };
 }
 
 export function transformBrandSubscription ({
@@ -50,11 +47,12 @@ export function transformCharacterSubscription ({
 /**
  *  Light version of a medium. No locales includes.
  */
-export function transformListMedium ({ auditInfo, title, type, posterImage, profileImage, uuid: id }) {
+export function transformListMedium ({ number, auditInfo, title, type, posterImage, profileImage, uuid: id }) {
   return {
     id,
     title,
     type,
+    number,
     posterImage: posterImage && { id: posterImage.uuid, url: posterImage. url },
     profileImage: profileImage && { id: profileImage.uuid, url: profileImage. url },
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
@@ -66,13 +64,20 @@ export function transformAvailability ({ country, endTimeStamp, startTimeStamp, 
   return { countryId: country && country.uuid, availabilityFrom: startTimeStamp && new Date(startTimeStamp), availabilityTo: endTimeStamp && new Date(endTimeStamp), videoStatus };
 }
 
+export function transformCharacter () {
+  // TODO
+}
 /**
  *  Complete version of a medium. Locales includes.
  */
-export function transformMedium ({ availabilities, number, auditInfo, type, defaultLocale, externalReference,
-    serie, season, uuid: id, publishStatus, defaultTitle, localeData }) {
+export function transformMedium ({ availabilities, broadcasters, characters, contentProducers, number,
+  auditInfo, type, defaultLocale, externalReference, serie, season, uuid: id, publishStatus,
+  defaultTitle, localeData }) {
   const seriesEntry = {
     availabilities: availabilities && availabilities.map(transformAvailability),
+    characters: characters && characters.map(transformCharacter),
+    contentProducers: contentProducers && contentProducers.map((cp) => cp.uuid),
+    broadcasters: broadcasters && broadcasters.map((bc) => bc.uuid),
     number,
     basedOnDefaultLocale: {},
     description: {},
@@ -280,7 +285,12 @@ export const transformListSeason = transformListMedium;
 export const transformListSeriesEntry = transformListMedium;
 
 export function transformBroadcastChannel ({ name, uuid: id, logo, broadcaster }) {
-  return { id, name, broadcaster: broadcaster && { id: broadcaster.uuid }, logo: logo && { url: logo.url } };
+  return {
+    broadcaster: broadcaster && { id: broadcaster.uuid },
+    id,
+    logo: logo && { id: logo.uuid, url: logo.url },
+    name
+  };
 }
 
 export function transformTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastUpdatedOn }, uuid: id, start, end, medium, medium: { season }, channel }) {
@@ -330,8 +340,8 @@ export function transformUser ({ profileImage, avatar, languages, dateOfBirth, d
     ...obj,
     broadcasters,
     contentProducers,
-    avatar: avatar && { url: avatar.url } || {},
-    profileImage: profileImage && { url: profileImage.url } || {},
+    avatar: avatar && { id: avatar.uuid, url: avatar.url },
+    profileImage: profileImage && { id: profileImage.uuid, url: profileImage.url },
     userStatus: disabled && ACTIVE || INACTIVE,
     languages,
     disabledReason,
@@ -341,5 +351,6 @@ export function transformUser ({ profileImage, avatar, languages, dateOfBirth, d
     firstName,
     lastName,
     gender,
-    id };
+    id
+  };
 }

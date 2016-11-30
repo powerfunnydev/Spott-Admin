@@ -141,9 +141,7 @@ export default class EditEpisodes extends Component {
   }
 
   onSetDefaultLocale (locale) {
-    const { change, dispatch, _activeLocale, defaultLocale } = this.props;
-    dispatch(change(`basedOnDefaultLocale.${defaultLocale}`, false));
-    dispatch(change(`basedOnDefaultLocale.${_activeLocale}`, false));
+    const { change, dispatch, _activeLocale } = this.props;
     dispatch(change('defaultLocale', _activeLocale));
   }
   static styles = {
@@ -206,7 +204,7 @@ export default class EditEpisodes extends Component {
             onCloseClick={closeModal}
             onCreate={this.languageAdded}/>}
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-          <Tabs>
+          <Tabs showPublishStatus>
             <Tab title='Details'>
               <Section noPadding style={styles.background}>
                 <LanguageBar
@@ -235,6 +233,7 @@ export default class EditEpisodes extends Component {
                   }} />
                 {currentSeriesEntryId && <Field
                   component={TextInput}
+                  disabled={_activeLocale !== defaultLocale}
                   label='Season number'
                   name='number'
                   placeholder='Season number'
@@ -263,7 +262,8 @@ export default class EditEpisodes extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
-                      imageUrl={currentSeason.getIn([ 'profileImage', currentSeason.get('defaultLocale'), 'url' ])}/>
+                      imageUrl={currentSeason.getIn([ 'profileImage', _activeLocale ]) &&
+                        `${currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}/>
                   </div>
                 </div>
               </Section>

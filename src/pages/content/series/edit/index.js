@@ -132,9 +132,7 @@ export default class EditSeriesEntries extends Component {
   }
 
   onSetDefaultLocale (locale) {
-    const { change, dispatch, _activeLocale, defaultLocale } = this.props;
-    dispatch(change(`basedOnDefaultLocale.${defaultLocale}`, false));
-    dispatch(change(`basedOnDefaultLocale.${_activeLocale}`, false));
+    const { change, dispatch, _activeLocale } = this.props;
     dispatch(change('defaultLocale', _activeLocale));
   }
 
@@ -160,8 +158,9 @@ export default class EditSeriesEntries extends Component {
   };
 
   render () {
-    const { styles } = this.constructor;
+    const styles = this.constructor.styles;
     const { _activeLocale, errors, closeModal, currentModal, supportedLocales, defaultLocale, currentSeriesEntry, location, handleSubmit } = this.props;
+
     return (
         <Root style={styles.backgroundRoot}>
           <Header currentLocation={location} hideHomePageLinks />
@@ -172,7 +171,7 @@ export default class EditSeriesEntries extends Component {
               onCloseClick={closeModal}
               onCreate={this.languageAdded}/>}
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-            <Tabs>
+            <Tabs showPublishStatus>
               <Tab title='Details'>
                 <Section noPadding style={styles.background}>
                   <LanguageBar
@@ -204,7 +203,8 @@ export default class EditSeriesEntries extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
-                      imageUrl={currentSeriesEntry.getIn([ 'profileImage', currentSeriesEntry.get('defaultLocale'), 'url' ])}/>
+                      imageUrl={currentSeriesEntry.getIn([ 'profileImage', _activeLocale ]) &&
+                        `${currentSeriesEntry.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`} />
                   </div>
                 </div>
               </Section>

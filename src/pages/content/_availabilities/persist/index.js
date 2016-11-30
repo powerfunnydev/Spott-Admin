@@ -23,14 +23,14 @@ import selector from './selector';
 @connect(selector)
 @reduxForm({
   form: 'availability'
-  // validate
+  // TODO: validate
 })
 @Radium
 export default class AvailabilityModal extends Component {
 
   static propTypes = {
     countries: ImmutablePropTypes.map.isRequired,
-    edit: PropTypes.bool.isRequired,
+    edit: PropTypes.bool,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
@@ -91,12 +91,10 @@ export default class AvailabilityModal extends Component {
             label='Start'
             name='startDate'
             placeholder='DD/MM/YYYY'
-            required
             style={{ flex: 1, paddingRight: '0.313em' }} />
           <Field
             component={TimeInput}
             name='startTime'
-            required
             style={{ flex: 1, paddingLeft: '0.313em' }} />
         </div>
         <div style={styles.col2}>
@@ -105,12 +103,10 @@ export default class AvailabilityModal extends Component {
             label='End'
             name='endDate'
             placeholder='DD/MM/YYYY'
-            required
             style={{ flex: 1, paddingRight: '0.313em' }} />
           <Field
             component={TimeInput}
             name='endTime'
-            required
             style={{ flex: 1, paddingLeft: '0.313em' }} />
         </div>
         <Field

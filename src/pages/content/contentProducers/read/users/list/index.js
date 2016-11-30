@@ -19,7 +19,7 @@ export const prefix = 'users';
 @tableDecorator(prefix)
 @connect(selector, (dispatch) => ({
   deleteLinkUser: bindActionCreators(actions.deleteLinkUser, dispatch),
-  // deleteLinkUsers: bindActionCreators(actions.deleteLinkUsers, dispatch),
+  deleteLinkUsers: bindActionCreators(actions.deleteLinkUsers, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
@@ -29,7 +29,7 @@ export default class Users extends Component {
 
   static propTypes = {
     deleteLinkUser: PropTypes.func.isRequired,
-    // deleteLinkUsers: PropTypes.func.isRequired,
+    deleteLinkUsers: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -71,22 +71,6 @@ export default class Users extends Component {
     }
   }
 
-  getUserName (user) {
-    return user.get('userName');
-  }
-
-  getEmail (user) {
-    return user.get('email');
-  }
-
-  getFirstName (user) {
-    return user.get('firstName');
-  }
-
-  getLastName (user) {
-    return user.get('lastName');
-  }
-
   async onDeleteLinkUser (userId) {
     await this.props.deleteLinkUser(this.props.params.id, userId);
     await this.props.load(this.props.location.query, this.props.params.id);
@@ -109,7 +93,7 @@ export default class Users extends Component {
         userIds.push(key);
       }
     });
-    // await this.props.deleteLinkUsers(userIds);
+    await this.props.deleteLinkUsers(this.props.params.id, userIds);
     await this.props.load(this.props.location.query, this.props.params.id);
   }
 
@@ -137,7 +121,11 @@ export default class Users extends Component {
         <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage, generalStyles.whiteBackground ]}>
           <div style={[ generalStyles.paddingTable, generalStyles.paddingLeftAndRight ]}>
-            <TotalEntries totalResultCount={totalResultCount}/>
+            <TotalEntries
+              entityType='Users'
+              numberSelected={numberSelected}
+              totalResultCount={totalResultCount}
+              onDeleteSelected={this.onClickDeleteSelected}/>
             {(!usersDisplay || usersDisplay === 'list') &&
               <div>
                 <Table style={generalStyles.lightGrayBorder}>
@@ -156,14 +144,14 @@ export default class Users extends Component {
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                           <CheckBoxCel checked={isSelected.get(user.get('id'))} onChange={selectCheckbox.bind(this, user.get('id'))}/>
-                          <CustomCel getValue={this.getUserName} objectToRender={user} style={{ flex: 2 }}/>
-                          <CustomCel getValue={this.getEmail} objectToRender={user} style={{ flex: 2 }}/>
-                          <CustomCel getValue={this.getFirstName} objectToRender={user} style={{ flex: 1 }} />
-                          <CustomCel getValue={this.getLastName} objectToRender={user} style={{ flex: 1 }} />
+                          <CustomCel style={{ flex: 2 }}>{user.get('userName')}</CustomCel>
+                          <CustomCel style={{ flex: 2 }}>{user.get('email')}</CustomCel>
+                          <CustomCel style={{ flex: 1 }}>{user.get('firstName')}</CustomCel>
+                          <CustomCel style={{ flex: 1 }}>{user.get('lastName')}</CustomCel>
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={this.onEditEntry.bind(this, user.get('id'))}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={this.onDeleteLinkUser.bind(this, user.get('id'))}>Remove link</div>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={this.onEditEntry.bind(this, user.get('id'))}>Edit</div>}>
+                              <div key={1} style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={this.onDeleteLinkUser.bind(this, user.get('id'))}>Remove link</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>
@@ -176,13 +164,12 @@ export default class Users extends Component {
                   pageCount={pageCount}
                   onLeftClick={() => { this.props.onChangePage(parseInt(usersPage, 10), false); }}
                   onRightClick={() => { this.props.onChangePage(parseInt(usersPage, 10), true); }}/>
-              </div>
-            }
+              </div>}
             {usersDisplay === 'grid' &&
               <div style={generalStyles.row}>
-                { users.get('data').map((user, index) => (
+                {users.get('data').map((user, index) => (
                   <Tile
-                    imageUrl={user.getIn([ 'avatar', 'url' ])}
+                    imageUrl={user.get('avatar') && `${user.getIn([ 'avatar', 'url' ])}?height=310&width=310`}
                     key={`user${index}`}
                     text={this.getUserName(user)}
                     onDelete={this.onDeleteLinkUser.bind(this, user.get('id'))}

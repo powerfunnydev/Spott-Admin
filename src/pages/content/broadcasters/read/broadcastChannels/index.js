@@ -17,6 +17,7 @@ export const prefix = 'broadcasterChannels';
 @tableDecorator(prefix)
 @connect(selector, (dispatch) => ({
   deleteBroadcastChannel: bindActionCreators(actions.deleteBroadcastChannel, dispatch),
+  deleteBroadcastChannels: bindActionCreators(actions.deleteBroadcastChannels, dispatch),
   loadBroadcasterChannels: bindActionCreators(actions.loadBroadcasterChannels, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
@@ -28,6 +29,7 @@ export default class List extends Component {
   static propTypes = {
     broadcasterChannels: ImmutablePropTypes.map.isRequired,
     deleteBroadcastChannel: PropTypes.func.isRequired,
+    deleteBroadcastChannels: PropTypes.func.isRequired,
     error: PropTypes.any,
     isSelected: ImmutablePropTypes.map.isRequired,
     loadBroadcasterChannels: PropTypes.func.isRequired,
@@ -35,7 +37,6 @@ export default class List extends Component {
       pathname: PropTypes.string.isRequired,
       query: PropTypes.object.isRequired
     }),
-    numberSelected: PropTypes.number,
     pageCount: PropTypes.number,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
@@ -53,11 +54,13 @@ export default class List extends Component {
     this.redirect = ::this.redirect;
     this.onClickNewEntry = :: this.onClickNewEntry;
     this.slowSearch = slowdown(props.loadBroadcasterChannels, 300);
+    this.onClickDeleteSelected = :: this.onClickDeleteSelected;
   }
 
   async componentWillMount () {
-    if (this.props.params.id) {
-      await this.props.loadBroadcasterChannels(this.props.location.query, this.props.params.id);
+    const broadcasterId = this.props.params.broadcasterId;
+    if (broadcasterId) {
+      await this.props.loadBroadcasterChannels(this.props.location.query, broadcasterId);
     }
   }
 
@@ -65,7 +68,7 @@ export default class List extends Component {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
     if (isQueryChanged(query, nextQuery, prefix)) {
-      await this.slowSearch(nextProps.location.query, this.props.params.id);
+      await this.slowSearch(nextProps.location.query, this.props.params.broadcasterId);
     }
   }
 
@@ -73,7 +76,7 @@ export default class List extends Component {
     const result = await confirmation();
     if (result) {
       await this.props.deleteBroadcastChannel(broadcastChannelId);
-      await this.props.loadBroadcasterChannels(this.props.location.query, this.props.params.id);
+      await this.props.loadBroadcasterChannels(this.props.location.query, this.props.params.broadcasterId);
     }
   }
 
@@ -85,18 +88,31 @@ export default class List extends Component {
     this.props.routerPushWithReturnTo('content/broadcasters', true);
   }
 
+  async onClickDeleteSelected (e) {
+    e.preventDefault();
+    const broadcastChannelsIds = [];
+    this.props.isSelected.forEach((selected, key) => {
+      if (selected && key !== 'ALL') {
+        broadcastChannelsIds.push(key);
+      }
+    });
+    await this.props.deleteBroadcastChannels(broadcastChannelsIds);
+    await this.props.loadBroadcasterChannels(this.props.location.query, this.props.params.broadcasterId);
+  }
+
   onClickNewEntry (e) {
     e.preventDefault();
-    const broadcasterId = this.props.params.id;
+    const broadcasterId = this.props.params.broadcasterId;
     if (broadcasterId) {
       this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcasterId}/create/broadcast-channel`);
     }
   }
 
   render () {
-    const { onChangeSearchString, onChangeDisplay, numberSelected, pageCount, selectAllCheckboxes, selectCheckbox, isSelected, totalResultCount, broadcasterChannels,
+    const { onChangeSearchString, onChangeDisplay, pageCount, selectAllCheckboxes, selectCheckbox, isSelected, totalResultCount, broadcasterChannels,
        location: { query: { broadcasterChannelsDisplay, broadcasterChannelsPage,
          broadcasterChannelsSearchString, broadcasterChannelsSortField, broadcasterChannelsSortDirection } } } = this.props;
+    const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
       <div style={generalStyles.border}>
         <div style={generalStyles.backgroundBar}>
@@ -104,7 +120,6 @@ export default class List extends Component {
             <UtilsBar
               display={broadcasterChannelsDisplay}
               isLoading={broadcasterChannels.get('_status') !== 'loaded'}
-              numberSelected={numberSelected}
               searchString={broadcasterChannelsSearchString}
               textCreateButton='New Broadcast Channel'
               onChangeDisplay={onChangeDisplay}
@@ -115,7 +130,11 @@ export default class List extends Component {
         <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage, generalStyles.whiteBackground ]}>
           <div style={[ generalStyles.paddingTable, generalStyles.paddingLeftAndRight ]}>
-            <TotalEntries totalResultCount={totalResultCount}/>
+            <TotalEntries
+              entityType='Broadcast Channels'
+              numberSelected={numberSelected}
+              totalResultCount={totalResultCount}
+              onDeleteSelected={this.onClickDeleteSelected}/>
             {(broadcasterChannelsDisplay === undefined || broadcasterChannelsDisplay === 'list') &&
               <div>
                 <Table style={generalStyles.lightGrayBorder}>
@@ -134,8 +153,8 @@ export default class List extends Component {
                           <CustomCel getValue={this.getName} objectToRender={broadcastChannel} style={{ flex: 5 }} />
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}>Remove</div>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}>Edit</div>}>
+                              <div key={1} style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>
@@ -150,11 +169,17 @@ export default class List extends Component {
               <div style={generalStyles.row}>
                 { this.props.broadcasterChannels.get('data').map((broadcastChannel, index) => (
                   <Tile
-                    imageUrl={broadcastChannel.getIn([ 'logo', 'url' ])}
+                    imageUrl={broadcastChannel.get('logo') && `${broadcastChannel.getIn([ 'logo', 'url' ])}?height=310&width=310`}
                     key={`broadcastChannel${index}`}
                     text={broadcastChannel.get('name')}
-                    onDelete={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}
-                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}/>
+                    onDelete={async (e) => {
+                      e.preventDefault();
+                      await this.deleteBroadcastChannel(broadcastChannel.get('id'));
+                    }}
+                    onEdit={(e) => {
+                      e.preventDefault();
+                      this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`);
+                    }}/>
                 ))}
                 <Tile key={'createBroadcastChannel'} onCreate={this.onClickNewEntry}/>
               </div>

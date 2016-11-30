@@ -1,4 +1,5 @@
 import { persistEpisode } from '../../../../actions/episode';
+import { fetchLastEpisode as dataFetchLastEpisode } from '../../../../actions/season';
 import { searchSeasons as dataSearchSeasons, searchSeriesEntries as dataSearchSeriesEntries } from '../../../../actions/series';
 
 export const SERIES_ENTRIES_SEARCH_START = 'EPISODE_CREATE/SERIES_ENTRIES_SEARCH_START';
@@ -32,17 +33,21 @@ export function searchSeasons (searchString, seriesEntryId) {
   };
 }
 
-export function submit ({ seriesEntryId, seasonId, number, defaultLocale }) {
+export function fetchLastEpisode (seasonId) {
+  return dataFetchLastEpisode({ seasonId });
+}
+
+export function submit ({ defaultLocale, ...restProps }) {
   return async (dispatch, getState) => {
     try {
+      // contains defaultLocale (from previous), locales, number (from previous) , basedOnDefaultLocale, hasTitle
+      // seasonId, seriesEntryId, broadcasters (from previous) and content producers (from previous)
       const seriesEntry = {
+        ...restProps,
         defaultLocale,
         locales: [ defaultLocale ],
-        number,
         basedOnDefaultLocale: { [defaultLocale]: true },
-        hasTitle: { [defaultLocale]: false },
-        seasonId,
-        seriesEntryId
+        hasTitle: { [defaultLocale]: false }
       };
       return await dispatch(persistEpisode(seriesEntry));
     } catch (error) {

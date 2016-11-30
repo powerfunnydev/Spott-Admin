@@ -26,7 +26,8 @@ export async function fetchEpisode (baseUrl, authenticationToken, locale, { epis
 }
 
 export async function persistEpisode (baseUrl, authenticationToken, locale, { availabilities, number, hasTitle, basedOnDefaultLocale,
-  locales, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title, seasonId, episodeId }) {
+  locales, publishStatus, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title, seasonId, episodeId,
+  contentProducers, broadcasters }) {
   let episode = {};
   if (episodeId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/serieEpisodes/${episodeId}`);
@@ -36,11 +37,13 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, { av
     country: countryId && { uuid: countryId }, startTimeStamp: availabilityFrom, endTimeStamp: availabilityTo, videoStatus
   }));
   // episode.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
+  episode.contentProducers = contentProducers && contentProducers.map((cp) => ({ uuid: cp }));
+  episode.broadcasters = broadcasters && broadcasters.map((bc) => ({ uuid: bc }));
   episode.defaultLocale = defaultLocale;
   episode.defaultTitle = defaultTitle;
   // episode.externalReference.reference = externalReference;
   // episode.externalReference.source = externalReferenceSource;
-  // episode.publishStatus = publishStatus;
+  episode.publishStatus = publishStatus;
   episode.season = { uuid: seasonId };
   episode.serie = { uuid: seriesEntryId };
   episode.type = 'TV_SERIE_SEASON';
