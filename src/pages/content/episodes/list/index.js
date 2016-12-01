@@ -79,14 +79,6 @@ export default class Episodes extends Component {
     }
   }
 
-  getTitle (season) {
-    return season.get('title');
-  }
-
-  getUpdatedBy (season) {
-    return season.get('lastUpdatedBy');
-  }
-
   getLastUpdatedOn (season) {
     const date = new Date(season.get('lastUpdatedOn'));
     return moment(date).format('YYYY-MM-DD HH:mm');
@@ -122,19 +114,21 @@ export default class Episodes extends Component {
             <UtilsBar
               display={display}
               isLoading={seasons.get('_status') !== 'loaded'}
-              numberSelected={numberSelected}
               searchString={searchString}
               textCreateButton='New Episode Entry'
               onChangeDisplay={onChangeDisplay}
               onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
-              onClickDeleteSelected={this.onClickDeleteSelected}
               onClickNewEntry={this.onClickNewEntry}/>
           </Container>
         </div>
         <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
           <Container style={generalStyles.paddingTable}>
-            <TotalEntries entityType='Episodes' totalResultCount={totalResultCount}/>
+            <TotalEntries
+              entityType='Episodes'
+              numberSelected={numberSelected}
+              totalResultCount={totalResultCount}
+              onDeleteSelected={this.onClickDeleteSelected}/>
             {(display === undefined || display === 'list') &&
               <div>
                 <Table>
@@ -152,13 +146,13 @@ export default class Episodes extends Component {
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                           <CheckBoxCel checked={isSelected.get(season.get('id'))} onChange={selectCheckbox.bind(this, season.get('id'))}/>
-                          <CustomCel getValue={this.getTitle} objectToRender={season} style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/seasons/read/${season.get('id')}`); }}/>
-                          <CustomCel getValue={this.getUpdatedBy} objectToRender={season} style={{ flex: 2 }}/>
+                          <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/seasons/read/${season.get('id')}`); }}>{season.get('title')}</CustomCel>
+                          <CustomCel style={{ flex: 2 }}>{season.get('updatedBy')}</CustomCel>
                           <CustomCel getValue={this.getLastUpdatedOn} objectToRender={season} style={{ flex: 2 }}/>
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/seasons/edit/${season.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteEpisode(season.get('id')); }}>Remove</div>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/seasons/edit/${season.get('id')}`); }}>Edit</div>}>
+                              <div key={1} style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={async (e) => { e.preventDefault(); await this.deleteEpisode(season.get('id')); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>
@@ -170,16 +164,20 @@ export default class Episodes extends Component {
               </div>
             }
             {display === 'grid' &&
-              <div style={generalStyles.row}>
-                {seasons.get('data').map((season, index) => (
-                  <Tile
-                    imageUrl={season.get('profileImage') && `${season.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
-                    key={`season${index}`}
-                    text={this.getTitle(season)}
-                    onDelete={async (e) => { e.preventDefault(); await this.deleteEpisode(season.get('id')); }}
-                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/seasons/edit/${season.get('id')}`); }}/>
-                ))}
-                <Tile key={'createEpisode'} onCreate={() => { this.props.routerPushWithReturnTo('content/seasons/create'); }}/>
+              <div>
+                <div style={generalStyles.row}>
+                  {seasons.get('data').map((season, index) => (
+                    <Tile
+                      imageUrl={season.get('profileImage') && `${season.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
+                      key={`season${index}`}
+                      text={this.getTitle(season)}
+                      onClick={() => { this.props.routerPushWithReturnTo(`content/seasons/read/${season.get('id')}`); }}
+                      onDelete={async (e) => { e.preventDefault(); await this.deleteEpisode(season.get('id')); }}
+                      onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/seasons/edit/${season.get('id')}`); }}/>
+                  ))}
+                  <Tile key={'createEpisode'} onCreate={() => { this.props.routerPushWithReturnTo('content/seasons/create'); }}/>
+                </div>
+                <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
               </div>
             }
           </Container>

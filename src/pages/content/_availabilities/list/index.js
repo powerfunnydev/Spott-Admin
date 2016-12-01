@@ -56,10 +56,10 @@ export default class Availabilities extends Component {
     const { availabilityFrom, availabilityTo, countryId, videoStatus } = this.props.availabilities.get(index).toJS();
     return {
       countryId,
-      endDate: moment(availabilityTo).startOf('day'),
-      endTime: moment(availabilityTo),
-      startDate: moment(availabilityFrom).startOf('day'),
-      startTime: moment(availabilityFrom),
+      endDate: availabilityTo && moment(availabilityTo).startOf('day'),
+      endTime: availabilityTo && moment(availabilityTo),
+      startDate: availabilityFrom && moment(availabilityFrom).startOf('day'),
+      startTime: availabilityFrom && moment(availabilityFrom),
       timezone: '+00:00',
       videoStatus
     };

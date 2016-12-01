@@ -1,4 +1,6 @@
-import { persistEpisode, fetchEpisode as dataFetchEpisode } from '../../../../actions/episode';
+import { persistEpisode, fetchEpisode as dataFetchEpisode,
+      uploadProfileImage as dataUploadProfileImage,
+      uploadPosterImage as dataUploadPosterImage } from '../../../../actions/episode';
 import { searchSeasons as dataSearchSeasons, searchSeriesEntries as dataSearchSeriesEntries } from '../../../../actions/series';
 import { searchBroadcasters as dataSearchBroadcasters } from '../../../../actions/broadcaster';
 import { searchContentProducers as dataSearchContentProducers } from '../../../../actions/contentProducer';
@@ -24,6 +26,8 @@ export const SHOW_CREATE_LANGUAGE_MODAL = 'EPISODES_EDIT/SHOW_CREATE_LANGUAGE_MO
 export const REMOVE_CREATE_LANGUAGE_MODAL = 'EPISODES_EDIT/REMOVE_CREATE_LANGUAGE_MODAL';
 
 export const submit = persistEpisode;
+export const uploadProfileImage = dataUploadProfileImage;
+export const uploadPosterImage = dataUploadPosterImage;
 
 export function loadEpisode (episodeId) {
   return async (dispatch, getState) => {

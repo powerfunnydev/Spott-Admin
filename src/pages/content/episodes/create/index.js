@@ -112,13 +112,19 @@ export default class CreateEpisodentryModal extends Component {
 
   async submit (form) {
     try {
-      await this.props.submit(form.toJS());
+      const { params, location, submit, dispatch, change } = this.props;
+      await submit(form.toJS());
+      const createAnother = form.get('createAnother');
       // Load the new list of items, using the location query of the previous page.
-      const location = this.props.location && this.props.location.state && this.props.location.state.returnTo;
-      if (location && location.query) {
-        this.props.loadEpisodes(location.query, this.props.params.seasonId);
+      const loc = location && location.state && location.state.returnTo;
+      if (loc && loc.query) {
+        this.props.loadEpisodes(loc.query, params.seasonId);
       }
-      this.onCloseClick();
+      if (createAnother) {
+        form.get('number') && dispatch(change('number', form.get('number') + 1));
+      } else {
+        this.onCloseClick();
+      }
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
@@ -146,7 +152,8 @@ export default class CreateEpisodentryModal extends Component {
         seriesEntriesById, searchedSeriesEntryIds, searchSeasons, seasonsById,
         searchedSeasonIds, handleSubmit } = this.props;
     return (
-      <PersistModal isOpen title='Create Episode Entry' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal createAnother isOpen title='Create Episode Entry'
+        onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}

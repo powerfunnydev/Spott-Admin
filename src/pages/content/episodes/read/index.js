@@ -12,6 +12,7 @@ import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
 import { generalStyles } from '../../../_common/components/table/index';
+import BreadCrumbs from '../../../_common/breadCrumbs';
 
 /* eslint-disable no-alert */
 
@@ -82,6 +83,11 @@ export default class ReadEpisode extends Component {
       <Root>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
+        <BreadCrumbs hierarchy={[
+          { title: 'List', url: '/content/series' },
+          { title: 'Series', url: `content/series/read/${this.props.params.seriesEntryId}` },
+          { title: 'Season', url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}` },
+          { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         <Container>
           {currentEpisode.get('_status') === 'loaded' && currentEpisode &&
             <EntityDetails

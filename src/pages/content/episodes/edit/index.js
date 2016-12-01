@@ -23,6 +23,7 @@ import Availabilities from '../../_availabilities/list';
 import RelatedVideo from '../../../content/_relatedVideo/read';
 import * as actions from './actions';
 import selector from './selector';
+// import Characters from '../../_helpers/_characters/list';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -37,15 +38,17 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
+  closeModal: bindActionCreators(actions.closeModal, dispatch),
   loadEpisode: bindActionCreators(actions.loadEpisode, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
-  closeModal: bindActionCreators(actions.closeModal, dispatch),
-  submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
   searchSeasons: bindActionCreators(actions.searchSeasons, dispatch),
-  searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch)
+  searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch),
+  submit: bindActionCreators(actions.submit, dispatch),
+  uploadPosterImage: bindActionCreators(actions.uploadPosterImage, dispatch),
+  uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch)
 }))
 @reduxForm({
   form: 'episodeEdit',
@@ -60,6 +63,7 @@ export default class EditEpisode extends Component {
     availabilities: ImmutablePropTypes.list,
     broadcastersById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
+    characters: ImmutablePropTypes.list,
     children: PropTypes.node,
     closeModal: PropTypes.func.isRequired,
     contentProducersById: ImmutablePropTypes.map.isRequired,
@@ -91,7 +95,9 @@ export default class EditEpisode extends Component {
     seriesEntriesById: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
-    t: PropTypes.func.isRequired
+    t: PropTypes.func.isRequired,
+    uploadPosterImage: PropTypes.func.isRequired,
+    uploadProfileImage: PropTypes.func.isRequired
 
   };
 
@@ -108,6 +114,7 @@ export default class EditEpisode extends Component {
   async componentWillMount () {
     if (this.props.params.episodeId) {
       const editObj = await this.props.loadEpisode(this.props.params.episodeId);
+      console.log('editObj', editObj);
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale
@@ -204,20 +211,23 @@ export default class EditEpisode extends Component {
     },
     removeLanguageButtonPadding: {
       paddingLeft: '10px'
+    },
+    paddingLeftUploadImage: {
+      paddingLeft: '24px'
     }
   }
 
   render () {
     const styles = this.constructor.styles;
     const {
-      _activeLocale, availabilities, closeModal, currentModal, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
+      _activeLocale, availabilities, characters, closeModal, currentModal, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
       contentProducersById, searchContentProducers, searchedContentProducerIds, broadcastersById,
       searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
-      seriesEntriesById, searchedSeriesEntryIds, defaultLocale, params,
+      seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
       searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors
     } = this.props;
 
-    const imageUrl = currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
+    const profileImageUrl = currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
       `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`;
 
     return (
@@ -246,6 +256,7 @@ export default class EditEpisode extends Component {
                 <FormSubtitle first>General</FormSubtitle>
                 <Field
                   component={SelectInput}
+                  disabled={_activeLocale !== defaultLocale}
                   getItemText={(id) => seriesEntriesById.getIn([ id, 'title' ])}
                   getOptions={searchSeriesEntries}
                   isLoading={searchedSeriesEntryIds.get('_status') === FETCHING}
@@ -259,6 +270,7 @@ export default class EditEpisode extends Component {
                   }} />
                 {currentSeriesEntryId && <Field
                   component={SelectInput}
+                  disabled={_activeLocale !== defaultLocale}
                   getItemText={(id) => seasonsById.getIn([ id, 'title' ])}
                   getOptions={(searchString) => { searchSeasons(searchString, currentSeriesEntryId); }}
                   isLoading={searchedSeasonIds.get('_status') === FETCHING}
@@ -295,6 +307,7 @@ export default class EditEpisode extends Component {
                   type='multiline'/>
                 <Field
                   component={SelectInput}
+                  disabled={_activeLocale !== defaultLocale}
                   getItemText={(contentProducerId) => contentProducersById.getIn([ contentProducerId, 'name' ])}
                   getOptions={searchContentProducers}
                   isLoading={searchedContentProducerIds.get('_status') === FETCHING}
@@ -305,6 +318,7 @@ export default class EditEpisode extends Component {
                   placeholder='Content producers'/>
                 <Field
                   component={SelectInput}
+                  disabled={_activeLocale !== defaultLocale}
                   getItemText={(broadcasterId) => broadcastersById.getIn([ broadcasterId, 'name' ])}
                   getOptions={searchBroadcasters}
                   isLoading={searchedBroadcasterIds.get('_status') === FETCHING}
@@ -319,16 +333,22 @@ export default class EditEpisode extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
-                      imageUrl={imageUrl} />
+                      imageUrl={profileImageUrl}
+                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}/>
+                  </div>
+                  <div style={styles.paddingLeftUploadImage}>
+                    <Label text='Poster image' />
+                    <Dropzone
+                      accept='image/*'
+                      imageUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
+                        `${currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}/>
                   </div>
                 </div>
               </Section>
             </Tab>
-            {/* TODO
-            <Tab title='Helpers'>
-              <Section>
-                <FormSubtitle first>Content</FormSubtitle>
-              </Section>
+            {/* <Tab title='Helpers'>
+              <FieldArray characters={characters} component={Characters} name='characters'/>
             </Tab>*/}
             <Tab title='Interactive video'>
               <Section>

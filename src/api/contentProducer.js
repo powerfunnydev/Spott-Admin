@@ -77,6 +77,12 @@ export async function deleteLinkUser (baseUrl, authenticationToken, locale, { co
   return await del(authenticationToken, locale, url);
 }
 
+export async function deleteLinkUsers (baseUrl, authenticationToken, locale, { contentProducerId, userIds }) {
+  for (const userId of userIds) {
+    await deleteLinkUser(baseUrl, authenticationToken, locale, { contentProducerId, userId });
+  }
+}
+
 export async function uploadContentProducerImage (baseUrl, authenticationToken, locale, { contentProducerId, image, callback }) {
   const formData = new FormData();
   formData.append('uuid', contentProducerId);

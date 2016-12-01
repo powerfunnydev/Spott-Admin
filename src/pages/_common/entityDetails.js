@@ -61,6 +61,12 @@ export default class EntityDetails extends Component {
     },
     paddingLeft: {
       paddingLeft: '20px'
+    },
+    minWidth: {
+      minWidth: '30px'
+    },
+    regular: {
+      ...makeTextStyle(fontWeights.regular, '12px')
     }
   };
 
@@ -79,8 +85,8 @@ export default class EntityDetails extends Component {
           <div style={styles.content}>{content}</div>
         </div>
         <div style={styles.alignRight}>
-          {onEdit && <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white ]} onClick={onEdit}>Edit</button>}
-          {onRemove && <RemoveButton style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white, { minWidth: '30px' } ]} onClick={onRemove}/>}
+          {onEdit && <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white, styles.regular ]} onClick={onEdit}>Edit</button>}
+          {onRemove && <RemoveButton style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white, styles.minWidth ]} onClick={onRemove}/>}
         </div>
       </div>
     );

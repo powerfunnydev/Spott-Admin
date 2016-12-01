@@ -108,7 +108,7 @@ export class SuccessMessage extends Component {
     return (
       <span>
         User <span style={styles.clickable} onClick={this.redirect.bind(this, `/users/edit/${user.id}`)}>
-          {user.firstName} {user.firstName}
+          {user.firstName} {user.lastName}
         </span> has been succesfully persisted.
       </span>
     );
@@ -175,7 +175,7 @@ export default class Toast extends Component {
       right: 40,
       top: 40,
       minHeight: 60, // Matches the flex-basis in icon.base style
-      zIndex: 2,
+      zIndex: 101,
       boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.25)'
     },
     icon: {
@@ -188,6 +188,7 @@ export default class Toast extends Component {
         borderTopLeftRadius: '2px',
         borderBottomLeftRadius: '2px'
       },
+      /*
       error: {
         backgroundColor: 'rgb(236, 65, 15)',
         border: '1px solid rgb(236, 65, 15)'
@@ -199,7 +200,7 @@ export default class Toast extends Component {
       warning: {
         backgroundColor: 'rgb(248, 170, 15)',
         border: '1px solid rgb(248, 170, 15)'
-      },
+      },*/
       success: {
         backgroundColor: colors.lightGreen,
         border: `1px solid ${colors.lightGreen}`

@@ -14,6 +14,7 @@ import Line from '../../../_common/components/line';
 import SeasonEpisodesList from './episodes';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
+import BreadCrumbs from '../../../_common/breadCrumbs';
 
 @connect(selector, (dispatch) => ({
   deleteSeason: bindActionCreators(listActions.deleteSeason, dispatch),
@@ -83,6 +84,10 @@ export default class ReadSeason extends Component {
       <Root>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
+        <BreadCrumbs hierarchy={[
+          { title: 'List', url: '/content/series' },
+          { title: 'Series', url: `content/series/read/${this.props.params.seriesEntryId}` },
+          { title: currentSeason.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         <Container>
           {currentSeason.get('_status') === 'loaded' && currentSeason &&
             <EntityDetails

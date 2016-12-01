@@ -66,9 +66,14 @@ export default class CreateSeasonEntryModal extends Component {
   }
 
   async componentWillMount () {
+    // in case we do an edit
     if (this.props.params.seriesEntryId) {
       this.props.initialize({
         seriesEntryId: this.props.params.seriesEntryId,
+        defaultLocale: this.props.currentLocale
+      });
+    } else { // in case we do a create
+      this.props.initialize({
         defaultLocale: this.props.currentLocale
       });
     }
@@ -124,7 +129,8 @@ export default class CreateSeasonEntryModal extends Component {
           label='Season number'
           name='number'
           placeholder='Season number'
-          required/>}
+          required
+          type='number'/>}
       </PersistModal>
     );
   }

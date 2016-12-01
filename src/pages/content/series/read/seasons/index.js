@@ -54,7 +54,8 @@ export default class List extends Component {
   constructor (props) {
     super(props);
     this.redirect = ::this.redirect;
-    this.onClickNewEntry = :: this.onClickNewEntry;
+    this.onCreateSeason = :: this.onCreateSeason;
+    this.onCreateEpisode = :: this.onCreateEpisode;
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
     this.slowSearch = slowdown(props.loadSeasons, 300);
   }
@@ -81,14 +82,6 @@ export default class List extends Component {
     }
   }
 
-  getTitle (season) {
-    return season.get('title');
-  }
-
-  getUpdatedBy (seriesEntry) {
-    return seriesEntry.get('lastUpdatedBy');
-  }
-
   getLastUpdatedOn (seriesEntry) {
     const date = new Date(seriesEntry.get('lastUpdatedOn'));
     return moment(date).format('YYYY-MM-DD HH:mm');
@@ -98,7 +91,15 @@ export default class List extends Component {
     this.props.routerPushWithReturnTo('content/seasons', true);
   }
 
-  onClickNewEntry (e) {
+  onCreateEpisode (e) {
+    e.preventDefault();
+    const seriesEntryId = this.props.params.seriesEntryId;
+    if (seriesEntryId) {
+      this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/create/episode`);
+    }
+  }
+
+  onCreateSeason (e) {
     e.preventDefault();
     const seriesEntryId = this.props.params.seriesEntryId;
     if (seriesEntryId) {
@@ -130,19 +131,27 @@ export default class List extends Component {
             <UtilsBar
               display={seasonsDisplay}
               isLoading={seasons.get('_status') !== 'loaded'}
-              numberSelected={numberSelected}
+              menu= {<div style={dropdownStyles.floatOptions}>
+                <div key='menuElementEpisode' style={[ dropdownStyles.floatOption ]} onClick={this.onCreateEpisode}>
+                  Add Episode
+                </div>
+              </div>}
               searchString={seasonsSearchString}
               textCreateButton='New season'
+              topElement={<div onClick={this.onCreateSeason}>Add Season</div>}
               onChangeDisplay={onChangeDisplay}
               onChangeSearchString={onChangeSearchString}
-              onClickDeleteSelected={this.onClickDeleteSelected}
-              onClickNewEntry={this.onClickNewEntry}/>
+              onClickNewEntry={this.onCreateSeason}/>
           </div>
         </div>
         <Line/>
         <div style={[ generalStyles.backgroundTable, generalStyles.fillPage, generalStyles.whiteBackground ]}>
           <div style={[ generalStyles.paddingTable, generalStyles.paddingLeftAndRight ]}>
-            <TotalEntries entityType='Seasons' totalResultCount={totalResultCount}/>
+            <TotalEntries
+              entityType='Seasons'
+              numberSelected={numberSelected}
+              totalResultCount={totalResultCount}
+              onDeleteSelected={this.onClickDeleteSelected} />
             {(seasonsDisplay === undefined || seasonsDisplay === 'list') &&
               <div>
                 <Table style={generalStyles.lightGrayBorder}>
@@ -150,6 +159,7 @@ export default class List extends Component {
                     {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                     <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
                     <CustomCel sortColumn={this.props.onSortField.bind(this, 'TITLE')} sortDirection = {seasonsSortField === 'TITLE' ? sortDirections[seasonsSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 5 } ]}>TITLE</CustomCel>
+                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'NUMBER')} sortDirection = {seasonsSortField === 'NUMBER' ? sortDirections[seasonsSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { minWidth: 60 } ]}>#</CustomCel>
                     <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
                     <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
                     <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
@@ -160,13 +170,14 @@ export default class List extends Component {
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                           <CheckBoxCel checked={isSelected.get(season.get('id'))} onChange={selectCheckbox.bind(this, season.get('id'))}/>
-                          <CustomCel getValue={this.getTitle} objectToRender={season} style={{ flex: 5 }} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${season.get('id')}`); }}/>
-                          <CustomCel getValue={this.getUpdatedBy} objectToRender={season} style={{ flex: 2 }}/>
-                          <CustomCel getValue={this.getLastUpdatedOn} objectToRender={season} style={{ flex: 2 }}/>
+                          <CustomCel style={{ flex: 5 }} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${season.get('id')}`); }}>{season.get('title')}</CustomCel>
+                          <CustomCel style={{ minWidth: 60 }}>{season.get('number')}</CustomCel>
+                          <CustomCel style={{ flex: 2 }}>{season.get('lastUpdatedBy')}</CustomCel>
+                          <CustomCel style={{ flex: 2 }}>{this.getLastUpdatedOn(season)}</CustomCel>
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.topElement ]} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/edit/${season.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option ]} onClick={async (e) => { e.preventDefault(); await this.deleteSeason(season.get('id')); }}>Remove</div>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/edit/${season.get('id')}`); }}>Edit</div>}>
+                              <div key={1} style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={async (e) => { e.preventDefault(); await this.deleteSeason(season.get('id')); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>
@@ -178,16 +189,20 @@ export default class List extends Component {
               </div>
             }
             {seasonsDisplay === 'grid' &&
-              <div style={generalStyles.row}>
-                {seasons.get('data').map((season, index) => (
-                  <Tile
-                    imageUrl={season.get('profileImage') && `${season.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
-                    key={`season${index}`}
-                    text={season.get('title')}
-                    onDelete={async (e) => { e.preventDefault(); await this.deleteSeason(season.get('id')); }}
-                    onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/edit/${season.get('id')}`); }}/>
-                ))}
-                <Tile key={'createSeason'} onCreate={this.onClickNewEntry}/>
+              <div>
+                <div style={generalStyles.row}>
+                  {seasons.get('data').map((season, index) => (
+                    <Tile
+                      imageUrl={season.get('profileImage') && `${season.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
+                      key={`season${index}`}
+                      text={season.get('title')}
+                      onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${season.get('id')}`); }}
+                      onDelete={async (e) => { e.preventDefault(); await this.deleteSeason(season.get('id')); }}
+                      onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/edit/${season.get('id')}`); }}/>
+                  ))}
+                  <Tile key={'createSeason'} onCreate={this.onClickNewEntry}/>
+                </div>
+                <Pagination currentPage={(seasonsPage && (parseInt(seasonsPage, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(seasonsPage, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(seasonsPage, 10), true); }}/>
               </div>
             }
           </div>

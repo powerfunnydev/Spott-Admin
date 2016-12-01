@@ -1,4 +1,6 @@
-import { persistSeason, fetchSeason as dataFetchSeason } from '../../../../actions/season';
+import { persistSeason, fetchSeason as dataFetchSeason,
+      uploadProfileImage as dataUploadProfileImage,
+      uploadPosterImage as dataUploadPosterImage } from '../../../../actions/season';
 import { searchSeriesEntries as dataSearchSeriesEntries } from '../../../../actions/series';
 
 export { openModal, closeModal } from '../../../../actions/global';
@@ -13,6 +15,8 @@ export const SHOW_CREATE_LANGUAGE_MODAL = 'SEASONS_EDIT/SHOW_CREATE_LANGUAGE_MOD
 export const REMOVE_CREATE_LANGUAGE_MODAL = 'SEASONS_EDIT/REMOVE_CREATE_LANGUAGE_MODAL';
 
 export const submit = persistSeason;
+export const uploadProfileImage = dataUploadProfileImage;
+export const uploadPosterImage = dataUploadPosterImage;
 
 export function loadSeason (seasonId) {
   return async (dispatch, getState) => {

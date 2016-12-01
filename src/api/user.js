@@ -90,14 +90,16 @@ export async function persistUser (baseUrl, authenticationToken, locale, { dateO
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/user/users/${userId}`);
     user = body;
   }
-  user.email = email || user.email;
-  user.firstName = firstName || user.firstName;
-  user.lastName = lastName || user.lastName;
+
+  user.email = email;
+  user.firstName = firstName;
+  user.lastName = lastName;
   user.disabled = userStatus === ACTIVE || user.disabled || false;
-  user.userName = userName || user.userName;
+  user.userName = userName;
   user.gender = gender || user.gender;
   user.disabledReason = disabledReason || user.disabledReason;
-  user.dateOfBirth = dateOfBirth && dateOfBirth.format() || user.dateOfBirth;
+  // Only use date, no timezone.
+  user.dateOfBirth = (dateOfBirth && dateOfBirth.local().format('YYYY-MM-DD')) || user.dateOfBirth;
   user.languages = languages || user.languages;
   user.roles = roles || user.roles;
   // user.roles = [ { role: 'CONTENT_MANAGER' } ];

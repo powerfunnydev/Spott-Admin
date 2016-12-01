@@ -84,12 +84,6 @@ export default class CreateSeriesEntryModal extends Component {
       <PersistModal isOpen title='Create Series Entry' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
-          component={TextInput}
-          label='Series title'
-          name='title'
-          placeholder='Series title'
-          required/>
-        <Field
           component={SelectInput}
           getItemText={(language) => localeNames.get(language)}
           getOptions={(language) => localeNames.keySeq().toArray()}
@@ -97,6 +91,12 @@ export default class CreateSeriesEntryModal extends Component {
           name='defaultLocale'
           options={localeNames.keySeq().toArray()}
           placeholder='Default language'/>
+        <Field
+          component={TextInput}
+          label='Series title'
+          name='title'
+          placeholder='Series title'
+          required/>
       </PersistModal>
     );
   }
