@@ -22,6 +22,7 @@ import { Tabs, Tab } from '../../_common/components/formTabs';
 import { Checkbox } from '../../_common/inputs/checkbox';
 import { INACTIVE, disabledReasons, userStatus as userStates } from '../../../constants/userRoles';
 import { FETCHING } from '../../../constants/statusTypes';
+import BreadCrumbs from '../../_common/breadCrumbs';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -146,6 +147,10 @@ export default class EditUser extends Component {
     },
     paddingTopMultiselect: {
       paddingTop: '0px'
+    },
+    background: {
+      backgroundColor: colors.lightGray4,
+      paddingBottom: '50px'
     }
   }
 
@@ -154,8 +159,11 @@ export default class EditUser extends Component {
     const { currentUser, currentUserStatus, contentProducersById, searchedContentProducerIds, searchContentProducers,
       broadcastersById, searchedBroadcasterIds, searchBroadcasters, location, handleSubmit, localeNames, genders } = this.props;
     return (
-      <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
+      <Root style={styles.background}>
         <Header currentLocation={location} hideHomePageLinks />
+        <BreadCrumbs hierarchy={[
+          { title: 'List', url: '/users' },
+          { title: `${currentUser.get('firstName')} ${currentUser.get('lastName')}`, url: location } ]}/>
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
           <Tabs>
             <Tab title='Details'>

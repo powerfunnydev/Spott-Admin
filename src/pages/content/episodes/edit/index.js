@@ -3,6 +3,7 @@ import { reduxForm, Field, FieldArray, SubmissionError } from 'redux-form/immuta
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { fromJS } from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { FETCHING } from '../../../../constants/statusTypes';
 import { makeTextStyle, fontWeights, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
@@ -23,6 +24,7 @@ import Availabilities from '../../_availabilities/list';
 import * as actions from './actions';
 import selector from './selector';
 import Characters from '../../_helpers/_characters/list';
+import BreadCrumbs from '../../../_common/breadCrumbs';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -42,6 +44,7 @@ function validate (values, { t }) {
   openModal: bindActionCreators(actions.openModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
+  searchCharacters: bindActionCreators(actions.searchCharacters, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
   searchSeasons: bindActionCreators(actions.searchSeasons, dispatch),
   searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch),
@@ -63,6 +66,7 @@ export default class EditEpisodes extends Component {
     broadcastersById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
     characters: ImmutablePropTypes.list,
+    charactersById: ImmutablePropTypes.map.isRequired,
     children: PropTypes.node,
     closeModal: PropTypes.func.isRequired,
     contentProducersById: ImmutablePropTypes.map.isRequired,
@@ -83,10 +87,12 @@ export default class EditEpisodes extends Component {
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
+    searchCharacters: PropTypes.func.isRequired,
     searchContentProducers: PropTypes.func.isRequired,
     searchSeasons: PropTypes.func.isRequired,
     searchSeriesEntries: PropTypes.func.isRequired,
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
+    searchedCharacterIds: ImmutablePropTypes.map.isRequired,
     searchedContentProducerIds: ImmutablePropTypes.map.isRequired,
     searchedSeasonIds: ImmutablePropTypes.map.isRequired,
     searchedSeriesEntryIds: ImmutablePropTypes.map.isRequired,
@@ -217,16 +223,23 @@ export default class EditEpisodes extends Component {
   }
 
   render () {
-    const { _activeLocale, availabilities, characters, closeModal, currentModal, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
+    const { _activeLocale, availabilities, closeModal, currentModal, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
         contentProducersById, searchContentProducers, searchedContentProducerIds, broadcastersById,
         searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
         seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
-        searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors } = this.props;
+        searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors,
+        searchedCharacterIds, charactersById, searchCharacters } = this.props;
+    console.log('searchedCharacterIds', searchedCharacterIds && searchedCharacterIds.toJS(), 'charactersById', charactersById && charactersById.toJS());
     const { styles } = this.constructor;
     return (
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
+        <BreadCrumbs hierarchy={[
+          { title: 'List', url: '/content/series' },
+          { title: 'Series', url: `content/series/read/${this.props.params.seriesEntryId}` },
+          { title: 'Season', url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${this.props.params.seasonId}` },
+          { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         {currentModal === EPISODE_CREATE_LANGUAGE &&
           <CreateLanguageModal
             supportedLocales={supportedLocales}
@@ -341,9 +354,16 @@ export default class EditEpisodes extends Component {
                 </div>
               </Section>
             </Tab>
-            {/* <Tab title='Helpers'>
-              <FieldArray characters={characters} component={Characters} name='characters'/>
-            </Tab>*/}
+            <Tab title='Helpers'>
+              <Characters
+                characters={fromJS([
+                  { name: 'Louis', image: { url: 'https://spott-cms-rest-tst.appiness.mobi:443/apptvate/rest/v004/image/images/06d2d037-612d-4d2a-a00f-1a5242e9cfc0?height=203&width=360' } },
+                  { name: 'Jos', image: { url: 'https://spott-cms-rest-tst.appiness.mobi:443/apptvate/rest/v004/image/images/06d2d037-612d-4d2a-a00f-1a5242e9cfc0?height=203&width=360' } }
+                ])}
+                charactersById={charactersById}
+                searchCharacters={searchCharacters}
+                searchedCharacterIds={searchedCharacterIds} />
+            </Tab>
             <Tab title='Availability'>
               <FieldArray availabilities={availabilities} component={Availabilities} name='availabilities' />
             </Tab>

@@ -103,6 +103,17 @@ export class SuccessMessage extends Component {
     );
   }
 
+  tvGuideEntryPersistSuccess (tvGuideEntry) {
+    const { styles } = this.constructor;
+    return (
+      <span>
+        TV Guide Entry <span style={styles.clickable} onClick={this.redirect.bind(this, `/tv-guide/edit/${tvGuideEntry.id}`)}>
+          {tvGuideEntry.medium && tvGuideEntry.medium.title}
+        </span> has been succesfully persisted.
+      </span>
+    );
+  }
+
   userPersistSuccess (user) {
     const { styles } = this.constructor;
     return (
@@ -139,6 +150,8 @@ export class SuccessMessage extends Component {
       return this.seasonPersistSuccess(entity);
     } else if (entityType === 'seriesEntry') {
       return this.seriesEntryPersistSuccess(entity);
+    } else if (entityType === 'tvGuideEntry') {
+      return this.tvGuideEntryPersistSuccess(entity);
     } else if (entityType === 'user') {
       return this.userPersistSuccess(entity);
     }

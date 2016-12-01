@@ -17,6 +17,7 @@ import selector from './selector';
 import Section from '../../_common/components/section';
 import { routerPushWithReturnTo } from '../../../actions/global';
 import { Tabs, Tab } from '../../_common/components/formTabs';
+import BreadCrumbs from '../../_common/breadCrumbs';
 
 function validate (values, { medium, t }) {
   const validationErrors = {};
@@ -59,6 +60,7 @@ export default class EditTvGuideEntry extends Component {
   static propTypes = {
     broadcastChannelsById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
+    currentTvGuideEntry: ImmutablePropTypes.map.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
@@ -144,19 +146,26 @@ export default class EditTvGuideEntry extends Component {
       borderRight: `1px solid ${colors.lightGray3}`,
       backgroundColor: colors.veryLightGray,
       width: '100%'
+    },
+    background: {
+      backgroundColor: colors.lightGray4,
+      paddingBottom: '50px'
     }
   };
 
   render () {
     const { styles } = this.constructor;
     const {
-      location, broadcastChannelsById, handleSubmit, mediaById, searchBroadcastChannels,
+      location, broadcastChannelsById, currentTvGuideEntry, handleSubmit, mediaById, searchBroadcastChannels,
       searchEpisodes, searchMedia, searchSeasons, searchedBroadcastChannelIds,
       searchedEpisodeIds, searchedSeasonIds, searchedMediumIds, medium, t
     } = this.props;
     return (
-      <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
+      <Root style={styles.background}>
         <Header currentLocation={location} hideHomePageLinks />
+        <BreadCrumbs hierarchy={[
+          { title: 'List', url: '/users' },
+          { title: currentTvGuideEntry.getIn([ 'medium', 'title' ]), url: location } ]}/>
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
         <Tabs>
           <Tab title='Details'>

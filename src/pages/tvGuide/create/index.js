@@ -12,7 +12,7 @@ import SelectInput from '../../_common/inputs/selectInput';
 import localized from '../../_common/localized';
 import { FETCHING } from '../../../constants/statusTypes';
 import PersistModal from '../../_common/persistModal';
-import { load } from '../list/actions';
+import { load as loadList } from '../list/actions';
 import * as actions from './actions';
 import selector from './selector';
 import { routerPushWithReturnTo } from '../../../actions/global';
@@ -40,7 +40,7 @@ function validate (values, { medium, t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
-  load: bindActionCreators(load, dispatch),
+  load: bindActionCreators(loadList, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchBroadcastChannels: bindActionCreators(actions.searchBroadcastChannels, dispatch),
   searchEpisodes: bindActionCreators(actions.searchEpisodes, dispatch),
@@ -71,6 +71,7 @@ export default class CreateTvGuideEntryModal extends Component {
     location: PropTypes.object.isRequired,
     mediaById: ImmutablePropTypes.map.isRequired,
     medium: ImmutablePropTypes.map.isRequired,
+    reset: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcastChannels: PropTypes.func.isRequired,
     searchEpisodes: PropTypes.func.isRequired,
@@ -93,13 +94,20 @@ export default class CreateTvGuideEntryModal extends Component {
 
   async submit (form) {
     try {
-      await this.props.submit(form.toJS());
+      const { load, location, submit, dispatch, change, reset } = this.props;
+      await submit(form.toJS());
+      const createAnother = form.get('createAnother');
       // Load the new list of items, using the location query of the previous page.
-      const location = this.props.location && this.props.location.state && this.props.location.state.returnTo;
-      if (location && location.query) {
-        this.props.load(location.query);
+      const loc = location && location.state && location.state.returnTo;
+      if (loc && loc.query) {
+        load(loc.query);
       }
-      this.onCloseClick();
+      if (createAnother) {
+        await dispatch(reset());
+        await dispatch(change('createAnother', true));
+      } else {
+        this.onCloseClick();
+      }
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
@@ -125,7 +133,8 @@ export default class CreateTvGuideEntryModal extends Component {
     } = this.props;
 
     return (
-      <PersistModal isOpen title='New TV guide entry' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal createAnother isOpen title='New TV guide entry'
+        onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}

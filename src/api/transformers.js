@@ -64,8 +64,12 @@ export function transformAvailability ({ country, endTimeStamp, startTimeStamp, 
   return { countryId: country && country.uuid, availabilityFrom: startTimeStamp && new Date(startTimeStamp), availabilityTo: endTimeStamp && new Date(endTimeStamp), videoStatus };
 }
 
-export function transformCharacter () {
-  // TODO
+export function transformCharacter ({ name, uuid: id, image }) {
+  return {
+    id,
+    name,
+    image: image && { id: image.uuid, url: image.url }
+  };
 }
 /**
  *  Complete version of a medium. Locales includes.

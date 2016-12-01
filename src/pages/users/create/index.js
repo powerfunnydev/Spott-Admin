@@ -37,12 +37,15 @@ function validate (values, { t }) {
 export default class CreateUserModal extends Component {
 
   static propTypes = {
+    change: PropTypes.func.isRequired,
+    dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
     loadList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
+    reset: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired
@@ -67,13 +70,20 @@ export default class CreateUserModal extends Component {
 
   async submit (form) {
     try {
-      await this.props.submit(form.toJS());
+      const { location, submit, dispatch, change, reset } = this.props;
+      await submit(form.toJS());
+      const createAnother = form.get('createAnother');
       // Load the new list of items, using the location query of the previous page.
-      const location = this.props.location && this.props.location.state && this.props.location.state.returnTo;
-      if (location && location.query) {
-        this.props.loadList(location.query);
+      const loc = location && location.state && location.state.returnTo;
+      if (loc && loc.query) {
+        this.props.loadList(loc.query);
       }
-      this.onCloseClick();
+      if (createAnother) {
+        await dispatch(reset());
+        await dispatch(change('createAnother', true));
+      } else {
+        this.onCloseClick();
+      }
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
@@ -86,7 +96,8 @@ export default class CreateUserModal extends Component {
   render () {
     const { handleSubmit } = this.props;
     return (
-      <PersistModal isOpen title='Create User' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal createAnother isOpen title='Create User'
+        onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={TextInput}

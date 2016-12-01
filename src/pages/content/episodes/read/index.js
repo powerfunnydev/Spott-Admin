@@ -13,6 +13,8 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
 import { generalStyles } from '../../../_common/components/table/index';
 import BreadCrumbs from '../../../_common/breadCrumbs';
+import TvGuideList from './tvGuide';
+import { Tabs, Tab } from '../../../_common/components/formTabs';
 
 /* eslint-disable no-alert */
 
@@ -76,7 +78,7 @@ export default class ReadEpisode extends Component {
   }
 
   render () {
-    const { params, children, currentEpisode, location, deleteEpisode } = this.props;
+    const { params, children, currentEpisode, location: { query: { tabIndex } }, deleteEpisode } = this.props;
     const { styles } = this.constructor;
     const defaultLocale = currentEpisode.getIn([ 'defaultLocale' ]);
     return (
@@ -97,7 +99,15 @@ export default class ReadEpisode extends Component {
               onRemove={async () => { await deleteEpisode(currentEpisode.getIn([ 'id' ])); this.redirect(); }}/>}
         </Container>
         <Line/>
-        <div style={[ generalStyles.fillPage, styles.table ]} />
+        <div style={[ generalStyles.fillPage, styles.table ]}>
+          <Container>
+            <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
+              <Tab title='Episodes'>
+                <TvGuideList {...this.props}/>
+              </Tab>
+            </Tabs>
+          </Container>
+        </div>
         <Line/>
         {children}
       </Root>

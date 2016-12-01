@@ -59,7 +59,7 @@ export default class BulkOperationDropdown extends Component {
             <div
               key='bulkOperationDropdownMenu1'
               style={dropdownStyles.option}
-              onClick={onDeleteSelected}>
+              onClick={this.onDeleteSelected}>
                 Remove
             </div>
           }

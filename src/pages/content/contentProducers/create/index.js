@@ -7,7 +7,7 @@ import { FormSubtitle } from '../../../_common/styles';
 import TextInput from '../../../_common/inputs/textInput';
 import localized from '../../../_common/localized';
 import PersistModal from '../../../_common/persistModal';
-import { load } from '../list/actions';
+import { load as loadList } from '../list/actions';
 import * as actions from './actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 
@@ -21,7 +21,7 @@ function validate (values, { t }) {
 
 @localized
 @connect(null, (dispatch) => ({
-  load: bindActionCreators(load, dispatch),
+  load: bindActionCreators(loadList, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
@@ -33,10 +33,13 @@ function validate (values, { t }) {
 export default class CreateContentProducerModal extends Component {
 
   static propTypes = {
+    change: PropTypes.func.isRequired,
+    dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    reset: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired
@@ -50,13 +53,20 @@ export default class CreateContentProducerModal extends Component {
 
   async submit (form) {
     try {
-      await this.props.submit(form.toJS());
+      const { load, location, submit, dispatch, change, reset } = this.props;
+      await submit(form.toJS());
+      const createAnother = form.get('createAnother');
       // Load the new list of items, using the location query of the previous page.
-      const location = this.props.location && this.props.location.state && this.props.location.state.returnTo;
-      if (location && location.query) {
-        this.props.load(location.query);
+      const loc = location && location.state && location.state.returnTo;
+      if (loc && loc.query) {
+        load(loc.query);
       }
-      this.onCloseClick();
+      if (createAnother) {
+        await dispatch(reset());
+        await dispatch(change('createAnother', true));
+      } else {
+        this.onCloseClick();
+      }
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
@@ -69,7 +79,8 @@ export default class CreateContentProducerModal extends Component {
   render () {
     const { handleSubmit } = this.props;
     return (
-      <PersistModal isOpen title='Create Content Producer' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal createAnother isOpen title='Create Content Producer'
+        onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={TextInput}

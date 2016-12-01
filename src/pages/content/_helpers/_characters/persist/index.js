@@ -2,10 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
-import { connect } from 'react-redux';
 import SelectInput from '../../../../_common/inputs/selectInput';
 import PersistModal from '../../../../_common/persistModal';
-
 // function validate (values, { t }) {
 //   const validationErrors = {};
 //   const { defaultLocale, title } = values.toJS();
@@ -16,16 +14,20 @@ import PersistModal from '../../../../_common/persistModal';
 // }
 
 @reduxForm({
-  form: 'availability'
+  form: 'character'
   // TODO: validate
 })
 @Radium
-export default class AvailabilityModal extends Component {
+export default class CharacterModal extends Component {
 
   static propTypes = {
+    characters: ImmutablePropTypes.map.isRequired,
+    charactersById: ImmutablePropTypes.map.isRequired,
     edit: PropTypes.bool,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
+    searchCharacters: PropTypes.func.isRequired,
+    searchedCharacterIds: ImmutablePropTypes.map.isRequired,
     onClose: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired
   };
@@ -57,10 +59,21 @@ export default class AvailabilityModal extends Component {
   };
 
   render () {
-    const styles = this.constructor.styles;
-    const { edit, handleSubmit } = this.props;
+    // const { styles } = this.constructor;
+    const { edit, handleSubmit, searchCharacters, searchedCharacterIds, charactersById } = this.props;
     return (
-      <PersistModal isOpen submitButtonText={edit ? 'Save' : 'Add'} title={edit ? 'Edit Availability' : 'Add Availability'} onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)} />
+      <PersistModal isOpen submitButtonText={edit ? 'Save' : 'Add'} title={edit ? 'Edit Character' : 'Add Character'} onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+        <Field
+          component={SelectInput}
+          first
+          getItemText={(characterId) => charactersById.getIn([ characterId, 'name' ])}
+          getOptions={searchCharacters}
+          label='Character'
+          name='characterId'
+          options={searchedCharacterIds.get('data').toArray()}
+          placeholder='Character'
+          required />
+      </PersistModal>
     );
   }
 

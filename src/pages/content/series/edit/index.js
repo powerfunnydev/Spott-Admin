@@ -20,6 +20,7 @@ import selector from './selector';
 import { SERIES_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import LanguageBar from '../../../_common/components/languageBar';
+import BreadCrumbs from '../../../_common/breadCrumbs';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -166,12 +167,16 @@ export default class EditSeriesEntries extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { _activeLocale, errors, closeModal, currentModal, supportedLocales, defaultLocale, currentSeriesEntry, location, handleSubmit } = this.props;
+    const { _activeLocale, errors, closeModal, currentModal, supportedLocales, defaultLocale,
+      currentSeriesEntry, location, handleSubmit } = this.props;
 
     return (
         <Root style={styles.backgroundRoot}>
           <Header currentLocation={location} hideHomePageLinks />
           <SpecificHeader/>
+          <BreadCrumbs hierarchy={[
+            { title: 'List', url: '/content/series' },
+            { title: currentSeriesEntry.getIn([ 'title', defaultLocale ]), url: location } ]}/>
           {currentModal === SERIES_CREATE_LANGUAGE &&
             <CreateLanguageModal
               supportedLocales={supportedLocales}

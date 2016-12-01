@@ -83,6 +83,18 @@ export default class Availabilities extends Component {
     },
     description: {
       marginBottom: '1.25em'
+    },
+    adaptedCustomCel: {
+      fontSize: '11px',
+      paddingTop: '5px',
+      paddingBottom: '5px',
+      minHeight: '30px'
+    },
+    adaptedRows: {
+      minHeight: '3.75em'
+    },
+    customTable: {
+      border: `1px solid ${colors.lightGray2}`
     }
   };
 
@@ -94,56 +106,56 @@ export default class Availabilities extends Component {
       <Section>
         <FormSubtitle first>Availability</FormSubtitle>
         <FormDescription style={styles.description}>Where, when and how will people be able to sync on this content? (from a legal perspective)</FormDescription>
-        <Table>
+        <Table style={styles.customTable}>
           <Headers>
             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>
+            <CustomCel style={[ headerStyles.header, headerStyles.firstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>
               Country
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>
+            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>
               Start
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>
+            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>
               End
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>
+            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>
               Sync state
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]} />
+            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 1 } ]} />
           </Headers>
-          <Rows>
+          <Rows style={styles.adaptedRows}>
             {fields.map((availability, index) => {
               return (
-                <Row index={index} isFirst={index === 0} key={index} >
-                  <CustomCel style={{ flex: 2 }}>
+                <Row isFirst={index === 0} >
+                  <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]}>
                     <Field
                       component={({ input: { value: countryId } }) => <span>{countries.getIn([ countryId, 'name' ]) || '-'}</span>}
                       name={`${availability}.countryId`} />
                   </CustomCel>
-                  <CustomCel style={{ flex: 2 }}>
+                  <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]}>
                     <Field
                       component={({ input: { value: availabilityFrom } }) => <span>{availabilityFrom ? moment(availabilityFrom).format('DD/MM/YYYY HH:mm') : '-'}</span>}
                       name={`${availability}.availabilityFrom`} />
                   </CustomCel>
-                  <CustomCel style={{ flex: 2 }}>
+                  <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]}>
                     <Field
                       component={({ input: { value: availabilityTo } }) => <span>{availabilityTo ? moment(availabilityTo).format('DD/MM/YYYY HH:mm') : '-'}</span>}
                       name={`${availability}.availabilityTo`} />
                   </CustomCel>
-                  <CustomCel style={{ flex: 2 }}>
+                  <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]}>
                     <Field
                       component={({ input: { value: videoStatus } }) => <span>{videoStatus}</span>}
                       name={`${availability}.videoStatus`} />
                   </CustomCel>
-                  <CustomCel style={{ flex: 1 }}>
+                  <CustomCel style={[ styles.adaptedCustomCel, { flex: 1 } ]}>
                     <EditButton style={styles.editButton} onClick={() => this.setState({ edit: index })} />
                     <RemoveButton onClick={() => fields.remove(index)} />
                   </CustomCel>
                 </Row>
               );
             })}
-            <Row index={fields.length} key={fields.length}>
-              <CustomCel style={styles.add} onClick={this.onClickNewEntry}>
+            <Row isFirst={fields.length === 0} >
+              <CustomCel style={[ styles.add, styles.adaptedCustomCel ]} onClick={this.onClickNewEntry}>
                 <Plus color={colors.primaryBlue} />&nbsp;&nbsp;&nbsp;Add availability
               </CustomCel>
             </Row>

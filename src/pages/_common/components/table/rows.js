@@ -6,7 +6,8 @@ import Spinner from '../../../_common/spinner';
 export class Rows extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
-    isLoading: PropTypes.bool
+    isLoading: PropTypes.bool,
+    style: PropTypes.object
   }
 
   static styles = {
@@ -25,10 +26,10 @@ export class Rows extends Component {
   }
 
   render () {
-    const { children, isLoading } = this.props;
+    const { children, isLoading, style } = this.props;
     const { styles } = this.constructor;
     return (
-      <div style={{ position: 'relative', minHeight: '5.25em' }}>
+      <div style={[ { position: 'relative', minHeight: '5.25em' }, style ]}>
         {isLoading &&
           <div style={styles.rows}>
            <Spinner style={{ height: '1.875em', width: '1.875em' }}/>
