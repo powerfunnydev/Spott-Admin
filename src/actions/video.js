@@ -38,10 +38,11 @@ export function uploadFile (file, callback) {
         const now = new Date().getTime();
         if (now - lastProgressTriggerTime >= 1000) {
           lastProgressTriggerTime = now;
-          callback(currentBytes, totalBytes);
+          return callback(currentBytes, totalBytes);
         }
       });
       dispatch({ data, file, type: UPLOAD_FILE_SUCCESS });
+      return data;
     } catch (error) {
       dispatch({ error, type: UPLOAD_FILE_ERROR });
       // Throw the error to the parent, because this is a sub action.

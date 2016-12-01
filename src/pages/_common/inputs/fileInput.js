@@ -48,14 +48,19 @@ export default class FileInput extends Component {
     },
     text: {
       button: {
-        ...makeTextStyle(fontWeights.regular, '0.75em', 0, '30px'),
-        width: 80,
-        textAlign: 'center',
-        color: colors.darkGray2,
-        border: `1px solid ${colors.lightGray2}`,
-        borderTopRightRadius: 2,
-        borderBottomRightRadius: 2,
-        marginLeft: -1
+        base: {
+          ...makeTextStyle(fontWeights.regular, '0.75em', 0, '30px'),
+          width: 80,
+          textAlign: 'center',
+          color: colors.darkGray2,
+          border: `1px solid ${colors.lightGray2}`,
+          borderTopRightRadius: 2,
+          borderBottomRightRadius: 2,
+          marginLeft: -1
+        },
+        error: {
+          border: `1px solid ${colors.errorColor}`
+        }
       },
       container: {
         display: 'flex',
@@ -119,11 +124,12 @@ export default class FileInput extends Component {
               type='text'
               value={(input.value && input.value.name) || ''}
               onChange={() => null} />
-            <div style={styles.text.button}>
+            <div style={[ styles.text.button.base, meta.touched && meta.error && styles.text.button.error ]}>
               Browse...
             </div>
           </div>
         </div>
+        {meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
       </div>
     );
   }

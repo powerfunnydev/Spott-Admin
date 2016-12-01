@@ -1,36 +1,33 @@
 import React, { Component, PropTypes } from 'react';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import { bindActionCreators } from 'redux';
-import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import TextInput from '../../../_common/inputs/textInput';
 import FileInput from '../../../_common/inputs/fileInput';
-import SelectInput from '../../../_common/inputs/selectInput';
 import CheckboxInput from '../../../_common/inputs/checkbox';
 import PersistModal from '../../../_common/persistModal';
+import localized from '../../../_common/localized';
 import { FormDescription, FormSubtitle } from '../../../_common/styles';
-import timezones, { timezoneKeys } from '../../../../constants/timezones';
-import videoStatusTypes from '../../../../constants/videoStatusTypes';
-import { zeroPad } from '../../../../utils';
-import selector from './selector';
 import * as actions from './actions';
+import selector from './selector';
 
-// function validate (values, { t }) {
-//   const validationErrors = {};
-//   const { defaultLocale, title } = values.toJS();
-//   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
-//   if (!title) { validationErrors.title = t('common.errors.required'); }
-//   // Done
-//   return validationErrors;
-// }
+function validate (values, { t }) {
+  const validationErrors = {};
+  const { description, file } = values.toJS();
+  if (!description) { validationErrors.description = t('common.errors.required'); }
+  if (!file) { validationErrors.file = t('common.errors.required'); }
+  // Done
+  return validationErrors;
+}
 
+@localized
 @connect(selector, (dispatch) => ({
   createVideo: bindActionCreators(actions.createVideo, dispatch)
 }))
 @reduxForm({
-  form: 'video'
-  // TODO: validate
+  form: 'video',
+  validate
 })
 @Radium
 export default class VideoModal extends Component {
@@ -51,8 +48,8 @@ export default class VideoModal extends Component {
 
   async submit (form) {
     try {
-      await this.props.createVideo(form.toJS());
       this.onCloseClick();
+      await this.props.createVideo(form.toJS());
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }

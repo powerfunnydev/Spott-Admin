@@ -15,17 +15,17 @@ export function createVideo ({ description, externalReference, externalReference
   return async (dispatch, getState) => {
     try {
       console.warn('CREATE VIDEO', { description, externalReference, externalReferenceSource, file, processAudio, processScenes });
-      dispatch({ type: CREATE_VIDEO_START });
+      dispatch({ data: { description, externalReference, videoFilename: file.name }, externalReference, type: CREATE_VIDEO_START });
       // Upload the video file.
       const { remoteFilename } = await dispatch(uploadFile(file, (currentBytes, totalBytes) => {
         // Track upload progress.
-        dispatch({ currentBytes, totalBytes, type: CREATE_VIDEO_PROGRESS });
+        dispatch({ externalReference, data: { currentBytes, externalReference, totalBytes }, type: CREATE_VIDEO_PROGRESS });
       }));
       // Stores the requestId in the state to poll the status or retrieve the logs.
       await dispatch(processVideo({ description, externalReference, externalReferenceSource, processAudio, processScenes, remoteFilename }));
-      dispatch({ type: CREATE_VIDEO_SUCCESS });
+      dispatch({ externalReference, data: { currentBytes: file.size, externalReference, totalBytes: file.size }, type: CREATE_VIDEO_SUCCESS });
     } catch (error) {
-      dispatch({ error, type: CREATE_VIDEO_ERROR });
+      dispatch({ error, externalReference, type: CREATE_VIDEO_ERROR });
     }
   };
 }
