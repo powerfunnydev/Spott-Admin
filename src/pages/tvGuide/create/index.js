@@ -131,7 +131,6 @@ export default class CreateTvGuideEntryModal extends Component {
       searchEpisodes, searchMedia, searchSeasons, searchedBroadcastChannelIds,
       searchedEpisodeIds, searchedSeasonIds, searchedMediumIds, medium, t
     } = this.props;
-
     return (
       <PersistModal createAnother isOpen title='New TV guide entry'
         onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>

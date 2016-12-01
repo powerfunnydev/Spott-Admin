@@ -5,13 +5,12 @@ import {
   broadcastChannelsEntitiesSelector,
   createEntityByIdSelector,
   createEntityIdsByRelationSelector,
-  filterHasEpisodesRelationsSelector,
-  filterHasSeasonsRelationsSelector,
+  seasonHasEpisodesSelector,
+  seriesEntryHasSeasonsSelector,
   listMediaEntitiesSelector,
   searchStringHasMediaRelationsSelector,
   searchStringHasBroadcastChannelsRelationsSelector
 } from '../../../selectors/data';
-import { serializeFilterHasEpisodes, serializeFilterHasSeries } from '../../../reducers/utils';
 
 const formSelector = getFormValues('tvGuideEditEntry');
 
@@ -33,26 +32,9 @@ export const currentBroadcastChannelsSearchStringSelector = (state) => state.get
 export const currentEpisodesSearchStringSelector = (state) => state.getIn([ 'tvGuide', 'edit', 'currentEpisodesSearchString' ]);
 export const currentSeasonsSearchStringSelector = (state) => state.getIn([ 'tvGuide', 'edit', 'currentSeasonsSearchString' ]);
 export const currentMediaSearchStringSelector = (state) => state.getIn([ 'tvGuide', 'edit', 'currentMediaSearchString' ]);
-// export const currentContentProducersSearchStringSelector = (state) => state.getIn([ 'content', 'editEpisodes', 'currentContentProducersSearchString' ]);
-// export const currentSeriesFilterHasSeasonsStringSelector = editSelector(
-//   currentseriesEntryIdSelector,
-//   currentSeasonsSearchStringSelector,
-//   (seriesEntryId, searchString) => `searchString=${encodeURIComponent(searchString || '')}&seriesEntryId=${seriesEntryId || ''}`
 
-// );
-
-const currentEpisodesFilterSelector = createSelector(
-  currentEpisodesSearchStringSelector,
-  currentSeasonIdSelector,
-  (searchString, seasonId) => serializeFilterHasEpisodes({ searchString, seasonId })
-);
-const currentSeasonsFilterSelector = createSelector(
-  currentSeasonsSearchStringSelector,
-  currentMediumIdSelector,
-  (searchString, seriesEntryId) => serializeFilterHasSeries({ searchString, seriesEntryId })
-);
-export const searchedEpisodeIdsSelector = createEntityIdsByRelationSelector(filterHasEpisodesRelationsSelector, currentEpisodesFilterSelector);
-export const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(filterHasSeasonsRelationsSelector, currentSeasonsFilterSelector);
+export const searchedEpisodeIdsSelector = createEntityIdsByRelationSelector(seasonHasEpisodesSelector, currentSeasonIdSelector);
+export const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(seriesEntryHasSeasonsSelector, currentMediumIdSelector);
 export const searchedMediumIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediaRelationsSelector, currentMediaSearchStringSelector);
 export const searchedBroadcastChannelIdsSelector = createEntityIdsByRelationSelector(searchStringHasBroadcastChannelsRelationsSelector, currentBroadcastChannelsSearchStringSelector);
 
