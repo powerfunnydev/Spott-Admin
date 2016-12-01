@@ -23,10 +23,10 @@ export default class FileInput extends Component {
   }
 
   onChange (e) {
-    this.setState({
-      value: e.target.value.split(/(\\|\/)/g).pop()
-    });
-    this.props.input.onChange(e);
+    e.preventDefault();
+    // Convert files to an array.
+    const [ file = null ] = [ ...e.target.files ];
+    this.props.input.onChange(file);
   }
 
   static styles = {
@@ -34,10 +34,12 @@ export default class FileInput extends Component {
       position: 'relative'
     },
     file: {
+      cursor: 'pointer',
+      left: 0,
+      lineHeight: '32px', // + border
+      opacity: 0, // Hide the actual file input.
       position: 'absolute',
       top: 0,
-      left: 0,
-      opacity: 0,
       width: '100%',
       zIndex: 1
     },
@@ -45,17 +47,31 @@ export default class FileInput extends Component {
       paddingTop: '1.25em'
     },
     text: {
-      base: {
+      button: {
+        ...makeTextStyle(fontWeights.regular, '0.75em', 0, '30px'),
+        width: 80,
+        textAlign: 'center',
+        color: colors.darkGray2,
         border: `1px solid ${colors.lightGray2}`,
-        borderRadius: 2,
+        borderTopRightRadius: 2,
+        borderBottomRightRadius: 2,
+        marginLeft: -1
+      },
+      container: {
+        display: 'flex',
+        position: 'relative'
+      },
+      input: {
+        border: `1px solid ${colors.lightGray2}`,
+        borderBottomLeftRadius: 2,
+        borderTopLeftRadius: 2,
         cursor: 'pointer',
         fontSize: '1em',
-        width: '100%',
-        paddingTop: 0,
+        lineHeight: '30px',
         paddingBottom: 0,
-        position: 'relative',
-        zIndex: -1,
-        lineHeight: '30px'
+        paddingTop: 0,
+        textOverflow: 'ellipsis',
+        width: '100%'
       },
       error: {
         color: colors.errorColor,
@@ -77,33 +93,36 @@ export default class FileInput extends Component {
   render () {
     const styles = this.constructor.styles;
     const { accept, disabled, input, first, label, meta, placeholder, required, style } = this.props;
-
     return (
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
         <div style={styles.container}>
-        {/* Actual file input. */}
-        <input
-          {...input}
-          accept={accept}
-          style={styles.file}
-          type='file'
-          onChange={this.onChange} />
+          {/* Actual file input. */}
+          <input
+            accept={accept}
+            style={styles.file}
+            type='file'
+            onChange={this.onChange} />
 
-        {/* Emulated file input. */}
-        <input
-          placeholder={placeholder}
-          style={[
-            styles.text.base,
-            disabled && styles.text.disabled,
-            meta.touched && meta.error && styles.text.error,
-            styles.text.text,
-            style
-          ]}
-          tabIndex={-1}
-          type='text'
-          value={this.state.value}
-          onChange={() => null} />
+          {/* Emulated file input. */}
+          <div style={styles.text.container}>
+            <input
+              placeholder={placeholder}
+              style={[
+                styles.text.input,
+                disabled && styles.text.disabled,
+                meta.touched && meta.error && styles.text.error,
+                styles.text.text,
+                style
+              ]}
+              tabIndex={-1}
+              type='text'
+              value={(input.value && input.value.name) || ''}
+              onChange={() => null} />
+            <div style={styles.text.button}>
+              Browse...
+            </div>
+          </div>
         </div>
       </div>
     );

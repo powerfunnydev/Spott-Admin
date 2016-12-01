@@ -1,11 +1,12 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
-// import ImmutablePropTypes from 'react-immutable-proptypes';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 // import { ERROR, FETCHING, LOADED, UPDATING } from '../../../data/statusTypes';
 // import { Section } from '../../../_common/components';
 import { buttonStyles, colors, fontWeights, makeTextStyle } from '../../../_common/styles';
+import { COMMERCIAL, EPISODE, MOVIE } from '../../../../constants/mediaTypes';
 import EntityDetails from '../../../_common/entityDetails';
 import { confirmation } from '../../../_common/askConfirmation';
 import PersistVideoModal from '../persist';
@@ -13,136 +14,9 @@ import * as actions from './actions';
 import selector from './selector';
 
 const cross = require('../../../../assets/images/cross/cross-red.svg');
-//
-// @Radium
-// class Video extends Component {
-//
-//   static propTypes = {
-//     localeNames: ImmutablePropTypes.map.isRequired,
-//     taggerUrl: PropTypes.string,
-//     video: ImmutablePropTypes.map, // Not required, video starting may not have started yet...
-//     onUnlinkVideo: PropTypes.func.isRequired
-//   };
-//
-//   constructor (props) {
-//     super(props);
-//     this.onUnlinkVideoClick = ::this.onUnlinkVideoClick;
-//   }
-//
-//   formatTime (seconds) {
-//     const d = new Date(seconds * 1000);
-//     return `${d.getHours() - 1}h ${d.getMinutes()}m ${d.getSeconds()}s`;
-//   }
-//
-//   onUnlinkVideoClick (e) {
-//     e.preventDefault();
-//     this.props.onUnlinkVideo();
-//   }
-//
-//   static styles = {
-//     container: {
-//       border: `1px solid ${colors.lightGray}`
-//     },
-//     heading: {
-//       backgroundColor: colors.lightGray,
-//       display: 'flex',
-//       fontFamily: 'Rubik-Medium',
-//       justifyContent: 'space-between',
-//       padding: defaultSpacing,
-//       width: '100%'
-//     },
-//     body: {
-//       color: colors.darkerGray,
-//       padding: defaultSpacing
-//     },
-//     section: {
-//       paddingBottom: defaultSpacing / 3
-//     },
-//     property: {
-//       container: {
-//         display: 'flex',
-//         paddingBottom: defaultSpacing / 3
-//       },
-//       name: {
-//         flex: '1 1 20%'
-//       },
-//       value: {
-//         flex: '1 1 80%',
-//         overflow: 'hidden',
-//         textOverflow: 'ellipsis'
-//       }
-//     },
-//     filename: {
-//       fontSize: 12
-//     }
-//   };
-//
-//   render () {
-//     const { styles } = this.constructor;
-//     const { localeNames, taggerUrl, video } = this.props;
-//     if (!video || video.get('_status') === FETCHING) {
-//       return <div>Loading video...</div>;
-//     } else if (video.get('_status') === ERROR) {
-//       return <div>Loading video failed.</div>;
-//     } else if (video.get('_status') === LOADED || video.get('_status') === UPDATING) {
-//       return (
-//         <div style={styles.container}>
-//           <div style={styles.heading}>
-//             {video.get('description') || 'No description'}
-//             <div>
-//               <button
-//                 style={[ buttonStyles.base, buttonStyles.extraSmall, buttonStyles.gray ]}
-//                 type='button'
-//                 onClick={this.onUnlinkVideoClick}>
-//                 Unlink video
-//               </button>
-//               {taggerUrl &&
-//                 <a
-//                   href={taggerUrl}
-//                   key='launchEditor'
-//                   style={[ buttonStyles.base, buttonStyles.extraSmall, buttonStyles.gray ]}
-//                   target='_blank'
-//                   title='Go to tagger'>
-//                   Launch editor
-//                 </a>}
-//               </div>
-//           </div>
-//           <div style={styles.body}>
-//             <h3 style={styles.section}>General</h3>
-//             <div style={styles.property.container}>
-//               <div style={styles.property.name}>Video source</div>
-//               <div style={styles.property.value}>
-//                 <div>{video.get('videoFilename') ? 'Video file' : 'No video file'}</div>
-//                 {video.get('videoFilename') && <div style={styles.filename}>{video.get('videoFilename')}</div>}
-//               </div>
-//             </div>
-//             <div style={styles.property.container}>
-//               <div style={styles.property.name}>Duration</div>
-//               <div style={styles.property.value}>{this.formatTime(video.get('totalDurationInSeconds'))}</div>
-//             </div>
-//             <h3 style={styles.section}>Audio</h3>
-//             {video.get('audioFingerprints').size === 0 &&
-//               <div style={styles.property.container}>
-//                 No audio file
-//               </div>}
-//             {video.get('audioFingerprints').map((fp) => (
-//               <div key={`${fp.get('type')}_${fp.get('fingerprint')}`} style={styles.property.container}>
-//                 <div style={styles.property.name}>{fp.get('language') ? localeNames.get(fp.get('language')) || fp.get('language') : 'Global'}</div>
-//                 <div style={styles.property.value}>
-//                   {fp.get('fingerprint')} (<span>{fp.get('type')}</span>)
-//                   <div style={styles.filename}>{fp.get('audioFilename')}</div>
-//                 </div>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-//       );
-//     }
-//   }
-//
-// }
 
 @connect(selector, (dispatch) => ({
+  createVideo: bindActionCreators(actions.createVideo, dispatch),
   loadVideo: bindActionCreators(actions.loadVideo, dispatch)
 }))
 @Radium
@@ -151,7 +25,8 @@ export default class RelatedVideo extends Component {
   static propTypes = {
     input: PropTypes.object.isRequired,
     // editStatusCurrentVideo: ImmutablePropTypes.map,
-    loadVideo: PropTypes.func.isRequired
+    loadVideo: PropTypes.func.isRequired,
+    medium: ImmutablePropTypes.map.isRequired
     // localeNames: ImmutablePropTypes.map.isRequired,
     // partialTaggerUrl: PropTypes.string,
     // relatedVideoIdField: PropTypes.object.isRequired,
@@ -186,8 +61,8 @@ export default class RelatedVideo extends Component {
     }
   }
 
-  persistVideo () {
-
+  persistVideo (values) {
+    console.warn('VALUES', values);
   }
 
   static styles = {
@@ -232,7 +107,7 @@ export default class RelatedVideo extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { input: { value: videoId }, video } = this.props;
+    const { input: { value: videoId }, medium, video } = this.props;
     console.warn('VIDEO', videoId, video && video.toJS());
     if (videoId) {
       if (video.get('_status') === 'loaded') {
@@ -254,6 +129,10 @@ export default class RelatedVideo extends Component {
       return <div>Loading...</div>;
     }
 
+    // A description could be 'Suits S02E01 Dogfight'.
+    // TODO: support movies etc.
+    const description = medium.getIn([ 'title', medium.get('defaultLocale') ]);
+
     return (
       <div style={styles.linkContainer}>
         <h2 style={styles.title}>Create a new interactive video</h2>
@@ -262,46 +141,17 @@ export default class RelatedVideo extends Component {
         </button>
         {this.state.create &&
           <PersistVideoModal
+            initialValues={{
+              description,
+              externalReference: medium.get('externalReference'),
+              externalReferenceSource: medium.get('externalReferenceSource'),
+              processAudio: true,
+              processScenes: true
+            }}
             onClose={() => this.setState({ create: false })}
             onSubmit={this.persistVideo} />}
       </div>
     );
-
-    // (
-      // <Section {...this.props}>
-      //    {!videoId && (
-      //     <div>
-      //       No linked project.
-      //       {/* {videoUploadUrl &&
-      //         <a
-      //           href={videoUploadUrl}
-      //           key='uploadVideo'
-      //           style={[ buttonStyles.base, buttonStyles.extraSmall, buttonStyles.gray ]}
-      //           target='_blank'
-      //           title='Upload a video'>
-      //           Upload video
-      //         </a>} */}
-      //     </div>
-      //   )}
-      //   {videoId && (
-      //     <div>
-      //       {/* <Video
-      //         key={videoId}
-      //         localeNames={localeNames}
-      //         taggerUrl={partialTaggerUrl && `${partialTaggerUrl}/video/${videoId}`}
-      //         video={videosById.get(videoId)}
-      //         onUnlinkVideo={this.onUnlinkVideo} /> */}
-      //
-      //         {currentEpisode.get('_status') === 'loaded' && currentEpisode &&
-      //           <EntityDetails
-      //             imageUrl={imageUrl}
-      //             title={currentEpisode.getIn([ 'title', defaultLocale ])}
-      //             onEdit={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/edit/${currentEpisode.get('id')}`); }}
-      //             onRemove={() => console.warn('delete')} />}
-      //     </div>
-      //   )}
-      // </Section>
-    // );
   }
 
 }

@@ -52,7 +52,7 @@ function validate (values, { t }) {
   validate
 })
 @Radium
-export default class EditEpisodes extends Component {
+export default class EditEpisode extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
@@ -335,6 +335,7 @@ export default class EditEpisodes extends Component {
                 <FormSubtitle first>Interactive video</FormSubtitle>
                 <Field
                   component={RelatedVideo}
+                  medium={currentEpisode}
                   name='videoId' />
               </Section>
             </Tab>

@@ -19,7 +19,7 @@ import selector from './selector';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Dropzone from '../../_common/dropzone';
 import { Tabs, Tab } from '../../_common/components/formTabs';
-import { Checkbox } from '../../_common/inputs/checkbox';
+import Checkbox from '../../_common/inputs/checkbox';
 import { INACTIVE, disabledReasons, userStatus as userStates } from '../../../constants/userRoles';
 import { FETCHING } from '../../../constants/statusTypes';
 

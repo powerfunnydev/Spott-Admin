@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { Checkbox } from '../../inputs/checkbox';
+import Checkbox from '../../inputs/checkbox';
 
 @Radium
 export class CheckBoxCel extends Component {

@@ -67,7 +67,7 @@ export function transformAvailability ({ country, endTimeStamp, startTimeStamp, 
  *  Complete version of a medium. Locales includes.
  */
 export function transformMedium ({ availabilities, broadcasters, contentProducers, number,
-  auditInfo, type, defaultLocale, externalReference, serie, season, uuid: id, publishStatus,
+  auditInfo, type, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, serie, season, uuid: id, publishStatus,
   defaultTitle, localeData, video }) {
   const seriesEntry = {
     availabilities: availabilities && availabilities.map(transformAvailability),
@@ -85,6 +85,7 @@ export function transformMedium ({ availabilities, broadcasters, contentProducer
     profileImage: {},
     defaultLocale,
     externalReference,
+    externalReferenceSource,
     id,
     publishStatus,
     type,

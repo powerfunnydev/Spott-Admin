@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { makeTextStyle, fontWeights, colors, errorTextStyle } from '../styles';
 import Label from './_label';
-import { Checkbox } from './checkbox';
+import Checkbox from './checkbox';
 import { Field } from 'redux-form/immutable';
 
 @Radium
