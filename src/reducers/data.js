@@ -10,6 +10,7 @@ import * as seasonActions from '../actions/season';
 import * as seriesActions from '../actions/series';
 import * as tvGuideActions from '../actions/tvGuide';
 import * as userActions from '../actions/user';
+import * as videoActions from '../actions/video';
 
 export default (state = fromJS({
   entities: {
@@ -22,7 +23,8 @@ export default (state = fromJS({
     listMedia: {}, // listMedia is the light version of media, without locales
     media: {}, // completed version of media, with locales
     tvGuideEntries: {},
-    users: {}
+    users: {},
+    videos: {}
   },
   relations: {
     ages: {},
@@ -296,6 +298,16 @@ export default (state = fromJS({
       return searchSuccess(state, 'users', 'searchStringHasUsers', action.searchString, action.data);
     case userActions.USER_SEARCH_ERROR:
       return searchError(state, 'searchStringHasUsers', action.searchString, action.error);
+
+    // Videos
+    // //////
+
+    case videoActions.VIDEO_FETCH_START:
+      return fetchStart(state, [ 'entities', 'videos', action.videoId ]);
+    case videoActions.VIDEO_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'videos', action.videoId ], action.data);
+    case videoActions.VIDEO_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'videos', action.videoId ], action.error);
 
     default:
       return state;

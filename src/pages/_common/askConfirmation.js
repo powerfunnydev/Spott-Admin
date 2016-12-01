@@ -4,7 +4,8 @@ export function confirmation (question = 'Are you sure you want to trigger this 
   return new Promise((resolve, reject) => {
     const result = window.confirm(question);
     if (result) {
-      resolve(result);
+      return resolve(result);
     }
+    reject();
   });
 }

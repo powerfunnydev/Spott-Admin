@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { makeTextStyle, fontWeights, colors, errorTextStyle } from '../styles';
 import Label from './_label';
-import { Checkbox } from './checkbox';
+import Checkbox from './checkbox';
 import { Field } from 'redux-form/immutable';
 
 @Radium
@@ -72,11 +72,11 @@ export default class TextInput extends Component {
       paddingTop: '8px',
       height: '60px'
     },
-    checkboxText: {
-      ...makeTextStyle(fontWeights.regular, '11px'),
-      color: colors.darkGray2,
-      paddingLeft: '8px'
-    },
+    // checkboxText: {
+    //   ...makeTextStyle(fontWeights.regular, '11px'),
+    //   color: colors.darkGray2,
+    //   paddingLeft: '8px'
+    // },
     checkboxRow: {
       display: 'flex',
       flexDirection: 'row',
@@ -84,12 +84,12 @@ export default class TextInput extends Component {
     },
     checkBox: {
       display: 'inline-block'
-    },
-    checkboxWithText: {
-      display: 'flex',
-      flexDirection: 'row',
-      paddingRight: '10px'
     }
+    // checkboxWithText: {
+    //   display: 'flex',
+    //   flexDirection: 'row',
+    //   paddingRight: '10px'
+    // }
   };
 
   render () {
@@ -99,15 +99,13 @@ export default class TextInput extends Component {
     return (
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
-        { (_activeLocale) && <div style={styles.checkboxRow}>
-          { _activeLocale && <div style={styles.checkboxWithText}>
+        {(_activeLocale) && <div style={styles.checkboxRow}>
+          { _activeLocale &&
             <Field
               component={Checkbox}
-              name={`hasTitle.${_activeLocale}`}/>
-            <div style={styles.checkboxText}>
-              Custom title
-            </div>
-          </div>}
+              first
+              label='Custom title'
+              name={`hasTitle.${_activeLocale}`}/>}
         </div>}
         {type !== 'multiline' &&
           <input
