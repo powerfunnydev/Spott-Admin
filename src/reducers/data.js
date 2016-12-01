@@ -166,11 +166,11 @@ export default (state = fromJS({
       return fetchError(state, [ 'entities', 'media', action.seasonId ], action.error);
 
     case seasonActions.EPISODES_SEARCH_START:
-      return searchStart(state, 'filterHasEpisodes', serializeFilterHasEpisodes(action));
+      return searchStart(state, 'seasonHasEpisodes', action.seasonId);
     case seasonActions.EPISODES_SEARCH_SUCCESS:
-      return searchSuccess(state, 'listMedia', 'filterHasEpisodes', serializeFilterHasEpisodes(action), action.data);
+      return searchSuccess(state, 'listMedia', 'seasonHasEpisodes', action.seasonId, action.data);
     case seasonActions.EPISODES_SEARCH_ERROR:
-      return searchError(state, 'filterHasEpisodes', serializeFilterHasEpisodes(action), action.error);
+      return searchError(state, 'seasonHasEpisodes', action.seasonId, action.error);
 
     case seasonActions.SEASON_EPISODES_FETCH_START:
       return searchStart(state, 'seasonHasEpisodes', action.seasonId);
