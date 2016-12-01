@@ -7,23 +7,25 @@ import DateInput from '../../../_common/inputs/dateInput';
 import TimeInput from '../../../_common/inputs/timeInput';
 import SelectInput from '../../../_common/inputs/selectInput';
 import PersistModal from '../../../_common/persistModal';
+import localized from '../../../_common/localized';
 import timezones, { timezoneKeys } from '../../../../constants/timezones';
 import videoStatusTypes from '../../../../constants/videoStatusTypes';
 import selector from './selector';
 
-// function validate (values, { t }) {
-//   const validationErrors = {};
-//   const { defaultLocale, title } = values.toJS();
-//   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
-//   if (!title) { validationErrors.title = t('common.errors.required'); }
-//   // Done
-//   return validationErrors;
-// }
+function validate (values, { t }) {
+  const validationErrors = {};
+  const { countryId, videoStatus } = values.toJS();
+  if (!countryId) { validationErrors.countryId = t('common.errors.required'); }
+  if (!videoStatus) { validationErrors.videoStatus = t('common.errors.required'); }
+  // Done
+  return validationErrors;
+}
 
+@localized
 @connect(selector)
 @reduxForm({
-  form: 'availability'
-  // TODO: validate
+  form: 'availability',
+  validate
 })
 @Radium
 export default class AvailabilityModal extends Component {
@@ -83,8 +85,7 @@ export default class AvailabilityModal extends Component {
           label='Timezone'
           name='timezone'
           options={timezoneKeys}
-          placeholder='Country'
-          required />
+          placeholder='Timezone' />
         <div style={styles.col2}>
           <Field
             component={DateInput}
