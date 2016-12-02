@@ -4,18 +4,19 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
 import SelectInput from '../../../../_common/inputs/selectInput';
 import PersistModal from '../../../../_common/persistModal';
-// function validate (values, { t }) {
-//   const validationErrors = {};
-//   const { defaultLocale, title } = values.toJS();
-//   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
-//   if (!title) { validationErrors.title = t('common.errors.required'); }
-//   // Done
-//   return validationErrors;
-// }
+import localized from '../../../../_common/localized';
 
+function validate (values, { t }) {
+  const validationErrors = {};
+  const { characterId } = values.toJS();
+  if (!characterId) { validationErrors.characterId = t('common.errors.required'); }
+  // Done
+  return validationErrors;
+}
+@localized
 @reduxForm({
-  form: 'character'
-  // TODO: validate
+  form: 'character',
+  validate
 })
 @Radium
 export default class CharacterModal extends Component {
