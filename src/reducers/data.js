@@ -53,7 +53,8 @@ export default (state = fromJS({
 
     episodeHasTvGuideEntries: {},
     seriesEntryHasSeasons: {},
-    seasonHasEpisodes: {}
+    seasonHasEpisodes: {},
+    mediumHasCharacters: {}
   }
 }), action) => {
   switch (action.type) {
@@ -129,6 +130,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'characters', 'searchStringHasCharacters', action.searchString, action.data);
     case charactersActions.CHARACTER_SEARCH_ERROR:
       return searchError(state, 'searchStringHasCharacters', action.searchString, action.error);
+
+    case charactersActions.MEDIUM_CHARACTER_SEARCH_START:
+      return searchStart(state, 'mediumHasCharacters', action.mediumId);
+    case charactersActions.MEDIUM_CHARACTER_SEARCH_SUCCESS:
+      return searchSuccess(state, 'characters', 'mediumHasCharacters', action.mediumId, action.data);
+    case charactersActions.MEDIUM_CHARACTER_SEARCH_ERROR:
+      return searchError(state, 'mediumHasCharacters', action.mediumId, action.error);
 
     // Content producers
     // /////////////////
