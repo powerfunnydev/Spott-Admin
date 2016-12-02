@@ -126,10 +126,11 @@ export default class SeriesEntries extends Component {
             <UtilsBar
               display={display}
               isLoading={seriesEntries.get('_status') !== 'loaded'}
-              menu= {<div style={dropdownStyles.floatOptions}>
+              menu= {<div style={[ dropdownStyles.floatOptions, dropdownStyles.extraWide ]}>
                 <div key='menuElementSeason' style={[ dropdownStyles.floatOption ]} onClick={this.onCreateSeason}>
                   Add Season
                 </div>
+                <div style={dropdownStyles.line}/>
                 <div key='menuElementEpisode' style={[ dropdownStyles.floatOption ]} onClick={this.onCreateEpisode}>
                   Add Episode
                 </div>
@@ -178,7 +179,7 @@ export default class SeriesEntries extends Component {
                           <DropdownCel>
                             <Dropdown
                               elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/series/edit/${seriesEntry.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}>Remove</div>
+                              <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>

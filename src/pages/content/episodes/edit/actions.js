@@ -4,8 +4,12 @@ import { persistEpisode, fetchEpisode as dataFetchEpisode,
 import { searchSeasons as dataSearchSeasons, searchSeriesEntries as dataSearchSeriesEntries } from '../../../../actions/series';
 import { searchBroadcasters as dataSearchBroadcasters } from '../../../../actions/broadcaster';
 import { searchContentProducers as dataSearchContentProducers } from '../../../../actions/contentProducer';
+import { searchCharacters as dataSearchCharacters } from '../../../../actions/character';
 
 export { openModal, closeModal } from '../../../../actions/global';
+
+export const CHARACTERS_SEARCH_START = 'EPISODE_EDIT/CHARACTERS_SEARCH_START';
+export const CHARACTERS_SEARCH_ERROR = 'EPISODE_EDIT/CHARACTERS_SEARCH_ERROR';
 
 export const CONTENT_PRODUCERS_SEARCH_START = 'EPISODE_EDIT/CONTENT_PRODUCERS_SEARCH_START';
 export const CONTENT_PRODUCERS_SEARCH_ERROR = 'EPISODE_EDIT/CONTENT_PRODUCERS_SEARCH_ERROR';
@@ -79,6 +83,17 @@ export function searchBroadcasters (searchString) {
       return await dispatch(dataSearchBroadcasters({ searchString }));
     } catch (error) {
       dispatch({ error, type: BROADCASTERS_SEARCH_ERROR });
+    }
+  };
+}
+
+export function searchCharacters (searchString) {
+  return async (dispatch, getState) => {
+    try {
+      await dispatch({ type: CHARACTERS_SEARCH_START, searchString });
+      return await dispatch(dataSearchCharacters({ searchString }));
+    } catch (error) {
+      dispatch({ error, type: CHARACTERS_SEARCH_ERROR });
     }
   };
 }

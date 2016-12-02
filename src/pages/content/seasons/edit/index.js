@@ -21,6 +21,7 @@ import selector from './selector';
 import SpecificHeader from '../../header';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
+import BreadCrumbs from '../../../_common/breadCrumbs';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -205,6 +206,10 @@ export default class EditEpisodes extends Component {
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
+        <BreadCrumbs hierarchy={[
+          { title: 'List', url: '/content/series' },
+          { title: 'Series', url: `content/series/read/${this.props.params.seriesEntryId}` },
+          { title: currentSeason.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         {currentModal === SEASON_CREATE_LANGUAGE &&
           <CreateLanguageModal
             supportedLocales={supportedLocales}

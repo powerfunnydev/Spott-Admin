@@ -59,6 +59,8 @@ export default class EditTvGuideEntry extends Component {
   static propTypes = {
     broadcastChannelsById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
+    // used for renderBreadCrumbs
+    currentTvGuideEntry: ImmutablePropTypes.map.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
@@ -68,6 +70,9 @@ export default class EditTvGuideEntry extends Component {
     mediaById: ImmutablePropTypes.map.isRequired,
     medium: ImmutablePropTypes.map.isRequired,
     params: PropTypes.object.isRequired,
+    route: PropTypes.shape({
+      renderBreadCrumbs: PropTypes.func.isRequired
+    }).isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcastChannels: PropTypes.func.isRequired,
     searchEpisodes: PropTypes.func.isRequired,
@@ -89,8 +94,8 @@ export default class EditTvGuideEntry extends Component {
   }
 
   async componentWillMount () {
-    if (this.props.params.id) {
-      const editObj = await this.props.load(this.props.params.id);
+    if (this.props.params.tvGuideEntryId) {
+      const editObj = await this.props.load(this.props.params.tvGuideEntryId);
       const initObj = {};
       // in case of a serie
       if (editObj.season) {
@@ -117,7 +122,7 @@ export default class EditTvGuideEntry extends Component {
 
   async submit (form) {
     try {
-      await this.props.submit({ id: this.props.params.id, ...form.toJS() });
+      await this.props.submit({ id: this.props.params.tvGuideEntryId, ...form.toJS() });
       this.redirect();
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
@@ -144,6 +149,10 @@ export default class EditTvGuideEntry extends Component {
       borderRight: `1px solid ${colors.lightGray3}`,
       backgroundColor: colors.veryLightGray,
       width: '100%'
+    },
+    background: {
+      backgroundColor: colors.lightGray4,
+      paddingBottom: '50px'
     }
   };
 
@@ -152,11 +161,12 @@ export default class EditTvGuideEntry extends Component {
     const {
       location, broadcastChannelsById, handleSubmit, mediaById, searchBroadcastChannels,
       searchEpisodes, searchMedia, searchSeasons, searchedBroadcastChannelIds,
-      searchedEpisodeIds, searchedSeasonIds, searchedMediumIds, medium, t
+      searchedEpisodeIds, searchedSeasonIds, searchedMediumIds, medium, t, route: { renderBreadCrumbs }
     } = this.props;
     return (
-      <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
+      <Root style={styles.background}>
         <Header currentLocation={location} hideHomePageLinks />
+        {renderBreadCrumbs(this.props)}
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
         <Tabs>
           <Tab title='Details'>

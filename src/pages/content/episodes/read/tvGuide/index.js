@@ -2,24 +2,24 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { routerPushWithReturnTo } from '../../../actions/global';
+import { routerPushWithReturnTo } from '../../../../../actions/global';
 import moment from 'moment';
-import Header from '../../app/header';
-import { Root, Container } from '../../_common/styles';
-import { DropdownCel, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table/index';
-import Line from '../../_common/components/line';
+import { DropdownCel, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../../_common/components/table/index';
+import Line from '../../../../_common/components/line';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
-import Dropdown, { styles as dropdownStyles } from '../../_common/components/actionDropdown';
-import UtilsBar from '../../_common/components/table/utilsBar';
-import { confirmation } from '../../_common/askConfirmation';
+import Dropdown, { styles as dropdownStyles } from '../../../../_common/components/actionDropdown';
+import UtilsBar from '../../../../_common/components/table/utilsBar';
+import { confirmation } from '../../../../_common/askConfirmation';
+import { slowdown } from '../../../../../utils';
 
 /* eslint-disable react/no-set-state*/
 
 const numberOfRows = 25;
 
-@tableDecorator()
+export const prefix = 'tvGuide';
+@tableDecorator(prefix)
 @connect(selector, (dispatch) => ({
   deleteTvGuideEntries: bindActionCreators(actions.deleteTvGuideEntries, dispatch),
   deleteTvGuideEntry: bindActionCreators(actions.deleteTvGuideEntry, dispatch),
@@ -43,6 +43,7 @@ export default class TvGuideList extends Component {
       query: PropTypes.object.isRequired
     }),
     pageCount: PropTypes.number,
+    params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     selectAllCheckboxes: PropTypes.func.isRequired,
     selectCheckbox: PropTypes.func.isRequired,
@@ -57,16 +58,19 @@ export default class TvGuideList extends Component {
     super(props);
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
     this.onClickNewEntry = ::this.onClickNewEntry;
+    this.slowSearch = slowdown(props.load, 300);
   }
 
   async componentWillMount () {
-    await this.props.load(this.props.location.query);
+    await this.props.load(this.props.location.query, this.props.params.episodeId);
   }
 
   async componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
-    await isQueryChanged(query, nextQuery) && this.props.load(nextProps.location.query);
+    if (isQueryChanged(query, nextQuery, prefix)) {
+      await this.slowSearch(nextProps.location.query, this.props.params.episodeId);
+    }
   }
 
   getMediumTitle (tvGuideEntry) {
@@ -105,13 +109,14 @@ export default class TvGuideList extends Component {
     const result = await confirmation();
     if (result) {
       await this.props.deleteTvGuideEntry(tvGuideEntryId);
-      await this.props.load(this.props.location.query);
+      await this.props.load(this.props.location.query, this.props.params.episodeId);
     }
   }
 
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('tv-guide/create');
+    const { episodeId, seasonId, seriesEntryId } = this.props.params;
+    this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/seasons/read/${seasonId}/episodes/read/${episodeId}/create/tv-guide`);
   }
 
   async onClickDeleteSelected (e) {
@@ -123,32 +128,34 @@ export default class TvGuideList extends Component {
       }
     });
     await this.props.deleteTvGuideEntries(tvGuideEntryIds);
-    await this.props.load(this.props.location.query);
+    await this.props.load(this.props.location.query, this.props.params.episodeId);
   }
 
   render () {
-    const { children, isSelected, location, location: { query: { page, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, tvGuideEntries } = this.props;
+    const { isSelected, pageCount, selectAllCheckboxes,
+      selectCheckbox, totalResultCount, tvGuideEntries, location: { query: { tvGuidePage,
+        tvGuideSortField, tvGuideSortDirection } }, params: { seriesEntryId, seasonId, episodeId } } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
-      <Root>
-        <Header currentLocation={location} hideHomePageLinks />
+      <div style={generalStyles.border}>
         <div style={generalStyles.backgroundBar}>
-          <Container>
+          <div style={generalStyles.paddingLeftAndRight}>
             <UtilsBar
+              isLoading={tvGuideEntries.get('_status') !== 'loaded'}
+              numberSelected={numberSelected}
               textCreateButton='New Tv Guide Entry'
               onClickNewEntry={this.onClickNewEntry}/>
-          </Container>
+          </div>
         </div>
         <Line/>
-        <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
-          <Container style={generalStyles.paddingTable}>
+        <div style={[ generalStyles.backgroundTable, generalStyles.fillPage, generalStyles.whiteBackground ]}>
+          <div style={[ generalStyles.paddingTable, generalStyles.paddingLeftAndRight ]}>
             <TotalEntries
               entityType='TV Guide'
               numberSelected={numberSelected}
               totalResultCount={totalResultCount}
               onDeleteSelected={this.onClickDeleteSelected}/>
-            <Table>
+            <Table style={generalStyles.lightGrayBorder}>
               <Headers>
                 {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                 <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
@@ -156,7 +163,7 @@ export default class TvGuideList extends Component {
                 <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Title</CustomCel>
                 <CustomCel
                   sortColumn={this.props.onSortField.bind(this, 'START')}
-                  sortDirection={sortField === 'START' ? sortDirections[sortDirection] : NONE}
+                  sortDirection={tvGuideSortField === 'START' ? sortDirections[tvGuideSortDirection] : NONE}
                   style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>
                   Start
                 </CustomCel>
@@ -164,7 +171,7 @@ export default class TvGuideList extends Component {
                 <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 0.8 } ]}>Updated by</CustomCel>
                 <CustomCel
                   sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')}
-                  sortDirection={sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE}
+                  sortDirection={tvGuideSortField === 'LAST_MODIFIED' ? sortDirections[tvGuideSortDirection] : NONE}
                   style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>
                   Last updated on
                 </CustomCel>
@@ -184,7 +191,7 @@ export default class TvGuideList extends Component {
                       <CustomCel getValue={this.getLastUpdatedOn} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
                       <DropdownCel>
                         <Dropdown
-                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`tv-guide/edit/${tvGuideEntry.get('id')}`); }}>Edit</div>}>
+                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/seasons/read/${seasonId}/episodes/read/${episodeId}/tv-guide/edit/${tvGuideEntry.get('id')}`); }}>Edit</div>}>
                           <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteTvGuideEntry(tvGuideEntry.get('id')); }}>Remove</div>
                         </Dropdown>
                       </DropdownCel>
@@ -193,11 +200,14 @@ export default class TvGuideList extends Component {
                 })}
               </Rows>
             </Table>
-            <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
-          </Container>
+            <Pagination
+              currentPage={(tvGuidePage && (parseInt(tvGuidePage, 10) + 1) || 1)}
+              pageCount={pageCount}
+              onLeftClick={() => { this.props.onChangePage(parseInt(tvGuidePage, 10), false); }}
+              onRightClick={() => { this.props.onChangePage(parseInt(tvGuidePage, 10), true); }}/>
         </div>
-        {children}
-      </Root>
+      </div>
+    </div>
 
     );
   }

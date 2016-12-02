@@ -26,13 +26,14 @@ export async function persistTvGuideEntry (baseUrl, authenticationToken, locale,
   // Use the time and use it in the date.
   const start = startDate.hours(startTime.hours()).minutes(startTime.minutes());
   const end = endDate.hours(endTime.hours()).minutes(endTime.minutes());
-  await post(authenticationToken, locale, `${baseUrl}/v004/media/tvGuideEntries`, {
+  const result = await post(authenticationToken, locale, `${baseUrl}/v004/media/tvGuideEntries`, {
     uuid: id,
     channel: broadcastChannelId,
     end: end.format(),
     start: start.format(),
     medium: { uuid: episodeId || mediumId }
   });
+  return transformSingleTvGuideEntry(result.body);
 }
 
 export async function deleteTvGuideEntry (baseUrl, authenticationToken, locale, { tvGuideEntryId }) {

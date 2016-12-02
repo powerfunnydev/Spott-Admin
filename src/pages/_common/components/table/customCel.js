@@ -48,6 +48,9 @@ export class CustomCel extends Component {
     },
     clickable: {
       color: colors.veryDarkGray
+    },
+    inlineFlex: {
+      display: 'inline-flex'
     }
   }
 
@@ -59,7 +62,7 @@ export class CustomCel extends Component {
       <div style={[ styles.cell, (sortColumn || onClick) && styles.pointer,
         sortDirection && sortDirection !== NONE && styles.headerSelected,
         onClick && styles.clickable, style ]} onClick={sortColumn || onClick}>
-        <div>
+        <div style={styles.inlineFlex}>
           {children}
           {getValue && objectToRender && getValue(objectToRender)}
         </div>

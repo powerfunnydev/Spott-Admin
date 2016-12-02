@@ -40,6 +40,8 @@ export default class CreateBroadcasterEntryModal extends Component {
 
   static propTypes = {
     broadcastersById: ImmutablePropTypes.map.isRequired,
+    change: PropTypes.func.isRequired,
+    dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
@@ -47,6 +49,7 @@ export default class CreateBroadcasterEntryModal extends Component {
     loadList: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
+    reset: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
@@ -70,17 +73,24 @@ export default class CreateBroadcasterEntryModal extends Component {
 
   async submit (form) {
     try {
-      await this.props.submit(form.toJS());
-      if (this.props.params.broadcasterId) {
-        await this.props.loadBroadcasterChannels(this.props.params.broadcasterId);
+      const { loadBroadcasterChannels, params, location, submit, dispatch, change, reset } = this.props;
+      await submit(form.toJS());
+      const createAnother = form.get('createAnother');
+      if (params.broadcasterId) {
+        await loadBroadcasterChannels(params.broadcasterId);
       } else {
         // Load the new list of items, using the location query of the previous page.
-        const location = this.props.location && this.props.location.state && this.props.location.state.returnTo;
-        if (location && location.query) {
-          this.props.loadList(location.query);
+        const loc = location && location.state && location.state.returnTo;
+        if (loc && loc.query) {
+          loadList(loc.query);
         }
       }
-      this.onCloseClick();
+      if (createAnother) {
+        await dispatch(reset());
+        await dispatch(change('createAnother', true));
+      } else {
+        this.onCloseClick();
+      }
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
@@ -93,7 +103,8 @@ export default class CreateBroadcasterEntryModal extends Component {
   render () {
     const { broadcastersById, handleSubmit, searchBroadcasters, searchedBroadcasterIds } = this.props;
     return (
-      <PersistModal isOpen title='Create Broadcast Channel' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal createAnother isOpen title='Create Broadcast Channel'
+        onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={TextInput}

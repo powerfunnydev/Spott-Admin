@@ -16,6 +16,7 @@ import Dropzone from '../../../_common/dropzone';
 import Label from '../../../_common/inputs/_label';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import selector from './selector';
+import BreadCrumbs from '../../../_common/breadCrumbs';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -81,12 +82,26 @@ export default class EditContentProducers extends Component {
     }
   }
 
+  static styles = {
+    background: {
+      backgroundColor: colors.lightGray4,
+      paddingBottom: '50px'
+    },
+    paddingTop: {
+      paddingTop: '1.25em'
+    }
+  }
+
   render () {
     const { currentContentProducer, location, handleSubmit } = this.props;
+    const { styles } = this.constructor;
     return (
-      <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
+      <Root style={styles.background}>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
+        <BreadCrumbs hierarchy={[
+          { title: 'List', url: '/content/content-producers' },
+          { title: currentContentProducer.get('name'), url: location } ]}/>
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
           <Tabs>
             <TabList style={tabStyles.tabList}>
@@ -101,7 +116,7 @@ export default class EditContentProducers extends Component {
                   name='name'
                   placeholder='Name content producer'
                   required/>
-                <div style={{ paddingTop: '1.25em' }}>
+                <div style={styles.paddingTop}>
                   <Label text='Upload image' />
                   <Dropzone
                     accept='image/*'

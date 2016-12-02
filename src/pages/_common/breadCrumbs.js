@@ -21,7 +21,8 @@ export default class BreadCrumbs extends Component {
       paddingTop: '20px',
       paddingBottom: '20px',
       ...makeTextStyle(fontWeights.regular, '14px'),
-      color: colors.lightGray3
+      color: colors.lightGray3,
+      backgroundColor: colors.white
     },
     clickable: {
       cursor: 'pointer'

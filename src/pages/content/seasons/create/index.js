@@ -51,6 +51,7 @@ export default class CreateSeasonEntryModal extends Component {
     localeNames: ImmutablePropTypes.map.isRequired,
     location: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
+    reset: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchSeriesEntries: PropTypes.func.isRequired,
     searchedSeriesEntryIds: ImmutablePropTypes.map.isRequired,
@@ -82,14 +83,21 @@ export default class CreateSeasonEntryModal extends Component {
   async submit (form) {
     try {
       const { seriesEntryId } = this.props.params;
-      await this.props.submit(form.toJS());
+      const { location, submit, dispatch, change, reset } = this.props;
+      await submit(form.toJS());
+      const createAnother = form.get('createAnother');
       // Load the new list of items, using the location query of the previous page.
-      const location = this.props.location && this.props.location.state && this.props.location.state.returnTo;
+      const loc = location && location.state && location.state.returnTo;
       // if we are in the read page of a seriesEntry
-      if (seriesEntryId && location && location.query) {
-        this.props.loadSeasons(location.query, seriesEntryId);
+      if (seriesEntryId && loc && loc.query) {
+        this.props.loadSeasons(loc.query, seriesEntryId);
       }
-      this.onCloseClick();
+      if (createAnother) {
+        await dispatch(reset());
+        await dispatch(change('createAnother', true));
+      } else {
+        this.onCloseClick();
+      }
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
@@ -102,7 +110,8 @@ export default class CreateSeasonEntryModal extends Component {
   render () {
     const { localeNames, currentSeriesEntryId, searchSeriesEntries, seriesEntriesById, searchedSeriesEntryIds, handleSubmit } = this.props;
     return (
-      <PersistModal isOpen title='Create Season Entry' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal createAnother isOpen title='Create Season Entry'
+        onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}

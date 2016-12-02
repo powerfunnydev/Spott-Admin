@@ -1,6 +1,7 @@
 import { createSelector, createStructuredSelector } from 'reselect';
 import { getFormValues } from 'redux-form/immutable';
 import {
+  tvGuideEntriesEntitiesSelector,
   broadcastChannelsEntitiesSelector,
   createEntityByIdSelector,
   createEntityIdsByRelationSelector,
@@ -12,6 +13,9 @@ import {
 } from '../../../selectors/data';
 
 const formSelector = getFormValues('tvGuideEditEntry');
+
+export const currentTvGuideEntryIdSelector = (state, props) => props.params.tvGuideEntryId;
+export const currentTvGuideEntrySelector = createEntityByIdSelector(tvGuideEntriesEntitiesSelector, currentTvGuideEntryIdSelector);
 
 export const currentMediumIdSelector = createSelector(
   formSelector,
@@ -36,6 +40,7 @@ export const searchedBroadcastChannelIdsSelector = createEntityIdsByRelationSele
 
 export default createStructuredSelector({
   broadcastChannelsById: broadcastChannelsEntitiesSelector,
+  currentTvGuideEntry: currentTvGuideEntrySelector,
   searchedBroadcastChannelIds: searchedBroadcastChannelIdsSelector,
   searchedEpisodeIds: searchedEpisodeIdsSelector,
   searchedSeasonIds: searchedSeasonIdsSelector,

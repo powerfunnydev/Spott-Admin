@@ -156,11 +156,21 @@ export const styles = {
     position: 'absolute',
     right: 0,
     top: 40,
-    minWidth: '180px',
+    minWidth: '140px',
     borderRadius: '2px',
     backgroundColor: colors.white,
     boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)',
     border: `solid 1px ${colors.lightGray2}`
+  },
+  adaptedTop: {
+    top: 30
+  },
+  line: {
+    height: '1px',
+    backgroundColor: colors.veryLightGray
+  },
+  extraWide: {
+    minWidth: '180px'
   }
 };
 
@@ -171,8 +181,8 @@ class Dropdown extends Component {
     arrowStyle: PropTypes.object,
     children: PropTypes.node,
     color: PropTypes.string,
+    customDropdown: PropTypes.bool,
     elementShown: PropTypes.node,
-    floatedDropdown: PropTypes.bool,
     style: PropTypes.object
   }
 
@@ -218,7 +228,7 @@ class Dropdown extends Component {
   }
 
   render () {
-    const { color, children, elementShown, style, arrowStyle, floatedDropdown } = this.props;
+    const { color, children, elementShown, style, arrowStyle, customDropdown } = this.props;
 
     return (
       <div key='dropdown' style={[ styles.root, style ]}>
@@ -245,7 +255,9 @@ class Dropdown extends Component {
         </div>
         {/* menu */}
         { this.state.isOpen &&
-          <div style={[ !floatedDropdown && styles.menu ]} onClick={this.toggleOpen}>{children}</div>
+          /* it is possible to give a custom menu as children, we check if we have a custom dropdown, if not,
+             we render floatedOptions */
+          <div style={[ !customDropdown && [ styles.floatOptions, styles.adaptedTop ] ]} onClick={this.toggleOpen}>{children}</div>
         }
       </div>
     );
