@@ -64,11 +64,21 @@ export function transformAvailability ({ country, endTimeStamp, startTimeStamp, 
   return { countryId: country && country.uuid, availabilityFrom: startTimeStamp && new Date(startTimeStamp), availabilityTo: endTimeStamp && new Date(endTimeStamp), videoStatus };
 }
 
-export function transformCharacter ({ name, uuid: id, image }) {
+export function transformListCharacter ({ profileImage, portraitImage, name, uuid: id }) {
   return {
     id,
     name,
-    image: image && { id: image.uuid, url: image.url }
+    profileImage: profileImage && { id: profileImage.uuid, url: profileImage.url },
+    portraitImage: portraitImage && { id: portraitImage.uuid, url: portraitImage.url }
+  };
+}
+
+export function transformCharacter ({ profileCover, portraitImage, defaultName, uuid: id }) {
+  return {
+    id,
+    defaultName,
+    profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
+    portraitImage: portraitImage && { id: portraitImage.uuid, url: portraitImage.url }
   };
 }
 /**

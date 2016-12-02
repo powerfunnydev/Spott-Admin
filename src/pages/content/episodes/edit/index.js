@@ -24,7 +24,7 @@ import Availabilities from '../../_availabilities/list';
 import RelatedVideo from '../../../content/_relatedVideo/read';
 import * as actions from './actions';
 import selector from './selector';
-// import Characters from '../../_helpers/_characters/list';
+import Characters from '../../_helpers/_characters/list';
 import BreadCrumbs from '../../../_common/breadCrumbs';
 
 function validate (values, { t }) {
@@ -46,6 +46,7 @@ function validate (values, { t }) {
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
   searchCharacters: bindActionCreators(actions.searchCharacters, dispatch),
+  loadMediumCharacters: bindActionCreators(actions.searchMediumCharacters, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
   searchSeasons: bindActionCreators(actions.searchSeasons, dispatch),
   searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch),
@@ -77,12 +78,14 @@ export default class EditEpisode extends Component {
     currentSeriesEntryId: PropTypes.string,
     defaultLocale: PropTypes.string,
     dispatch: PropTypes.func.isRequired,
+    episodeCharacterIds: ImmutablePropTypes.map.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
     handleSubmit: PropTypes.func.isRequired,
     hasTitle: ImmutablePropTypes.map,
     initialize: PropTypes.func.isRequired,
     loadEpisode: PropTypes.func.isRequired,
+    loadMediumCharacters: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
@@ -118,9 +121,9 @@ export default class EditEpisode extends Component {
   }
 
   async componentWillMount () {
-    if (this.props.params.episodeId) {
-      const editObj = await this.props.loadEpisode(this.props.params.episodeId);
-      console.log('editObj', editObj);
+    const { episodeId } = this.props.params;
+    if (episodeId) {
+      const editObj = await this.props.loadEpisode(episodeId);
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale
@@ -230,14 +233,13 @@ export default class EditEpisode extends Component {
   }
 
   render () {
-    const { _activeLocale, availabilities, closeModal, currentModal, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
-        contentProducersById, searchContentProducers, searchedContentProducerIds, broadcastersById,
+    const { _activeLocale, availabilities, closeModal, currentModal, currentSeasonId, currentSeriesEntryId, episodeCharacterIds,
+        searchSeriesEntries, contentProducersById, searchContentProducers, searchedContentProducerIds, broadcastersById,
         searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
         seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
         searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors,
-        searchedCharacterIds, charactersById, searchCharacters } = this.props;
+        searchedCharacterIds, charactersById, searchCharacters, loadMediumCharacters } = this.props;
     const { styles } = this.constructor;
-
     const profileImageUrl = currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
       `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`;
 
@@ -372,16 +374,15 @@ export default class EditEpisode extends Component {
                 </div>
               </Section>
             </Tab>
-            {/* <Tab title='Helpers'>
+           <Tab title='Helpers'>
               <Characters
-                characters={fromJS([
-                  { name: 'Louis', image: { url: 'https://spott-cms-rest-tst.appiness.mobi:443/apptvate/rest/v004/image/images/06d2d037-612d-4d2a-a00f-1a5242e9cfc0?height=203&width=360' } },
-                  { name: 'Jos', image: { url: 'https://spott-cms-rest-tst.appiness.mobi:443/apptvate/rest/v004/image/images/06d2d037-612d-4d2a-a00f-1a5242e9cfc0?height=203&width=360' } }
-                ])}
                 charactersById={charactersById}
+                loadMediumCharacters={loadMediumCharacters}
+                mediumCharacterIds={episodeCharacterIds}
+                mediumId={this.props.params.episodeId}
                 searchCharacters={searchCharacters}
                 searchedCharacterIds={searchedCharacterIds} />
-            </Tab>*/}
+            </Tab>
             <Tab title='Interactive video'>
               <Section>
                 <FormSubtitle first>Interactive video</FormSubtitle>
