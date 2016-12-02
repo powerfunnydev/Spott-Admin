@@ -58,6 +58,7 @@ export default class Availabilities extends Component {
       countryId,
       endDate: availabilityTo && moment(availabilityTo).startOf('day'),
       endTime: availabilityTo && moment(availabilityTo),
+      noEndDate: !availabilityTo,
       startDate: availabilityFrom && moment(availabilityFrom).startOf('day'),
       startTime: availabilityFrom && moment(availabilityFrom),
       timezone: '+00:00',

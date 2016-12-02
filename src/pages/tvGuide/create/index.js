@@ -136,6 +136,15 @@ export default class CreateTvGuideEntryModal extends Component {
     col2: {
       display: 'flex',
       flexDirection: 'row'
+    },
+    dateInput: {
+      flex: 1,
+      paddingRight: '0.313em'
+    },
+    timeInput: {
+      alignSelf: 'flex-end',
+      flex: 1,
+      paddingLeft: '0.313em'
     }
   };
 
@@ -207,12 +216,12 @@ export default class CreateTvGuideEntryModal extends Component {
             label='Start'
             name='startDate'
             required
-            style={{ flex: 1, paddingRight: '0.313em' }} />
+            style={styles.dateInput} />
           <Field
             component={TimeInput}
             name='startTime'
             required
-            style={{ flex: 1, paddingLeft: '0.313em' }} />
+            style={styles.timeInput} />
         </div>
         <div style={styles.col2}>
           <Field
@@ -220,12 +229,12 @@ export default class CreateTvGuideEntryModal extends Component {
             label='End'
             name='endDate'
             required
-            style={{ flex: 1, paddingRight: '0.313em' }} />
+            style={styles.dateInput} />
           <Field
             component={TimeInput}
             name='endTime'
             required
-            style={{ flex: 1, paddingLeft: '0.313em' }} />
+            style={styles.timeInput} />
         </div>
       </PersistModal>
     );

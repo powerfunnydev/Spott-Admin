@@ -15,6 +15,7 @@ import Header from '../../../app/header';
 import Label from '../../../_common/inputs/_label';
 import localized from '../../../_common/localized';
 import Section from '../../../_common/components/section';
+import CheckboxInput from '../../../_common/inputs/checkbox';
 import SelectInput from '../../../_common/inputs/selectInput';
 import SpecificHeader from '../../header';
 import TextInput from '../../../_common/inputs/textInput';
@@ -219,6 +220,12 @@ export default class EditEpisode extends Component {
     },
     paddingLeftUploadImage: {
       paddingLeft: '24px'
+    },
+    customTitle: {
+      paddingBottom: '0.438em'
+    },
+    titleLabel: {
+      paddingBottom: '0.7em'
     }
   }
 
@@ -277,37 +284,46 @@ export default class EditEpisode extends Component {
                   onChange={() => {
                     this.props.dispatch(this.props.change('seasonId', null));
                   }} />
-                {currentSeriesEntryId && <Field
-                  component={SelectInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  getItemText={(id) => seasonsById.getIn([ id, 'title' ])}
-                  getOptions={(searchString) => { searchSeasons(searchString, currentSeriesEntryId); }}
-                  isLoading={searchedSeasonIds.get('_status') === FETCHING}
-                  label='Season title'
-                  name='seasonId'
-                  options={searchedSeasonIds.get('data').toJS()}
-                  placeholder='Season title'
-                  required
-                  onChange={() => {
-                    this.props.dispatch(this.props.change('title', {}));
-                  }} />}
-                {currentSeriesEntryId && currentSeasonId && <Field
-                  component={TextInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  label='Episode number'
-                  name='number'
-                  placeholder='Episode number'
-                  required
-                  type='number'/>}
-                {currentSeriesEntryId && currentSeasonId && <Field
-                  _activeLocale={_activeLocale}
-                  component={TextInput}
-                  disabled={hasTitle && !hasTitle.get(_activeLocale)}
-                  hasTitle={hasTitle}
-                  label='Episode title'
-                  name={`title.${_activeLocale}`}
-                  placeholder='Episode title'
-                  required={hasTitle && hasTitle.get(_activeLocale)}/>}
+                {currentSeriesEntryId &&
+                  <Field
+                    component={SelectInput}
+                    disabled={_activeLocale !== defaultLocale}
+                    getItemText={(id) => seasonsById.getIn([ id, 'title' ])}
+                    getOptions={(searchString) => { searchSeasons(searchString, currentSeriesEntryId); }}
+                    isLoading={searchedSeasonIds.get('_status') === FETCHING}
+                    label='Season title'
+                    name='seasonId'
+                    options={searchedSeasonIds.get('data').toJS()}
+                    placeholder='Season title'
+                    required
+                    onChange={() => {
+                      this.props.dispatch(this.props.change('title', {}));
+                    }} />}
+                {currentSeriesEntryId && currentSeasonId &&
+                  <Field
+                    component={TextInput}
+                    disabled={_activeLocale !== defaultLocale}
+                    label='Episode number'
+                    name='number'
+                    placeholder='Episode number'
+                    required
+                    type='number'/>}
+                {currentSeriesEntryId && currentSeasonId &&
+                  <Field
+                    component={TextInput}
+                    content={
+                      <Field
+                        component={CheckboxInput}
+                        first
+                        label='Custom title'
+                        name={`hasTitle.${_activeLocale}`}
+                        style={styles.customTitle} />}
+                    disabled={hasTitle && !hasTitle.get(_activeLocale)}
+                    label='Episode title'
+                    labelStyle={styles.titleLabel}
+                    name={`title.${_activeLocale}`}
+                    placeholder='Episode title'
+                    required />}
                 <Field
                   component={TextInput}
                   label='Description'

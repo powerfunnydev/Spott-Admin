@@ -18,6 +18,15 @@
   cursor: pointer;
 }
 
+.rc-time-picker-input:disabled {
+  background-color: #f4f5f5;
+}
+
+.rc-time-picker-input-error input {
+  border: 1px solid #e17575;
+  color: #e17575;
+}
+
 .rc-time-picker-panel-select li {
   list-style: none;
   box-sizing: content-box;

@@ -153,6 +153,15 @@ export default class EditTvGuideEntry extends Component {
     background: {
       backgroundColor: colors.lightGray4,
       paddingBottom: '50px'
+    },
+    dateInput: {
+      flex: 1,
+      paddingRight: '0.313em'
+    },
+    timeInput: {
+      alignSelf: 'flex-end',
+      flex: 1,
+      paddingLeft: '0.313em'
     }
   };
 
@@ -229,12 +238,12 @@ export default class EditTvGuideEntry extends Component {
                   label='Start'
                   name='startDate'
                   required
-                  style={{ flex: 1, paddingRight: '0.313em' }} />
+                  style={styles.dateInput} />
                 <Field
                   component={TimeInput}
                   name='startTime'
                   required
-                  style={{ flex: 1, paddingLeft: '0.313em' }} />
+                  style={styles.timeInput} />
               </div>
               <div style={styles.dividedFields}>
                 <Field
@@ -242,12 +251,12 @@ export default class EditTvGuideEntry extends Component {
                   label='End'
                   name='endDate'
                   required
-                  style={{ flex: 1, paddingRight: '0.313em' }} />
+                  style={styles.dateInput} />
                 <Field
                   component={TimeInput}
                   name='endTime'
                   required
-                  style={{ flex: 1, paddingLeft: '0.313em' }} />
+                  style={styles.timeInput} />
               </div>
               </Section>
             </Tab>
