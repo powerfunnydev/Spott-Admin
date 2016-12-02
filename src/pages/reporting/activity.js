@@ -20,6 +20,12 @@ import { arraysEqual, slowdown } from '../../utils';
 HighchartsMore(Highcharts.Highcharts);
 HighchartsExporting(Highcharts.Highcharts);
 
+Highcharts.Highcharts.setOptions({
+  global: {
+    useUTC: false
+  }
+});
+
 @connect(activitySelector, (dispatch) => ({
   loadActivities: bindActionCreators(actions.loadActivities, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
