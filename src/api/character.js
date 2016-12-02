@@ -1,23 +1,30 @@
-// import { del, get, post, postFormData } from './request';
-import { transformCharacter } from './transformers';
+import { del, get, post } from './request';
+import { transformCharacter, transformListCharacter } from './transformers';
 
-export function searchCharacters (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
-  /* let url = `${baseUrl}/v004/media/broadcasters?page=${page}&pageSize=${pageSize}`;
+export async function searchCharacters (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25 }) {
+  let url = `${baseUrl}/v004/media/characters?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${searchString}`);
   }
-  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
-    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
-  }
-  const { body } = await get(authenticationToken, locale, url);
-  // There is also usable data in body (not only in data field).
-  // We need also fields page, pageCount,...
-  body.data = body.data.map(transformBroadcaster);
-  return body;*/
+  const { body: { data } } = await get(authenticationToken, locale, url);
+  return data.map(transformCharacter);
+}
 
-  const characters = [
-    { uuid: 'louis', name: 'Louis', image: { url: 'https://spott-cms-rest-tst.appiness.mobi:443/apptvate/rest/v004/image/images/06d2d037-612d-4d2a-a00f-1a5242e9cfc0?height=203&width=360' } },
-    { uuid: 'jos', name: 'Jos', image: { url: 'https://spott-cms-rest-tst.appiness.mobi:443/apptvate/rest/v004/image/images/06d2d037-612d-4d2a-a00f-1a5242e9cfc0?height=203&width=360' } }
-  ];
-  return characters.map(transformCharacter);
+export async function searchMediumCharacters (baseUrl, authenticationToken, locale, { mediumId, searchString = '', page = 0, pageSize = 25 }) {
+  let url = `${baseUrl}/v004/media/media/${mediumId}/castMembers?page=${page}&pageSize=${pageSize}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${searchString}`);
+  }
+  const { body: { data } } = await get(authenticationToken, locale, url);
+  return data.map(transformListCharacter);
+}
+
+export async function persistMediumCharacter (baseUrl, authenticationToken, locale, { mediumId, characterId }) {
+  const { body } = await post(authenticationToken, locale, `${baseUrl}//v004/media/media/${mediumId}/castMembers/${characterId}`, {});
+  return transformCharacter(body);
+}
+
+export async function deleteMediumCharacter (baseUrl, authenticationToken, locale, { mediumId, characterId }) {
+  const { body } = await del(authenticationToken, locale, `${baseUrl}//v004/media/media/${mediumId}/castMembers/${characterId}`, {});
+  return transformCharacter(body);
 }

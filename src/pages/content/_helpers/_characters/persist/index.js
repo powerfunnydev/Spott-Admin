@@ -21,7 +21,6 @@ import PersistModal from '../../../../_common/persistModal';
 export default class CharacterModal extends Component {
 
   static propTypes = {
-    characters: ImmutablePropTypes.map.isRequired,
     charactersById: ImmutablePropTypes.map.isRequired,
     edit: PropTypes.bool,
     error: PropTypes.any,
@@ -66,7 +65,7 @@ export default class CharacterModal extends Component {
         <Field
           component={SelectInput}
           first
-          getItemText={(characterId) => charactersById.getIn([ characterId, 'name' ])}
+          getItemText={(characterId) => charactersById.getIn([ characterId, 'defaultName' ])}
           getOptions={searchCharacters}
           label='Character'
           name='characterId'
