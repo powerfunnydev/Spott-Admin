@@ -15,14 +15,17 @@ import Header from '../../../app/header';
 import Label from '../../../_common/inputs/_label';
 import localized from '../../../_common/localized';
 import Section from '../../../_common/components/section';
+import CheckboxInput from '../../../_common/inputs/checkbox';
 import SelectInput from '../../../_common/inputs/selectInput';
 import SpecificHeader from '../../header';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
 import Availabilities from '../../_availabilities/list';
+import RelatedVideo from '../../../content/_relatedVideo/read';
 import * as actions from './actions';
 import selector from './selector';
-import Characters from '../../_helpers/_characters/list';
+// import Characters from '../../_helpers/_characters/list';
+import BreadCrumbs from '../../../_common/breadCrumbs';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -42,6 +45,7 @@ function validate (values, { t }) {
   openModal: bindActionCreators(actions.openModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
+  searchCharacters: bindActionCreators(actions.searchCharacters, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
   searchSeasons: bindActionCreators(actions.searchSeasons, dispatch),
   searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch),
@@ -54,7 +58,7 @@ function validate (values, { t }) {
   validate
 })
 @Radium
-export default class EditEpisodes extends Component {
+export default class EditEpisode extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
@@ -63,6 +67,7 @@ export default class EditEpisodes extends Component {
     broadcastersById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
     characters: ImmutablePropTypes.list,
+    charactersById: ImmutablePropTypes.map.isRequired,
     children: PropTypes.node,
     closeModal: PropTypes.func.isRequired,
     contentProducersById: ImmutablePropTypes.map.isRequired,
@@ -83,10 +88,12 @@ export default class EditEpisodes extends Component {
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
+    searchCharacters: PropTypes.func.isRequired,
     searchContentProducers: PropTypes.func.isRequired,
     searchSeasons: PropTypes.func.isRequired,
     searchSeriesEntries: PropTypes.func.isRequired,
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
+    searchedCharacterIds: ImmutablePropTypes.map.isRequired,
     searchedContentProducerIds: ImmutablePropTypes.map.isRequired,
     searchedSeasonIds: ImmutablePropTypes.map.isRequired,
     searchedSeriesEntryIds: ImmutablePropTypes.map.isRequired,
@@ -213,20 +220,36 @@ export default class EditEpisodes extends Component {
     },
     paddingLeftUploadImage: {
       paddingLeft: '24px'
+    },
+    customTitle: {
+      paddingBottom: '0.438em'
+    },
+    titleLabel: {
+      paddingBottom: '0.7em'
     }
   }
 
   render () {
-    const { _activeLocale, availabilities, characters, closeModal, currentModal, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
+    const { _activeLocale, availabilities, closeModal, currentModal, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
         contentProducersById, searchContentProducers, searchedContentProducerIds, broadcastersById,
         searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
         seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
-        searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors } = this.props;
+        searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors,
+        searchedCharacterIds, charactersById, searchCharacters } = this.props;
     const { styles } = this.constructor;
+
+    const profileImageUrl = currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
+      `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`;
+
     return (
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
+        <BreadCrumbs hierarchy={[
+          { title: 'List', url: '/content/series' },
+          { title: 'Series', url: `content/series/read/${this.props.params.seriesEntryId}` },
+          { title: 'Season', url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${this.props.params.seasonId}` },
+          { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         {currentModal === EPISODE_CREATE_LANGUAGE &&
           <CreateLanguageModal
             supportedLocales={supportedLocales}
@@ -261,37 +284,46 @@ export default class EditEpisodes extends Component {
                   onChange={() => {
                     this.props.dispatch(this.props.change('seasonId', null));
                   }} />
-                {currentSeriesEntryId && <Field
-                  component={SelectInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  getItemText={(id) => seasonsById.getIn([ id, 'title' ])}
-                  getOptions={(searchString) => { searchSeasons(searchString, currentSeriesEntryId); }}
-                  isLoading={searchedSeasonIds.get('_status') === FETCHING}
-                  label='Season title'
-                  name='seasonId'
-                  options={searchedSeasonIds.get('data').toJS()}
-                  placeholder='Season title'
-                  required
-                  onChange={() => {
-                    this.props.dispatch(this.props.change('title', {}));
-                  }} />}
-                {currentSeriesEntryId && currentSeasonId && <Field
-                  component={TextInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  label='Episode number'
-                  name='number'
-                  placeholder='Episode number'
-                  required
-                  type='number'/>}
-                {currentSeriesEntryId && currentSeasonId && <Field
-                  _activeLocale={_activeLocale}
-                  component={TextInput}
-                  disabled={hasTitle && !hasTitle.get(_activeLocale)}
-                  hasTitle={hasTitle}
-                  label='Episode title'
-                  name={`title.${_activeLocale}`}
-                  placeholder='Episode title'
-                  required={hasTitle && hasTitle.get(_activeLocale)}/>}
+                {currentSeriesEntryId &&
+                  <Field
+                    component={SelectInput}
+                    disabled={_activeLocale !== defaultLocale}
+                    getItemText={(id) => seasonsById.getIn([ id, 'title' ])}
+                    getOptions={(searchString) => { searchSeasons(searchString, currentSeriesEntryId); }}
+                    isLoading={searchedSeasonIds.get('_status') === FETCHING}
+                    label='Season title'
+                    name='seasonId'
+                    options={searchedSeasonIds.get('data').toJS()}
+                    placeholder='Season title'
+                    required
+                    onChange={() => {
+                      this.props.dispatch(this.props.change('title', {}));
+                    }} />}
+                {currentSeriesEntryId && currentSeasonId &&
+                  <Field
+                    component={TextInput}
+                    disabled={_activeLocale !== defaultLocale}
+                    label='Episode number'
+                    name='number'
+                    placeholder='Episode number'
+                    required
+                    type='number'/>}
+                {currentSeriesEntryId && currentSeasonId &&
+                  <Field
+                    component={TextInput}
+                    content={
+                      <Field
+                        component={CheckboxInput}
+                        first
+                        label='Custom title'
+                        name={`hasTitle.${_activeLocale}`}
+                        style={styles.customTitle} />}
+                    disabled={hasTitle && !hasTitle.get(_activeLocale)}
+                    label='Episode title'
+                    labelStyle={styles.titleLabel}
+                    name={`title.${_activeLocale}`}
+                    placeholder='Episode title'
+                    required />}
                 <Field
                   component={TextInput}
                   label='Description'
@@ -326,8 +358,7 @@ export default class EditEpisodes extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
-                      imageUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
-                        `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      imageUrl={profileImageUrl}
                       onChange={({ callback, file }) => { this.props.uploadProfileImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}/>
                   </div>
                   <div style={styles.paddingLeftUploadImage}>
@@ -342,18 +373,27 @@ export default class EditEpisodes extends Component {
               </Section>
             </Tab>
             {/* <Tab title='Helpers'>
-              <FieldArray characters={characters} component={Characters} name='characters'/>
+              <Characters
+                characters={fromJS([
+                  { name: 'Louis', image: { url: 'https://spott-cms-rest-tst.appiness.mobi:443/apptvate/rest/v004/image/images/06d2d037-612d-4d2a-a00f-1a5242e9cfc0?height=203&width=360' } },
+                  { name: 'Jos', image: { url: 'https://spott-cms-rest-tst.appiness.mobi:443/apptvate/rest/v004/image/images/06d2d037-612d-4d2a-a00f-1a5242e9cfc0?height=203&width=360' } }
+                ])}
+                charactersById={charactersById}
+                searchCharacters={searchCharacters}
+                searchedCharacterIds={searchedCharacterIds} />
             </Tab>*/}
+            <Tab title='Interactive video'>
+              <Section>
+                <FormSubtitle first>Interactive video</FormSubtitle>
+                <Field
+                  component={RelatedVideo}
+                  medium={currentEpisode}
+                  name='videoId' />
+              </Section>
+            </Tab>
             <Tab title='Availability'>
               <FieldArray availabilities={availabilities} component={Availabilities} name='availabilities' />
             </Tab>
-            {/* TODO
-            <Tab title='Audience'>
-              <Section>
-                <FormSubtitle first>Location</FormSubtitle>
-                ...
-              </Section>
-            </Tab>*/}
           </Tabs>
         </EditTemplate>
       </Root>

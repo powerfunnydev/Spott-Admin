@@ -16,6 +16,7 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 import Dropzone from '../../../_common/dropzone';
 import Label from '../../../_common/inputs/_label';
 import selector from './selector';
+import BreadCrumbs from '../../../_common/breadCrumbs';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -80,12 +81,26 @@ export default class EditBroadcaster extends Component {
     }
   }
 
+  static styles = {
+    background: {
+      backgroundColor: colors.lightGray4,
+      paddingBottom: '50px'
+    },
+    paddingTop: {
+      paddingTop: '1.25em'
+    }
+  }
+
   render () {
     const { currentBroadcaster, location, handleSubmit } = this.props;
+    const { styles } = this.constructor;
     return (
-      <Root style={{ backgroundColor: colors.lightGray4 }}>
+      <Root style={styles.background}>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
+        <BreadCrumbs hierarchy={[
+          { title: 'List', url: '/content/broadcasters' },
+          { title: currentBroadcaster.get('name'), url: location } ]}/>
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
           <Tabs>
             <TabList style={tabStyles.tabList}>
@@ -100,7 +115,7 @@ export default class EditBroadcaster extends Component {
                   name='name'
                   placeholder='Name broadcaster'
                   required/>
-                <div style={{ paddingTop: '1.25em' }}>
+                <div style={styles.paddingTop}>
                   <Label text='Upload image' />
                   <Dropzone
                     accept='image/*'

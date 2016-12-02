@@ -4,7 +4,7 @@ import Radium from 'radium';
 import localized from '../localized';
 import { colors, buttonStyles, fontWeights, makeTextStyle } from '../styles';
 import Button from '../buttons/button';
-import { Checkbox } from '../inputs/checkbox';
+import Checkbox from '../inputs/checkbox';
 import { Field } from 'redux-form/immutable';
 const crossImage = require('./cross.svg');
 
@@ -182,13 +182,11 @@ export default class PersistModal extends Component {
               <div style={styles.footer}>
                 <div style={styles.alignRight}>
                   {createAnother &&
-                    <div style={styles.row}>
-                      <div style={styles.text}>Create another</div>
-                      <Field
-                        component={Checkbox}
-                        name='createAnother'/>
-                    </div>
-                  }
+                    <Field
+                      component={Checkbox}
+                      first
+                      label='Create another'
+                      name='createAnother'/>}
                   <Button key='cancel' style={[ buttonStyles.white ]} text='Cancel' type='button' onClick={(e) => { e.preventDefault(); onClose(); }} />
                   <Button key='submit' style={[ buttonStyles.blue ]} text={submitButtonText || 'Create'} type='submit' />
                 </div>

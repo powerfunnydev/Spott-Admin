@@ -12,7 +12,6 @@ import SelectInput from '../../_common/inputs/selectInput';
 import localized from '../../_common/localized';
 import { FETCHING } from '../../../constants/statusTypes';
 import PersistModal from '../../_common/persistModal';
-import { load } from '../list/actions';
 import * as actions from './actions';
 import selector from './selector';
 import { routerPushWithReturnTo } from '../../../actions/global';
@@ -40,7 +39,6 @@ function validate (values, { medium, t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
-  load: bindActionCreators(load, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchBroadcastChannels: bindActionCreators(actions.searchBroadcastChannels, dispatch),
   searchEpisodes: bindActionCreators(actions.searchEpisodes, dispatch),
@@ -50,12 +48,6 @@ function validate (values, { medium, t }) {
 }))
 @reduxForm({
   form: 'tvGuideCreateEntry',
-  initialValues: {
-    endDate: moment().startOf('day'),
-    endTime: moment(),
-    startDate: moment().startOf('day'),
-    startTime: moment()
-  },
   validate
 })
 @Radium
@@ -67,10 +59,15 @@ export default class CreateTvGuideEntryModal extends Component {
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
-    load: PropTypes.func.isRequired,
+    initialize: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     mediaById: ImmutablePropTypes.map.isRequired,
     medium: ImmutablePropTypes.map.isRequired,
+    params: PropTypes.object.isRequired,
+    reset: PropTypes.func.isRequired,
+    route: PropTypes.shape({
+      load: PropTypes.func.isRequired
+    }).isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcastChannels: PropTypes.func.isRequired,
     searchEpisodes: PropTypes.func.isRequired,
@@ -91,15 +88,41 @@ export default class CreateTvGuideEntryModal extends Component {
     this.submit = ::this.submit;
   }
 
+  async componentWillMount () {
+    const { episodeId, seasonId, seriesEntryId } = this.props.params;
+    if (seriesEntryId && seasonId && episodeId) {
+      this.props.initialize({
+        mediumId: seriesEntryId,
+        seasonId,
+        episodeId,
+        endDate: moment().startOf('day'),
+        endTime: moment(),
+        startDate: moment().startOf('day'),
+        startTime: moment()
+      });
+    } else {
+      this.props.initialize({
+        endDate: moment().startOf('day'),
+        endTime: moment(),
+        startDate: moment().startOf('day'),
+        startTime: moment()
+      });
+    }
+  }
+
   async submit (form) {
     try {
-      await this.props.submit(form.toJS());
+      const { route: { load }, submit, dispatch, change, reset } = this.props;
+      await submit(form.toJS());
+      const createAnother = form.get('createAnother');
       // Load the new list of items, using the location query of the previous page.
-      const location = this.props.location && this.props.location.state && this.props.location.state.returnTo;
-      if (location && location.query) {
-        this.props.load(location.query);
+      load(this.props);
+      if (createAnother) {
+        await dispatch(reset());
+        await dispatch(change('createAnother', true));
+      } else {
+        this.onCloseClick();
       }
-      this.onCloseClick();
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
@@ -113,6 +136,15 @@ export default class CreateTvGuideEntryModal extends Component {
     col2: {
       display: 'flex',
       flexDirection: 'row'
+    },
+    dateInput: {
+      flex: 1,
+      paddingRight: '0.313em'
+    },
+    timeInput: {
+      alignSelf: 'flex-end',
+      flex: 1,
+      paddingLeft: '0.313em'
     }
   };
 
@@ -124,7 +156,8 @@ export default class CreateTvGuideEntryModal extends Component {
       searchedEpisodeIds, searchedSeasonIds, searchedMediumIds, medium, t
     } = this.props;
     return (
-      <PersistModal isOpen title='New TV guide entry' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal createAnother isOpen title='New TV guide entry'
+        onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}
@@ -183,12 +216,12 @@ export default class CreateTvGuideEntryModal extends Component {
             label='Start'
             name='startDate'
             required
-            style={{ flex: 1, paddingRight: '0.313em' }} />
+            style={styles.dateInput} />
           <Field
             component={TimeInput}
             name='startTime'
             required
-            style={{ flex: 1, paddingLeft: '0.313em' }} />
+            style={styles.timeInput} />
         </div>
         <div style={styles.col2}>
           <Field
@@ -196,12 +229,12 @@ export default class CreateTvGuideEntryModal extends Component {
             label='End'
             name='endDate'
             required
-            style={{ flex: 1, paddingRight: '0.313em' }} />
+            style={styles.dateInput} />
           <Field
             component={TimeInput}
             name='endTime'
             required
-            style={{ flex: 1, paddingLeft: '0.313em' }} />
+            style={styles.timeInput} />
         </div>
       </PersistModal>
     );

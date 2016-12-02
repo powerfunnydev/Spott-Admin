@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { Checkbox } from '../../inputs/checkbox';
+import Checkbox from '../../inputs/checkbox';
 
 @Radium
 export class CheckBoxCel extends Component {
@@ -26,7 +26,7 @@ export class CheckBoxCel extends Component {
     const { styles } = this.constructor;
     return (
       <div style={[ styles.cell, style ]}>
-        <Checkbox checked={checked} onChange={onChange}/>
+        <Checkbox checked={checked} first onChange={onChange}/>
         {/* <input checked={checked} type='checkbox' onClick={(e) => { onChange(); }}/>*/}
       </div>
     );

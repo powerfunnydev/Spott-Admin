@@ -1,12 +1,14 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { confirmation } from '../../_common/askConfirmation';
+import PlusSVG from '../images/plus';
 
 const removeIcon = require('../../../assets/images/garbage.svg');
 
 @Radium
 export default class RemoveButton extends Component {
   static propTypes = {
+    cross: PropTypes.bool,
     noCofirmation: PropTypes.bool,
     style: PropTypes.object,
     onClick: PropTypes.func.isRequired
@@ -28,11 +30,20 @@ export default class RemoveButton extends Component {
     }
   }
 
+  static styles = {
+    cross: {
+      transform: 'rotate(45deg)',
+      width: '12px',
+      height: '12px'
+    }
+  }
+
   render () {
-    const { style } = this.props;
+    const { style, cross } = this.props;
+    const { styles } = this.constructor;
     return (
       <button style={style} onClick={() => this.remove()}>
-        <img src={removeIcon}/>
+        {cross && <PlusSVG color='#aab5b8' style={styles.cross}/> || <img src={removeIcon}/>}
       </button>
     );
   }

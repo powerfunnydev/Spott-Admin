@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import Dropdown, { styles as dropdownStyles } from '../actionDropdown';
-import { Checkbox } from '../../inputs/checkbox';
+import Checkbox from '../../inputs/checkbox';
 import { confirmation } from '../../../_common/askConfirmation';
 
 @Radium
@@ -58,8 +58,8 @@ export default class BulkOperationDropdown extends Component {
           {onDeleteSelected &&
             <div
               key='bulkOperationDropdownMenu1'
-              style={dropdownStyles.option}
-              onClick={onDeleteSelected}>
+              style={dropdownStyles.floatOption}
+              onClick={this.onDeleteSelected}>
                 Remove
             </div>
           }

@@ -1,5 +1,20 @@
 import { del, get, post, postFormData } from './request';
-import { transformEpisode, transformEpisode004 } from './transformers';
+import { transformEpisode, transformEpisode004, transformTvGuideEntry } from './transformers';
+
+export async function fetchTvGuideEntries (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField, episodeId }) {
+  let url = `${baseUrl}/v004/media/media/${episodeId}/tvGuideEntries?page=${page}&pageSize=${pageSize}&mediumUuid=${episodeId}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${searchString}`);
+  }
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  const { body } = await get(authenticationToken, locale, url);
+  // There is also usable data in body (not only in data field).
+  // We need also fields page, pageCount,...
+  body.data = body.data.map(transformTvGuideEntry);
+  return body;
+}
 
 export async function fetchEpisodes (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/serieEpisodes?page=${page}&pageSize=${pageSize}`;
@@ -19,10 +34,7 @@ export async function fetchEpisodes (baseUrl, authenticationToken, locale, { sea
 export async function fetchEpisode (baseUrl, authenticationToken, locale, { episodeId }) {
   const url = `${baseUrl}/v004/media/serieEpisodes/${episodeId}`;
   const { body } = await get(authenticationToken, locale, url);
-  // console.log('before transform', { ...body });
-  const result = transformEpisode004(body);
-  // console.log('after tranform', result);
-  return result;
+  return transformEpisode004(body);
 }
 
 export async function persistEpisode (baseUrl, authenticationToken, locale, { availabilities, number, hasTitle, basedOnDefaultLocale,

@@ -19,8 +19,10 @@ import Section from '../../../_common/components/section';
 import SelectInput from '../../../_common/inputs/selectInput';
 import selector from './selector';
 import SpecificHeader from '../../header';
+import CheckboxInput from '../../../_common/inputs/checkbox';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
+import BreadCrumbs from '../../../_common/breadCrumbs';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -193,6 +195,12 @@ export default class EditEpisodes extends Component {
     },
     paddingLeftUploadImage: {
       paddingLeft: '24px'
+    },
+    customTitle: {
+      paddingBottom: '0.438em'
+    },
+    titleLabel: {
+      paddingBottom: '0.7em'
     }
   }
 
@@ -205,6 +213,10 @@ export default class EditEpisodes extends Component {
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
+        <BreadCrumbs hierarchy={[
+          { title: 'List', url: '/content/series' },
+          { title: 'Series', url: `content/series/read/${this.props.params.seriesEntryId}` },
+          { title: currentSeason.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         {currentModal === SEASON_CREATE_LANGUAGE &&
           <CreateLanguageModal
             supportedLocales={supportedLocales}
@@ -247,19 +259,25 @@ export default class EditEpisodes extends Component {
                   placeholder='Season number'
                   required
                   type='number'/>}
-                {currentSeriesEntryId && <Field
-                  _activeLocale={_activeLocale}
-                  component={TextInput}
-                  disabled={hasTitle && !hasTitle.get(_activeLocale)}
-                  hasTitle={hasTitle}
-                  label='Season title'
-                  name={`title.${_activeLocale}`}
-                  placeholder='Season title'
-                  required={hasTitle && hasTitle.get(_activeLocale)}/>}
+                {currentSeriesEntryId &&
+                  <Field
+                    component={TextInput}
+                    content={
+                      <Field
+                        component={CheckboxInput}
+                        first
+                        label='Custom title'
+                        name={`hasTitle.${_activeLocale}`}
+                        style={styles.customTitle} />}
+                    disabled={hasTitle && !hasTitle.get(_activeLocale)}
+                    hasTitle={hasTitle}
+                    label='Season title'
+                    labelStyle={styles.titleLabel}
+                    name={`title.${_activeLocale}`}
+                    placeholder='Season title'
+                    required />}
                 <Field
                   component={TextInput}
-                  // copyFromBase={!isDefaultLocaleSelected}
-                  // disabled={copyFromBase && copyFromBase.getIn([ 'description', _activeLocale ])}
                   label='Description'
                   name={`description.${_activeLocale}`}
                   placeholder='Description'

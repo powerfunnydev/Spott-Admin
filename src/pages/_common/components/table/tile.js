@@ -83,8 +83,9 @@ export class Tile extends Component {
               {imageUrl && <img src={imageUrl} style={styles.image} />}
               {!imageUrl && <div style={styles.noImage}>No image</div>}
               <Dropdown style={styles.dropdown}>
-                {onEdit && <div key='onEdit' style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={onEdit}>Edit</div>}
-                {onDelete && <div key='onDelete' style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={onDelete}>{deleteText || 'Remove'}</div>}
+                {onEdit && <div key='onEdit' style={dropdownStyles.floatOption} onClick={(e) => { e.stopPropagation(); onEdit(e); }}>Edit</div>}
+                {onEdit && onDelete && <div style={dropdownStyles.line}/>}
+                {onDelete && <div key='onDelete' style={dropdownStyles.floatOption} onClick={(e) => { e.stopPropagation(); onDelete(e); }}>{deleteText || 'Remove'}</div>}
               </Dropdown>
             </div>
             <div style={styles.title}>{text}</div>

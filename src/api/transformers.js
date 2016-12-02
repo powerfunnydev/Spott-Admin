@@ -64,15 +64,19 @@ export function transformAvailability ({ country, endTimeStamp, startTimeStamp, 
   return { countryId: country && country.uuid, availabilityFrom: startTimeStamp && new Date(startTimeStamp), availabilityTo: endTimeStamp && new Date(endTimeStamp), videoStatus };
 }
 
-export function transformCharacter () {
-  // TODO
+export function transformCharacter ({ name, uuid: id, image }) {
+  return {
+    id,
+    name,
+    image: image && { id: image.uuid, url: image.url }
+  };
 }
 /**
  *  Complete version of a medium. Locales includes.
  */
 export function transformMedium ({ availabilities, broadcasters, characters, contentProducers, number,
-  auditInfo, type, defaultLocale, externalReference, serie, season, uuid: id, publishStatus,
-  defaultTitle, localeData }) {
+  auditInfo, type, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, serie, season, uuid: id, publishStatus,
+  defaultTitle, localeData, video }) {
   const seriesEntry = {
     availabilities: availabilities && availabilities.map(transformAvailability),
     characters: characters && characters.map(transformCharacter),
@@ -90,13 +94,15 @@ export function transformMedium ({ availabilities, broadcasters, characters, con
     profileImage: {},
     defaultLocale,
     externalReference,
+    externalReferenceSource,
     id,
     publishStatus,
     type,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     seriesEntryId: serie && serie.uuid,
-    seasonId: season && season.uuid
+    seasonId: season && season.uuid,
+    videoId: video && video.uuid
   };
   if (localeData) {
     for (const { hasTitle, basedOnDefaultLocale, description, locale,
@@ -352,5 +358,34 @@ export function transformUser ({ profileImage, avatar, languages, dateOfBirth, d
     lastName,
     gender,
     id
+  };
+}
+
+function transformFingerprint ({ audioFilename, fingerprintId, spokenLanguage, type }) {
+  return {
+    audioFilename,
+    fingerprint: fingerprintId,
+    language: spokenLanguage,
+    type
+  };
+}
+
+function transformScene ({ hidden, image, offsetInSeconds, status, uuid: id }) {
+  return {
+    hidden,
+    id,
+    image: image && { id: image.uuid, url: image.url },
+    offsetInSeconds
+  };
+}
+
+export function transformVideo ({ audioFingerprints, description, scenes, totalDurationInSeconds, uuid: id, videoFilename }) {
+  return {
+    audioFingerprints: audioFingerprints && audioFingerprints.map(transformFingerprint),
+    description,
+    id,
+    scenes: scenes && scenes.map(transformScene),
+    totalDurationInSeconds,
+    videoFilename
   };
 }

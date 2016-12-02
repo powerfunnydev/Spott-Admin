@@ -42,11 +42,12 @@ export default class ProgressBar extends Component {
   }
 
   render () {
+    const { styles } = this.constructor;
     const { progress, style, total } = this.props;
     const percentage = (progress / total) * 100;
-    const { styles } = this.constructor;
+
     return (
-      <div style={style}>
+      <div style={style} title={`${Math.round(((total - progress) * 100) / (1024 * 1024)) / 100} MiB remaining - ${Math.round(percentage * 100) / 100}% completed`}>
         <div style={styles.title}>Uploading file...</div>
         <div style={styles.container}>
           <div style={styles.backgroundDiv}/>

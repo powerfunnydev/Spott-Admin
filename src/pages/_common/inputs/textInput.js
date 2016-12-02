@@ -1,21 +1,19 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { makeTextStyle, fontWeights, colors, errorTextStyle } from '../styles';
+import { fontWeights, colors, errorTextStyle } from '../styles';
 import Label from './_label';
-import { Checkbox } from './checkbox';
-import { Field } from 'redux-form/immutable';
 
 @Radium
 export default class TextInput extends Component {
 
   static propTypes = {
-    _activeLocale: PropTypes.string,
-    copyFromBase: PropTypes.bool,
+    content: PropTypes.node,
     disabled: PropTypes.bool,
     first: PropTypes.bool,
     input: PropTypes.object.isRequired,
     label: PropTypes.string,
-    meta: PropTypes.object.isRequired,
+    labelStyle: PropTypes.object,
+    meta: PropTypes.object,
     placeholder: PropTypes.string,
     required: PropTypes.bool,
     style: PropTypes.object,
@@ -72,11 +70,11 @@ export default class TextInput extends Component {
       paddingTop: '8px',
       height: '60px'
     },
-    checkboxText: {
-      ...makeTextStyle(fontWeights.regular, '11px'),
-      color: colors.darkGray2,
-      paddingLeft: '8px'
-    },
+    // checkboxText: {
+    //   ...makeTextStyle(fontWeights.regular, '11px'),
+    //   color: colors.darkGray2,
+    //   paddingLeft: '8px'
+    // },
     checkboxRow: {
       display: 'flex',
       flexDirection: 'row',
@@ -84,38 +82,35 @@ export default class TextInput extends Component {
     },
     checkBox: {
       display: 'inline-block'
-    },
-    checkboxWithText: {
-      display: 'flex',
-      flexDirection: 'row',
-      paddingRight: '10px'
     }
+    // checkboxWithText: {
+    //   display: 'flex',
+    //   flexDirection: 'row',
+    //   paddingRight: '10px'
+    // }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { placeholder, disabled, first, input, label, meta, required, style,
-        type, _activeLocale } = this.props;
+    const { content, placeholder, disabled, first, input, label, labelStyle,
+      meta, required, style, type } = this.props;
     return (
       <div style={[ !first && styles.padTop, style ]}>
-        {label && <Label required={required} text={label} />}
-        { (_activeLocale) && <div style={styles.checkboxRow}>
-          { _activeLocale && <div style={styles.checkboxWithText}>
-            <Field
-              component={Checkbox}
-              name={`hasTitle.${_activeLocale}`}/>
-            <div style={styles.checkboxText}>
-              Custom title
-            </div>
-          </div>}
-        </div>}
+        {label && <Label required={required} style={labelStyle} text={label} />}
+        {content}
         {type !== 'multiline' &&
           <input
             {...input}
             disabled={disabled}
             placeholder={placeholder}
             required={required}
-            style={[ styles.base, disabled && styles.disabled, meta.touched && meta.error && styles.error, styles.text, styles.lineHeight, style ]}
+            style={[
+              styles.base,
+              disabled && styles.disabled,
+              meta && meta.touched && meta.error && styles.error,
+              styles.text,
+              styles.lineHeight
+            ]}
             type={type}
             onChange={this.onChange} />}
         {type === 'multiline' &&
@@ -125,9 +120,15 @@ export default class TextInput extends Component {
             disabled={disabled}
             placeholder={placeholder}
             required={required}
-            style={[ styles.base, styles.textArea, disabled && styles.disabled, meta.touched && meta.error && styles.error, styles.text, style ]}
+            style={[
+              styles.base,
+              styles.textArea,
+              disabled && styles.disabled,
+              meta && meta.touched && meta.error && styles.error,
+              styles.text
+            ]}
             onChange={this.onChange} />}
-        {meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
+        {meta && meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
       </div>
     );
   }

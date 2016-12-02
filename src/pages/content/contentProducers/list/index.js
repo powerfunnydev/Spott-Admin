@@ -153,7 +153,7 @@ export default class ContentProducers extends Component {
                           <DropdownCel>
                             <Dropdown
                               elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/content-producers/edit/${cp.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={async (e) => { e.preventDefault(); await this.deleteContentProducer(cp.get('id')); }}>Remove</div>
+                              <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteContentProducer(cp.get('id')); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>

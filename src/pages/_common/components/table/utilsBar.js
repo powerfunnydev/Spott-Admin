@@ -48,6 +48,7 @@ export default class UtilsBar extends Component {
           { topElement && menu && <Dropdown
             arrowStyle={dropdownStyles.bigArrowContainer}
             color= 'blue'
+            customDropdown
             elementShown={
               <div key='topElementCreate' style={[
                 dropdownStyles.option,
@@ -64,8 +65,7 @@ export default class UtilsBar extends Component {
                   {topElement}
                 </div>
               </div>
-            }
-            floatedDropdown>
+            }>
             {menu}
           </Dropdown> ||
             /* else, render classic button */
