@@ -33,7 +33,12 @@ export async function getGenders (baseUrl, authenticationToken, locale) {
 
 export async function getTimelineData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
   const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/report/reports/mediumActivity?dataFormat=DATE_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}&aggregationLevel=DAY&fillGaps=true`);
-  return transformActivityData(data, (d) => d);
+  return transformActivityData(data, (d) => {
+    // Last entry is the always 0, skip it.
+    // We want exclusive the end date, so the end date dot is not shown on charts.
+    d.splice(-1, 1);
+    return d;
+  });
 }
 
 export async function getAgeData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
