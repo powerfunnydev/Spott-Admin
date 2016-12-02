@@ -184,6 +184,7 @@ export default class PersistModal extends Component {
                   {createAnother &&
                     <Field
                       component={Checkbox}
+                      first
                       label='Create another'
                       name='createAnother'/>}
                   <Button key='cancel' style={[ buttonStyles.white ]} text='Cancel' type='button' onClick={(e) => { e.preventDefault(); onClose(); }} />

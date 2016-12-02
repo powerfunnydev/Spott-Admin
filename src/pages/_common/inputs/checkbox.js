@@ -15,6 +15,7 @@ export default class Checkbox extends Component {
     checked: PropTypes.bool,
     color: PropTypes.string,
     first: PropTypes.bool,
+    // Input is optional, only used with redux-form.
     input: PropTypes.object,
     label: PropTypes.string,
     style: PropTypes.object,
@@ -28,7 +29,7 @@ export default class Checkbox extends Component {
 
   onChange () {
     const { input } = this.props;
-    this.props.onChange && this.props.onChange(!input.valu);
+    this.props.onChange && this.props.onChange(input && !input.value);
     if (input && input.onChange) {
       input.onChange(!input.value);
     }
