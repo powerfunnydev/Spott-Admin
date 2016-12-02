@@ -1,8 +1,11 @@
 import { del, get, post, postFormData } from './request';
 import { transformEpisode, transformEpisode004, transformTvGuideEntry } from './transformers';
 
-export async function fetchTvGuideEntries (baseUrl, authenticationToken, locale, { page = 0, pageSize = 25, sortDirection, sortField, episodeId }) {
-  let url = `${baseUrl}/v004/media/media/${episodeId}/tvGuideEntries?page=${page}&pageSize=${pageSize}`;
+export async function fetchTvGuideEntries (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField, episodeId }) {
+  let url = `${baseUrl}/v004/media/media/${episodeId}/tvGuideEntries?page=${page}&pageSize=${pageSize}&mediumUuid=${episodeId}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${searchString}`);
+  }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }

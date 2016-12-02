@@ -12,7 +12,6 @@ import SelectInput from '../../_common/inputs/selectInput';
 import localized from '../../_common/localized';
 import { FETCHING } from '../../../constants/statusTypes';
 import PersistModal from '../../_common/persistModal';
-import { load as loadList } from '../list/actions';
 import * as actions from './actions';
 import selector from './selector';
 import { routerPushWithReturnTo } from '../../../actions/global';
@@ -40,7 +39,6 @@ function validate (values, { medium, t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
-  load: bindActionCreators(loadList, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchBroadcastChannels: bindActionCreators(actions.searchBroadcastChannels, dispatch),
   searchEpisodes: bindActionCreators(actions.searchEpisodes, dispatch),
@@ -50,12 +48,6 @@ function validate (values, { medium, t }) {
 }))
 @reduxForm({
   form: 'tvGuideCreateEntry',
-  initialValues: {
-    endDate: moment().startOf('day'),
-    endTime: moment(),
-    startDate: moment().startOf('day'),
-    startTime: moment()
-  },
   validate
 })
 @Radium
@@ -67,11 +59,15 @@ export default class CreateTvGuideEntryModal extends Component {
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
-    load: PropTypes.func.isRequired,
+    initialize: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     mediaById: ImmutablePropTypes.map.isRequired,
     medium: ImmutablePropTypes.map.isRequired,
+    params: PropTypes.object.isRequired,
     reset: PropTypes.func.isRequired,
+    route: PropTypes.shape({
+      load: PropTypes.func.isRequired
+    }).isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcastChannels: PropTypes.func.isRequired,
     searchEpisodes: PropTypes.func.isRequired,
@@ -92,16 +88,35 @@ export default class CreateTvGuideEntryModal extends Component {
     this.submit = ::this.submit;
   }
 
+  async componentWillMount () {
+    const { episodeId, seasonId, seriesEntryId } = this.props.params;
+    if (seriesEntryId && seasonId && episodeId) {
+      this.props.initialize({
+        mediumId: seriesEntryId,
+        seasonId,
+        episodeId,
+        endDate: moment().startOf('day'),
+        endTime: moment(),
+        startDate: moment().startOf('day'),
+        startTime: moment()
+      });
+    } else {
+      this.props.initialize({
+        endDate: moment().startOf('day'),
+        endTime: moment(),
+        startDate: moment().startOf('day'),
+        startTime: moment()
+      });
+    }
+  }
+
   async submit (form) {
     try {
-      const { load, location, submit, dispatch, change, reset } = this.props;
+      const { route: { load }, submit, dispatch, change, reset } = this.props;
       await submit(form.toJS());
       const createAnother = form.get('createAnother');
       // Load the new list of items, using the location query of the previous page.
-      const loc = location && location.state && location.state.returnTo;
-      if (loc && loc.query) {
-        load(loc.query);
-      }
+      load(this.props);
       if (createAnother) {
         await dispatch(reset());
         await dispatch(change('createAnother', true));

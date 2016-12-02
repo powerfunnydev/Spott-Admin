@@ -8,7 +8,6 @@ import { prefix } from './index';
 // ////////////
 
 export const TV_GUIDE_ENTRIES_FETCH_ERROR = 'EPISODE_READ_TV_GUIDE/TV_GUIDE_FETCH_ERROR';
-export const TV_GUIDE_ENTRIES_FETCH_SUCCESS = 'EPISODE_READ_TV_GUIDE/TV_GUIDE_FETCH_SUCCESS';
 
 export const TV_GUIDE_ENTRIES_DELETE_ERROR = 'EPISODE_READ_TV_GUIDE/TV_GUIDE_ENTRIES_REMOVE_ERROR';
 export const TV_GUIDE_ENTRY_DELETE_ERROR = 'EPISODE_READ_TV_GUIDE/TV_GUIDE_ENTRY_REMOVE_ERROR';
@@ -20,7 +19,6 @@ export const SELECT_ENTITY = 'EPISODE_READ_TV_GUIDE/SELECT_ENTITY';
 export const SORT_COLUMN = 'EPISODE_READ_TV_GUIDE/SORT_COLUMN';
 
 export function load (query, episodeId) {
-  console.log('episodeId', episodeId);
   return async (dispatch, getState) => {
     try {
       return await dispatch(dataFetchTvGuideEntries({ ...getInformationFromQuery(query, prefix), episodeId }));

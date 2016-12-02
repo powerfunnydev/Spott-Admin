@@ -49,6 +49,7 @@ export default (state = fromJS({
     searchStringHasSeriesEntries: {},
     searchStringHasUsers: {},
 
+    episodeHasTvGuideEntries: {},
     seriesEntryHasSeasons: {},
     seasonHasEpisodes: {}
   }
@@ -169,11 +170,11 @@ export default (state = fromJS({
       return fetchError(state, [ 'entities', 'media', action.episodeId ], action.error);
 
     case episodeActions.TV_GUIDE_ENTRIES_FETCH_START:
-      return searchStart(state, 'episodeHasTvGuideEntries', serializeFilterHasTvGuideEntries(action));
+      return searchStart(state, 'episodeHasTvGuideEntries', serializeFilterHasTvGuideEntries(action, 'tvGuide'));
     case episodeActions.TV_GUIDE_ENTRIES_FETCH_SUCCESS:
-      return searchSuccess(state, 'tvGuideEntries', 'episodeHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.data.data);
+      return searchSuccess(state, 'tvGuideEntries', 'episodeHasTvGuideEntries', serializeFilterHasTvGuideEntries(action, 'tvGuide'), action.data.data);
     case episodeActions.TV_GUIDE_ENTRIES_FETCH_ERROR:
-      return searchError(state, 'episodeHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.error);
+      return searchError(state, 'episodeHasTvGuideEntries', serializeFilterHasTvGuideEntries(action, 'tvGuide'), action.error);
 
     // Seasons
     // /////////////////

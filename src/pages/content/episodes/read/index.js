@@ -89,7 +89,7 @@ export default class ReadEpisode extends Component {
           { title: 'List', url: '/content/series' },
           { title: 'Series', url: `content/series/read/${this.props.params.seriesEntryId}` },
           { title: 'Season', url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}` },
-          { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: location } ]}/>
+          { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/read/${params.episodeId}` } ]}/>
         <Container>
           {currentEpisode.get('_status') === 'loaded' && currentEpisode &&
             <EntityDetails
@@ -102,7 +102,7 @@ export default class ReadEpisode extends Component {
         <div style={[ generalStyles.fillPage, styles.table ]}>
           <Container>
             <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
-              <Tab title='Episodes'>
+              <Tab title='TV Guide'>
                 <TvGuideList {...this.props}/>
               </Tab>
             </Tabs>

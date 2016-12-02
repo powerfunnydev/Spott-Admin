@@ -14,7 +14,7 @@ import {
 
 const formSelector = getFormValues('tvGuideEditEntry');
 
-export const currentTvGuideEntryIdSelector = (state, props) => props.params.id;
+export const currentTvGuideEntryIdSelector = (state, props) => props.params.tvGuideEntryId;
 export const currentTvGuideEntrySelector = createEntityByIdSelector(tvGuideEntriesEntitiesSelector, currentTvGuideEntryIdSelector);
 
 export const currentMediumIdSelector = createSelector(

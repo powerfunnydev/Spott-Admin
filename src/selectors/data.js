@@ -33,6 +33,7 @@ export const searchStringHasUsersRelationsSelector = (state) => state.getIn([ 'd
 export const searchStringHasSeriesEntriesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasSeriesEntries' ]);
 export const searchStringHasSeasonsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasSeasons' ]);
 
+export const episodeHasTvGuideEntriesSelector = (state) => state.getIn([ 'data', 'relations', 'episodeHasTvGuideEntries' ]);
 export const seriesEntryHasSeasonsSelector = (state) => state.getIn([ 'data', 'relations', 'seriesEntryHasSeasons' ]);
 export const seasonHasEpisodesSelector = (state) => state.getIn([ 'data', 'relations', 'seasonHasEpisodes' ]);
 
