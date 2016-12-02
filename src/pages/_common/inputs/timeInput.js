@@ -12,9 +12,11 @@ export default class TimeInput extends Component {
 
   static propTypes = {
     dateFormat: PropTypes.string,
+    disabled: PropTypes.bool,
     first: PropTypes.bool,
     input: PropTypes.object.isRequired,
     label: PropTypes.string,
+    labelStyle: PropTypes.object,
     meta: PropTypes.object,
     required: PropTypes.bool,
     style: PropTypes.object,
@@ -56,16 +58,18 @@ export default class TimeInput extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { first, input, label, meta, required, style } = this.props;
+    const { disabled, first, input, label, meta, required, style } = this.props;
 
     return (
       <div style={[ !first && styles.padTop, style ]}>
-        {label ? <Label required={required} text={label} /> : <Label />}
+        {label && <Label required={required} text={label} />}
         <TimePicker
+          className={meta.touched && meta.error && 'rc-time-picker-input-error'}
+          disabled={disabled}
           placeholder='hh:mm'
           showSecond={false}
           value={typeof input.value === 'object' ? input.value : null}
-          onChange={this.onChange}/>
+          onChange={this.onChange} />
         {meta && meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
       </div>
     );

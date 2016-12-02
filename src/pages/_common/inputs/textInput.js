@@ -11,6 +11,7 @@ export default class TextInput extends Component {
   static propTypes = {
     _activeLocale: PropTypes.string,
     copyFromBase: PropTypes.bool,
+    content: PropTypes.node,
     disabled: PropTypes.bool,
     first: PropTypes.bool,
     input: PropTypes.object.isRequired,
@@ -94,11 +95,12 @@ export default class TextInput extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { placeholder, disabled, first, input, label, meta, required, style,
+    const { content, placeholder, disabled, first, input, label, meta, required, style,
         type, _activeLocale } = this.props;
     return (
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
+        {content}
         {(_activeLocale) && <div style={styles.checkboxRow}>
           { _activeLocale &&
             <Field
