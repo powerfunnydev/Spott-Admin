@@ -171,7 +171,7 @@ export default class List extends Component {
                           <DropdownCel>
                             <Dropdown
                               elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]}onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/edit/${episode.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={async (e) => { e.preventDefault(); await this.deleteEpisode(episode.get('id')); }}>Remove</div>
+                              <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteEpisode(episode.get('id')); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>
@@ -197,7 +197,7 @@ export default class List extends Component {
                       }}
                       onEdit={(e) => {
                         e.preventDefault();
-                        this.props.routerPushWithReturnTo(`content/episodes/edit/${episode.get('id')}`);
+                        this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/edit/${episode.get('id')}`);
                       }}/>
                   ))}
                   <Tile key={'createEpisode'} onCreate={this.onClickNewEntry}/>

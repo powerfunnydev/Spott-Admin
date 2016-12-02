@@ -229,7 +229,6 @@ export default class EditEpisodes extends Component {
         seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
         searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors,
         searchedCharacterIds, charactersById, searchCharacters } = this.props;
-    console.log('searchedCharacterIds', searchedCharacterIds && searchedCharacterIds.toJS(), 'charactersById', charactersById && charactersById.toJS());
     const { styles } = this.constructor;
     return (
       <Root style={styles.backgroundRoot}>
@@ -354,7 +353,7 @@ export default class EditEpisodes extends Component {
                 </div>
               </Section>
             </Tab>
-            <Tab title='Helpers'>
+            {/* <Tab title='Helpers'>
               <Characters
                 characters={fromJS([
                   { name: 'Louis', image: { url: 'https://spott-cms-rest-tst.appiness.mobi:443/apptvate/rest/v004/image/images/06d2d037-612d-4d2a-a00f-1a5242e9cfc0?height=203&width=360' } },
@@ -363,7 +362,7 @@ export default class EditEpisodes extends Component {
                 charactersById={charactersById}
                 searchCharacters={searchCharacters}
                 searchedCharacterIds={searchedCharacterIds} />
-            </Tab>
+            </Tab>*/}
             <Tab title='Availability'>
               <FieldArray availabilities={availabilities} component={Availabilities} name='availabilities' />
             </Tab>

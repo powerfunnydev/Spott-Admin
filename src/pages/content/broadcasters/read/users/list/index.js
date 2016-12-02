@@ -147,7 +147,7 @@ export default class Users extends Component {
                           <DropdownCel>
                             <Dropdown
                               elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={this.onEditEntry.bind(this, user.get('id'))}>Edit</div>}>
-                              <div key={1} style={[ dropdownStyles.option, dropdownStyles.marginTop ]} onClick={this.onDeleteLinkUser.bind(this, user.get('id'))}>Remove link</div>
+                              <div key={1} style={dropdownStyles.floatOption} onClick={this.onDeleteLinkUser.bind(this, user.get('id'))}>Remove link</div>
                             </Dropdown>
                           </DropdownCel>
                         </Row>
