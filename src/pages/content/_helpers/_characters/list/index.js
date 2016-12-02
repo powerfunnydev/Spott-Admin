@@ -113,7 +113,6 @@ export default class Characters extends Component {
         <Table style={styles.customTable}>
           <Rows style={styles.adaptedRows}>
             {mediumCharacterIds.get('data').map((character, index) => {
-              console.log('character', character.toJS());
               return (
                 <Row isFirst={index === 0} key={index} >
                   <CustomCel style={[ styles.adaptedCustomCel, styles.paddingLeft ]}>
