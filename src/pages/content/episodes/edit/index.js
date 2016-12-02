@@ -3,7 +3,6 @@ import { reduxForm, Field, FieldArray, SubmissionError } from 'redux-form/immuta
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fromJS } from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { FETCHING } from '../../../../constants/statusTypes';
 import { makeTextStyle, fontWeights, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
@@ -21,9 +20,10 @@ import SpecificHeader from '../../header';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
 import Availabilities from '../../_availabilities/list';
+import RelatedVideo from '../../../content/_relatedVideo/read';
 import * as actions from './actions';
 import selector from './selector';
-import Characters from '../../_helpers/_characters/list';
+// import Characters from '../../_helpers/_characters/list';
 import BreadCrumbs from '../../../_common/breadCrumbs';
 
 function validate (values, { t }) {
@@ -57,7 +57,7 @@ function validate (values, { t }) {
   validate
 })
 @Radium
-export default class EditEpisodes extends Component {
+export default class EditEpisode extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
@@ -230,6 +230,10 @@ export default class EditEpisodes extends Component {
         searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors,
         searchedCharacterIds, charactersById, searchCharacters } = this.props;
     const { styles } = this.constructor;
+
+    const profileImageUrl = currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
+      `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`;
+
     return (
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />
@@ -338,8 +342,7 @@ export default class EditEpisodes extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
-                      imageUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
-                        `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      imageUrl={profileImageUrl}
                       onChange={({ callback, file }) => { this.props.uploadProfileImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}/>
                   </div>
                   <div style={styles.paddingLeftUploadImage}>
@@ -363,16 +366,18 @@ export default class EditEpisodes extends Component {
                 searchCharacters={searchCharacters}
                 searchedCharacterIds={searchedCharacterIds} />
             </Tab>*/}
+            <Tab title='Interactive video'>
+              <Section>
+                <FormSubtitle first>Interactive video</FormSubtitle>
+                <Field
+                  component={RelatedVideo}
+                  medium={currentEpisode}
+                  name='videoId' />
+              </Section>
+            </Tab>
             <Tab title='Availability'>
               <FieldArray availabilities={availabilities} component={Availabilities} name='availabilities' />
             </Tab>
-            {/* TODO
-            <Tab title='Audience'>
-              <Section>
-                <FormSubtitle first>Location</FormSubtitle>
-                ...
-              </Section>
-            </Tab>*/}
           </Tabs>
         </EditTemplate>
       </Root>

@@ -17,6 +17,7 @@ import episodesEdit from '../pages/content/episodes/edit/reducer';
 import episodesReadTvGuide from '../pages/content/episodes/read/tvGuide/reducer';
 import LinkUserModal from '../pages/_common/linkUserModal/reducer';
 import reporting from '../pages/reporting/reducer';
+import relatedVideoPersist from '../pages/content/_relatedVideo/persist/reducer';
 import seasonsCreate from '../pages/content/seasons/create/reducer';
 import seasonsEdit from '../pages/content/seasons/edit/reducer';
 import seasonsList from '../pages/content/seasons/list/reducer';
@@ -29,10 +30,12 @@ import tvGuideList from '../pages/tvGuide/list/reducer';
 import usersEdit from '../pages/users/edit/reducer';
 import usersList from '../pages/users/list/reducer';
 import Toast from './toast';
+
 /**
  * The application's main reducer
  */
 export default combineReducers({
+  _relatedVideo: relatedVideoPersist,
   common: combineReducers({
     linkUserModal: LinkUserModal
   }),

@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { colors } from '../styles';
+import { colors, fontWeights, makeTextStyle } from '../styles';
 import CheckedSVG from '../images/completed';
 
 let counter = 0;
@@ -9,13 +9,14 @@ function newId () {
 }
 
 @Radium
-export class Checkbox extends Component {
+export default class Checkbox extends Component {
 
   static propTypes = {
     checked: PropTypes.bool,
     color: PropTypes.string,
+    first: PropTypes.bool,
     input: PropTypes.object,
-    key: PropTypes.string,
+    label: PropTypes.string,
     style: PropTypes.object,
     onChange: PropTypes.func // Uses the field's onChange, and this one if provided.
   };
@@ -34,6 +35,10 @@ export class Checkbox extends Component {
   }
 
   static styles = {
+    container: {
+      alignItems: 'center',
+      display: 'flex'
+    },
     checkbox: {
       backgroundColor: colors.white,
       alignItems: 'center',
@@ -55,6 +60,14 @@ export class Checkbox extends Component {
         backgroundColor: colors.blue3
       }
     },
+    label: {
+      ...makeTextStyle(fontWeights.regular, '0.688em'),
+      color: colors.darkGray2,
+      paddingLeft: '0.75em'
+    },
+    padTop: {
+      paddingTop: '1.25em'
+    },
     blueCheckbox: {
       backgroundColor: colors.white,
       border: `1px solid ${colors.primaryBlue}`
@@ -70,10 +83,15 @@ export class Checkbox extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { checked, input, style, color } = this.props;
+    const { checked, color, first, input, label, style } = this.props;
+
+    // return (
+    //   <div style={[ styles.container, !first && styles.padTop, style ]}>
+    //     <span style={[ styles.checkbox, (checked || input && input.value) && styles.checked ]} onClick={this.onChange}>
+    //       {(checked || input && input.value) && <img src={checkIcon}/>}</span>
 
     return (
-      <div key={newId()} style={style}>
+      <div key={newId()} style={[ styles.container, !first && styles.padTop, style ]}>
         <span
           style={[
             styles.checkbox,
@@ -84,7 +102,9 @@ export class Checkbox extends Component {
             color === 'blue' && (checked || input && input.value) && styles.blueChecked
           ]}
           onClick={this.onChange}>
-          {(checked || input && input.value) && <CheckedSVG color={color === 'blue' && colors.primaryBlue || colors.white}/>}</span>
+          {(checked || input && input.value) && <CheckedSVG color={color === 'blue' && colors.primaryBlue || colors.white}/>}
+        </span>
+        {label && <div style={styles.label}>{label}</div>}
       </div>
     );
   }

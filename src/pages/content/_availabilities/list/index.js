@@ -28,7 +28,7 @@ export default class Availabilities extends Component {
   constructor (props) {
     super(props);
     this.persistAvailiability = ::this.persistAvailiability;
-    this.onClickNewEntry = ::this.onClickNewEntry;
+    this.onClickCreate = ::this.onClickCreate;
     this.getAvailability = ::this.getAvailability;
     this.state = {
       create: false,
@@ -65,7 +65,7 @@ export default class Availabilities extends Component {
     };
   }
 
-  onClickNewEntry (e) {
+  onClickCreate (e) {
     e.preventDefault();
     this.setState({ create: true });
   }
@@ -126,7 +126,7 @@ export default class Availabilities extends Component {
           <Rows style={styles.adaptedRows}>
             {fields.map((availability, index) => {
               return (
-                <Row isFirst={index === 0} >
+                <Row isFirst={index === 0} key={`availabilityRow${index}`} >
                   <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]}>
                     <Field
                       component={({ input: { value: countryId } }) => <span>{countries.getIn([ countryId, 'name' ]) || '-'}</span>}
@@ -155,7 +155,7 @@ export default class Availabilities extends Component {
               );
             })}
             <Row isFirst={fields.length === 0} >
-              <CustomCel style={[ styles.add, styles.adaptedCustomCel ]} onClick={this.onClickNewEntry}>
+              <CustomCel style={[ styles.add, styles.adaptedCustomCel ]} onClick={this.onClickCreate}>
                 <Plus color={colors.primaryBlue} />&nbsp;&nbsp;&nbsp;Add availability
               </CustomCel>
             </Row>
