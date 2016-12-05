@@ -7,6 +7,7 @@ import Label from './_label';
 export default class FileInput extends Component {
 
   static propTypes = {
+    accept: PropTypes.string,
     disabled: PropTypes.bool,
     first: PropTypes.bool,
     input: PropTypes.object.isRequired,

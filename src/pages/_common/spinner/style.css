@@ -1,0 +1,129 @@
+/* Loading indicator */
+.loading {
+  position: relative;
+}
+
+.inner, .loading:after {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+/* Mask */
+ .loading:after {
+  content:" ";
+  border-radius: 100%;
+  background: #fff;    /* same as container background */
+}
+/* Spinning gradients */
+ .inner {
+  animation-duration: 1s;    /* speed */
+  -webkit-animation-duration: 1s;    /* speed */
+  animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  -webkit-animation-timing-function: linear;
+}
+.inner {
+  animation-name: rotate-inner;
+  -webkit-animation-name: rotate-inner;
+}
+/* Halfs */
+.inner:before, .inner:after {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  content: " ";
+}
+/* Left half */
+.inner:before {
+  left: 0;
+  right: 50%;
+}
+/* Right half */
+.inner:after {
+  left: 50%;
+  right: 0;
+}
+/* Half gradients */
+.inner:before {
+  background-image: -webkit-linear-gradient(top, rgba(9,187,240,1), rgba(15,204,244,0.5));
+  background-image: -moz-linear-gradient(top, rgba(9,187,240,1), rgba(15,204,244,0.5));
+  background-image: linear-gradient(to bottom, rgba(9,187,240,1), rgba(15,204,244,0.5));
+}
+.inner:after {
+  background-image: -webkit-linear-gradient(top, rgba(21,233,249,0), rgba(15,204,244,0.5));
+  background-image: -moz-linear-gradient(top, rgba(21,233,249,0), rgba(15,204,244,0.5));
+  background-image: linear-gradient(to bottom, rgba(21,233,249,0), rgba(15,204,244,0.5));
+}
+/* Spinning animations */
+
+@keyframes rotate-inner {
+  0% {
+    transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes rotate-inner {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+/* Size Variant Large */
+.loading.large {
+  width: 48px;    /* diameter */
+  height: 48px;    /* diameter */
+}
+.loading.large:after {
+  margin: 8%;    /* stroke width */
+}
+
+.loading.large .inner:before {
+  border-radius: 48px 0 0 48px;    /* diameter */
+}
+.loading.large .inner:after {
+  border-radius: 0 48px 48px 0;    /* diameter */
+}
+
+/* Size Variant Large */
+.loading.medium {
+  width: 24px;    /* diameter */
+  height: 24px;    /* diameter */
+}
+.loading.medium:after {
+  margin: 14%;    /* stroke width */
+}
+
+.loading.medium .inner:before {
+  border-radius: 24px 0 0 24px;    /* diameter */
+}
+.loading.medium .inner:after {
+  border-radius: 0 24px 24px 0;    /* diameter */
+}
+
+/* Size Variant Small */
+
+.loading.small {
+  width: 14px;    /* diameter */
+  height: 14px;    /* diameter */
+}
+.loading.small:after {
+  margin: 14%;    /* stroke width */
+}
+.loading.small .inner:before {
+  border-radius: 14px 0 0 14px;    /* diameter */
+}
+.loading.small .inner:after {
+  border-radius: 0 14px 14px 0;    /* diameter */
+}

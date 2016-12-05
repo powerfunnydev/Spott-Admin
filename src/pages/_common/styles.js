@@ -204,7 +204,10 @@ export const FormSubtitle = Radium((props) => (
 FormSubtitle.propTypes = {
   children: PropTypes.node,
   first: PropTypes.bool,
-  style: PropTypes.object
+  style: PropTypes.oneOfType([
+    PropTypes.object,
+    PropTypes.array
+  ])
 };
 
 const formDescriptionStyle = {
