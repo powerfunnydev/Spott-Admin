@@ -96,7 +96,7 @@ export default class Widget extends Component {
         <div style={styles.container}>
           <div style={styles.header}>
             <h2 style={styles.title}>{title}&nbsp;&nbsp;&nbsp;</h2>
-            {isLoading && <Spinner />}
+            {isLoading && <Spinner size='small' />}
           </div>
           <div style={[ styles.content, contentStyle ]}>
             {children}
