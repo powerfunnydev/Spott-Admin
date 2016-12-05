@@ -25,6 +25,7 @@ import EpisodeList from './pages/content/episodes/list';
 import EpisodeRead from './pages/content/episodes/read';
 import EpisodeEdit from './pages/content/episodes/edit';
 import EpisodeCreate from './pages/content/episodes/create';
+import VideoEdit from './pages/content/videos/edit';
 import LinkUserToContentProducer from './pages/content/contentProducers/read/users/linkUser';
 import Error404 from './pages/error404/main';
 import MediaSinglePage from './pages/media/singlePage';
@@ -126,6 +127,7 @@ function getRoutes ({ dispatch, getState }) {
         <Route path='broadcast-channels'>
           <Route component={BroadcastChannelEdit} path='edit/:id' />
         </Route>
+        <Route component={VideoEdit} path='videos/edit/:videoId' onEnter={requireOneRole([ ADMIN ])}/>
         <Route component={SeriesList} path='series'>
           <Route component={SeriesCreate} path='create'/>
           <Route component={SeasonCreate} path='create/season'/>

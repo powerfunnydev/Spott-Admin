@@ -6,6 +6,10 @@ export const VIDEO_FETCH_START = 'VIDEO/VIDEO_FETCH_START';
 export const VIDEO_FETCH_SUCCESS = 'VIDEO/VIDEO_FETCH_SUCCESS';
 export const VIDEO_FETCH_ERROR = 'VIDEO/VIDEO_FETCH_ERROR';
 
+export const VIDEO_PERSIST_START = 'VIDEO/VIDEO_PERSIST_START';
+export const VIDEO_PERSIST_SUCCESS = 'VIDEO/VIDEO_PERSIST_SUCCESS';
+export const VIDEO_PERSIST_ERROR = 'VIDEO/VIDEO_PERSIST_ERROR';
+
 export const UPLOAD_FILE_START = 'VIDEO/UPLOAD_FILE_START';
 export const UPLOAD_FILE_SUCCESS = 'VIDEO/UPLOAD_FILE_SUCCESS';
 export const UPLOAD_FILE_ERROR = 'VIDEO/UPLOAD_FILE_ERROR';
@@ -15,6 +19,7 @@ export const PROCESS_VIDEO_SUCCESS = 'PROCESS_VIDEO_SUCCESS';
 export const PROCESS_VIDEO_ERROR = 'PROCESS_VIDEO_ERROR';
 
 export const fetchVideo = makeApiActionCreator(videoApi.getVideo, VIDEO_FETCH_START, VIDEO_FETCH_SUCCESS, VIDEO_FETCH_ERROR);
+export const persistVideo = makeApiActionCreator(videoApi.persistVideo, VIDEO_PERSIST_START, VIDEO_PERSIST_SUCCESS, VIDEO_PERSIST_ERROR);
 
 /**
  * Requests a file upload to the server, then perform a file upload to Amazon.
