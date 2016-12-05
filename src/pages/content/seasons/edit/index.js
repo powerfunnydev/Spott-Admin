@@ -10,7 +10,7 @@ import { Tabs, Tab } from '../../../_common/components/formTabs';
 import * as actions from './actions';
 import { SEASON_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
-import Dropzone from '../../../_common/dropzone';
+import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Header from '../../../app/header';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Label from '../../../_common/inputs/_label';
@@ -37,6 +37,8 @@ function validate (values, { t }) {
 @localized
 @connect(selector, (dispatch) => ({
   closeModal: bindActionCreators(actions.closeModal, dispatch),
+  deletePosterImage: bindActionCreators(actions.deletePosterImage, dispatch),
+  deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
   loadSeason: bindActionCreators(actions.loadSeason, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
@@ -62,6 +64,8 @@ export default class EditEpisodes extends Component {
     currentSeasonId: PropTypes.string,
     currentSeriesEntryId: PropTypes.string,
     defaultLocale: PropTypes.string,
+    deletePosterImage: PropTypes.func.isRequired,
+    deleteProfileImage: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
@@ -207,7 +211,7 @@ export default class EditEpisodes extends Component {
   render () {
     const { closeModal, currentModal, _activeLocale, currentSeriesEntryId, searchSeriesEntries,
         hasTitle, location, currentSeason, seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
-        handleSubmit, supportedLocales, errors } = this.props;
+        handleSubmit, supportedLocales, errors, deleteProfileImage, deletePosterImage } = this.props;
     const { styles } = this.constructor;
     return (
       <Root style={styles.backgroundRoot}>
@@ -288,17 +292,23 @@ export default class EditEpisodes extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
+                      downloadUrl={currentSeason.getIn([ 'profileImage', _activeLocale ]) &&
+                        currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ])}
                       imageUrl={currentSeason.getIn([ 'profileImage', _activeLocale ]) &&
                         `${currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ seasonId: this.props.params.seasonId, image: file, callback }); }}/>
+                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ seasonId: this.props.params.seasonId, image: file, callback }); }}
+                      onDelete={() => { deleteProfileImage({ mediumId: currentSeason.get('id') }); }}/>
                   </div>
                   <div style={styles.paddingLeftUploadImage}>
                     <Label text='Poster image' />
                     <Dropzone
                       accept='image/*'
+                      downloadUrl={currentSeason.getIn([ 'posterImage', _activeLocale ]) &&
+                        currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ])}
                       imageUrl={currentSeason.getIn([ 'posterImage', _activeLocale ]) &&
                         `${currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=203&width=360`}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ seasonId: this.props.params.seasonId, image: file, callback }); }}/>
+                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ seasonId: this.props.params.seasonId, image: file, callback }); }}
+                      onDelete={() => { deletePosterImage({ mediumId: currentSeason.get('id') }); }}/>
                   </div>
                 </div>
               </Section>

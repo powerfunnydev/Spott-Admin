@@ -12,7 +12,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Section from '../../../_common/components/section';
 import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
-import Dropzone from '../../../_common/dropzone';
+import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Label from '../../../_common/inputs/_label';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import selector from './selector';
@@ -28,6 +28,7 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
+  deleteLogo: bindActionCreators(actions.deleteLogo, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadImage: bindActionCreators(actions.uploadImage, dispatch),
@@ -42,6 +43,7 @@ export default class EditContentProducers extends Component {
 
   static propTypes = {
     currentContentProducer: ImmutablePropTypes.map.isRequired,
+    deleteLogo: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
@@ -93,7 +95,7 @@ export default class EditContentProducers extends Component {
   }
 
   render () {
-    const { currentContentProducer, location, handleSubmit } = this.props;
+    const { currentContentProducer, location, handleSubmit, deleteLogo } = this.props;
     const { styles } = this.constructor;
     return (
       <Root style={styles.background}>
@@ -120,9 +122,12 @@ export default class EditContentProducers extends Component {
                   <Label text='Upload image' />
                   <Dropzone
                     accept='image/*'
+                    downloadUrl={currentContentProducer.get('logo') &&
+                      currentContentProducer.getIn([ 'logo', 'url' ])}
                     imageUrl={currentContentProducer.get('logo') &&
                       `${currentContentProducer.getIn([ 'logo', 'url' ])}?height=310&width=310`}
-                    onChange={({ callback, file }) => { this.props.uploadImage({ contentProducerId: this.props.params.id, image: file, callback }); }}/>
+                    onChange={({ callback, file }) => { this.props.uploadImage({ contentProducerId: this.props.params.id, image: file, callback }); }}
+                    onDelete={() => { deleteLogo({ contentProducerId: currentContentProducer.get('id') }); }}/>
                 </div>
               </Section>
             </TabPanel>

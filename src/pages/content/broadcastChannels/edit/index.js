@@ -12,7 +12,7 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Section from '../../../_common/components/section';
 import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
-import Dropzone from '../../../_common/dropzone';
+import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Label from '../../../_common/inputs/_label';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import selector from './selector';
@@ -27,6 +27,7 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
+  deleteLogo: bindActionCreators(actions.deleteLogo, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadImage: bindActionCreators(actions.uploadImage, dispatch),
@@ -41,6 +42,7 @@ export default class EditBroadcastChannel extends Component {
 
   static propTypes = {
     currentBroadcastChannel: ImmutablePropTypes.map.isRequired,
+    deleteLogo: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
@@ -81,10 +83,18 @@ export default class EditBroadcastChannel extends Component {
     }
   }
 
+  static styles = {
+    background: {
+      backgroundColor: colors.lightGray4,
+      paddingBottom: '50px'
+    }
+  }
+
   render () {
-    const { currentBroadcastChannel, location, handleSubmit } = this.props;
+    const { deleteLogo, currentBroadcastChannel, location, handleSubmit } = this.props;
+    const { styles } = this.constructor;
     return (
-      <Root style={{ backgroundColor: colors.lightGray4, paddingBottom: '50px' }}>
+      <Root style={styles.background}>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
@@ -105,9 +115,12 @@ export default class EditBroadcastChannel extends Component {
                   <Label text='Upload image' />
                   <Dropzone
                     accept='image/*'
+                    downloadUrl={currentBroadcastChannel.get('logo') &&
+                      currentBroadcastChannel.getIn([ 'logo', 'url' ])}
                     imageUrl={currentBroadcastChannel.get('logo') &&
                       `${currentBroadcastChannel.getIn([ 'logo', 'url' ])}?height=310&width=310`}
-                    onChange={({ callback, file }) => { this.props.uploadImage({ broadcastChannelId: this.props.params.id, image: file, callback }); }}/>
+                    onChange={({ callback, file }) => { this.props.uploadImage({ broadcastChannelId: this.props.params.id, image: file, callback }); }}
+                    onDelete={() => { deleteLogo({ broadcastChannelId: currentBroadcastChannel.get('id') }); }}/>
                 </div>
               </Section>
             </TabPanel>

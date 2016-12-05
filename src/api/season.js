@@ -20,12 +20,12 @@ export async function searchEpisodes (baseUrl, authenticationToken, locale, { se
   if (!seasonId) {
     return [];
   }
-  let searchUrl = `${baseUrl}/v003/media/serieSeasons/${seasonId}/episodes?pageSize=25`;
+  let searchUrl = `${baseUrl}/v004/media/serieSeasons/${seasonId}/episodes?pageSize=25`;
   if (searchString) {
     searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
   }
   const { body: { data } } = await get(authenticationToken, locale, searchUrl);
-  return data.map(transformEpisode);
+  return data.map(transformListEpisode);
 }
 
 export async function fetchSeasons (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {

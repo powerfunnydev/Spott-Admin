@@ -14,7 +14,7 @@ import { Tabs, Tab } from '../../../_common/components/formTabs';
 import Section from '../../../_common/components/section';
 import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
-import Dropzone from '../../../_common/dropzone';
+import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Label from '../../../_common/inputs/_label';
 import selector from './selector';
 import { SERIES_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
@@ -36,6 +36,8 @@ function validate (values, { t }) {
   loadSeriesEntry: bindActionCreators(actions.loadSeriesEntry, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   closeModal: bindActionCreators(actions.closeModal, dispatch),
+  deletePosterImage: bindActionCreators(actions.deletePosterImage, dispatch),
+  deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
   uploadPosterImage: bindActionCreators(actions.uploadPosterImage, dispatch),
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
@@ -55,6 +57,8 @@ export default class EditSeriesEntries extends Component {
     currentModal: PropTypes.string,
     currentSeriesEntry: ImmutablePropTypes.map.isRequired,
     defaultLocale: PropTypes.string,
+    deletePosterImage: PropTypes.func.isRequired,
+    deleteProfileImage: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
@@ -168,7 +172,7 @@ export default class EditSeriesEntries extends Component {
   render () {
     const styles = this.constructor.styles;
     const { _activeLocale, errors, closeModal, currentModal, supportedLocales, defaultLocale,
-      currentSeriesEntry, location, handleSubmit } = this.props;
+      currentSeriesEntry, location, handleSubmit, deletePosterImage, deleteProfileImage } = this.props;
 
     return (
         <Root style={styles.backgroundRoot}>
@@ -215,17 +219,23 @@ export default class EditSeriesEntries extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
+                      downloadUrl={currentSeriesEntry.getIn([ 'profileImage', _activeLocale ]) &&
+                        currentSeriesEntry.getIn([ 'profileImage', _activeLocale, 'url' ])}
                       imageUrl={currentSeriesEntry.getIn([ 'profileImage', _activeLocale ]) &&
                         `${currentSeriesEntry.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ seriesEntryId: this.props.params.seriesEntryId, image: file, callback }); }}/>
+                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ seriesEntryId: this.props.params.seriesEntryId, image: file, callback }); }}
+                      onDelete={() => { deleteProfileImage({ mediumId: currentSeriesEntry.get('id') }); }}/>
                   </div>
                   <div style={styles.paddingLeftUploadImage}>
                     <Label text='Poster image' />
                     <Dropzone
                       accept='image/*'
+                      downloadUrl={currentSeriesEntry.getIn([ 'posterImage', _activeLocale ]) &&
+                        currentSeriesEntry.getIn([ 'posterImage', _activeLocale, 'url' ])}
                       imageUrl={currentSeriesEntry.getIn([ 'posterImage', _activeLocale ]) &&
                         `${currentSeriesEntry.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=203&width=360`}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ seriesEntryId: this.props.params.seriesEntryId, image: file, callback }); }}/>
+                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ seriesEntryId: this.props.params.seriesEntryId, image: file, callback }); }}
+                      onDelete={() => { deletePosterImage({ mediumId: currentSeriesEntry.get('id') }); }}/>
                   </div>
                 </div>
               </Section>

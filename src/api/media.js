@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 import AWS from 'aws-sdk';
-import { get, post, UnexpectedError } from './request';
+import { get, post, UnexpectedError, del } from './request';
 import { transformListMedium } from './transformers';
 
 function uploadToS3 ({ accessKeyId, acl, baseKey, bucket, file, policy, signature }, uploadingCallback) {
@@ -224,4 +224,14 @@ export async function searchMedia (baseUrl, authenticationToken, locale, { searc
   }
   const { body: { data } } = await get(authenticationToken, locale, searchUrl);
   return data.map(transformListMedium);
+}
+
+export async function deletePosterImage (baseUrl, authenticationToken, locale, { mediumId }) {
+  let url = `${baseUrl}/v004/media/media/${mediumId}/posterImage`;
+  await del(authenticationToken, locale, url);
+}
+
+export async function deleteProfileImage (baseUrl, authenticationToken, locale, { mediumId }) {
+  let url = `${baseUrl}/v004/media/media/${mediumId}/profileCover`;
+  await del(authenticationToken, locale, url);
 }

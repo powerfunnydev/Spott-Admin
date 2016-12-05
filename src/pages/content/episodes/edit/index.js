@@ -10,7 +10,7 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { EPISODE_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
-import Dropzone from '../../../_common/dropzone';
+import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Header from '../../../app/header';
 import Label from '../../../_common/inputs/_label';
 import localized from '../../../_common/localized';
@@ -41,6 +41,8 @@ function validate (values, { t }) {
 @localized
 @connect(selector, (dispatch) => ({
   closeModal: bindActionCreators(actions.closeModal, dispatch),
+  deletePosterImage: bindActionCreators(actions.deletePosterImage, dispatch),
+  deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
   loadEpisode: bindActionCreators(actions.loadEpisode, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
@@ -77,6 +79,8 @@ export default class EditEpisode extends Component {
     currentSeasonId: PropTypes.string,
     currentSeriesEntryId: PropTypes.string,
     defaultLocale: PropTypes.string,
+    deletePosterImage: PropTypes.func.isRequired,
+    deleteProfileImage: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
     episodeCharacterIds: ImmutablePropTypes.map.isRequired,
     error: PropTypes.any,
@@ -238,10 +242,9 @@ export default class EditEpisode extends Component {
         searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
         seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
         searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors,
-        searchedCharacterIds, charactersById, searchCharacters, loadMediumCharacters } = this.props;
+        searchedCharacterIds, charactersById, searchCharacters, loadMediumCharacters, deleteProfileImage,
+        deletePosterImage } = this.props;
     const { styles } = this.constructor;
-    const profileImageUrl = currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
-      `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`;
 
     return (
       <Root style={styles.backgroundRoot}>
@@ -360,16 +363,23 @@ export default class EditEpisode extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
-                      imageUrl={profileImageUrl}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}/>
+                      downloadUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
+                        currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}
+                      imageUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
+                        `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}
+                      onDelete={() => { deleteProfileImage({ mediumId: currentEpisode.get('id') }); }}/>
                   </div>
                   <div style={styles.paddingLeftUploadImage}>
                     <Label text='Poster image' />
                     <Dropzone
                       accept='image/*'
+                      downloadUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
+                        currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}
                       imageUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
                         `${currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=203&width=360`}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}/>
+                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}
+                      onDelete={() => { deletePosterImage({ mediumId: currentEpisode.get('id') }); }}/>
                   </div>
                 </div>
               </Section>

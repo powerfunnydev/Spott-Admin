@@ -170,12 +170,25 @@ export default class Toast extends Component {
     popToast: PropTypes.func.isRequired
   };
 
-  componentDidUpdate () {
+  constructor (props) {
+    super(props);
+    this.state = { transition: false };
+  }
+
+  componentWillReceiveProps (nextProps, nextState) {
     // We received a new toast, let's timeout
-    if (this.props.currentToast) {
+    if (nextProps.currentToast) {
+      // next tick we need to set the transition on true, otherwise there
+      // will be no transition.
       setTimeout(() => {
-        this.props.popToast();
-      }, 5000);
+        this.setState({ transition: true });
+        setTimeout(() => {
+          this.setState({ transition: false });
+        }, 4000);
+        setTimeout(() => {
+          this.props.popToast();
+        }, 4500);
+      }, 0);
     }
   }
 
@@ -184,9 +197,10 @@ export default class Toast extends Component {
       display: 'flex',
       flexDirection: 'row',
       width: 380,
-      position: 'fixed',
+      position: 'absolute',
+      transition: 'top 0.5s ease-in',
       right: 40,
-      top: 40,
+      top: -100,
       minHeight: 60, // Matches the flex-basis in icon.base style
       zIndex: 101,
       boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.25)'
@@ -245,6 +259,10 @@ export default class Toast extends Component {
       transform: 'rotate(45deg)',
       paddingRight: '13px',
       cursor: 'pointer'
+    },
+    transition: {
+      top: 40,
+      transition: 'top 0.5s ease-out'
     }
   };
 
@@ -263,7 +281,7 @@ export default class Toast extends Component {
     const entityType = currentToast.get('entityType');
     const entity = currentToast.get('entity');
     return (
-      <div style={styles.container}>
+      <div key='toastContainer' style={[ styles.container, this.state.transition && styles.transition ]}>
         <div style={[ styles.icon.base, styles.icon[type] ]}>
         <CompletedSVG color={colors.white} />
         </div>

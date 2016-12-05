@@ -5,6 +5,7 @@ import { searchSeasons as dataSearchSeasons, searchSeriesEntries as dataSearchSe
 import { searchBroadcasters as dataSearchBroadcasters } from '../../../../actions/broadcaster';
 import { searchContentProducers as dataSearchContentProducers } from '../../../../actions/contentProducer';
 import { searchCharacters as dataSearchCharacters, searchMediumCharacters as dataSearchMediumCharacters } from '../../../../actions/character';
+export { deleteProfileImage, deletePosterImage } from '../../../../actions/media';
 
 export { openModal, closeModal } from '../../../../actions/global';
 

@@ -169,7 +169,7 @@ export default class Users extends Component {
                     deleteText='Remove link'
                     imageUrl={user.get('avatar') && `${user.getIn([ 'avatar', 'url' ])}?height=310&width=310`}
                     key={`user${index}`}
-                    text={this.getUserName(user)}
+                    text={user.get('userName')}
                     onDelete={this.onDeleteLinkUser.bind(this, user.get('id'))}
                     onEdit={this.onEditEntry.bind(this, user.get('id'))}/>
                 ))}
