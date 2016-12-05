@@ -185,7 +185,7 @@ export default class RelatedVideo extends Component {
     }
 
     if (videoUploadStatus) {
-      const showProgress = Boolean(videoUploadStatus.get('totalBytes'));
+      const showProgress = videoUploadStatus.get('currentBytes') !== videoUploadStatus.get('totalBytes');
       return (
         <div>
           <div style={[ styles.detailsContainer.base, styles.detailsContainer.bottomBar ]}>
