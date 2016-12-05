@@ -17,7 +17,7 @@ import SelectInput from '../../_common/inputs/selectInput';
 import TextInput from '../../_common/inputs/textInput';
 import selector from './selector';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import Dropzone from '../../_common/dropzone';
+import Dropzone from '../../_common/dropzone/imageDropzone';
 import { Tabs, Tab } from '../../_common/components/formTabs';
 import Checkbox from '../../_common/inputs/checkbox';
 import { INACTIVE, disabledReasons, userStatus as userStates } from '../../../constants/userRoles';
@@ -227,6 +227,7 @@ export default class EditUser extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
+                      downloadUrl={currentUser.get('profileImage') && currentUser.getIn([ 'profileImage', 'url' ])}
                       imageUrl={currentUser.get('profileImage') && `${currentUser.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                       onChange={({ callback, file }) => { this.props.uploadProfileImage({ userId: this.props.params.id, image: file, callback }); }}/>
                   </div>
@@ -234,6 +235,7 @@ export default class EditUser extends Component {
                     <Label text='Avatar image' />
                     <Dropzone
                       accept='image/*'
+                      downloadUrl={currentUser.get('avatar') && currentUser.getIn([ 'avatar', 'url' ])}
                       imageUrl={currentUser.get('avatar') && `${currentUser.getIn([ 'avatar', 'url' ])}?height=310&width=310`}
                       onChange={({ callback, file }) => { this.props.uploadBackgroundImage({ userId: this.props.params.id, image: file, callback }); }}/>
                   </div>

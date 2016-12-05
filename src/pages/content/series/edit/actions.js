@@ -1,6 +1,7 @@
 import { persistSeriesEntry, fetchSeriesEntry as dataFetchSeriesEntry,
       uploadProfileImage as dataUploadProfileImage,
       uploadPosterImage as dataUploadPosterImage } from '../../../../actions/series';
+export { deleteProfileImage, deletePosterImage } from '../../../../actions/media';
 
 export const SERIES_ENTRY_FETCH_ENTRY_ERROR = 'SERIES_ENTRIES_EDIT/FETCH_ENTRY_ERROR';
 

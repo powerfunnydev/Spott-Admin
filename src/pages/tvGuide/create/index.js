@@ -161,7 +161,7 @@ export default class CreateTvGuideEntryModal extends Component {
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}
-          getItemText={(id) => `${mediaById.getIn([ id, 'title' ])} (${t(`mediaTypes.${mediaById.getIn([ id, 'type' ])}`)})`}
+          getItemText={(id) => mediaById.getIn([ id, 'title' ]) && `${mediaById.getIn([ id, 'title' ])} (${t(`mediaTypes.${mediaById.getIn([ id, 'type' ])}`)})`}
           getOptions={searchMedia}
           isLoading={searchedMediumIds.get('_status') === FETCHING}
           label='Medium title'

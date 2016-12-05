@@ -66,4 +66,28 @@ export function slowdown (func, wait, immediate) {
     }
 	};
 }
+
+export function downloadFile (url) {
+  const userAgentString = navigator.userAgent.toLowerCase();
+  // Chrome and Safari support a virtual link being clicked
+  if (userAgentString.indexOf('chrome') > -1 || userAgentString.indexOf('safari') > -1) {
+    // Create a-tag, if HTML5's download attribute is supported, we use it
+    const linkEl = document.createElement('a');
+    linkEl.href = url;
+    linkEl.download = 'download';
+    if (linkEl.download) { linkEl.download = url.substring(url.lastIndexOf('/') + 1, url.length); }
+    // Click the link
+    if (document.createEvent) {
+      const e = document.createEvent('MouseEvents');
+      e.initEvent('click', true, true);
+      linkEl.dispatchEvent(e);
+      return true;
+    }
+  }
+  // Failback method
+  // Why does the file shows up in the same tab on Windows Phone 8?
+  // Here is why: http://stackoverflow.com/questions/12201436/how-to-open-a-new-window-or-tab-via-javascript-in-windows-phone-7-browser
+  window.location.href = url;
+}
+
 /* eslint-enable */

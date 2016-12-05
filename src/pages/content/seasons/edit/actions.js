@@ -2,6 +2,7 @@ import { persistSeason, fetchSeason as dataFetchSeason,
       uploadProfileImage as dataUploadProfileImage,
       uploadPosterImage as dataUploadPosterImage } from '../../../../actions/season';
 import { searchSeriesEntries as dataSearchSeriesEntries } from '../../../../actions/series';
+export { deleteProfileImage, deletePosterImage } from '../../../../actions/media';
 
 export { openModal, closeModal } from '../../../../actions/global';
 

@@ -1,4 +1,5 @@
 import { uploadBroadcasterImage, persistBroadcaster, fetchBroadcaster as dataFetchBroadcaster } from '../../../../actions/broadcaster';
+export { deleteLogo } from '../../../../actions/broadcaster';
 
 export const BROADCASTERS_FETCH_ENTRY_ERROR = 'BROADCASTERS_EDIT/FETCH_ENTRY_ERROR';
 
