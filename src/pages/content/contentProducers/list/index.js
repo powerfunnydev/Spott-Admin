@@ -89,8 +89,7 @@ export default class ContentProducers extends Component {
     this.props.routerPushWithReturnTo('content/content-producers/create');
   }
 
-  async onClickDeleteSelected (e) {
-    e.preventDefault();
+  async onClickDeleteSelected () {
     const contentProducersIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {

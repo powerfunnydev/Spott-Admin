@@ -10,7 +10,7 @@ import selector from './selector';
 import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
-import BreadCrumbs from '../../../_common/breadCrumbs';
+import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import Line from '../../../_common/components/line';
 import BroadcastChannelList from './broadcastChannels';
 import UserList from './users/list';

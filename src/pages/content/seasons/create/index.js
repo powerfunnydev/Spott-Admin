@@ -6,8 +6,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { FormSubtitle } from '../../../_common/styles';
 import TextInput from '../../../_common/inputs/textInput';
-import localized from '../../../_common/localized';
-import PersistModal from '../../../_common/persistModal';
+import NumberInput from '../../../_common/inputs/numberInput';
+import CheckboxInput from '../../../_common/inputs/checkbox';
+import localized from '../../../_common/decorators/localized';
+import PersistModal from '../../../_common/components/persistModal';
 import { loadSeasons } from '../../series/read/seasons/actions';
 import * as actions from './actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
@@ -17,10 +19,11 @@ import { FETCHING } from '../../../../constants/statusTypes';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { seriesEntryId, defaultLocale, title } = values.toJS();
+  const { defaultLocale, hasTitle, number, seriesEntryId, title } = values.toJS();
   if (!seriesEntryId) { validationErrors.seriesEntryId = t('common.errors.required'); }
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
-  if (!title) { validationErrors.title = t('common.errors.required'); }
+  if (!number || number < 1) { validationErrors.number = t('common.errors.required'); }
+  if (hasTitle && !title) { validationErrors.title = t('common.errors.required'); }
   // Done
   return validationErrors;
 }
@@ -33,7 +36,7 @@ function validate (values, { t }) {
   searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch)
 }))
 @reduxForm({
-  form: 'seasonsCreateEntry',
+  form: 'seasonCreate',
   validate
 })
 @Radium
@@ -46,6 +49,7 @@ export default class CreateSeasonEntryModal extends Component {
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
+    hasTitle: PropTypes.bool,
     initialize: PropTypes.func.isRequired,
     loadSeasons: PropTypes.func.isRequired,
     localeNames: ImmutablePropTypes.map.isRequired,
@@ -57,7 +61,8 @@ export default class CreateSeasonEntryModal extends Component {
     searchedSeriesEntryIds: ImmutablePropTypes.map.isRequired,
     seriesEntriesById: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
-    t: PropTypes.func.isRequired
+    t: PropTypes.func.isRequired,
+    untouch: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -67,23 +72,17 @@ export default class CreateSeasonEntryModal extends Component {
   }
 
   async componentWillMount () {
-    // in case we do an edit
-    if (this.props.params.seriesEntryId) {
-      this.props.initialize({
-        seriesEntryId: this.props.params.seriesEntryId,
-        defaultLocale: this.props.currentLocale
-      });
-    } else { // in case we do a create
-      this.props.initialize({
-        defaultLocale: this.props.currentLocale
-      });
-    }
+    this.props.initialize({
+      defaultLocale: this.props.currentLocale,
+      hasTitle: false,
+      seriesEntryId: this.props.params.seriesEntryId
+    });
   }
 
   async submit (form) {
     try {
       const { seriesEntryId } = this.props.params;
-      const { location, submit, dispatch, change, reset } = this.props;
+      const { change, dispatch, location, submit, untouch } = this.props;
       await submit(form.toJS());
       const createAnother = form.get('createAnother');
       // Load the new list of items, using the location query of the previous page.
@@ -93,8 +92,11 @@ export default class CreateSeasonEntryModal extends Component {
         this.props.loadSeasons(loc.query, seriesEntryId);
       }
       if (createAnother) {
-        await dispatch(reset());
-        await dispatch(change('createAnother', true));
+        // If we create another season, set the next season number
+        dispatch(change('number', parseInt(form.get('number'), 10) + 1));
+        // and reset the title.
+        dispatch(change('title', null));
+        dispatch(untouch('defaultLocale', 'seriesEntryId', 'number', 'hasTitle', 'title'));
       } else {
         this.onCloseClick();
       }
@@ -107,8 +109,18 @@ export default class CreateSeasonEntryModal extends Component {
     this.props.routerPushWithReturnTo('content/seasons', true);
   }
 
+  static styles = {
+    customTitle: {
+      paddingBottom: '0.438em'
+    },
+    titleLabel: {
+      paddingBottom: '0.7em'
+    }
+  };
+
   render () {
-    const { localeNames, currentSeriesEntryId, searchSeriesEntries, seriesEntriesById, searchedSeriesEntryIds, handleSubmit } = this.props;
+    const styles = this.constructor.styles;
+    const { hasTitle, localeNames, currentSeriesEntryId, searchSeriesEntries, seriesEntriesById, searchedSeriesEntryIds, handleSubmit } = this.props;
     return (
       <PersistModal createAnother isOpen title='Create Season Entry'
         onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
@@ -133,13 +145,30 @@ export default class CreateSeasonEntryModal extends Component {
           onChange={() => {
             this.props.dispatch(this.props.change('title', null));
           }} />
-        { currentSeriesEntryId && <Field
-          component={TextInput}
-          label='Season number'
-          name='number'
-          placeholder='Season number'
-          required
-          type='number'/>}
+        {currentSeriesEntryId &&
+          <Field
+            component={NumberInput}
+            label='Season number'
+            min={1}
+            name='number'
+            placeholder='Season number'
+            required />}
+        {currentSeriesEntryId &&
+          <Field
+            component={TextInput}
+            content={
+              <Field
+                component={CheckboxInput}
+                first
+                label='Custom title'
+                name='hasTitle'
+                style={styles.customTitle} />}
+            disabled={!hasTitle}
+            label='Season title'
+            labelStyle={styles.titleLabel}
+            name='title'
+            placeholder='Season title'
+            required />}
       </PersistModal>
     );
   }

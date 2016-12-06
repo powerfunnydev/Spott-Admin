@@ -1,11 +1,11 @@
 import React, { Component, PropTypes } from 'react';
-import ReactModal from 'react-modal';
 import Radium from 'radium';
-import localized from '../localized';
-import { buttonStyles, fontWeights, makeTextStyle } from '../styles';
+import ReactModal from 'react-modal';
+import localized from '../../decorators/localized';
+import { buttonStyles, fontWeights, makeTextStyle } from '../../styles';
 import Button from '../buttons/button';
 
-const crossImage = require('./cross.svg');
+const crossImage = require('../cross.svg');
 
 /**
  * Dialog style used for this modal.

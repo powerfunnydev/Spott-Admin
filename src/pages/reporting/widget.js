@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { fontWeights, makeTextStyle, mediaQueries } from '../_common/styles';
-import Spinner from '../_common/spinner';
+import Spinner from '../_common/components/spinner';
 
 export const smallWidgetStyle = {
   width: '100%',

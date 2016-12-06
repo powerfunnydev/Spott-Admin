@@ -10,7 +10,7 @@ import { Root, FormSubtitle, colors, EditTemplate } from '../../_common/styles';
 import DateInput from '../../_common/inputs/dateInput';
 import TimeInput from '../../_common/inputs/timeInput';
 import SelectInput from '../../_common/inputs/selectInput';
-import localized from '../../_common/localized';
+import localized from '../../_common/decorators/localized';
 import { FETCHING } from '../../../constants/statusTypes';
 import * as actions from './actions';
 import selector from './selector';

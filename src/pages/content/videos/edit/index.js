@@ -10,7 +10,7 @@ import { Tabs, Tab } from '../../../_common/components/formTabs';
 import * as actions from './actions';
 import Header from '../../../app/header';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import localized from '../../../_common/localized';
+import localized from '../../../_common/decorators/localized';
 import Section from '../../../_common/components/section';
 import selector from './selector';
 import SpecificHeader from '../../header';

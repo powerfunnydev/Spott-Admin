@@ -6,8 +6,8 @@ import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { buttonStyles } from '../_common/styles';
-import localized from '../_common/localized';
-import Modal from '../_common/modal';
+import localized from '../_common/decorators/localized';
+import Modal from '../_common/components/modal';
 import { forgotPassword } from '../../actions/user';
 
 function validate (values) {

@@ -10,8 +10,8 @@ import Section from '../../../_common/components/section';
 import { headerStyles, Table, Headers, CustomCel, Rows, Row } from '../../../_common/components/table/index';
 import { colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../_common/styles';
 import Plus from '../../../_common/images/plus';
-import EditButton from '../../../_common/buttons/editButton';
-import RemoveButton from '../../../_common/buttons/removeButton';
+import EditButton from '../../../_common/components/buttons/editButton';
+import RemoveButton from '../../../_common/components/buttons/removeButton';
 import PersistAvailabilityModal from '../persist';
 import selector from './selector';
 

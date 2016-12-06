@@ -1,12 +1,13 @@
-import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
+import Radium from 'radium';
 import { Field } from 'redux-form/immutable';
-import SelectionDropdown from '../selectionDropdown';
-import { buttonStyles, makeTextStyle, fontWeights } from '../../styles';
-import Button from '../../buttons/button';
-import RemoveButton from '../../buttons/removeButton';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
+import Button from '../../components/buttons/button';
+import RemoveButton from '../../components/buttons/removeButton';
+import { buttonStyles, makeTextStyle, fontWeights } from '../../styles';
+import SelectionDropdown from '../selectionDropdown';
+
 import selector from './selector';
 
 @connect(selector)

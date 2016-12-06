@@ -90,8 +90,7 @@ export default class List extends Component {
     this.props.routerPushWithReturnTo('content/series', true);
   }
 
-  async onClickDeleteSelected (e) {
-    e.preventDefault();
+  async onClickDeleteSelected () {
     const episodesIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {

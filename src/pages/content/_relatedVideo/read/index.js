@@ -13,7 +13,7 @@ import * as actions from './actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import selector from './selector';
 
-import Spinner from '../../../_common/spinner';
+import Spinner from '../../../_common/components/spinner';
 
 const cross = require('../../../../assets/images/cross/cross-red.svg');
 

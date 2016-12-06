@@ -17,7 +17,7 @@ export function searchSeriesEntries (searchString) {
   };
 }
 
-export function submit ({ number, seriesEntryId, defaultLocale }) {
+export function submit ({ defaultLocale, hasTitle, number, seriesEntryId, title }) {
   return async (dispatch, getState) => {
     try {
       const seriesEntry = {
@@ -25,8 +25,9 @@ export function submit ({ number, seriesEntryId, defaultLocale }) {
         locales: [ defaultLocale ],
         number,
         basedOnDefaultLocale: { [defaultLocale]: true },
-        hasTitle: { [defaultLocale]: false },
-        seriesEntryId
+        hasTitle: { [defaultLocale]: hasTitle },
+        seriesEntryId,
+        title: { [defaultLocale]: title }
       };
       return await dispatch(persistSeason(seriesEntry));
     } catch (error) {

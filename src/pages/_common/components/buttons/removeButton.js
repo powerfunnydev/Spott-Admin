@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { confirmation } from '../../_common/askConfirmation';
-import PlusSVG from '../images/plus';
+import { confirmation } from '../../../_common/askConfirmation';
+import PlusSVG from '../../images/plus';
 
-const removeIcon = require('../../../assets/images/garbage.svg');
+const removeIcon = require('../../../../assets/images/garbage.svg');
 
 @Radium
 export default class RemoveButton extends Component {

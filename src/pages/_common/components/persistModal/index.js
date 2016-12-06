@@ -1,11 +1,12 @@
 import React, { Component, PropTypes } from 'react';
-import ReactModal from 'react-modal';
 import Radium from 'radium';
-import localized from '../localized';
-import { colors, buttonStyles, fontWeights, makeTextStyle } from '../styles';
-import Button from '../buttons/button';
-import Checkbox from '../inputs/checkbox';
+import ReactModal from 'react-modal';
 import { Field } from 'redux-form/immutable';
+import localized from '../../decorators/localized';
+import Checkbox from '../../inputs/checkbox';
+import { colors, buttonStyles, fontWeights, makeTextStyle } from '../../styles';
+import Button from '../buttons/button';
+
 const crossImage = require('./cross.svg');
 
 /**

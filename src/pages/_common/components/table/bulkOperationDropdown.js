@@ -18,10 +18,11 @@ export default class BulkOperationDropdown extends Component {
   }
 
   async onDeleteSelected (e) {
+    e.preventDefault();
     const { onDeleteSelected } = this.props;
     const result = await confirmation();
     if (result) {
-      await onDeleteSelected(e);
+      onDeleteSelected();
     }
   }
 
@@ -43,15 +44,14 @@ export default class BulkOperationDropdown extends Component {
     const { numberSelected, onDeleteSelected } = this.props;
     return (
       <div>
-      { typeof numberSelected === 'number' && numberSelected !== 0 &&
+      {typeof numberSelected === 'number' && numberSelected > 0 &&
         <Dropdown
           color='blue'
           elementShown={
             <div style={styles.row}>
               <Checkbox checked color='blue' style={[ dropdownStyles.option, dropdownStyles.borderLeft, dropdownStyles.blue, styles.smallPadding ]}/>
-              <div
-                style={[ dropdownStyles.option, dropdownStyles.blue, styles.smallPadding ]}>
-                  {numberSelected}
+              <div style={[ dropdownStyles.option, dropdownStyles.blue, styles.smallPadding ]}>
+                {numberSelected}
               </div>
             </div>
           }>
@@ -61,10 +61,8 @@ export default class BulkOperationDropdown extends Component {
               style={dropdownStyles.floatOption}
               onClick={this.onDeleteSelected}>
                 Remove
-            </div>
-          }
-        </Dropdown>
-      }
+            </div>}
+        </Dropdown>}
       </div>
     );
   }

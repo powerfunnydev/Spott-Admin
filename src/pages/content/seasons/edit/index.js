@@ -14,7 +14,7 @@ import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Header from '../../../app/header';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Label from '../../../_common/inputs/_label';
-import localized from '../../../_common/localized';
+import localized from '../../../_common/decorators/localized';
 import Section from '../../../_common/components/section';
 import SelectInput from '../../../_common/inputs/selectInput';
 import selector from './selector';
@@ -22,7 +22,7 @@ import SpecificHeader from '../../header';
 import CheckboxInput from '../../../_common/inputs/checkbox';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
-import BreadCrumbs from '../../../_common/breadCrumbs';
+import BreadCrumbs from '../../../_common/components/breadCrumbs';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -100,7 +100,6 @@ export default class EditEpisodes extends Component {
   async componentWillMount () {
     if (this.props.params.seasonId) {
       const editObj = await this.props.loadSeason(this.props.params.seasonId);
-      console.log('editObj', editObj);
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale
@@ -274,7 +273,6 @@ export default class EditEpisodes extends Component {
                         name={`hasTitle.${_activeLocale}`}
                         style={styles.customTitle} />}
                     disabled={hasTitle && !hasTitle.get(_activeLocale)}
-                    hasTitle={hasTitle}
                     label='Season title'
                     labelStyle={styles.titleLabel}
                     name={`title.${_activeLocale}`}
