@@ -87,8 +87,8 @@ export default class ReadEpisode extends Component {
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
           { title: 'List', url: '/content/series' },
-          { title: 'Series', url: `content/series/read/${this.props.params.seriesEntryId}` },
-          { title: 'Season', url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}` },
+          { title: currentEpisode.getIn([ 'seriesEntry', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}` },
+          { title: currentEpisode.getIn([ 'season', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}` },
           { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/read/${params.episodeId}` } ]}/>
         <Container>
           {currentEpisode.get('_status') === 'loaded' && currentEpisode &&

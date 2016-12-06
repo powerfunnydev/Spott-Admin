@@ -274,7 +274,7 @@ export default class Toast extends Component {
       display: 'flex',
       flexDirection: 'row',
       width: 380,
-      position: 'absolute',
+      position: 'fixed',
       transition: 'top 0.25s ease-in, opacity 0.25s ease-in',
       right: 40,
       top: -100,

@@ -64,7 +64,7 @@ export default class TimeInput extends Component {
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
         <TimePicker
-          className={meta.touched && meta.error && 'rc-time-picker-input-error'}
+          className={meta.touched && meta.error && 'rc-time-picker-input-error' || null}
           disabled={disabled}
           placeholder='hh:mm'
           showSecond={false}

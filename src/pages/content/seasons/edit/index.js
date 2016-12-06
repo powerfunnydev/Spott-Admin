@@ -218,7 +218,7 @@ export default class EditEpisodes extends Component {
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
           { title: 'List', url: '/content/series' },
-          { title: 'Series', url: `content/series/read/${this.props.params.seriesEntryId}` },
+          { title: currentSeason.getIn([ 'seriesEntry', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}` },
           { title: currentSeason.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         {currentModal === SEASON_CREATE_LANGUAGE &&
           <CreateLanguageModal

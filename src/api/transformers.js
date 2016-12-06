@@ -85,8 +85,12 @@ export function transformCharacter ({ profileCover, portraitImage, defaultName, 
  *  Complete version of a medium. Locales includes.
  */
 export function transformMedium ({ availabilities, broadcasters, characters, contentProducers, number,
-  auditInfo, type, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, serie, season, uuid: id, publishStatus,
+  auditInfo, type, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, serieInfo: serie, seasonInfo, uuid: id, publishStatus,
   defaultTitle, localeData, video }) {
+  let serieInfo = serie;
+  if (seasonInfo) {
+    serieInfo = seasonInfo.serie;
+  }
   const seriesEntry = {
     availabilities: availabilities && availabilities.map(transformAvailability),
     characters: characters && characters.map(transformCharacter),
@@ -110,8 +114,8 @@ export function transformMedium ({ availabilities, broadcasters, characters, con
     type,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
-    seriesEntryId: serie && serie.uuid,
-    seasonId: season && season.uuid,
+    season: seasonInfo && { title: seasonInfo.title, id: seasonInfo.uuid },
+    seriesEntry: serieInfo && { title: serieInfo.title, id: serieInfo.uuid },
     videoId: video && video.uuid
   };
   if (localeData) {

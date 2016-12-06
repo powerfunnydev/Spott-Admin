@@ -129,10 +129,10 @@ export default class CreateTvGuideEntryModal extends Component {
           const nextEpisode = await fetchNextEpisode(episodeId);
           await dispatch(change('startDate', moment(startDate).add(1, 'days')));
           await dispatch(change('endDate', moment(endDate).add(1, 'days')));
-          await dispatch(change('seasonId', nextEpisode.seasonId));
+          await dispatch(change('seasonId', nextEpisode.season.id));
           // When there is a next episode, but not in the same season,
           // we need to fetch the episodes of this new season.
-          if (seasonId !== nextEpisode.seasonId) {
+          if (seasonId !== nextEpisode.season.id) {
             await searchEpisodes();
           }
           await dispatch(change('episodeId', nextEpisode.id));
