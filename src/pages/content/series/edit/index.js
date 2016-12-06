@@ -8,7 +8,7 @@ import TextInput from '../../../_common/inputs/textInput';
 import Header from '../../../app/header';
 // import Line from '../../../_common/components/line';
 import { Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
-import localized from '../../../_common/localized';
+import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import Section from '../../../_common/components/section';
@@ -20,7 +20,7 @@ import selector from './selector';
 import { SERIES_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import LanguageBar from '../../../_common/components/languageBar';
-import BreadCrumbs from '../../../_common/breadCrumbs';
+import BreadCrumbs from '../../../_common/components/breadCrumbs';
 
 function validate (values, { t }) {
   const validationErrors = {};

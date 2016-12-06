@@ -7,11 +7,11 @@ import moment from 'moment';
 import { routerPushWithReturnTo } from '../../../actions/global';
 import { Root, FormSubtitle, colors, EditTemplate } from '../../_common/styles';
 import * as actions from './actions';
-import Button from '../../_common/buttons/button';
+import Button from '../../_common/components/buttons/button';
 import DateInput from '../../_common/inputs/dateInput';
 import Header from '../../app/header';
 import Label from '../../_common/inputs/_label';
-import localized from '../../_common/localized';
+import localized from '../../_common/decorators/localized';
 import Section from '../../_common/components/section';
 import SelectInput from '../../_common/inputs/selectInput';
 import TextInput from '../../_common/inputs/textInput';
@@ -22,7 +22,7 @@ import { Tabs, Tab } from '../../_common/components/formTabs';
 import Checkbox from '../../_common/inputs/checkbox';
 import { INACTIVE, disabledReasons, userStatus as userStates } from '../../../constants/userRoles';
 import { FETCHING } from '../../../constants/statusTypes';
-import BreadCrumbs from '../../_common/breadCrumbs';
+import BreadCrumbs from '../../_common/components/breadCrumbs';
 
 function validate (values, { t }) {
   const validationErrors = {};

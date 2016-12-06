@@ -101,8 +101,7 @@ export default class SeriesEntries extends Component {
     this.props.routerPushWithReturnTo('content/series/create/episode');
   }
 
-  async onClickDeleteSelected (e) {
-    e.preventDefault();
+  async onClickDeleteSelected () {
     const seriesEntryIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {

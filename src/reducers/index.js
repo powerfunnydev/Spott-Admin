@@ -15,7 +15,7 @@ import episodesCreate from '../pages/content/episodes/create/reducer';
 import episodesList from '../pages/content/episodes/list/reducer';
 import episodesEdit from '../pages/content/episodes/edit/reducer';
 import episodesReadTvGuide from '../pages/content/episodes/read/tvGuide/reducer';
-import LinkUserModal from '../pages/_common/linkUserModal/reducer';
+import LinkUserModal from '../pages/_common/components/linkUserModal/reducer';
 import reporting from '../pages/reporting/reducer';
 import relatedVideoPersist from '../pages/content/_relatedVideo/persist/reducer';
 import seasonsCreate from '../pages/content/seasons/create/reducer';

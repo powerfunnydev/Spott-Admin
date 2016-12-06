@@ -3,8 +3,8 @@ import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
 import SelectInput from '../../../../_common/inputs/selectInput';
-import PersistModal from '../../../../_common/persistModal';
-import localized from '../../../../_common/localized';
+import PersistModal from '../../../../_common/components/persistModal';
+import localized from '../../../../_common/decorators/localized';
 
 function validate (values, { t }) {
   const validationErrors = {};

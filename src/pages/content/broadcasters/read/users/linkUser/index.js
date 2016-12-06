@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import LinkUserModal from '../../../../../_common/linkUserModal';
+import LinkUserModal from '../../../../../_common/components/linkUserModal';
 import { routerPushWithReturnTo } from '../../../../../../actions/global';
 import { persistLinkUser } from './actions';
 import { load } from '../list/actions';

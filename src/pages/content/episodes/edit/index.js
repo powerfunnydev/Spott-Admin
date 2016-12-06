@@ -13,7 +13,7 @@ import CreateLanguageModal from '../../_languageModal/create';
 import Dropzone from '../../../_common/dropzone';
 import Header from '../../../app/header';
 import Label from '../../../_common/inputs/_label';
-import localized from '../../../_common/localized';
+import localized from '../../../_common/decorators/localized';
 import Section from '../../../_common/components/section';
 import CheckboxInput from '../../../_common/inputs/checkbox';
 import SelectInput from '../../../_common/inputs/selectInput';
@@ -25,7 +25,7 @@ import RelatedVideo from '../../../content/_relatedVideo/read';
 import * as actions from './actions';
 import selector from './selector';
 import Characters from '../../_helpers/_characters/list';
-import BreadCrumbs from '../../../_common/breadCrumbs';
+import BreadCrumbs from '../../../_common/components/breadCrumbs';
 
 function validate (values, { t }) {
   const validationErrors = {};

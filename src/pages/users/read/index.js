@@ -8,7 +8,7 @@ import * as actions from './actions';
 import selector from './selector';
 import EntityDetails from '../../_common/entityDetails';
 import { routerPushWithReturnTo } from '../../../actions/global';
-import BreadCrumbs from '../../_common/breadCrumbs';
+import BreadCrumbs from '../../_common/components/breadCrumbs';
 import Line from '../../_common/components/line';
 import { generalStyles } from '../../_common/components/table/index';
 import * as listActions from '../list/actions';

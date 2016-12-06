@@ -1,6 +1,9 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 
+// TODO: deprecated!
+// Only used by createMediaModal.
+// Can be removed after video upload has been migrated for all media.
 @Radium
 export default class Checkbox extends Component {
 

@@ -82,8 +82,7 @@ export default class Users extends Component {
     this.props.routerPushWithReturnTo(`content/broadcasters/read/${this.props.params.broadcasterId}/link/user`);
   }
 
-  async onClickDeleteSelected (e) {
-    e.preventDefault();
+  async onClickDeleteSelected () {
     const userIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {

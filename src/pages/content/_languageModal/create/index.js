@@ -3,10 +3,10 @@ import { reduxForm, Field } from 'redux-form/immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
 import { connect } from 'react-redux';
-import PersistModal from '../../../_common/persistModal';
+import PersistModal from '../../../_common/components/persistModal';
 import SelectInput from '../../../_common/inputs/selectInput';
 import selector from './selector';
-import localized from '../../../_common/localized';
+import localized from '../../../_common/decorators/localized';
 import { bindActionCreators } from 'redux';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 

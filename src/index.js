@@ -55,7 +55,7 @@ import UsersList from './pages/users/list';
 import UsersRead from './pages/users/read';
 import { authenticationTokenSelector, userRolesSelector } from './selectors/global';
 import reducer from './reducers';
-import BreadCrumbs from './pages/_common/breadCrumbs';
+import BreadCrumbs from './pages/_common/components/breadCrumbs';
 
 import { load as loadTvGuide } from './pages/tvGuide/list/actions';
 import { load as loadEpisodeTvGuide } from './pages/content/episodes/read/tvGuide/actions';

@@ -14,7 +14,7 @@ import Dropzone from '../../../_common/dropzone';
 import Header from '../../../app/header';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Label from '../../../_common/inputs/_label';
-import localized from '../../../_common/localized';
+import localized from '../../../_common/decorators/localized';
 import Section from '../../../_common/components/section';
 import SelectInput from '../../../_common/inputs/selectInput';
 import selector from './selector';
@@ -22,7 +22,7 @@ import SpecificHeader from '../../header';
 import CheckboxInput from '../../../_common/inputs/checkbox';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
-import BreadCrumbs from '../../../_common/breadCrumbs';
+import BreadCrumbs from '../../../_common/components/breadCrumbs';
 
 function validate (values, { t }) {
   const validationErrors = {};

@@ -12,7 +12,7 @@ import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
 import { generalStyles } from '../../../_common/components/table/index';
-import BreadCrumbs from '../../../_common/breadCrumbs';
+import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import TvGuideList from './tvGuide';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 

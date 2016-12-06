@@ -8,7 +8,7 @@ import Section from '../../../../_common/components/section';
 import { Table, CustomCel, Rows, Row } from '../../../../_common/components/table/index';
 import { colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../../_common/styles';
 import Plus from '../../../../_common/images/plus';
-import RemoveButton from '../../../../_common/buttons/removeButton';
+import RemoveButton from '../../../../_common/components/buttons/removeButton';
 import PersistCharacterModal from '../persist';
 import * as actions from './actions';
 

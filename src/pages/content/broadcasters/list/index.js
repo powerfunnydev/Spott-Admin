@@ -82,8 +82,7 @@ export default class Broadcasters extends Component {
     this.props.routerPushWithReturnTo('content/broadcasters/create');
   }
 
-  async onClickDeleteSelected (e) {
-    e.preventDefault();
+  async onClickDeleteSelected () {
     const broadcasterIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {
