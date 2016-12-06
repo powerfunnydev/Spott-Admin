@@ -6,6 +6,7 @@ import localized from '../../decorators/localized';
 import Checkbox from '../../inputs/checkbox';
 import { colors, buttonStyles, fontWeights, makeTextStyle } from '../../styles';
 import Button from '../buttons/button';
+import { ErrorComponent, HintComponent, InfoComponent } from '../infoPopUps';
 
 const crossImage = require('./cross.svg');
 
@@ -70,9 +71,11 @@ export default class PersistModal extends Component {
 
   static propTypes = {
     children: PropTypes.node,
+    clearPopUpMessage: PropTypes.func,
     createAnother: PropTypes.bool,
     error: PropTypes.any,
     isOpen: PropTypes.bool.isRequired,
+    popUpObject: PropTypes.object,
     style: PropTypes.object,
     submitButtonText: PropTypes.string,
     t: PropTypes.func.isRequired,
@@ -151,13 +154,13 @@ export default class PersistModal extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { createAnother, children, error, isOpen, style, t, title, onClose,
-      onSubmit, submitButtonText } = this.props;
+    const { createAnother, children, isOpen, style, title, onClose,
+      onSubmit, submitButtonText, popUpObject, clearPopUpMessage } = this.props;
     return (
       <ReactModal
         isOpen={isOpen}
         style={style || dialogStyle}
-        onRequestClose={() => onClose()}>
+        onRequestClose={() => { clearPopUpMessage && clearPopUpMessage(); onClose(); }}>
         <RemoveBodyScrollbar>
           <div style={styles.wrapper}>
             <div style={styles.header}>
@@ -167,6 +170,7 @@ export default class PersistModal extends Component {
                   cross from tab focus. */}
               <div style={styles.cross} onClick={(e) => {
                 e.preventDefault();
+                clearPopUpMessage && clearPopUpMessage();
                 onClose();
               }}>
                 <img alt='Close' src={crossImage} style={styles.crossImage} />
@@ -174,9 +178,15 @@ export default class PersistModal extends Component {
             </div>
             {/* handleSubmit(this.submit) */}
             <form onSubmit={onSubmit}>
-              <div style={styles.error}>
-                {error && typeof error === 'string' && t(error)}
-              </div>
+              {popUpObject && popUpObject.type === 'error' && popUpObject.message && popUpObject.stackTrace &&
+                <ErrorComponent message={popUpObject.message} stackTrace={popUpObject.stackTrace} onClose={clearPopUpMessage}/>
+              }
+              {popUpObject && popUpObject.type === 'hint' && popUpObject.message &&
+                <HintComponent message={popUpObject.message} onClose={clearPopUpMessage}/>
+              }
+              {popUpObject && popUpObject.type === 'info' && popUpObject.message &&
+                <InfoComponent message={popUpObject.message} onClose={clearPopUpMessage}/>
+              }
               <div style={styles.content}>
                 {children}
               </div>
@@ -188,7 +198,7 @@ export default class PersistModal extends Component {
                       first
                       label='Create another'
                       name='createAnother'/>}
-                  <Button key='cancel' style={[ buttonStyles.white ]} text='Cancel' type='button' onClick={(e) => { e.preventDefault(); onClose(); }} />
+                  <Button key='cancel' style={[ buttonStyles.white ]} text='Cancel' type='button' onClick={(e) => { e.preventDefault(); clearPopUpMessage && clearPopUpMessage(); onClose(); }} />
                   <Button key='submit' style={[ buttonStyles.blue ]} text={submitButtonText || 'Create'} type='submit' />
                 </div>
               </div>

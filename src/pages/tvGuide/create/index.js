@@ -39,6 +39,8 @@ function validate (values, { medium, t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
+  clearPopUpMessage: bindActionCreators(actions.clearPopUpMessage, dispatch),
+  fetchNextEpisode: bindActionCreators(actions.fetchNextEpisode, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchBroadcastChannels: bindActionCreators(actions.searchBroadcastChannels, dispatch),
   searchEpisodes: bindActionCreators(actions.searchEpisodes, dispatch),
@@ -56,14 +58,17 @@ export default class CreateTvGuideEntryModal extends Component {
   static propTypes = {
     broadcastChannelsById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
+    clearPopUpMessage: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
+    fetchNextEpisode: PropTypes.func.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     mediaById: ImmutablePropTypes.map.isRequired,
     medium: ImmutablePropTypes.map.isRequired,
     params: PropTypes.object.isRequired,
+    popUpMessage: PropTypes.object,
     reset: PropTypes.func.isRequired,
     route: PropTypes.shape({
       load: PropTypes.func.isRequired
@@ -112,14 +117,26 @@ export default class CreateTvGuideEntryModal extends Component {
 
   async submit (form) {
     try {
-      const { route: { load }, submit, dispatch, change, reset } = this.props;
-      await submit(form.toJS());
+      const { route: { load }, submit, dispatch, fetchNextEpisode, change, searchEpisodes } = this.props;
+      const fullForm = form.toJS();
+      const { episodeId, seasonId, startDate, endDate } = fullForm;
+      await submit(fullForm);
       const createAnother = form.get('createAnother');
       // Load the new list of items, using the location query of the previous page.
       load(this.props);
       if (createAnother) {
-        await dispatch(reset());
-        await dispatch(change('createAnother', true));
+        if (episodeId) {
+          const nextEpisode = await fetchNextEpisode(episodeId);
+          await dispatch(change('startDate', moment(startDate).add(1, 'days')));
+          await dispatch(change('endDate', moment(endDate).add(1, 'days')));
+          await dispatch(change('seasonId', nextEpisode.seasonId));
+          // When there is a next episode, but not in the same season,
+          // we need to fetch the episodes of this new season.
+          if (seasonId !== nextEpisode.seasonId) {
+            await searchEpisodes();
+          }
+          await dispatch(change('episodeId', nextEpisode.id));
+        }
       } else {
         this.onCloseClick();
       }
@@ -151,12 +168,17 @@ export default class CreateTvGuideEntryModal extends Component {
   render () {
     const { styles } = this.constructor;
     const {
-      broadcastChannelsById, handleSubmit, mediaById, searchBroadcastChannels,
+      broadcastChannelsById, clearPopUpMessage, handleSubmit, mediaById, popUpMessage, searchBroadcastChannels,
       searchEpisodes, searchMedia, searchSeasons, searchedBroadcastChannelIds,
       searchedEpisodeIds, searchedSeasonIds, searchedMediumIds, medium, t
     } = this.props;
     return (
-      <PersistModal createAnother isOpen title='New TV guide entry'
+      <PersistModal
+        clearPopUpMessage={clearPopUpMessage}
+        createAnother
+        isOpen
+        popUpObject={popUpMessage}
+        title='New TV guide entry'
         onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field

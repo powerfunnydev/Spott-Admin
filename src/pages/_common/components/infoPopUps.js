@@ -92,9 +92,12 @@ class StandardComponent extends Component {
 
     return (
       <div>
-        {!this.state.close && <div style={[ generalStyles.container, color === 'blue' && styles.blue,
-                                color === 'yellow' && styles.yellow,
-                                color === 'red' && styles.red, style ]}>
+        {!this.state.close && <div style={[
+          generalStyles.container,
+          color === 'blue' && styles.blue,
+          color === 'yellow' && styles.yellow,
+          color === 'red' && styles.red, style
+        ]}>
             <div style={[ generalStyles.horizontal ]}>
               <div>
                 <span style={styles.medium}>{message}</span>

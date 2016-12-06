@@ -28,6 +28,7 @@ export const currentBroadcastChannelsSearchStringSelector = (state) => state.get
 export const currentEpisodesSearchStringSelector = (state) => state.getIn([ 'tvGuide', 'create', 'currentEpisodesSearchString' ]);
 export const currentSeasonsSearchStringSelector = (state) => state.getIn([ 'tvGuide', 'create', 'currentSeasonsSearchString' ]);
 export const currentMediaSearchStringSelector = (state) => state.getIn([ 'tvGuide', 'create', 'currentMediaSearchString' ]);
+export const popUpMessageSelector = (state) => state.getIn([ 'tvGuide', 'create', 'popUpMessage' ]);
 
 export const searchedEpisodeIdsSelector = createEntityIdsByRelationSelector(seasonHasEpisodesSelector, currentSeasonIdSelector);
 export const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(seriesEntryHasSeasonsSelector, currentMediumIdSelector);
@@ -36,10 +37,11 @@ export const searchedBroadcastChannelIdsSelector = createEntityIdsByRelationSele
 
 export default createStructuredSelector({
   broadcastChannelsById: broadcastChannelsEntitiesSelector,
+  medium: currentMediumSelector,
+  mediaById: listMediaEntitiesSelector,
+  popUpMessage: popUpMessageSelector,
   searchedBroadcastChannelIds: searchedBroadcastChannelIdsSelector,
   searchedEpisodeIds: searchedEpisodeIdsSelector,
   searchedSeasonIds: searchedSeasonIdsSelector,
-  searchedMediumIds: searchedMediumIdsSelector,
-  medium: currentMediumSelector,
-  mediaById: listMediaEntitiesSelector
+  searchedMediumIds: searchedMediumIdsSelector
 });
