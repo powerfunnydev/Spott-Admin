@@ -1,13 +1,10 @@
-import { createStructuredSelector, createSelector } from 'reselect';
+import { createStructuredSelector } from 'reselect';
 import {
   listMediaEntitiesSelector,
   createEntityIdsByRelationSelector,
   searchStringHasSeriesEntriesRelationsSelector
 } from '../../../../selectors/data';
-import {
-  localeNamesSelector,
-  currentLocaleSelector
-} from '../../../../selectors/global';
+import { currentLocaleSelector, localeNamesSelector } from '../../../../selectors/global';
 import { createFormValueSelector } from '../../../../utils';
 
 export const currentSeriesEntryIdSelector = createFormValueSelector('seasonCreate', 'seriesEntryId');

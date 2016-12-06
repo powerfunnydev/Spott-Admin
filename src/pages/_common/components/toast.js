@@ -1,14 +1,15 @@
-import Radium from 'radium';
+/* eslint-disable react/no-set-state */
 import React, { Component, PropTypes } from 'react';
+import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import * as toastActions from '../../../actions/toast';
+import { routerPushWithReturnTo } from '../../../actions/global';
 import toastSelector from '../../../selectors/toast';
 import { colors, makeTextStyle, fontWeights } from '../styles';
 import CompletedSVG from '../images/completed';
 import PlusSVG from '../images/plus';
-import { routerPushWithReturnTo } from '../../../actions/global';
 
 @connect(null, (dispatch) => ({
   popToast: bindActionCreators(toastActions.pop, dispatch),
