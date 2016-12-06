@@ -9,8 +9,8 @@ import * as seasonActions from '../actions/season';
 import * as seriesActions from '../actions/series';
 import * as tvGuideActions from '../actions/tvGuide';
 
-function pushError (state, entity, entityType) {
-  return state.push(Map({ type: 'error', entity, entityType }));
+function pushError (state, error, entityType) {
+  return state.push(Map({ type: 'error', error, entityType }));
 }
 
 function pushInfo (state, entity, entityType) {
@@ -31,6 +31,27 @@ function pop (state) {
 
 export default (state = List(), action) => {
   switch (action.type) {
+    // Error messages
+    case broadcastChannelActions.BROADCAST_CHANNEL_DELETE_ERROR:
+    case broadcastChannelActions.BROADCAST_CHANNELS_DELETE_ERROR:
+    case broadcastChannelActions.BROADCAST_CHANNEL_PERSIST_ERROR:
+      return pushError(state, action.error, 'broadcastChannel');
+    case broadcasterActions.BROADCASTER_PERSIST_ERROR:
+      return pushError(state, action.error, 'broadcaster');
+    case contentProducerActions.CONTENT_PRODUCER_DELETE_ERROR:
+    case contentProducerActions.CONTENT_PRODUCERS_DELETE_ERROR:
+    case contentProducerActions.CONTENT_PRODUCER_PERSIST_ERROR:
+      return pushError(state, action.error, 'contentProducer');
+    case seasonActions.SEASON_DELETE_ERROR:
+      return pushError(state, action.error, 'season');
+    case seriesActions.SERIES_ENTRY_DELETE_ERROR:
+      return pushError(state, action.error, 'seriesEntry');
+    case userActions.USERS_DELETE_ERROR:
+    case userActions.USER_DELETE_ERROR:
+    case userActions.USER_PERSIST_ERROR:
+      return pushError(state, action.error, 'user');
+
+    // Success messages
     case broadcastChannelActions.BROADCAST_CHANNEL_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, 'broadcastChannel');
     case broadcasterActions.BROADCASTER_PERSIST_SUCCESS:
