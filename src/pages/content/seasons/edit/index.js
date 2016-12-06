@@ -96,7 +96,6 @@ export default class EditEpisodes extends Component {
   async componentWillMount () {
     if (this.props.params.seasonId) {
       const editObj = await this.props.loadSeason(this.props.params.seasonId);
-      console.log('editObj', editObj);
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale
@@ -270,7 +269,6 @@ export default class EditEpisodes extends Component {
                         name={`hasTitle.${_activeLocale}`}
                         style={styles.customTitle} />}
                     disabled={hasTitle && !hasTitle.get(_activeLocale)}
-                    hasTitle={hasTitle}
                     label='Season title'
                     labelStyle={styles.titleLabel}
                     name={`title.${_activeLocale}`}

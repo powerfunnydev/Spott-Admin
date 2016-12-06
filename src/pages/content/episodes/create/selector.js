@@ -1,5 +1,4 @@
-import { createSelector, createStructuredSelector } from 'reselect';
-import { getFormValues } from 'redux-form/immutable';
+import { createStructuredSelector } from 'reselect';
 import {
   listMediaEntitiesSelector,
   createEntityIdsByRelationSelector,
@@ -10,17 +9,13 @@ import {
   localeNamesSelector,
   currentLocaleSelector
 } from '../../../../selectors/global';
+import { createFormValueSelector } from '../../../../utils';
 
-const formSelector = getFormValues('episodesCreateEntry');
+const formName = 'episodeCreate';
+export const currentSeriesEntryIdSelector = createFormValueSelector(formName, 'seriesEntryId');
+export const currentSeasonIdSelector = createFormValueSelector(formName, 'seasonId');
+export const hasTitleSelector = createFormValueSelector(formName, 'hasTitle');
 
-export const currentSeriesEntryIdSelector = createSelector(
-  formSelector,
-  (form) => form && form.get('seriesEntryId')
-);
-export const currentSeasonIdSelector = createSelector(
-  formSelector,
-  (form) => form && form.get('seasonId')
-);
 export const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'create', 'currentSeriesEntrySearchString' ]);
 
 export const searchedSeriesEntryIdsSelector = createEntityIdsByRelationSelector(searchStringHasSeriesEntriesRelationsSelector, currentSeriesEntriesSearchStringSelector);
@@ -28,6 +23,7 @@ export const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(serie
 
 export default createStructuredSelector({
   currentLocale: currentLocaleSelector,
+  hasTitle: hasTitleSelector,
   localeNames: localeNamesSelector,
   seriesEntriesById: listMediaEntitiesSelector,
   seasonsById: listMediaEntitiesSelector,
