@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { fontWeights, colors, errorTextStyle } from '../styles';
+import { colors, errorTextStyle } from '../styles';
 import Label from './_label';
 
 @Radium

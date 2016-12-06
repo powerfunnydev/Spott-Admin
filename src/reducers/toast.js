@@ -14,13 +14,13 @@ function pushError (state, error, entityType) {
   return state.push(Map({ type: 'error', error, entityType }));
 }
 
-function pushInfo (state, entity, entityType) {
-  return state.push(Map({ type: 'info', entity, entityType }));
-}
+// function pushInfo (state, entity, entityType) {
+//   return state.push(Map({ type: 'info', entity, entityType }));
+// }
 
-function pushWarning (state, entity, entityType) {
-  return state.push(Map({ type: 'warning', entity, entityType }));
-}
+// function pushWarning (state, entity, entityType) {
+//   return state.push(Map({ type: 'warning', entity, entityType }));
+// }
 
 function pushSuccess (state, entity, entityType) {
   return state.push(Map({ type: 'success', entity, entityType }));
