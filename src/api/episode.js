@@ -37,6 +37,12 @@ export async function fetchEpisode (baseUrl, authenticationToken, locale, { epis
   return transformEpisode004(body);
 }
 
+export async function fetchNextEpisode (baseUrl, authenticationToken, locale, { episodeId }) {
+  const url = `${baseUrl}/v004/media/serieEpisodes/${episodeId}/next`;
+  const { body } = await get(authenticationToken, locale, url);
+  return transformEpisode004(body);
+}
+
 export async function persistEpisode (baseUrl, authenticationToken, locale, { availabilities, number, hasTitle, basedOnDefaultLocale,
   locales, publishStatus, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title, seasonId, episodeId,
   contentProducers, broadcasters }) {

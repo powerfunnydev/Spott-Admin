@@ -46,6 +46,12 @@ export class ErrorMessage extends Component {
     );
   }
 
+  notFoundError (error) {
+    return (
+      <div><b>Not found:</b> {error.body && error.body.message || error.message}</div>
+    );
+  }
+
   static styles = {
     clickable: {
       cursor: 'pointer',
@@ -67,6 +73,10 @@ export class ErrorMessage extends Component {
     // When there is a conflict error
     if (error.name === 'ConflictError') {
       return this.conflictError(error);
+    } else
+    // When there is a not found error
+    if (error.name === 'NotFoundError') {
+      return this.notFoundError(error);
     }
     return <span>Error occured, please let us know about this error.</span>;
   }

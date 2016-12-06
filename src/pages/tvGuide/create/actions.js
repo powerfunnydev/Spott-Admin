@@ -4,6 +4,7 @@ import { persistTvGuideEntry } from '../../../actions/tvGuide';
 import { searchSeasons as dataSearchSeasons } from '../../../actions/series';
 import { searchEpisodes as dataSearchEpisodes } from '../../../actions/season';
 import { currentSeasonIdSelector, currentMediumIdSelector } from './selector';
+import { fetchNextEpisode as dataFetchNextEpisode } from '../../../actions/episode';
 
 export const BROADCAST_CHANNELS_SEARCH_START = 'TV_GUIDE_CREATE/BROADCAST_CHANNELS_SEARCH_START';
 export const BROADCAST_CHANNELS_SEARCH_ERROR = 'TV_GUIDE_CREATE/BROADCAST_CHANNELS_SEARCH_ERROR';
@@ -17,7 +18,24 @@ export const MEDIA_SEARCH_ERROR = 'TV_GUIDE_CREATE/MEDIA_SEARCH_ERROR';
 export const SEASONS_SEARCH_START = 'TV_GUIDE_CREATE/SEASONS_SEARCH_START';
 export const SEASONS_SEARCH_ERROR = 'TV_GUIDE_CREATE/SEASONS_SEARCH_ERROR';
 
+export const NEXT_EPISODE_FETCH_ERROR = 'TV_GUIDE_CREATE/NEXT_EPISODE_FETCH_ERROR';
+export const CLEAR_POP_UP_MESSAGE = 'TV_GUIDE_CREATE/CLEAR_POP_UP_MESSAGE';
+
 export const submit = persistTvGuideEntry;
+
+export function fetchNextEpisode (episodeId) {
+  return async (dispatch, getState) => {
+    try {
+      return await dispatch(dataFetchNextEpisode({ episodeId }));
+    } catch (error) {
+      dispatch({ error, type: NEXT_EPISODE_FETCH_ERROR });
+    }
+  };
+}
+
+export function clearPopUpMessage () {
+  return { type: CLEAR_POP_UP_MESSAGE };
+}
 
 function createSearchAction (dataAction, startActionType, errorActionType, selector) {
   return (searchString = '') => {
