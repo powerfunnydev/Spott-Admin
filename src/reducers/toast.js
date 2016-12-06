@@ -42,9 +42,17 @@ export default (state = List(), action) => {
     case contentProducerActions.CONTENT_PRODUCERS_DELETE_ERROR:
     case contentProducerActions.CONTENT_PRODUCER_PERSIST_ERROR:
       return pushError(state, action.error, 'contentProducer');
+    case episodeActions.EPISODE_DELETE_ERROR:
+    case episodeActions.EPISODES_DELETE_ERROR:
+    case episodeActions.EPISODE_PERSIST_ERROR:
+      return pushError(state, action.error, 'episode');
     case seasonActions.SEASON_DELETE_ERROR:
+    case seasonActions.SEASONS_DELETE_ERROR:
+    case seasonActions.SEASON_PERSIST_ERROR:
       return pushError(state, action.error, 'season');
     case seriesActions.SERIES_ENTRY_DELETE_ERROR:
+    case seriesActions.SERIES_ENTRIES_DELETE_ERROR:
+    case seriesActions.SERIES_ENTRY_PERSIST_ERROR:
       return pushError(state, action.error, 'seriesEntry');
     case userActions.USERS_DELETE_ERROR:
     case userActions.USER_DELETE_ERROR:
