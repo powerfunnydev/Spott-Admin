@@ -264,9 +264,10 @@ export default class Toast extends Component {
       flexDirection: 'row',
       width: 380,
       position: 'absolute',
-      transition: 'top 0.25s ease-in',
+      transition: 'top 0.25s ease-in, opacity 0.25s ease-in',
       right: 40,
       top: -100,
+      opacity: 0,
       minHeight: 60, // Matches the flex-basis in icon.base style
       zIndex: 101,
       boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.25)'
@@ -328,7 +329,8 @@ export default class Toast extends Component {
     },
     transition: {
       top: 40,
-      transition: 'top 0.25s ease-out'
+      opacity: 1,
+      transition: 'top 0.25s ease-out, opacity 0.25s ease-in'
     }
   };
 
