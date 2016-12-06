@@ -37,7 +37,7 @@ export async function fetchEpisode (baseUrl, authenticationToken, locale, { epis
   return transformEpisode004(body);
 }
 
-export async function persistEpisode (baseUrl, authenticationToken, locale, { availabilities, number, hasTitle, basedOnDefaultLocale,
+export async function persistEpisode (baseUrl, authenticationToken, locale, { number, hasTitle, basedOnDefaultLocale,
   locales, publishStatus, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title, seasonId, episodeId,
   contentProducers, broadcasters }) {
   let episode = {};
@@ -45,9 +45,7 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, { av
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/serieEpisodes/${episodeId}`);
     episode = body;
   }
-  episode.availabilities = availabilities && availabilities.map(({ availabilityFrom, availabilityTo, countryId, videoStatus }) => ({
-    country: countryId && { uuid: countryId }, startTimeStamp: availabilityFrom, endTimeStamp: availabilityTo, videoStatus
-  }));
+
   // episode.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
   episode.contentProducers = contentProducers && contentProducers.map((cp) => ({ uuid: cp }));
   episode.broadcasters = broadcasters && broadcasters.map((bc) => ({ uuid: bc }));

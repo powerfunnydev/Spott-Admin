@@ -1,5 +1,6 @@
 import { fromJS } from 'immutable';
 import { serializeFilterHasSeriesEntries, serializeFilterHasUsers, serializeFilterHasBroadcastChannels, serializeFilterHasBroadcasters, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers, fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, fetchListSuccess, fetchListError } from './utils';
+import * as availabilityActions from '../actions/availability';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcastersActions from '../actions/broadcaster';
 import * as charactersActions from '../actions/character';
@@ -16,6 +17,7 @@ import * as videoActions from '../actions/video';
 export default (state = fromJS({
   entities: {
     ages: {},
+    availabilities: {},
     broadcastChannels: {},
     broadcasters: {},
     characters: {},
@@ -54,10 +56,21 @@ export default (state = fromJS({
     episodeHasTvGuideEntries: {},
     seriesEntryHasSeasons: {},
     seasonHasEpisodes: {},
+    mediumHasAvailabilities: {},
     mediumHasCharacters: {}
   }
 }), action) => {
   switch (action.type) {
+
+    // Availabilities
+    // //////////////
+
+    case availabilityActions.AVAILABILITIES_FETCH_START:
+      return searchStart(state, 'mediumHasAvailabilities', action.mediumId);
+    case availabilityActions.AVAILABILITIES_FETCH_SUCCESS:
+      return searchSuccess(state, 'availabilities', 'mediumHasAvailabilities', action.mediumId, action.data);
+    case availabilityActions.AVAILABILITIES_FETCH_ERROR:
+      return searchError(state, 'mediumHasAvailabilities', action.mediumId, action.error);
 
     // Broadcaster Channels
     // ////////////////////
@@ -122,7 +135,7 @@ export default (state = fromJS({
       return searchError(state, 'searchStringHasBroadcasters', action.searchString, action.error);
 
     // Characters
-    // /////////////////
+    // //////////
 
     case charactersActions.CHARACTER_SEARCH_START:
       return searchStart(state, 'searchStringHasCharacters', action.searchString);
@@ -211,7 +224,7 @@ export default (state = fromJS({
       return searchError(state, 'seasonHasEpisodes', action.seasonId, action.error);
 
     // Series Entries
-    // /////////////////
+    // //////////////
 
     case seriesActions.SERIES_ENTRY_FETCH_START:
       return fetchStart(state, [ 'entities', 'media', action.seriesEntryId ]);

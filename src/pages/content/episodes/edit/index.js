@@ -403,7 +403,7 @@ export default class EditEpisode extends Component {
               </Section>
             </Tab>
             <Tab title='Availability'>
-              <FieldArray availabilities={availabilities} component={Availabilities} name='availabilities' />
+              <Availabilities mediumId={this.props.params.episodeId} />
             </Tab>
           </Tabs>
         </EditTemplate>
