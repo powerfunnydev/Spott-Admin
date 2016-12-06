@@ -10,7 +10,7 @@ export async function searchCharacters (baseUrl, authenticationToken, locale, { 
   return data.map(transformCharacter);
 }
 
-export async function searchMediumCharacters (baseUrl, authenticationToken, locale, { mediumId, searchString = '', page = 0, pageSize = 25 }) {
+export async function searchMediumCharacters (baseUrl, authenticationToken, locale, { mediumId, searchString = '', page = 0, pageSize = 100 }) {
   let url = `${baseUrl}/v004/media/media/${mediumId}/castMembers?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${searchString}`);

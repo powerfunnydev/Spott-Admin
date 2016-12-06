@@ -13,6 +13,7 @@ import PersistCharacterModal from '../persist';
 import * as actions from './actions';
 
 @connect(null, (dispatch) => ({
+  loadMediumCharacters: bindActionCreators(actions.searchMediumCharacters, dispatch),
   persistMediumCharacter: bindActionCreators(actions.persistMediumCharacter, dispatch),
   deleteMediumCharacter: bindActionCreators(actions.deleteMediumCharacter, dispatch)
 }))
@@ -23,7 +24,7 @@ export default class Characters extends Component {
     charactersById: ImmutablePropTypes.map.isRequired,
     deleteMediumCharacter: PropTypes.func.isRequired,
     loadMediumCharacters: PropTypes.func.isRequired,
-    mediumCharacterIds: ImmutablePropTypes.map.isRequired,
+    mediumCharacters: ImmutablePropTypes.map.isRequired,
     mediumId: PropTypes.string.isRequired,
     persistMediumCharacter: PropTypes.func.isRequired,
     searchCharacters: PropTypes.func.isRequired,
@@ -105,14 +106,14 @@ export default class Characters extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { mediumCharacterIds, searchCharacters, charactersById, searchedCharacterIds } = this.props;
+    const { mediumCharacters, searchCharacters, charactersById, searchedCharacterIds } = this.props;
     return (
       <Section>
         <FormSubtitle first>Character</FormSubtitle>
         <FormDescription style={styles.description}>Which characters are starring in this content? This way we’ll do a better job detecting their faces automagically!</FormDescription>
         <Table style={styles.customTable}>
           <Rows style={styles.adaptedRows}>
-            {mediumCharacterIds.get('data').map((character, index) => {
+            {mediumCharacters.get('data').map((character, index) => {
               return (
                 <Row isFirst={index === 0} key={index} >
                   <CustomCel style={[ styles.adaptedCustomCel, styles.paddingLeft ]}>
@@ -125,7 +126,7 @@ export default class Characters extends Component {
                 </Row>
               );
             })}
-            <Row isFirst={mediumCharacterIds.get('data') && mediumCharacterIds.get('data').size === 0} >
+            <Row isFirst={mediumCharacters.get('data') && mediumCharacters.get('data').size === 0} >
               <CustomCel style={[ styles.add, styles.adaptedCustomCel ]} onClick={this.onClickNewEntry}>
                 <Plus color={colors.primaryBlue} />&nbsp;&nbsp;&nbsp;Add Character
               </CustomCel>

@@ -48,7 +48,6 @@ function validate (values, { t }) {
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
   searchCharacters: bindActionCreators(actions.searchCharacters, dispatch),
-  loadMediumCharacters: bindActionCreators(actions.searchMediumCharacters, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
   searchSeasons: bindActionCreators(actions.searchSeasons, dispatch),
   searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch),
@@ -82,14 +81,13 @@ export default class EditEpisode extends Component {
     deletePosterImage: PropTypes.func.isRequired,
     deleteProfileImage: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
-    episodeCharacterIds: ImmutablePropTypes.map.isRequired,
+    episodeCharacters: ImmutablePropTypes.map.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
     handleSubmit: PropTypes.func.isRequired,
     hasTitle: ImmutablePropTypes.map,
     initialize: PropTypes.func.isRequired,
     loadEpisode: PropTypes.func.isRequired,
-    loadMediumCharacters: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
@@ -237,12 +235,12 @@ export default class EditEpisode extends Component {
   }
 
   render () {
-    const { _activeLocale, availabilities, closeModal, currentModal, currentSeasonId, currentSeriesEntryId, episodeCharacterIds,
+    const { _activeLocale, availabilities, closeModal, currentModal, currentSeasonId, currentSeriesEntryId, episodeCharacters,
         searchSeriesEntries, contentProducersById, searchContentProducers, searchedContentProducerIds, broadcastersById,
         searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
         seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
         searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors,
-        searchedCharacterIds, charactersById, searchCharacters, loadMediumCharacters, deleteProfileImage,
+        searchedCharacterIds, charactersById, searchCharacters, deleteProfileImage,
         deletePosterImage } = this.props;
     const { styles } = this.constructor;
 
@@ -387,8 +385,7 @@ export default class EditEpisode extends Component {
            <Tab title='Helpers'>
               <Characters
                 charactersById={charactersById}
-                loadMediumCharacters={loadMediumCharacters}
-                mediumCharacterIds={episodeCharacterIds}
+                mediumCharacters={episodeCharacters}
                 mediumId={this.props.params.episodeId}
                 searchCharacters={searchCharacters}
                 searchedCharacterIds={searchedCharacterIds} />

@@ -73,10 +73,13 @@ export function transformListCharacter ({ profileImage, portraitImage, name, uui
   };
 }
 
+/*
+  TODO: Need to be refactored. Back-end will be adjusted soon..
+*/
 export function transformCharacter ({ profileCover, portraitImage, defaultName, uuid: id }) {
   return {
     id,
-    defaultName,
+    name: defaultName,
     profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
     portraitImage: portraitImage && { id: portraitImage.uuid, url: portraitImage.url }
   };
