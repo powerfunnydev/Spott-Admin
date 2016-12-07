@@ -64,26 +64,48 @@ export function transformAvailability ({ country, endTimeStamp, startTimeStamp, 
   return { countryId: country && country.uuid, availabilityFrom: startTimeStamp && new Date(startTimeStamp), availabilityTo: endTimeStamp && new Date(endTimeStamp), videoStatus };
 }
 
-export function transformListCharacter ({ profileImage, portraitImage, name, uuid: id }) {
+export function transformListCharacter ({ auditInfo, profileImage, portraitImage, name, uuid: id }) {
   return {
     id,
     name,
     profileImage: profileImage && { id: profileImage.uuid, url: profileImage.url },
-    portraitImage: portraitImage && { id: portraitImage.uuid, url: portraitImage.url }
+    portraitImage: portraitImage && { id: portraitImage.uuid, url: portraitImage.url },
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
   };
 }
 
-/*
-  TODO: Need to be refactored. Back-end will be adjusted soon..
-*/
-export function transformCharacter ({ profileCover, portraitImage, defaultName, uuid: id }) {
-  return {
-    id,
-    name: defaultName,
+export function transformCharacter ({
+  actor, auditInfo, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, uuid: id, publishStatus,
+ localeData, portraitImage, profileCover }) {
+  const character = {
+    actorId: actor.uuid,
+    basedOnDefaultLocale: {},
+    description: {},
+    name: {},
+    locales: [],
     profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
-    portraitImage: portraitImage && { id: portraitImage.uuid, url: portraitImage.url }
+    portraitImage: portraitImage && { id: portraitImage.uuid, url: portraitImage.url },
+    defaultLocale,
+    externalReference,
+    externalReferenceSource,
+    id,
+    publishStatus,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
   };
+  console.log('localeData', localeData);
+  if (localeData) {
+    for (const { basedOnDefaultLocale, description, locale, name } of localeData) {
+      character.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      character.description[locale] = description;
+      character.name[locale] = name;
+      character.locales.push(locale);
+    }
+  }
+  return character;
 }
+
 /**
  *  Complete version of a medium. Locales includes.
  */
@@ -94,9 +116,9 @@ export function transformMedium ({ availabilities, broadcasters, characters, con
   if (seasonInfo) {
     serieInfo = seasonInfo.serie;
   }
-  const seriesEntry = {
+  const medium = {
     availabilities: availabilities && availabilities.map(transformAvailability),
-    characters: characters && characters.map(transformCharacter),
+    characters: characters && characters.map(transformListCharacter),
     contentProducers: contentProducers && contentProducers.map((cp) => cp.uuid),
     broadcasters: broadcasters && broadcasters.map((bc) => bc.uuid),
     number,
@@ -124,18 +146,18 @@ export function transformMedium ({ availabilities, broadcasters, characters, con
   if (localeData) {
     for (const { hasTitle, basedOnDefaultLocale, description, locale,
       posterImage, profileCover, endYear, startYear, title } of localeData) {
-      seriesEntry.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
-      seriesEntry.description[locale] = description;
-      seriesEntry.startYear[locale] = startYear;
-      seriesEntry.endYear[locale] = endYear;
-      seriesEntry.hasTitle[locale] = hasTitle;
-      seriesEntry.title[locale] = title;
-      seriesEntry.locales.push(locale);
-      seriesEntry.profileImage[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
-      seriesEntry.posterImage[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
+      medium.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      medium.description[locale] = description;
+      medium.startYear[locale] = startYear;
+      medium.endYear[locale] = endYear;
+      medium.hasTitle[locale] = hasTitle;
+      medium.title[locale] = title;
+      medium.locales.push(locale);
+      medium.profileImage[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
+      medium.posterImage[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
     }
   }
-  return seriesEntry;
+  return medium;
 }
 
 // Can transforms medium subscriptions and medium syncs.
@@ -410,3 +432,11 @@ export function transformVideo ({ audioFingerprints, description,
     videoFilename
   };
 }
+
+export const transformActor = transformCharacter;
+// Temporary solution. Actor is almost the same as character, except name calls fullName here...
+export const transformListActor = (actor) => {
+  const result = transformListCharacter(actor);
+  result.name = actor.fullName;
+  return result;
+};

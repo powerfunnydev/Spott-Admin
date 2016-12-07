@@ -9,6 +9,9 @@ import broadcastChannelsList from '../pages/content/broadcastChannels/list/reduc
 import broadcastersListBroadcasters from '../pages/content/broadcasters/list/reducer';
 import broadcastersReadBroadcastChannels from '../pages/content/broadcasters/read/broadcastChannels/reducer';
 import broadcastersReadUsers from '../pages/content/broadcasters/read/users/list/reducer';
+import charactersCreate from '../pages/content/characters/create/reducer';
+import charactersEdit from '../pages/content/characters/edit/reducer';
+import charactersList from '../pages/content/characters/list/reducer';
 import contentProducersList from '../pages/content/contentProducers/list/reducer';
 import contentProducersReadUsers from '../pages/content/contentProducers/read/users/list/reducer';
 import episodesCreate from '../pages/content/episodes/create/reducer';
@@ -54,6 +57,11 @@ export default combineReducers({
         broadcastChannels: broadcastersReadBroadcastChannels,
         users: broadcastersReadUsers
       })
+    }),
+    characters: combineReducers({
+      create: charactersCreate,
+      edit: charactersEdit,
+      list: charactersList
     }),
     contentProducers: combineReducers({
       list: contentProducersList,

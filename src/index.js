@@ -13,6 +13,10 @@ import BroadcastersList from './pages/content/broadcasters/list';
 import BroadcastersCreate from './pages/content/broadcasters/create';
 import BroadcastersEdit from './pages/content/broadcasters/edit';
 import BroadcastersRead from './pages/content/broadcasters/read';
+import CharactersList from './pages/content/characters/list';
+import CharactersCreate from './pages/content/characters/create';
+import CharactersEdit from './pages/content/characters/edit';
+import CharactersRead from './pages/content/characters/read';
 import LinkUserToBroadcaster from './pages/content/broadcasters/read/users/linkUser';
 import BroadcastChannelCreate from './pages/content/broadcastChannels/create';
 import BroadcastChannelEdit from './pages/content/broadcastChannels/edit';
@@ -102,6 +106,13 @@ function getRoutes ({ dispatch, getState }) {
       </Route>
       <Route path='content' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <IndexRedirect to='content-producers' />
+        <Route component={CharactersList} path='characters'>
+          <Route component={CharactersCreate} path='create'/>
+        </Route>
+        <Route path='characters'>
+          <Route component={CharactersEdit} path='edit/:characterId'/>
+          <Route component={CharactersRead} path='read/:characterId'/>
+        </Route>
         <Route component={ContentProducersList} path='content-producers'>
           <Route component={ContentProducersCreate} path='create'/>
         </Route>
@@ -216,6 +227,7 @@ function getRoutes ({ dispatch, getState }) {
         </Route>
       </Route>
 
+      {/* Users */}
       <Route component={UsersList} path='users' onEnter={requireOneRole([ ADMIN ])}>
         <Route component={UsersCreate} path='create'/>
       </Route>
@@ -224,6 +236,7 @@ function getRoutes ({ dispatch, getState }) {
         <Route component={UsersRead} path='read/:id'/>
       </Route>
 
+      {/* TV Guide */}
       <Route component={TvGuideList} path='tv-guide' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <Route
           component={TvGuideCreateEntry} load={(props) => { dispatch(loadTvGuide(props.location.query)); }} path='create' />

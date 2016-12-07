@@ -1,7 +1,7 @@
 import { createStructuredSelector } from 'reselect';
 import { currentModalSelector } from '../../../../selectors/global';
 import {
-  charactersEntitiesSelector,
+  listCharactersEntitiesSelector,
   mediaEntitiesSelector,
   createEntityByIdSelector,
   listMediaEntitiesSelector,
@@ -35,7 +35,7 @@ const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'conte
 
 const currentCharactersSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentCharacterSearchString' ]);
 const searchedCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCharactersSearchStringSelector);
-const episodeCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersSelector, currentEpisodeIdSelector, charactersEntitiesSelector);
+const episodeCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersSelector, currentEpisodeIdSelector, listCharactersEntitiesSelector);
 
 const searchedSeriesEntryIdsSelector = createEntityIdsByRelationSelector(searchStringHasSeriesEntriesRelationsSelector, currentSeriesEntriesSearchStringSelector);
 const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(seriesEntryHasSeasonsSelector, currentSeriesEntryIdSelector);
@@ -50,7 +50,7 @@ export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
   availabilities: availabilitiesSelector,
   broadcastersById: broadcastersEntitiesSelector,
-  charactersById: charactersEntitiesSelector,
+  charactersById: listCharactersEntitiesSelector,
   contentProducersById: contentProducersEntitiesSelector,
   currentEpisode: currentEpisodeSelector,
   currentModal: currentModalSelector,
