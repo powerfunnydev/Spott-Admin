@@ -253,7 +253,6 @@ export default class EditEpisode extends Component {
       deletePosterImage, location: { query: { tab } }
     } = this.props;
 
-    console.warn('TAB', tab);
     return (
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />

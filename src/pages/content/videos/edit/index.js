@@ -30,7 +30,6 @@ function validate (values, { t }) {
 @connect(selector, (dispatch) => ({
   loadVideo: bindActionCreators(actions.loadVideo, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
-  searchSeriesEntries: console.warn,
   submit: bindActionCreators(actions.submit, dispatch)
 }))
 @reduxForm({
