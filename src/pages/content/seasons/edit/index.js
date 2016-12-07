@@ -17,12 +17,13 @@ import Label from '../../../_common/inputs/_label';
 import localized from '../../../_common/decorators/localized';
 import Section from '../../../_common/components/section';
 import SelectInput from '../../../_common/inputs/selectInput';
-import selector from './selector';
 import SpecificHeader from '../../header';
 import CheckboxInput from '../../../_common/inputs/checkbox';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
+import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
+import selector from './selector';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -289,6 +290,18 @@ export default class EditEpisodes extends Component {
                 <FormSubtitle>Images</FormSubtitle>
                 <div style={[ styles.paddingTop, styles.row ]}>
                   <div>
+                    <Label text='Poster image' />
+                    <Dropzone
+                      accept='image/*'
+                      downloadUrl={currentSeason.getIn([ 'posterImage', _activeLocale ]) &&
+                        currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ])}
+                      imageUrl={currentSeason.getIn([ 'posterImage', _activeLocale ]) &&
+                        `${currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310`}
+                      type={POSTER_IMAGE}
+                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ seasonId: this.props.params.seasonId, image: file, callback }); }}
+                      onDelete={() => { deletePosterImage({ mediumId: currentSeason.get('id') }); }}/>
+                  </div>
+                  <div style={styles.paddingLeftUploadImage}>
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
@@ -296,19 +309,9 @@ export default class EditEpisodes extends Component {
                         currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ])}
                       imageUrl={currentSeason.getIn([ 'profileImage', _activeLocale ]) &&
                         `${currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      type={PROFILE_IMAGE}
                       onChange={({ callback, file }) => { this.props.uploadProfileImage({ seasonId: this.props.params.seasonId, image: file, callback }); }}
                       onDelete={() => { deleteProfileImage({ mediumId: currentSeason.get('id') }); }}/>
-                  </div>
-                  <div style={styles.paddingLeftUploadImage}>
-                    <Label text='Poster image' />
-                    <Dropzone
-                      accept='image/*'
-                      downloadUrl={currentSeason.getIn([ 'posterImage', _activeLocale ]) &&
-                        currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ])}
-                      imageUrl={currentSeason.getIn([ 'posterImage', _activeLocale ]) &&
-                        `${currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=203&width=360`}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ seasonId: this.props.params.seasonId, image: file, callback }); }}
-                      onDelete={() => { deletePosterImage({ mediumId: currentSeason.get('id') }); }}/>
                   </div>
                 </div>
               </Section>
