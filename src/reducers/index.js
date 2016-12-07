@@ -22,8 +22,10 @@ import seasonsCreate from '../pages/content/seasons/create/reducer';
 import seasonsEdit from '../pages/content/seasons/edit/reducer';
 import seasonsList from '../pages/content/seasons/list/reducer';
 import seasonsReadEpisodes from '../pages/content/seasons/read/episodes/reducer';
+import seasonsReadTvGuide from '../pages/content/seasons/read/tvGuide/reducer';
 import seriesList from '../pages/content/series/list/reducer';
 import seriesReadSeasons from '../pages/content/series/read/seasons/reducer';
+import seriesReadTvGuide from '../pages/content/series/read/tvGuide/reducer';
 import tvGuideCreate from '../pages/tvGuide/create/reducer';
 import tvGuideEdit from '../pages/tvGuide/edit/reducer';
 import tvGuideList from '../pages/tvGuide/list/reducer';
@@ -72,13 +74,15 @@ export default combineReducers({
       edit: seasonsEdit,
       list: seasonsList,
       read: combineReducers({
-        episodes: seasonsReadEpisodes
+        episodes: seasonsReadEpisodes,
+        tvGuide: seasonsReadTvGuide
       })
     }),
     series: combineReducers({
       list: seriesList,
       read: combineReducers({
-        seasons: seriesReadSeasons
+        seasons: seriesReadSeasons,
+        tvGuide: seriesReadTvGuide
       })
     })
   }),

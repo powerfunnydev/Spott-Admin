@@ -15,6 +15,7 @@ import Line from '../../../_common/components/line';
 import SeriesEntrySeasonsList from './seasons';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
+import TvGuideList from './tvGuide';
 
 /* eslint-disable no-alert */
 
@@ -104,6 +105,9 @@ export default class ReadSeriesEntry extends Component {
             <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
               <Tab title='Seasons'>
                 <SeriesEntrySeasonsList {...this.props}/>
+              </Tab>
+              <Tab title='TV Guide'>
+                <TvGuideList {...this.props}/>
               </Tab>
             </Tabs>
           </Container>

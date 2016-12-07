@@ -38,6 +38,7 @@ export const episodeHasTvGuideEntriesSelector = (state) => state.getIn([ 'data',
 export const seriesEntryHasSeasonsSelector = (state) => state.getIn([ 'data', 'relations', 'seriesEntryHasSeasons' ]);
 export const seasonHasEpisodesSelector = (state) => state.getIn([ 'data', 'relations', 'seasonHasEpisodes' ]);
 export const mediumHasCharactersSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasCharacters' ]);
+export const mediumHasTvGuideEntriesSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasTvGuideEntries' ]);
 
 export const agesListSelector = (state) => state.getIn([ 'data', 'lists', 'ages' ]);
 export const eventsListSelector = (state) => state.getIn([ 'data', 'lists', 'events' ]);

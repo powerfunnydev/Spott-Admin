@@ -22,8 +22,8 @@ export const serializeFilterHasUsers = serialize;
 export const serializeFilterHasSeriesEntries = serialize;
 export const serializeFilterHasSeasons = serialize;
 
-export function serializeFilterHasTvGuideEntries ({ page = 0, pageSize = 25, sortDirection, sortField }) {
-  let id = `page=${page}&pageSize=${pageSize}`;
+export function serializeFilterHasTvGuideEntries ({ page = 0, pageSize = 25, sortDirection, sortField, mediumId }) {
+  let id = `mediumId=${mediumId}&page=${page}&pageSize=${pageSize}`;
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     id = id.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }
