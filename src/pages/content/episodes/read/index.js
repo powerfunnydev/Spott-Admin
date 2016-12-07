@@ -44,14 +44,10 @@ export default class ReadEpisode extends Component {
     this.onChangeTab = :: this.onChangeTab;
   }
 
-  async componentWillMount () {
+  componentWillMount () {
     if (this.props.params.seasonId) {
-      await this.props.loadEpisode(this.props.params.episodeId);
+      this.props.loadEpisode(this.props.params.episodeId);
     }
-  }
-
-  getTitle (season) {
-    return season.get('name');
   }
 
   redirect () {

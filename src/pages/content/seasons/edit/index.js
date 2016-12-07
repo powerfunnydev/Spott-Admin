@@ -154,6 +154,7 @@ export default class EditEpisodes extends Component {
     const { change, dispatch, _activeLocale } = this.props;
     dispatch(change('defaultLocale', _activeLocale));
   }
+
   static styles = {
     topBar: {
       display: 'flex',

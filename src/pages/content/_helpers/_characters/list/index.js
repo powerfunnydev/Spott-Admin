@@ -41,9 +41,9 @@ export default class Characters extends Component {
     };
   }
 
-  async componentWillMount () {
+  componentWillMount () {
     const { loadMediumCharacters, mediumId } = this.props;
-    await loadMediumCharacters(mediumId);
+    loadMediumCharacters(mediumId);
   }
 
   onClickNewEntry (e) {

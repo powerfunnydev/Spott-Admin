@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { reduxForm, Field, FieldArray, SubmissionError } from 'redux-form/immutable';
+import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -64,8 +64,6 @@ export default class EditEpisode extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
-    // Form field.
-    availabilities: ImmutablePropTypes.list,
     broadcastersById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
     characters: ImmutablePropTypes.list,
@@ -120,6 +118,7 @@ export default class EditEpisode extends Component {
     this.openCreateLanguageModal = :: this.openCreateLanguageModal;
     this.languageAdded = :: this.languageAdded;
     this.removeLanguage = :: this.removeLanguage;
+    this.onChangeTab = ::this.onChangeTab;
   }
 
   async componentWillMount () {
@@ -176,6 +175,10 @@ export default class EditEpisode extends Component {
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
+  }
+
+  onChangeTab (tab) {
+    this.props.routerPushWithReturnTo({ ...this.props.location, query: { ...this.props.location.query, tab } });
   }
 
   onSetDefaultLocale (locale) {
@@ -238,15 +241,19 @@ export default class EditEpisode extends Component {
   }
 
   render () {
-    const { _activeLocale, availabilities, closeModal, currentModal, currentSeasonId, currentSeriesEntryId, episodeCharacters,
-        searchSeriesEntries, contentProducersById, searchContentProducers, searchedContentProducerIds, broadcastersById,
-        searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
-        seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
-        searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors,
-        searchedCharacterIds, charactersById, searchCharacters, deleteProfileImage,
-        deletePosterImage } = this.props;
-    const { styles } = this.constructor;
+    const styles = this.constructor.styles;
+    const {
+      _activeLocale, closeModal, currentModal, currentSeasonId,
+      currentSeriesEntryId, searchSeriesEntries, contentProducersById,
+      searchContentProducers, searchedContentProducerIds, broadcastersById,
+      searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
+      seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
+      searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors,
+      searchedCharacterIds, charactersById, searchCharacters, deleteProfileImage, episodeCharacters,
+      deletePosterImage, location: { query: { tab } }
+    } = this.props;
 
+    console.warn('TAB', tab);
     return (
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />
@@ -261,8 +268,8 @@ export default class EditEpisode extends Component {
             supportedLocales={supportedLocales}
             onCloseClick={closeModal}
             onCreate={this.languageAdded}/>}
-        <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-          <Tabs showPublishStatus>
+        <EditTemplate disableSubmit={tab > 1} onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
+          <Tabs activeTab={tab} showPublishStatus onChange={this.onChangeTab}>
             <Tab title='Details'>
               <Section noPadding style={styles.background}>
                 <LanguageBar
@@ -403,7 +410,7 @@ export default class EditEpisode extends Component {
               </Section>
             </Tab>
             <Tab title='Availability'>
-              <FieldArray availabilities={availabilities} component={Availabilities} name='availabilities' />
+              <Availabilities mediumId={this.props.params.episodeId} />
             </Tab>
           </Tabs>
         </EditTemplate>

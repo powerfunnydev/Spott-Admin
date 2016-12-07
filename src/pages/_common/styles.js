@@ -282,6 +282,7 @@ export class EditTemplate extends Component {
 
   static propTypes = {
     children: PropTypes.node,
+    disableSubmit: PropTypes.bool,
     style: PropTypes.object,
     onCancel: PropTypes.func,
     onSubmit: PropTypes.func
@@ -308,24 +309,33 @@ export class EditTemplate extends Component {
     },
     container: {
       marginTop: '1.3em'
+    },
+    disabled: {
+      backgroundColor: colors.primaryBlue,
+      border: `solid 1px ${colors.primaryBlue}`,
+      opacity: 0.4
     }
   };
 
   render () {
     const { styles } = this.constructor;
-    const { children, style, onCancel, onSubmit } = this.props;
+    const { children, disableSubmit, style, onCancel, onSubmit } = this.props;
+
     return (
       <Container style={[ styles.container, style ]}>
         {children}
         {(onCancel || onSubmit) && <div style={styles.cancelAndSubmitComponent}>
-          {onCancel && <button
-            key='cancel'
-            style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white ]}
-            onClick={onCancel}>Cancel</button>}
-          {onSubmit && <button
-            key='save'
-            style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]}
-            onClick={onSubmit}>Save</button>}
+          {onCancel &&
+            <button
+              key='cancel'
+              style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white ]}
+              onClick={onCancel}>Cancel</button>}
+          {onSubmit &&
+            <button
+              disabled={disableSubmit}
+              key='save'
+              style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue, disableSubmit && styles.disabled ]}
+              onClick={onSubmit}>Save</button>}
         </div>}
       </Container>
     );

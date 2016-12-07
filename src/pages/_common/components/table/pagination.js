@@ -8,12 +8,14 @@ const arrowLightGray = require('../../../../assets/images/arrow-light-gray.svg')
 
 @Radium
 export class Pagination extends Component {
+
   static propTypes = {
     currentPage: PropTypes.number.isRequired,
     pageCount: PropTypes.number.isRequired,
     onLeftClick: PropTypes.func.isRequired,
     onRightClick: PropTypes.func.isRequired
-  }
+  };
+
   static styles = {
     pagination: {
       marginTop: '1.875em',
@@ -57,7 +59,7 @@ export class Pagination extends Component {
           {(currentPage <= 1) && <img src={arrowLightGray} style={generalStyles.arrowLeft}/>}
         </div>
         <div style={styles.middle}>
-          <span>{currentPage} <span style={styles.gray}> of {pageCount}</span></span>
+          <span>{currentPage} <span style={styles.gray}> of {pageCount || 1}</span></span>
         </div>
         <div style={styles.smallButton} onClick={(currentPage < pageCount) && onRightClick}>
           {(currentPage < pageCount) && <img src={arrowGray} style={generalStyles.arrowRight}/>}
