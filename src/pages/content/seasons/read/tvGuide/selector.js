@@ -8,8 +8,7 @@ export const isSelectedSelector = (state) => state.getIn([ 'content', 'seasons',
 export const pageCountSelector = (state) => state.getIn([ 'content', 'seasons', 'read', 'tvGuide', 'pageCount' ]);
 export const totalResultCountSelector = (state) => state.getIn([ 'content', 'seasons', 'read', 'tvGuide', 'totalResultCount' ]);
 
-// Every tv guide list is unique by a mediumId. Further, we need all information of a query, like current page, total page count,...
-export const tvGuideEntriesFilterKeySelector = (state, props) => serializeFilterHasTvGuideEntries({ ...getInformationFromQuery(props.location.query, prefix), mediumId: props.params.episodeId });
+export const tvGuideEntriesFilterKeySelector = (state, props) => serializeFilterHasTvGuideEntries({ ...getInformationFromQuery(props.location.query, prefix), mediumId: props.params.seasonId });
 
 export const tvGuideEntriesSelector = createEntitiesByRelationSelector(
   mediumHasTvGuideEntriesSelector,

@@ -95,7 +95,9 @@ export default class CreateTvGuideEntryModal extends Component {
 
   async componentWillMount () {
     const { episodeId, seasonId, seriesEntryId } = this.props.params;
-    if (seriesEntryId && seasonId && episodeId) {
+    // If we want to create an tv guide entry in the read page of a series entry,
+    // season or episode, we want to prefill this information.
+    if (seriesEntryId) {
       this.props.initialize({
         mediumId: seriesEntryId,
         seasonId,

@@ -51,10 +51,10 @@ export default (state = fromJS({
     searchStringHasSeriesEntries: {},
     searchStringHasUsers: {},
 
-    episodeHasTvGuideEntries: {},
+    mediumHasCharacters: {},
+    mediumHasTvGuideEntries: {},
     seriesEntryHasSeasons: {},
-    seasonHasEpisodes: {},
-    mediumHasCharacters: {}
+    seasonHasEpisodes: {}
   }
 }), action) => {
   switch (action.type) {
@@ -179,12 +179,15 @@ export default (state = fromJS({
     case episodeActions.EPISODE_FETCH_ERROR:
       return fetchError(state, [ 'entities', 'media', action.episodeId ], action.error);
 
-    case episodeActions.TV_GUIDE_ENTRIES_FETCH_START:
-      return searchStart(state, 'episodeHasTvGuideEntries', serializeFilterHasTvGuideEntries(action, 'tvGuide'));
-    case episodeActions.TV_GUIDE_ENTRIES_FETCH_SUCCESS:
-      return searchSuccess(state, 'tvGuideEntries', 'episodeHasTvGuideEntries', serializeFilterHasTvGuideEntries(action, 'tvGuide'), action.data.data);
-    case episodeActions.TV_GUIDE_ENTRIES_FETCH_ERROR:
-      return searchError(state, 'episodeHasTvGuideEntries', serializeFilterHasTvGuideEntries(action, 'tvGuide'), action.error);
+    // Media
+    // /////////////////
+
+    case mediaActions.TV_GUIDE_ENTRIES_FETCH_START:
+      return searchStart(state, 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action));
+    case mediaActions.TV_GUIDE_ENTRIES_FETCH_SUCCESS:
+      return searchSuccess(state, 'tvGuideEntries', 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.data.data);
+    case mediaActions.TV_GUIDE_ENTRIES_FETCH_ERROR:
+      return searchError(state, 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.error);
 
     // Seasons
     // /////////////////

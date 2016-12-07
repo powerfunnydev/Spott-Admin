@@ -126,8 +126,11 @@ export default class EditEpisode extends Component {
     const { episodeId } = this.props.params;
     if (episodeId) {
       const editObj = await this.props.loadEpisode(episodeId);
+      console.log('editObj', editObj);
       this.props.initialize({
         ...editObj,
+        seasonId: editObj.season.id,
+        seriesEntryId: editObj.seriesEntry.id,
         _activeLocale: editObj.defaultLocale
       });
     }

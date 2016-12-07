@@ -15,6 +15,7 @@ import SeasonEpisodesList from './episodes';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
+import TvGuideList from './tvGuide';
 
 @connect(selector, (dispatch) => ({
   deleteSeason: bindActionCreators(listActions.deleteSeason, dispatch),
@@ -105,6 +106,9 @@ export default class ReadSeason extends Component {
             <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
               <Tab title='Episodes'>
                 <SeasonEpisodesList {...this.props}/>
+              </Tab>
+              <Tab title='TV Guide'>
+                <TvGuideList {...this.props}/>
               </Tab>
             </Tabs>
           </Container>

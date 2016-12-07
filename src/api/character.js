@@ -7,7 +7,7 @@ export async function searchCharacters (baseUrl, authenticationToken, locale, { 
     url = url.concat(`&searchString=${searchString}`);
   }
   const { body: { data } } = await get(authenticationToken, locale, url);
-  return data.map(transformCharacter);
+  return data.map(transformListCharacter);
 }
 
 export async function searchMediumCharacters (baseUrl, authenticationToken, locale, { mediumId, searchString = '', page = 0, pageSize = 100 }) {
