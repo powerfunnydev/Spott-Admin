@@ -60,8 +60,14 @@ export function transformListMedium ({ number, auditInfo, title, type, posterIma
   };
 }
 
-export function transformAvailability ({ country, endTimeStamp, startTimeStamp, videoStatus }) {
-  return { countryId: country && country.uuid, availabilityFrom: startTimeStamp && new Date(startTimeStamp), availabilityTo: endTimeStamp && new Date(endTimeStamp), videoStatus };
+export function transformAvailability ({ country, endTimeStamp, startTimeStamp, uuid: id, videoStatus }) {
+  return {
+    availabilityFrom: startTimeStamp && new Date(startTimeStamp),
+    availabilityTo: endTimeStamp && new Date(endTimeStamp),
+    countryId: country && country.uuid,
+    id,
+    videoStatus
+  };
 }
 
 export function transformListCharacter ({ auditInfo, profileImage, portraitImage, name, uuid: id }) {

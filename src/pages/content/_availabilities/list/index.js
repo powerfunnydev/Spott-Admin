@@ -3,9 +3,8 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { Field } from 'redux-form/immutable';
+import { bindActionCreators } from 'redux';
 import moment from 'moment';
-import { fromJS } from 'immutable';
 import Section from '../../../_common/components/section';
 import { headerStyles, Table, Headers, CustomCel, Rows, Row } from '../../../_common/components/table/index';
 import { colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../_common/styles';
@@ -14,51 +13,63 @@ import EditButton from '../../../_common/components/buttons/editButton';
 import RemoveButton from '../../../_common/components/buttons/removeButton';
 import PersistAvailabilityModal from '../persist';
 import selector from './selector';
+import * as actions from './actions';
 
-@connect(selector)
+@connect(selector, (dispatch) => ({
+  deleteAvailability: bindActionCreators(actions.deleteAvailability, dispatch),
+  loadAvailabilities: bindActionCreators(actions.loadAvailabilities, dispatch),
+  persistAvailiability: bindActionCreators(actions.persistAvailability, dispatch)
+}))
 @Radium
 export default class Availabilities extends Component {
 
   static propTypes = {
-    availabilities: ImmutablePropTypes.list.isRequired,
+    availabilities: ImmutablePropTypes.map.isRequired,
     countries: ImmutablePropTypes.map.isRequired,
-    fields: PropTypes.object.isRequired
+    deleteAvailability: PropTypes.func.isRequired,
+    loadAvailabilities: PropTypes.func.isRequired,
+    mediumId: PropTypes.string.isRequired,
+    persistAvailiability: PropTypes.func.isRequired
   };
 
   constructor (props) {
     super(props);
-    this.persistAvailiability = ::this.persistAvailiability;
-    this.onClickCreate = ::this.onClickCreate;
     this.getAvailability = ::this.getAvailability;
+    this.onClickCreateAvailability = ::this.onClickCreateAvailability;
+    this.onSubmit = ::this.onSubmit;
     this.state = {
       create: false,
       edit: false
     };
   }
 
+  componentWillMount () {
+    const { loadAvailabilities, mediumId } = this.props;
+    loadAvailabilities({ mediumId });
+  }
+
   // Transform the date + time + timezone to one date
-  transformAvailability ({ countryId, endDate, endTime, startDate, startTime, timezone, videoStatus }) {
+  transformAvailability ({ countryId, endDate, endTime, id, mediumId, startDate, startTime, timezone, videoStatus }) {
     return {
       availabilityFrom: startDate && startTime && moment(`${startDate.format('YYYY-MM-DD')} ${startTime.format('HH:mm')} ${timezone}`, 'YYYY-MM-DD HH:mm Z').utc().toDate(),
       availabilityTo: endDate && endTime && moment(`${endDate.format('YYYY-MM-DD')} ${endTime.format('HH:mm')} ${timezone}`, 'YYYY-MM-DD HH:mm Z').utc().toDate(),
       countryId,
+      id,
+      mediumId,
       videoStatus
     };
   }
 
-  persistAvailiability (index, data) {
-    const availability = this.transformAvailability(data);
-    this.props.fields.remove(index);
-    this.props.fields.insert(index, fromJS(availability));
-  }
-
   getAvailability (index) {
-    const { availabilityFrom, availabilityTo, countryId, videoStatus } = this.props.availabilities.get(index).toJS();
+    const mediumId = this.props.mediumId;
+    const { availabilityFrom, availabilityTo, countryId, id, videoStatus } = this.props.availabilities.getIn([ 'data', index ]).toJS();
     return {
       countryId,
       endDate: availabilityTo && moment(availabilityTo).startOf('day'),
       endTime: availabilityTo && moment(availabilityTo),
+      id,
       noEndDate: !availabilityTo,
+      mediumId,
       startDate: availabilityFrom && moment(availabilityFrom).startOf('day'),
       startTime: availabilityFrom && moment(availabilityFrom),
       timezone: '+00:00',
@@ -66,9 +77,22 @@ export default class Availabilities extends Component {
     };
   }
 
-  onClickCreate (e) {
+  onClickCreateAvailability (e) {
     e.preventDefault();
     this.setState({ create: true });
+  }
+
+  async onClickDeleteAvailability (availabilityId) {
+    const { deleteAvailability, loadAvailabilities, mediumId } = this.props;
+    await deleteAvailability({ availabilityId, mediumId });
+    await loadAvailabilities({ mediumId });
+  }
+
+  async onSubmit (form) {
+    const { loadAvailabilities, persistAvailiability, mediumId } = this.props;
+    const availability = this.transformAvailability(form);
+    await persistAvailiability(availability);
+    await loadAvailabilities({ mediumId });
   }
 
   static styles = {
@@ -101,7 +125,7 @@ export default class Availabilities extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { fields, countries } = this.props;
+    const { availabilities, countries, mediumId } = this.props;
 
     return (
       <Section>
@@ -125,38 +149,30 @@ export default class Availabilities extends Component {
             <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 1 } ]} />
           </Headers>
           <Rows style={styles.adaptedRows}>
-            {fields.map((availability, index) => {
+            {availabilities.get('data').map((availability, index) => {
               return (
-                <Row isFirst={index === 0} key={`availabilityRow${index}`} >
+                <Row isFirst={index === 0} key={index} >
                   <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]}>
-                    <Field
-                      component={({ input: { value: countryId } }) => <span>{countries.getIn([ countryId, 'name' ]) || '-'}</span>}
-                      name={`${availability}.countryId`} />
+                    {countries.getIn([ availability.get('countryId'), 'name' ]) || '-'}
                   </CustomCel>
                   <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]}>
-                    <Field
-                      component={({ input: { value: availabilityFrom } }) => <span>{availabilityFrom ? moment(availabilityFrom).format('DD/MM/YYYY HH:mm') : '-'}</span>}
-                      name={`${availability}.availabilityFrom`} />
+                    {availability.get('availabilityFrom') ? moment(availability.get('availabilityFrom')).format('DD/MM/YYYY HH:mm') : '-'}
                   </CustomCel>
                   <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]}>
-                    <Field
-                      component={({ input: { value: availabilityTo } }) => <span>{availabilityTo ? moment(availabilityTo).format('DD/MM/YYYY HH:mm') : '-'}</span>}
-                      name={`${availability}.availabilityTo`} />
+                    {availability.get('availabilityTo') ? moment(availability.get('availabilityTo')).format('DD/MM/YYYY HH:mm') : '-'}
                   </CustomCel>
                   <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]}>
-                    <Field
-                      component={({ input: { value: videoStatus } }) => <span>{videoStatus}</span>}
-                      name={`${availability}.videoStatus`} />
+                    {availability.get('videoStatus')}
                   </CustomCel>
                   <CustomCel style={[ styles.adaptedCustomCel, { flex: 1 } ]}>
                     <EditButton style={styles.editButton} onClick={() => this.setState({ edit: index })} />
-                    <RemoveButton onClick={() => fields.remove(index)} />
+                    <RemoveButton onClick={this.onClickDeleteAvailability.bind(this, availability.get('id'))} />
                   </CustomCel>
                 </Row>
               );
             })}
-            <Row isFirst={fields.length === 0} >
-              <CustomCel style={[ styles.add, styles.adaptedCustomCel ]} onClick={this.onClickCreate}>
+            <Row isFirst={availabilities.get('data').size === 0} >
+              <CustomCel style={[ styles.add, styles.adaptedCustomCel ]} onClick={this.onClickCreateAvailability}>
                 <Plus color={colors.primaryBlue} />&nbsp;&nbsp;&nbsp;Add availability
               </CustomCel>
             </Row>
@@ -167,19 +183,20 @@ export default class Availabilities extends Component {
                 countryId: 'BE',
                 endDate: moment().startOf('day'),
                 endTime: moment(),
+                mediumId,
                 startDate: moment().startOf('day'),
                 startTime: moment(),
                 timezone: '+01:00',
                 videoStatus: 'DISABLED'
               }}
               onClose={() => this.setState({ create: false })}
-              onSubmit={this.persistAvailiability.bind(this, this.props.fields.length)} />}
+              onSubmit={this.onSubmit} />}
           {typeof this.state.edit === 'number' &&
             <PersistAvailabilityModal
               edit
               initialValues={this.getAvailability(this.state.edit)}
               onClose={() => this.setState({ edit: false })}
-              onSubmit={this.persistAvailiability.bind(this, this.state.edit)} />}
+              onSubmit={this.onSubmit} />}
         </Table>
       </Section>
     );

@@ -3,6 +3,7 @@ import { createSelector } from 'reselect';
 import { LAZY } from '../constants/statusTypes';
 
 export const actorsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'actors' ]);
+export const availabilitiesEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'availabilities' ]);
 export const agesEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'ages' ]);
 export const broadcastChannelsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'broadcastChannels' ]);
 export const broadcastersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'broadcasters' ]);
@@ -41,6 +42,7 @@ export const searchStringHasSeasonsRelationsSelector = (state) => state.getIn([ 
 export const episodeHasTvGuideEntriesSelector = (state) => state.getIn([ 'data', 'relations', 'episodeHasTvGuideEntries' ]);
 export const seriesEntryHasSeasonsSelector = (state) => state.getIn([ 'data', 'relations', 'seriesEntryHasSeasons' ]);
 export const seasonHasEpisodesSelector = (state) => state.getIn([ 'data', 'relations', 'seasonHasEpisodes' ]);
+export const mediumHasAvailabilitiesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasAvailabilities' ]);
 export const mediumHasCharactersSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasCharacters' ]);
 export const mediumHasTvGuideEntriesSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasTvGuideEntries' ]);
 

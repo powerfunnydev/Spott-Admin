@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { reduxForm, Field, FieldArray, SubmissionError } from 'redux-form/immutable';
+import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -26,6 +26,7 @@ import * as actions from './actions';
 import selector from './selector';
 import Characters from '../../_helpers/_characters/list';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
+import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -64,8 +65,6 @@ export default class EditEpisode extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
-    // Form field.
-    availabilities: ImmutablePropTypes.list,
     broadcastersById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
     characters: ImmutablePropTypes.list,
@@ -120,6 +119,7 @@ export default class EditEpisode extends Component {
     this.openCreateLanguageModal = :: this.openCreateLanguageModal;
     this.languageAdded = :: this.languageAdded;
     this.removeLanguage = :: this.removeLanguage;
+    this.onChangeTab = ::this.onChangeTab;
   }
 
   async componentWillMount () {
@@ -176,6 +176,10 @@ export default class EditEpisode extends Component {
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
+  }
+
+  onChangeTab (tab) {
+    this.props.routerPushWithReturnTo({ ...this.props.location, query: { ...this.props.location.query, tab } });
   }
 
   onSetDefaultLocale (locale) {
@@ -238,14 +242,17 @@ export default class EditEpisode extends Component {
   }
 
   render () {
-    const { _activeLocale, availabilities, closeModal, currentModal, currentSeasonId, currentSeriesEntryId, episodeCharacters,
-        searchSeriesEntries, contentProducersById, searchContentProducers, searchedContentProducerIds, broadcastersById,
-        searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
-        seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
-        searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors,
-        searchedCharacterIds, charactersById, searchCharacters, deleteProfileImage,
-        deletePosterImage } = this.props;
-    const { styles } = this.constructor;
+    const styles = this.constructor.styles;
+    const {
+      _activeLocale, closeModal, currentModal, currentSeasonId,
+      currentSeriesEntryId, searchSeriesEntries, contentProducersById,
+      searchContentProducers, searchedContentProducerIds, broadcastersById,
+      searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
+      seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
+      searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors,
+      searchedCharacterIds, charactersById, searchCharacters, deleteProfileImage, episodeCharacters,
+      deletePosterImage, location: { query: { tab } }
+    } = this.props;
 
     return (
       <Root style={styles.backgroundRoot}>
@@ -261,8 +268,8 @@ export default class EditEpisode extends Component {
             supportedLocales={supportedLocales}
             onCloseClick={closeModal}
             onCreate={this.languageAdded}/>}
-        <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-          <Tabs showPublishStatus>
+        <EditTemplate disableSubmit={tab > 1} onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
+          <Tabs activeTab={tab} showPublishStatus onChange={this.onChangeTab}>
             <Tab title='Details'>
               <Section noPadding style={styles.background}>
                 <LanguageBar
@@ -361,6 +368,18 @@ export default class EditEpisode extends Component {
                 <FormSubtitle>Images</FormSubtitle>
                 <div style={[ styles.paddingTop, styles.row ]}>
                   <div>
+                    <Label text='Poster image' />
+                    <Dropzone
+                      accept='image/*'
+                      downloadUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
+                        currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}
+                      imageUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
+                        `${currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310`}
+                      type={POSTER_IMAGE}
+                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}
+                      onDelete={() => { deletePosterImage({ mediumId: currentEpisode.get('id') }); }}/>
+                  </div>
+                  <div style={styles.paddingLeftUploadImage}>
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
@@ -368,19 +387,9 @@ export default class EditEpisode extends Component {
                         currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}
                       imageUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
                         `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      type={PROFILE_IMAGE}
                       onChange={({ callback, file }) => { this.props.uploadProfileImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}
                       onDelete={() => { deleteProfileImage({ mediumId: currentEpisode.get('id') }); }}/>
-                  </div>
-                  <div style={styles.paddingLeftUploadImage}>
-                    <Label text='Poster image' />
-                    <Dropzone
-                      accept='image/*'
-                      downloadUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
-                        currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}
-                      imageUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
-                        `${currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=203&width=360`}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}
-                      onDelete={() => { deletePosterImage({ mediumId: currentEpisode.get('id') }); }}/>
                   </div>
                 </div>
               </Section>
@@ -403,7 +412,7 @@ export default class EditEpisode extends Component {
               </Section>
             </Tab>
             <Tab title='Availability'>
-              <FieldArray availabilities={availabilities} component={Availabilities} name='availabilities' />
+              <Availabilities mediumId={this.props.params.episodeId} />
             </Tab>
           </Tabs>
         </EditTemplate>

@@ -22,7 +22,6 @@ const formName = 'episodeEdit';
 const formErrorsSelector = (state) => state.getIn([ 'form', formName, 'syncErrors' ]);
 
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
-const availabilitiesSelector = createFormValueSelector(formName, 'availabilities');
 const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultLocale');
 const currentSeasonIdSelector = createFormValueSelector(formName, 'seasonId');
 const currentSeriesEntryIdSelector = createFormValueSelector(formName, 'seriesEntryId');
@@ -48,7 +47,6 @@ export const searchedContentProducerIdsSelector = createEntityIdsByRelationSelec
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
-  availabilities: availabilitiesSelector,
   broadcastersById: broadcastersEntitiesSelector,
   charactersById: listCharactersEntitiesSelector,
   contentProducersById: contentProducersEntitiesSelector,

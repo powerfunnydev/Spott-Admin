@@ -125,6 +125,7 @@ export default class EditUser extends Component {
       paddingLeft: '24px'
     },
     row: {
+      alignItems: 'flex-start',
       display: 'flex',
       flexDirection: 'row'
     },
@@ -267,12 +268,14 @@ export default class EditUser extends Component {
                   <div style={styles.row}>
                     <Field
                       component={Checkbox}
+                      first
                       name='sysAdmin'/>
                     <div style={[ styles.paddingLeftCheckbox, styles.fontSize ]}>System admin</div>
                   </div>
                   <div style={[ styles.row, styles.paddingTopRow ]}>
                     <Field
                       component={Checkbox}
+                      first
                       name='broadcaster'/>
                     <div style={[ styles.paddingLeftCheckbox, styles.column ]}>
                       <div style={styles.fontSize}>Broadcaster</div>
@@ -294,12 +297,14 @@ export default class EditUser extends Component {
                   <div style={[ styles.row, styles.paddingTopRow ]}>
                     <Field
                       component={Checkbox}
+                      first
                       name='contentManager'/>
                     <div style={[ styles.paddingLeftCheckbox, styles.fontSize ]}>Content manager</div>
                   </div>
                   <div style={[ styles.row, styles.paddingTopRow ]}>
                     <Field
                       component={Checkbox}
+                      first
                       name='contentProducer'/>
                     <div style={[ styles.paddingLeftCheckbox, styles.column ]}>
                       <div style={styles.fontSize}>Content producer</div>

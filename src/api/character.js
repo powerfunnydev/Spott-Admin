@@ -81,12 +81,12 @@ export async function searchMediumCharacters (baseUrl, authenticationToken, loca
 }
 
 export async function persistMediumCharacter (baseUrl, authenticationToken, locale, { mediumId, characterId }) {
-  const { body } = await post(authenticationToken, locale, `${baseUrl}//v004/media/media/${mediumId}/castMembers/${characterId}`, {});
+  const { body } = await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/castMembers/${characterId}`, {});
   return transformCharacter(body);
 }
 
 export async function deleteMediumCharacter (baseUrl, authenticationToken, locale, { mediumId, characterId }) {
-  const { body } = await del(authenticationToken, locale, `${baseUrl}//v004/media/media/${mediumId}/castMembers/${characterId}`, {});
+  const { body } = await del(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/castMembers/${characterId}`, {});
   return transformCharacter(body);
 }
 

@@ -16,11 +16,12 @@ import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Label from '../../../_common/inputs/_label';
-import selector from './selector';
 import { SERIES_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import LanguageBar from '../../../_common/components/languageBar';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
+import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
+import selector from './selector';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -216,6 +217,18 @@ export default class EditSeriesEntries extends Component {
                 <FormSubtitle>Images</FormSubtitle>
                 <div style={[ styles.paddingTop, styles.row ]}>
                   <div>
+                    <Label text='Poster image' />
+                    <Dropzone
+                      accept='image/*'
+                      downloadUrl={currentSeriesEntry.getIn([ 'posterImage', _activeLocale ]) &&
+                        currentSeriesEntry.getIn([ 'posterImage', _activeLocale, 'url' ])}
+                      imageUrl={currentSeriesEntry.getIn([ 'posterImage', _activeLocale ]) &&
+                        `${currentSeriesEntry.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310`}
+                      type={POSTER_IMAGE}
+                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ seriesEntryId: this.props.params.seriesEntryId, image: file, callback }); }}
+                      onDelete={() => { deletePosterImage({ mediumId: currentSeriesEntry.get('id') }); }}/>
+                  </div>
+                  <div style={styles.paddingLeftUploadImage}>
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
@@ -223,19 +236,9 @@ export default class EditSeriesEntries extends Component {
                         currentSeriesEntry.getIn([ 'profileImage', _activeLocale, 'url' ])}
                       imageUrl={currentSeriesEntry.getIn([ 'profileImage', _activeLocale ]) &&
                         `${currentSeriesEntry.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      type={PROFILE_IMAGE}
                       onChange={({ callback, file }) => { this.props.uploadProfileImage({ seriesEntryId: this.props.params.seriesEntryId, image: file, callback }); }}
                       onDelete={() => { deleteProfileImage({ mediumId: currentSeriesEntry.get('id') }); }}/>
-                  </div>
-                  <div style={styles.paddingLeftUploadImage}>
-                    <Label text='Poster image' />
-                    <Dropzone
-                      accept='image/*'
-                      downloadUrl={currentSeriesEntry.getIn([ 'posterImage', _activeLocale ]) &&
-                        currentSeriesEntry.getIn([ 'posterImage', _activeLocale, 'url' ])}
-                      imageUrl={currentSeriesEntry.getIn([ 'posterImage', _activeLocale ]) &&
-                        `${currentSeriesEntry.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=203&width=360`}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ seriesEntryId: this.props.params.seriesEntryId, image: file, callback }); }}
-                      onDelete={() => { deletePosterImage({ mediumId: currentSeriesEntry.get('id') }); }}/>
                   </div>
                 </div>
               </Section>
