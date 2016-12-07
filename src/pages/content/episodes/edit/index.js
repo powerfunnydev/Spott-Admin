@@ -26,6 +26,7 @@ import * as actions from './actions';
 import selector from './selector';
 import Characters from '../../_helpers/_characters/list';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
+import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -367,6 +368,18 @@ export default class EditEpisode extends Component {
                 <FormSubtitle>Images</FormSubtitle>
                 <div style={[ styles.paddingTop, styles.row ]}>
                   <div>
+                    <Label text='Poster image' />
+                    <Dropzone
+                      accept='image/*'
+                      downloadUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
+                        currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}
+                      imageUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
+                        `${currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310`}
+                      type={POSTER_IMAGE}
+                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}
+                      onDelete={() => { deletePosterImage({ mediumId: currentEpisode.get('id') }); }}/>
+                  </div>
+                  <div style={styles.paddingLeftUploadImage}>
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
@@ -374,19 +387,9 @@ export default class EditEpisode extends Component {
                         currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}
                       imageUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
                         `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      type={PROFILE_IMAGE}
                       onChange={({ callback, file }) => { this.props.uploadProfileImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}
                       onDelete={() => { deleteProfileImage({ mediumId: currentEpisode.get('id') }); }}/>
-                  </div>
-                  <div style={styles.paddingLeftUploadImage}>
-                    <Label text='Poster image' />
-                    <Dropzone
-                      accept='image/*'
-                      downloadUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
-                        currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}
-                      imageUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
-                        `${currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=203&width=360`}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}
-                      onDelete={() => { deletePosterImage({ mediumId: currentEpisode.get('id') }); }}/>
                   </div>
                 </div>
               </Section>

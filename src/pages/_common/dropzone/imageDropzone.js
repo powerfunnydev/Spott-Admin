@@ -1,12 +1,13 @@
-import Radium from 'radium';
+ /* eslint-disable react/no-set-state */
 import React, { Component, PropTypes } from 'react';
+import Radium from 'radium';
 import ReactDOM from 'react-dom';
 import ReactDropzone from 'react-dropzone';
 import { colors, makeTextStyle, fontWeights } from '../styles';
 import ProgressBar from '../components/progressBar';
 import Dropdown, { styles as dropdownStyles } from '../components/actionDropdown';
 import { downloadFile } from '../../../utils';
- /* eslint-disable react/no-set-state */
+import { aspectRatios } from '../../../constants/imageTypes';
 
 const uploadIcon = require('../../../assets/images/upload.svg');
 const completedIcon = require('../../../assets/images/completed.svg');
@@ -128,14 +129,6 @@ export default class ImageDropzone extends Component {
     progressBar: {
       width: '130px'
     },
-    profileImage: {
-      position: 'relative',
-      width: '200px'
-    },
-    backgroundImage: {
-      position: 'relative',
-      width: '426px'
-    },
     dropdownButton: {
       position: 'absolute',
       right: 7,
@@ -153,7 +146,7 @@ export default class ImageDropzone extends Component {
     const downloadUrlOrPreview = this.state.showImage && this.state.file && this.state.file.type.startsWith('image') && this.state.file.preview || !this.state.deleteImage && downloadUrl;
     const imageUrlOrPreview = this.state.showImage && this.state.file && this.state.file.type.startsWith('image') && this.state.file.preview || !this.state.deleteImage && imageUrl;
     return (
-      <div style={type === 'backgroundImage' ? styles.backgroundImage : styles.profileImage}>
+      <div style={{ position: 'relative', width: 200 * (aspectRatios[type] || 1) }}>
         {/* Render dropzone */}
         <ReactDropzone accept={accept || 'image/*'} activeStyle={styles.activeDropzone} multiple={false} ref={(x) => { this.dropzone = x; }}
           style={styles.dropzone} onDrop={this.onDrop} >
