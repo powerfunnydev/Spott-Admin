@@ -5,8 +5,8 @@ import { bindActionCreators } from 'redux';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import { buttonStyles } from '../_common/styles';
-import localized from '../_common/localized';
-import Modal from '../_common/modal';
+import localized from '../_common/decorators/localized';
+import Modal from '../_common/components/modal';
 import { resetPassword } from '../../actions/user';
 import { routerPushWithReturnTo } from '../../actions/global';
 

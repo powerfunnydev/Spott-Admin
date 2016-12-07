@@ -6,7 +6,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { buttonStyles } from '../../_common/styles';
-import localized from '../../_common/localized';
+import localized from '../../_common/decorators/localized';
 import { menuSelector } from '../selectors';
 import * as globalActions from '../../../actions/global';
 import * as actions from '../../../actions/user';

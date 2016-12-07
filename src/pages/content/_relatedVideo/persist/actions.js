@@ -14,7 +14,6 @@ export const CREATE_VIDEO_PROGRESS = 'VIDEO/CREATE_VIDEO_PROGRESS';
 export function createVideo ({ description, externalReference, externalReferenceSource, file, processAudio, processScenes }) {
   return async (dispatch, getState) => {
     try {
-      console.warn('CREATE VIDEO', { description, externalReference, externalReferenceSource, file, processAudio, processScenes });
       dispatch({ data: { description, externalReference, videoFilename: file.name }, externalReference, type: CREATE_VIDEO_START });
       // Upload the video file.
       const { remoteFilename } = await dispatch(uploadFile(file, (currentBytes, totalBytes) => {

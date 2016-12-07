@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { buttonStyles } from '../styles';
+import { buttonStyles } from '../../styles';
 
 @Radium
 export default class Button extends Component {

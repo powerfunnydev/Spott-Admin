@@ -61,6 +61,17 @@ export class NotFoundError extends RequestError {
 }
 
 /**
+ * Constructs a Conflict error wrapper.
+ */
+export class ConflictError extends RequestError {
+  constructor (message, body) {
+    super('Request occured a conflict.', body, null);
+    this.statusCode = 409;
+    this.name = 'ConflictError';
+  }
+}
+
+/**
  * Constructs a Unexpected error wrapper.
  */
 export class UnexpectedError extends RequestError {
@@ -122,6 +133,8 @@ const hookedHttpinvoke = httpinvoke.hook('finished', (err, output, statusCode, h
         return window.location.reload();
       case 404:
         responseError = new NotFoundError(newOutput); break;
+      case 409:
+        responseError = new ConflictError(null, newOutput); break;
       default:
         responseError = new UnexpectedError(null, newOutput);
     }

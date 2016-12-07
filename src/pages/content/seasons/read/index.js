@@ -14,7 +14,8 @@ import Line from '../../../_common/components/line';
 import SeasonEpisodesList from './episodes';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
-import BreadCrumbs from '../../../_common/breadCrumbs';
+import BreadCrumbs from '../../../_common/components/breadCrumbs';
+import TvGuideList from './tvGuide';
 
 @connect(selector, (dispatch) => ({
   deleteSeason: bindActionCreators(listActions.deleteSeason, dispatch),
@@ -86,7 +87,7 @@ export default class ReadSeason extends Component {
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
           { title: 'List', url: '/content/series' },
-          { title: 'Series', url: `content/series/read/${this.props.params.seriesEntryId}` },
+          { title: currentSeason.getIn([ 'seriesEntry', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}` },
           { title: currentSeason.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         <Container>
           {currentSeason.get('_status') === 'loaded' && currentSeason &&
@@ -105,6 +106,9 @@ export default class ReadSeason extends Component {
             <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
               <Tab title='Episodes'>
                 <SeasonEpisodesList {...this.props}/>
+              </Tab>
+              <Tab title='TV Guide'>
+                <TvGuideList {...this.props}/>
               </Tab>
             </Tabs>
           </Container>

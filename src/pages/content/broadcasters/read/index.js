@@ -10,7 +10,7 @@ import selector from './selector';
 import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
-import BreadCrumbs from '../../../_common/breadCrumbs';
+import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import Line from '../../../_common/components/line';
 import BroadcastChannelList from './broadcastChannels';
 import UserList from './users/list';
@@ -57,8 +57,8 @@ export default class ReadBroadcaster extends Component {
     this.props.routerPushWithReturnTo('content/broadcasters', true);
   }
 
-  onChangeTab (index) {
-    this.props.routerPushWithReturnTo({ ...this.props.location, query: { ...this.props.location.query, tabIndex: index } });
+  onChangeTab (tab) {
+    this.props.routerPushWithReturnTo({ ...this.props.location, query: { ...this.props.location.query, tab } });
   }
 
   onClickNewEntry (e) {
@@ -78,8 +78,9 @@ export default class ReadBroadcaster extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { children, currentBroadcaster,
-       location, deleteBroadcaster, location: { query: { tabIndex } } } = this.props;
+    const {
+      children, currentBroadcaster, deleteBroadcaster, location, location: { query: { tab } }
+    } = this.props;
 
     return (
       <Root>
@@ -104,7 +105,7 @@ export default class ReadBroadcaster extends Component {
         <Line/>
         <div style={[ generalStyles.fillPage, styles.table ]}>
           <Container>
-            <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
+            <Tabs activeTab={tab} onChange={this.onChangeTab}>
               <Tab title='Broadcast Channels'>
                 <BroadcastChannelList {...this.props}/>
               </Tab>

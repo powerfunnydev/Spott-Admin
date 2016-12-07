@@ -89,3 +89,8 @@ export async function uploadContentProducerImage (baseUrl, authenticationToken, 
   formData.append('file', image);
   await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/contentProducers/${contentProducerId}/logo`, formData, callback);
 }
+
+export async function deleteLogo (baseUrl, authenticationToken, locale, { contentProducerId }) {
+  const url = `${baseUrl}/v004/media/contentProducers/${contentProducerId}/logo`;
+  return await del(authenticationToken, locale, url);
+}

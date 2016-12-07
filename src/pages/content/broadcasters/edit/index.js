@@ -7,16 +7,16 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
 import Header from '../../../app/header';
 import { tabStyles, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
-import localized from '../../../_common/localized';
+import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Section from '../../../_common/components/section';
 import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
-import Dropzone from '../../../_common/dropzone';
+import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Label from '../../../_common/inputs/_label';
 import selector from './selector';
-import BreadCrumbs from '../../../_common/breadCrumbs';
+import BreadCrumbs from '../../../_common/components/breadCrumbs';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -28,6 +28,7 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
+  deleteLogo: bindActionCreators(actions.deleteLogo, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadImage: bindActionCreators(actions.uploadImage, dispatch),
@@ -42,6 +43,7 @@ export default class EditBroadcaster extends Component {
 
   static propTypes = {
     currentBroadcaster: ImmutablePropTypes.map.isRequired,
+    deleteLogo: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
@@ -92,7 +94,7 @@ export default class EditBroadcaster extends Component {
   }
 
   render () {
-    const { currentBroadcaster, location, handleSubmit } = this.props;
+    const { currentBroadcaster, location, handleSubmit, deleteLogo } = this.props;
     const { styles } = this.constructor;
     return (
       <Root style={styles.background}>
@@ -119,9 +121,12 @@ export default class EditBroadcaster extends Component {
                   <Label text='Upload image' />
                   <Dropzone
                     accept='image/*'
+                    downloadUrl={currentBroadcaster.get('logo') &&
+                      currentBroadcaster.getIn([ 'logo', 'url' ])}
                     imageUrl={currentBroadcaster.get('logo') &&
                       `${currentBroadcaster.getIn([ 'logo', 'url' ])}?height=310&width=310`}
-                    onChange={({ callback, file }) => this.props.uploadImage({ broadcasterId: this.props.params.broadcasterId, image: file, callback })}/>
+                    onChange={({ callback, file }) => this.props.uploadImage({ broadcasterId: this.props.params.broadcasterId, image: file, callback })}
+                    onDelete={() => { deleteLogo({ broadcasterId: currentBroadcaster.get('id') }); }}/>
                 </div>
               </Section>
             </TabPanel>

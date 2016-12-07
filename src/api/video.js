@@ -217,6 +217,18 @@ export async function postProcess (baseUrl, authenticationToken, { description, 
  * @throws UnexpectedError
  */
 export async function getVideo (baseUrl, authenticationToken, locale, { videoId }) {
-  const { body } = await get(authenticationToken, locale, `${baseUrl}/v003/video/videos/${videoId}`);
+  const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}`);
+  return transformVideo(body);
+}
+
+export async function persistVideo (baseUrl, authenticationToken, locale, { description, videoId }) {
+  let video = {};
+  if (videoId) {
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}`);
+    video = body;
+  }
+  video.description = description;
+
+  const { body } = await post(authenticationToken, locale, `${baseUrl}/v004/video/videos`, video);
   return transformVideo(body);
 }

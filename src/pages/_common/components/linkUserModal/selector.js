@@ -3,7 +3,7 @@ import {
   usersEntitiesSelector,
   createEntityIdsByRelationSelector,
   searchStringHasUsersRelationsSelector
-} from '../../../selectors/data';
+} from '../../../../selectors/data';
 
 export const currentUsersSearchStringSelector = (state) => state.getIn([ 'common', 'linkUserModal', 'currentUserSearchString' ]);
 

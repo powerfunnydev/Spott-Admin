@@ -1,10 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { currentLocaleSelector } from '../../selectors/global';
 import counterpart from 'counterpart';
-import lang from '../../lang/index';
 import reactStringReplace from 'react-string-replace';
+import { currentLocaleSelector } from '../../../selectors/global';
+import lang from '../../../lang/index';
 
 // Register counterpart locales
 Object.keys(lang.localeData).forEach((locale) => {

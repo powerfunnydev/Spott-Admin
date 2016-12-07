@@ -1,10 +1,12 @@
 import React, { Component, PropTypes } from 'react';
-import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
+import { reduxForm, Field } from 'redux-form/immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
 import SelectInput from '../../../../_common/inputs/selectInput';
-import PersistModal from '../../../../_common/persistModal';
-import localized from '../../../../_common/localized';
+import PersistModal from '../../../../_common/components/persistModal';
+import localized from '../../../../_common/decorators/localized';
+
+/* eslint-disable react/no-set-state */
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -36,6 +38,12 @@ export default class CharacterModal extends Component {
     super(props);
     this.onCloseClick = ::this.onCloseClick;
     this.submit = ::this.submit;
+    this.clearPopUpMessage = :: this.clearPopUpMessage;
+    this.state = {};
+  }
+
+  clearPopUpMessage () {
+    this.setState({});
   }
 
   async submit (form) {
@@ -43,7 +51,9 @@ export default class CharacterModal extends Component {
       await this.props.onSubmit(form.toJS());
       this.onCloseClick();
     } catch (error) {
-      throw new SubmissionError({ _error: 'common.errors.unexpected' });
+      if (error.name === 'BadRequestError') {
+        this.setState({ popUpMessage: { message: error.body.message, type: 'info' } });
+      }
     }
   }
 
@@ -62,11 +72,18 @@ export default class CharacterModal extends Component {
     // const { styles } = this.constructor;
     const { edit, handleSubmit, searchCharacters, searchedCharacterIds, charactersById } = this.props;
     return (
-      <PersistModal isOpen submitButtonText={edit ? 'Save' : 'Add'} title={edit ? 'Edit Character' : 'Add Character'} onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal
+        clearPopUpMessage={this.clearPopUpMessage}
+        isOpen
+        popUpObject={this.state.popUpMessage}
+        submitButtonText={edit ? 'Save' : 'Add'}
+        title={edit ? 'Edit Character' : 'Add Character'}
+        onClose={this.onCloseClick}
+        onSubmit={handleSubmit(this.submit)}>
         <Field
           component={SelectInput}
           first
-          getItemText={(characterId) => charactersById.getIn([ characterId, 'defaultName' ])}
+          getItemText={(characterId) => charactersById.getIn([ characterId, 'name' ])}
           getOptions={searchCharacters}
           label='Character'
           name='characterId'

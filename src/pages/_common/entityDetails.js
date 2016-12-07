@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { buttonStyles, colors, fontWeights, makeTextStyle } from './styles';
-import RemoveButton from './buttons/removeButton';
+import RemoveButton from './components/buttons/removeButton';
 
 @Radium
 export default class EntityDetails extends Component {

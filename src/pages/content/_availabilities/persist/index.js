@@ -7,8 +7,8 @@ import DateInput from '../../../_common/inputs/dateInput';
 import TimeInput from '../../../_common/inputs/timeInput';
 import SelectInput from '../../../_common/inputs/selectInput';
 import CheckboxInput from '../../../_common/inputs/checkbox';
-import PersistModal from '../../../_common/persistModal';
-import localized from '../../../_common/localized';
+import PersistModal from '../../../_common/components/persistModal';
+import localized from '../../../_common/decorators/localized';
 import timezones, { timezoneKeys } from '../../../../constants/timezones';
 import videoStatusTypes from '../../../../constants/videoStatusTypes';
 import selector from './selector';
@@ -27,6 +27,24 @@ function validate (values, { t }) {
     if (!endDate) { validationErrors.endDate = t('common.errors.required'); }
     if (!endTime) { validationErrors.endTime = t('common.errors.required'); }
   }
+
+  if (!noEndDate && !validationErrors.startDate && !validationErrors.startTime && !validationErrors.endDate && !validationErrors.endTime) {
+    const start = startDate.clone().hours(startTime.hours()).minutes(startTime.minutes());
+    const end = endDate.clone().hours(endTime.hours()).minutes(endTime.minutes());
+
+    // Date/time is wrong! End before start.
+    if (start.isSameOrAfter(end)) {
+      // Check date.
+      if (startDate.isAfter(endDate)) {
+        // Date is wrong.
+        validationErrors.endDate = 'End date must be after start date.';
+      } else {
+        // Date is oké, time is wrong.
+        validationErrors.endTime = 'End time must be after start time.';
+      }
+    }
+  }
+
   // Done
   return validationErrors;
 }
@@ -60,6 +78,7 @@ export default class AvailabilityModal extends Component {
 
   async submit (form) {
     try {
+      console.warn('form.toJS()', form.toJS());
       await this.props.onSubmit(form.toJS());
       this.onCloseClick();
     } catch (error) {

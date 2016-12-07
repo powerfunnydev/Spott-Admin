@@ -4,14 +4,14 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { FETCHING } from '../../../constants/statusTypes';
-import { FormSubtitle } from '../../_common/styles';
-import localized from '../../_common/localized';
-import PersistModal from '../../_common/persistModal';
+import { FETCHING } from '../../../../constants/statusTypes';
+import { FormSubtitle } from '../../styles';
+import localized from '../../decorators/localized';
+import PersistModal from '../persistModal';
 import * as actions from './actions';
-import SelectInput from '../../_common/inputs/selectInput';
+import SelectInput from '../../inputs/selectInput';
 import selector from './selector';
-import { routerPushWithReturnTo } from '../../../actions/global';
+import { routerPushWithReturnTo } from '../../../../actions/global';
 
 function validate (values, { t }) {
   const validationErrors = {};

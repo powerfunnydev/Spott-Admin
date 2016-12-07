@@ -110,3 +110,8 @@ export async function uploadBroadcasterImage (baseUrl, authenticationToken, loca
   formData.append('file', image);
   await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/broadcasters/${broadcasterId}/logo`, formData, callback);
 }
+
+export async function deleteLogo (baseUrl, authenticationToken, locale, { broadcasterId }) {
+  const url = `${baseUrl}/v004/media/broadcasters/${broadcasterId}/logo`;
+  return await del(authenticationToken, locale, url);
+}

@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import SearchInput from '../../inputs/searchInput';
-import PlusButton from '../../buttons/plusButton';
+import PlusButton from '../../components/buttons/plusButton';
 import { generalStyles } from './index';
 import { colors, buttonStyles } from '../../../_common/styles';
 import DisplayMode from './displayMode';

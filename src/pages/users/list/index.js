@@ -80,8 +80,7 @@ export default class Users extends Component {
     this.props.routerPushWithReturnTo('users/create');
   }
 
-  async onClickDeleteSelected (e) {
-    e.preventDefault();
+  async onClickDeleteSelected () {
     const usersEntryIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {

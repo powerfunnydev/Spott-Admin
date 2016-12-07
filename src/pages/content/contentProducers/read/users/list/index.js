@@ -51,7 +51,6 @@ export default class Users extends Component {
 
   constructor (props) {
     super(props);
-    // this.deleteLinkUser = ::this.deleteLinkUser;
     this.onClickNewEntry = ::this.onClickNewEntry;
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
     this.slowSearch = slowdown(props.load, 300);
@@ -85,8 +84,7 @@ export default class Users extends Component {
     this.props.routerPushWithReturnTo(`users/edit/${userId}`);
   }
 
-  async onClickDeleteSelected (e) {
-    e.preventDefault();
+  async onClickDeleteSelected () {
     const userIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {
@@ -171,7 +169,7 @@ export default class Users extends Component {
                   <Tile
                     imageUrl={user.get('avatar') && `${user.getIn([ 'avatar', 'url' ])}?height=310&width=310`}
                     key={`user${index}`}
-                    text={this.getUserName(user)}
+                    text={user.get('userName')}
                     onDelete={this.onDeleteLinkUser.bind(this, user.get('id'))}
                     onEdit={this.onEditEntry.bind(this, user.get('id'))}/>
                 ))}

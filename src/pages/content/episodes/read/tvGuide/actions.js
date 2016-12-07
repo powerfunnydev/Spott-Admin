@@ -1,6 +1,6 @@
 import { deleteTvGuideEntry as dataDeleteTvGuideEntry,
   deleteTvGuideEntries as dataDeleteTvGuideEntries } from '../../../../../actions/tvGuide';
-import { fetchTvGuideEntries as dataFetchTvGuideEntries } from '../../../../../actions/episode';
+import { fetchTvGuideEntries as dataFetchTvGuideEntries } from '../../../../../actions/media';
 import { getInformationFromQuery } from '../../../../_common/components/table/index';
 import { prefix } from './index';
 
@@ -18,10 +18,10 @@ export const SELECT_ENTITY = 'EPISODE_READ_TV_GUIDE/SELECT_ENTITY';
 
 export const SORT_COLUMN = 'EPISODE_READ_TV_GUIDE/SORT_COLUMN';
 
-export function load (query, episodeId) {
+export function load (query, mediumId) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataFetchTvGuideEntries({ ...getInformationFromQuery(query, prefix), episodeId }));
+      return await dispatch(dataFetchTvGuideEntries({ ...getInformationFromQuery(query, prefix), mediumId }));
     } catch (error) {
       dispatch({ error, type: TV_GUIDE_ENTRIES_FETCH_ERROR });
     }

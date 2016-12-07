@@ -10,19 +10,20 @@ import { Tabs, Tab } from '../../../_common/components/formTabs';
 import * as actions from './actions';
 import { SEASON_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
-import Dropzone from '../../../_common/dropzone';
+import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Header from '../../../app/header';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Label from '../../../_common/inputs/_label';
-import localized from '../../../_common/localized';
+import localized from '../../../_common/decorators/localized';
 import Section from '../../../_common/components/section';
 import SelectInput from '../../../_common/inputs/selectInput';
-import selector from './selector';
 import SpecificHeader from '../../header';
 import CheckboxInput from '../../../_common/inputs/checkbox';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
-import BreadCrumbs from '../../../_common/breadCrumbs';
+import BreadCrumbs from '../../../_common/components/breadCrumbs';
+import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
+import selector from './selector';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -37,6 +38,8 @@ function validate (values, { t }) {
 @localized
 @connect(selector, (dispatch) => ({
   closeModal: bindActionCreators(actions.closeModal, dispatch),
+  deletePosterImage: bindActionCreators(actions.deletePosterImage, dispatch),
+  deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
   loadSeason: bindActionCreators(actions.loadSeason, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
@@ -62,6 +65,8 @@ export default class EditEpisodes extends Component {
     currentSeasonId: PropTypes.string,
     currentSeriesEntryId: PropTypes.string,
     defaultLocale: PropTypes.string,
+    deletePosterImage: PropTypes.func.isRequired,
+    deleteProfileImage: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
@@ -96,9 +101,9 @@ export default class EditEpisodes extends Component {
   async componentWillMount () {
     if (this.props.params.seasonId) {
       const editObj = await this.props.loadSeason(this.props.params.seasonId);
-      console.log('editObj', editObj);
       this.props.initialize({
         ...editObj,
+        seriesEntryId: editObj.seriesEntry.id,
         _activeLocale: editObj.defaultLocale
       });
     }
@@ -150,6 +155,7 @@ export default class EditEpisodes extends Component {
     const { change, dispatch, _activeLocale } = this.props;
     dispatch(change('defaultLocale', _activeLocale));
   }
+
   static styles = {
     topBar: {
       display: 'flex',
@@ -207,7 +213,7 @@ export default class EditEpisodes extends Component {
   render () {
     const { closeModal, currentModal, _activeLocale, currentSeriesEntryId, searchSeriesEntries,
         hasTitle, location, currentSeason, seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
-        handleSubmit, supportedLocales, errors } = this.props;
+        handleSubmit, supportedLocales, errors, deleteProfileImage, deletePosterImage } = this.props;
     const { styles } = this.constructor;
     return (
       <Root style={styles.backgroundRoot}>
@@ -215,7 +221,7 @@ export default class EditEpisodes extends Component {
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
           { title: 'List', url: '/content/series' },
-          { title: 'Series', url: `content/series/read/${this.props.params.seriesEntryId}` },
+          { title: currentSeason.getIn([ 'seriesEntry', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}` },
           { title: currentSeason.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         {currentModal === SEASON_CREATE_LANGUAGE &&
           <CreateLanguageModal
@@ -270,7 +276,6 @@ export default class EditEpisodes extends Component {
                         name={`hasTitle.${_activeLocale}`}
                         style={styles.customTitle} />}
                     disabled={hasTitle && !hasTitle.get(_activeLocale)}
-                    hasTitle={hasTitle}
                     label='Season title'
                     labelStyle={styles.titleLabel}
                     name={`title.${_activeLocale}`}
@@ -285,20 +290,28 @@ export default class EditEpisodes extends Component {
                 <FormSubtitle>Images</FormSubtitle>
                 <div style={[ styles.paddingTop, styles.row ]}>
                   <div>
-                    <Label text='Profile image' />
-                    <Dropzone
-                      accept='image/*'
-                      imageUrl={currentSeason.getIn([ 'profileImage', _activeLocale ]) &&
-                        `${currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ seasonId: this.props.params.seasonId, image: file, callback }); }}/>
-                  </div>
-                  <div style={styles.paddingLeftUploadImage}>
                     <Label text='Poster image' />
                     <Dropzone
                       accept='image/*'
+                      downloadUrl={currentSeason.getIn([ 'posterImage', _activeLocale ]) &&
+                        currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ])}
                       imageUrl={currentSeason.getIn([ 'posterImage', _activeLocale ]) &&
-                        `${currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=203&width=360`}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ seasonId: this.props.params.seasonId, image: file, callback }); }}/>
+                        `${currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310`}
+                      type={POSTER_IMAGE}
+                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ seasonId: this.props.params.seasonId, image: file, callback }); }}
+                      onDelete={() => { deletePosterImage({ mediumId: currentSeason.get('id') }); }}/>
+                  </div>
+                  <div style={styles.paddingLeftUploadImage}>
+                    <Label text='Profile image' />
+                    <Dropzone
+                      accept='image/*'
+                      downloadUrl={currentSeason.getIn([ 'profileImage', _activeLocale ]) &&
+                        currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ])}
+                      imageUrl={currentSeason.getIn([ 'profileImage', _activeLocale ]) &&
+                        `${currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      type={PROFILE_IMAGE}
+                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ seasonId: this.props.params.seasonId, image: file, callback }); }}
+                      onDelete={() => { deleteProfileImage({ mediumId: currentSeason.get('id') }); }}/>
                   </div>
                 </div>
               </Section>

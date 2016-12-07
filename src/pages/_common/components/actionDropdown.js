@@ -92,7 +92,7 @@ export const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: '24px',
+    minWidth: '20px',
     minHeight: '20px'
   },
   elementShown: {
@@ -175,7 +175,7 @@ export const styles = {
 };
 
 @Radium
-class Dropdown extends Component {
+export default class Dropdown extends Component {
 
   static propTypes = {
     arrowStyle: PropTypes.object,
@@ -192,8 +192,9 @@ class Dropdown extends Component {
       isOpen: false
     };
     this.mounted = true;
-    this.handleDocumentClick = this.handleDocumentClick.bind(this);
-    this.toggleOpen = this.toggleOpen.bind(this);
+    this.handleDocumentClick = ::this.handleDocumentClick;
+    this.toggleOpen = ::this.toggleOpen;
+    this.handleMouseDown = ::this.handleMouseDown;
   }
 
   componentDidMount () {
@@ -207,21 +208,24 @@ class Dropdown extends Component {
     document.removeEventListener('touchend', this.handleDocumentClick, false);
   }
 
-  toggleOpen () {
+  toggleOpen (e) {
     this.setState({ isOpen: !this.state.isOpen });
   }
 
-  handleMouseDown (event) {
-    if (event.type === 'mousedown' && event.button !== 0) { return; }
-    event.stopPropagation();
-    event.preventDefault();
+  handleMouseDown (e) {
+    if (e.type === 'mousedown' && e.button !== 0) {
+      return;
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
 
     this.toggleOpen();
   }
 
-  handleDocumentClick (event) {
+  handleDocumentClick (e) {
     if (this.mounted) {
-      if (!ReactDOM.findDOMNode(this).contains(event.target)) {
+      if (!ReactDOM.findDOMNode(this).contains(e.target)) {
         this.setState({ isOpen: false });
       }
     }
@@ -246,23 +250,20 @@ class Dropdown extends Component {
               styles.clickable, color === 'blue' && styles.blue,
               arrowStyle
             ]}
-            // we need to stop the propagation, cause in components like Tile, we do not want
+            // We need to stop the propagation, cause in components like Tile, we do not want
             // to trigger multiple onClick events. Dropdown has priority.
             onClick={(e) => { e.stopPropagation(); e.preventDefault(); }}
-            onMouseDown={this.handleMouseDown.bind(this)}>
+            onMouseDown={this.handleMouseDown}>
             <ArrowSVG color={color === 'blue' && colors.white || colors.darkGray2} style={[ !this.state.isOpen && styles.arrowUnder ]} />
           </div>
         </div>
         {/* menu */}
         { this.state.isOpen &&
-          /* it is possible to give a custom menu as children, we check if we have a custom dropdown, if not,
+          /* It is possible to give a custom menu as children, we check if we have a custom dropdown, if not,
              we render floatedOptions */
-          <div style={[ !customDropdown && [ styles.floatOptions, styles.adaptedTop ] ]} onClick={this.toggleOpen}>{children}</div>
+          <div style={[ !customDropdown && [ styles.floatOptions, styles.adaptedTop ] ]} onClick={this.handleMouseDown}>{children}</div>
         }
       </div>
     );
   }
-
 }
-
-export default Dropdown;
