@@ -49,12 +49,12 @@ export default class Availabilities extends Component {
   }
 
   // Transform the date + time + timezone to one date
-  transformAvailability ({ availabilityId, countryId, endDate, endTime, mediumId, startDate, startTime, timezone, videoStatus }) {
+  transformAvailability ({ countryId, endDate, endTime, id, mediumId, startDate, startTime, timezone, videoStatus }) {
     return {
       availabilityFrom: startDate && startTime && moment(`${startDate.format('YYYY-MM-DD')} ${startTime.format('HH:mm')} ${timezone}`, 'YYYY-MM-DD HH:mm Z').utc().toDate(),
-      availabilityId,
       availabilityTo: endDate && endTime && moment(`${endDate.format('YYYY-MM-DD')} ${endTime.format('HH:mm')} ${timezone}`, 'YYYY-MM-DD HH:mm Z').utc().toDate(),
       countryId,
+      id,
       mediumId,
       videoStatus
     };
@@ -64,10 +64,10 @@ export default class Availabilities extends Component {
     const mediumId = this.props.mediumId;
     const { availabilityFrom, availabilityTo, countryId, id, videoStatus } = this.props.availabilities.getIn([ 'data', index ]).toJS();
     return {
-      availabilityId: id,
       countryId,
       endDate: availabilityTo && moment(availabilityTo).startOf('day'),
       endTime: availabilityTo && moment(availabilityTo),
+      id,
       noEndDate: !availabilityTo,
       mediumId,
       startDate: availabilityFrom && moment(availabilityFrom).startOf('day'),
@@ -126,7 +126,7 @@ export default class Availabilities extends Component {
   render () {
     const styles = this.constructor.styles;
     const { availabilities, countries, mediumId } = this.props;
-    console.warn('availabilities', availabilities.toJS());
+
     return (
       <Section>
         <FormSubtitle first>Availability</FormSubtitle>

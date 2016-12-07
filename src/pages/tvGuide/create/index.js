@@ -18,9 +18,6 @@ import { routerPushWithReturnTo } from '../../../actions/global';
 
 function validate (values, { medium, t }) {
   const validationErrors = {};
-  if (!values.toJS) {
-    return validationErrors;
-  }
   const { broadcastChannelId, endDate, endTime, episodeId, mediumId, seasonId, startDate, startTime } = values.toJS();
   if (!broadcastChannelId) { validationErrors.broadcastChannelId = t('common.errors.required'); }
   if (!endDate) { validationErrors.endDate = t('common.errors.required'); }
@@ -32,6 +29,23 @@ function validate (values, { medium, t }) {
   if (medium.get('type') === 'TV_SERIE' && !seasonId) { validationErrors.seasonId = t('common.errors.required'); }
   if (!startDate) { validationErrors.startDate = t('common.errors.required'); }
   if (!startTime) { validationErrors.startTime = t('common.errors.required'); }
+
+  if (!validationErrors.startDate && !validationErrors.startTime && !validationErrors.endDate && !validationErrors.endTime) {
+    const start = startDate.clone().hours(startTime.hours()).minutes(startTime.minutes());
+    const end = endDate.clone().hours(endTime.hours()).minutes(endTime.minutes());
+
+    // Date/time is wrong! End before start.
+    if (start.isSameOrAfter(end)) {
+      // Check date.
+      if (startDate.isAfter(endDate)) {
+        // Date is wrong.
+        validationErrors.endDate = 'End date must be after start date.';
+      } else {
+        // Date is oké, time is wrong.
+        validationErrors.endTime = 'End time must be after start time.';
+      }
+    }
+  }
 
   // Done
   return validationErrors;
