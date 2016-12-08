@@ -24,7 +24,6 @@ export function searchSeriesEntries (searchString) {
 export function searchSeasons (searchString, seriesEntryId) {
   return async (dispatch, getState) => {
     try {
-      console.log('seriesEntryId', seriesEntryId);
       await dispatch({ type: SERIES_ENTRY_SEASONS_SEARCH_START, searchString });
       return await dispatch(dataSearchSeasons({ searchString, seriesEntryId }));
     } catch (error) {
@@ -41,7 +40,7 @@ export function submit ({ defaultLocale, ...restProps }) {
   return async (dispatch, getState) => {
     try {
       // contains defaultLocale (from previous), locales, number (from previous) , basedOnDefaultLocale, hasTitle
-      // seasonId, seriesEntryId, broadcasters (from previous) and content producers (from previous)
+      // seasonId, seriesEntryId, broadcasters (from previous), lastEpisodeId and content producers (from previous)
       const seriesEntry = {
         ...restProps,
         defaultLocale,
