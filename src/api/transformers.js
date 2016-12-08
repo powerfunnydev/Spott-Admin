@@ -195,6 +195,8 @@ export function transformProductView ({
   };
 }
 
+export const transformProductImpression = transformProductView;
+
 export function transformActivityData (dataList, transformer) {
   const res = {};
   for (const { data, medium } of dataList) {

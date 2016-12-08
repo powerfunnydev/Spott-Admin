@@ -3,7 +3,7 @@ import { searchMedia as dataSearchMedia } from '../../actions/media';
 import {
   fetchAges, fetchEvents, fetchGenders, fetchProductViews, fetchTimelineData,
   fetchAgeData, fetchBrandSubscriptions, fetchMediumSyncs, fetchMediumSubscriptions,
-  fetchGenderData, fetchCharacterSubscriptions
+  fetchGenderData, fetchCharacterSubscriptions, fetchProductImpressions
 } from '../../actions/reporting';
 import { currentAgesSelector, currentGendersSelector, currentMediaSelector } from './selector';
 import { locationSelector } from '../../selectors/global';
@@ -84,23 +84,6 @@ export function loadActivities () {
   };
 }
 
-// export function updateRankingsLocation () {
-//   return async (dispatch, getState) => {
-//     const state = getState();
-//
-//     const { ages = [], genders = [] } = rankingsFilterSelector(state, 'ages', 'genders');
-//     const mediumIds = mediaFilterSelector(state, 'media') || [];
-//
-//     // Change route.
-//     const currentLocation = state.get('router').locationBeforeTransitions;
-//     dispatch(routerPush({ ...currentLocation, query: {
-//       ages,
-//       genders,
-//       mediumIds
-//     } }));
-//   };
-// }
-
 export function loadRankings () {
   return async (dispatch, getState) => {
     const state = getState();
@@ -118,6 +101,7 @@ export function loadRankings () {
       dispatch(fetchCharacterSubscriptions({ ages, genders, mediumIds, page: 0 }));
       dispatch(fetchMediumSubscriptions({ ages, genders, mediumIds, page: 0 }));
       dispatch(fetchMediumSyncs({ ages, genders, mediumIds, page: 0 }));
+      dispatch(fetchProductImpressions({ ages, genders, mediumIds, page: 0 }));
       dispatch(fetchProductViews({ ages, genders, mediumIds, page: 0 }));
 
       // return await dispatch(dataSearchSeries({ searchString }));
@@ -144,20 +128,4 @@ export const loadCharacterSubscriptions = createLoadRankings(fetchCharacterSubsc
 export const loadMediumSubscriptions = createLoadRankings(fetchMediumSubscriptions);
 export const loadMediumSyncs = createLoadRankings(fetchMediumSyncs);
 export const loadProductViews = createLoadRankings(fetchProductViews);
-
-// export function initializeRankingsFilterForm (ages, genders) {
-//   return async (dispatch, getState) => {
-//     const state = getState();
-//     const { ages: currentAges, genders: currentGenders } = rankingsFilterSelector(state, 'ages', 'genders');
-//
-//     if (!currentAges || currentAges.length === 0) {
-//       const ageIds = ages.map(({ id }) => id);
-//       dispatch(change('reportingRankingsFilter', 'ages', ageIds));
-//     }
-//
-//     if (!currentGenders || currentGenders.length === 0) {
-//       const genderIds = genders.map(({ id }) => id);
-//       dispatch(change('reportingRankingsFilter', 'genders', genderIds));
-//     }
-//   };
-// }
+export const loadProductImpressions = createLoadRankings(fetchProductImpressions);

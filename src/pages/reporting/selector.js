@@ -54,11 +54,13 @@ export const characterSubscriptionsSelector = createInfiniteListSelector((state)
 export const mediumSubscriptionsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'mediumSubscriptions' ]));
 export const mediumSyncsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'mediumSyncs' ]));
 export const productViewsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'productViews' ]));
+export const productImpressionsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'productImpressions' ]));
 
 export const currentBrandSubscriptionsPageSelector = (state) => state.getIn([ 'reporting', 'currentBrandSubscriptionsPage' ]);
 export const currentCharacterSubscriptionsPageSelector = (state) => state.getIn([ 'reporting', 'currentCharacterSubscriptionsPage' ]);
 export const currentMediumSubscriptionsPageSelector = (state) => state.getIn([ 'reporting', 'currentMediumSubscriptionsPage' ]);
 export const currentMediumSyncsPageSelector = (state) => state.getIn([ 'reporting', 'currentMediumSyncsPage' ]);
+export const currentProductImpressionsPageSelector = (state) => state.getIn([ 'reporting', 'currentProductImpressionsPage' ]);
 export const currentProductViewsPageSelector = (state) => state.getIn([ 'reporting', 'currentProductViewsPage' ]);
 
 export const searchedMediumIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediaRelationsSelector, currentMediaSearchStringSelector);
@@ -258,9 +260,11 @@ export const rankingsSelector = createStructuredSelector({
   currentCharacterSubscriptionsPage: currentCharacterSubscriptionsPageSelector,
   currentMediumSubscriptionsPage: currentMediumSubscriptionsPageSelector,
   currentMediumSyncsPage: currentMediumSyncsPageSelector,
+  currentProductImpressionsPage: currentProductImpressionsPageSelector,
   currentProductViewsPage: currentProductViewsPageSelector,
   characterSubscriptions: characterSubscriptionsSelector,
   mediumSubscriptions: mediumSubscriptionsSelector,
   mediumSyncs: mediumSyncsSelector,
+  productImpressions: productImpressionsSelector,
   productViews: productViewsSelector
 });
