@@ -39,12 +39,16 @@ export default (state = fromJS({
   currentCharacterSubscriptionsPage: 0,
   currentMediumSubscriptionsPage: 0,
   currentMediumSyncsPage: 0,
+  currentProductBuysPage: 0,
+  currentProductImpressionsPage: 0,
   currentProductViewsPage: 0,
   brandSubscriptions: {},
   characterSubscriptions: {},
   genderData: {},
   mediumSubscriptions: {},
   mediumSyncs: {},
+  productBuys: {},
+  productImpressions: {},
   productViews: {},
   timelineData: {}
 }), action) => {
@@ -80,6 +84,7 @@ export default (state = fromJS({
         .setIn([ 'characterSubscriptions' ], Map())
         .setIn([ 'mediumSubscriptions' ], Map())
         .setIn([ 'mediumSyncs' ], Map())
+        .setIn([ 'productImpressions' ], Map())
         .setIn([ 'productViews' ], Map());
     case SAVE_FILTER_QUERY:
       return state.set('filterQuery', action.query);
@@ -115,6 +120,22 @@ export default (state = fromJS({
       return fetchSuccess(state, [ 'mediumSyncs', action.data.page ], action.data);
     case actions.MEDIUM_SYNCS_FETCH_ERROR:
       return fetchError(state, [ 'mediumSyncs', action.page ], action.error);
+
+    case actions.PRODUCT_BUYS_FETCH_START:
+      return fetchStart(state, [ 'productBuys', action.page ])
+        .set('currentProductBuysPage', action.page);
+    case actions.PRODUCT_BUYS_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'productBuys', action.data.page ], action.data);
+    case actions.PRODUCT_BUYS_FETCH_ERROR:
+      return fetchError(state, [ 'productBuys', action.page ], action.error);
+
+    case actions.PRODUCT_IMPRESSIONS_FETCH_START:
+      return fetchStart(state, [ 'productImpressions', action.page ])
+        .set('currentProductImpressionsPage', action.page);
+    case actions.PRODUCT_IMPRESSIONS_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'productImpressions', action.data.page ], action.data);
+    case actions.PRODUCT_IMPRESSIONS_FETCH_ERROR:
+      return fetchError(state, [ 'productImpressions', action.page ], action.error);
 
     case actions.PRODUCT_VIEWS_FETCH_START:
       return fetchStart(state, [ 'productViews', action.page ])

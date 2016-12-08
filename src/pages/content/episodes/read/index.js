@@ -45,7 +45,7 @@ export default class ReadEpisode extends Component {
   }
 
   componentWillMount () {
-    if (this.props.params.seasonId) {
+    if (this.props.params.episodeId) {
       this.props.loadEpisode(this.props.params.episodeId);
     }
   }

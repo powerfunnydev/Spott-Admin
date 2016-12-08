@@ -1,5 +1,9 @@
 import { fromJS } from 'immutable';
-import { serializeFilterHasSeriesEntries, serializeFilterHasUsers, serializeFilterHasBroadcastChannels, serializeFilterHasBroadcasters, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers, fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, fetchListSuccess, fetchListError } from './utils';
+import { serializeFilterHasCharacters, serializeFilterHasSeriesEntries, serializeFilterHasUsers, serializeFilterHasBroadcastChannels,
+    serializeFilterHasBroadcasters, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
+    fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart,
+    fetchListSuccess, fetchListError } from './utils';
+import * as actorActions from '../actions/actor';
 import * as availabilityActions from '../actions/availability';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcastersActions from '../actions/broadcaster';
@@ -16,6 +20,7 @@ import * as videoActions from '../actions/video';
 
 export default (state = fromJS({
   entities: {
+    actors: {},
     ages: {},
     availabilities: {},
     broadcastChannels: {},
@@ -24,6 +29,7 @@ export default (state = fromJS({
     contentProducers: {},
     events: {},
     genders: {},
+    listCharacters: {}, // listCharacters is the light version of characters, without locales
     listMedia: {}, // listMedia is the light version of media, without locales
     media: {}, // completed version of media, with locales
     tvGuideEntries: {},
@@ -38,6 +44,7 @@ export default (state = fromJS({
 
     filterHasBroadcastChannels: {},
     filterHasBroadcasters: {},
+    filterHasCharacters: {},
     filterHasContentProducers: {},
     filterHasEpisodes: {},
     filterHasSeasons: {},
@@ -45,6 +52,7 @@ export default (state = fromJS({
     filterHasTvGuideEntries: {},
     filterHasUsers: {},
 
+    searchStringHasActors: {},
     searchStringHasBroadcastChannels: {},
     searchStringHasBroadcasters: {},
     searchStringHasCharacters: {},
@@ -61,6 +69,16 @@ export default (state = fromJS({
   }
 }), action) => {
   switch (action.type) {
+
+    // Actors
+    // ////////////////////
+
+    case actorActions.ACTOR_SEARCH_START:
+      return searchStart(state, 'searchStringHasActors', action.searchString);
+    case actorActions.ACTOR_SEARCH_SUCCESS:
+      return searchSuccess(state, 'actors', 'searchStringHasActors', action.searchString, action.data);
+    case actorActions.ACTOR_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasActors', action.searchString, action.error);
 
     // Availabilities
     // //////////////
@@ -137,17 +155,31 @@ export default (state = fromJS({
     // Characters
     // //////////
 
+    case charactersActions.CHARACTER_FETCH_START:
+      return fetchStart(state, [ 'entities', 'characters', action.characterId ]);
+    case charactersActions.CHARACTER_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'characters', action.characterId ], action.data);
+    case charactersActions.CHARACTER_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'characters', action.characterId ], action.error);
+
+    case charactersActions.CHARACTERS_FETCH_START:
+      return searchStart(state, 'filterHasCharacters', serializeFilterHasCharacters(action));
+    case charactersActions.CHARACTERS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listCharacters', 'filterHasCharacters', serializeFilterHasCharacters(action), action.data.data);
+    case charactersActions.CHARACTERS_FETCH_ERROR:
+      return searchError(state, 'filterHasCharacters', serializeFilterHasCharacters(action), action.error);
+
     case charactersActions.CHARACTER_SEARCH_START:
       return searchStart(state, 'searchStringHasCharacters', action.searchString);
     case charactersActions.CHARACTER_SEARCH_SUCCESS:
-      return searchSuccess(state, 'characters', 'searchStringHasCharacters', action.searchString, action.data);
+      return searchSuccess(state, 'listCharacters', 'searchStringHasCharacters', action.searchString, action.data);
     case charactersActions.CHARACTER_SEARCH_ERROR:
       return searchError(state, 'searchStringHasCharacters', action.searchString, action.error);
 
     case charactersActions.MEDIUM_CHARACTER_SEARCH_START:
       return searchStart(state, 'mediumHasCharacters', action.mediumId);
     case charactersActions.MEDIUM_CHARACTER_SEARCH_SUCCESS:
-      return searchSuccess(state, 'characters', 'mediumHasCharacters', action.mediumId, action.data);
+      return searchSuccess(state, 'listCharacters', 'mediumHasCharacters', action.mediumId, action.data);
     case charactersActions.MEDIUM_CHARACTER_SEARCH_ERROR:
       return searchError(state, 'mediumHasCharacters', action.mediumId, action.error);
 

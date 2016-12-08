@@ -59,23 +59,14 @@ export const timelineConfig = fromJS({
 
 export const ageConfig = fromJS({
   chart: {
-    polar: true,
     style: {
       fontFamily: 'Rubik-Regular, Verdana, sans-serif'
     },
-    type: 'line'
+    type: 'column'
   },
-  // colors: [
-  //   '#643dfa',
-  //   '#f0b609'
-  // ],
   credits: false,
   title: {
     text: null
-  },
-  pane: {
-    size: '75%',
-    startAngle: -30
   },
   xAxis: {
     categories: [], // '-18', '18-25', '26-35', '36-45', '46-65', '66+'
@@ -84,19 +75,12 @@ export const ageConfig = fromJS({
         color: '#aab5b8',
         font: 'normal 12px Rubik-Regular, Verdana, sans-serif'
       }
-    },
-    tickmarkPlacement: 'on',
-    lineWidth: 0
+    }
   },
   yAxis: {
-    gridLineInterpolation: 'polygon',
-    lineWidth: 0,
-    min: 0,
-    labels: {
-      style: {
-        color: '#aab5b8',
-        font: 'normal 12px Rubik-Regular, Verdana, sans-serif'
-      }
+    title: {
+      // No title 'Values' on the y-axis.
+      text: null
     }
   },
   tooltip: {
@@ -127,6 +111,78 @@ export const ageConfig = fromJS({
     }
   }
 });
+
+// Age spider chart is replaced by bar chart.
+// export const ageConfig = fromJS({
+//   chart: {
+//     polar: true,
+//     style: {
+//       fontFamily: 'Rubik-Regular, Verdana, sans-serif'
+//     },
+//     type: 'line'
+//   },
+//   // colors: [
+//   //   '#643dfa',
+//   //   '#f0b609'
+//   // ],
+//   credits: false,
+//   title: {
+//     text: null
+//   },
+//   pane: {
+//     size: '75%',
+//     startAngle: -30
+//   },
+//   xAxis: {
+//     categories: [], // '-18', '18-25', '26-35', '36-45', '46-65', '66+'
+//     labels: {
+//       style: {
+//         color: '#aab5b8',
+//         font: 'normal 12px Rubik-Regular, Verdana, sans-serif'
+//       }
+//     },
+//     tickmarkPlacement: 'on',
+//     lineWidth: 0
+//   },
+//   yAxis: {
+//     gridLineInterpolation: 'polygon',
+//     lineWidth: 0,
+//     min: 0,
+//     labels: {
+//       style: {
+//         color: '#aab5b8',
+//         font: 'normal 12px Rubik-Regular, Verdana, sans-serif'
+//       }
+//     }
+//   },
+//   tooltip: {
+//     backgroundColor: '#ffffff',
+//     borderColor: '#ced6da',
+//     borderRadius: 2,
+//     boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)',
+//     headerFormat: '<p style="font-size: 10px; color: #6d8791; margin-bottom: 9px; margin-left: 3px; margin-top: 3px;">{eventType} ({point.x})</p>',
+//     pointFormat: '<p style="font-size: 12px; margin-bottom: 7px; margin-left: 3px;"><span style="color:{point.color};">{series.name}</span>\u00a0\u00a0\u00a0\u00a0<b>{point.y:.0f}%</b></p>',
+//     shared: true,
+//     style: {
+//       padding: 7
+//     },
+//     useHTML: true
+//   },
+//   legend: {
+//     align: 'center',
+//     verticalAlign: 'bottom',
+//     itemStyle: {
+//       color: '#17262b',
+//       font: 'normal 12px Rubik-Regular, Verdana, sans-serif'
+//     }
+//   },
+//   series: [],
+//   plotOptions: {
+//     series: {
+//       animation: false
+//     }
+//   }
+// });
 
 // [ {
 //   name: 'Dagelijkse Kost',
