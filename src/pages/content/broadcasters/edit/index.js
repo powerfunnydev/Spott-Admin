@@ -101,7 +101,7 @@ export default class EditBroadcaster extends Component {
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
-          { title: 'List', url: '/content/broadcasters' },
+          { title: 'Broadcasters', url: '/content/broadcasters' },
           { title: currentBroadcaster.get('name'), url: location } ]}/>
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
           <Tabs>

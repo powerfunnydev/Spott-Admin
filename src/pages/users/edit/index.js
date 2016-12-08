@@ -163,7 +163,7 @@ export default class EditUser extends Component {
       <Root style={styles.background}>
         <Header currentLocation={location} hideHomePageLinks />
         <BreadCrumbs hierarchy={[
-          { title: 'List', url: '/users' },
+          { title: 'Users', url: '/users' },
           { title: `${currentUser.get('firstName')} ${currentUser.get('lastName')}`, url: location } ]}/>
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
           <Tabs>

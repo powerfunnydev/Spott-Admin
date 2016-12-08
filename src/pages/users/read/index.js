@@ -83,7 +83,7 @@ export default class ReadUser extends Component {
         <Header currentLocation={location} hideHomePageLinks />
         <BreadCrumbs
           hierarchy={[
-            { title: 'List', url: '/users' },
+            { title: 'Users', url: '/users' },
             { title: currentUser.get('userName'), url: location.pathname }
           ]}/>
         <Container>

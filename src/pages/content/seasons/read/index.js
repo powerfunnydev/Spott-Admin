@@ -86,7 +86,7 @@ export default class ReadSeason extends Component {
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
-          { title: 'List', url: '/content/series' },
+          { title: 'Series', url: '/content/series' },
           { title: currentSeason.getIn([ 'seriesEntry', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}` },
           { title: currentSeason.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         <Container>

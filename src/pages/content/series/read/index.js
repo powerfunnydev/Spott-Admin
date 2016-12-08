@@ -87,7 +87,10 @@ export default class ReadSeriesEntry extends Component {
       <Root>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
-        <BreadCrumbs hierarchy={[ { title: 'List', url: '/content/series' }, { title: currentSeriesEntry.getIn([ 'title', defaultLocale ]), url: location.pathname } ]}/>
+        <BreadCrumbs hierarchy={[
+          { title: 'Series', url: '/content/series' },
+          { title: currentSeriesEntry.getIn([ 'title', defaultLocale ]), url: location.pathname }
+        ]}/>
         <Container>
           {currentSeriesEntry.get('_status') === 'loaded' && currentSeriesEntry &&
             <EntityDetails
