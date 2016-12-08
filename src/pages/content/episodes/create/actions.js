@@ -24,7 +24,6 @@ export function searchSeriesEntries (searchString) {
 export function searchSeasons (searchString, seriesEntryId) {
   return async (dispatch, getState) => {
     try {
-      console.log('seriesEntryId', seriesEntryId);
       await dispatch({ type: SERIES_ENTRY_SEASONS_SEARCH_START, searchString });
       return await dispatch(dataSearchSeasons({ searchString, seriesEntryId }));
     } catch (error) {

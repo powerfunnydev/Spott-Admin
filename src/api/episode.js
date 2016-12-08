@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformEpisode, transformEpisode004, transformTvGuideEntry } from './transformers';
+import { transformListEpisode, transformEpisode004, transformTvGuideEntry } from './transformers';
 
 export async function fetchTvGuideEntries (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField, episodeId }) {
   let url = `${baseUrl}/v004/media/media/${episodeId}/tvGuideEntries?page=${page}&pageSize=${pageSize}&mediumUuid=${episodeId}`;
@@ -27,7 +27,7 @@ export async function fetchEpisodes (baseUrl, authenticationToken, locale, { sea
   const { body } = await get(authenticationToken, locale, url);
   // There is also usable data in body (not only in data field).
   // We need also fields page, pageCount,...
-  body.data = body.data.map(transformEpisode);
+  body.data = body.data.map(transformListEpisode);
   return body;
 }
 
@@ -43,15 +43,18 @@ export async function fetchNextEpisode (baseUrl, authenticationToken, locale, { 
   return transformEpisode004(body);
 }
 
-export async function persistEpisode (baseUrl, authenticationToken, locale, { number, hasTitle, basedOnDefaultLocale,
-  locales, publishStatus, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title, seasonId, episodeId,
-  contentProducers, broadcasters }) {
+export async function persistEpisode (baseUrl, authenticationToken, locale, {
+  basedOnDefaultLocale, broadcasters, characters, contentProducers, defaultLocale,
+  defaultTitle, description, endYear, episodeId, hasTitle, locales, number,
+  publishStatus, relatedCharacterIds, seasonId, seriesEntryId, startYear, title
+}) {
   let episode = {};
   if (episodeId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/serieEpisodes/${episodeId}`);
     episode = body;
   }
 
+  episode.characters = characters.map(({ id }) => ({ character: { uuid: id } }));
   // episode.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
   episode.contentProducers = contentProducers && contentProducers.map((cp) => ({ uuid: cp }));
   episode.broadcasters = broadcasters && broadcasters.map((bc) => ({ uuid: bc }));

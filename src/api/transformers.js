@@ -102,7 +102,7 @@ export function transformMedium ({ availabilities, broadcasters, characters, con
   }
   const seriesEntry = {
     availabilities: availabilities && availabilities.map(transformAvailability),
-    characters: characters && characters.map(transformCharacter),
+    characters: characters && characters.map(({ character: { uuid } }) => ({ id: uuid })),
     contentProducers: contentProducers && contentProducers.map((cp) => cp.uuid),
     broadcasters: broadcasters && broadcasters.map((bc) => bc.uuid),
     number,
@@ -179,67 +179,6 @@ export function transformActivityData (dataList, transformer) {
     res[medium.uuid] = transformer(data);
   }
   return res;
-}
-
-/**
-  * @returnExample
-  * {
-  *   availabilityFrom: <date>,
-  *   availabilityPlatforms: [<id>],
-  *   availabilityTo: <date>,
-  *   availabilityVideoStatusType: 'DISABLED' || 'SYNCABLE' || 'INTERACTIVE',
-  *   basedOnDefaultLocale: { en: false, fr: true, nl: false },
-  *   defaultLocale: 'en',
-  *   description: { en: '...', fr: '...', nl: '...' },
-  *   externalReference: '...',
-  *   externalReferenceSource: '...',
-  *   hasTitle: { en: true, fr: true, nl: true },
-  *   id: 'abcdef123',
-  *   keyVisual: { en: ..., fr: ..., nl: ... },
-  *   locales: [ 'en', 'fr', 'nl' ],
-  *   number: 2,
-  *   poster: { en: ..., fr: ..., nl: ... },
-  *   publishStatus: 'DRAFT' || 'REVIEW' || 'PUBLISHED',
-  *   relatedCharacterIds: [ '1234', '1235', ... ]
-  *   relatedVideoId: '1234',
-  *   seasonId: 'abc12',
-  *   seriesEntryId: 'bca12',
-  *   title: { en: 'Pilot', fr: 'Pilot', nl: 'Pilot' }
-  * }
-  */
-export function transformEpisode ({ availabilities, characters, contentProducers, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource },
-  localeData, number, publishStatus, season, serie, uuid: id, video }) {
-  const episode = {
-    // ...convertAvailabilitiesFromApi(availabilities),
-    basedOnDefaultLocale: {},
-    contentProducerIds: contentProducers.map((cp) => cp.uuid),
-    defaultLocale,
-    description: {}, // Locale data
-    externalReference,
-    externalReferenceSource,
-    hasTitle: {}, // Locale data
-    id,
-    keyVisual: {},
-    locales: [],
-    number,
-    poster: {},
-    publishStatus,
-    relatedCharacterIds: characters.map((c) => c.character.uuid),
-    relatedVideoId: video && video.uuid,
-    seasonId: season.uuid,
-    seriesEntryId: serie.uuid,
-    title: {} // Locale data
-  };
-  for (const { basedOnDefaultLocale, description, hasTitle, locale, posterImage, profileCover, title } of localeData) {
-    episode.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
-    episode.description[locale] = description;
-    episode.hasTitle[locale] = hasTitle;
-    episode.keyVisual[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
-    episode.poster[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
-    episode.title[locale] = title;
-    episode.locales.push(locale);
-  }
-  return episode;
 }
 
 /**
