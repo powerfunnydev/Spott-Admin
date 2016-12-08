@@ -39,6 +39,7 @@ export default (state = fromJS({
   currentCharacterSubscriptionsPage: 0,
   currentMediumSubscriptionsPage: 0,
   currentMediumSyncsPage: 0,
+  currentProductBuysPage: 0,
   currentProductImpressionsPage: 0,
   currentProductViewsPage: 0,
   brandSubscriptions: {},
@@ -46,6 +47,7 @@ export default (state = fromJS({
   genderData: {},
   mediumSubscriptions: {},
   mediumSyncs: {},
+  productBuys: {},
   productImpressions: {},
   productViews: {},
   timelineData: {}
@@ -118,6 +120,14 @@ export default (state = fromJS({
       return fetchSuccess(state, [ 'mediumSyncs', action.data.page ], action.data);
     case actions.MEDIUM_SYNCS_FETCH_ERROR:
       return fetchError(state, [ 'mediumSyncs', action.page ], action.error);
+
+    case actions.PRODUCT_BUYS_FETCH_START:
+      return fetchStart(state, [ 'productBuys', action.page ])
+        .set('currentProductBuysPage', action.page);
+    case actions.PRODUCT_BUYS_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'productBuys', action.data.page ], action.data);
+    case actions.PRODUCT_BUYS_FETCH_ERROR:
+      return fetchError(state, [ 'productBuys', action.page ], action.error);
 
     case actions.PRODUCT_IMPRESSIONS_FETCH_START:
       return fetchStart(state, [ 'productImpressions', action.page ])

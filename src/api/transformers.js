@@ -195,6 +195,7 @@ export function transformProductView ({
   };
 }
 
+export const transformProductBuy = transformProductView;
 export const transformProductImpression = transformProductView;
 
 export function transformActivityData (dataList, transformer) {

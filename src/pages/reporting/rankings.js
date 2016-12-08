@@ -130,6 +130,7 @@ class RankingItem extends Component {
   loadCharacterSubscriptions: bindActionCreators(actions.loadCharacterSubscriptions, dispatch),
   loadMediumSubscriptions: bindActionCreators(actions.loadMediumSubscriptions, dispatch),
   loadMediumSyncs: bindActionCreators(actions.loadMediumSyncs, dispatch),
+  loadProductBuys: bindActionCreators(actions.loadProductBuys, dispatch),
   loadProductImpressions: bindActionCreators(actions.loadProductImpressions, dispatch),
   loadProductViews: bindActionCreators(actions.loadProductViews, dispatch),
   loadRankings: bindActionCreators(actions.loadRankings, dispatch),
@@ -144,18 +145,21 @@ export default class Rankings extends Component {
     currentCharacterSubscriptionsPage: PropTypes.number.isRequired,
     currentMediumSubscriptionsPage: PropTypes.number.isRequired,
     currentMediumSyncsPage: PropTypes.number.isRequired,
+    currentProductBuysPage: PropTypes.number.isRequired,
     currentProductImpressionsPage: PropTypes.number.isRequired,
     currentProductViewsPage: PropTypes.number.isRequired,
     loadBrandSubscriptions: PropTypes.func.isRequired,
     loadCharacterSubscriptions: PropTypes.func.isRequired,
     loadMediumSubscriptions: PropTypes.func.isRequired,
     loadMediumSyncs: PropTypes.func.isRequired,
+    loadProductBuys: PropTypes.func.isRequired,
     loadProductImpressions: PropTypes.func.isRequired,
     loadProductViews: PropTypes.func.isRequired,
     loadRankings: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     mediumSubscriptions: ImmutablePropTypes.map.isRequired,
     mediumSyncs: ImmutablePropTypes.map.isRequired,
+    productBuys: ImmutablePropTypes.map.isRequired,
     productImpressions: ImmutablePropTypes.map.isRequired,
     productViews: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired
@@ -248,11 +252,12 @@ export default class Rankings extends Component {
     const styles = this.constructor.styles;
     const {
       brandSubscriptions, currentBrandSubscriptionsPage, currentCharacterSubscriptionsPage,
-      currentMediumSubscriptionsPage, currentMediumSyncsPage, currentProductImpressionsPage, currentProductViewsPage,
-      characterSubscriptions, loadBrandSubscriptions,
-      loadCharacterSubscriptions, loadMediumSubscriptions, loadMediumSyncs, loadProductImpressions,
+      currentMediumSubscriptionsPage, currentMediumSyncsPage, currentProductBuysPage,
+      currentProductImpressionsPage, currentProductViewsPage,
+      characterSubscriptions, loadBrandSubscriptions, loadCharacterSubscriptions,
+      loadMediumSubscriptions, loadMediumSyncs, loadProductBuys, loadProductImpressions,
       loadProductViews, location: { query: { ages, genders } }, mediumSubscriptions,
-      mediumSyncs, productImpressions, productViews
+      mediumSyncs, productBuys, productImpressions, productViews
     } = this.props;
 
     return (
@@ -338,7 +343,26 @@ export default class Rankings extends Component {
                 {productViews.get('data').map((pw, i) => (
                   <RankingItem
                     count={pw.count}
-                    countLabel={'Views'}
+                    countLabel='Views'
+                    imageUrl={pw.product.image && pw.product.image.url}
+                    key={i}
+                    position={i + 1}
+                    title={pw.product.shortName} />
+                ))}
+                </InfiniteScroll>
+              </Widget>
+              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(productBuys)} title='Product buys'>
+                <InfiniteScroll
+                  containerHeight={260}
+                  elementHeight={40}
+                  isLoading={isLoading(productBuys)}
+                  loadMore={loadProductBuys}
+                  offset={400}
+                  page={currentProductBuysPage}>
+                {productBuys.get('data').map((pw, i) => (
+                  <RankingItem
+                    count={pw.count}
+                    countLabel='Buys'
                     imageUrl={pw.product.image && pw.product.image.url}
                     key={i}
                     position={i + 1}
@@ -357,7 +381,7 @@ export default class Rankings extends Component {
                 {productImpressions.get('data').map((pw, i) => (
                   <RankingItem
                     count={pw.count}
-                    countLabel={'Views'}
+                    countLabel='Impressions'
                     imageUrl={pw.product.image && pw.product.image.url}
                     key={i}
                     position={i + 1}

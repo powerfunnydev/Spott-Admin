@@ -2,7 +2,7 @@ import { get } from './request';
 import {
   transformPaging, transformActivityData, transformBrandSubscription,
   transformCharacterSubscription, transformProductView, transformMediumInfo,
-  transformProductImpression
+  transformProductBuy, transformProductImpression
 } from './transformers';
 
 /**
@@ -95,5 +95,12 @@ export async function getRankingProductImpressions (baseUrl, authenticationToken
   const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/report/reports/mediumRanking?ageRanges=${ages.join(',')}&genders=${genders.join(',')}&type=PRODUCT_IMPRESSIONS&mediaUuidList=${mediumIds.join(',')}&page=${page}&pageSize=20`);
   const result = transformPaging(body);
   result.data = body.productImpressions.map(transformProductImpression);
+  return result;
+}
+
+export async function getRankingProductBuys (baseUrl, authenticationToken, locale, { ages, genders, mediumIds, page = 0 }) {
+  const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/report/reports/mediumRanking?ageRanges=${ages.join(',')}&genders=${genders.join(',')}&type=PRODUCT_BUYS&mediaUuidList=${mediumIds.join(',')}&page=${page}&pageSize=20`);
+  const result = transformPaging(body);
+  result.data = body.productViews.map(transformProductBuy);
   return result;
 }
