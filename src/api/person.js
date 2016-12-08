@@ -1,7 +1,11 @@
 import { del, get, post } from './request';
-import { transformActor, transformListActor } from './transformers';
+import { transformPerson, transformListPerson } from './transformers';
 
-export async function fetchActors (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+// IMPORTANT
+// Actors will be Persons in the future, so we will call this entity already Person,
+// but on the backend this entity calls still Actor.
+
+export async function fetchPersons (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/actors?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${searchString}`);
@@ -10,18 +14,18 @@ export async function fetchActors (baseUrl, authenticationToken, locale, { searc
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }
   const { body } = await get(authenticationToken, locale, url);
-  body.data = body.data.map(transformListActor);
+  body.data = body.data.map(transformListPerson);
   return body;
 }
 
 // This file is copied from character and adjusted, but it is still postible that this function must be
 // revised.
-export async function persistActor (baseUrl, authenticationToken, locale, {
+export async function persistPerson (baseUrl, authenticationToken, locale, {
   basedOnDefaultLocale, defaultLocale, description, locales, publishStatus,
-  actorId, name }) {
+  personId, name }) {
   let character = {};
-  if (actorId) {
-    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/actors/${actorId}`);
+  if (personId) {
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/actors/${personId}`);
     character = body;
   }
 
@@ -44,24 +48,24 @@ export async function persistActor (baseUrl, authenticationToken, locale, {
   });
   const url = `${baseUrl}/v004/media/actors`;
   const result = await post(authenticationToken, locale, url, character);
-  return transformActor(result.body);
+  return transformPerson(result.body);
 }
 
-export async function deleteActor (baseUrl, authenticationToken, locale, { actorId }) {
-  await del(authenticationToken, locale, `${baseUrl}/v004/media/actors/${actorId}`);
+export async function deletePerson (baseUrl, authenticationToken, locale, { personId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/actors/${personId}`);
 }
 
-export async function deleteActors (baseUrl, authenticationToken, locale, { actorIds }) {
-  for (const actorId of actorIds) {
-    await deleteActor(baseUrl, authenticationToken, locale, { actorId });
+export async function deletePersons (baseUrl, authenticationToken, locale, { personIds }) {
+  for (const personId of personIds) {
+    await deletePerson(baseUrl, authenticationToken, locale, { personId });
   }
 }
 
-export async function searchActors (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25 }) {
+export async function searchPersons (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25 }) {
   let url = `${baseUrl}/v004/media/actors?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${searchString}`);
   }
   const { body: { data } } = await get(authenticationToken, locale, url);
-  return data.map(transformListActor);
+  return data.map(transformListPerson);
 }

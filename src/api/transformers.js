@@ -85,7 +85,7 @@ export function transformCharacter ({
   actor, auditInfo, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, uuid: id, publishStatus,
  localeData, portraitImage, profileCover }) {
   const character = {
-    actorId: actor.uuid,
+    personId: actor.uuid,
     basedOnDefaultLocale: {},
     description: {},
     name: {},
@@ -100,7 +100,6 @@ export function transformCharacter ({
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
   };
-  console.log('localeData', localeData);
   if (localeData) {
     for (const { basedOnDefaultLocale, description, locale, name } of localeData) {
       character.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
@@ -439,10 +438,16 @@ export function transformVideo ({ audioFingerprints, description,
   };
 }
 
-export const transformActor = transformCharacter;
-// Temporary solution. Actor is almost the same as character, except name calls fullName here...
-export const transformListActor = (actor) => {
-  const result = transformListCharacter(actor);
-  result.name = actor.fullName;
+export const transformPerson = transformCharacter;
+// Temporary solution. Person is almost the same as character, except name calls fullName here...
+export const transformListPerson = (person) => {
+  const result = transformListCharacter(person);
+  result.name = person.fullName;
   return result;
 };
+
+export function transformCharacterFaceImage ({ image }) {
+  return {
+    image: { url: image && image.url }
+  };
+}

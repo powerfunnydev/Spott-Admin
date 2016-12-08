@@ -12,6 +12,14 @@ import { aspectRatios } from '../../../constants/imageTypes';
 const uploadIcon = require('../../../assets/images/upload.svg');
 const completedIcon = require('../../../assets/images/completed.svg');
 
+function mergeStyles (array) {
+  let styles = {};
+  for (const style of array) {
+    styles = { ...styles, ...style };
+  }
+  return styles;
+}
+
 @Radium
 export default class ImageDropzone extends Component {
 
@@ -19,6 +27,7 @@ export default class ImageDropzone extends Component {
     accept: PropTypes.string,
     downloadUrl: PropTypes.string,
     imageUrl: PropTypes.string,
+    style: PropTypes.object,
     type: PropTypes.string,
     onChange: PropTypes.func,
     onDelete: PropTypes.func
@@ -139,17 +148,17 @@ export default class ImageDropzone extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { accept, type, imageUrl, downloadUrl, onDelete } = this.props;
+    const { accept, type, imageUrl, downloadUrl, onDelete, style } = this.props;
     // If we have delete an image, we don't want to display the imageUrl or downloadUrl,
     // cause it doesn't exist anymore. So we show the local image if there is one.
     // Else, if we didn't delete an image, but there is an image, show that image.
     const downloadUrlOrPreview = this.state.showImage && this.state.file && this.state.file.type.startsWith('image') && this.state.file.preview || !this.state.deleteImage && downloadUrl;
     const imageUrlOrPreview = this.state.showImage && this.state.file && this.state.file.type.startsWith('image') && this.state.file.preview || !this.state.deleteImage && imageUrl;
     return (
-      <div style={{ position: 'relative', width: 200 * (aspectRatios[type] || 1) }}>
+      <div style={{ position: 'relative' }}>
         {/* Render dropzone */}
         <ReactDropzone accept={accept || 'image/*'} activeStyle={styles.activeDropzone} multiple={false} ref={(x) => { this.dropzone = x; }}
-          style={styles.dropzone} onDrop={this.onDrop} >
+          style={mergeStyles([ styles.dropzone, { width: 200 * (aspectRatios[type] || 1) }, style ])} onDrop={this.onDrop} >
           <div>
             {downloadUrlOrPreview && <Dropdown style={styles.dropdownButton}>
               {downloadUrlOrPreview && <div key='downloadImage' style={dropdownStyles.floatOption} onClick={(e) => { downloadFile(downloadUrlOrPreview); }}>Download</div>}

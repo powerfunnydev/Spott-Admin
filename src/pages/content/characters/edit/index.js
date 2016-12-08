@@ -8,14 +8,13 @@ import TextInput from '../../../_common/inputs/textInput';
 import SelectInput from '../../../_common/inputs/selectInput';
 import Header from '../../../app/header';
 // import Line from '../../../_common/components/line';
-import { Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
+import { Root, FormSubtitle, colors, EditTemplate, FormDescription } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import Section from '../../../_common/components/section';
 import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
-import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Label from '../../../_common/inputs/_label';
 import selector from './selector';
 import { CHARACTER_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
@@ -23,12 +22,13 @@ import { FETCHING } from '../../../../constants/statusTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import LanguageBar from '../../../_common/components/languageBar';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
+import ImageDropzone from '../../../_common/dropzone/imageDropzone';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { _activeLocale, defaultLocale, name, actorId } = values.toJS();
+  const { _activeLocale, defaultLocale, name, personId } = values.toJS();
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
-  if (!actorId) { validationErrors.actorId = t('common.errors.required'); }
+  if (!personId) { validationErrors.personId = t('common.errors.required'); }
   if (name && !name[_activeLocale]) { validationErrors.name = validationErrors.name || {}; validationErrors.name[_activeLocale] = t('common.errors.required'); }
 // Done
   return validationErrors;
@@ -36,14 +36,16 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
+  fetchFaceImages: bindActionCreators(actions.fetchFaceImages, dispatch),
   loadCharacter: bindActionCreators(actions.loadCharacter, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   closeModal: bindActionCreators(actions.closeModal, dispatch),
   deletePortraitImage: bindActionCreators(actions.deletePortraitImage, dispatch),
   deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
+  uploadFaceImage: bindActionCreators(actions.uploadFaceImage, dispatch),
   uploadPortraitImage: bindActionCreators(actions.uploadPortraitImage, dispatch),
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch),
-  searchActors: bindActionCreators(actions.searchActors, dispatch),
+  searchPersons: bindActionCreators(actions.searchPersons, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
@@ -56,7 +58,6 @@ export default class EditCharacter extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
-    actorsById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
     closeModal: PropTypes.func.isRequired,
     currentCharacter: ImmutablePropTypes.map.isRequired,
@@ -67,18 +68,21 @@ export default class EditCharacter extends Component {
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
+    fetchFaceImages: PropTypes.func,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
     loadCharacter: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
+    personsById: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
-    searchActors: PropTypes.func.isRequired,
-    searchedActorIds: ImmutablePropTypes.map.isRequired,
+    searchPersons: PropTypes.func.isRequired,
+    searchedPersonIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
+    uploadFaceImage: PropTypes.func.isRequired,
     uploadPortraitImage: PropTypes.func.isRequired,
     uploadProfileImage: PropTypes.func.isRequired
   };
@@ -96,7 +100,7 @@ export default class EditCharacter extends Component {
   async componentWillMount () {
     if (this.props.params.characterId) {
       const editObj = await this.props.loadCharacter(this.props.params.characterId);
-      console.log('editObj', editObj);
+      await this.props.fetchFaceImages({ characterId: this.props.params.characterId });
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale
@@ -173,12 +177,19 @@ export default class EditCharacter extends Component {
     },
     paddingLeftUploadImage: {
       paddingLeft: '24px'
+    },
+    description: {
+      marginBottom: '1.25em'
+    },
+    imageDropzone: {
+      width: '100%',
+      height: '100px'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { _activeLocale, actorsById, errors, closeModal, currentModal, searchActors, searchedActorIds, supportedLocales, defaultLocale,
+    const { _activeLocale, personsById, errors, closeModal, currentModal, searchPersons, searchedPersonIds, supportedLocales, defaultLocale,
       currentCharacter, location, handleSubmit, deletePortraitImage, deleteProfileImage } = this.props;
     return (
         <Root style={styles.backgroundRoot}>
@@ -216,13 +227,13 @@ export default class EditCharacter extends Component {
                   <Field
                     component={SelectInput}
                     disabled={_activeLocale !== defaultLocale}
-                    getItemText={(id) => actorsById.getIn([ id, 'name' ])}
-                    getOptions={searchActors}
-                    isLoading={searchedActorIds.get('_status') === FETCHING}
-                    label='Actor'
-                    name='actorId'
-                    options={searchedActorIds.get('data').toJS()}
-                    placeholder='Actor'
+                    getItemText={(id) => personsById.getIn([ id, 'name' ])}
+                    getOptions={searchPersons}
+                    isLoading={searchedPersonIds.get('_status') === FETCHING}
+                    label='Person'
+                    name='personId'
+                    options={searchedPersonIds.get('data').toJS()}
+                    placeholder='Person'
                     required/>
                   <Field
                     component={TextInput}
@@ -234,7 +245,7 @@ export default class EditCharacter extends Component {
                 <div style={[ styles.paddingTop, styles.row ]}>
                   <div>
                     <Label text='Profile image' />
-                    <Dropzone
+                    <ImageDropzone
                       accept='image/*'
                       downloadUrl={currentCharacter.getIn([ 'profileImage', 'url' ])}
                       imageUrl={currentCharacter.getIn([ 'profileImage', 'url' ]) && `${currentCharacter.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
@@ -243,7 +254,7 @@ export default class EditCharacter extends Component {
                   </div>
                   <div style={styles.paddingLeftUploadImage}>
                     <Label text='Poster image' />
-                    <Dropzone
+                    <ImageDropzone
                       accept='image/*'
                       downloadUrl={currentCharacter.getIn([ 'portraitImage', 'url' ])}
                       imageUrl={currentCharacter.getIn([ 'portraitImage', 'url' ]) && `${currentCharacter.getIn([ 'portraitImage', 'url' ])}?height=203&width=360`}
@@ -255,7 +266,13 @@ export default class EditCharacter extends Component {
             </Tab>
             <Tab title='Face Data'>
               <Section>
-                <FormSubtitle first>TODO</FormSubtitle>
+                <FormSubtitle first>Upload face images</FormSubtitle>
+                <FormDescription style={styles.description}>We use facial recognition to automatically detect faces in frames.</FormDescription>
+                <ImageDropzone
+                  style={styles.imageDropzone}
+                  onChange={({ callback, file }) => { this.props.uploadFaceImage({ characterId: this.props.params.characterId, image: file, callback }); }}/>
+
+                <FormSubtitle>Uploads</FormSubtitle>
               </Section>
              </Tab>
           </Tabs>

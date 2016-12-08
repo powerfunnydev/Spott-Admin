@@ -4,18 +4,18 @@ import {
   currentLocaleSelector
 } from '../../../../selectors/global';
 import {
-  actorsEntitiesSelector,
+  personsEntitiesSelector,
   createEntityIdsByRelationSelector,
-  searchStringHasActorsRelationsSelector
+  searchStringHasPersonsRelationsSelector
 } from '../../../../selectors/data';
 
-export const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'characters', 'create', 'currentActorSearchString' ]);
+export const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'characters', 'create', 'currentPersonSearchString' ]);
 
-export const searchedActorIdsSelector = createEntityIdsByRelationSelector(searchStringHasActorsRelationsSelector, currentSeriesEntriesSearchStringSelector);
+export const searchedPersonIdsSelector = createEntityIdsByRelationSelector(searchStringHasPersonsRelationsSelector, currentSeriesEntriesSearchStringSelector);
 
 export default createStructuredSelector({
-  actorsById: actorsEntitiesSelector,
-  searchedActorIds: searchedActorIdsSelector,
+  personsById: personsEntitiesSelector,
+  searchedPersonIds: searchedPersonIdsSelector,
   currentLocale: currentLocaleSelector,
   localeNames: localeNamesSelector
 });

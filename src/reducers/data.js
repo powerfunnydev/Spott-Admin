@@ -3,7 +3,6 @@ import { serializeFilterHasCharacters, serializeFilterHasSeriesEntries, serializ
     serializeFilterHasBroadcasters, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
     fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart,
     fetchListSuccess, fetchListError } from './utils';
-import * as actorActions from '../actions/actor';
 import * as availabilityActions from '../actions/availability';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcastersActions from '../actions/broadcaster';
@@ -11,6 +10,7 @@ import * as charactersActions from '../actions/character';
 import * as contentProducersActions from '../actions/contentProducer';
 import * as episodeActions from '../actions/episode';
 import * as mediaActions from '../actions/media';
+import * as personActions from '../actions/person';
 import * as reportingActions from '../actions/reporting';
 import * as seasonActions from '../actions/season';
 import * as seriesActions from '../actions/series';
@@ -20,7 +20,6 @@ import * as videoActions from '../actions/video';
 
 export default (state = fromJS({
   entities: {
-    actors: {},
     ages: {},
     availabilities: {},
     broadcastChannels: {},
@@ -32,6 +31,7 @@ export default (state = fromJS({
     listCharacters: {}, // listCharacters is the light version of characters, without locales
     listMedia: {}, // listMedia is the light version of media, without locales
     media: {}, // completed version of media, with locales
+    persons: {},
     tvGuideEntries: {},
     users: {},
     videos: {}
@@ -52,12 +52,12 @@ export default (state = fromJS({
     filterHasTvGuideEntries: {},
     filterHasUsers: {},
 
-    searchStringHasActors: {},
     searchStringHasBroadcastChannels: {},
     searchStringHasBroadcasters: {},
     searchStringHasCharacters: {},
     searchStringHasContentProducers: {},
     searchStringHasMedia: {},
+    searchStringHasPersons: {},
     searchStringHasSeriesEntries: {},
     searchStringHasUsers: {},
 
@@ -73,12 +73,12 @@ export default (state = fromJS({
     // Actors
     // ////////////////////
 
-    case actorActions.ACTOR_SEARCH_START:
-      return searchStart(state, 'searchStringHasActors', action.searchString);
-    case actorActions.ACTOR_SEARCH_SUCCESS:
-      return searchSuccess(state, 'actors', 'searchStringHasActors', action.searchString, action.data);
-    case actorActions.ACTOR_SEARCH_ERROR:
-      return searchError(state, 'searchStringHasActors', action.searchString, action.error);
+    case personActions.PERSON_SEARCH_START:
+      return searchStart(state, 'searchStringHasPersons', action.searchString);
+    case personActions.PERSON_SEARCH_SUCCESS:
+      return searchSuccess(state, 'persons', 'searchStringHasPersons', action.searchString, action.data);
+    case personActions.PERSON_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasPersons', action.searchString, action.error);
 
     // Availabilities
     // //////////////

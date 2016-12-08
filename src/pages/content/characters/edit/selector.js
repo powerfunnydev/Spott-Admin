@@ -2,11 +2,11 @@ import { createStructuredSelector } from 'reselect';
 import { currentModalSelector } from '../../../../selectors/global';
 import { createFormValueSelector } from '../../../../utils';
 import {
-  actorsEntitiesSelector,
+  personsEntitiesSelector,
   charactersEntitiesSelector,
   createEntityByIdSelector,
   createEntityIdsByRelationSelector,
-  searchStringHasActorsRelationsSelector
+  searchStringHasPersonsRelationsSelector
 } from '../../../../selectors/data';
 
 const formName = 'characterEdit';
@@ -19,17 +19,17 @@ const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 export const currentCharacterIdSelector = (state, props) => { return props.params.characterId; };
 export const currentCharacterSelector = createEntityByIdSelector(charactersEntitiesSelector, currentCharacterIdSelector);
 
-export const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'characters', 'edit', 'currentActorSearchString' ]);
+export const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'characters', 'edit', 'currentPersonSearchString' ]);
 
-export const searchedActorIdsSelector = createEntityIdsByRelationSelector(searchStringHasActorsRelationsSelector, currentSeriesEntriesSearchStringSelector);
+export const searchedPersonIdsSelector = createEntityIdsByRelationSelector(searchStringHasPersonsRelationsSelector, currentSeriesEntriesSearchStringSelector);
 
 export default createStructuredSelector({
-  actorsById: actorsEntitiesSelector,
+  personsById: personsEntitiesSelector,
   _activeLocale: _activeLocaleSelector,
   defaultLocale: currentDefaultLocaleSelector,
   errors: formErrorsSelector,
   currentModal: currentModalSelector,
   currentCharacter: currentCharacterSelector,
-  searchedActorIds: searchedActorIdsSelector,
+  searchedPersonIds: searchedPersonIdsSelector,
   supportedLocales: supportedLocalesSelector
 });
