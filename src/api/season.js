@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformEpisode004, transformSeason004, transformEpisode, transformListEpisode } from './transformers';
+import { transformEpisode004, transformSeason004, transformListEpisode } from './transformers';
 
 export async function fetchSeasonEpisodes (baseUrl, authenticationToken, locale, { seasonId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/serieSeasons/${seasonId}/episodes?page=${page}&pageSize=${pageSize}`;
@@ -20,12 +20,12 @@ export async function searchEpisodes (baseUrl, authenticationToken, locale, { se
   if (!seasonId) {
     return [];
   }
-  let searchUrl = `${baseUrl}/v003/media/serieSeasons/${seasonId}/episodes?pageSize=25`;
+  let searchUrl = `${baseUrl}/v004/media/serieSeasons/${seasonId}/episodes?pageSize=25`;
   if (searchString) {
     searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
   }
   const { body: { data } } = await get(authenticationToken, locale, searchUrl);
-  return data.map(transformEpisode);
+  return data.map(transformListEpisode);
 }
 
 export async function fetchSeasons (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {

@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import Spinner from '../../../_common/spinner';
+import Spinner from '../../../_common/components/spinner';
 
 @Radium
 export class Rows extends Component {

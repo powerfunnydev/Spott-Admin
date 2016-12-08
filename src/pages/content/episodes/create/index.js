@@ -6,8 +6,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { FormSubtitle } from '../../../_common/styles';
 import TextInput from '../../../_common/inputs/textInput';
-import localized from '../../../_common/localized';
-import PersistModal from '../../../_common/persistModal';
+import CheckboxInput from '../../../_common/inputs/checkbox';
+import localized from '../../../_common/decorators/localized';
+import PersistModal from '../../../_common/components/persistModal';
 import { loadEpisodes } from '../../seasons/read/episodes/actions';
 import * as actions from './actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
@@ -17,11 +18,12 @@ import { FETCHING } from '../../../../constants/statusTypes';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { seriesEntryId, seasonId, defaultLocale, title } = values.toJS();
+  const { defaultLocale, hasTitle, number, seriesEntryId, seasonId, title } = values.toJS();
   if (!seriesEntryId) { validationErrors.seriesEntryId = t('common.errors.required'); }
   if (!seasonId) { validationErrors.seasonId = t('common.errors.required'); }
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
-  if (!title) { validationErrors.title = t('common.errors.required'); }
+  if (!number || number < 1) { validationErrors.number = t('common.errors.required'); }
+  if (hasTitle && !title) { validationErrors.title = t('common.errors.required'); }
   // Done
   return validationErrors;
 }
@@ -36,7 +38,7 @@ function validate (values, { t }) {
   searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch)
 }))
 @reduxForm({
-  form: 'episodesCreateEntry',
+  form: 'episodeCreate',
   validate
 })
 @Radium
@@ -51,6 +53,7 @@ export default class CreateEpisodentryModal extends Component {
     error: PropTypes.any,
     fetchLastEpisode: PropTypes.func.isRequired,
     handleSubmit: PropTypes.func.isRequired,
+    hasTitle: PropTypes.bool,
     initialize: PropTypes.func.isRequired,
     loadEpisodes: PropTypes.func.isRequired,
     localeNames: ImmutablePropTypes.map.isRequired,
@@ -64,7 +67,8 @@ export default class CreateEpisodentryModal extends Component {
     seasonsById: ImmutablePropTypes.map.isRequired,
     seriesEntriesById: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
-    t: PropTypes.func.isRequired
+    t: PropTypes.func.isRequired,
+    untouch: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -83,36 +87,47 @@ export default class CreateEpisodentryModal extends Component {
     await searchSeasons(null, seriesEntryId);
     // 404 error when there is no last episode. We go further with the default value of
     // defaultLocale, content producers, broadcasters and number of an episode.
-    let episodeNumber;
-    let contentProducers;
     let broadcasters;
+    let characters;
+    let contentProducers;
     let defaultLocale;
+    let episodeNumber;
+    // We need the id of the last episode for copying all characters.
+    let lastEpisodeId;
     try {
       const lastEpisode = await fetchLastEpisode(seasonId);
-      contentProducers = lastEpisode.contentProducers;
+      console.log('lastEpisode', lastEpisode);
       broadcasters = lastEpisode.broadcasters;
-      episodeNumber = lastEpisode.number + 1;
+      characters = lastEpisode.characters;
+      contentProducers = lastEpisode.contentProducers;
       defaultLocale = lastEpisode.defaultLocale;
+      episodeNumber = lastEpisode.number + 1;
+      lastEpisodeId = lastEpisode.id;
+      console.log('lastEpisodeId', lastEpisodeId);
     } catch (e) {
-      contentProducers = [];
+      console.error('e', e);
       broadcasters = [];
-      episodeNumber = 1;
+      characters = [];
+      contentProducers = [];
       // We will use the locale of the current user as default locale.
       defaultLocale = currentLocale;
+      episodeNumber = 1;
     }
     await initialize({
-      number: episodeNumber,
       broadcasters,
+      characters,
       contentProducers,
-      seriesEntryId,
+      defaultLocale,
+      lastEpisodeId,
+      number: episodeNumber,
       seasonId,
-      defaultLocale
+      seriesEntryId
     });
   }
 
   async submit (form) {
     try {
-      const { params, location, submit, dispatch, change } = this.props;
+      const { change, dispatch, location, params, submit, untouch } = this.props;
       await submit(form.toJS());
       const createAnother = form.get('createAnother');
       // Load the new list of items, using the location query of the previous page.
@@ -121,7 +136,11 @@ export default class CreateEpisodentryModal extends Component {
         this.props.loadEpisodes(loc.query, params.seasonId);
       }
       if (createAnother) {
-        form.get('number') && dispatch(change('number', form.get('number') + 1));
+        // If we create another episode, set the next episode number
+        dispatch(change('number', parseInt(form.get('number'), 10) + 1));
+        // and reset the title.
+        dispatch(change('title', null));
+        dispatch(untouch('defaultLocale', 'seriesEntryId', 'seasonId', 'number', 'hasTitle', 'title'));
       } else {
         this.onCloseClick();
       }
@@ -132,14 +151,19 @@ export default class CreateEpisodentryModal extends Component {
 
   async onChangeSeason (currentSeasonId) {
     const { fetchLastEpisode, change, dispatch } = this.props;
-    // 404 error when there is no last episode. We go further with the default value of
-    // 1 for a episode number.
+
     let episodeNumber;
     try {
-      const lastEpisode = await fetchLastEpisode(currentSeasonId);
-      episodeNumber = lastEpisode.number + 1;
-    } catch (e) { episodeNumber = 1; }
+      const { number } = await fetchLastEpisode(currentSeasonId);
+      episodeNumber = number + 1;
+    } catch (e) {
+      // We get a 404 error when there is no last episode.
+      // This is the first episode because there is no last episode.
+      episodeNumber = 1;
+    }
+    // Set the next episode number
     dispatch(change('number', episodeNumber));
+    // and reset the title.
     dispatch(change('title', null));
   }
 
@@ -147,8 +171,18 @@ export default class CreateEpisodentryModal extends Component {
     this.props.routerPushWithReturnTo('content/series', true);
   }
 
+  static styles = {
+    customTitle: {
+      paddingBottom: '0.438em'
+    },
+    titleLabel: {
+      paddingBottom: '0.7em'
+    }
+  };
+
   render () {
-    const { localeNames, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
+    const styles = this.constructor.styles;
+    const { hasTitle, localeNames, currentSeasonId, currentSeriesEntryId, searchSeriesEntries,
         seriesEntriesById, searchedSeriesEntryIds, searchSeasons, seasonsById,
         searchedSeasonIds, handleSubmit } = this.props;
     return (
@@ -175,23 +209,41 @@ export default class CreateEpisodentryModal extends Component {
           onChange={() => {
             this.props.dispatch(this.props.change('seasonId', null));
           }} />
-        {currentSeriesEntryId && <Field
-          component={SelectInput}
-          getItemText={(id) => seasonsById.getIn([ id, 'title' ])}
-          getOptions={(searchString) => { searchSeasons(searchString, currentSeriesEntryId); }}
-          isLoading={searchedSeasonIds.get('_status') === FETCHING}
-          label='Season title'
-          name='seasonId'
-          options={searchedSeasonIds.get('data').toJS()}
-          placeholder='Season title'
-          onChange={this.onChangeSeason} />}
-        {currentSeriesEntryId && currentSeasonId && <Field
-          component={TextInput}
-          label='Episode number'
-          name='number'
-          placeholder='Episode number'
-          required
-          type='number'/>}
+        {currentSeriesEntryId &&
+          <Field
+            component={SelectInput}
+            getItemText={(id) => seasonsById.getIn([ id, 'title' ])}
+            getOptions={(searchString) => { searchSeasons(searchString, currentSeriesEntryId); }}
+            isLoading={searchedSeasonIds.get('_status') === FETCHING}
+            label='Season title'
+            name='seasonId'
+            options={searchedSeasonIds.get('data').toJS()}
+            placeholder='Season title'
+            onChange={this.onChangeSeason} />}
+        {currentSeriesEntryId && currentSeasonId &&
+          <Field
+            component={TextInput}
+            label='Episode number'
+            name='number'
+            placeholder='Episode number'
+            required
+            type='number'/>}
+        {currentSeriesEntryId && currentSeasonId &&
+          <Field
+            component={TextInput}
+            content={
+              <Field
+                component={CheckboxInput}
+                first
+                label='Custom title'
+                name='hasTitle'
+                style={styles.customTitle} />}
+            disabled={!hasTitle}
+            label='Episode title'
+            labelStyle={styles.titleLabel}
+            name='title'
+            placeholder='Episode title'
+            required />}
       </PersistModal>
     );
   }

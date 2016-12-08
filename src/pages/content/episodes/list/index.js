@@ -89,8 +89,7 @@ export default class Episodes extends Component {
     this.props.routerPushWithReturnTo('content/seasons/create');
   }
 
-  async onClickDeleteSelected (e) {
-    e.preventDefault();
+  async onClickDeleteSelected () {
     const seasonsIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {

@@ -22,7 +22,6 @@ const formName = 'episodeEdit';
 const formErrorsSelector = (state) => state.getIn([ 'form', formName, 'syncErrors' ]);
 
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
-const availabilitiesSelector = createFormValueSelector(formName, 'availabilities');
 const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultLocale');
 const currentSeasonIdSelector = createFormValueSelector(formName, 'seasonId');
 const currentSeriesEntryIdSelector = createFormValueSelector(formName, 'seriesEntryId');
@@ -35,7 +34,7 @@ const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'conte
 
 const currentCharactersSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentCharacterSearchString' ]);
 const searchedCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCharactersSearchStringSelector);
-const episodeCharacterIdsSelector = createEntitiesByRelationSelector(mediumHasCharactersSelector, currentEpisodeIdSelector, charactersEntitiesSelector);
+const episodeCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersSelector, currentEpisodeIdSelector, charactersEntitiesSelector);
 
 const searchedSeriesEntryIdsSelector = createEntityIdsByRelationSelector(searchStringHasSeriesEntriesRelationsSelector, currentSeriesEntriesSearchStringSelector);
 const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(seriesEntryHasSeasonsSelector, currentSeriesEntryIdSelector);
@@ -48,7 +47,6 @@ export const searchedContentProducerIdsSelector = createEntityIdsByRelationSelec
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
-  availabilities: availabilitiesSelector,
   broadcastersById: broadcastersEntitiesSelector,
   charactersById: charactersEntitiesSelector,
   contentProducersById: contentProducersEntitiesSelector,
@@ -57,7 +55,7 @@ export default createStructuredSelector({
   currentSeasonId: currentSeasonIdSelector,
   currentSeriesEntryId: currentSeriesEntryIdSelector,
   defaultLocale: currentDefaultLocaleSelector,
-  episodeCharacterIds: episodeCharacterIdsSelector,
+  episodeCharacters: episodeCharactersSelector,
   errors: formErrorsSelector,
   hasTitle: hasTitleSelector,
   searchedBroadcasterIds: searchedBroadcasterIdsSelector,

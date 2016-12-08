@@ -2,9 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Container, colors, fontWeights, makeTextStyle } from './styles';
-import { routerPushWithReturnTo } from '../../actions/global';
-import Line from './components/line';
+import { Container, colors, fontWeights, makeTextStyle } from '../styles';
+import { routerPushWithReturnTo } from '../../../actions/global';
+import Line from './line';
 
 @connect(null, (dispatch) => ({
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)

@@ -84,8 +84,7 @@ export default class BroadcastChannelList extends Component {
     this.props.routerPushWithReturnTo('content/broadcast-channels/create');
   }
 
-  async onClickDeleteSelected (e) {
-    e.preventDefault();
+  async onClickDeleteSelected () {
     const broadcastChannelsIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {

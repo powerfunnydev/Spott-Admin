@@ -12,7 +12,7 @@ import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
 import { generalStyles } from '../../../_common/components/table/index';
-import BreadCrumbs from '../../../_common/breadCrumbs';
+import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import TvGuideList from './tvGuide';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 
@@ -44,14 +44,10 @@ export default class ReadEpisode extends Component {
     this.onChangeTab = :: this.onChangeTab;
   }
 
-  async componentWillMount () {
+  componentWillMount () {
     if (this.props.params.seasonId) {
-      await this.props.loadEpisode(this.props.params.episodeId);
+      this.props.loadEpisode(this.props.params.episodeId);
     }
-  }
-
-  getTitle (season) {
-    return season.get('name');
   }
 
   redirect () {
@@ -87,9 +83,10 @@ export default class ReadEpisode extends Component {
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
           { title: 'List', url: '/content/series' },
-          { title: 'Series', url: `content/series/read/${this.props.params.seriesEntryId}` },
-          { title: 'Season', url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}` },
-          { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/read/${params.episodeId}` } ]}/>
+          { title: currentEpisode.getIn([ 'seriesEntry', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}` },
+          { title: currentEpisode.getIn([ 'season', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}` },
+          { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/read/${params.episodeId}` }
+        ]}/>
         <Container>
           {currentEpisode.get('_status') === 'loaded' && currentEpisode &&
             <EntityDetails

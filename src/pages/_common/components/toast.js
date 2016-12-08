@@ -1,14 +1,86 @@
-import Radium from 'radium';
+/* eslint-disable react/no-set-state */
 import React, { Component, PropTypes } from 'react';
+import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import * as toastActions from '../../../actions/toast';
+import { routerPushWithReturnTo } from '../../../actions/global';
 import toastSelector from '../../../selectors/toast';
 import { colors, makeTextStyle, fontWeights } from '../styles';
 import CompletedSVG from '../images/completed';
 import PlusSVG from '../images/plus';
-import { routerPushWithReturnTo } from '../../../actions/global';
+
+@connect(null, (dispatch) => ({
+  popToast: bindActionCreators(toastActions.pop, dispatch),
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
+}))
+@Radium
+export class ErrorMessage extends Component {
+
+  static propTypes = {
+    error: PropTypes.object.isRequired,
+    popToast: PropTypes.func.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired
+  };
+
+  constructor (props) {
+    super(props);
+  }
+
+  async redirect (url) {
+    await this.props.routerPushWithReturnTo(url);
+    await this.props.popToast();
+  }
+
+  badRequestError (error) {
+    console.log('error', error);
+    return (
+      <div><b>Bad request:</b> {error.body && error.body.message || error.message}</div>
+    );
+  }
+
+  conflictError (error) {
+    return (
+      <div><b>Conflict:</b> {error.body && error.body.message || error.message}</div>
+    );
+  }
+
+  notFoundError (error) {
+    return (
+      <div><b>Not found:</b> {error.body && error.body.message || error.message}</div>
+    );
+  }
+
+  static styles = {
+    clickable: {
+      cursor: 'pointer',
+      fontSize: '12px',
+      color: colors.veryDarkGray,
+      ':hover': {
+        textDecoration: 'underline'
+      }
+    }
+  };
+
+  render () {
+    const { error } = this.props;
+    console.log('error', error);
+    // When there is a bad request error
+    if (error.name === 'BadRequestError') {
+      return this.badRequestError(error);
+    } else
+    // When there is a conflict error
+    if (error.name === 'ConflictError') {
+      return this.conflictError(error);
+    } else
+    // When there is a not found error
+    if (error.name === 'NotFoundError') {
+      return this.notFoundError(error);
+    }
+    return <span>Error occured, please let us know about this error.</span>;
+  }
+}
 
 @connect(null, (dispatch) => ({
   popToast: bindActionCreators(toastActions.pop, dispatch),
@@ -29,6 +101,11 @@ export class SuccessMessage extends Component {
     this.broadcastChannelPersistSuccess = ::this.broadcastChannelPersistSuccess;
     this.broadcasterPersistSuccess = ::this.broadcasterPersistSuccess;
     this.contentProducerPersistSuccess = ::this.contentProducerPersistSuccess;
+    this.userPersistSuccess = ::this.userPersistSuccess;
+    this.seasonPersistSuccess = ::this.seasonPersistSuccess;
+    this.episodePersistSuccess = ::this.episodePersistSuccess;
+    this.seriesEntryPersistSuccess = ::this.seriesEntryPersistSuccess;
+    this.seriesEntryPersistSuccess = ::this.seriesEntryPersistSuccess;
     this.userPersistSuccess = ::this.userPersistSuccess;
   }
 
@@ -74,7 +151,7 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        Episode <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/series/read/${episode.seriesEntryId}/seasons/read/${episode.seasonId}/episodes/read/${episode.id}`)}>
+        Episode <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/series/read/${episode.seriesEntry.id}/seasons/read/${episode.season.id}/episodes/read/${episode.id}`)}>
           {episode.title[episode.defaultLocale]}
         </span> has been succesfully persisted.
       </span>
@@ -85,7 +162,7 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        Season <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/series/read/${season.seriesEntryId}/seasons/read/${season.id}`)}>
+        Season <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/series/read/${season.seriesEntry.id}/seasons/read/${season.id}`)}>
           {season.title[season.defaultLocale]}
         </span> has been succesfully persisted.
       </span>
@@ -170,12 +247,25 @@ export default class Toast extends Component {
     popToast: PropTypes.func.isRequired
   };
 
-  componentDidUpdate () {
+  constructor (props) {
+    super(props);
+    this.state = { transition: false };
+  }
+
+  componentWillReceiveProps (nextProps, nextState) {
     // We received a new toast, let's timeout
-    if (this.props.currentToast) {
+    if (nextProps.currentToast) {
+      // next tick we need to set the transition on true, otherwise there
+      // will be no transition.
       setTimeout(() => {
-        this.props.popToast();
-      }, 5000);
+        this.setState({ transition: true });
+        setTimeout(() => {
+          this.setState({ transition: false });
+        }, 4000);
+        setTimeout(() => {
+          this.props.popToast();
+        }, 4250);
+      }, 0);
     }
   }
 
@@ -185,8 +275,10 @@ export default class Toast extends Component {
       flexDirection: 'row',
       width: 380,
       position: 'fixed',
+      transition: 'top 0.25s ease-in, opacity 0.25s ease-in',
       right: 40,
-      top: 40,
+      top: -100,
+      opacity: 0,
       minHeight: 60, // Matches the flex-basis in icon.base style
       zIndex: 101,
       boxShadow: '0 2px 4px 0 rgba(0, 0, 0, 0.25)'
@@ -201,12 +293,11 @@ export default class Toast extends Component {
         borderTopLeftRadius: '2px',
         borderBottomLeftRadius: '2px'
       },
-      /*
       error: {
-        backgroundColor: 'rgb(236, 65, 15)',
-        border: '1px solid rgb(236, 65, 15)'
+        backgroundColor: colors.red,
+        border: `1px solid ${colors.red}`
       },
-      info: {
+      /* info: {
         backgroundColor: 'rgb(0, 115, 211)',
         border: '1px solid rgb(0, 115, 211)'
       },
@@ -234,6 +325,7 @@ export default class Toast extends Component {
       paddingRight: '13px',
       paddingBottom: '13px',
       paddingLeft: '19px',
+      width: '100%',
       backgroundColor: colors.white,
       border: '1px solid rgb(206, 214, 218)',
       borderTopRightRadius: '2px',
@@ -245,6 +337,11 @@ export default class Toast extends Component {
       transform: 'rotate(45deg)',
       paddingRight: '13px',
       cursor: 'pointer'
+    },
+    transition: {
+      top: 40,
+      opacity: 1,
+      transition: 'top 0.25s ease-out, opacity 0.25s ease-in'
     }
   };
 
@@ -262,13 +359,17 @@ export default class Toast extends Component {
     const type = currentToast.get('type');
     const entityType = currentToast.get('entityType');
     const entity = currentToast.get('entity');
+    const error = currentToast.get('error');
     return (
-      <div style={styles.container}>
+      <div key='toastContainer' style={[ styles.container, this.state.transition && styles.transition ]}>
         <div style={[ styles.icon.base, styles.icon[type] ]}>
-        <CompletedSVG color={colors.white} />
+        {type === 'error' &&
+          <PlusSVG color={colors.white} style={styles.cross}/> ||
+          <CompletedSVG color={colors.white} />}
         </div>
         <div style={styles.textContainer}>
           <div style={[ styles.text.base ]}>
+            { type === 'error' && <ErrorMessage entityType={entityType} error={error}/> }
             { type === 'success' && <SuccessMessage entity={entity} entityType={entityType}/> }
           </div>
           <div onClick={this.props.popToast}><PlusSVG color='#aab5b8' style={styles.cross}/></div>

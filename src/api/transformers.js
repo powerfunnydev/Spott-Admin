@@ -60,8 +60,14 @@ export function transformListMedium ({ number, auditInfo, title, type, posterIma
   };
 }
 
-export function transformAvailability ({ country, endTimeStamp, startTimeStamp, videoStatus }) {
-  return { countryId: country && country.uuid, availabilityFrom: startTimeStamp && new Date(startTimeStamp), availabilityTo: endTimeStamp && new Date(endTimeStamp), videoStatus };
+export function transformAvailability ({ country, endTimeStamp, startTimeStamp, uuid: id, videoStatus }) {
+  return {
+    availabilityFrom: startTimeStamp && new Date(startTimeStamp),
+    availabilityTo: endTimeStamp && new Date(endTimeStamp),
+    countryId: country && country.uuid,
+    id,
+    videoStatus
+  };
 }
 
 export function transformListCharacter ({ profileImage, portraitImage, name, uuid: id }) {
@@ -73,10 +79,13 @@ export function transformListCharacter ({ profileImage, portraitImage, name, uui
   };
 }
 
+/*
+  TODO: Need to be refactored. Back-end will be adjusted soon..
+*/
 export function transformCharacter ({ profileCover, portraitImage, defaultName, uuid: id }) {
   return {
     id,
-    defaultName,
+    name: defaultName,
     profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
     portraitImage: portraitImage && { id: portraitImage.uuid, url: portraitImage.url }
   };
@@ -85,11 +94,15 @@ export function transformCharacter ({ profileCover, portraitImage, defaultName, 
  *  Complete version of a medium. Locales includes.
  */
 export function transformMedium ({ availabilities, broadcasters, characters, contentProducers, number,
-  auditInfo, type, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, serie, season, uuid: id, publishStatus,
+  auditInfo, type, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, serieInfo: serie, seasonInfo, uuid: id, publishStatus,
   defaultTitle, localeData, video }) {
+  let serieInfo = serie;
+  if (seasonInfo) {
+    serieInfo = seasonInfo.serie;
+  }
   const seriesEntry = {
     availabilities: availabilities && availabilities.map(transformAvailability),
-    characters: characters && characters.map(transformCharacter),
+    characters: characters && characters.map(({ character: { uuid } }) => ({ id: uuid })),
     contentProducers: contentProducers && contentProducers.map((cp) => cp.uuid),
     broadcasters: broadcasters && broadcasters.map((bc) => bc.uuid),
     number,
@@ -110,8 +123,8 @@ export function transformMedium ({ availabilities, broadcasters, characters, con
     type,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
-    seriesEntryId: serie && serie.uuid,
-    seasonId: season && season.uuid,
+    season: seasonInfo && { title: seasonInfo.title, id: seasonInfo.uuid },
+    seriesEntry: serieInfo && { title: serieInfo.title, id: serieInfo.uuid },
     videoId: video && video.uuid
   };
   if (localeData) {
@@ -166,67 +179,6 @@ export function transformActivityData (dataList, transformer) {
     res[medium.uuid] = transformer(data);
   }
   return res;
-}
-
-/**
-  * @returnExample
-  * {
-  *   availabilityFrom: <date>,
-  *   availabilityPlatforms: [<id>],
-  *   availabilityTo: <date>,
-  *   availabilityVideoStatusType: 'DISABLED' || 'SYNCABLE' || 'INTERACTIVE',
-  *   basedOnDefaultLocale: { en: false, fr: true, nl: false },
-  *   defaultLocale: 'en',
-  *   description: { en: '...', fr: '...', nl: '...' },
-  *   externalReference: '...',
-  *   externalReferenceSource: '...',
-  *   hasTitle: { en: true, fr: true, nl: true },
-  *   id: 'abcdef123',
-  *   keyVisual: { en: ..., fr: ..., nl: ... },
-  *   locales: [ 'en', 'fr', 'nl' ],
-  *   number: 2,
-  *   poster: { en: ..., fr: ..., nl: ... },
-  *   publishStatus: 'DRAFT' || 'REVIEW' || 'PUBLISHED',
-  *   relatedCharacterIds: [ '1234', '1235', ... ]
-  *   relatedVideoId: '1234',
-  *   seasonId: 'abc12',
-  *   seriesEntryId: 'bca12',
-  *   title: { en: 'Pilot', fr: 'Pilot', nl: 'Pilot' }
-  * }
-  */
-export function transformEpisode ({ availabilities, characters, contentProducers, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource },
-  localeData, number, publishStatus, season, serie, uuid: id, video }) {
-  const episode = {
-    // ...convertAvailabilitiesFromApi(availabilities),
-    basedOnDefaultLocale: {},
-    contentProducerIds: contentProducers.map((cp) => cp.uuid),
-    defaultLocale,
-    description: {}, // Locale data
-    externalReference,
-    externalReferenceSource,
-    hasTitle: {}, // Locale data
-    id,
-    keyVisual: {},
-    locales: [],
-    number,
-    poster: {},
-    publishStatus,
-    relatedCharacterIds: characters.map((c) => c.character.uuid),
-    relatedVideoId: video && video.uuid,
-    seasonId: season.uuid,
-    seriesEntryId: serie.uuid,
-    title: {} // Locale data
-  };
-  for (const { basedOnDefaultLocale, description, hasTitle, locale, posterImage, profileCover, title } of localeData) {
-    episode.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
-    episode.description[locale] = description;
-    episode.hasTitle[locale] = hasTitle;
-    episode.keyVisual[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
-    episode.poster[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
-    episode.title[locale] = title;
-    episode.locales.push(locale);
-  }
-  return episode;
 }
 
 /**
@@ -389,10 +341,14 @@ function transformScene ({ hidden, image, offsetInSeconds, status, uuid: id }) {
   };
 }
 
-export function transformVideo ({ audioFingerprints, description, scenes, totalDurationInSeconds, uuid: id, videoFilename }) {
+export function transformVideo ({ audioFingerprints, description,
+  externalReference: { reference: externalReference, source: externalReferenceSource },
+  scenes, totalDurationInSeconds, uuid: id, videoFilename }) {
   return {
     audioFingerprints: audioFingerprints && audioFingerprints.map(transformFingerprint),
     description,
+    externalReference,
+    externalReferenceSource,
     id,
     scenes: scenes && scenes.map(transformScene),
     totalDurationInSeconds,

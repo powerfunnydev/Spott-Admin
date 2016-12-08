@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { fontWeights, makeTextStyle, mediaQueries } from '../_common/styles';
-import Spinner from '../_common/spinner';
+import Spinner from '../_common/components/spinner';
 
 export const smallWidgetStyle = {
   width: '100%',
@@ -96,7 +96,7 @@ export default class Widget extends Component {
         <div style={styles.container}>
           <div style={styles.header}>
             <h2 style={styles.title}>{title}&nbsp;&nbsp;&nbsp;</h2>
-            {isLoading && <Spinner />}
+            {isLoading && <Spinner size='small' />}
           </div>
           <div style={[ styles.content, contentStyle ]}>
             {children}

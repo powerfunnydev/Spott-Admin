@@ -1,37 +1,36 @@
+/* eslint-disable react/no-set-state */
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-// import { ERROR, FETCHING, LOADED, UPDATING } from '../../../data/statusTypes';
-// import { Section } from '../../../_common/components';
 import { buttonStyles, colors, fontWeights, makeTextStyle } from '../../../_common/styles';
-import { COMMERCIAL, EPISODE, MOVIE } from '../../../../constants/mediaTypes';
 import EntityDetails from '../../../_common/entityDetails';
 import { confirmation } from '../../../_common/askConfirmation';
 import ProgressBar from '../../../_common/components/progressBar';
 import PersistVideoModal from '../persist';
 import * as actions from './actions';
+import { routerPushWithReturnTo } from '../../../../actions/global';
 import selector from './selector';
+
+import Spinner from '../../../_common/components/spinner';
 
 const cross = require('../../../../assets/images/cross/cross-red.svg');
 
 @connect(selector, (dispatch) => ({
-  loadVideo: bindActionCreators(actions.loadVideo, dispatch)
+  loadVideo: bindActionCreators(actions.loadVideo, dispatch),
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @Radium
 export default class RelatedVideo extends Component {
 
   static propTypes = {
     input: PropTypes.object.isRequired,
-    // editStatusCurrentVideo: ImmutablePropTypes.map,
     loadVideo: PropTypes.func.isRequired,
     medium: ImmutablePropTypes.map.isRequired,
-    // localeNames: ImmutablePropTypes.map.isRequired,
-    // partialTaggerUrl: PropTypes.string,
-    // relatedVideoIdField: PropTypes.object.isRequired,
-    // videoUploadUrl: PropTypes.string,
-    // videosById: ImmutablePropTypes.map.isRequired
+    partialTaggerUrl: PropTypes.string.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
+    video: ImmutablePropTypes.map,
     videoUploadStatus: ImmutablePropTypes.map
   };
 
@@ -60,10 +59,6 @@ export default class RelatedVideo extends Component {
     if (confirmed) {
       this.props.input.onChange(null);
     }
-  }
-
-  persistVideo (values) {
-    console.warn('VALUES', values);
   }
 
   static styles = {
@@ -133,23 +128,48 @@ export default class RelatedVideo extends Component {
       bar: {
         width: '18.75em'
       }
+    },
+    launchTagger: {
+      marginLeft: 0,
+      marginTop: '1em',
+      paddingLeft: 24,
+      paddingRight: 24
+    },
+    spinnerContainer: {
+      alignItems: 'center',
+      display: 'flex',
+      justifyContent: 'center',
+      padding: '3em'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { input: { value: videoId }, medium, video, videoUploadStatus } = this.props;
-    console.warn('VIDEO', videoId, video && video.toJS());
+    const { input: { value: videoId }, medium, partialTaggerUrl, video, videoUploadStatus } = this.props;
+
     if (videoId) {
       if (video.get('_status') === 'loaded') {
         return (
           <div>
             <div style={styles.detailsContainer.base}>
               <EntityDetails
-                content={video.get('videoFilename')}
+                content={
+                  <div>
+                    {video.get('videoFilename')}
+                    <div>
+                      <a
+                        href={`${partialTaggerUrl}#/episode/${medium.get('id')}/video/${videoId}`}
+                        key='tagger'
+                        style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue, styles.launchTagger ]}
+                        target='_blank'>
+                        Launch Tagger
+                      </a>
+                    </div>
+                  </div>}
                 imageUrl={video.getIn([ 'scenes', 0, 'image' ]) && `${video.getIn([ 'scenes', 0, 'image', 'url' ])}?height=174&width=310`}
                 style={styles.details}
-                title={video.get('description')} />
+                title={video.get('description')}
+                onEdit={() => this.props.routerPushWithReturnTo(`content/videos/edit/${videoId}`)}/>
             </div>
             <div style={styles.unlink} onClick={this.onUnlinkVideo}>
               <img src={cross} />&nbsp;&nbsp;&nbsp;Unlink
@@ -157,11 +177,15 @@ export default class RelatedVideo extends Component {
           </div>
         );
       }
-      return <div>Loading...</div>;
+      return (
+        <div style={styles.spinnerContainer}>
+          <Spinner size='large'/>
+        </div>
+      );
     }
 
     if (videoUploadStatus) {
-      const showProgress = Boolean(videoUploadStatus.get('totalBytes'));
+      const showProgress = videoUploadStatus.get('currentBytes') !== videoUploadStatus.get('totalBytes');
       return (
         <div>
           <div style={[ styles.detailsContainer.base, styles.detailsContainer.bottomBar ]}>

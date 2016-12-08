@@ -27,7 +27,7 @@ export default class Checkbox extends Component {
     this.onChange = ::this.onChange;
   }
 
-  onChange () {
+  onChange (e) {
     const { input } = this.props;
     this.props.onChange && this.props.onChange(input && !input.value);
     if (input && input.onChange) {

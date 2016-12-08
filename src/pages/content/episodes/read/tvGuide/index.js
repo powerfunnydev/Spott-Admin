@@ -119,8 +119,7 @@ export default class TvGuideList extends Component {
     this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/seasons/read/${seasonId}/episodes/read/${episodeId}/create/tv-guide`);
   }
 
-  async onClickDeleteSelected (e) {
-    e.preventDefault();
+  async onClickDeleteSelected () {
     const tvGuideEntryIds = [];
     this.props.isSelected.forEach((selected, key) => {
       if (selected && key !== 'ALL') {

@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformEpisode, transformEpisode004, transformTvGuideEntry } from './transformers';
+import { transformListEpisode, transformEpisode004, transformTvGuideEntry } from './transformers';
 
 export async function fetchTvGuideEntries (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField, episodeId }) {
   let url = `${baseUrl}/v004/media/media/${episodeId}/tvGuideEntries?page=${page}&pageSize=${pageSize}&mediumUuid=${episodeId}`;
@@ -27,7 +27,7 @@ export async function fetchEpisodes (baseUrl, authenticationToken, locale, { sea
   const { body } = await get(authenticationToken, locale, url);
   // There is also usable data in body (not only in data field).
   // We need also fields page, pageCount,...
-  body.data = body.data.map(transformEpisode);
+  body.data = body.data.map(transformListEpisode);
   return body;
 }
 
@@ -37,17 +37,24 @@ export async function fetchEpisode (baseUrl, authenticationToken, locale, { epis
   return transformEpisode004(body);
 }
 
-export async function persistEpisode (baseUrl, authenticationToken, locale, { availabilities, number, hasTitle, basedOnDefaultLocale,
-  locales, publishStatus, description, endYear, startYear, defaultLocale, defaultTitle, seriesEntryId, title, seasonId, episodeId,
-  contentProducers, broadcasters }) {
+export async function fetchNextEpisode (baseUrl, authenticationToken, locale, { episodeId }) {
+  const url = `${baseUrl}/v004/media/serieEpisodes/${episodeId}/next`;
+  const { body } = await get(authenticationToken, locale, url);
+  return transformEpisode004(body);
+}
+
+export async function persistEpisode (baseUrl, authenticationToken, locale, {
+  basedOnDefaultLocale, broadcasters, characters, contentProducers, defaultLocale,
+  defaultTitle, description, endYear, episodeId, hasTitle, locales, number,
+  publishStatus, relatedCharacterIds, seasonId, seriesEntryId, startYear, title,
+  lastEpisodeId
+}) {
   let episode = {};
   if (episodeId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/serieEpisodes/${episodeId}`);
     episode = body;
   }
-  episode.availabilities = availabilities && availabilities.map(({ availabilityFrom, availabilityTo, countryId, videoStatus }) => ({
-    country: countryId && { uuid: countryId }, startTimeStamp: availabilityFrom, endTimeStamp: availabilityTo, videoStatus
-  }));
+  // episode.characters = characters.map(({ id }) => ({ character: { uuid: id } }));
   // episode.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
   episode.contentProducers = contentProducers && contentProducers.map((cp) => ({ uuid: cp }));
   episode.broadcasters = broadcasters && broadcasters.map((bc) => ({ uuid: bc }));
@@ -79,7 +86,15 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, { av
   });
   const url = `${baseUrl}/v004/media/serieEpisodes`;
   const result = await post(authenticationToken, locale, url, episode);
-  return transformEpisode004(result.body);
+  const persistedEpisode = transformEpisode004(result.body);
+  // Copy all characters of the last episode of a season. This only happens when
+  // we create a new episode. We need to create the episode first, so we have the
+  // id of this episode. After that we can do the copy call.
+  if (lastEpisodeId) {
+    const resp = await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${persistedEpisode.id}/castMembers/actions/importFromOtherMedium/${lastEpisodeId}`);
+    console.log('result', resp);
+  }
+  return persistedEpisode;
 }
 
 export async function deleteEpisode (baseUrl, authenticationToken, locale, { episodeId }) {

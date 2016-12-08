@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import AWS from 'aws-sdk';
-import { get, post, UnexpectedError } from './request';
-import { transformListMedium } from './transformers';
+import { get, post, UnexpectedError, del } from './request';
+import { transformListMedium, transformTvGuideEntry } from './transformers';
 
 function uploadToS3 ({ accessKeyId, acl, baseKey, bucket, file, policy, signature }, uploadingCallback) {
   return new Promise((resolve, reject) => {
@@ -224,4 +224,29 @@ export async function searchMedia (baseUrl, authenticationToken, locale, { searc
   }
   const { body: { data } } = await get(authenticationToken, locale, searchUrl);
   return data.map(transformListMedium);
+}
+
+export async function deletePosterImage (baseUrl, authenticationToken, locale, { mediumId }) {
+  let url = `${baseUrl}/v004/media/media/${mediumId}/posterImage`;
+  await del(authenticationToken, locale, url);
+}
+
+export async function deleteProfileImage (baseUrl, authenticationToken, locale, { mediumId }) {
+  let url = `${baseUrl}/v004/media/media/${mediumId}/profileCover`;
+  await del(authenticationToken, locale, url);
+}
+
+export async function fetchTvGuideEntries (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField, mediumId }) {
+  let url = `${baseUrl}/v004/media/media/${mediumId}/tvGuideEntries?page=${page}&pageSize=${pageSize}&mediumUuid=${mediumId}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${searchString}`);
+  }
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  const { body } = await get(authenticationToken, locale, url);
+  // There is also usable data in body (not only in data field).
+  // We need also fields page, pageCount,...
+  body.data = body.data.map(transformTvGuideEntry);
+  return body;
 }

@@ -7,22 +7,22 @@ import moment from 'moment';
 import { routerPushWithReturnTo } from '../../../actions/global';
 import { Root, FormSubtitle, colors, EditTemplate } from '../../_common/styles';
 import * as actions from './actions';
-import Button from '../../_common/buttons/button';
+import Button from '../../_common/components/buttons/button';
 import DateInput from '../../_common/inputs/dateInput';
 import Header from '../../app/header';
 import Label from '../../_common/inputs/_label';
-import localized from '../../_common/localized';
+import localized from '../../_common/decorators/localized';
 import Section from '../../_common/components/section';
 import SelectInput from '../../_common/inputs/selectInput';
 import TextInput from '../../_common/inputs/textInput';
 import selector from './selector';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import Dropzone from '../../_common/dropzone';
+import Dropzone from '../../_common/dropzone/imageDropzone';
 import { Tabs, Tab } from '../../_common/components/formTabs';
 import Checkbox from '../../_common/inputs/checkbox';
 import { INACTIVE, disabledReasons, userStatus as userStates } from '../../../constants/userRoles';
 import { FETCHING } from '../../../constants/statusTypes';
-import BreadCrumbs from '../../_common/breadCrumbs';
+import BreadCrumbs from '../../_common/components/breadCrumbs';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -125,6 +125,7 @@ export default class EditUser extends Component {
       paddingLeft: '24px'
     },
     row: {
+      alignItems: 'flex-start',
       display: 'flex',
       flexDirection: 'row'
     },
@@ -227,6 +228,7 @@ export default class EditUser extends Component {
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
+                      downloadUrl={currentUser.get('profileImage') && currentUser.getIn([ 'profileImage', 'url' ])}
                       imageUrl={currentUser.get('profileImage') && `${currentUser.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                       onChange={({ callback, file }) => { this.props.uploadProfileImage({ userId: this.props.params.id, image: file, callback }); }}/>
                   </div>
@@ -234,6 +236,7 @@ export default class EditUser extends Component {
                     <Label text='Avatar image' />
                     <Dropzone
                       accept='image/*'
+                      downloadUrl={currentUser.get('avatar') && currentUser.getIn([ 'avatar', 'url' ])}
                       imageUrl={currentUser.get('avatar') && `${currentUser.getIn([ 'avatar', 'url' ])}?height=310&width=310`}
                       onChange={({ callback, file }) => { this.props.uploadBackgroundImage({ userId: this.props.params.id, image: file, callback }); }}/>
                   </div>
@@ -265,12 +268,14 @@ export default class EditUser extends Component {
                   <div style={styles.row}>
                     <Field
                       component={Checkbox}
+                      first
                       name='sysAdmin'/>
                     <div style={[ styles.paddingLeftCheckbox, styles.fontSize ]}>System admin</div>
                   </div>
                   <div style={[ styles.row, styles.paddingTopRow ]}>
                     <Field
                       component={Checkbox}
+                      first
                       name='broadcaster'/>
                     <div style={[ styles.paddingLeftCheckbox, styles.column ]}>
                       <div style={styles.fontSize}>Broadcaster</div>
@@ -292,12 +297,14 @@ export default class EditUser extends Component {
                   <div style={[ styles.row, styles.paddingTopRow ]}>
                     <Field
                       component={Checkbox}
+                      first
                       name='contentManager'/>
                     <div style={[ styles.paddingLeftCheckbox, styles.fontSize ]}>Content manager</div>
                   </div>
                   <div style={[ styles.row, styles.paddingTopRow ]}>
                     <Field
                       component={Checkbox}
+                      first
                       name='contentProducer'/>
                     <div style={[ styles.paddingLeftCheckbox, styles.column ]}>
                       <div style={styles.fontSize}>Content producer</div>

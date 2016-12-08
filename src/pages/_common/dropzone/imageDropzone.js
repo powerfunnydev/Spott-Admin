@@ -1,30 +1,36 @@
-import Radium from 'radium';
+ /* eslint-disable react/no-set-state */
 import React, { Component, PropTypes } from 'react';
+import Radium from 'radium';
 import ReactDOM from 'react-dom';
 import ReactDropzone from 'react-dropzone';
 import { colors, makeTextStyle, fontWeights } from '../styles';
 import ProgressBar from '../components/progressBar';
-
- /* eslint-disable react/no-set-state */
+import Dropdown, { styles as dropdownStyles } from '../components/actionDropdown';
+import { downloadFile } from '../../../utils';
+import { aspectRatios } from '../../../constants/imageTypes';
 
 const uploadIcon = require('../../../assets/images/upload.svg');
 const completedIcon = require('../../../assets/images/completed.svg');
 
 @Radium
-export default class Dropzone extends Component {
+export default class ImageDropzone extends Component {
 
   static propTypes = {
     accept: PropTypes.string,
+    downloadUrl: PropTypes.string,
     imageUrl: PropTypes.string,
     type: PropTypes.string,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    onDelete: PropTypes.func
   };
 
   constructor (props) {
     super(props);
     this.onDrop = ::this.onDrop;
     this.callback = ::this.callback;
-    this.state = { };
+    this.onDelete = :: this.onDelete;
+    // we haven't delete the image yet
+    this.state = { deleteImage: false };
   }
 
   /**
@@ -40,7 +46,7 @@ export default class Dropzone extends Component {
     this.setState(...this.state, { progress, total });
     if (progress === total) {
       setTimeout(() => {
-        this.setState(...this.state, { showImage: true });
+        this.setState({ ...this.state, showImage: true });
       }, 1000);
     }
     console.log('progress ', (progress / total) * 100, '%');
@@ -51,6 +57,19 @@ export default class Dropzone extends Component {
     if (this.props.onChange) {
       this.props.onChange({ callback: this.callback, file: acceptedFiles[0] });
     }
+  }
+
+  async onDelete (e) {
+    // We want to delete the image. We need to set the state right.
+    await this.props.onDelete();
+    this.setState({
+      ...this.state,
+      file: undefined,
+      showImage: false,
+      deleteImage: true,
+      progress: 0,
+      total: 0
+    });
   }
 
   static styles = {
@@ -110,23 +129,33 @@ export default class Dropzone extends Component {
     progressBar: {
       width: '130px'
     },
-    profileImage: {
-      width: '200px'
-    },
-    backgroundImage: {
-      width: '426px'
+    dropdownButton: {
+      position: 'absolute',
+      right: 7,
+      top: 7,
+      zIndex: 12
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { accept, type, imageUrl } = this.props;
+    const { accept, type, imageUrl, downloadUrl, onDelete } = this.props;
+    // If we have delete an image, we don't want to display the imageUrl or downloadUrl,
+    // cause it doesn't exist anymore. So we show the local image if there is one.
+    // Else, if we didn't delete an image, but there is an image, show that image.
+    const downloadUrlOrPreview = this.state.showImage && this.state.file && this.state.file.type.startsWith('image') && this.state.file.preview || !this.state.deleteImage && downloadUrl;
+    const imageUrlOrPreview = this.state.showImage && this.state.file && this.state.file.type.startsWith('image') && this.state.file.preview || !this.state.deleteImage && imageUrl;
     return (
-      <div style={type === 'backgroundImage' ? styles.backgroundImage : styles.profileImage}>
+      <div style={{ position: 'relative', width: 200 * (aspectRatios[type] || 1) }}>
         {/* Render dropzone */}
-        <ReactDropzone accept={accept} activeStyle={styles.activeDropzone} multiple={false} ref={(x) => { this.dropzone = x; }}
+        <ReactDropzone accept={accept || 'image/*'} activeStyle={styles.activeDropzone} multiple={false} ref={(x) => { this.dropzone = x; }}
           style={styles.dropzone} onDrop={this.onDrop} >
-          <div >
+          <div>
+            {downloadUrlOrPreview && <Dropdown style={styles.dropdownButton}>
+              {downloadUrlOrPreview && <div key='downloadImage' style={dropdownStyles.floatOption} onClick={(e) => { downloadFile(downloadUrlOrPreview); }}>Download</div>}
+              {downloadUrlOrPreview && onDelete && <div style={dropdownStyles.line}/>}
+              {downloadUrlOrPreview && onDelete && <div key='deleteImage' style={dropdownStyles.floatOption} onClick={this.onDelete}>Delete</div>}
+            </Dropdown>}
             { /* Uploading */
               (this.state.progress && this.state.total && this.state.progress !== this.state.total &&
                 <ProgressBar
@@ -140,12 +169,14 @@ export default class Dropzone extends Component {
                     <img src={completedIcon} style={styles.completedImage}/>
                     <div style={styles.completedText}>Completed</div>
                   </div>}
-                  {this.state.showImage && this.state.file && this.state.file.type.startsWith('image') && <div style={styles.chosenImage}><img src={this.state.file.preview} style={styles.chosenImage}/></div>}
+                  {this.state.showImage && this.state.file && this.state.file.type.startsWith('image') &&
+                    <img src={this.state.file.preview} style={styles.chosenImage}/>
+                  }
                 </div>) ||
             /* When there was already an image uploaded */
-            (imageUrl && <div style={styles.chosenImage}>
-              <img src={imageUrl} style={styles.chosenImage}/>
-              </div>) ||
+            ((imageUrlOrPreview) &&
+              <img src={imageUrlOrPreview} style={styles.chosenImage}/>
+            ) ||
             /* Idle state, user has to chose a image */
             (<img src={uploadIcon} style={styles.uploadImage}/>)
             }

@@ -5,8 +5,8 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { buttonStyles } from '../_common/styles';
-import localized from '../_common/localized';
-import Modal from '../_common/modal';
+import localized from '../_common/decorators/localized';
+import Modal from '../_common/components/modal';
 import * as actions from '../../actions/user';
 import { routerPushWithReturnTo } from '../../actions/global';
 

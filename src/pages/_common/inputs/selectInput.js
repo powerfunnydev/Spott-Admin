@@ -1,3 +1,4 @@
+/* eslint-disable react/no-set-state */
 import React, { Component, PropTypes } from 'react';
 import Select from 'react-select';
 import Radium from 'radium';
@@ -111,14 +112,13 @@ export default class SelectInput extends Component {
     // expects a classic array. So we invoke toJS on the list.
     if (Immutable.Iterable.isIterable(input.value)) {
       value = (input.value || []).map((o) => ({ value: o, label: getItemText(o) })).toJS();
+    } else if (multiselect) { // If it isn't a immutable List, but a classic array.
+      // We fall back to [] because of https://github.com/erikras/redux-form/issues/621
+      value = (input.value || []).map((o) => ({ value: o, label: getItemText(o) }));
     } else {
-      // if it isn't a immutable List, but a classic array.
-      if (multiselect) {
-        value = (input.value || []).map((o) => ({ value: o, label: getItemText(o) })); // We fall back to [] because of https://github.com/erikras/redux-form/issues/621
-      } else {
-        value = input.value && { value: input.value, label: getItemText(input.value) };
-      }
+      value = input.value && { value: input.value, label: getItemText(input.value) };
     }
+
     const maxSelected = maxSelect ? ((input.value && input.value.length) || 0) >= maxSelect : false;
     return (
       <div style={[ !first && styles.padTop, style ]}>
@@ -137,7 +137,10 @@ export default class SelectInput extends Component {
           value={value} // Overides value of of {...field}
           onBlur={() => input.onBlur && input.onBlur(input.value)} // Overides onBlur of {...field}
           onChange={this.onInternalChange}  // Overides onChange of {...field};
-          onInputChange={(val) => { this.setState({ value: val }); getOptions && getOptions(val); }}
+          onInputChange={(val) => {
+            this.setState({ value: val });
+            getOptions && getOptions(val);
+          }}
           onOpen={getOptions} />
         {typeof maxSelect === 'number' && <span style={styles.info}>{(input.value && input.value.length) || 0}/{maxSelect} selected</span>}
         {meta && meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}

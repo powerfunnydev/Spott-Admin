@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 
-const plusIcon = require('../../../assets/images/plus-white.svg');
+const plusIcon = require('../../../../assets/images/plus-white.svg');
 
 @Radium
 export default class PlusButton extends Component {
