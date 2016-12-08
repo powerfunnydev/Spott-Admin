@@ -87,30 +87,41 @@ export default class CreateEpisodentryModal extends Component {
     await searchSeasons(null, seriesEntryId);
     // 404 error when there is no last episode. We go further with the default value of
     // defaultLocale, content producers, broadcasters and number of an episode.
-    let episodeNumber;
-    let contentProducers;
     let broadcasters;
+    let characters;
+    let contentProducers;
     let defaultLocale;
+    let episodeNumber;
+    // We need the id of the last episode for copying all characters.
+    let lastEpisodeId;
     try {
       const lastEpisode = await fetchLastEpisode(seasonId);
-      contentProducers = lastEpisode.contentProducers;
+      console.log('lastEpisode', lastEpisode);
       broadcasters = lastEpisode.broadcasters;
+      characters = lastEpisode.characters;
+      contentProducers = lastEpisode.contentProducers;
       defaultLocale = lastEpisode.defaultLocale;
       episodeNumber = lastEpisode.number + 1;
+      lastEpisodeId = lastEpisode.id;
+      console.log('lastEpisodeId', lastEpisodeId);
     } catch (e) {
-      contentProducers = [];
+      console.error('e', e);
       broadcasters = [];
-      episodeNumber = 1;
+      characters = [];
+      contentProducers = [];
       // We will use the locale of the current user as default locale.
       defaultLocale = currentLocale;
+      episodeNumber = 1;
     }
     await initialize({
       broadcasters,
+      characters,
       contentProducers,
       defaultLocale,
+      lastEpisodeId,
       number: episodeNumber,
-      seriesEntryId,
-      seasonId
+      seasonId,
+      seriesEntryId
     });
   }
 

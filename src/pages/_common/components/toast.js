@@ -151,7 +151,7 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        Episode <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/series/read/${episode.seriesEntryId}/seasons/read/${episode.seasonId}/episodes/read/${episode.id}`)}>
+        Episode <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/series/read/${episode.seriesEntry.id}/seasons/read/${episode.season.id}/episodes/read/${episode.id}`)}>
           {episode.title[episode.defaultLocale]}
         </span> has been succesfully persisted.
       </span>
@@ -162,7 +162,7 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        Season <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/series/read/${season.seriesEntryId}/seasons/read/${season.id}`)}>
+        Season <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/series/read/${season.seriesEntry.id}/seasons/read/${season.id}`)}>
           {season.title[season.defaultLocale]}
         </span> has been succesfully persisted.
       </span>
