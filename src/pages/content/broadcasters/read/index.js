@@ -88,7 +88,7 @@ export default class ReadBroadcaster extends Component {
         <SpecificHeader/>
         <BreadCrumbs
           hierarchy={[
-            { title: 'List', url: '/content/broadcasters' },
+            { title: 'Broadcasters', url: '/content/broadcasters' },
             { title: currentBroadcaster.get('name'), url: location.pathname }
           ]}/>
         <Container>

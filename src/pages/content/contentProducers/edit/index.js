@@ -102,7 +102,7 @@ export default class EditContentProducers extends Component {
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
-          { title: 'List', url: '/content/content-producers' },
+          { title: 'Content producers', url: '/content/content-producers' },
           { title: currentContentProducer.get('name'), url: location } ]}/>
         <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
           <Tabs>
