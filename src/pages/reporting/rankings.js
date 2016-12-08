@@ -332,7 +332,26 @@ export default class Rankings extends Component {
                   ))}
                 </InfiniteScroll>
               </Widget>
-              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(productViews)} title='Product views'>
+              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(productImpressions)} title='Product impressions'>
+                <InfiniteScroll
+                  containerHeight={260}
+                  elementHeight={40}
+                  isLoading={isLoading(productImpressions)}
+                  loadMore={loadProductImpressions}
+                  offset={400}
+                  page={currentProductImpressionsPage}>
+                {productImpressions.get('data').map((pw, i) => (
+                  <RankingItem
+                    count={pw.count}
+                    countLabel='Impressions'
+                    imageUrl={pw.product.image && pw.product.image.url}
+                    key={i}
+                    position={i + 1}
+                    title={pw.product.shortName} />
+                ))}
+                </InfiniteScroll>
+              </Widget>
+              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(productViews)} title='Product clicks'>
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
@@ -343,7 +362,7 @@ export default class Rankings extends Component {
                 {productViews.get('data').map((pw, i) => (
                   <RankingItem
                     count={pw.count}
-                    countLabel='Views'
+                    countLabel='Clicks'
                     imageUrl={pw.product.image && pw.product.image.url}
                     key={i}
                     position={i + 1}
@@ -363,25 +382,6 @@ export default class Rankings extends Component {
                   <RankingItem
                     count={pw.count}
                     countLabel='Buys'
-                    imageUrl={pw.product.image && pw.product.image.url}
-                    key={i}
-                    position={i + 1}
-                    title={pw.product.shortName} />
-                ))}
-                </InfiniteScroll>
-              </Widget>
-              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(productImpressions)} title='Product impressions'>
-                <InfiniteScroll
-                  containerHeight={260}
-                  elementHeight={40}
-                  isLoading={isLoading(productImpressions)}
-                  loadMore={loadProductImpressions}
-                  offset={400}
-                  page={currentProductImpressionsPage}>
-                {productImpressions.get('data').map((pw, i) => (
-                  <RankingItem
-                    count={pw.count}
-                    countLabel='Impressions'
                     imageUrl={pw.product.image && pw.product.image.url}
                     key={i}
                     position={i + 1}
