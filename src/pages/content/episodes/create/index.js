@@ -92,14 +92,20 @@ export default class CreateEpisodentryModal extends Component {
     let contentProducers;
     let defaultLocale;
     let episodeNumber;
+    // We need the id of the last episode for copying all characters.
+    let lastEpisodeId;
     try {
       const lastEpisode = await fetchLastEpisode(seasonId);
+      console.log('lastEpisode', lastEpisode);
       broadcasters = lastEpisode.broadcasters;
       characters = lastEpisode.characters;
       contentProducers = lastEpisode.contentProducers;
       defaultLocale = lastEpisode.defaultLocale;
       episodeNumber = lastEpisode.number + 1;
+      lastEpisodeId = lastEpisode.id;
+      console.log('lastEpisodeId', lastEpisodeId);
     } catch (e) {
+      console.error('e', e);
       broadcasters = [];
       characters = [];
       contentProducers = [];
@@ -112,6 +118,7 @@ export default class CreateEpisodentryModal extends Component {
       characters,
       contentProducers,
       defaultLocale,
+      lastEpisodeId,
       number: episodeNumber,
       seasonId,
       seriesEntryId

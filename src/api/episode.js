@@ -46,15 +46,15 @@ export async function fetchNextEpisode (baseUrl, authenticationToken, locale, { 
 export async function persistEpisode (baseUrl, authenticationToken, locale, {
   basedOnDefaultLocale, broadcasters, characters, contentProducers, defaultLocale,
   defaultTitle, description, endYear, episodeId, hasTitle, locales, number,
-  publishStatus, relatedCharacterIds, seasonId, seriesEntryId, startYear, title
+  publishStatus, relatedCharacterIds, seasonId, seriesEntryId, startYear, title,
+  lastEpisodeId
 }) {
   let episode = {};
   if (episodeId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/serieEpisodes/${episodeId}`);
     episode = body;
   }
-
-  episode.characters = characters.map(({ id }) => ({ character: { uuid: id } }));
+  // episode.characters = characters.map(({ id }) => ({ character: { uuid: id } }));
   // episode.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
   episode.contentProducers = contentProducers && contentProducers.map((cp) => ({ uuid: cp }));
   episode.broadcasters = broadcasters && broadcasters.map((bc) => ({ uuid: bc }));
@@ -86,7 +86,15 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, {
   });
   const url = `${baseUrl}/v004/media/serieEpisodes`;
   const result = await post(authenticationToken, locale, url, episode);
-  return transformEpisode004(result.body);
+  const persistedEpisode = transformEpisode004(result.body);
+  // Copy all characters of the last episode of a season. This only happens when
+  // we create a new episode. We need to create the episode first, so we have the
+  // id of this episode. After that we can do the copy call.
+  if (lastEpisodeId) {
+    const resp = await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${persistedEpisode.id}/castMembers/actions/importFromOtherMedium/${lastEpisodeId}`);
+    console.log('result', resp);
+  }
+  return persistedEpisode;
 }
 
 export async function deleteEpisode (baseUrl, authenticationToken, locale, { episodeId }) {

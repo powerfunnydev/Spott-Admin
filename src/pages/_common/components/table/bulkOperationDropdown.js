@@ -1,8 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import Dropdown, { styles as dropdownStyles } from '../actionDropdown';
-import Checkbox from '../../inputs/checkbox';
 import { confirmation } from '../../../_common/askConfirmation';
+import CogWheal from '../../images/cogWheal';
+import { fontWeights } from '../../styles';
 
 @Radium
 export default class BulkOperationDropdown extends Component {
@@ -28,14 +29,21 @@ export default class BulkOperationDropdown extends Component {
 
   static styles = {
     smallPadding: {
-      paddingLeft: '2px',
-      paddingTop: '2px',
-      paddingBottom: '2px',
-      paddingRight: '2px'
+      paddingLeft: '3px',
+      paddingTop: '3px',
+      paddingBottom: '3px',
+      paddingRight: '3px'
     },
     row: {
       display: 'flex',
       flexDirection: 'row'
+    },
+    centerHeight: {
+      display: 'flex',
+      alignItems: 'center'
+    },
+    medium: {
+      fontFamily: fontWeights.medium
     }
   }
 
@@ -49,8 +57,10 @@ export default class BulkOperationDropdown extends Component {
           color='blue'
           elementShown={
             <div style={styles.row}>
-              <Checkbox checked color='blue' style={[ dropdownStyles.option, dropdownStyles.borderLeft, dropdownStyles.blue, styles.smallPadding ]}/>
-              <div style={[ dropdownStyles.option, dropdownStyles.blue, styles.smallPadding ]}>
+              <div key='wheal' style={[ dropdownStyles.option, dropdownStyles.borderLeft, dropdownStyles.blue, styles.smallPadding, styles.centerHeight ]}>
+                <CogWheal color='white'/>
+              </div>
+              <div key='numberSelected' style={[ dropdownStyles.option, dropdownStyles.blue, styles.smallPadding, styles.centerHeight, styles.medium ]}>
                 {numberSelected}
               </div>
             </div>
