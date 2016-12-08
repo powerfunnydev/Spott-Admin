@@ -172,9 +172,11 @@ export default class Characters extends Component {
                 <div style={generalStyles.row}>
                   {characters.get('data').map((character, index) => (
                     <Tile
+                      checked={isSelected.get(character.get('id'))}
                       imageUrl={character.get('profileImage') && `${character.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                       key={`character${index}`}
                       text={character.get('name')}
+                      onCheckboxChange={selectCheckbox.bind(this, character.get('id'))}
                       onClick={() => { this.props.routerPushWithReturnTo(`content/characters/read/${character.get('id')}`); }}
                       onDelete={async (e) => { e.preventDefault(); await this.deleteCharacter(character.get('id')); }}
                       onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/characters/edit/${character.get('id')}`); }}/>

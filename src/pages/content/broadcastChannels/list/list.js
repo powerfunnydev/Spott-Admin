@@ -156,9 +156,11 @@ export default class BroadcastChannelList extends Component {
                 <div style={generalStyles.row}>
                   {this.props.broadcastChannels.get('data').map((broadcastChannel, index) => (
                     <Tile
+                      checked={isSelected.get(broadcastChannel.get('id'))}
                       imageUrl={broadcastChannel.get('logo') && `${broadcastChannel.getIn([ 'logo', 'url' ])}?height=310&width=310`}
                       key={`broadcastChannel${index}`}
                       text={broadcastChannel.get('name')}
+                      onCheckboxChange={selectCheckbox.bind(this, broadcastChannel.get('id'))}
                       onDelete={async (e) => {
                         e.preventDefault();
                         await this.deleteBroadcastChannel(broadcastChannel.get('id'));

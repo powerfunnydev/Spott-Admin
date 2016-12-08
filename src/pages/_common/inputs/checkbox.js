@@ -28,6 +28,8 @@ export default class Checkbox extends Component {
   }
 
   onChange (e) {
+    e.preventDefault();
+    e.stopPropagation();
     const { input } = this.props;
     this.props.onChange && this.props.onChange(input && !input.value);
     if (input && input.onChange) {
@@ -38,7 +40,8 @@ export default class Checkbox extends Component {
   static styles = {
     container: {
       alignItems: 'center',
-      display: 'flex'
+      display: 'flex',
+      zIndex: 13
     },
     checkbox: {
       backgroundColor: colors.white,

@@ -163,10 +163,12 @@ export default class Users extends Component {
                 <div style={generalStyles.row}>
                   { users.get('data').map((user, index) => (
                     <Tile
+                      checked={isSelected.get(user.get('id'))}
                       deleteText='Remove'
                       imageUrl={user.get('avatar') && `${user.getIn([ 'avatar', 'url' ])}?height=310&width=310`}
                       key={`user${index}`}
                       text={user.get('name')}
+                      onCheckboxChange={selectCheckbox.bind(this, user.get('id'))}
                       onClick={() => { this.props.routerPushWithReturnTo(`users/read/${user.get('id')}`); }}
                       onDelete={this.onDeleteUser.bind(this, user.get('id'))}
                       onEdit={this.onEditEntry.bind(this, user.get('id'))}/>

@@ -167,9 +167,11 @@ export default class Episodes extends Component {
                 <div style={generalStyles.row}>
                   {seasons.get('data').map((season, index) => (
                     <Tile
+                      checked={isSelected.get(season.get('id'))}
                       imageUrl={season.get('profileImage') && `${season.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                       key={`season${index}`}
                       text={this.getTitle(season)}
+                      onCheckboxChange={selectCheckbox.bind(this, season.get('id'))}
                       onClick={() => { this.props.routerPushWithReturnTo(`content/seasons/read/${season.get('id')}`); }}
                       onDelete={async (e) => { e.preventDefault(); await this.deleteEpisode(season.get('id')); }}
                       onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/seasons/edit/${season.get('id')}`); }}/>

@@ -172,9 +172,11 @@ export default class Persons extends Component {
                 <div style={generalStyles.row}>
                   {persons.get('data').map((person, index) => (
                     <Tile
+                      checked={isSelected.get(person.get('id'))}
                       imageUrl={person.get('profileImage') && `${person.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                       key={`person${index}`}
                       text={person.get('name')}
+                      onCheckboxChange={selectCheckbox.bind(this, person.get('id'))}
                       onClick={() => { this.props.routerPushWithReturnTo(`content/persons/read/${person.get('id')}`); }}
                       onDelete={async (e) => { e.preventDefault(); await this.deletePerson(person.get('id')); }}
                       onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/persons/edit/${person.get('id')}`); }}/>
