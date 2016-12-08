@@ -13,14 +13,15 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import * as actions from './actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import selector from './selector';
-import { FETCHING } from '../../../../constants/statusTypes';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { defaultLocale, name, personId } = values.toJS();
+  const { defaultLocale, gender, firstName, lastName } = values.toJS();
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
-  if (!name) { validationErrors.name = t('common.errors.required'); }
-  if (!personId) { validationErrors.personId = t('common.errors.required'); }
+  if (!gender) { validationErrors.gender = t('common.errors.required'); }
+  if (!firstName) { validationErrors.firstName = t('common.errors.required'); }
+  if (!lastName) { validationErrors.lastName = t('common.errors.required'); }
+
   // Done
   return validationErrors;
 }
@@ -28,7 +29,6 @@ function validate (values, { t }) {
 @localized
 @connect(selector, (dispatch) => ({
   load: bindActionCreators(loadList, dispatch),
-  searchPersons: bindActionCreators(actions.searchPersons, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
@@ -37,23 +37,21 @@ function validate (values, { t }) {
   validate
 })
 @Radium
-export default class CreateCharacterModal extends Component {
+export default class CreatePersonModal extends Component {
 
   static propTypes = {
     change: PropTypes.func.isRequired,
     currentLocale: PropTypes.string.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
+    genders: ImmutablePropTypes.map.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
     load: PropTypes.func.isRequired,
     localeNames: ImmutablePropTypes.map.isRequired,
     location: PropTypes.object.isRequired,
-    personsById: ImmutablePropTypes.map.isRequired,
     reset: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
-    searchPersons: PropTypes.func.isRequired,
-    searchedPersonIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired
   };
@@ -91,13 +89,13 @@ export default class CreateCharacterModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo('content/characters', true);
+    this.props.routerPushWithReturnTo('content/persons', true);
   }
 
   render () {
-    const { personsById, handleSubmit, localeNames, searchPersons, searchedPersonIds } = this.props;
+    const { genders, handleSubmit, localeNames } = this.props;
     return (
-      <PersistModal isOpen title='Create Character' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal isOpen title='Create Person' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}
@@ -109,19 +107,17 @@ export default class CreateCharacterModal extends Component {
           placeholder='Default language'/>
         <Field
           component={TextInput}
-          label='Character name'
-          name='name'
-          placeholder='Character name'
+          label='Full name'
+          name='fullName'
+          placeholder='E.g. Mark Zuckerberg'
           required/>
         <Field
           component={SelectInput}
-          getItemText={(id) => personsById.getIn([ id, 'fullName' ])}
-          getOptions={searchPersons}
-          isLoading={searchedPersonIds.get('_status') === FETCHING}
-          label='Person'
-          name='personId'
-          options={searchedPersonIds.get('data').toJS()}
-          placeholder='Person'
+          getItemText={(gender) => genders.get(gender)}
+          label='Gender'
+          name='gender'
+          options={genders.keySeq().toArray()}
+          placeholder='Gender'
           required/>
       </PersistModal>
     );

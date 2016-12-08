@@ -3,9 +3,11 @@ import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import moment from 'moment';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
 import SelectInput from '../../../_common/inputs/selectInput';
+import DateInput from '../../../_common/inputs/dateInput';
 import Header from '../../../app/header';
 // import Line from '../../../_common/components/line';
 import { Root, FormSubtitle, colors, EditTemplate, FormDescription } from '../../../_common/styles';
@@ -16,20 +18,20 @@ import Section from '../../../_common/components/section';
 import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Label from '../../../_common/inputs/_label';
-import selector from './selector';
-import { CHARACTER_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
-import { FETCHING } from '../../../../constants/statusTypes';
+import { PERSON_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
+import selector from './selector';
 import LanguageBar from '../../../_common/components/languageBar';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import ImageDropzone from '../../../_common/dropzone/imageDropzone';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { _activeLocale, defaultLocale, name, personId } = values.toJS();
+  const { defaultLocale, fullName, gender } = values.toJS();
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
-  if (!personId) { validationErrors.personId = t('common.errors.required'); }
-  if (name && !name[_activeLocale]) { validationErrors.name = validationErrors.name || {}; validationErrors.name[_activeLocale] = t('common.errors.required'); }
+  if (!fullName) { validationErrors.fullName = t('common.errors.required'); }
+  if (!gender) { validationErrors.gender = t('common.errors.required'); }
+
 // Done
   return validationErrors;
 }
@@ -37,7 +39,7 @@ function validate (values, { t }) {
 @localized
 @connect(selector, (dispatch) => ({
   fetchFaceImages: bindActionCreators(actions.fetchFaceImages, dispatch),
-  loadCharacter: bindActionCreators(actions.loadCharacter, dispatch),
+  loadPerson: bindActionCreators(actions.loadPerson, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   closeModal: bindActionCreators(actions.closeModal, dispatch),
   deletePortraitImage: bindActionCreators(actions.deletePortraitImage, dispatch),
@@ -45,23 +47,22 @@ function validate (values, { t }) {
   uploadFaceImage: bindActionCreators(actions.uploadFaceImage, dispatch),
   uploadPortraitImage: bindActionCreators(actions.uploadPortraitImage, dispatch),
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch),
-  searchPersons: bindActionCreators(actions.searchPersons, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
-  form: 'characterEdit',
+  form: 'personEdit',
   validate
 })
 @Radium
-export default class EditCharacter extends Component {
+export default class EditPerson extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
     change: PropTypes.func.isRequired,
     closeModal: PropTypes.func.isRequired,
-    currentCharacter: ImmutablePropTypes.map.isRequired,
     currentModal: PropTypes.string,
+    currentPerson: ImmutablePropTypes.map.isRequired,
     defaultLocale: PropTypes.string,
     deletePortraitImage: PropTypes.func.isRequired,
     deleteProfileImage: PropTypes.func.isRequired,
@@ -69,16 +70,14 @@ export default class EditCharacter extends Component {
     error: PropTypes.any,
     errors: PropTypes.object,
     fetchFaceImages: PropTypes.func,
+    genders: ImmutablePropTypes.map.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
-    loadCharacter: PropTypes.func.isRequired,
+    loadPerson: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
-    personsById: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
-    searchPersons: PropTypes.func.isRequired,
-    searchedPersonIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
@@ -98,18 +97,19 @@ export default class EditCharacter extends Component {
   }
 
   async componentWillMount () {
-    if (this.props.params.characterId) {
-      const editObj = await this.props.loadCharacter(this.props.params.characterId);
-      await this.props.fetchFaceImages({ characterId: this.props.params.characterId });
+    if (this.props.params.personId) {
+      const editObj = await this.props.loadPerson(this.props.params.personId);
+      await this.props.fetchFaceImages({ personId: this.props.params.personId });
       this.props.initialize({
         ...editObj,
+        dateOfBirth: moment(editObj.dateOfBirth),
         _activeLocale: editObj.defaultLocale
       });
     }
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/characters', true);
+    this.props.routerPushWithReturnTo('content/persons', true);
   }
 
   languageAdded (form) {
@@ -133,17 +133,17 @@ export default class EditCharacter extends Component {
   }
 
   openCreateLanguageModal () {
-    this.props.openModal(CHARACTER_CREATE_LANGUAGE);
+    this.props.openModal(PERSON_CREATE_LANGUAGE);
   }
 
   async submit (form) {
-    const { supportedLocales, params: { characterId } } = this.props;
+    const { supportedLocales, params: { personId } } = this.props;
 
     try {
       await this.props.submit({
         ...form.toJS(),
         locales: supportedLocales.toArray(),
-        characterId
+        personId
       });
       this.redirect();
     } catch (error) {
@@ -189,16 +189,16 @@ export default class EditCharacter extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { _activeLocale, personsById, errors, closeModal, currentModal, searchPersons, searchedPersonIds, supportedLocales, defaultLocale,
-      currentCharacter, location, handleSubmit, deletePortraitImage, deleteProfileImage } = this.props;
+    const { _activeLocale, errors, currentModal, closeModal, genders, supportedLocales, defaultLocale,
+      currentPerson, location, handleSubmit, deletePortraitImage, deleteProfileImage } = this.props;
     return (
         <Root style={styles.backgroundRoot}>
           <Header currentLocation={location} hideHomePageLinks />
           <SpecificHeader/>
           <BreadCrumbs hierarchy={[
-            { title: 'List', url: '/content/characters' },
-            { title: currentCharacter.getIn([ 'name', defaultLocale ]), url: location } ]}/>
-          {currentModal === CHARACTER_CREATE_LANGUAGE &&
+            { title: 'List', url: '/content/persons' },
+            { title: currentPerson.get('fullName'), url: location } ]}/>
+          {currentModal === PERSON_CREATE_LANGUAGE &&
             <CreateLanguageModal
               supportedLocales={supportedLocales}
               onCloseClick={closeModal}
@@ -220,21 +220,28 @@ export default class EditCharacter extends Component {
                   <FormSubtitle first>General</FormSubtitle>
                   <Field
                     component={TextInput}
-                    label='Character name'
-                    name={`name.${_activeLocale}`}
-                    placeholder='Character name'
+                    label='Full name'
+                    name='fullName'
+                    placeholder='E.g. Mark Zuckerberg'
                     required/>
                   <Field
                     component={SelectInput}
-                    disabled={_activeLocale !== defaultLocale}
-                    getItemText={(id) => personsById.getIn([ id, 'fullName' ])}
-                    getOptions={searchPersons}
-                    isLoading={searchedPersonIds.get('_status') === FETCHING}
-                    label='Person'
-                    name='personId'
-                    options={searchedPersonIds.get('data').toJS()}
-                    placeholder='Person'
+                    getItemText={(gender) => genders.get(gender)}
+                    label='Gender'
+                    name='gender'
+                    options={genders.keySeq().toArray()}
+                    placeholder='Gender'
                     required/>
+                  <Field
+                    component={DateInput}
+                    label='Date Of Birth'
+                    name='dateOfBirth'
+                    placeholder='Date of birth (DD/MM/YYYY)'/>
+                  <Field
+                    component={TextInput}
+                    label='Place Of Birth'
+                    name='placeOfBirth'
+                    placeholder='E.g. London'/>
                   <Field
                     component={TextInput}
                     label='Description'
@@ -247,19 +254,19 @@ export default class EditCharacter extends Component {
                     <Label text='Profile image' />
                     <ImageDropzone
                       accept='image/*'
-                      downloadUrl={currentCharacter.getIn([ 'profileImage', 'url' ])}
-                      imageUrl={currentCharacter.getIn([ 'profileImage', 'url' ]) && `${currentCharacter.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ characterId: this.props.params.characterId, image: file, callback }); }}
-                      onDelete={() => { deleteProfileImage({ characterId: currentCharacter.get('id') }); }}/>
+                      downloadUrl={currentPerson.getIn([ 'profileImage', 'url' ])}
+                      imageUrl={currentPerson.getIn([ 'profileImage', 'url' ]) && `${currentPerson.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
+                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ personId: this.props.params.personId, image: file, callback }); }}
+                      onDelete={() => { deleteProfileImage({ personId: currentPerson.get('id') }); }}/>
                   </div>
                   <div style={styles.paddingLeftUploadImage}>
                     <Label text='Poster image' />
                     <ImageDropzone
                       accept='image/*'
-                      downloadUrl={currentCharacter.getIn([ 'portraitImage', 'url' ])}
-                      imageUrl={currentCharacter.getIn([ 'portraitImage', 'url' ]) && `${currentCharacter.getIn([ 'portraitImage', 'url' ])}?height=203&width=360`}
-                      onChange={({ callback, file }) => { this.props.uploadPortraitImage({ characterId: this.props.params.characterId, image: file, callback }); }}
-                      onDelete={() => { deletePortraitImage({ characterId: currentCharacter.get('id') }); }}/>
+                      downloadUrl={currentPerson.getIn([ 'portraitImage', 'url' ])}
+                      imageUrl={currentPerson.getIn([ 'portraitImage', 'url' ]) && `${currentPerson.getIn([ 'portraitImage', 'url' ])}?height=203&width=360`}
+                      onChange={({ callback, file }) => { this.props.uploadPortraitImage({ personId: this.props.params.personId, image: file, callback }); }}
+                      onDelete={() => { deletePortraitImage({ personId: currentPerson.get('id') }); }}/>
                   </div>
                 </div>
               </Section>
@@ -270,7 +277,7 @@ export default class EditCharacter extends Component {
                 <FormDescription style={styles.description}>We use facial recognition to automatically detect faces in frames.</FormDescription>
                 <ImageDropzone
                   style={styles.imageDropzone}
-                  onChange={({ callback, file }) => { this.props.uploadFaceImage({ characterId: this.props.params.characterId, image: file, callback }); }}/>
+                  onChange={({ callback, file }) => { this.props.uploadFaceImage({ personId: this.props.params.personId, image: file, callback }); }}/>
 
                 <FormSubtitle>Uploads</FormSubtitle>
               </Section>

@@ -16,19 +16,19 @@ import BreadCrumbs from '../../../_common/components/breadCrumbs';
 /* eslint-disable no-alert */
 
 @connect(selector, (dispatch) => ({
-  deleteCharacter: bindActionCreators(listActions.deleteCharacter, dispatch),
-  loadCharacter: bindActionCreators(actions.loadCharacter, dispatch),
+  deletePerson: bindActionCreators(listActions.deletePerson, dispatch),
+  loadPerson: bindActionCreators(actions.loadPerson, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @Radium
-export default class ReadCharacter extends Component {
+export default class ReadPerson extends Component {
 
   static propTypes = {
     children: PropTypes.node,
-    currentCharacter: PropTypes.object.isRequired,
-    deleteCharacter: PropTypes.func.isRequired,
+    currentPerson: PropTypes.object.isRequired,
+    deletePerson: PropTypes.func.isRequired,
     error: PropTypes.any,
-    loadCharacter: PropTypes.func.isRequired,
+    loadPerson: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired
@@ -41,8 +41,8 @@ export default class ReadCharacter extends Component {
   }
 
   async componentWillMount () {
-    if (this.props.params.characterId) {
-      await this.props.loadCharacter(this.props.params.characterId);
+    if (this.props.params.personId) {
+      await this.props.loadPerson(this.props.params.personId);
     }
   }
 
@@ -59,22 +59,21 @@ export default class ReadCharacter extends Component {
   }
 
   render () {
-    const { params, children, currentCharacter, location, deleteCharacter } = this.props;
-    const defaultLocale = currentCharacter.getIn([ 'defaultLocale' ]);
+    const { params, children, currentPerson, location, deletePerson } = this.props;
     return (
       <Root>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
-          { title: 'List', url: '/content/characters' },
-          { title: currentCharacter.getIn([ 'name', defaultLocale ]), url: location } ]}/>
+          { title: 'List', url: '/content/persons' },
+          { title: currentPerson.get('fullName'), url: location } ]}/>
         <Container>
-          {currentCharacter.get('_status') === 'loaded' && currentCharacter &&
+          {currentPerson.get('_status') === 'loaded' && currentPerson &&
             <EntityDetails
-              imageUrl={currentCharacter.getIn([ 'profileImage', 'url' ]) && `${currentCharacter.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
-              title={currentCharacter.getIn([ 'name', defaultLocale ])}
-              onEdit={() => { this.props.routerPushWithReturnTo(`content/characters/edit/${params.characterId}`); }}
-              onRemove={async () => { await deleteCharacter(currentCharacter.getIn([ 'id' ])); this.redirect(); }}/>}
+              imageUrl={currentPerson.getIn([ 'profileImage', 'url' ]) && `${currentPerson.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
+              title={currentPerson.get('fullName')}
+              onEdit={() => { this.props.routerPushWithReturnTo(`content/persons/edit/${params.personId}`); }}
+              onRemove={async () => { await deletePerson(currentPerson.get('id')); this.redirect(); }}/>}
         </Container>
         <Line/>
         {children}

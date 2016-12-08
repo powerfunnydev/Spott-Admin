@@ -17,6 +17,7 @@ const crossImage = require('./cross.svg');
  */
 const dialogStyle = {
   overlay: {
+    display: 'flex',
     position: 'fixed',
     top: 0,
     left: 0,
@@ -24,7 +25,6 @@ const dialogStyle = {
     bottom: 0,
     zIndex: 100,
     backgroundColor: 'rgba(0, 0, 0, 0.80)',
-    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -32,6 +32,7 @@ const dialogStyle = {
     top: 0,
     left: 0,
     right: 0,
+    bottom: 0,
     position: 'relative',
     backgroundColor: 'transparent',
     border: 'none',
@@ -43,9 +44,9 @@ const dialogStyle = {
     maxWidth: 430,
     // Internal padding
     padding: 0,
-    // Fit height to content, centering vertically
-    bottom: 'auto',
-    overflow: 'visible'
+    display: 'flex',
+    flexDirection: 'column',
+    maxHeight: '100%'
   }
 };
 
@@ -89,6 +90,7 @@ export default class PersistModal extends Component {
       alignItems: 'center',
       backgroundColor: '#eaeced',
       display: 'flex',
+      flex: '0 0 auto',
       justifyContent: 'space-between',
       paddingBottom: '1em',
       paddingLeft: '1.5em',
@@ -102,6 +104,8 @@ export default class PersistModal extends Component {
       alignItems: 'center',
       backgroundColor: '#eaeced',
       display: 'flex',
+      flexDirection: 'row',
+      flex: '0 0 auto',
       justifyContent: 'space-between',
       paddingBottom: '0.813em',
       paddingLeft: '1.5em',
@@ -118,7 +122,8 @@ export default class PersistModal extends Component {
       paddingRight: '1.5em',
       paddingTop: '1.875em',
       borderLeft: 'solid 1px #ced6da',
-      borderRight: 'solid 1px #ced6da'
+      borderRight: 'solid 1px #ced6da',
+      overflow: 'auto'
     },
     cross: {
       cursor: 'pointer',
@@ -134,7 +139,9 @@ export default class PersistModal extends Component {
       fontWeight: 'normal'
     },
     wrapper: {
-      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)'
+      boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)',
+      display: 'flex',
+      flexDirection: 'column'
     },
     alignRight: {
       display: 'flex',
@@ -149,6 +156,10 @@ export default class PersistModal extends Component {
       ...makeTextStyle(fontWeights.regular, '12px'),
       color: colors.darkGray2,
       paddingRight: '5px'
+    },
+    form: {
+      display: 'flex',
+      flexDirection: 'column'
     }
   };
 
@@ -177,7 +188,7 @@ export default class PersistModal extends Component {
               </div>
             </div>
             {/* handleSubmit(this.submit) */}
-            <form onSubmit={onSubmit}>
+            <form style={styles.form} onSubmit={onSubmit}>
               {popUpObject && popUpObject.type === 'error' && popUpObject.message && popUpObject.stackTrace &&
                 <ErrorComponent message={popUpObject.message} stackTrace={popUpObject.stackTrace} onClose={clearPopUpMessage}/>
               }

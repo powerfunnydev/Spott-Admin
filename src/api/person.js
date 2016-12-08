@@ -1,5 +1,5 @@
-import { del, get, post } from './request';
-import { transformPerson, transformListPerson } from './transformers';
+import { del, get, post, postFormData } from './request';
+import { transformPerson, transformListPerson, transformPersonFaceImage } from './transformers';
 
 // IMPORTANT
 // Actors will be Persons in the future, so we will call this entity already Person,
@@ -18,36 +18,51 @@ export async function fetchPersons (baseUrl, authenticationToken, locale, { sear
   return body;
 }
 
+export async function fetchPerson (baseUrl, authenticationToken, locale, { personId }) {
+  const url = `${baseUrl}/v004/media/actors/${personId}`;
+  const { body } = await get(authenticationToken, locale, url);
+  const result = transformPerson(body);
+  return result;
+}
+
+export async function fetchFaceImages (baseUrl, authenticationToken, locale, { personId }) {
+  const url = `${baseUrl}/v004/media/actors/${personId}/faceImages`;
+  const { body } = await get(authenticationToken, locale, url);
+  body.data = body.data.map(transformPersonFaceImage);
+  return body;
+}
+
 // This file is copied from character and adjusted, but it is still postible that this function must be
 // revised.
 export async function persistPerson (baseUrl, authenticationToken, locale, {
   basedOnDefaultLocale, defaultLocale, description, locales, publishStatus,
-  personId, name }) {
-  let character = {};
+  personId, fullName, gender, dateOfBirth, placeOfBirth }) {
+  let person = {};
   if (personId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/actors/${personId}`);
-    character = body;
+    person = body;
   }
 
-  character.defaultLocale = defaultLocale;
-  character.publishStatus = publishStatus;
+  person.defaultLocale = defaultLocale;
+  person.publishStatus = publishStatus;
+  person.gender = gender;
+  person.fullName = fullName;
+  person.dateOfBirth = dateOfBirth && dateOfBirth.format();
+  person.placeOfBirth = placeOfBirth;
 
   // Update locale data.
-  character.localeData = character.localeData || []; // Ensure we have locale data
+  person.localeData = person.localeData || []; // Ensure we have locale data
   locales.forEach((locale) => {
-    let localeData = character.localeData.find((ld) => ld.locale === locale);
+    let localeData = person.localeData.find((ld) => ld.locale === locale);
     if (!localeData) {
       localeData = { locale };
-      character.localeData.push(localeData);
+      person.localeData.push(localeData);
     }
-    // basedOnDefaultLocale is always provided, no check needed
     localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
     localeData.description = description && description[locale];
-    // title is always provided, no check needed
-    localeData.name = name[locale];
   });
   const url = `${baseUrl}/v004/media/actors`;
-  const result = await post(authenticationToken, locale, url, character);
+  const result = await post(authenticationToken, locale, url, person);
   return transformPerson(result.body);
 }
 
@@ -68,4 +83,32 @@ export async function searchPersons (baseUrl, authenticationToken, locale, { sea
   }
   const { body: { data } } = await get(authenticationToken, locale, url);
   return data.map(transformListPerson);
+}
+
+export async function uploadProfileImage (baseUrl, authenticationToken, locale, { personId, image, callback }) {
+  const formData = new FormData();
+  formData.append('file', image);
+  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/actors/${personId}/profileCover`, formData, callback);
+}
+
+export async function uploadPortraitImage (baseUrl, authenticationToken, locale, { personId, image, callback }) {
+  const formData = new FormData();
+  formData.append('file', image);
+  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/actors/${personId}/portraitImage`, formData, callback);
+}
+
+export async function uploadFaceImage (baseUrl, authenticationToken, locale, { personId, image, callback }) {
+  const formData = new FormData();
+  formData.append('file', image);
+  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/actors/${personId}/faceImages`, formData, callback);
+}
+
+export async function deletePortraitImage (baseUrl, authenticationToken, locale, { personId }) {
+  const url = `${baseUrl}/v004/media/actors/${personId}/portraitImage`;
+  await del(authenticationToken, locale, url);
+}
+
+export async function deleteProfileImage (baseUrl, authenticationToken, locale, { personId }) {
+  const url = `${baseUrl}/v004/media/actors/${personId}/profileCover`;
+  await del(authenticationToken, locale, url);
 }

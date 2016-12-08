@@ -1,35 +1,33 @@
 import { createStructuredSelector } from 'reselect';
-import { currentModalSelector } from '../../../../selectors/global';
+import { currentModalSelector, gendersSelector } from '../../../../selectors/global';
 import { createFormValueSelector } from '../../../../utils';
 import {
-  listPersonsEntitiesSelector,
-  charactersEntitiesSelector,
+  personsEntitiesSelector,
   createEntityByIdSelector,
   createEntityIdsByRelationSelector,
   searchStringHasPersonsRelationsSelector
 } from '../../../../selectors/data';
 
-const formName = 'characterEdit';
+const formName = 'personEdit';
 const formErrorsSelector = (state) => { return state.getIn([ 'form', formName, 'syncErrors' ]); };
 
 const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultLocale');
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
 const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 
-export const currentCharacterIdSelector = (state, props) => { return props.params.characterId; };
-export const currentCharacterSelector = createEntityByIdSelector(charactersEntitiesSelector, currentCharacterIdSelector);
+export const currentPersonIdSelector = (state, props) => { return props.params.personId; };
+export const currentPersonSelector = createEntityByIdSelector(personsEntitiesSelector, currentPersonIdSelector);
 
-export const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'characters', 'edit', 'currentPersonSearchString' ]);
+export const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'persons', 'edit', 'currentPersonSearchString' ]);
 
 export const searchedPersonIdsSelector = createEntityIdsByRelationSelector(searchStringHasPersonsRelationsSelector, currentSeriesEntriesSearchStringSelector);
 
 export default createStructuredSelector({
-  personsById: listPersonsEntitiesSelector,
   _activeLocale: _activeLocaleSelector,
+  currentModal: currentModalSelector,
+  currentPerson: currentPersonSelector,
   defaultLocale: currentDefaultLocaleSelector,
   errors: formErrorsSelector,
-  currentModal: currentModalSelector,
-  currentCharacter: currentCharacterSelector,
-  searchedPersonIds: searchedPersonIdsSelector,
+  genders: gendersSelector,
   supportedLocales: supportedLocalesSelector
 });

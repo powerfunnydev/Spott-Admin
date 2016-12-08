@@ -1,47 +1,47 @@
-import { fetchCharacters as dataFetchCharacters,
-  deleteCharacter as dataDeleteCharacter,
-  deleteCharacters as dataDeleteCharacters } from '../../../../actions/character';
+import { fetchPersons as dataFetchPersons,
+  deletePerson as dataDeletePerson,
+  deletePersons as dataDeletePersons } from '../../../../actions/person';
 
 // Action types
 // ////////////
 
-export const CHARACTER_FETCH_START = 'CHARACTERS/CHARACTER_FETCH_START';
-export const CHARACTER_FETCH_ERROR = 'CHARACTERS/CHARACTER_FETCH_ERROR';
+export const PERSON_FETCH_START = 'PERSONS/PERSON_FETCH_START';
+export const PERSON_FETCH_ERROR = 'PERSONS/PERSON_FETCH_ERROR';
 
-export const CHARACTERS_DELETE_ERROR = 'CHARACTERS/CHARACTERS_REMOVE_ERROR';
-export const CHARACTER_DELETE_ERROR = 'CHARACTERS/CHARACTER_REMOVE_ERROR';
+export const PERSONS_DELETE_ERROR = 'PERSONS/PERSONS_REMOVE_ERROR';
+export const PERSON_DELETE_ERROR = 'PERSONS/PERSON_REMOVE_ERROR';
 
-export const SELECT_ALL_CHECKBOXES = 'CHARACTERS/SELECT_ALL_CHECKBOXES';
-export const SELECT_CHECKBOX = 'CHARACTERS/SELECT_CHECKBOX';
+export const SELECT_ALL_CHECKBOXES = 'PERSONS/SELECT_ALL_CHECKBOXES';
+export const SELECT_CHECKBOX = 'PERSONS/SELECT_CHECKBOX';
 
-export const SORT_COLUMN = 'CHARACTERS/SORT_COLUMN';
+export const SORT_COLUMN = 'PERSONS/SORT_COLUMN';
 
 export function load (query) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataFetchCharacters(query));
+      return await dispatch(dataFetchPersons(query));
     } catch (error) {
-      dispatch({ error, type: CHARACTER_FETCH_ERROR });
+      dispatch({ error, type: PERSON_FETCH_ERROR });
     }
   };
 }
 
-export function deleteCharacters (characterIds) {
+export function deletePersons (personIds) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataDeleteCharacters({ characterIds }));
+      return await dispatch(dataDeletePersons({ personIds }));
     } catch (error) {
-      dispatch({ error, type: CHARACTERS_DELETE_ERROR });
+      dispatch({ error, type: PERSONS_DELETE_ERROR });
     }
   };
 }
 
-export function deleteCharacter (characterId) {
+export function deletePerson (personId) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataDeleteCharacter({ characterId }));
+      return await dispatch(dataDeletePerson({ personId }));
     } catch (error) {
-      dispatch({ error, type: CHARACTER_DELETE_ERROR });
+      dispatch({ error, type: PERSON_DELETE_ERROR });
     }
   };
 }

@@ -18,6 +18,7 @@ import episodesCreate from '../pages/content/episodes/create/reducer';
 import episodesList from '../pages/content/episodes/list/reducer';
 import episodesEdit from '../pages/content/episodes/edit/reducer';
 import episodesReadTvGuide from '../pages/content/episodes/read/tvGuide/reducer';
+import personsList from '../pages/content/persons/list/reducer';
 import LinkUserModal from '../pages/_common/components/linkUserModal/reducer';
 import reporting from '../pages/reporting/reducer';
 import relatedVideoPersist from '../pages/content/_relatedVideo/persist/reducer';
@@ -76,6 +77,9 @@ export default combineReducers({
       read: combineReducers({
         tvGuide: episodesReadTvGuide
       })
+    }),
+    persons: combineReducers({
+      list: personsList
     }),
     seasons: combineReducers({
       create: seasonsCreate,

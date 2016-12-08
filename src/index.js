@@ -38,6 +38,10 @@ import MediaUpload from './pages/media/upload';
 import MediaWelcome from './pages/media/welcome';
 import Login from './pages/login';
 import ForgotPassword from './pages/forgotPassword';
+import PersonsCreate from './pages/content/persons/create';
+import PersonsEdit from './pages/content/persons/edit';
+import PersonsList from './pages/content/persons/list';
+import PersonsRead from './pages/content/persons/read';
 import ResetPassword from './pages/resetPassword';
 import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
@@ -106,6 +110,23 @@ function getRoutes ({ dispatch, getState }) {
       </Route>
       <Route path='content' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <IndexRedirect to='content-producers' />
+        <Route component={BroadcastersList} path='broadcasters'>
+          <Route component={BroadcastersCreate} path='create'/>
+        </Route>
+        <Route path='broadcasters'>
+          <Route component={BroadcastersEdit} path='edit/:broadcasterId'/>
+          <Route component={BroadcastersRead} path='read/:broadcasterId'>
+            <Route component={BroadcastChannelCreate} path='create/broadcast-channel'/>
+            <Route component={LinkUserToBroadcaster} path='link/user'/>
+            <Route component={UsersCreate} path='create/user'/>
+          </Route>
+        </Route>
+        <Route component={BroadcastChannelList} path='broadcast-channels'>
+          <Route component={BroadcastChannelCreate} path='create'/>
+        </Route>
+        <Route path='broadcast-channels'>
+          <Route component={BroadcastChannelEdit} path='edit/:id' />
+        </Route>
         <Route component={CharactersList} path='characters'>
           <Route component={CharactersCreate} path='create'/>
         </Route>
@@ -123,22 +144,12 @@ function getRoutes ({ dispatch, getState }) {
             <Route component={UsersCreate} path='create/user'/>
           </Route>
         </Route>
-        <Route component={BroadcastersList} path='broadcasters'>
-          <Route component={BroadcastersCreate} path='create'/>
+        <Route component={PersonsList} path='persons'>
+          <Route component={PersonsCreate} path ='create'/>
         </Route>
-        <Route path='broadcasters'>
-          <Route component={BroadcastersEdit} path='edit/:broadcasterId'/>
-          <Route component={BroadcastersRead} path='read/:broadcasterId'>
-            <Route component={BroadcastChannelCreate} path='create/broadcast-channel'/>
-            <Route component={LinkUserToBroadcaster} path='link/user'/>
-            <Route component={UsersCreate} path='create/user'/>
-          </Route>
-        </Route>
-        <Route component={BroadcastChannelList} path='broadcast-channels'>
-          <Route component={BroadcastChannelCreate} path='create'/>
-        </Route>
-        <Route path='broadcast-channels'>
-          <Route component={BroadcastChannelEdit} path='edit/:id' />
+        <Route path='persons'>
+          <Route component={PersonsRead} path='read/:personId'/>
+          <Route component={PersonsEdit} path='edit/:personId'/>
         </Route>
         <Route component={VideoEdit} path='videos/edit/:videoId' onEnter={requireOneRole([ ADMIN ])}/>
         <Route component={SeriesList} path='series'>
