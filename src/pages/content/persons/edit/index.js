@@ -24,6 +24,7 @@ import selector from './selector';
 import LanguageBar from '../../../_common/components/languageBar';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import ImageDropzone from '../../../_common/dropzone/imageDropzone';
+import { ImageWithDropdown } from '../../../_common/components/imageWithDropdown';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -38,17 +39,18 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
+  closeModal: bindActionCreators(actions.closeModal, dispatch),
+  deleteFaceImage: bindActionCreators(actions.deleteFaceImage, dispatch),
+  deletePortraitImage: bindActionCreators(actions.deletePortraitImage, dispatch),
+  deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
   fetchFaceImages: bindActionCreators(actions.fetchFaceImages, dispatch),
   loadPerson: bindActionCreators(actions.loadPerson, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
-  closeModal: bindActionCreators(actions.closeModal, dispatch),
-  deletePortraitImage: bindActionCreators(actions.deletePortraitImage, dispatch),
-  deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
+  submit: bindActionCreators(actions.submit, dispatch),
   uploadFaceImage: bindActionCreators(actions.uploadFaceImage, dispatch),
   uploadPortraitImage: bindActionCreators(actions.uploadPortraitImage, dispatch),
-  uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch),
-  submit: bindActionCreators(actions.submit, dispatch),
-  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
+  uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch)
 }))
 @reduxForm({
   form: 'personEdit',
@@ -64,11 +66,13 @@ export default class EditPerson extends Component {
     currentModal: PropTypes.string,
     currentPerson: ImmutablePropTypes.map.isRequired,
     defaultLocale: PropTypes.string,
+    deleteFaceImage: PropTypes.func.isRequired,
     deletePortraitImage: PropTypes.func.isRequired,
     deleteProfileImage: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
+    faceImages: ImmutablePropTypes.map.isRequired,
     fetchFaceImages: PropTypes.func,
     genders: ImmutablePropTypes.map.isRequired,
     handleSubmit: PropTypes.func.isRequired,
@@ -184,13 +188,20 @@ export default class EditPerson extends Component {
     imageDropzone: {
       width: '100%',
       height: '100px'
+    },
+    faceImagesContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginTop: '20px'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
     const { _activeLocale, errors, currentModal, closeModal, genders, supportedLocales, defaultLocale,
-      currentPerson, location, handleSubmit, deletePortraitImage, deleteProfileImage } = this.props;
+      currentPerson, location, handleSubmit, deletePortraitImage, deleteProfileImage, faceImages,
+      deleteFaceImage, fetchFaceImages } = this.props;
     return (
         <Root style={styles.backgroundRoot}>
           <Header currentLocation={location} hideHomePageLinks />
@@ -276,10 +287,24 @@ export default class EditPerson extends Component {
                 <FormSubtitle first>Upload face images</FormSubtitle>
                 <FormDescription style={styles.description}>We use facial recognition to automatically detect faces in frames.</FormDescription>
                 <ImageDropzone
+                  multiple
+                  noPreview
                   style={styles.imageDropzone}
-                  onChange={({ callback, file }) => { this.props.uploadFaceImage({ personId: this.props.params.personId, image: file, callback }); }}/>
+                  onChange={async ({ callback, file }) => { await this.props.uploadFaceImage({ personId: currentPerson.get('id'), image: file, callback }); fetchFaceImages({ personId: currentPerson.get('id') }); }}/>
 
                 <FormSubtitle>Uploads</FormSubtitle>
+                <div style={styles.faceImagesContainer}>
+                  {faceImages.get('data').map((faceImage, index) =>
+                    <ImageWithDropdown
+                      downloadUrl={faceImage.getIn([ 'image', 'url' ])}
+                      imageUrl={faceImage.getIn([ 'image', 'url' ])}
+                      key={`ImageWithDropdown${index}`}
+                      onDelete={async () => {
+                        await deleteFaceImage({ personId: currentPerson.get('id'), faceImageId: faceImage.get('id') });
+                        fetchFaceImages({ personId: currentPerson.get('id') });
+                      }}/>
+                  )}
+                </div>
               </Section>
              </Tab>
           </Tabs>

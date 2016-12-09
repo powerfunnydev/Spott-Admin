@@ -3,6 +3,7 @@ import { persistCharacter, fetchCharacter as dataFetchCharacter,
       uploadPortraitImage as dataUploadPortraitImage } from '../../../../actions/character';
 import { searchPersons as dataSearchPersons } from '../../../../actions/person';
 
+export { deleteFaceImage } from '../../../../actions/character';
 export { uploadFaceImage, fetchFaceImages, deletePortraitImage, deleteProfileImage } from '../../../../actions/character';
 export const CHARACTER_FETCH_ENTRY_ERROR = 'CHARACTERS_EDIT/FETCH_ENTRY_ERROR';
 

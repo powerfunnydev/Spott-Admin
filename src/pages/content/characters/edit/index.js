@@ -23,6 +23,7 @@ import CreateLanguageModal from '../../_languageModal/create';
 import LanguageBar from '../../../_common/components/languageBar';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import ImageDropzone from '../../../_common/dropzone/imageDropzone';
+import { ImageWithDropdown } from '../../../_common/components/imageWithDropdown';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -40,6 +41,7 @@ function validate (values, { t }) {
   loadCharacter: bindActionCreators(actions.loadCharacter, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   closeModal: bindActionCreators(actions.closeModal, dispatch),
+  deleteFaceImage: bindActionCreators(actions.deleteFaceImage, dispatch),
   deletePortraitImage: bindActionCreators(actions.deletePortraitImage, dispatch),
   deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
   uploadFaceImage: bindActionCreators(actions.uploadFaceImage, dispatch),
@@ -63,11 +65,13 @@ export default class EditCharacter extends Component {
     currentCharacter: ImmutablePropTypes.map.isRequired,
     currentModal: PropTypes.string,
     defaultLocale: PropTypes.string,
+    deleteFaceImage: PropTypes.func,
     deletePortraitImage: PropTypes.func.isRequired,
     deleteProfileImage: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
+    faceImages: ImmutablePropTypes.map.isRequired,
     fetchFaceImages: PropTypes.func,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
@@ -184,13 +188,19 @@ export default class EditCharacter extends Component {
     imageDropzone: {
       width: '100%',
       height: '100px'
+    },
+    faceImagesContainer: {
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginTop: '20px'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
     const { _activeLocale, personsById, errors, closeModal, currentModal, searchPersons, searchedPersonIds, supportedLocales, defaultLocale,
-      currentCharacter, location, handleSubmit, deletePortraitImage, deleteProfileImage } = this.props;
+      currentCharacter, location, handleSubmit, deletePortraitImage, deleteProfileImage, deleteFaceImage, faceImages, fetchFaceImages } = this.props;
     return (
         <Root style={styles.backgroundRoot}>
           <Header currentLocation={location} hideHomePageLinks />
@@ -269,10 +279,24 @@ export default class EditCharacter extends Component {
                 <FormSubtitle first>Upload face images</FormSubtitle>
                 <FormDescription style={styles.description}>We use facial recognition to automatically detect faces in frames.</FormDescription>
                 <ImageDropzone
+                  multiple
+                  noPreview
                   style={styles.imageDropzone}
-                  onChange={({ callback, file }) => { this.props.uploadFaceImage({ characterId: this.props.params.characterId, image: file, callback }); }}/>
+                  onChange={async ({ callback, file }) => { await this.props.uploadFaceImage({ characterId: this.props.params.characterId, image: file, callback }); fetchFaceImages({ characterId: currentCharacter.get('id') }); }}/>
 
                 <FormSubtitle>Uploads</FormSubtitle>
+                <div style={styles.faceImagesContainer}>
+                  {faceImages.get('data').map((faceImage, index) =>
+                    <ImageWithDropdown
+                      downloadUrl={faceImage.getIn([ 'image', 'url' ])}
+                      imageUrl={faceImage.getIn([ 'image', 'url' ])}
+                      key={`ImageWithDropdown${index}`}
+                      onDelete={async () => {
+                        await deleteFaceImage({ characterId: currentCharacter.get('id'), faceImageId: faceImage.get('id') });
+                        fetchFaceImages({ characterId: currentCharacter.get('id') });
+                      }}/>
+                  )}
+                </div>
               </Section>
              </Tab>
           </Tabs>

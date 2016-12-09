@@ -4,8 +4,9 @@ import { createFormValueSelector } from '../../../../utils';
 import {
   personsEntitiesSelector,
   createEntityByIdSelector,
-  createEntityIdsByRelationSelector,
-  searchStringHasPersonsRelationsSelector
+  createEntitiesByRelationSelector,
+  faceImagesEntitiesSelector,
+  personHasFaceImagesRelationsSelector
 } from '../../../../selectors/data';
 
 const formName = 'personEdit';
@@ -15,12 +16,10 @@ const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultL
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
 const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 
-export const currentPersonIdSelector = (state, props) => { return props.params.personId; };
-export const currentPersonSelector = createEntityByIdSelector(personsEntitiesSelector, currentPersonIdSelector);
+const currentPersonIdSelector = (state, props) => { return props.params.personId; };
+const currentPersonSelector = createEntityByIdSelector(personsEntitiesSelector, currentPersonIdSelector);
 
-export const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'persons', 'edit', 'currentPersonSearchString' ]);
-
-export const searchedPersonIdsSelector = createEntityIdsByRelationSelector(searchStringHasPersonsRelationsSelector, currentSeriesEntriesSearchStringSelector);
+const faceImagesSelector = createEntitiesByRelationSelector(personHasFaceImagesRelationsSelector, currentPersonIdSelector, faceImagesEntitiesSelector);
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
@@ -28,6 +27,7 @@ export default createStructuredSelector({
   currentPerson: currentPersonSelector,
   defaultLocale: currentDefaultLocaleSelector,
   errors: formErrorsSelector,
+  faceImages: faceImagesSelector,
   genders: gendersSelector,
   supportedLocales: supportedLocalesSelector
 });

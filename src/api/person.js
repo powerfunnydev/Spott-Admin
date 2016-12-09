@@ -103,6 +103,10 @@ export async function uploadFaceImage (baseUrl, authenticationToken, locale, { p
   await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/actors/${personId}/faceImages`, formData, callback);
 }
 
+export async function deleteFaceImage (baseUrl, authenticationToken, locale, { personId, faceImageId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/actors/${personId}/faceImages/${faceImageId}`);
+}
+
 export async function deletePortraitImage (baseUrl, authenticationToken, locale, { personId }) {
   const url = `${baseUrl}/v004/media/actors/${personId}/portraitImage`;
   await del(authenticationToken, locale, url);

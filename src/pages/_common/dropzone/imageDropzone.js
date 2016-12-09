@@ -27,6 +27,8 @@ export default class ImageDropzone extends Component {
     accept: PropTypes.string,
     downloadUrl: PropTypes.string,
     imageUrl: PropTypes.string,
+    multiple: PropTypes.bool,
+    noPreview: PropTypes.bool,
     style: PropTypes.object,
     type: PropTypes.string,
     onChange: PropTypes.func,
@@ -54,17 +56,21 @@ export default class ImageDropzone extends Component {
   callback (progress, total) {
     this.setState(...this.state, { progress, total });
     if (progress === total) {
-      setTimeout(() => {
+      const { noPreview } = this.props;
+      // If we want to show a preview, set a timeout.
+      !noPreview && setTimeout(() => {
         this.setState({ ...this.state, showImage: true });
       }, 1000);
     }
     console.log('progress ', (progress / total) * 100, '%');
   }
 
-  onDrop (acceptedFiles) {
-    this.setState(...this.state, { file: acceptedFiles[0], showImage: false });
+  async onDrop (acceptedFiles) {
     if (this.props.onChange) {
-      this.props.onChange({ callback: this.callback, file: acceptedFiles[0] });
+      for (const acceptedFile of acceptedFiles) {
+        this.setState(...this.state, { file: acceptedFile, showImage: false });
+        await this.props.onChange({ callback: this.callback, file: acceptedFile });
+      }
     }
   }
 
@@ -148,7 +154,7 @@ export default class ImageDropzone extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { accept, type, imageUrl, downloadUrl, onDelete, style } = this.props;
+    const { accept, type, imageUrl, downloadUrl, onDelete, style, noPreview, multiple } = this.props;
     // If we have delete an image, we don't want to display the imageUrl or downloadUrl,
     // cause it doesn't exist anymore. So we show the local image if there is one.
     // Else, if we didn't delete an image, but there is an image, show that image.
@@ -157,7 +163,7 @@ export default class ImageDropzone extends Component {
     return (
       <div style={{ position: 'relative' }}>
         {/* Render dropzone */}
-        <ReactDropzone accept={accept || 'image/*'} activeStyle={styles.activeDropzone} multiple={false} ref={(x) => { this.dropzone = x; }}
+        <ReactDropzone accept={accept || 'image/*'} activeStyle={styles.activeDropzone} multiple={multiple} ref={(x) => { this.dropzone = x; }}
           style={mergeStyles([ styles.dropzone, { width: 200 * (aspectRatios[type] || 1) }, style ])} onDrop={this.onDrop} >
           <div>
             {downloadUrlOrPreview && <Dropdown style={styles.dropdownButton}>
@@ -178,12 +184,12 @@ export default class ImageDropzone extends Component {
                     <img src={completedIcon} style={styles.completedImage}/>
                     <div style={styles.completedText}>Completed</div>
                   </div>}
-                  {this.state.showImage && this.state.file && this.state.file.type.startsWith('image') &&
+                  {!noPreview && this.state.showImage && this.state.file && this.state.file.type.startsWith('image') &&
                     <img src={this.state.file.preview} style={styles.chosenImage}/>
                   }
                 </div>) ||
             /* When there was already an image uploaded */
-            ((imageUrlOrPreview) &&
+            ((!noPreview && imageUrlOrPreview) &&
               <img src={imageUrlOrPreview} style={styles.chosenImage}/>
             ) ||
             /* Idle state, user has to chose a image */

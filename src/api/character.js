@@ -21,8 +21,8 @@ export async function fetchCharacter (baseUrl, authenticationToken, locale, { ch
   return result;
 }
 
-export async function fetchFaceImages (baseUrl, authenticationToken, locale, { characterId }) {
-  const url = `${baseUrl}/v004/media/characters/${characterId}/faceImages`;
+export async function fetchFaceImages (baseUrl, authenticationToken, locale, { characterId, sortDirection = 'DESC', sortField = 'ADDED_ON' }) {
+  const url = `${baseUrl}/v004/media/characters/${characterId}/faceImages?sortDirection=${sortDirection}&sortField=${sortField}`;
   const { body } = await get(authenticationToken, locale, url);
   body.data = body.data.map(transformCharacterFaceImage);
   return body;
@@ -113,6 +113,10 @@ export async function uploadFaceImage (baseUrl, authenticationToken, locale, { c
   const formData = new FormData();
   formData.append('file', image);
   await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/faceImages`, formData, callback);
+}
+
+export async function deleteFaceImage (baseUrl, authenticationToken, locale, { characterId, faceImageId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/faceImages/${faceImageId}`);
 }
 
 export async function deletePortraitImage (baseUrl, authenticationToken, locale, { characterId }) {

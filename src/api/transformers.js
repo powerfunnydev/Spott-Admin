@@ -414,8 +414,9 @@ export const transformListPerson = (person) => {
   return result;
 };
 
-export function transformCharacterFaceImage ({ image }) {
+export function transformCharacterFaceImage ({ image, uuid: id }) {
   return {
+    id,
     image: { url: image && image.url }
   };
 }

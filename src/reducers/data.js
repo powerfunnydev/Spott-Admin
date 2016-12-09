@@ -27,11 +27,12 @@ export default (state = fromJS({
     characters: {},
     contentProducers: {},
     events: {},
+    faceImages: {}, // Characters and persons has faceImages
     genders: {},
     listCharacters: {}, // listCharacters is the light version of characters, without locales
     listMedia: {}, // listMedia is the light version of media, without locales
     listPersons: {}, // listCharacters is the light version of characters, without locales
-    media: {}, // completed version of media, with locales
+    media: {}, // Completed version of media, with locales
     persons: {},
     tvGuideEntries: {},
     users: {},
@@ -63,8 +64,10 @@ export default (state = fromJS({
     searchStringHasSeriesEntries: {},
     searchStringHasUsers: {},
 
+    characterHasFaceImages: {},
     mediumHasCharacters: {},
     mediumHasTvGuideEntries: {},
+    personHasFaceImages: {},
     seriesEntryHasSeasons: {},
     seasonHasEpisodes: {},
     mediumHasAvailabilities: {}
@@ -168,6 +171,13 @@ export default (state = fromJS({
     case charactersActions.CHARACTER_SEARCH_ERROR:
       return searchError(state, 'searchStringHasCharacters', action.searchString, action.error);
 
+    case charactersActions.CHARACTER_FACE_IMAGES_FETCH_START:
+      return searchStart(state, 'characterHasFaceImages', action.characterId);
+    case charactersActions.CHARACTER_FACE_IMAGES_FETCH_SUCCESS:
+      return searchSuccess(state, 'faceImages', 'characterHasFaceImages', action.characterId, action.data.data);
+    case charactersActions.CHARACTER_FACE_IMAGES_FETCH_ERROR:
+      return searchError(state, 'characterHasFaceImages', action.characterId, action.error);
+
     case charactersActions.MEDIUM_CHARACTER_SEARCH_START:
       return searchStart(state, 'mediumHasCharacters', action.mediumId);
     case charactersActions.MEDIUM_CHARACTER_SEARCH_SUCCESS:
@@ -249,6 +259,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'listPersons', 'searchStringHasPersons', action.searchString, action.data);
     case personActions.PERSON_SEARCH_ERROR:
       return searchError(state, 'searchStringHasPersons', action.searchString, action.error);
+
+    case personActions.PERSON_FACE_IMAGES_FETCH_START:
+      return searchStart(state, 'personHasFaceImages', action.personId);
+    case personActions.PERSON_FACE_IMAGES_FETCH_SUCCESS:
+      return searchSuccess(state, 'faceImages', 'personHasFaceImages', action.personId, action.data.data);
+    case personActions.PERSON_FACE_IMAGES_FETCH_ERROR:
+      return searchError(state, 'personHasFaceImages', action.personId, action.error);
 
     // Seasons
     // /////////////////

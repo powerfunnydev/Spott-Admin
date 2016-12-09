@@ -4,8 +4,11 @@ import { createFormValueSelector } from '../../../../utils';
 import {
   listPersonsEntitiesSelector,
   charactersEntitiesSelector,
+  characterHasFaceImagesRelationsSelector,
   createEntityByIdSelector,
   createEntityIdsByRelationSelector,
+  createEntitiesByRelationSelector,
+  faceImagesEntitiesSelector,
   searchStringHasPersonsRelationsSelector
 } from '../../../../selectors/data';
 
@@ -16,20 +19,22 @@ const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultL
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
 const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 
-export const currentCharacterIdSelector = (state, props) => { return props.params.characterId; };
-export const currentCharacterSelector = createEntityByIdSelector(charactersEntitiesSelector, currentCharacterIdSelector);
+const currentCharacterIdSelector = (state, props) => { return props.params.characterId; };
+const currentCharacterSelector = createEntityByIdSelector(charactersEntitiesSelector, currentCharacterIdSelector);
 
-export const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'characters', 'edit', 'currentPersonSearchString' ]);
+const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'characters', 'edit', 'currentPersonSearchString' ]);
 
-export const searchedPersonIdsSelector = createEntityIdsByRelationSelector(searchStringHasPersonsRelationsSelector, currentSeriesEntriesSearchStringSelector);
+const searchedPersonIdsSelector = createEntityIdsByRelationSelector(searchStringHasPersonsRelationsSelector, currentSeriesEntriesSearchStringSelector);
+const faceImagesSelector = createEntitiesByRelationSelector(characterHasFaceImagesRelationsSelector, currentCharacterIdSelector, faceImagesEntitiesSelector);
 
 export default createStructuredSelector({
-  personsById: listPersonsEntitiesSelector,
   _activeLocale: _activeLocaleSelector,
-  defaultLocale: currentDefaultLocaleSelector,
-  errors: formErrorsSelector,
   currentModal: currentModalSelector,
   currentCharacter: currentCharacterSelector,
+  defaultLocale: currentDefaultLocaleSelector,
+  errors: formErrorsSelector,
+  faceImages: faceImagesSelector,
+  personsById: listPersonsEntitiesSelector,
   searchedPersonIds: searchedPersonIdsSelector,
   supportedLocales: supportedLocalesSelector
 });
