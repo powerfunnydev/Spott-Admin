@@ -4,6 +4,7 @@ import { reducer as form } from 'redux-form/immutable';
 import media from './media';
 import globalReducer from './global';
 import data from './data';
+import _mediumTvGuide from '../pages/content/_mediumTvGuide/reducer';
 import broadcastChannelsCreate from '../pages/content/broadcastChannels/create/reducer';
 import broadcastChannelsList from '../pages/content/broadcastChannels/list/reducer';
 import broadcastersListBroadcasters from '../pages/content/broadcasters/list/reducer';
@@ -17,7 +18,6 @@ import contentProducersReadUsers from '../pages/content/contentProducers/read/us
 import episodesCreate from '../pages/content/episodes/create/reducer';
 import episodesList from '../pages/content/episodes/list/reducer';
 import episodesEdit from '../pages/content/episodes/edit/reducer';
-import episodesReadTvGuide from '../pages/content/episodes/read/tvGuide/reducer';
 import personsList from '../pages/content/persons/list/reducer';
 import LinkUserModal from '../pages/_common/components/linkUserModal/reducer';
 import reporting from '../pages/reporting/reducer';
@@ -26,10 +26,8 @@ import seasonsCreate from '../pages/content/seasons/create/reducer';
 import seasonsEdit from '../pages/content/seasons/edit/reducer';
 import seasonsList from '../pages/content/seasons/list/reducer';
 import seasonsReadEpisodes from '../pages/content/seasons/read/episodes/reducer';
-import seasonsReadTvGuide from '../pages/content/seasons/read/tvGuide/reducer';
 import seriesList from '../pages/content/series/list/reducer';
 import seriesReadSeasons from '../pages/content/series/read/seasons/reducer';
-import seriesReadTvGuide from '../pages/content/series/read/tvGuide/reducer';
 import tvGuideCreate from '../pages/tvGuide/create/reducer';
 import tvGuideEdit from '../pages/tvGuide/edit/reducer';
 import tvGuideList from '../pages/tvGuide/list/reducer';
@@ -46,6 +44,8 @@ export default combineReducers({
     linkUserModal: LinkUserModal
   }),
   content: combineReducers({
+    // _mediumTvGuide is a component used by a medium.
+    mediumTvGuide: _mediumTvGuide,
     broadcastChannels: combineReducers({
       create: broadcastChannelsCreate,
       list: broadcastChannelsList
@@ -73,10 +73,7 @@ export default combineReducers({
     episodes: combineReducers({
       create: episodesCreate,
       edit: episodesEdit,
-      list: episodesList,
-      read: combineReducers({
-        tvGuide: episodesReadTvGuide
-      })
+      list: episodesList
     }),
     persons: combineReducers({
       list: personsList
@@ -86,15 +83,13 @@ export default combineReducers({
       edit: seasonsEdit,
       list: seasonsList,
       read: combineReducers({
-        episodes: seasonsReadEpisodes,
-        tvGuide: seasonsReadTvGuide
+        episodes: seasonsReadEpisodes
       })
     }),
     series: combineReducers({
       list: seriesList,
       read: combineReducers({
-        seasons: seriesReadSeasons,
-        tvGuide: seriesReadTvGuide
+        seasons: seriesReadSeasons
       })
     })
   }),

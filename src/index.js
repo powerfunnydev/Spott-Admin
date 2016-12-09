@@ -66,9 +66,7 @@ import reducer from './reducers';
 import BreadCrumbs from './pages/_common/components/breadCrumbs';
 
 import { load as loadTvGuide } from './pages/tvGuide/list/actions';
-import { load as loadEpisodeTvGuide } from './pages/content/episodes/read/tvGuide/actions';
-import { load as loadSeasonTvGuide } from './pages/content/seasons/read/tvGuide/actions';
-import { load as loadSeriesEntryTvGuide } from './pages/content/series/read/tvGuide/actions';
+import { load as loadMediumTvGuide } from './pages/content/_mediumTvGuide/actions';
 /**
  * The application routes
  */
@@ -163,7 +161,7 @@ function getRoutes ({ dispatch, getState }) {
             <Route component={EpisodeCreate} path='create/episode'/>
             <Route
               component={TvGuideCreateEntry}
-              load={(props) => { dispatch(loadSeriesEntryTvGuide(props.location.query, props.params.seriesEntryId)); }}
+              load={(props) => { dispatch(loadMediumTvGuide(props.location.query, props.params.seriesEntryId)); }}
               path='create/tv-guide'/>
           </Route>
           <Route component={SeriesEdit} path='edit/:seriesEntryId' />
@@ -172,12 +170,12 @@ function getRoutes ({ dispatch, getState }) {
               component={TvGuideEditEntry}
               path='tv-guide/edit/:tvGuideEntryId'
               renderBreadCrumbs={(props) => {
-                const { params: { seriesEntryId } } = props;
+                const { params: { seriesEntryId }, currentTvGuideEntry } = props;
                 return (
                   <BreadCrumbs hierarchy={[
-                    { title: 'List', url: '/content/series' },
-                    { title: 'Series', url: `content/series/read/${seriesEntryId}` },
-                    { title: props.currentTvGuideEntry.getIn([ 'medium', 'title' ]), url: props.location }
+                    { title: 'Series', url: '/content/series' },
+                    { title: currentTvGuideEntry.getIn([ 'serie', 'title' ]), url: `content/series/read/${seriesEntryId}` },
+                    { title: 'TV Guide', url: props.location }
                   ]}/>);
               }} />
             <Route path='seasons'>
@@ -185,7 +183,7 @@ function getRoutes ({ dispatch, getState }) {
                 <Route component={EpisodeCreate} path='create/episode'/>
                 <Route
                   component={TvGuideCreateEntry}
-                  load={(props) => { dispatch(loadSeasonTvGuide(props.location.query, props.params.seasonId)); }}
+                  load={(props) => { dispatch(loadMediumTvGuide(props.location.query, props.params.seasonId)); }}
                   path='create/tv-guide'/>
               </Route>
               <Route component={SeasonEdit} path='edit/:seasonId'/>
@@ -194,34 +192,34 @@ function getRoutes ({ dispatch, getState }) {
                 component={TvGuideEditEntry}
                 path='tv-guide/edit/:tvGuideEntryId'
                 renderBreadCrumbs={(props) => {
-                  const { params: { seriesEntryId, seasonId } } = props;
+                  const { params: { seriesEntryId, seasonId }, currentTvGuideEntry } = props;
                   return (
                     <BreadCrumbs hierarchy={[
-                      { title: 'List', url: '/content/series' },
-                      { title: 'Series', url: `content/series/read/${seriesEntryId}` },
-                      { title: 'Season', url: `content/series/read/${seriesEntryId}/seasons/read/${seasonId}` },
-                      { title: props.currentTvGuideEntry.getIn([ 'medium', 'title' ]), url: props.location }
+                      { title: 'Series', url: '/content/series' },
+                      { title: currentTvGuideEntry.getIn([ 'serie', 'title' ]), url: `content/series/read/${seriesEntryId}` },
+                      { title: currentTvGuideEntry.getIn([ 'season', 'title' ]), url: `content/series/read/${seriesEntryId}/seasons/read/${seasonId}` },
+                      { title: 'TV Guide', url: props.location }
                     ]}/>);
                 }} />
                 <Route path='episodes'>
                   <Route component={EpisodeRead} path='read/:episodeId'>
                     <Route
                       component={TvGuideCreateEntry}
-                      load={(props) => { dispatch(loadEpisodeTvGuide(props.location.query, props.params.episodeId)); }}
+                      load={(props) => { dispatch(loadMediumTvGuide(props.location.query, props.params.episodeId)); }}
                       path='create/tv-guide'/>
                   </Route>
                   <Route
                     component={TvGuideEditEntry}
                     path='read/:episodeId/tv-guide/edit/:tvGuideEntryId'
                     renderBreadCrumbs={(props) => {
-                      const { params: { seriesEntryId, seasonId, episodeId } } = props;
+                      const { params: { seriesEntryId, seasonId, episodeId }, currentTvGuideEntry, location } = props;
                       return (
                         <BreadCrumbs hierarchy={[
-                          { title: 'List', url: '/content/series' },
-                          { title: 'Series', url: `content/series/read/${seriesEntryId}` },
-                          { title: 'Season', url: `content/series/read/${seriesEntryId}/seasons/read/${seasonId}` },
-                          { title: 'Episode', url: `content/series/read/${seriesEntryId}/seasons/read/${seasonId}/episodes/read/${episodeId}` },
-                          { title: props.currentTvGuideEntry.getIn([ 'medium', 'title' ]), url: props.location }
+                          { title: 'Series', url: '/content/series' },
+                          { title: currentTvGuideEntry.getIn([ 'serie', 'title' ]), url: `content/series/read/${seriesEntryId}` },
+                          { title: currentTvGuideEntry.getIn([ 'season', 'title' ]), url: `content/series/read/${seriesEntryId}/seasons/read/${seasonId}` },
+                          { title: currentTvGuideEntry.getIn([ 'medium', 'title' ]), url: `content/series/read/${seriesEntryId}/seasons/read/${seasonId}/episodes/read/${episodeId}` },
+                          { title: 'TV Guide', url: location }
                         ]}/>);
                     }} />
                   <Route component={EpisodeEdit} path='edit/:episodeId'/>
@@ -257,7 +255,7 @@ function getRoutes ({ dispatch, getState }) {
           component={TvGuideEditEntry}
           path='edit/:tvGuideEntryId'
           renderBreadCrumbs={(props) => <BreadCrumbs hierarchy={[
-            { title: 'List', url: '/tv-guide' },
+            { title: 'TV Guide', url: '/tv-guide' },
             { title: props.currentTvGuideEntry.getIn([ 'medium', 'title' ]), url: props.location } ]}/>} />
       </Route>
       <Route component={Error404} path='*' />
