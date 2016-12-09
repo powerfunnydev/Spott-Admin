@@ -1,8 +1,8 @@
 import { del, get, post, postFormData } from './request';
-import { transformListEpisode, transformEpisode004 } from './transformers';
+import { transformListCommercial, transformCommercial } from './transformers';
 
-export async function fetchEpisodes (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
-  let url = `${baseUrl}/v004/media/serieEpisodes?page=${page}&pageSize=${pageSize}`;
+export async function fetchCommercials (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/media/commercials?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${searchString}`);
   }
@@ -12,31 +12,25 @@ export async function fetchEpisodes (baseUrl, authenticationToken, locale, { sea
   const { body } = await get(authenticationToken, locale, url);
   // There is also usable data in body (not only in data field).
   // We need also fields page, pageCount,...
-  body.data = body.data.map(transformListEpisode);
+  body.data = body.data.map(transformListCommercial);
   return body;
 }
 
-export async function fetchEpisode (baseUrl, authenticationToken, locale, { episodeId }) {
-  const url = `${baseUrl}/v004/media/serieEpisodes/${episodeId}`;
+export async function fetchCommercial (baseUrl, authenticationToken, locale, { commercialId }) {
+  const url = `${baseUrl}/v004/media/commercials/${commercialId}`;
   const { body } = await get(authenticationToken, locale, url);
-  return transformEpisode004(body);
+  return transformCommercial(body);
 }
 
-export async function fetchNextEpisode (baseUrl, authenticationToken, locale, { episodeId }) {
-  const url = `${baseUrl}/v004/media/serieEpisodes/${episodeId}/next`;
-  const { body } = await get(authenticationToken, locale, url);
-  return transformEpisode004(body);
-}
-
-export async function persistEpisode (baseUrl, authenticationToken, locale, {
+export async function persistCommercial (baseUrl, authenticationToken, locale, {
   basedOnDefaultLocale, broadcasters, characters, contentProducers, defaultLocale,
   defaultTitle, description, endYear, episodeId, hasTitle, locales, number,
   publishStatus, relatedCharacterIds, seasonId, seriesEntryId, startYear, title,
-  lastEpisodeId
+  lastCommercialId
 }) {
   let episode = {};
   if (episodeId) {
-    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/serieEpisodes/${episodeId}`);
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/serieCommercials/${episodeId}`);
     episode = body;
   }
   // episode.characters = characters.map(({ id }) => ({ character: { uuid: id } }));
@@ -69,26 +63,26 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, {
     localeData.hasTitle = hasTitle && hasTitle[locale];
     localeData.title = title && title[locale];
   });
-  const url = `${baseUrl}/v004/media/serieEpisodes`;
+  const url = `${baseUrl}/v004/media/serieCommercials`;
   const result = await post(authenticationToken, locale, url, episode);
-  const persistedEpisode = transformEpisode004(result.body);
+  const persistedCommercial = transformCommercial(result.body);
   // Copy all characters of the last episode of a season. This only happens when
   // we create a new episode. We need to create the episode first, so we have the
   // id of this episode. After that we can do the copy call.
-  if (lastEpisodeId) {
-    const resp = await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${persistedEpisode.id}/castMembers/actions/importFromOtherMedium/${lastEpisodeId}`);
+  if (lastCommercialId) {
+    const resp = await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${persistedCommercial.id}/castMembers/actions/importFromOtherMedium/${lastCommercialId}`);
     console.log('result', resp);
   }
-  return persistedEpisode;
+  return persistedCommercial;
 }
 
-export async function deleteEpisode (baseUrl, authenticationToken, locale, { episodeId }) {
-  await del(authenticationToken, locale, `${baseUrl}/v004/media/serieEpisodes/${episodeId}`);
+export async function deleteCommercial (baseUrl, authenticationToken, locale, { episodeId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/serieCommercials/${episodeId}`);
 }
 
-export async function deleteEpisodes (baseUrl, authenticationToken, locale, { episodeIds }) {
+export async function deleteCommercials (baseUrl, authenticationToken, locale, { episodeIds }) {
   for (const episodeId of episodeIds) {
-    await deleteEpisode(baseUrl, authenticationToken, locale, { episodeId });
+    await deleteCommercial(baseUrl, authenticationToken, locale, { episodeId });
   }
 }
 

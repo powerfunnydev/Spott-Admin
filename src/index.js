@@ -17,6 +17,10 @@ import CharactersList from './pages/content/characters/list';
 import CharactersCreate from './pages/content/characters/create';
 import CharactersEdit from './pages/content/characters/edit';
 import CharactersRead from './pages/content/characters/read';
+import CommercialsList from './pages/content/commercials/list';
+import CommercialsCreate from './pages/content/commercials/create';
+import CommercialsEdit from './pages/content/commercials/edit';
+import CommercialsRead from './pages/content/commercials/read';
 import LinkUserToBroadcaster from './pages/content/broadcasters/read/users/linkUser';
 import BroadcastChannelCreate from './pages/content/broadcastChannels/create';
 import BroadcastChannelEdit from './pages/content/broadcastChannels/edit';
@@ -112,6 +116,13 @@ function getRoutes ({ dispatch, getState }) {
         <Route path='characters'>
           <Route component={CharactersEdit} path='edit/:characterId'/>
           <Route component={CharactersRead} path='read/:characterId'/>
+        </Route>
+        <Route component={CommercialsList} path='commercials'>
+          <Route component={CommercialsCreate} path='create'/>
+        </Route>
+        <Route path='commercials'>
+          <Route component={CommercialsEdit} path='edit/:commercialId'/>
+          <Route component={CommercialsRead} path='read/:commercialId'/>
         </Route>
         <Route component={ContentProducersList} path='content-producers'>
           <Route component={ContentProducersCreate} path='create'/>

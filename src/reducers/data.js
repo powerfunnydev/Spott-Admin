@@ -1,5 +1,6 @@
 import { fromJS } from 'immutable';
-import { serializeFilterHasCharacters, serializeFilterHasSeriesEntries, serializeFilterHasUsers, serializeFilterHasBroadcastChannels,
+import { serializeFilterHasCharacters, serializeFilterHasSeriesEntries, serializeFilterHasUsers,
+    serializeFilterHasBroadcastChannels, serializeFilterHasCommercials,
     serializeFilterHasBroadcasters, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
     fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart,
     fetchListSuccess, fetchListError } from './utils';
@@ -8,6 +9,7 @@ import * as availabilityActions from '../actions/availability';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcastersActions from '../actions/broadcaster';
 import * as charactersActions from '../actions/character';
+import * as commercialActions from '../actions/commercial';
 import * as contentProducersActions from '../actions/contentProducer';
 import * as episodeActions from '../actions/episode';
 import * as mediaActions from '../actions/media';
@@ -45,6 +47,7 @@ export default (state = fromJS({
     filterHasBroadcastChannels: {},
     filterHasBroadcasters: {},
     filterHasCharacters: {},
+    filterHasCommercials: {},
     filterHasContentProducers: {},
     filterHasEpisodes: {},
     filterHasSeasons: {},
@@ -182,6 +185,23 @@ export default (state = fromJS({
       return searchSuccess(state, 'listCharacters', 'mediumHasCharacters', action.mediumId, action.data);
     case charactersActions.MEDIUM_CHARACTER_SEARCH_ERROR:
       return searchError(state, 'mediumHasCharacters', action.mediumId, action.error);
+
+    // Commercials
+    // ///////////
+
+    case commercialActions.COMMERCIAL_FETCH_START:
+      return fetchStart(state, [ 'entities', 'media', action.commercialId ]);
+    case commercialActions.COMMERCIAL_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.commercialId ], action.data);
+    case commercialActions.COMMERCIAL_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'media', action.commercialId ], action.error);
+
+    case commercialActions.COMMERCIALS_FETCH_START:
+      return searchStart(state, 'filterHasCommercials', serializeFilterHasCommercials(action));
+    case commercialActions.COMMERCIALS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'filterHasCommercials', serializeFilterHasCommercials(action), action.data.data);
+    case commercialActions.COMMERCIALS_FETCH_ERROR:
+      return searchError(state, 'filterHasCommercials', serializeFilterHasCommercials(action), action.error);
 
     // Content producers
     // /////////////////

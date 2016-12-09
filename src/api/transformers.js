@@ -272,10 +272,13 @@ export function transformSeason ({ availabilities, characters, defaultLocale,
 export const transformSeriesEntry004 = transformMedium;
 export const transformSeason004 = transformMedium;
 export const transformEpisode004 = transformMedium;
+export const transformCommercial = transformMedium;
 
 export const transformListEpisode = transformListMedium;
 export const transformListSeason = transformListMedium;
 export const transformListSeriesEntry = transformListMedium;
+
+export const transformListCommercial = transformListMedium;
 
 export function transformBroadcastChannel ({ name, uuid: id, logo, broadcaster }) {
   return {

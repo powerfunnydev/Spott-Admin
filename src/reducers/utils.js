@@ -22,6 +22,7 @@ export const serializeFilterHasUsers = serialize;
 export const serializeFilterHasSeriesEntries = serialize;
 export const serializeFilterHasSeasons = serialize;
 export const serializeFilterHasCharacters = serialize;
+export const serializeFilterHasCommercials = serialize;
 
 export function serializeFilterHasTvGuideEntries ({ page = 0, pageSize = 25, sortDirection, sortField, mediumId }) {
   let id = `mediumId=${mediumId}&page=${page}&pageSize=${pageSize}`;
