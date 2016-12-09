@@ -15,12 +15,15 @@ import charactersList from '../pages/content/characters/list/reducer';
 import contentProducersList from '../pages/content/contentProducers/list/reducer';
 import contentProducersReadUsers from '../pages/content/contentProducers/read/users/list/reducer';
 import episodesCreate from '../pages/content/episodes/create/reducer';
-import episodesList from '../pages/content/episodes/list/reducer';
 import episodesEdit from '../pages/content/episodes/edit/reducer';
+import episodesList from '../pages/content/episodes/list/reducer';
 import episodesReadTvGuide from '../pages/content/episodes/read/tvGuide/reducer';
 import LinkUserModal from '../pages/_common/components/linkUserModal/reducer';
-import reporting from '../pages/reporting/reducer';
+import productsCreate from '../pages/content/products/create/reducer';
+import productsEdit from '../pages/content/products/edit/reducer';
+import productsList from '../pages/content/products/list/reducer';
 import relatedVideoPersist from '../pages/content/_relatedVideo/persist/reducer';
+import reporting from '../pages/reporting/reducer';
 import seasonsCreate from '../pages/content/seasons/create/reducer';
 import seasonsEdit from '../pages/content/seasons/edit/reducer';
 import seasonsList from '../pages/content/seasons/list/reducer';
@@ -76,6 +79,11 @@ export default combineReducers({
       read: combineReducers({
         tvGuide: episodesReadTvGuide
       })
+    }),
+    products: combineReducers({
+      create: productsCreate,
+      edit: productsEdit,
+      list: productsList
     }),
     seasons: combineReducers({
       create: seasonsCreate,

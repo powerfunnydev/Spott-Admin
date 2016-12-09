@@ -1,6 +1,6 @@
 import { fromJS } from 'immutable';
 import { serializeFilterHasCharacters, serializeFilterHasSeriesEntries, serializeFilterHasUsers, serializeFilterHasBroadcastChannels,
-    serializeFilterHasBroadcasters, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
+    serializeFilterHasBroadcasters, serializeFilterHasTvGuideEntries, serializeFilterHasProducts, serializeFilterHasContentProducers,
     fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart,
     fetchListSuccess, fetchListError } from './utils';
 import * as actorActions from '../actions/actor';
@@ -11,6 +11,7 @@ import * as charactersActions from '../actions/character';
 import * as contentProducersActions from '../actions/contentProducer';
 import * as episodeActions from '../actions/episode';
 import * as mediaActions from '../actions/media';
+import * as productActions from '../actions/product';
 import * as reportingActions from '../actions/reporting';
 import * as seasonActions from '../actions/season';
 import * as seriesActions from '../actions/series';
@@ -31,7 +32,9 @@ export default (state = fromJS({
     genders: {},
     listCharacters: {}, // listCharacters is the light version of characters, without locales
     listMedia: {}, // listMedia is the light version of media, without locales
+    listProducts: {},
     media: {}, // completed version of media, with locales
+    products: {},
     tvGuideEntries: {},
     users: {},
     videos: {}
@@ -47,6 +50,7 @@ export default (state = fromJS({
     filterHasCharacters: {},
     filterHasContentProducers: {},
     filterHasEpisodes: {},
+    filterHasProducts: {},
     filterHasSeasons: {},
     filterHasSeriesEntries: {},
     filterHasTvGuideEntries: {},
@@ -327,6 +331,23 @@ export default (state = fromJS({
       return searchSuccess(state, 'listMedia', 'searchStringHasMedia', action.searchString, action.data);
     case mediaActions.MEDIA_SEARCH_ERROR:
       return searchError(state, 'searchStringHasMedia', action.searchString, action.error);
+
+    // Products
+    // ////////
+
+    case productActions.PRODUCT_FETCH_START:
+      return fetchStart(state, [ 'entities', 'products', action.productId ]);
+    case productActions.PRODUCT_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'products', action.productId ], action.data);
+    case productActions.PRODUCT_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'products', action.productId ], action.error);
+
+    case productActions.PRODUCTS_FETCH_START:
+      return searchStart(state, 'filterHasProducts', serializeFilterHasProducts(action));
+    case productActions.PRODUCTS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listProducts', 'filterHasProducts', serializeFilterHasProducts(action), action.data.data);
+    case productActions.PRODUCTS_FETCH_ERROR:
+      return searchError(state, 'filterHasProducts', serializeFilterHasProducts(action), action.error);
 
     // Reporting
     // /////////
