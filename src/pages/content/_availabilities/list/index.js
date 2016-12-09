@@ -66,12 +66,12 @@ export default class Availabilities extends Component {
     return {
       countryId,
       endDate: availabilityTo && moment(availabilityTo).startOf('day'),
-      endTime: availabilityTo && moment(availabilityTo),
+      endTime: availabilityTo && moment(availabilityTo).utc(),
       id,
       noEndDate: !availabilityTo,
       mediumId,
       startDate: availabilityFrom && moment(availabilityFrom).startOf('day'),
-      startTime: availabilityFrom && moment(availabilityFrom),
+      startTime: availabilityFrom && moment(availabilityFrom).utc(),
       timezone: '+00:00',
       videoStatus
     };
