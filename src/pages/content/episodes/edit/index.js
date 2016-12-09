@@ -382,7 +382,6 @@ export default class EditEpisode extends Component {
                   <div style={styles.paddingLeftUploadImage}>
                     <Label text='Profile image' />
                     <Dropzone
-                      accept='image/*'
                       downloadUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
                         currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}
                       imageUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&

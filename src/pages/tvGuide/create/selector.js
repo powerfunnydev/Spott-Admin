@@ -4,8 +4,8 @@ import {
   broadcastChannelsEntitiesSelector,
   createEntityByIdSelector,
   createEntityIdsByRelationSelector,
-  seasonHasEpisodesSelector,
-  seriesEntryHasSeasonsSelector,
+  seasonHasEpisodesRelationsSelector,
+  seriesEntryHasSeasonsRelationsSelector,
   listMediaEntitiesSelector,
   searchStringHasMediaRelationsSelector,
   searchStringHasBroadcastChannelsRelationsSelector
@@ -30,8 +30,8 @@ export const currentSeasonsSearchStringSelector = (state) => state.getIn([ 'tvGu
 export const currentMediaSearchStringSelector = (state) => state.getIn([ 'tvGuide', 'create', 'currentMediaSearchString' ]);
 export const popUpMessageSelector = (state) => state.getIn([ 'tvGuide', 'create', 'popUpMessage' ]);
 
-export const searchedEpisodeIdsSelector = createEntityIdsByRelationSelector(seasonHasEpisodesSelector, currentSeasonIdSelector);
-export const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(seriesEntryHasSeasonsSelector, currentMediumIdSelector);
+export const searchedEpisodeIdsSelector = createEntityIdsByRelationSelector(seasonHasEpisodesRelationsSelector, currentSeasonIdSelector);
+export const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(seriesEntryHasSeasonsRelationsSelector, currentMediumIdSelector);
 export const searchedMediumIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediaRelationsSelector, currentMediaSearchStringSelector);
 export const searchedBroadcastChannelIdsSelector = createEntityIdsByRelationSelector(searchStringHasBroadcastChannelsRelationsSelector, currentBroadcastChannelsSearchStringSelector);
 

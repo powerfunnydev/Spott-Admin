@@ -6,7 +6,7 @@ export const isSelectedSelector = (state) => state.getIn([ 'content', 'character
 export const pageCountSelector = (state) => state.getIn([ 'content', 'characters', 'list', 'pageCount' ]);
 export const totalResultCountSelector = (state) => state.getIn([ 'content', 'characters', 'list', 'totalResultCount' ]);
 
-export const charactersFilterKeySelector = (state, props) => { return serializeFilterHasCharacters(props.location.query); };
+export const charactersFilterKeySelector = (state, props) => serializeFilterHasCharacters(props.location.query);
 
 export const charactersSelector = createEntitiesByRelationSelector(
   filterHasCharactersRelationsSelector,

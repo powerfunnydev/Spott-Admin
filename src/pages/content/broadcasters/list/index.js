@@ -160,9 +160,11 @@ export default class Broadcasters extends Component {
                 <div style={generalStyles.row}>
                   {broadcasters.get('data').map((broadcaster, index) => (
                     <Tile
+                      checked={isSelected.get(broadcaster.get('id'))}
                       imageUrl={broadcaster.get('logo') && `${broadcaster.getIn([ 'logo', 'url' ])}?height=310&width=310`}
                       key={`broadcaster${index}`}
                       text={broadcaster.get('name')}
+                      onCheckboxChange={selectCheckbox.bind(this, broadcaster.get('id'))}
                       onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcaster.get('id')}`); }}
                       onDelete={async (e) => {
                         e.preventDefault();

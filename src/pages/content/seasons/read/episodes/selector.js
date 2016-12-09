@@ -1,6 +1,6 @@
 import { createStructuredSelector } from 'reselect';
 import {
-  seasonHasEpisodesSelector,
+  seasonHasEpisodesRelationsSelector,
   createEntitiesByRelationSelector,
   listMediaEntitiesSelector,
   createEntityByIdSelector
@@ -15,7 +15,7 @@ export const currentSeasonIdSelector = (state, props) => { return props.params.s
 export const currentSeasonSelector = createEntityByIdSelector(listMediaEntitiesSelector, currentSeasonIdSelector);
 
 export const episodesSelector = createEntitiesByRelationSelector(
-  seasonHasEpisodesSelector,
+  seasonHasEpisodesRelationsSelector,
   currentSeasonIdSelector,
   listMediaEntitiesSelector
 );

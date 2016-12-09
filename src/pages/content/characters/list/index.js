@@ -135,7 +135,7 @@ export default class Characters extends Component {
                   <Headers>
                     {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                     <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>TITLE</CustomCel>
+                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>NAME</CustomCel>
                     <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
                     <CustomCel sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
                     <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
@@ -172,9 +172,11 @@ export default class Characters extends Component {
                 <div style={generalStyles.row}>
                   {characters.get('data').map((character, index) => (
                     <Tile
+                      checked={isSelected.get(character.get('id'))}
                       imageUrl={character.get('profileImage') && `${character.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                       key={`character${index}`}
                       text={character.get('name')}
+                      onCheckboxChange={selectCheckbox.bind(this, character.get('id'))}
                       onClick={() => { this.props.routerPushWithReturnTo(`content/characters/read/${character.get('id')}`); }}
                       onDelete={async (e) => { e.preventDefault(); await this.deleteCharacter(character.get('id')); }}
                       onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/characters/edit/${character.get('id')}`); }}/>

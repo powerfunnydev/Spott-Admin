@@ -168,9 +168,11 @@ export default class ContentProducers extends Component {
                 <div style={generalStyles.row}>
                   {contentProducers.get('data').map((contentProducer, index) => (
                     <Tile
+                      checked={isSelected.get(contentProducer.get('id'))}
                       imageUrl={contentProducer.get('logo') && `${contentProducer.getIn([ 'logo', 'url' ])}?height=310&width=310`}
                       key={`contentProducer${index}`}
                       text={contentProducer.get('name')}
+                      onCheckboxChange={selectCheckbox.bind(this, contentProducer.get('id'))}
                       onClick={() => { this.props.routerPushWithReturnTo(`content/content-producers/read/${contentProducer.get('id')}`); }}
                       onDelete={async (e) => {
                         e.preventDefault();
