@@ -268,13 +268,17 @@ export function transformSeason ({ availabilities, characters, defaultLocale,
   }
   return season;
 }
+// Need to be refactored. Old versions need to be replaced by the 004 version.
 export const transformSeriesEntry004 = transformMedium;
 export const transformSeason004 = transformMedium;
 export const transformEpisode004 = transformMedium;
+// Already refactored -> OK
+export const transformMovie = transformMedium;
 
 export const transformListEpisode = transformListMedium;
 export const transformListSeason = transformListMedium;
 export const transformListSeriesEntry = transformListMedium;
+export const transformListMovie = transformListMedium;
 
 export function transformBroadcastChannel ({ name, uuid: id, logo, broadcaster }) {
   return {

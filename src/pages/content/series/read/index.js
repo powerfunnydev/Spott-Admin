@@ -15,7 +15,7 @@ import Line from '../../../_common/components/line';
 import SeriesEntrySeasonsList from './seasons';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
-import TvGuideList from './tvGuide';
+import TvGuideList from '../../_mediumTvGuide';
 
 /* eslint-disable no-alert */
 
@@ -110,7 +110,7 @@ export default class ReadSeriesEntry extends Component {
                 <SeriesEntrySeasonsList {...this.props}/>
               </Tab>
               <Tab title='TV Guide'>
-                <TvGuideList {...this.props}/>
+                <TvGuideList {...this.props} mediumId={this.props.params.seriesEntryId}/>
               </Tab>
             </Tabs>
           </Container>
