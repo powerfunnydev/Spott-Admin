@@ -1,9 +1,10 @@
 import moment from 'moment';
 import { searchMedia as dataSearchMedia } from '../../actions/media';
 import {
-  fetchAges, fetchEvents, fetchGenders, fetchProductViews, fetchTimelineData,
-  fetchAgeData, fetchBrandSubscriptions, fetchMediumSyncs, fetchMediumSubscriptions,
-  fetchGenderData, fetchCharacterSubscriptions
+  fetchAges, fetchEvents, fetchGenders, fetchTimelineData, fetchAgeData,
+  fetchBrandSubscriptions, fetchMediumSyncs, fetchMediumSubscriptions,
+  fetchGenderData, fetchCharacterSubscriptions, fetchProductBuys,
+  fetchProductImpressions, fetchProductViews
 } from '../../actions/reporting';
 import { currentAgesSelector, currentGendersSelector, currentMediaSelector } from './selector';
 import { locationSelector } from '../../selectors/global';
@@ -36,28 +37,6 @@ export const loadAges = fetchAges;
 export const loadEvents = fetchEvents;
 export const loadGenders = fetchGenders;
 
-// export function updateActivitiesLocation () {
-//   return async (dispatch, getState) => {
-//     const state = getState();
-//
-//     // Get the current selected media (series/movies/commercials).
-//     const mediumIds = mediaFilterSelector(state, 'media');
-//
-//     // Get the date range and the event type.
-//     const eventFilterSelector = formValueSelector('reportingActivityFilter');
-//     const { endDate, event, startDate } = eventFilterSelector(state, 'endDate', 'event', 'startDate');
-//
-//     // Change route.
-//     const currentLocation = state.get('router').locationBeforeTransitions;
-//     dispatch(routerPush({ ...currentLocation, query: {
-//       endDate: endDate.format('YYYY-MM-DD'),
-//       event,
-//       startDate: startDate.format('YYYY-MM-DD'),
-//       mediumIds
-//     } }));
-//   };
-// }
-
 export function loadActivities () {
   return async (dispatch, getState) => {
     const state = getState();
@@ -84,23 +63,6 @@ export function loadActivities () {
   };
 }
 
-// export function updateRankingsLocation () {
-//   return async (dispatch, getState) => {
-//     const state = getState();
-//
-//     const { ages = [], genders = [] } = rankingsFilterSelector(state, 'ages', 'genders');
-//     const mediumIds = mediaFilterSelector(state, 'media') || [];
-//
-//     // Change route.
-//     const currentLocation = state.get('router').locationBeforeTransitions;
-//     dispatch(routerPush({ ...currentLocation, query: {
-//       ages,
-//       genders,
-//       mediumIds
-//     } }));
-//   };
-// }
-
 export function loadRankings () {
   return async (dispatch, getState) => {
     const state = getState();
@@ -118,6 +80,8 @@ export function loadRankings () {
       dispatch(fetchCharacterSubscriptions({ ages, genders, mediumIds, page: 0 }));
       dispatch(fetchMediumSubscriptions({ ages, genders, mediumIds, page: 0 }));
       dispatch(fetchMediumSyncs({ ages, genders, mediumIds, page: 0 }));
+      dispatch(fetchProductBuys({ ages, genders, mediumIds, page: 0 }));
+      dispatch(fetchProductImpressions({ ages, genders, mediumIds, page: 0 }));
       dispatch(fetchProductViews({ ages, genders, mediumIds, page: 0 }));
 
       // return await dispatch(dataSearchSeries({ searchString }));
@@ -143,21 +107,6 @@ export const loadBrandSubscriptions = createLoadRankings(fetchBrandSubscriptions
 export const loadCharacterSubscriptions = createLoadRankings(fetchCharacterSubscriptions);
 export const loadMediumSubscriptions = createLoadRankings(fetchMediumSubscriptions);
 export const loadMediumSyncs = createLoadRankings(fetchMediumSyncs);
+export const loadProductBuys = createLoadRankings(fetchProductBuys);
 export const loadProductViews = createLoadRankings(fetchProductViews);
-
-// export function initializeRankingsFilterForm (ages, genders) {
-//   return async (dispatch, getState) => {
-//     const state = getState();
-//     const { ages: currentAges, genders: currentGenders } = rankingsFilterSelector(state, 'ages', 'genders');
-//
-//     if (!currentAges || currentAges.length === 0) {
-//       const ageIds = ages.map(({ id }) => id);
-//       dispatch(change('reportingRankingsFilter', 'ages', ageIds));
-//     }
-//
-//     if (!currentGenders || currentGenders.length === 0) {
-//       const genderIds = genders.map(({ id }) => id);
-//       dispatch(change('reportingRankingsFilter', 'genders', genderIds));
-//     }
-//   };
-// }
+export const loadProductImpressions = createLoadRankings(fetchProductImpressions);

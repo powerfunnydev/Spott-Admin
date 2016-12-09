@@ -130,6 +130,8 @@ class RankingItem extends Component {
   loadCharacterSubscriptions: bindActionCreators(actions.loadCharacterSubscriptions, dispatch),
   loadMediumSubscriptions: bindActionCreators(actions.loadMediumSubscriptions, dispatch),
   loadMediumSyncs: bindActionCreators(actions.loadMediumSyncs, dispatch),
+  loadProductBuys: bindActionCreators(actions.loadProductBuys, dispatch),
+  loadProductImpressions: bindActionCreators(actions.loadProductImpressions, dispatch),
   loadProductViews: bindActionCreators(actions.loadProductViews, dispatch),
   loadRankings: bindActionCreators(actions.loadRankings, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
@@ -143,16 +145,22 @@ export default class Rankings extends Component {
     currentCharacterSubscriptionsPage: PropTypes.number.isRequired,
     currentMediumSubscriptionsPage: PropTypes.number.isRequired,
     currentMediumSyncsPage: PropTypes.number.isRequired,
+    currentProductBuysPage: PropTypes.number.isRequired,
+    currentProductImpressionsPage: PropTypes.number.isRequired,
     currentProductViewsPage: PropTypes.number.isRequired,
     loadBrandSubscriptions: PropTypes.func.isRequired,
     loadCharacterSubscriptions: PropTypes.func.isRequired,
     loadMediumSubscriptions: PropTypes.func.isRequired,
     loadMediumSyncs: PropTypes.func.isRequired,
+    loadProductBuys: PropTypes.func.isRequired,
+    loadProductImpressions: PropTypes.func.isRequired,
     loadProductViews: PropTypes.func.isRequired,
     loadRankings: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     mediumSubscriptions: ImmutablePropTypes.map.isRequired,
     mediumSyncs: ImmutablePropTypes.map.isRequired,
+    productBuys: ImmutablePropTypes.map.isRequired,
+    productImpressions: ImmutablePropTypes.map.isRequired,
     productViews: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired
   };
@@ -244,10 +252,13 @@ export default class Rankings extends Component {
     const styles = this.constructor.styles;
     const {
       brandSubscriptions, currentBrandSubscriptionsPage, currentCharacterSubscriptionsPage,
-      currentMediumSubscriptionsPage, currentMediumSyncsPage, currentProductViewsPage,
-      characterSubscriptions, loadBrandSubscriptions,
-      loadCharacterSubscriptions, loadMediumSubscriptions, loadMediumSyncs, loadProductViews,
-      location: { query: { ages, genders } }, mediumSubscriptions, mediumSyncs, productViews } = this.props;
+      currentMediumSubscriptionsPage, currentMediumSyncsPage, currentProductBuysPage,
+      currentProductImpressionsPage, currentProductViewsPage,
+      characterSubscriptions, loadBrandSubscriptions, loadCharacterSubscriptions,
+      loadMediumSubscriptions, loadMediumSyncs, loadProductBuys, loadProductImpressions,
+      loadProductViews, location: { query: { ages, genders } }, mediumSubscriptions,
+      mediumSyncs, productBuys, productImpressions, productViews
+    } = this.props;
 
     return (
       <div>
@@ -263,7 +274,7 @@ export default class Rankings extends Component {
         <div style={styles.rankings}>
           <Container>
             <div style={styles.widgets}>
-              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(mediumSubscriptions)} title='Programs'>
+              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(mediumSubscriptions)} title='Program subscribers'>
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
@@ -302,7 +313,7 @@ export default class Rankings extends Component {
                 </InfiniteScroll>
               </Widget>
               {/* <Widget contentStyle={styles.rankingWidget} title='Interactive commercials'>{content}</Widget> */}
-              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(characterSubscriptions)} title='Characters'>
+              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(characterSubscriptions)} title='Character subscribers'>
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
@@ -321,7 +332,26 @@ export default class Rankings extends Component {
                   ))}
                 </InfiniteScroll>
               </Widget>
-              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(productViews)} title='Products'>
+              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(productImpressions)} title='Product impressions'>
+                <InfiniteScroll
+                  containerHeight={260}
+                  elementHeight={40}
+                  isLoading={isLoading(productImpressions)}
+                  loadMore={loadProductImpressions}
+                  offset={400}
+                  page={currentProductImpressionsPage}>
+                {productImpressions.get('data').map((pw, i) => (
+                  <RankingItem
+                    count={pw.count}
+                    countLabel='Impressions'
+                    imageUrl={pw.product.image && pw.product.image.url}
+                    key={i}
+                    position={i + 1}
+                    title={pw.product.shortName} />
+                ))}
+                </InfiniteScroll>
+              </Widget>
+              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(productViews)} title='Product clicks'>
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
@@ -332,7 +362,7 @@ export default class Rankings extends Component {
                 {productViews.get('data').map((pw, i) => (
                   <RankingItem
                     count={pw.count}
-                    countLabel={'Views'}
+                    countLabel='Clicks'
                     imageUrl={pw.product.image && pw.product.image.url}
                     key={i}
                     position={i + 1}
@@ -340,7 +370,26 @@ export default class Rankings extends Component {
                 ))}
                 </InfiniteScroll>
               </Widget>
-              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(brandSubscriptions)} title='Brands'>
+              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(productBuys)} title='Product buys'>
+                <InfiniteScroll
+                  containerHeight={260}
+                  elementHeight={40}
+                  isLoading={isLoading(productBuys)}
+                  loadMore={loadProductBuys}
+                  offset={400}
+                  page={currentProductBuysPage}>
+                {productBuys.get('data').map((pw, i) => (
+                  <RankingItem
+                    count={pw.count}
+                    countLabel='Buys'
+                    imageUrl={pw.product.image && pw.product.image.url}
+                    key={i}
+                    position={i + 1}
+                    title={pw.product.shortName} />
+                ))}
+                </InfiniteScroll>
+              </Widget>
+              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(brandSubscriptions)} title='Brand subscribers'>
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
