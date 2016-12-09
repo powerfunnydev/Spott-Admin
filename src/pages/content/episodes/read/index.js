@@ -45,7 +45,7 @@ export default class ReadEpisode extends Component {
   }
 
   componentWillMount () {
-    if (this.props.params.seasonId) {
+    if (this.props.params.episodeId) {
       this.props.loadEpisode(this.props.params.episodeId);
     }
   }
@@ -82,7 +82,7 @@ export default class ReadEpisode extends Component {
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
-          { title: 'List', url: '/content/series' },
+          { title: 'Series', url: '/content/series' },
           { title: currentEpisode.getIn([ 'seriesEntry', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}` },
           { title: currentEpisode.getIn([ 'season', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}` },
           { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/read/${params.episodeId}` }

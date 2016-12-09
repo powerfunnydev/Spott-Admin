@@ -1,5 +1,5 @@
 import { createStructuredSelector } from 'reselect';
-import { createEntitiesByRelationSelector, tvGuideEntriesEntitiesSelector, mediumHasTvGuideEntriesSelector } from '../../../../../selectors/data';
+import { createEntitiesByRelationSelector, tvGuideEntriesEntitiesSelector, mediumHasTvGuideEntriesRelationsSelector } from '../../../../../selectors/data';
 import { serializeFilterHasTvGuideEntries } from '../../../../../../src/reducers/utils';
 import { getInformationFromQuery } from '../../../../_common/components/table/index';
 import { prefix } from './index';
@@ -11,7 +11,7 @@ export const totalResultCountSelector = (state) => state.getIn([ 'content', 'ser
 export const tvGuideEntriesFilterKeySelector = (state, props) => serializeFilterHasTvGuideEntries({ ...getInformationFromQuery(props.location.query, prefix), mediumId: props.params.seriesEntryId });
 
 export const tvGuideEntriesSelector = createEntitiesByRelationSelector(
-  mediumHasTvGuideEntriesSelector,
+  mediumHasTvGuideEntriesRelationsSelector,
   tvGuideEntriesFilterKeySelector,
   tvGuideEntriesEntitiesSelector
 );

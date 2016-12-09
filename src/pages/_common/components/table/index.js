@@ -123,7 +123,6 @@ export function determineSortDirection (sortField, querySortField, querySortDire
 export const isQueryChanged = (query, nextQuery, prefix) => {
   const prefixPage = concatCamelCase('page', prefix);
   const prefixSearchString = concatCamelCase('searchString', prefix);
-  const prefixDisplay = concatCamelCase('display', prefix);
   const prefixPageSize = concatCamelCase('pageSize', prefix);
   const prefixSortDirection = concatCamelCase('sortDirection', prefix);
   const prefixSortField = concatCamelCase('sortField', prefix);
@@ -131,7 +130,6 @@ export const isQueryChanged = (query, nextQuery, prefix) => {
   return (
     (query[prefixPage] !== nextQuery[prefixPage]) ||
     (query[prefixSearchString] !== nextQuery[prefixSearchString]) ||
-    (query[prefixDisplay] !== nextQuery[prefixDisplay]) ||
     (query[prefixPageSize] !== nextQuery[prefixPageSize]) ||
     (query[prefixSortDirection] !== nextQuery[prefixSortDirection]) ||
     (query[prefixSortField] !== nextQuery[prefixSortField]));

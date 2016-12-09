@@ -9,38 +9,45 @@ export const broadcastersEntitiesSelector = (state) => state.getIn([ 'data', 'en
 export const charactersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'characters' ]);
 export const contentProducersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'contentProducers' ]);
 export const eventsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'events' ]);
+export const faceImagesEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'faceImages' ]);
 export const gendersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'genders' ]);
+export const listCharactersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listCharacters' ]);
 export const listMediaEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listMedia' ]);
+export const listPersonsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listPersons' ]);
 export const mediaEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'media' ]);
+export const personsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'persons' ]);
 export const tvGuideEntriesEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'tvGuideEntries' ]);
 export const usersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'users' ]);
 export const videosEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'videos' ]);
 
 export const filterHasBroadcastersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasBroadcasters' ]);
 export const filterHasBroadcasterChannelsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasBroadcastChannels' ]);
+export const filterHasCharactersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasCharacters' ]);
 export const filterHasContentProducersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasContentProducers' ]);
 export const filterHasEpisodesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasEpisodes' ]);
+export const filterHasPersonsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasPersons' ]);
 export const filterHasSeasonsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasSeasons' ]);
 export const filterHasTvGuideEntriesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasTvGuideEntries' ]);
 export const filterHasUsersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasUsers' ]);
 export const filterHasSeriesEntriesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasSeriesEntries' ]);
-export const filterHasSeriesEntrySeasonsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasSeriesEntrySeasons' ]);
 
 export const searchStringHasBroadcastChannelsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasBroadcastChannels' ]);
 export const searchStringHasCharactersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasCharacters' ]);
 export const searchStringHasMediaRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasMedia' ]);
 export const searchStringHasBroadcastersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasBroadcasters' ]);
 export const searchStringHasContentProducersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasContentProducers' ]);
+export const searchStringHasPersonsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasPersons' ]);
 export const searchStringHasUsersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasUsers' ]);
 export const searchStringHasSeriesEntriesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasSeriesEntries' ]);
 export const searchStringHasSeasonsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasSeasons' ]);
 
-export const episodeHasTvGuideEntriesSelector = (state) => state.getIn([ 'data', 'relations', 'episodeHasTvGuideEntries' ]);
-export const seriesEntryHasSeasonsSelector = (state) => state.getIn([ 'data', 'relations', 'seriesEntryHasSeasons' ]);
-export const seasonHasEpisodesSelector = (state) => state.getIn([ 'data', 'relations', 'seasonHasEpisodes' ]);
+export const characterHasFaceImagesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'characterHasFaceImages' ]);
 export const mediumHasAvailabilitiesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasAvailabilities' ]);
-export const mediumHasCharactersSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasCharacters' ]);
-export const mediumHasTvGuideEntriesSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasTvGuideEntries' ]);
+export const mediumHasCharactersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasCharacters' ]);
+export const mediumHasTvGuideEntriesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasTvGuideEntries' ]);
+export const personHasFaceImagesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'personHasFaceImages' ]);
+export const seriesEntryHasSeasonsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'seriesEntryHasSeasons' ]);
+export const seasonHasEpisodesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'seasonHasEpisodes' ]);
 
 export const agesListSelector = (state) => state.getIn([ 'data', 'lists', 'ages' ]);
 export const eventsListSelector = (state) => state.getIn([ 'data', 'lists', 'events' ]);

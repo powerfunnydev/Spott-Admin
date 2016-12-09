@@ -13,6 +13,10 @@ import BroadcastersList from './pages/content/broadcasters/list';
 import BroadcastersCreate from './pages/content/broadcasters/create';
 import BroadcastersEdit from './pages/content/broadcasters/edit';
 import BroadcastersRead from './pages/content/broadcasters/read';
+import CharactersList from './pages/content/characters/list';
+import CharactersCreate from './pages/content/characters/create';
+import CharactersEdit from './pages/content/characters/edit';
+import CharactersRead from './pages/content/characters/read';
 import LinkUserToBroadcaster from './pages/content/broadcasters/read/users/linkUser';
 import BroadcastChannelCreate from './pages/content/broadcastChannels/create';
 import BroadcastChannelEdit from './pages/content/broadcastChannels/edit';
@@ -34,6 +38,10 @@ import MediaUpload from './pages/media/upload';
 import MediaWelcome from './pages/media/welcome';
 import Login from './pages/login';
 import ForgotPassword from './pages/forgotPassword';
+import PersonsCreate from './pages/content/persons/create';
+import PersonsEdit from './pages/content/persons/edit';
+import PersonsList from './pages/content/persons/list';
+import PersonsRead from './pages/content/persons/read';
 import ResetPassword from './pages/resetPassword';
 import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
@@ -102,16 +110,6 @@ function getRoutes ({ dispatch, getState }) {
       </Route>
       <Route path='content' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <IndexRedirect to='content-producers' />
-        <Route component={ContentProducersList} path='content-producers'>
-          <Route component={ContentProducersCreate} path='create'/>
-        </Route>
-        <Route path='content-producers'>
-          <Route component={ContentProducersEdit} path='edit/:id'/>
-          <Route component={ContentProducersRead} path='read/:id'>
-            <Route component={LinkUserToContentProducer} path='link/user'/>
-            <Route component={UsersCreate} path='create/user'/>
-          </Route>
-        </Route>
         <Route component={BroadcastersList} path='broadcasters'>
           <Route component={BroadcastersCreate} path='create'/>
         </Route>
@@ -128,6 +126,30 @@ function getRoutes ({ dispatch, getState }) {
         </Route>
         <Route path='broadcast-channels'>
           <Route component={BroadcastChannelEdit} path='edit/:id' />
+        </Route>
+        <Route component={CharactersList} path='characters'>
+          <Route component={CharactersCreate} path='create'/>
+        </Route>
+        <Route path='characters'>
+          <Route component={CharactersEdit} path='edit/:characterId'/>
+          <Route component={CharactersRead} path='read/:characterId'/>
+        </Route>
+        <Route component={ContentProducersList} path='content-producers'>
+          <Route component={ContentProducersCreate} path='create'/>
+        </Route>
+        <Route path='content-producers'>
+          <Route component={ContentProducersEdit} path='edit/:id'/>
+          <Route component={ContentProducersRead} path='read/:id'>
+            <Route component={LinkUserToContentProducer} path='link/user'/>
+            <Route component={UsersCreate} path='create/user'/>
+          </Route>
+        </Route>
+        <Route component={PersonsList} path='persons'>
+          <Route component={PersonsCreate} path ='create'/>
+        </Route>
+        <Route path='persons'>
+          <Route component={PersonsRead} path='read/:personId'/>
+          <Route component={PersonsEdit} path='edit/:personId'/>
         </Route>
         <Route component={VideoEdit} path='videos/edit/:videoId' onEnter={requireOneRole([ ADMIN ])}/>
         <Route component={SeriesList} path='series'>
@@ -216,6 +238,7 @@ function getRoutes ({ dispatch, getState }) {
         </Route>
       </Route>
 
+      {/* Users */}
       <Route component={UsersList} path='users' onEnter={requireOneRole([ ADMIN ])}>
         <Route component={UsersCreate} path='create'/>
       </Route>
@@ -224,6 +247,7 @@ function getRoutes ({ dispatch, getState }) {
         <Route component={UsersRead} path='read/:id'/>
       </Route>
 
+      {/* TV Guide */}
       <Route component={TvGuideList} path='tv-guide' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <Route
           component={TvGuideCreateEntry} load={(props) => { dispatch(loadTvGuide(props.location.query)); }} path='create' />

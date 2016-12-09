@@ -1,5 +1,8 @@
 import { fromJS } from 'immutable';
-import { serializeFilterHasSeriesEntries, serializeFilterHasUsers, serializeFilterHasBroadcastChannels, serializeFilterHasBroadcasters, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers, fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, fetchListSuccess, fetchListError } from './utils';
+import { serializeFilterHasCharacters, serializeFilterHasSeriesEntries, serializeFilterHasUsers, serializeFilterHasBroadcastChannels,
+    serializeFilterHasBroadcasters, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
+    fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart,
+    fetchListSuccess, fetchListError } from './utils';
 import * as availabilityActions from '../actions/availability';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcastersActions from '../actions/broadcaster';
@@ -7,6 +10,7 @@ import * as charactersActions from '../actions/character';
 import * as contentProducersActions from '../actions/contentProducer';
 import * as episodeActions from '../actions/episode';
 import * as mediaActions from '../actions/media';
+import * as personActions from '../actions/person';
 import * as reportingActions from '../actions/reporting';
 import * as seasonActions from '../actions/season';
 import * as seriesActions from '../actions/series';
@@ -23,9 +27,13 @@ export default (state = fromJS({
     characters: {},
     contentProducers: {},
     events: {},
+    faceImages: {}, // Characters and persons has faceImages
     genders: {},
+    listCharacters: {}, // listCharacters is the light version of characters, without locales
     listMedia: {}, // listMedia is the light version of media, without locales
-    media: {}, // completed version of media, with locales
+    listPersons: {}, // listCharacters is the light version of characters, without locales
+    media: {}, // Completed version of media, with locales
+    persons: {},
     tvGuideEntries: {},
     users: {},
     videos: {}
@@ -38,8 +46,10 @@ export default (state = fromJS({
 
     filterHasBroadcastChannels: {},
     filterHasBroadcasters: {},
+    filterHasCharacters: {},
     filterHasContentProducers: {},
     filterHasEpisodes: {},
+    filterHasPersons: {},
     filterHasSeasons: {},
     filterHasSeriesEntries: {},
     filterHasTvGuideEntries: {},
@@ -50,11 +60,14 @@ export default (state = fromJS({
     searchStringHasCharacters: {},
     searchStringHasContentProducers: {},
     searchStringHasMedia: {},
+    searchStringHasPersons: {},
     searchStringHasSeriesEntries: {},
     searchStringHasUsers: {},
 
+    characterHasFaceImages: {},
     mediumHasCharacters: {},
     mediumHasTvGuideEntries: {},
+    personHasFaceImages: {},
     seriesEntryHasSeasons: {},
     seasonHasEpisodes: {},
     mediumHasAvailabilities: {}
@@ -137,17 +150,38 @@ export default (state = fromJS({
     // Characters
     // //////////
 
+    case charactersActions.CHARACTER_FETCH_START:
+      return fetchStart(state, [ 'entities', 'characters', action.characterId ]);
+    case charactersActions.CHARACTER_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'characters', action.characterId ], action.data);
+    case charactersActions.CHARACTER_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'characters', action.characterId ], action.error);
+
+    case charactersActions.CHARACTERS_FETCH_START:
+      return searchStart(state, 'filterHasCharacters', serializeFilterHasCharacters(action));
+    case charactersActions.CHARACTERS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listCharacters', 'filterHasCharacters', serializeFilterHasCharacters(action), action.data.data);
+    case charactersActions.CHARACTERS_FETCH_ERROR:
+      return searchError(state, 'filterHasCharacters', serializeFilterHasCharacters(action), action.error);
+
     case charactersActions.CHARACTER_SEARCH_START:
       return searchStart(state, 'searchStringHasCharacters', action.searchString);
     case charactersActions.CHARACTER_SEARCH_SUCCESS:
-      return searchSuccess(state, 'characters', 'searchStringHasCharacters', action.searchString, action.data);
+      return searchSuccess(state, 'listCharacters', 'searchStringHasCharacters', action.searchString, action.data);
     case charactersActions.CHARACTER_SEARCH_ERROR:
       return searchError(state, 'searchStringHasCharacters', action.searchString, action.error);
+
+    case charactersActions.CHARACTER_FACE_IMAGES_FETCH_START:
+      return searchStart(state, 'characterHasFaceImages', action.characterId);
+    case charactersActions.CHARACTER_FACE_IMAGES_FETCH_SUCCESS:
+      return searchSuccess(state, 'faceImages', 'characterHasFaceImages', action.characterId, action.data.data);
+    case charactersActions.CHARACTER_FACE_IMAGES_FETCH_ERROR:
+      return searchError(state, 'characterHasFaceImages', action.characterId, action.error);
 
     case charactersActions.MEDIUM_CHARACTER_SEARCH_START:
       return searchStart(state, 'mediumHasCharacters', action.mediumId);
     case charactersActions.MEDIUM_CHARACTER_SEARCH_SUCCESS:
-      return searchSuccess(state, 'characters', 'mediumHasCharacters', action.mediumId, action.data);
+      return searchSuccess(state, 'listCharacters', 'mediumHasCharacters', action.mediumId, action.data);
     case charactersActions.MEDIUM_CHARACTER_SEARCH_ERROR:
       return searchError(state, 'mediumHasCharacters', action.mediumId, action.error);
 
@@ -201,6 +235,37 @@ export default (state = fromJS({
       return searchSuccess(state, 'tvGuideEntries', 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.data.data);
     case mediaActions.TV_GUIDE_ENTRIES_FETCH_ERROR:
       return searchError(state, 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.error);
+
+    // Persons
+    // ////////////////////
+
+    case personActions.PERSONS_FETCH_START:
+      return searchStart(state, 'filterHasCharacters', serializeFilterHasPersons(action));
+    case personActions.PERSONS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listPersons', 'filterHasPersons', serializeFilterHasPersons(action), action.data.data);
+    case personActions.PERSONS_FETCH_ERROR:
+      return searchError(state, 'filterHasPersons', serializeFilterHasPersons(action), action.error);
+
+    case personActions.PERSON_FETCH_START:
+      return fetchStart(state, [ 'entities', 'persons', action.personId ]);
+    case personActions.PERSON_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'persons', action.personId ], action.data);
+    case personActions.PERSON_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'persons', action.personId ], action.error);
+
+    case personActions.PERSON_SEARCH_START:
+      return searchStart(state, 'searchStringHasPersons', action.searchString);
+    case personActions.PERSON_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listPersons', 'searchStringHasPersons', action.searchString, action.data);
+    case personActions.PERSON_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasPersons', action.searchString, action.error);
+
+    case personActions.PERSON_FACE_IMAGES_FETCH_START:
+      return searchStart(state, 'personHasFaceImages', action.personId);
+    case personActions.PERSON_FACE_IMAGES_FETCH_SUCCESS:
+      return searchSuccess(state, 'faceImages', 'personHasFaceImages', action.personId, action.data.data);
+    case personActions.PERSON_FACE_IMAGES_FETCH_ERROR:
+      return searchError(state, 'personHasFaceImages', action.personId, action.error);
 
     // Seasons
     // /////////////////

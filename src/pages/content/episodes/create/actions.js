@@ -45,7 +45,7 @@ export function submit ({ defaultLocale, ...restProps }) {
         ...restProps,
         defaultLocale,
         locales: [ defaultLocale ],
-        basedOnDefaultLocale: { [defaultLocale]: true },
+        basedOnDefaultLocale: { [defaultLocale]: false },
         hasTitle: { [defaultLocale]: false }
       };
       return await dispatch(persistEpisode(seriesEntry));

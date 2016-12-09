@@ -180,8 +180,9 @@ export default class EditSeriesEntries extends Component {
           <Header currentLocation={location} hideHomePageLinks />
           <SpecificHeader/>
           <BreadCrumbs hierarchy={[
-            { title: 'List', url: '/content/series' },
-            { title: currentSeriesEntry.getIn([ 'title', defaultLocale ]), url: location } ]}/>
+            { title: 'Series', url: '/content/series' },
+            { title: currentSeriesEntry.getIn([ 'title', defaultLocale ]), url: location }
+          ]}/>
           {currentModal === SERIES_CREATE_LANGUAGE &&
             <CreateLanguageModal
               supportedLocales={supportedLocales}

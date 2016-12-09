@@ -24,7 +24,7 @@ export function submit ({ defaultLocale, hasTitle, number, seriesEntryId, title 
         defaultLocale,
         locales: [ defaultLocale ],
         number,
-        basedOnDefaultLocale: { [defaultLocale]: true },
+        basedOnDefaultLocale: { [defaultLocale]: false },
         hasTitle: { [defaultLocale]: hasTitle },
         seriesEntryId,
         title: { [defaultLocale]: title }

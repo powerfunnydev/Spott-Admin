@@ -42,8 +42,8 @@ export const TV_GUIDE_ENTRIES_FETCH_ERROR = 'MEDIA/TV_GUIDE_ENTRIES_FETCH_ERROR'
 
 export const fetchTvGuideEntries = makeApiActionCreator(mediaApi.fetchTvGuideEntries, TV_GUIDE_ENTRIES_FETCH_START, TV_GUIDE_ENTRIES_FETCH_SUCCESS, TV_GUIDE_ENTRIES_FETCH_ERROR);
 export const searchMedia = makeApiActionCreator(mediaApi.searchMedia, MEDIA_SEARCH_START, MEDIA_SEARCH_SUCCESS, MEDIA_SEARCH_ERROR);
-export const deletePosterImage = makeApiActionCreator(mediaApi.deletePosterImage, DELETE_PROFILE_IMAGE_START, DELETE_PROFILE_IMAGE_SUCCESS, DELETE_PROFILE_IMAGE_ERROR);
-export const deleteProfileImage = makeApiActionCreator(mediaApi.deleteProfileImage, DELETE_POSTER_IMAGE_START, DELETE_POSTER_IMAGE_SUCCESS, DELETE_POSTER_IMAGE_ERROR);
+export const deleteProfileImage = makeApiActionCreator(mediaApi.deleteProfileImage, DELETE_PROFILE_IMAGE_START, DELETE_PROFILE_IMAGE_SUCCESS, DELETE_PROFILE_IMAGE_ERROR);
+export const deletePosterImage = makeApiActionCreator(mediaApi.deletePosterImage, DELETE_POSTER_IMAGE_START, DELETE_POSTER_IMAGE_SUCCESS, DELETE_POSTER_IMAGE_ERROR);
 
 /**
  * Opens the create media modal with video upload etc.

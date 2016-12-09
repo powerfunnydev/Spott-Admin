@@ -74,7 +74,10 @@ export default class ReadContentProducer extends Component {
       <Root>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
-        <BreadCrumbs hierarchy={[ { title: 'List', url: '/content/content-producers' }, { title: currentContentProducer.get('name'), url: location.pathname } ]}/>
+        <BreadCrumbs hierarchy={[
+          { title: 'Content producers', url: '/content/content-producers' },
+          { title: currentContentProducer.get('name'), url: location.pathname }
+        ]}/>
         <Container>
           {currentContentProducer.get('_status') === 'loaded' && currentContentProducer &&
             <EntityDetails

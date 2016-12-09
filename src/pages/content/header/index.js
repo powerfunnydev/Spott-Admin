@@ -22,7 +22,7 @@ export default class Reporting extends Component {
     tab: {
       container: {
         display: 'inline-block',
-        paddingRight: '3em'
+        paddingRight: '2em'
       },
       base: {
         ...makeTextStyle(fontWeights.regular, '0.875em'),
@@ -70,6 +70,12 @@ export default class Reporting extends Component {
               </div>
               <div style={styles.tab.container}>
                 <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/content/series'>Series</Link>
+              </div>
+              <div style={styles.tab.container}>
+                <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/content/characters'>Characters</Link>
+              </div>
+              <div style={styles.tab.container}>
+                <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/content/persons'>People</Link>
               </div>
             </div>
           </Container>
