@@ -13,14 +13,12 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import * as actions from './actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import selector from './selector';
-import { FETCHING } from '../../../../constants/statusTypes';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { defaultLocale, name, personId } = values.toJS();
+  const { defaultLocale, title } = values.toJS();
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
-  if (!name) { validationErrors.name = t('common.errors.required'); }
-  if (!personId) { validationErrors.personId = t('common.errors.required'); }
+  if (!title) { validationErrors.title = t('common.errors.required'); }
   // Done
   return validationErrors;
 }
@@ -28,16 +26,15 @@ function validate (values, { t }) {
 @localized
 @connect(selector, (dispatch) => ({
   load: bindActionCreators(loadList, dispatch),
-  searchPersons: bindActionCreators(actions.searchPersons, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
-  form: 'characterCreate',
+  form: 'movieCreate',
   validate
 })
 @Radium
-export default class CreateCharacterModal extends Component {
+export default class CreateMovieModal extends Component {
 
   static propTypes = {
     change: PropTypes.func.isRequired,
@@ -49,11 +46,8 @@ export default class CreateCharacterModal extends Component {
     load: PropTypes.func.isRequired,
     localeNames: ImmutablePropTypes.map.isRequired,
     location: PropTypes.object.isRequired,
-    personsById: ImmutablePropTypes.map.isRequired,
     reset: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
-    searchPersons: PropTypes.func.isRequired,
-    searchedPersonIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired
   };
@@ -69,6 +63,7 @@ export default class CreateCharacterModal extends Component {
       defaultLocale: this.props.currentLocale
     });
   }
+
   async submit (form) {
     try {
       const { load, location, submit, dispatch, change, reset } = this.props;
@@ -91,13 +86,13 @@ export default class CreateCharacterModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo('content/characters', true);
+    this.props.routerPushWithReturnTo('content/movies', true);
   }
 
   render () {
-    const { personsById, handleSubmit, localeNames, searchPersons, searchedPersonIds } = this.props;
+    const { handleSubmit, localeNames } = this.props;
     return (
-      <PersistModal isOpen title='Create Character' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal isOpen title='Create Movie' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}
@@ -109,19 +104,9 @@ export default class CreateCharacterModal extends Component {
           placeholder='Default language'/>
         <Field
           component={TextInput}
-          label='Character name'
-          name='name'
-          placeholder='Character name'
-          required/>
-        <Field
-          component={SelectInput}
-          getItemText={(id) => personsById.getIn([ id, 'fullName' ])}
-          getOptions={searchPersons}
-          isLoading={searchedPersonIds.get('_status') === FETCHING}
-          label='Person'
-          name='personId'
-          options={searchedPersonIds.get('data').toJS()}
-          placeholder='Person'
+          label='Movie title'
+          name='title'
+          placeholder='Movie title'
           required/>
       </PersistModal>
     );

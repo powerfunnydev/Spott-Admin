@@ -1,40 +1,58 @@
 import { createStructuredSelector } from 'reselect';
 import { currentModalSelector } from '../../../../selectors/global';
-import { createFormValueSelector } from '../../../../utils';
 import {
-  listPersonsEntitiesSelector,
-  charactersEntitiesSelector,
-  characterHasFaceImagesRelationsSelector,
+  listCharactersEntitiesSelector,
+  mediaEntitiesSelector,
   createEntityByIdSelector,
   createEntityIdsByRelationSelector,
-  createEntitiesByRelationSelector,
-  faceImagesEntitiesSelector,
-  searchStringHasPersonsRelationsSelector
+  searchStringHasBroadcastersRelationsSelector,
+  searchStringHasCharactersRelationsSelector,
+  searchStringHasContentProducersRelationsSelector,
+  searchStringHasMediumCategoriesRelationsSelector,
+  broadcastersEntitiesSelector,
+  contentProducersEntitiesSelector,
+  mediumCategoriesEntitiesSelector,
+  mediumHasCharactersRelationsSelector,
+  createEntitiesByRelationSelector
 } from '../../../../selectors/data';
+import { createFormValueSelector } from '../../../../utils';
 
-const formName = 'characterEdit';
-const formErrorsSelector = (state) => { return state.getIn([ 'form', formName, 'syncErrors' ]); };
+const formName = 'movieEdit';
+const formErrorsSelector = (state) => state.getIn([ 'form', formName, 'syncErrors' ]);
 
-const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultLocale');
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
+const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultLocale');
 const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 
-const currentCharacterIdSelector = (state, props) => { return props.params.characterId; };
-const currentCharacterSelector = createEntityByIdSelector(charactersEntitiesSelector, currentCharacterIdSelector);
+const currentMovieIdSelector = (state, props) => { return props.params.movieId; };
+const currentMovieSelector = createEntityByIdSelector(mediaEntitiesSelector, currentMovieIdSelector);
 
-const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'characters', 'edit', 'currentPersonSearchString' ]);
+const movieCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersRelationsSelector, currentMovieIdSelector, listCharactersEntitiesSelector);
 
-const searchedPersonIdsSelector = createEntityIdsByRelationSelector(searchStringHasPersonsRelationsSelector, currentSeriesEntriesSearchStringSelector);
-const faceImagesSelector = createEntitiesByRelationSelector(characterHasFaceImagesRelationsSelector, currentCharacterIdSelector, faceImagesEntitiesSelector);
+const currentCharactersSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentCharacterSearchString' ]);
+const currentBroadcastersSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentBroadcastersSearchString' ]);
+const currentContentProducersSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentContentProducersSearchString' ]);
+const currentMediumCategoriesSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentMediumCategoriesSearchString' ]);
+
+const searchedBroadcasterIdsSelector = createEntityIdsByRelationSelector(searchStringHasBroadcastersRelationsSelector, currentBroadcastersSearchStringSelector);
+const searchedCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCharactersSearchStringSelector);
+const searchedContentProducerIdsSelector = createEntityIdsByRelationSelector(searchStringHasContentProducersRelationsSelector, currentContentProducersSearchStringSelector);
+const searchedMediumCategoryIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediumCategoriesRelationsSelector, currentMediumCategoriesSearchStringSelector);
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
+  broadcastersById: broadcastersEntitiesSelector,
+  charactersById: listCharactersEntitiesSelector,
+  contentProducersById: contentProducersEntitiesSelector,
+  currentMovie: currentMovieSelector,
   currentModal: currentModalSelector,
-  currentCharacter: currentCharacterSelector,
   defaultLocale: currentDefaultLocaleSelector,
+  mediumCategoriesById: mediumCategoriesEntitiesSelector,
+  movieCharacters: movieCharactersSelector,
   errors: formErrorsSelector,
-  faceImages: faceImagesSelector,
-  personsById: listPersonsEntitiesSelector,
-  searchedPersonIds: searchedPersonIdsSelector,
+  searchedBroadcasterIds: searchedBroadcasterIdsSelector,
+  searchedCharacterIds: searchedCharacterIdsSelector,
+  searchedContentProducerIds: searchedContentProducerIdsSelector,
+  searchedMediumCategoryIds: searchedMediumCategoryIdsSelector,
   supportedLocales: supportedLocalesSelector
 });

@@ -66,7 +66,7 @@ export default class ReadCharacter extends Component {
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
-          { title: 'List', url: '/content/characters' },
+          { title: 'Characters', url: '/content/characters' },
           { title: currentCharacter.getIn([ 'name', defaultLocale ]), url: location } ]}/>
         <Container>
           {currentCharacter.get('_status') === 'loaded' && currentCharacter &&

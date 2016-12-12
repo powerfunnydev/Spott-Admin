@@ -36,6 +36,10 @@ import MediaSinglePage from './pages/media/singlePage';
 import MediaHome from './pages/media/home';
 import MediaUpload from './pages/media/upload';
 import MediaWelcome from './pages/media/welcome';
+import MoviesCreate from './pages/content/movies/create';
+import MoviesEdit from './pages/content/movies/edit';
+import MoviesList from './pages/content/movies/list';
+import MoviesRead from './pages/content/movies/read';
 import Login from './pages/login';
 import ForgotPassword from './pages/forgotPassword';
 import PersonsCreate from './pages/content/persons/create';
@@ -144,6 +148,13 @@ function getRoutes ({ dispatch, getState }) {
         </Route>
         <Route component={PersonsList} path='persons'>
           <Route component={PersonsCreate} path ='create'/>
+        </Route>
+        <Route component={MoviesList} path='movies'>
+          <Route component={MoviesCreate} path='create'/>
+        </Route>
+        <Route path='movies'>
+          <Route component={MoviesRead} path='read/:movieId'/>
+          <Route component={MoviesEdit} path='edit/:movieId'/>
         </Route>
         <Route path='persons'>
           <Route component={PersonsRead} path='read/:personId'/>

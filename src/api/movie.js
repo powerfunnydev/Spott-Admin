@@ -2,7 +2,7 @@ import { del, get, post, postFormData } from './request';
 import { transformListMovie, transformMovie } from './transformers';
 
 export async function fetchMovies (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
-  let url = `${baseUrl}/v004/media/movies/?page=${page}&pageSize=${pageSize}`;
+  let url = `${baseUrl}/v004/media/movies?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${searchString}`);
   }
@@ -17,7 +17,7 @@ export async function fetchMovies (baseUrl, authenticationToken, locale, { searc
 }
 
 export async function fetchMovie (baseUrl, authenticationToken, locale, { movieId }) {
-  const url = `${baseUrl}/v004/media/movies//${movieId}`;
+  const url = `${baseUrl}/v004/media/movies/${movieId}`;
   const { body } = await get(authenticationToken, locale, url);
   // console.log('before transform', { ...body });
   const result = transformMovie(body);
@@ -26,45 +26,48 @@ export async function fetchMovie (baseUrl, authenticationToken, locale, { movieI
 }
 
 export async function persistMovie (baseUrl, authenticationToken, locale, {
-  basedOnDefaultLocale, defaultLocale, defaultTitle, description, endYear, locales, publishStatus,
-  movieId, startYear, title }) {
-  let seriesEntry = {};
+  basedOnDefaultLocale, broadcasters, characters, contentProducers, defaultLocale,
+  defaultTitle, description, endYear, movieId, locales,
+  publishStatus, relatedCharacterIds, startYear, title, subTitle, mediumCategories
+}) {
+  let movie = {};
   if (movieId) {
-    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/movies//${movieId}`);
-    seriesEntry = body;
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/movies/${movieId}`);
+    movie = body;
   }
-
-  // series.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
-  seriesEntry.defaultLocale = defaultLocale;
-  seriesEntry.defaultTitle = title[defaultLocale];
-  // series.externalReference.reference = externalReference;
-  // series.externalReference.source = externalReferenceSource;
-  seriesEntry.publishStatus = publishStatus;
-
+  movie.categories = mediumCategories && mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
+  movie.contentProducers = contentProducers && contentProducers.map((cp) => ({ uuid: cp }));
+  movie.broadcasters = broadcasters && broadcasters.map((bc) => ({ uuid: bc }));
+  movie.defaultLocale = defaultLocale;
+  movie.defaultTitle = defaultTitle;
+  // movie.externalReference.reference = externalReference;
+  // movie.externalReference.source = externalReferenceSource;
+  movie.publishStatus = publishStatus;
+  movie.type = 'MOVIE';
   // Update locale data.
-  seriesEntry.localeData = seriesEntry.localeData || []; // Ensure we have locale data
+  movie.localeData = movie.localeData || []; // Ensure we have locale data
   locales.forEach((locale) => {
     // Get localeData, create if necessary in O(n^2)
-    let localeData = seriesEntry.localeData.find((ld) => ld.locale === locale);
+    let localeData = movie.localeData.find((ld) => ld.locale === locale);
     if (!localeData) {
       localeData = { locale };
-      seriesEntry.localeData.push(localeData);
+      movie.localeData.push(localeData);
     }
     // basedOnDefaultLocale is always provided, no check needed
     localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
     localeData.description = description && description[locale];
     localeData.endYear = endYear && endYear[locale];
     localeData.startYear = startYear && startYear[locale];
-    // title is always provided, no check needed
-    localeData.title = title[locale];
+    localeData.title = title && title[locale];
+    localeData.subTitle = subTitle && subTitle[locale];
   });
-  const url = `${baseUrl}/v004/media/movies/`;
-  const result = await post(authenticationToken, locale, url, seriesEntry);
+  const url = `${baseUrl}/v004/media/movies`;
+  const result = await post(authenticationToken, locale, url, movie);
   return transformMovie(result.body);
 }
 
 export async function deleteMovie (baseUrl, authenticationToken, locale, { movieId }) {
-  await del(authenticationToken, locale, `${baseUrl}/v004/media/movies//${movieId}`);
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/movies/${movieId}`);
 }
 
 export async function deleteMovies (baseUrl, authenticationToken, locale, { movieIds }) {
@@ -75,7 +78,7 @@ export async function deleteMovies (baseUrl, authenticationToken, locale, { movi
 
 // Used for autocompletion.
 export async function searchMovies (baseUrl, authenticationToken, locale, { searchString = '' }) {
-  let searchUrl = `${baseUrl}/v004/media/movies/?pageSize=25`;
+  let searchUrl = `${baseUrl}/v004/media/movies?pageSize=25`;
   if (searchString) {
     searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
   }

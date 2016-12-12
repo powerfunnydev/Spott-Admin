@@ -1,21 +1,21 @@
 import { createStructuredSelector } from 'reselect';
-import { createEntitiesByRelationSelector, listCharactersEntitiesSelector, filterHasCharactersRelationsSelector } from '../../../../selectors/data';
-import { serializeFilterHasCharacters } from '../../../../../src/reducers/utils';
+import { createEntitiesByRelationSelector, listMediaEntitiesSelector, filterHasMoviesRelationsSelector } from '../../../../selectors/data';
+import { serializeFilterHasMovies } from '../../../../../src/reducers/utils';
 
-export const isSelectedSelector = (state) => state.getIn([ 'content', 'characters', 'list', 'isSelected' ]);
-export const pageCountSelector = (state) => state.getIn([ 'content', 'characters', 'list', 'pageCount' ]);
-export const totalResultCountSelector = (state) => state.getIn([ 'content', 'characters', 'list', 'totalResultCount' ]);
+export const isSelectedSelector = (state) => state.getIn([ 'content', 'movies', 'list', 'isSelected' ]);
+export const pageCountSelector = (state) => state.getIn([ 'content', 'movies', 'list', 'pageCount' ]);
+export const totalResultCountSelector = (state) => state.getIn([ 'content', 'movies', 'list', 'totalResultCount' ]);
 
-export const charactersFilterKeySelector = (state, props) => serializeFilterHasCharacters(props.location.query);
+export const moviesFilterKeySelector = (state, props) => serializeFilterHasMovies(props.location.query);
 
-export const charactersSelector = createEntitiesByRelationSelector(
-  filterHasCharactersRelationsSelector,
-  charactersFilterKeySelector,
-  listCharactersEntitiesSelector
+export const moviesSelector = createEntitiesByRelationSelector(
+  filterHasMoviesRelationsSelector,
+  moviesFilterKeySelector,
+  listMediaEntitiesSelector
 );
 
 export default createStructuredSelector({
-  characters: charactersSelector,
+  movies: moviesSelector,
   isSelected: isSelectedSelector,
   pageCount: pageCountSelector,
   totalResultCount: totalResultCountSelector

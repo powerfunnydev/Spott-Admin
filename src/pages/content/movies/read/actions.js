@@ -1,13 +1,13 @@
-import { fetchCharacter as dataFetchCharacter } from '../../../../actions/character';
+import { fetchMovie as dataFetchMovie } from '../../../../actions/movie';
 
-export const CHARACTER_FETCH_ERROR = 'CHARACTER_READ/FETCH_CHARACTER_ERROR';
+export const MOVIE_FETCH_ERROR = 'MOVIE_READ/FETCH_MOVIE_ERROR';
 
-export function loadCharacter (characterId) {
+export function loadMovie (movieId) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataFetchCharacter({ characterId }));
+      return await dispatch(dataFetchMovie({ movieId }));
     } catch (error) {
-      dispatch({ error, type: CHARACTER_FETCH_ERROR });
+      dispatch({ error, type: MOVIE_FETCH_ERROR });
     }
   };
 }

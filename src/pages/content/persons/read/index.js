@@ -65,7 +65,7 @@ export default class ReadPerson extends Component {
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
-          { title: 'List', url: '/content/persons' },
+          { title: 'People', url: '/content/persons' },
           { title: currentPerson.get('fullName'), url: location } ]}/>
         <Container>
           {currentPerson.get('_status') === 'loaded' && currentPerson &&

@@ -1,6 +1,6 @@
 import { fromJS } from 'immutable';
-import { serializeFilterHasCharacters, serializeFilterHasSeriesEntries, serializeFilterHasUsers, serializeFilterHasBroadcastChannels,
-    serializeFilterHasBroadcasters, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
+import { serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasSeriesEntries,
+    serializeFilterHasUsers, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
     fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart,
     fetchListSuccess, fetchListError } from './utils';
 import * as availabilityActions from '../actions/availability';
@@ -10,6 +10,8 @@ import * as charactersActions from '../actions/character';
 import * as contentProducersActions from '../actions/contentProducer';
 import * as episodeActions from '../actions/episode';
 import * as mediaActions from '../actions/media';
+import * as mediumCategoryActions from '../actions/mediumCategory';
+import * as moviesActions from '../actions/movie';
 import * as personActions from '../actions/person';
 import * as reportingActions from '../actions/reporting';
 import * as seasonActions from '../actions/season';
@@ -33,6 +35,7 @@ export default (state = fromJS({
     listMedia: {}, // listMedia is the light version of media, without locales
     listPersons: {}, // listCharacters is the light version of characters, without locales
     media: {}, // Completed version of media, with locales
+    mediumCategories: {},
     persons: {},
     tvGuideEntries: {},
     users: {},
@@ -49,6 +52,7 @@ export default (state = fromJS({
     filterHasCharacters: {},
     filterHasContentProducers: {},
     filterHasEpisodes: {},
+    filterHasMovies: {},
     filterHasPersons: {},
     filterHasSeasons: {},
     filterHasSeriesEntries: {},
@@ -60,6 +64,7 @@ export default (state = fromJS({
     searchStringHasCharacters: {},
     searchStringHasContentProducers: {},
     searchStringHasMedia: {},
+    searchStringHasMediumCategories: {},
     searchStringHasPersons: {},
     searchStringHasSeriesEntries: {},
     searchStringHasUsers: {},
@@ -235,6 +240,34 @@ export default (state = fromJS({
       return searchSuccess(state, 'tvGuideEntries', 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.data.data);
     case mediaActions.TV_GUIDE_ENTRIES_FETCH_ERROR:
       return searchError(state, 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.error);
+
+    // Media
+    // /////////////////
+
+    case mediumCategoryActions.MEDIUM_CATEGORIES_SEARCH_START:
+      return searchStart(state, 'searchStringHasMediumCategories', action.searchString);
+    case mediumCategoryActions.MEDIUM_CATEGORIES_SEARCH_SUCCESS:
+      // TODO mediumCategories will be listMediumCategories, once the backend is updated.
+      return searchSuccess(state, 'mediumCategories', 'searchStringHasMediumCategories', action.searchString, action.data);
+    case mediumCategoryActions.MEDIUM_CATEGORIES_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasMediumCategories', action.searchString, action.error);
+
+    // Movies
+    // //////////////
+
+    case moviesActions.MOVIE_FETCH_START:
+      return fetchStart(state, [ 'entities', 'media', action.movieId ]);
+    case moviesActions.MOVIE_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.movieId ], action.data);
+    case moviesActions.MOVIE_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'media', action.movieId ], action.error);
+
+    case moviesActions.MOVIES_FETCH_START:
+      return searchStart(state, 'filterHasMovies', serializeFilterHasMovies(action));
+    case moviesActions.MOVIES_FETCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'filterHasMovies', serializeFilterHasMovies(action), action.data.data);
+    case moviesActions.MOVIES_FETCH_ERROR:
+      return searchError(state, 'filterHasMovies', serializeFilterHasMovies(action), action.error);
 
     // Persons
     // ////////////////////

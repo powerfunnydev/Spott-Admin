@@ -1,13 +1,13 @@
 import { createStructuredSelector } from 'reselect';
 import {
-  charactersEntitiesSelector,
+  mediaEntitiesSelector,
   createEntityByIdSelector
 } from '../../../../selectors/data';
 
-export const currentCharacterIdSelector = (state, props) => { return props.params.characterId; };
+export const currentMovieIdSelector = (state, props) => { return props.params.movieId; };
 
-export const currentCharacterSelector = createEntityByIdSelector(charactersEntitiesSelector, currentCharacterIdSelector);
+export const currentMovieSelector = createEntityByIdSelector(mediaEntitiesSelector, currentMovieIdSelector);
 
 export default createStructuredSelector({
-  currentCharacter: currentCharacterSelector
+  currentMovie: currentMovieSelector
 });

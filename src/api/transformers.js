@@ -44,6 +44,24 @@ export function transformCharacterSubscription ({
     medium: { id: mediumId, title }
   };
 }
+
+// TODO Taken from the old CMS, to be refactored! listMediumCategory <-> mediumCategory
+export function transformMediumCategory ({ defaultLocale, localeData, uuid: id }) {
+  const genre = {
+    basedOnDefaultLocale: {},
+    defaultLocale,
+    id,
+    locales: [],
+    name: {}
+  };
+  for (const data of localeData) {
+    genre.basedOnDefaultLocale[data.locale] = data.basedOnDefaultLocale;
+    genre.name[data.locale] = data.name;
+    genre.locales.push(data.locale);
+  }
+  return genre;
+}
+
 /**
  *  Light version of a medium. No locales includes.
  */
@@ -116,16 +134,17 @@ export function transformCharacter ({
  */
 export function transformMedium ({ availabilities, broadcasters, characters, contentProducers, number,
   auditInfo, type, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, serieInfo: serie, seasonInfo, uuid: id, publishStatus,
-  defaultTitle, localeData, video }) {
+  defaultTitle, localeData, video, categories: mediumCategories }) {
   let serieInfo = serie;
   if (seasonInfo) {
     serieInfo = seasonInfo.serie;
   }
   const medium = {
     availabilities: availabilities && availabilities.map(transformAvailability),
+    broadcasters: broadcasters && broadcasters.map((bc) => bc.uuid),
     characters: characters && characters.map(transformListCharacter),
     contentProducers: contentProducers && contentProducers.map((cp) => cp.uuid),
-    broadcasters: broadcasters && broadcasters.map((bc) => bc.uuid),
+    mediumCategories: mediumCategories && mediumCategories.map((mc) => mc.uuid),
     number,
     basedOnDefaultLocale: {},
     description: {},
@@ -133,6 +152,7 @@ export function transformMedium ({ availabilities, broadcasters, characters, con
     endYear: {},
     hasTitle: {},
     title: {},
+    subTitle: {},
     locales: [],
     posterImage: {},
     profileImage: {},
@@ -150,13 +170,14 @@ export function transformMedium ({ availabilities, broadcasters, characters, con
   };
   if (localeData) {
     for (const { hasTitle, basedOnDefaultLocale, description, locale,
-      posterImage, profileCover, endYear, startYear, title } of localeData) {
+      posterImage, profileCover, endYear, startYear, title, subTitle } of localeData) {
       medium.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
       medium.description[locale] = description;
       medium.startYear[locale] = startYear;
       medium.endYear[locale] = endYear;
       medium.hasTitle[locale] = hasTitle;
       medium.title[locale] = title;
+      medium.subTitle[locale] = subTitle;
       medium.locales.push(locale);
       medium.profileImage[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
       medium.posterImage[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;

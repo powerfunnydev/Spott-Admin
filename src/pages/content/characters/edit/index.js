@@ -206,7 +206,7 @@ export default class EditCharacter extends Component {
           <Header currentLocation={location} hideHomePageLinks />
           <SpecificHeader/>
           <BreadCrumbs hierarchy={[
-            { title: 'List', url: '/content/characters' },
+            { title: 'Characters', url: '/content/characters' },
             { title: currentCharacter.getIn([ 'name', defaultLocale ]), url: location } ]}/>
           {currentModal === CHARACTER_CREATE_LANGUAGE &&
             <CreateLanguageModal

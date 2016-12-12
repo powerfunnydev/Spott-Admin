@@ -207,7 +207,7 @@ export default class EditPerson extends Component {
           <Header currentLocation={location} hideHomePageLinks />
           <SpecificHeader/>
           <BreadCrumbs hierarchy={[
-            { title: 'List', url: '/content/persons' },
+            { title: 'People', url: '/content/persons' },
             { title: currentPerson.get('fullName'), url: location } ]}/>
           {currentModal === PERSON_CREATE_LANGUAGE &&
             <CreateLanguageModal
