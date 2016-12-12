@@ -2,13 +2,10 @@ import { persistEpisode } from '../../../../actions/episode';
 import { fetchLastEpisode as dataFetchLastEpisode } from '../../../../actions/season';
 import { searchSeasons as dataSearchSeasons, searchSeriesEntries as dataSearchSeriesEntries } from '../../../../actions/series';
 
-export const SERIES_ENTRIES_SEARCH_START = 'EPISODE_CREATE/SERIES_ENTRIES_SEARCH_START';
-export const SERIES_ENTRIES_SEARCH_ERROR = 'EPISODE_CREATE/SERIES_ENTRIES_SEARCH_ERROR';
+export const BRANDS_SEARCH_START = 'COMMERCIAL_CREATE/BRANDS_SEARCH_START';
+export const BRAND_SEARCH_ERROR = 'COMMERCIAL_CREATE/BRAND_SEARCH_ERROR';
 
-export const SERIES_ENTRY_SEASONS_SEARCH_START = 'EPISODE_CREATE/SERIES_ENTRY_SEASONS_SEARCH_START';
-export const SERIES_ENTRY_SEASONS_SEARCH_ERROR = 'EPISODE_CREATE/SERIES_ENTRY_SEASONS_SEARCH_ERROR';
-
-export const EPISODE_PERSIST_ERROR = 'EPISODE_CREATE/EPISODE_PERSIST_ERROR';
+export const EPISODE_PERSIST_ERROR = 'COMMERCIAL_CREATE/EPISODE_PERSIST_ERROR';
 
 export function searchSeriesEntries (searchString) {
   return async (dispatch, getState) => {

@@ -9,7 +9,7 @@ import TextInput from '../../../_common/inputs/textInput';
 import CheckboxInput from '../../../_common/inputs/checkbox';
 import localized from '../../../_common/decorators/localized';
 import PersistModal from '../../../_common/components/persistModal';
-import { loadEpisodes } from '../../seasons/read/episodes/actions';
+import { loadCommercials } from '../../seasons/read/episodes/actions';
 import * as actions from './actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import selector from './selector';
@@ -30,15 +30,13 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
-  fetchLastEpisode: bindActionCreators(actions.fetchLastEpisode, dispatch),
-  loadEpisodes: bindActionCreators(loadEpisodes, dispatch),
+  loadCommercials: bindActionCreators(loadCommercials, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
-  searchSeasons: bindActionCreators(actions.searchSeasons, dispatch),
-  searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch)
+  searchBrands: bindActionCreators(actions.searchBrands, dispatch)
 }))
 @reduxForm({
-  form: 'episodeCreate',
+  form: 'commercialCreate',
   validate
 })
 @Radium
@@ -55,7 +53,7 @@ export default class CreateEpisodentryModal extends Component {
     handleSubmit: PropTypes.func.isRequired,
     hasTitle: PropTypes.bool,
     initialize: PropTypes.func.isRequired,
-    loadEpisodes: PropTypes.func.isRequired,
+    loadCommercials: PropTypes.func.isRequired,
     localeNames: ImmutablePropTypes.map.isRequired,
     location: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
@@ -133,7 +131,7 @@ export default class CreateEpisodentryModal extends Component {
       // Load the new list of items, using the location query of the previous page.
       const loc = location && location.state && location.state.returnTo;
       if (loc && loc.query) {
-        this.props.loadEpisodes(loc.query, params.seasonId);
+        this.props.loadCommercials(loc.query, params.seasonId);
       }
       if (createAnother) {
         // If we create another episode, set the next episode number
@@ -199,51 +197,20 @@ export default class CreateEpisodentryModal extends Component {
           placeholder='Default language'/>
         <Field
           component={SelectInput}
-          getItemText={(id) => seriesEntriesById.getIn([ id, 'title' ])}
-          getOptions={searchSeriesEntries}
-          isLoading={searchedSeriesEntryIds.get('_status') === FETCHING}
-          label='Series title'
-          name='seriesEntryId'
-          options={searchedSeriesEntryIds.get('data').toJS()}
-          placeholder='Series title'
-          onChange={() => {
-            this.props.dispatch(this.props.change('seasonId', null));
-          }} />
-        {currentSeriesEntryId &&
-          <Field
-            component={SelectInput}
-            getItemText={(id) => seasonsById.getIn([ id, 'title' ])}
-            getOptions={(searchString) => { searchSeasons(searchString, currentSeriesEntryId); }}
-            isLoading={searchedSeasonIds.get('_status') === FETCHING}
-            label='Season title'
-            name='seasonId'
-            options={searchedSeasonIds.get('data').toJS()}
-            placeholder='Season title'
-            onChange={this.onChangeSeason} />}
-        {currentSeriesEntryId && currentSeasonId &&
-          <Field
-            component={TextInput}
-            label='Episode number'
-            name='number'
-            placeholder='Episode number'
-            required
-            type='number'/>}
-        {currentSeriesEntryId && currentSeasonId &&
-          <Field
-            component={TextInput}
-            content={
-              <Field
-                component={CheckboxInput}
-                first
-                label='Custom title'
-                name='hasTitle'
-                style={styles.customTitle} />}
-            disabled={!hasTitle}
-            label='Episode title'
-            labelStyle={styles.titleLabel}
-            name='title'
-            placeholder='Episode title'
-            required />}
+          getItemText={(id) => brandsById.getIn([ id, 'name' ])}
+          getOptions={searchBrands}
+          isLoading={searchedBrandIds.get('_status') === FETCHING}
+          label='Brand'
+          name='brandId'
+          options={searchedBrandIds.get('data').toJS()}
+          placeholder='Brand'
+          required />
+        <Field
+          component={TextInput}
+          label='Title'
+          name='title'
+          placeholder='Title'
+          required />
       </PersistModal>
     );
   }
