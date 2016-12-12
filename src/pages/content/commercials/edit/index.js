@@ -14,8 +14,9 @@ import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Header from '../../../app/header';
 import Label from '../../../_common/inputs/_label';
 import localized from '../../../_common/decorators/localized';
-import Section from '../../../_common/components/section';
 import CheckboxInput from '../../../_common/inputs/checkbox';
+import Section from '../../../_common/components/section';
+import ColorInput from '../../../_common/inputs/colorInput';
 import SelectInput from '../../../_common/inputs/selectInput';
 import SpecificHeader from '../../header';
 import TextInput from '../../../_common/inputs/textInput';
@@ -26,14 +27,14 @@ import * as actions from './actions';
 import selector from './selector';
 import Characters from '../../_helpers/_characters/list';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
-import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
+import { PROFILE_IMAGE } from '../../../../constants/imageTypes';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { _activeLocale, defaultLocale, brandId, title, hasTitle } = values.toJS();
+  const { _activeLocale, brandId, defaultLocale, title } = values.toJS();
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
   if (!brandId) { validationErrors.brandId = t('common.errors.required'); }
-  if (hasTitle && title && hasTitle[_activeLocale] && !title[_activeLocale]) {
+  if (title && !title[_activeLocale]) {
     validationErrors.title = validationErrors.title || {};
     validationErrors.title[_activeLocale] = t('common.errors.required');
   }
@@ -44,7 +45,6 @@ function validate (values, { t }) {
 @localized
 @connect(selector, (dispatch) => ({
   closeModal: bindActionCreators(actions.closeModal, dispatch),
-  deletePosterImage: bindActionCreators(actions.deletePosterImage, dispatch),
   deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
   loadCommercial: bindActionCreators(actions.loadCommercial, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
@@ -54,7 +54,6 @@ function validate (values, { t }) {
   searchCharacters: bindActionCreators(actions.searchCharacters, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
-  uploadPosterImage: bindActionCreators(actions.uploadPosterImage, dispatch),
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch)
 }))
 @reduxForm({
@@ -66,6 +65,7 @@ export default class EditCommercial extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
+    brandsById: ImmutablePropTypes.map.isRequired,
     broadcastersById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
     charactersById: ImmutablePropTypes.map.isRequired,
@@ -76,30 +76,29 @@ export default class EditCommercial extends Component {
     currentCommercial: ImmutablePropTypes.map.isRequired,
     currentModal: PropTypes.string,
     defaultLocale: PropTypes.string,
-    deletePosterImage: PropTypes.func.isRequired,
     deleteProfileImage: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
-    episodeCharacters: ImmutablePropTypes.map.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
     handleSubmit: PropTypes.func.isRequired,
-    hasTitle: ImmutablePropTypes.map,
+    hasBanner: ImmutablePropTypes.map,
     initialize: PropTypes.func.isRequired,
     loadCommercial: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
+    searchBrands: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
     searchCharacters: PropTypes.func.isRequired,
     searchContentProducers: PropTypes.func.isRequired,
+    searchedBrandIds: ImmutablePropTypes.map.isRequired,
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
     searchedCharacterIds: ImmutablePropTypes.map.isRequired,
     searchedContentProducerIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
-    uploadPosterImage: PropTypes.func.isRequired,
     uploadProfileImage: PropTypes.func.isRequired
   };
 
@@ -218,15 +217,6 @@ export default class EditCommercial extends Component {
     },
     removeLanguageButtonPadding: {
       paddingLeft: '10px'
-    },
-    paddingLeftUploadImage: {
-      paddingLeft: '24px'
-    },
-    customTitle: {
-      paddingBottom: '0.438em'
-    },
-    titleLabel: {
-      paddingBottom: '0.7em'
     }
   };
 
@@ -235,13 +225,13 @@ export default class EditCommercial extends Component {
     const {
       _activeLocale, closeModal, currentModal, commercialCharacters, contentProducersById,
       searchContentProducers, searchedContentProducerIds, broadcastersById,
-      searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentCommercial,
-      defaultLocale, handleSubmit, supportedLocales, errors,
+      searchBroadcasters, searchedBroadcasterIds, location, currentCommercial,
+      defaultLocale, handleSubmit, hasBanner, supportedLocales, errors,
       searchedCharacterIds, charactersById, searchCharacters, deleteProfileImage,
-      deletePosterImage, location: { query: { tab } }
+      searchBrands, brandsById, searchedBrandIds, location: { query: { tab } }
     } = this.props;
 
-    console.warn('currentCommercial', currentCommercial && currentCommercial.toJS());
+    console.warn('currentCommercial', hasBanner, currentCommercial && currentCommercial.toJS());
 
     return (
       <Root style={styles.backgroundRoot}>
@@ -255,7 +245,7 @@ export default class EditCommercial extends Component {
             supportedLocales={supportedLocales}
             onCloseClick={closeModal}
             onCreate={this.languageAdded}/>}
-        <EditTemplate disableSubmit={tab > 1} onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
+        <EditTemplate disableSubmit={tab > 2} onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
           <Tabs activeTab={tab} showPublishStatus onChange={this.onChangeTab}>
             <Tab title='Details'>
               <Section noPadding style={styles.background}>
@@ -270,41 +260,20 @@ export default class EditCommercial extends Component {
               </Section>
               <Section>
                 <FormSubtitle first>General</FormSubtitle>
-                {/* <Field
+                <Field
                   component={SelectInput}
                   disabled={_activeLocale !== defaultLocale}
-                  getItemText={(id) => seriesEntriesById.getIn([ id, 'title' ])}
-                  getOptions={searchSeriesEntries}
-                  isLoading={searchedSeriesEntryIds.get('_status') === FETCHING}
-                  label='Series title'
-                  name='seriesEntryId'
-                  options={searchedSeriesEntryIds.get('data').toJS()}
-                  placeholder='Series title'
-                  required
-                  onChange={() => {
-                    this.props.dispatch(this.props.change('seasonId', null));
-                  }} /> */}
-                {/* {currentSeriesEntryId && currentSeasonId &&
-                  <Field
-                    component={TextInput}
-                    disabled={_activeLocale !== defaultLocale}
-                    label='Commercial number'
-                    name='number'
-                    placeholder='Commercial number'
-                    required
-                    type='number'/>} */}
+                  getItemText={(id) => brandsById.getIn([ id, 'name' ])}
+                  getOptions={searchBrands}
+                  isLoading={searchedBrandIds.get('_status') === FETCHING}
+                  label='Brand'
+                  name='brandId'
+                  options={searchedBrandIds.get('data').toJS()}
+                  placeholder='Brand'
+                  required />
                 <Field
                   component={TextInput}
-                  content={
-                    <Field
-                      component={CheckboxInput}
-                      first
-                      label='Custom title'
-                      name={`hasTitle.${_activeLocale}`}
-                      style={styles.customTitle} />}
-                  disabled={hasTitle && !hasTitle.get(_activeLocale)}
                   label='Title'
-                  labelStyle={styles.titleLabel}
                   name={`title.${_activeLocale}`}
                   placeholder='Title'
                   required />
@@ -339,18 +308,6 @@ export default class EditCommercial extends Component {
                 <FormSubtitle>Images</FormSubtitle>
                 <div style={[ styles.paddingTop, styles.row ]}>
                   <div>
-                    <Label text='Poster image' />
-                    <Dropzone
-                      accept='image/*'
-                      downloadUrl={currentCommercial.getIn([ 'posterImage', _activeLocale ]) &&
-                        currentCommercial.getIn([ 'posterImage', _activeLocale, 'url' ])}
-                      imageUrl={currentCommercial.getIn([ 'posterImage', _activeLocale ]) &&
-                        `${currentCommercial.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310`}
-                      type={POSTER_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ commercialId: this.props.params.commercialId, image: file, callback }); }}
-                      onDelete={() => { deletePosterImage({ mediumId: currentCommercial.get('id') }); }}/>
-                  </div>
-                  <div style={styles.paddingLeftUploadImage}>
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
@@ -363,6 +320,51 @@ export default class EditCommercial extends Component {
                       onDelete={() => { deleteProfileImage({ mediumId: currentCommercial.get('id') }); }}/>
                   </div>
                 </div>
+              </Section>
+            </Tab>
+            <Tab title='Banner'>
+              <Section noPadding style={styles.background}>
+                <LanguageBar
+                  _activeLocale={_activeLocale}
+                  defaultLocale={defaultLocale}
+                  errors={errors}
+                  openCreateLanguageModal={this.openCreateLanguageModal}
+                  removeLanguage={this.removeLanguage}
+                  supportedLocales={supportedLocales}
+                  onSetDefaultLocale={this.onSetDefaultLocale}/>
+              </Section>
+              <Section>
+                <FormSubtitle first>Banner</FormSubtitle>
+                <Field
+                  component={CheckboxInput}
+                  label='Has banner'
+                  name={`hasBanner.${_activeLocale}`} />
+                <Field
+                  component={TextInput}
+                  disabled={hasBanner && !hasBanner.get(_activeLocale)}
+                  label='Text'
+                  name={`bannerText.${_activeLocale}`}
+                  placeholder='Text'
+                  required />
+                <Field
+                  component={TextInput}
+                  disabled={hasBanner && !hasBanner.get(_activeLocale)}
+                  label='Url'
+                  name={`bannerUrl.${_activeLocale}`}
+                  placeholder='Url'
+                  required />
+                <Field
+                  component={ColorInput}
+                  disabled={hasBanner && !hasBanner.get(_activeLocale)}
+                  label='Text color'
+                  name={`bannerTextColor.${_activeLocale}`}
+                  required />
+                <Field
+                  component={ColorInput}
+                  disabled={hasBanner && !hasBanner.get(_activeLocale)}
+                  label='Bar color'
+                  name={`bannerBarColor.${_activeLocale}`}
+                  required />
               </Section>
             </Tab>
            <Tab title='Helpers'>

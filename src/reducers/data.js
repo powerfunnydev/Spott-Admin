@@ -6,6 +6,7 @@ import { serializeFilterHasCharacters, serializeFilterHasSeriesEntries, serializ
     fetchListSuccess, fetchListError } from './utils';
 import * as actorActions from '../actions/actor';
 import * as availabilityActions from '../actions/availability';
+import * as brandActions from '../actions/brand';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcastersActions from '../actions/broadcaster';
 import * as charactersActions from '../actions/character';
@@ -31,6 +32,7 @@ export default (state = fromJS({
     contentProducers: {},
     events: {},
     genders: {},
+    listBrands: {},
     listCharacters: {}, // listCharacters is the light version of characters, without locales
     listMedia: {}, // listMedia is the light version of media, without locales
     media: {}, // completed version of media, with locales
@@ -56,6 +58,7 @@ export default (state = fromJS({
     filterHasUsers: {},
 
     searchStringHasActors: {},
+    searchStringHasBrands: {},
     searchStringHasBroadcastChannels: {},
     searchStringHasBroadcasters: {},
     searchStringHasCharacters: {},
@@ -74,7 +77,7 @@ export default (state = fromJS({
   switch (action.type) {
 
     // Actors
-    // ////////////////////
+    // //////
 
     case actorActions.ACTOR_SEARCH_START:
       return searchStart(state, 'searchStringHasActors', action.searchString);
@@ -92,6 +95,16 @@ export default (state = fromJS({
       return searchSuccess(state, 'availabilities', 'mediumHasAvailabilities', action.mediumId, action.data);
     case availabilityActions.AVAILABILITIES_FETCH_ERROR:
       return searchError(state, 'mediumHasAvailabilities', action.mediumId, action.error);
+
+    // Brands
+    // //////
+
+    case brandActions.BRAND_SEARCH_START:
+      return searchStart(state, 'searchStringHasBrands', action.searchString);
+    case brandActions.BRAND_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listBrands', 'searchStringHasBrands', action.searchString, action.data);
+    case brandActions.BRAND_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasBrands', action.searchString, action.error);
 
     // Broadcaster Channels
     // ////////////////////

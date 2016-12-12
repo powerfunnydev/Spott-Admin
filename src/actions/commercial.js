@@ -34,5 +34,4 @@ export const fetchCommercial = makeApiActionCreator(commercialApi.fetchCommercia
 export const persistCommercial = makeApiActionCreator(commercialApi.persistCommercial, COMMERCIAL_PERSIST_START, COMMERCIAL_PERSIST_SUCCESS, COMMERCIAL_PERSIST_ERROR);
 export const deleteCommercials = makeApiActionCreator(commercialApi.deleteCommercials, COMMERCIALS_DELETE_START, COMMERCIALS_DELETE_SUCCESS, COMMERCIALS_DELETE_ERROR);
 export const deleteCommercial = makeApiActionCreator(commercialApi.deleteCommercial, COMMERCIAL_DELETE_START, COMMERCIAL_DELETE_SUCCESS, COMMERCIAL_DELETE_ERROR);
-export const uploadPosterImage = makeApiActionCreator(commercialApi.uploadPosterImage, UPLOAD_POSTER_IMAGE_START, UPLOAD_POSTER_IMAGE_SUCCESS, UPLOAD_POSTER_IMAGE_ERROR);
 export const uploadProfileImage = makeApiActionCreator(commercialApi.uploadProfileImage, UPLOAD_PROFILE_IMAGE_START, UPLOAD_PROFILE_IMAGE_SUCCESS, UPLOAD_PROFILE_IMAGE_ERROR);

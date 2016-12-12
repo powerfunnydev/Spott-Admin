@@ -1,11 +1,10 @@
 import {
   persistCommercial, fetchCommercial as dataFetchCommercial,
-  uploadProfileImage as dataUploadProfileImage,
-  uploadPosterImage as dataUploadPosterImage
+  uploadProfileImage as dataUploadProfileImage
 } from '../../../../actions/commercial';
 import { searchBroadcasters as dataSearchBroadcasters } from '../../../../actions/broadcaster';
 import { searchContentProducers as dataSearchContentProducers } from '../../../../actions/contentProducer';
-// import { searchBrands as dataSearchBrands } from '../../../../actions/brand';
+import { searchBrands as dataSearchBrands } from '../../../../actions/brand';
 import { searchCharacters as dataSearchCharacters } from '../../../../actions/character';
 export { deleteProfileImage, deletePosterImage } from '../../../../actions/media';
 
@@ -31,7 +30,6 @@ export const CHARACTERS_SEARCH_ERROR = 'EPISODE_EDIT/CHARACTERS_SEARCH_ERROR';
 
 export const submit = persistCommercial;
 export const uploadProfileImage = dataUploadProfileImage;
-export const uploadPosterImage = dataUploadPosterImage;
 
 export function loadCommercial (commercialId) {
   return async (dispatch, getState) => {
@@ -41,10 +39,6 @@ export function loadCommercial (commercialId) {
       dispatch({ error, type: COMMERCIAL_FETCH_ERROR });
     }
   };
-}
-
-function dataSearchBrands () {
-  console.warn('dataSearchBrands TODO');
 }
 
 export function searchBrands (searchString) {

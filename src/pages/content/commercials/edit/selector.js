@@ -1,21 +1,19 @@
 import { createStructuredSelector } from 'reselect';
 import { currentModalSelector } from '../../../../selectors/global';
 import {
-  listCharactersEntitiesSelector,
-  mediaEntitiesSelector,
-  charactersEntitiesSelector,
-  createEntityByIdSelector,
-  createEntityIdsByRelationSelector,
-  searchStringHasBroadcastersRelationsSelector,
-  searchStringHasCharactersRelationsSelector,
-  // searchStringHasBrandsRelationsSelector,
-  searchStringHasContentProducersRelationsSelector,
-  searchStringHasSeriesEntriesRelationsSelector,
   broadcastersEntitiesSelector,
   contentProducersEntitiesSelector,
-  seriesEntryHasSeasonsSelector,
+  createEntitiesByRelationSelector,
+  createEntityByIdSelector,
+  createEntityIdsByRelationSelector,
+  listBrandsEntitiesSelector,
+  listCharactersEntitiesSelector,
+  mediaEntitiesSelector,
   mediumHasCharactersSelector,
-  createEntitiesByRelationSelector
+  searchStringHasBrandsRelationsSelector,
+  searchStringHasBroadcastersRelationsSelector,
+  searchStringHasCharactersRelationsSelector,
+  searchStringHasContentProducersRelationsSelector
 } from '../../../../selectors/data';
 import { createFormValueSelector } from '../../../../utils';
 
@@ -24,8 +22,8 @@ const formErrorsSelector = (state) => state.getIn([ 'form', formName, 'syncError
 
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
 const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultLocale');
-const hasTitleSelector = createFormValueSelector(formName, 'hasTitle');
 const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
+const hasBannerSelector = createFormValueSelector(formName, 'hasBanner');
 
 const currentCommercialIdSelector = (state, props) => props.params.commercialId;
 const currentCommercialSelector = createEntityByIdSelector(mediaEntitiesSelector, currentCommercialIdSelector);
@@ -38,14 +36,14 @@ const currentContentProducersSearchStringSelector = (state) => state.getIn([ 'co
 const searchedBroadcasterIdsSelector = createEntityIdsByRelationSelector(searchStringHasBroadcastersRelationsSelector, currentBroadcastersSearchStringSelector);
 const searchedCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCharactersSearchStringSelector);
 const searchedContentProducerIdsSelector = createEntityIdsByRelationSelector(searchStringHasContentProducersRelationsSelector, currentContentProducersSearchStringSelector);
-// const searchedBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentBrandsSearchStringSelector);
+const searchedBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentBrandsSearchStringSelector);
 
 const commercialCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersSelector, currentCommercialIdSelector, listCharactersEntitiesSelector);
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
   broadcastersById: broadcastersEntitiesSelector,
-  brandsById: listCharactersEntitiesSelector, // TODO
+  brandsById: listBrandsEntitiesSelector,
   charactersById: listCharactersEntitiesSelector,
   commercialCharacters: commercialCharactersSelector,
   contentProducersById: contentProducersEntitiesSelector,
@@ -53,9 +51,9 @@ export default createStructuredSelector({
   currentModal: currentModalSelector,
   defaultLocale: currentDefaultLocaleSelector,
   errors: formErrorsSelector,
-  hasTitle: hasTitleSelector,
+  hasBanner: hasBannerSelector,
   searchedBroadcasterIds: searchedBroadcasterIdsSelector,
-  // searchedBrandIds: searchedBrandIdsSelector,
+  searchedBrandIds: searchedBrandIdsSelector,
   searchedCharacterIds: searchedCharacterIdsSelector,
   searchedContentProducerIds: searchedContentProducerIdsSelector,
   supportedLocales: supportedLocalesSelector

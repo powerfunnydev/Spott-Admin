@@ -23,57 +23,45 @@ export async function fetchCommercial (baseUrl, authenticationToken, locale, { c
 }
 
 export async function persistCommercial (baseUrl, authenticationToken, locale, {
-  basedOnDefaultLocale, broadcasters, characters, contentProducers, defaultLocale,
-  defaultTitle, description, endYear, episodeId, hasTitle, locales, number,
-  publishStatus, relatedCharacterIds, seasonId, seriesEntryId, startYear, title,
-  lastCommercialId
+  bannerBarColor, bannerText, bannerTextColor, bannerUrl, basedOnDefaultLocale,
+  brandId, broadcasters, commercialId, contentProducers, defaultLocale,
+  description, hasBanner, locales, publishStatus, title
 }) {
-  let episode = {};
-  if (episodeId) {
-    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/serieCommercials/${episodeId}`);
-    episode = body;
+  let commercial = {};
+  if (commercialId) {
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/commercials/${commercialId}`);
+    commercial = body;
   }
-  // episode.characters = characters.map(({ id }) => ({ character: { uuid: id } }));
-  // episode.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
-  episode.contentProducers = contentProducers && contentProducers.map((cp) => ({ uuid: cp }));
-  episode.broadcasters = broadcasters && broadcasters.map((bc) => ({ uuid: bc }));
-  episode.defaultLocale = defaultLocale;
-  episode.defaultTitle = defaultTitle;
-  // episode.externalReference.reference = externalReference;
-  // episode.externalReference.source = externalReferenceSource;
-  episode.publishStatus = publishStatus;
-  episode.season = { uuid: seasonId };
-  episode.serie = { uuid: seriesEntryId };
-  episode.type = 'TV_SERIE_SEASON';
-  episode.number = number;
+
+  commercial.contentProducers = contentProducers && contentProducers.map((cp) => ({ uuid: cp }));
+  commercial.brand = brandId && { uuid: brandId };
+  commercial.broadcasters = broadcasters && broadcasters.map((bc) => ({ uuid: bc }));
+  commercial.defaultLocale = defaultLocale;
+  commercial.publishStatus = publishStatus;
   // Update locale data.
-  episode.localeData = episode.localeData || []; // Ensure we have locale data
+  commercial.localeData = commercial.localeData || []; // Ensure we have locale data
   locales.forEach((locale) => {
     // Get localeData, create if necessary in O(n^2)
-    let localeData = episode.localeData.find((ld) => ld.locale === locale);
+    let localeData = commercial.localeData.find((ld) => ld.locale === locale);
     if (!localeData) {
       localeData = { locale };
-      episode.localeData.push(localeData);
+      commercial.localeData.push(localeData);
     }
+
+    localeData.banner = hasBanner[locale] ? {
+      barColor: bannerBarColor[locale],
+      text: bannerText[locale],
+      textColor: bannerTextColor[locale],
+      url: bannerUrl[locale]
+    } : null;
     // basedOnDefaultLocale is always provided, no check needed
     localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
     localeData.description = description && description[locale];
-    localeData.endYear = endYear && endYear[locale];
-    localeData.startYear = startYear && startYear[locale];
-    localeData.hasTitle = hasTitle && hasTitle[locale];
     localeData.title = title && title[locale];
   });
-  const url = `${baseUrl}/v004/media/serieCommercials`;
-  const result = await post(authenticationToken, locale, url, episode);
-  const persistedCommercial = transformCommercial(result.body);
-  // Copy all characters of the last episode of a season. This only happens when
-  // we create a new episode. We need to create the episode first, so we have the
-  // id of this episode. After that we can do the copy call.
-  if (lastCommercialId) {
-    const resp = await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${persistedCommercial.id}/castMembers/actions/importFromOtherMedium/${lastCommercialId}`);
-    console.log('result', resp);
-  }
-  return persistedCommercial;
+  const url = `${baseUrl}/v004/media/commercials`;
+  const result = await post(authenticationToken, locale, url, commercial);
+  return transformCommercial(result.body);
 }
 
 export async function deleteCommercial (baseUrl, authenticationToken, locale, { episodeId }) {
@@ -86,16 +74,9 @@ export async function deleteCommercials (baseUrl, authenticationToken, locale, {
   }
 }
 
-export async function uploadProfileImage (baseUrl, authenticationToken, locale, { episodeId, image, callback }) {
+export async function uploadProfileImage (baseUrl, authenticationToken, locale, { commercialId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', episodeId);
+  formData.append('uuid', commercialId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${episodeId}/profileCover`, formData, callback);
-}
-
-export async function uploadPosterImage (baseUrl, authenticationToken, locale, { episodeId, image, callback }) {
-  const formData = new FormData();
-  formData.append('uuid', episodeId);
-  formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${episodeId}/posterImage`, formData, callback);
+  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${commercialId}/profileCover`, formData, callback);
 }

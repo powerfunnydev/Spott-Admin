@@ -70,6 +70,31 @@ export function transformAvailability ({ country, endTimeStamp, startTimeStamp, 
   };
 }
 
+export function transformListBrand ({ defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, localeData, publishStatus, productCount, usedProductCount, subscriberCount, uuid: id }) {
+  const brand = {
+    description: {}, // Description for each locale
+    logo: {}, // Locale data
+    name: {}, // Locale data
+    profileCover: {}, // Locale data
+    tagLine: {} // Locale data
+  };
+  for (const { description, locale, name, profileCover, logo, tagLine } of localeData) {
+    brand.description[locale] = description;
+    brand.logo[locale] = logo && { id: logo.uuid, url: logo.url };
+    brand.name[locale] = name;
+    brand.profileCover[locale] = profileCover && { id: profileCover.uuid, url: profileCover.url };
+    brand.tagLine[locale] = tagLine;
+  }
+  return {
+    description: brand.description[defaultLocale],
+    id,
+    logo: brand.logo[defaultLocale],
+    name: brand.name[defaultLocale],
+    profileCover: brand.profileCover[defaultLocale],
+    tagLine: brand.tagLine[defaultLocale]
+  };
+}
+
 export function transformListCharacter ({ auditInfo, profileImage, portraitImage, name, uuid: id }) {
   return {
     id,
@@ -100,7 +125,6 @@ export function transformCharacter ({
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
   };
-  console.log('localeData', localeData);
   if (localeData) {
     for (const { basedOnDefaultLocale, description, locale, name } of localeData) {
       character.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
@@ -115,7 +139,7 @@ export function transformCharacter ({
 /**
  *  Complete version of a medium. Locales includes.
  */
-export function transformMedium ({ availabilities, broadcasters, characters, contentProducers, number,
+export function transformMedium ({ availabilities, brand, broadcasters, characters, contentProducers, number,
   auditInfo, type, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, serieInfo: serie, seasonInfo, uuid: id, publishStatus,
   defaultTitle, localeData, video }) {
   let serieInfo = serie;
@@ -126,6 +150,7 @@ export function transformMedium ({ availabilities, broadcasters, characters, con
     availabilities: availabilities && availabilities.map(transformAvailability),
     characters: characters && characters.map(transformListCharacter),
     contentProducers: contentProducers && contentProducers.map((cp) => cp.uuid),
+    brandId: brand && brand.uuid,
     broadcasters: broadcasters && broadcasters.map((bc) => bc.uuid),
     number,
     basedOnDefaultLocale: {},
@@ -272,7 +297,34 @@ export function transformSeason ({ availabilities, characters, defaultLocale,
 export const transformSeriesEntry004 = transformMedium;
 export const transformSeason004 = transformMedium;
 export const transformEpisode004 = transformMedium;
-export const transformCommercial = transformMedium;
+
+export function transformCommercial (data) {
+  const commercial = transformMedium(data);
+  commercial.hasBanner = {};
+  commercial.bannerBarColor = {};
+  commercial.bannerLogo = {};
+  commercial.bannerText = {};
+  commercial.bannerTextColor = {};
+  commercial.bannerUrl = {};
+
+  const { localeData } = data;
+  for (const { banner, locale } of localeData) {
+    if (banner) {
+      const { barColor, logo, text, textColor, url } = banner;
+      commercial.hasBanner[locale] = true;
+      commercial.bannerBarColor[locale] = barColor;
+      commercial.bannerLogo[locale] = logo ? { id: logo.uuid, url: logo.url } : null;
+      commercial.bannerText[locale] = text;
+      commercial.bannerTextColor[locale] = textColor;
+      commercial.bannerUrl[locale] = url;
+    } else {
+      commercial.hasBanner[locale] = false;
+      commercial.bannerBarColor[locale] = '#000000';
+      commercial.bannerTextColor[locale] = '#000000';
+    }
+  }
+  return commercial;
+}
 
 export const transformListEpisode = transformListMedium;
 export const transformListSeason = transformListMedium;

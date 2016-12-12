@@ -84,8 +84,8 @@ export default class FileInput extends Component {
         border: `1px solid ${colors.errorColor}`
       },
       disabled: {
-        backgroundColor: colors.lightGray,
-        color: colors.darkerGray
+        backgroundColor: colors.lightGray4,
+        color: colors.lightGray3
       },
       text: {
         paddingLeft: '10px',
@@ -116,9 +116,9 @@ export default class FileInput extends Component {
               placeholder={placeholder}
               style={[
                 styles.text.input,
+                styles.text.text,
                 disabled && styles.text.disabled,
                 meta.touched && meta.error && styles.text.error,
-                styles.text.text,
                 style
               ]}
               tabIndex={-1}
