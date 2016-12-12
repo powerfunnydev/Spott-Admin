@@ -194,9 +194,11 @@ export default class SeriesEntries extends Component {
                 <div style={generalStyles.row}>
                   {seriesEntries.get('data').map((seriesEntry, index) => (
                     <Tile
+                      checked={isSelected.get(seriesEntry.get('id'))}
                       imageUrl={seriesEntry.get('profileImage') && `${seriesEntry.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                       key={`seriesEntry${index}`}
                       text={seriesEntry.get('title')}
+                      onCheckboxChange={selectCheckbox.bind(this, seriesEntry.get('id'))}
                       onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${seriesEntry.get('id')}`); }}
                       onDelete={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}
                       onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/series/edit/${seriesEntry.get('id')}`); }}/>

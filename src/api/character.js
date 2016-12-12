@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformCharacter, transformListCharacter } from './transformers';
+import { transformCharacterFaceImage, transformCharacter, transformListCharacter } from './transformers';
 
 export async function fetchCharacters (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/characters?page=${page}&pageSize=${pageSize}`;
@@ -21,15 +21,22 @@ export async function fetchCharacter (baseUrl, authenticationToken, locale, { ch
   return result;
 }
 
+export async function fetchFaceImages (baseUrl, authenticationToken, locale, { characterId, sortDirection = 'DESC', sortField = 'ADDED_ON' }) {
+  const url = `${baseUrl}/v004/media/characters/${characterId}/faceImages?sortDirection=${sortDirection}&sortField=${sortField}`;
+  const { body } = await get(authenticationToken, locale, url);
+  body.data = body.data.map(transformCharacterFaceImage);
+  return body;
+}
+
 export async function persistCharacter (baseUrl, authenticationToken, locale, {
   basedOnDefaultLocale, defaultLocale, description, locales, publishStatus,
-  characterId, name, actorId }) {
+  characterId, name, personId }) {
   let character = {};
   if (characterId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}`);
     character = body;
   }
-  character.actor = { uuid: actorId };
+  character.actor = { uuid: personId };
   character.defaultLocale = defaultLocale;
   character.publishStatus = publishStatus;
 
@@ -92,16 +99,24 @@ export async function deleteMediumCharacter (baseUrl, authenticationToken, local
 
 export async function uploadProfileImage (baseUrl, authenticationToken, locale, { characterId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', characterId);
   formData.append('file', image);
   await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/profileCover`, formData, callback);
 }
 
 export async function uploadPortraitImage (baseUrl, authenticationToken, locale, { characterId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', characterId);
   formData.append('file', image);
   await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/portraitImage`, formData, callback);
+}
+
+export async function uploadFaceImage (baseUrl, authenticationToken, locale, { characterId, image, callback }) {
+  const formData = new FormData();
+  formData.append('file', image);
+  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/faceImages`, formData, callback);
+}
+
+export async function deleteFaceImage (baseUrl, authenticationToken, locale, { characterId, faceImageId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/faceImages/${faceImageId}`);
 }
 
 export async function deletePortraitImage (baseUrl, authenticationToken, locale, { characterId }) {

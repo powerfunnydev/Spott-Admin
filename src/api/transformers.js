@@ -44,6 +44,24 @@ export function transformCharacterSubscription ({
     medium: { id: mediumId, title }
   };
 }
+
+// TODO Taken from the old CMS, to be refactored! listMediumCategory <-> mediumCategory
+export function transformMediumCategory ({ defaultLocale, localeData, uuid: id }) {
+  const genre = {
+    basedOnDefaultLocale: {},
+    defaultLocale,
+    id,
+    locales: [],
+    name: {}
+  };
+  for (const data of localeData) {
+    genre.basedOnDefaultLocale[data.locale] = data.basedOnDefaultLocale;
+    genre.name[data.locale] = data.name;
+    genre.locales.push(data.locale);
+  }
+  return genre;
+}
+
 /**
  *  Light version of a medium. No locales includes.
  */
@@ -110,7 +128,7 @@ export function transformCharacter ({
   actor, auditInfo, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, uuid: id, publishStatus,
  localeData, portraitImage, profileCover }) {
   const character = {
-    actorId: actor.uuid,
+    personId: actor.uuid,
     basedOnDefaultLocale: {},
     description: {},
     name: {},
@@ -141,17 +159,18 @@ export function transformCharacter ({
  */
 export function transformMedium ({ availabilities, brand, broadcasters, characters, contentProducers, number,
   auditInfo, type, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, serieInfo: serie, seasonInfo, uuid: id, publishStatus,
-  defaultTitle, localeData, video }) {
+  defaultTitle, localeData, video, categories: mediumCategories }) {
   let serieInfo = serie;
   if (seasonInfo) {
     serieInfo = seasonInfo.serie;
   }
   const medium = {
     availabilities: availabilities && availabilities.map(transformAvailability),
-    characters: characters && characters.map(transformListCharacter),
-    contentProducers: contentProducers && contentProducers.map((cp) => cp.uuid),
     brandId: brand && brand.uuid,
     broadcasters: broadcasters && broadcasters.map((bc) => bc.uuid),
+    characters: characters && characters.map(transformListCharacter),
+    contentProducers: contentProducers && contentProducers.map((cp) => cp.uuid),
+    mediumCategories: mediumCategories && mediumCategories.map((mc) => mc.uuid),
     number,
     basedOnDefaultLocale: {},
     description: {},
@@ -159,6 +178,7 @@ export function transformMedium ({ availabilities, brand, broadcasters, characte
     endYear: {},
     hasTitle: {},
     title: {},
+    subTitle: {},
     locales: [],
     posterImage: {},
     profileImage: {},
@@ -176,13 +196,14 @@ export function transformMedium ({ availabilities, brand, broadcasters, characte
   };
   if (localeData) {
     for (const { hasTitle, basedOnDefaultLocale, description, locale,
-      posterImage, profileCover, endYear, startYear, title } of localeData) {
+      posterImage, profileCover, endYear, startYear, title, subTitle } of localeData) {
       medium.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
       medium.description[locale] = description;
       medium.startYear[locale] = startYear;
       medium.endYear[locale] = endYear;
       medium.hasTitle[locale] = hasTitle;
       medium.title[locale] = title;
+      medium.subTitle[locale] = subTitle;
       medium.locales.push(locale);
       medium.profileImage[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
       medium.posterImage[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
@@ -294,9 +315,12 @@ export function transformSeason ({ availabilities, characters, defaultLocale,
   }
   return season;
 }
+// Need to be refactored. Old versions need to be replaced by the 004 version.
 export const transformSeriesEntry004 = transformMedium;
 export const transformSeason004 = transformMedium;
 export const transformEpisode004 = transformMedium;
+// Already refactored -> OK
+export const transformMovie = transformMedium;
 
 export function transformCommercial (data) {
   const commercial = transformMedium(data);
@@ -329,6 +353,7 @@ export function transformCommercial (data) {
 export const transformListEpisode = transformListMedium;
 export const transformListSeason = transformListMedium;
 export const transformListSeriesEntry = transformListMedium;
+export const transformListMovie = transformListMedium;
 
 export const transformListCommercial = transformListMedium;
 
@@ -436,10 +461,48 @@ export function transformVideo ({ audioFingerprints, description,
   };
 }
 
-export const transformActor = transformCharacter;
-// Temporary solution. Actor is almost the same as character, except name calls fullName here...
-export const transformListActor = (actor) => {
-  const result = transformListCharacter(actor);
-  result.name = actor.fullName;
+export function transformPerson ({
+  auditInfo, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, uuid: id, publishStatus,
+  localeData, portraitImage, profileCover, fullName, gender, dateOfBirth, placeOfBirth }) {
+  const person = {
+    basedOnDefaultLocale: {},
+    dateOfBirth,
+    description: {},
+    fullName,
+    gender,
+    locales: [],
+    placeOfBirth,
+    profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
+    portraitImage: portraitImage && { id: portraitImage.uuid, url: portraitImage.url },
+    defaultLocale,
+    externalReference,
+    externalReferenceSource,
+    id,
+    publishStatus,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
+  };
+  if (localeData) {
+    for (const { basedOnDefaultLocale, description, locale } of localeData) {
+      person.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      person.description[locale] = description;
+      person.locales.push(locale);
+    }
+  }
+  return person;
+}
+// Temporary solution. Person is almost the same as character, except name calls fullName here...
+export const transformListPerson = (person) => {
+  const result = transformListCharacter(person);
+  result.fullName = person.fullName;
   return result;
 };
+
+export function transformCharacterFaceImage ({ image, uuid: id }) {
+  return {
+    id,
+    image: { url: image && image.url }
+  };
+}
+
+export const transformPersonFaceImage = transformCharacterFaceImage;

@@ -15,14 +15,16 @@ export function serialize ({ searchString = '', page = 0, pageSize = 25, sortDir
   return id;
 }
 
-export const serializeFilterHasContentProducers = serialize;
-export const serializeFilterHasBroadcasters = serialize;
 export const serializeFilterHasBroadcastChannels = serialize;
-export const serializeFilterHasUsers = serialize;
-export const serializeFilterHasSeriesEntries = serialize;
-export const serializeFilterHasSeasons = serialize;
+export const serializeFilterHasBroadcasters = serialize;
 export const serializeFilterHasCharacters = serialize;
 export const serializeFilterHasCommercials = serialize;
+export const serializeFilterHasContentProducers = serialize;
+export const serializeFilterHasMovies = serialize;
+export const serializeFilterHasPersons = serialize;
+export const serializeFilterHasSeasons = serialize;
+export const serializeFilterHasSeriesEntries = serialize;
+export const serializeFilterHasUsers = serialize;
 
 export function serializeFilterHasTvGuideEntries ({ page = 0, pageSize = 25, sortDirection, sortField, mediumId }) {
   let id = `mediumId=${mediumId}&page=${page}&pageSize=${pageSize}`;

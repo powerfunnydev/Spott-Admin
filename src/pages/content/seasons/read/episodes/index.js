@@ -186,9 +186,11 @@ export default class List extends Component {
                 <div style={generalStyles.row}>
                   {this.props.episodes.get('data').map((episode, index) => (
                     <Tile
+                      checked={isSelected.get(episode.get('id'))}
                       imageUrl={episode.get('profileImage') && `${episode.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                       key={`episode${index}`}
                       text={episode.get('title')}
+                      onCheckboxChange={selectCheckbox.bind(this, episode.get('id'))}
                       onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/read/${episode.get('id')}`); }}
                       onDelete={async (e) => {
                         e.preventDefault();

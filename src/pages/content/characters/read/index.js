@@ -37,7 +37,6 @@ export default class ReadCharacter extends Component {
   constructor (props) {
     super(props);
     this.redirect = ::this.redirect;
-    this.onClickNewEntry = :: this.onClickNewEntry;
     this.onChangeTab = :: this.onChangeTab;
   }
 
@@ -47,24 +46,12 @@ export default class ReadCharacter extends Component {
     }
   }
 
-  getTitle (season) {
-    return season.get('name');
-  }
-
   redirect () {
-    this.props.routerPushWithReturnTo('content/seasons', true);
+    this.props.routerPushWithReturnTo('content/characters', true);
   }
 
   onChangeTab (index) {
     this.props.routerPushWithReturnTo({ ...this.props.location, query: { ...this.props.location.query, tabIndex: index } });
-  }
-
-  onClickNewEntry (e) {
-    e.preventDefault();
-    const seasonId = this.props.params.seasonId;
-    if (seasonId) {
-      this.props.routerPushWithReturnTo(`content/seasons/read/${seasonId}/create/season`);
-    }
   }
 
   static styles= {
@@ -79,7 +66,7 @@ export default class ReadCharacter extends Component {
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
-          { title: 'List', url: '/content/characters' },
+          { title: 'Characters', url: '/content/characters' },
           { title: currentCharacter.getIn([ 'name', defaultLocale ]), url: location } ]}/>
         <Container>
           {currentCharacter.get('_status') === 'loaded' && currentCharacter &&

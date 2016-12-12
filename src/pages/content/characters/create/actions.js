@@ -1,16 +1,16 @@
 import { persistCharacter } from '../../../../actions/character';
-import { searchActors as dataSearchActors } from '../../../../actions/actor';
+import { searchPersons as dataSearchPersons } from '../../../../actions/person';
 
 export const CHARACTER_PERSIST_ERROR = 'CHARACTER_CREATE/CHARACTER_PERSIST_ERROR';
 
-export const ACTORS_SEARCH_START = 'CHARACTER_CREATE/ACTORS_SEARCH_START';
-export const ACTORS_SEARCH_ERROR = 'CHARACTER_CREATE/ACTORS_SEARCH_ERROR';
+export const PERSONS_SEARCH_START = 'CHARACTER_CREATE/PERSONS_SEARCH_START';
+export const PERSONS_SEARCH_ERROR = 'CHARACTER_CREATE/PERSONS_SEARCH_ERROR';
 
-export function submit ({ actorId, name, defaultLocale }) {
+export function submit ({ personId, name, defaultLocale }) {
   return async (dispatch, getState) => {
     try {
       const character = {
-        actorId,
+        personId,
         defaultLocale,
         locales: [ defaultLocale ],
         name: { [defaultLocale]: name },
@@ -23,13 +23,13 @@ export function submit ({ actorId, name, defaultLocale }) {
   };
 }
 
-export function searchActors (searchString) {
+export function searchPersons (searchString) {
   return async (dispatch, getState) => {
     try {
-      await dispatch({ type: ACTORS_SEARCH_START, searchString });
-      return await dispatch(dataSearchActors({ searchString }));
+      await dispatch({ type: PERSONS_SEARCH_START, searchString });
+      return await dispatch(dataSearchPersons({ searchString }));
     } catch (error) {
-      dispatch({ error, type: ACTORS_SEARCH_ERROR });
+      dispatch({ error, type: PERSONS_SEARCH_ERROR });
     }
   };
 }

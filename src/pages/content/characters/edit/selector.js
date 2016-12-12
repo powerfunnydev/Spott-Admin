@@ -2,11 +2,14 @@ import { createStructuredSelector } from 'reselect';
 import { currentModalSelector } from '../../../../selectors/global';
 import { createFormValueSelector } from '../../../../utils';
 import {
-  actorsEntitiesSelector,
+  listPersonsEntitiesSelector,
   charactersEntitiesSelector,
+  characterHasFaceImagesRelationsSelector,
   createEntityByIdSelector,
   createEntityIdsByRelationSelector,
-  searchStringHasActorsRelationsSelector
+  createEntitiesByRelationSelector,
+  faceImagesEntitiesSelector,
+  searchStringHasPersonsRelationsSelector
 } from '../../../../selectors/data';
 
 const formName = 'characterEdit';
@@ -16,20 +19,22 @@ const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultL
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
 const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 
-export const currentCharacterIdSelector = (state, props) => { return props.params.characterId; };
-export const currentCharacterSelector = createEntityByIdSelector(charactersEntitiesSelector, currentCharacterIdSelector);
+const currentCharacterIdSelector = (state, props) => { return props.params.characterId; };
+const currentCharacterSelector = createEntityByIdSelector(charactersEntitiesSelector, currentCharacterIdSelector);
 
-export const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'characters', 'edit', 'currentActorSearchString' ]);
+const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'characters', 'edit', 'currentPersonSearchString' ]);
 
-export const searchedActorIdsSelector = createEntityIdsByRelationSelector(searchStringHasActorsRelationsSelector, currentSeriesEntriesSearchStringSelector);
+const searchedPersonIdsSelector = createEntityIdsByRelationSelector(searchStringHasPersonsRelationsSelector, currentSeriesEntriesSearchStringSelector);
+const faceImagesSelector = createEntitiesByRelationSelector(characterHasFaceImagesRelationsSelector, currentCharacterIdSelector, faceImagesEntitiesSelector);
 
 export default createStructuredSelector({
-  actorsById: actorsEntitiesSelector,
   _activeLocale: _activeLocaleSelector,
-  defaultLocale: currentDefaultLocaleSelector,
-  errors: formErrorsSelector,
   currentModal: currentModalSelector,
   currentCharacter: currentCharacterSelector,
-  searchedActorIds: searchedActorIdsSelector,
+  defaultLocale: currentDefaultLocaleSelector,
+  errors: formErrorsSelector,
+  faceImages: faceImagesSelector,
+  personsById: listPersonsEntitiesSelector,
+  searchedPersonIds: searchedPersonIdsSelector,
   supportedLocales: supportedLocalesSelector
 });

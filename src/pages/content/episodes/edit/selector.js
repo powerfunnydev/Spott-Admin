@@ -12,8 +12,8 @@ import {
   searchStringHasSeriesEntriesRelationsSelector,
   broadcastersEntitiesSelector,
   contentProducersEntitiesSelector,
-  seriesEntryHasSeasonsSelector,
-  mediumHasCharactersSelector,
+  seriesEntryHasSeasonsRelationsSelector,
+  mediumHasCharactersRelationsSelector,
   createEntitiesByRelationSelector
 } from '../../../../selectors/data';
 import { createFormValueSelector } from '../../../../utils';
@@ -34,10 +34,10 @@ const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'conte
 
 const currentCharactersSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentCharacterSearchString' ]);
 const searchedCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCharactersSearchStringSelector);
-const episodeCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersSelector, currentEpisodeIdSelector, listCharactersEntitiesSelector);
+const episodeCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersRelationsSelector, currentEpisodeIdSelector, listCharactersEntitiesSelector);
 
 const searchedSeriesEntryIdsSelector = createEntityIdsByRelationSelector(searchStringHasSeriesEntriesRelationsSelector, currentSeriesEntriesSearchStringSelector);
-const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(seriesEntryHasSeasonsSelector, currentSeriesEntryIdSelector);
+const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(seriesEntryHasSeasonsRelationsSelector, currentSeriesEntryIdSelector);
 
 export const currentBroadcastersSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentBroadcastersSearchString' ]);
 export const currentContentProducersSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentContentProducersSearchString' ]);

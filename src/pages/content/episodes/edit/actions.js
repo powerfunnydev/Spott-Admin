@@ -5,8 +5,8 @@ import { searchSeasons as dataSearchSeasons, searchSeriesEntries as dataSearchSe
 import { searchBroadcasters as dataSearchBroadcasters } from '../../../../actions/broadcaster';
 import { searchContentProducers as dataSearchContentProducers } from '../../../../actions/contentProducer';
 import { searchCharacters as dataSearchCharacters } from '../../../../actions/character';
-export { deleteProfileImage, deletePosterImage } from '../../../../actions/media';
 
+export { deleteProfileImage, deletePosterImage } from '../../../../actions/media';
 export { openModal, closeModal } from '../../../../actions/global';
 
 export const CHARACTERS_SEARCH_START = 'EPISODE_EDIT/CHARACTERS_SEARCH_START';

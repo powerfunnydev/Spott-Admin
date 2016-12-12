@@ -17,10 +17,10 @@ import { FETCHING } from '../../../../constants/statusTypes';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { defaultLocale, name, actorId } = values.toJS();
+  const { defaultLocale, name, personId } = values.toJS();
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
   if (!name) { validationErrors.name = t('common.errors.required'); }
-  if (!actorId) { validationErrors.actorId = t('common.errors.required'); }
+  if (!personId) { validationErrors.personId = t('common.errors.required'); }
   // Done
   return validationErrors;
 }
@@ -28,7 +28,7 @@ function validate (values, { t }) {
 @localized
 @connect(selector, (dispatch) => ({
   load: bindActionCreators(loadList, dispatch),
-  searchActors: bindActionCreators(actions.searchActors, dispatch),
+  searchPersons: bindActionCreators(actions.searchPersons, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
@@ -40,7 +40,6 @@ function validate (values, { t }) {
 export default class CreateCharacterModal extends Component {
 
   static propTypes = {
-    actorsById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
     currentLocale: PropTypes.string.isRequired,
     dispatch: PropTypes.func.isRequired,
@@ -50,10 +49,11 @@ export default class CreateCharacterModal extends Component {
     load: PropTypes.func.isRequired,
     localeNames: ImmutablePropTypes.map.isRequired,
     location: PropTypes.object.isRequired,
+    personsById: ImmutablePropTypes.map.isRequired,
     reset: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
-    searchActors: PropTypes.func.isRequired,
-    searchedActorIds: ImmutablePropTypes.map.isRequired,
+    searchPersons: PropTypes.func.isRequired,
+    searchedPersonIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired
   };
@@ -91,11 +91,11 @@ export default class CreateCharacterModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo('content/series', true);
+    this.props.routerPushWithReturnTo('content/characters', true);
   }
 
   render () {
-    const { actorsById, handleSubmit, localeNames, searchActors, searchedActorIds } = this.props;
+    const { personsById, handleSubmit, localeNames, searchPersons, searchedPersonIds } = this.props;
     return (
       <PersistModal isOpen title='Create Character' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
@@ -115,13 +115,13 @@ export default class CreateCharacterModal extends Component {
           required/>
         <Field
           component={SelectInput}
-          getItemText={(id) => actorsById.getIn([ id, 'name' ])}
-          getOptions={searchActors}
-          isLoading={searchedActorIds.get('_status') === FETCHING}
-          label='Actor'
-          name='actorId'
-          options={searchedActorIds.get('data').toJS()}
-          placeholder='Actor'
+          getItemText={(id) => personsById.getIn([ id, 'fullName' ])}
+          getOptions={searchPersons}
+          isLoading={searchedPersonIds.get('_status') === FETCHING}
+          label='Person'
+          name='personId'
+          options={searchedPersonIds.get('data').toJS()}
+          placeholder='Person'
           required/>
       </PersistModal>
     );

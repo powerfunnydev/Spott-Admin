@@ -9,7 +9,7 @@ import {
   listBrandsEntitiesSelector,
   listCharactersEntitiesSelector,
   mediaEntitiesSelector,
-  mediumHasCharactersSelector,
+  mediumHasCharactersRelationsSelector,
   searchStringHasBrandsRelationsSelector,
   searchStringHasBroadcastersRelationsSelector,
   searchStringHasCharactersRelationsSelector,
@@ -38,7 +38,7 @@ const searchedCharacterIdsSelector = createEntityIdsByRelationSelector(searchStr
 const searchedContentProducerIdsSelector = createEntityIdsByRelationSelector(searchStringHasContentProducersRelationsSelector, currentContentProducersSearchStringSelector);
 const searchedBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentBrandsSearchStringSelector);
 
-const commercialCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersSelector, currentCommercialIdSelector, listCharactersEntitiesSelector);
+const commercialCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersRelationsSelector, currentCommercialIdSelector, listCharactersEntitiesSelector);
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,

@@ -1,10 +1,10 @@
 import { fromJS } from 'immutable';
-import { serializeFilterHasCharacters, serializeFilterHasSeriesEntries, serializeFilterHasUsers,
-    serializeFilterHasBroadcastChannels, serializeFilterHasCommercials,
-    serializeFilterHasBroadcasters, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
-    fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart,
-    fetchListSuccess, fetchListError } from './utils';
-import * as actorActions from '../actions/actor';
+import {
+  serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
+  serializeFilterHasUsers, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
+  fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart,
+  fetchListSuccess, fetchListError
+} from './utils';
 import * as availabilityActions from '../actions/availability';
 import * as brandActions from '../actions/brand';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
@@ -14,6 +14,9 @@ import * as commercialActions from '../actions/commercial';
 import * as contentProducersActions from '../actions/contentProducer';
 import * as episodeActions from '../actions/episode';
 import * as mediaActions from '../actions/media';
+import * as mediumCategoryActions from '../actions/mediumCategory';
+import * as moviesActions from '../actions/movie';
+import * as personActions from '../actions/person';
 import * as reportingActions from '../actions/reporting';
 import * as seasonActions from '../actions/season';
 import * as seriesActions from '../actions/series';
@@ -23,7 +26,6 @@ import * as videoActions from '../actions/video';
 
 export default (state = fromJS({
   entities: {
-    actors: {},
     ages: {},
     availabilities: {},
     broadcastChannels: {},
@@ -31,11 +33,15 @@ export default (state = fromJS({
     characters: {},
     contentProducers: {},
     events: {},
+    faceImages: {}, // Characters and persons has faceImages
     genders: {},
     listBrands: {},
     listCharacters: {}, // listCharacters is the light version of characters, without locales
     listMedia: {}, // listMedia is the light version of media, without locales
-    media: {}, // completed version of media, with locales
+    listPersons: {}, // listCharacters is the light version of characters, without locales
+    media: {}, // Completed version of media, with locales
+    mediumCategories: {},
+    persons: {},
     tvGuideEntries: {},
     users: {},
     videos: {}
@@ -52,6 +58,8 @@ export default (state = fromJS({
     filterHasCommercials: {},
     filterHasContentProducers: {},
     filterHasEpisodes: {},
+    filterHasMovies: {},
+    filterHasPersons: {},
     filterHasSeasons: {},
     filterHasSeriesEntries: {},
     filterHasTvGuideEntries: {},
@@ -64,27 +72,21 @@ export default (state = fromJS({
     searchStringHasCharacters: {},
     searchStringHasContentProducers: {},
     searchStringHasMedia: {},
+    searchStringHasMediumCategories: {},
+    searchStringHasPersons: {},
     searchStringHasSeriesEntries: {},
     searchStringHasUsers: {},
 
+    characterHasFaceImages: {},
     mediumHasCharacters: {},
     mediumHasTvGuideEntries: {},
+    personHasFaceImages: {},
     seriesEntryHasSeasons: {},
     seasonHasEpisodes: {},
     mediumHasAvailabilities: {}
   }
 }), action) => {
   switch (action.type) {
-
-    // Actors
-    // //////
-
-    case actorActions.ACTOR_SEARCH_START:
-      return searchStart(state, 'searchStringHasActors', action.searchString);
-    case actorActions.ACTOR_SEARCH_SUCCESS:
-      return searchSuccess(state, 'actors', 'searchStringHasActors', action.searchString, action.data);
-    case actorActions.ACTOR_SEARCH_ERROR:
-      return searchError(state, 'searchStringHasActors', action.searchString, action.error);
 
     // Availabilities
     // //////////////
@@ -192,6 +194,13 @@ export default (state = fromJS({
     case charactersActions.CHARACTER_SEARCH_ERROR:
       return searchError(state, 'searchStringHasCharacters', action.searchString, action.error);
 
+    case charactersActions.CHARACTER_FACE_IMAGES_FETCH_START:
+      return searchStart(state, 'characterHasFaceImages', action.characterId);
+    case charactersActions.CHARACTER_FACE_IMAGES_FETCH_SUCCESS:
+      return searchSuccess(state, 'faceImages', 'characterHasFaceImages', action.characterId, action.data.data);
+    case charactersActions.CHARACTER_FACE_IMAGES_FETCH_ERROR:
+      return searchError(state, 'characterHasFaceImages', action.characterId, action.error);
+
     case charactersActions.MEDIUM_CHARACTER_SEARCH_START:
       return searchStart(state, 'mediumHasCharacters', action.mediumId);
     case charactersActions.MEDIUM_CHARACTER_SEARCH_SUCCESS:
@@ -266,6 +275,65 @@ export default (state = fromJS({
       return searchSuccess(state, 'tvGuideEntries', 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.data.data);
     case mediaActions.TV_GUIDE_ENTRIES_FETCH_ERROR:
       return searchError(state, 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.error);
+
+    // Media
+    // /////////////////
+
+    case mediumCategoryActions.MEDIUM_CATEGORIES_SEARCH_START:
+      return searchStart(state, 'searchStringHasMediumCategories', action.searchString);
+    case mediumCategoryActions.MEDIUM_CATEGORIES_SEARCH_SUCCESS:
+      // TODO mediumCategories will be listMediumCategories, once the backend is updated.
+      return searchSuccess(state, 'mediumCategories', 'searchStringHasMediumCategories', action.searchString, action.data);
+    case mediumCategoryActions.MEDIUM_CATEGORIES_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasMediumCategories', action.searchString, action.error);
+
+    // Movies
+    // //////////////
+
+    case moviesActions.MOVIE_FETCH_START:
+      return fetchStart(state, [ 'entities', 'media', action.movieId ]);
+    case moviesActions.MOVIE_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.movieId ], action.data);
+    case moviesActions.MOVIE_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'media', action.movieId ], action.error);
+
+    case moviesActions.MOVIES_FETCH_START:
+      return searchStart(state, 'filterHasMovies', serializeFilterHasMovies(action));
+    case moviesActions.MOVIES_FETCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'filterHasMovies', serializeFilterHasMovies(action), action.data.data);
+    case moviesActions.MOVIES_FETCH_ERROR:
+      return searchError(state, 'filterHasMovies', serializeFilterHasMovies(action), action.error);
+
+    // Persons
+    // ////////////////////
+
+    case personActions.PERSONS_FETCH_START:
+      return searchStart(state, 'filterHasCharacters', serializeFilterHasPersons(action));
+    case personActions.PERSONS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listPersons', 'filterHasPersons', serializeFilterHasPersons(action), action.data.data);
+    case personActions.PERSONS_FETCH_ERROR:
+      return searchError(state, 'filterHasPersons', serializeFilterHasPersons(action), action.error);
+
+    case personActions.PERSON_FETCH_START:
+      return fetchStart(state, [ 'entities', 'persons', action.personId ]);
+    case personActions.PERSON_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'persons', action.personId ], action.data);
+    case personActions.PERSON_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'persons', action.personId ], action.error);
+
+    case personActions.PERSON_SEARCH_START:
+      return searchStart(state, 'searchStringHasPersons', action.searchString);
+    case personActions.PERSON_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listPersons', 'searchStringHasPersons', action.searchString, action.data);
+    case personActions.PERSON_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasPersons', action.searchString, action.error);
+
+    case personActions.PERSON_FACE_IMAGES_FETCH_START:
+      return searchStart(state, 'personHasFaceImages', action.personId);
+    case personActions.PERSON_FACE_IMAGES_FETCH_SUCCESS:
+      return searchSuccess(state, 'faceImages', 'personHasFaceImages', action.personId, action.data.data);
+    case personActions.PERSON_FACE_IMAGES_FETCH_ERROR:
+      return searchError(state, 'personHasFaceImages', action.personId, action.error);
 
     // Seasons
     // /////////////////
