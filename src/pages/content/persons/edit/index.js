@@ -25,7 +25,6 @@ import LanguageBar from '../../../_common/components/languageBar';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import ImageDropzone from '../../../_common/dropzone/imageDropzone';
 import { ImageWithDropdown } from '../../../_common/components/imageWithDropdown';
-import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -268,7 +267,6 @@ export default class EditPerson extends Component {
                       accept='image/*'
                       downloadUrl={currentPerson.getIn([ 'portraitImage', 'url' ])}
                       imageUrl={currentPerson.getIn([ 'portraitImage', 'url' ]) && `${currentPerson.getIn([ 'portraitImage', 'url' ])}?height=203&width=360`}
-                      type={POSTER_IMAGE}
                       onChange={({ callback, file }) => { this.props.uploadPortraitImage({ personId: this.props.params.personId, image: file, callback }); }}
                       onDelete={() => { deletePortraitImage({ personId: currentPerson.get('id') }); }}/>
                   </div>
