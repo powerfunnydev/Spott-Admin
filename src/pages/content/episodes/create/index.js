@@ -92,6 +92,7 @@ export default class CreateEpisodentryModal extends Component {
     let contentProducers;
     let defaultLocale;
     let episodeNumber;
+    let mediumCategories;
     // We need the id of the last episode for copying all characters.
     let lastEpisodeId;
     try {
@@ -99,6 +100,7 @@ export default class CreateEpisodentryModal extends Component {
       console.log('lastEpisode', lastEpisode);
       broadcasters = lastEpisode.broadcasters;
       characters = lastEpisode.characters;
+      mediumCategories = lastEpisode.mediumCategories;
       contentProducers = lastEpisode.contentProducers;
       defaultLocale = lastEpisode.defaultLocale;
       episodeNumber = lastEpisode.number + 1;
@@ -119,6 +121,7 @@ export default class CreateEpisodentryModal extends Component {
       contentProducers,
       defaultLocale,
       lastEpisodeId,
+      mediumCategories,
       number: episodeNumber,
       seasonId,
       seriesEntryId
