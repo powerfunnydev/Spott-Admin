@@ -130,14 +130,15 @@ export async function searchUsers (baseUrl, authenticationToken, locale, { searc
 
 export async function uploadProfileImage (baseUrl, authenticationToken, locale, { userId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', userId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/user/users/${userId}/profileImage`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/user/users/${userId}/profileImage`, formData, callback);
+  return transformUser(result.body);
 }
 
 export async function uploadBackgroundImage (baseUrl, authenticationToken, locale, { userId, image, callback }) {
   const formData = new FormData();
   formData.append('uuid', userId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/user/users/${userId}/avatarImage`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/user/users/${userId}/avatarImage`, formData, callback);
+  return transformUser(result.body);
 }

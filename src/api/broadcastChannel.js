@@ -58,9 +58,9 @@ export async function deleteBroadcastChannels (baseUrl, authenticationToken, loc
 
 export async function uploadBroadcastChannelImage (baseUrl, authenticationToken, locale, { broadcastChannelId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', broadcastChannelId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/broadcastChannels/${broadcastChannelId}/logo`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/broadcastChannels/${broadcastChannelId}/logo`, formData, callback);
+  return transformBroadcastChannel(result.body);
 }
 
 export async function deleteLogo (baseUrl, authenticationToken, locale, { broadcastChannelId }) {

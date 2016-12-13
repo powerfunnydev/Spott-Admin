@@ -14,6 +14,7 @@ export const gendersEntitiesSelector = (state) => state.getIn([ 'data', 'entitie
 export const listBrandsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listBrands' ]);
 export const listCharactersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listCharacters' ]);
 export const listMediaEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listMedia' ]);
+export const listMediumCategoriesEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listMediumCategories' ]);
 export const listPersonsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listPersons' ]);
 export const mediaEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'media' ]);
 export const mediumCategoriesEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'mediumCategories' ]);

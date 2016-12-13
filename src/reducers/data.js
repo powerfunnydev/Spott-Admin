@@ -38,6 +38,7 @@ export default (state = fromJS({
     listBrands: {},
     listCharacters: {}, // listCharacters is the light version of characters, without locales
     listMedia: {}, // listMedia is the light version of media, without locales
+    listMediumCategories: {},
     listPersons: {}, // listCharacters is the light version of characters, without locales
     media: {}, // Completed version of media, with locales
     mediumCategories: {},
@@ -111,6 +112,9 @@ export default (state = fromJS({
     // Broadcaster Channels
     // ////////////////////
 
+    case broadcastChannelActions.BROADCAST_CHANNEL_UPLOAD_IMAGE_SUCCESS:
+      return searchSuccess(state, 'broadcastChannels', 'searchStringHasBroadcastChannels', action.searchString, action.data);
+
     case broadcastChannelActions.BROADCAST_CHANNEL_FETCH_START:
       return fetchStart(state, [ 'entities', 'broadcastChannels', action.broadcastChannelId ]);
     case broadcastChannelActions.BROADCAST_CHANNEL_FETCH_SUCCESS:
@@ -134,6 +138,9 @@ export default (state = fromJS({
 
     // Broadcasters
     // ////////////
+
+    case broadcastersActions.BROADCASTER_UPLOAD_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'broadcasters', action.broadcasterId ], action.data);
 
     case broadcastersActions.BROADCASTER_USERS_FETCH_START:
       return searchStart(state, 'filterHasUsers', serializeFilterHasUsers(action, 'broadcasters'));
@@ -172,6 +179,11 @@ export default (state = fromJS({
 
     // Characters
     // //////////
+
+    case charactersActions.UPLOAD_PROFILE_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'characters', action.characterId ], action.data);
+    case charactersActions.UPLOAD_PORTRAIT_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'characters', action.characterId ], action.data);
 
     case charactersActions.CHARACTER_FETCH_START:
       return fetchStart(state, [ 'entities', 'characters', action.characterId ]);
@@ -228,6 +240,9 @@ export default (state = fromJS({
     // Content producers
     // /////////////////
 
+    case contentProducersActions.CONTENT_PRODUCER_UPLOAD_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'contentProducers', action.contentProducerId ], action.data);
+
     case contentProducersActions.CONTENT_PRODUCER_USERS_FETCH_START:
       return searchStart(state, 'filterHasUsers', serializeFilterHasUsers(action, 'contentProducers'));
     case contentProducersActions.CONTENT_PRODUCER_USERS_FETCH_SUCCESS:
@@ -259,6 +274,11 @@ export default (state = fromJS({
     // Episodes
     // /////////////////
 
+    case episodeActions.UPLOAD_POSTER_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.episodeId ], action.data);
+    case episodeActions.UPLOAD_PROFILE_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.episodeId ], action.data);
+
     case episodeActions.EPISODE_FETCH_START:
       return fetchStart(state, [ 'entities', 'media', action.episodeId ]);
     case episodeActions.EPISODE_FETCH_SUCCESS:
@@ -283,12 +303,17 @@ export default (state = fromJS({
       return searchStart(state, 'searchStringHasMediumCategories', action.searchString);
     case mediumCategoryActions.MEDIUM_CATEGORIES_SEARCH_SUCCESS:
       // TODO mediumCategories will be listMediumCategories, once the backend is updated.
-      return searchSuccess(state, 'mediumCategories', 'searchStringHasMediumCategories', action.searchString, action.data);
+      return searchSuccess(state, 'listMediumCategories', 'searchStringHasMediumCategories', action.searchString, action.data);
     case mediumCategoryActions.MEDIUM_CATEGORIES_SEARCH_ERROR:
       return searchError(state, 'searchStringHasMediumCategories', action.searchString, action.error);
 
     // Movies
     // //////////////
+
+    case moviesActions.UPLOAD_POSTER_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.movieId ], action.data);
+    case moviesActions.UPLOAD_PROFILE_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.movieId ], action.data);
 
     case moviesActions.MOVIE_FETCH_START:
       return fetchStart(state, [ 'entities', 'media', action.movieId ]);
@@ -306,6 +331,11 @@ export default (state = fromJS({
 
     // Persons
     // ////////////////////
+
+    case personActions.UPLOAD_PROFILE_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'persons', action.personId ], action.data);
+    case personActions.UPLOAD_PORTRAIT_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'persons', action.personId ], action.data);
 
     case personActions.PERSONS_FETCH_START:
       return searchStart(state, 'filterHasCharacters', serializeFilterHasPersons(action));
@@ -338,6 +368,11 @@ export default (state = fromJS({
     // Seasons
     // /////////////////
 
+    case seasonActions.UPLOAD_POSTER_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.seasonId ], action.data);
+    case seasonActions.UPLOAD_PROFILE_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.seasonId ], action.data);
+
     case seasonActions.SEASON_FETCH_START:
       return fetchStart(state, [ 'entities', 'media', action.seasonId ]);
     case seasonActions.SEASON_FETCH_SUCCESS:
@@ -361,6 +396,11 @@ export default (state = fromJS({
 
     // Series Entries
     // //////////////
+
+    case seriesActions.UPLOAD_POSTER_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.seriesEntryId ], action.data);
+    case seriesActions.UPLOAD_PROFILE_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.seriesEntryId ], action.data);
 
     case seriesActions.SERIES_ENTRY_FETCH_START:
       return fetchStart(state, [ 'entities', 'media', action.seriesEntryId ]);
@@ -455,6 +495,9 @@ export default (state = fromJS({
 
     // Users
     // /////
+
+    case userActions.USER_UPLOAD_PROFILE_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'users', action.userId ], action.data);
 
     case userActions.USER_FETCH_START:
       return fetchStart(state, [ 'entities', 'users', action.userId ]);

@@ -175,7 +175,7 @@ export default class TvGuideList extends Component {
                     <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                       {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                       <CheckBoxCel checked={isSelected.get(tvGuideEntry.get('id'))} onChange={selectCheckbox.bind(this, tvGuideEntry.get('id'))}/>
-                      <CustomCel getValue={this.getChannelName} objectToRender={tvGuideEntry} style={{ flex: 1 }} /* onClick={selectEntity.bind(this, tvGuideEntry.get('id'))} *//>
+                      <CustomCel getValue={this.getChannelName} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
                       <CustomCel getValue={this.getMediumTitle} objectToRender={tvGuideEntry} style={{ flex: 2 }}/>
                       <CustomCel getValue={this.getStartDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
                       <CustomCel getValue={this.getEndDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>

@@ -32,7 +32,7 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, {
   basedOnDefaultLocale, broadcasters, characters, contentProducers, defaultLocale,
   defaultTitle, description, endYear, episodeId, hasTitle, locales, number,
   publishStatus, relatedCharacterIds, seasonId, seriesEntryId, startYear, title,
-  lastEpisodeId
+  lastEpisodeId, mediumCategories
 }) {
   let episode = {};
   if (episodeId) {
@@ -40,7 +40,7 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, {
     episode = body;
   }
   // episode.characters = characters.map(({ id }) => ({ character: { uuid: id } }));
-  // episode.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
+  episode.categories = mediumCategories && mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
   episode.contentProducers = contentProducers && contentProducers.map((cp) => ({ uuid: cp }));
   episode.broadcasters = broadcasters && broadcasters.map((bc) => ({ uuid: bc }));
   episode.defaultLocale = defaultLocale;
@@ -94,14 +94,14 @@ export async function deleteEpisodes (baseUrl, authenticationToken, locale, { ep
 
 export async function uploadProfileImage (baseUrl, authenticationToken, locale, { episodeId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', episodeId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${episodeId}/profileCover`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${episodeId}/profileCover`, formData, callback);
+  return transformEpisode004(result.body);
 }
 
 export async function uploadPosterImage (baseUrl, authenticationToken, locale, { episodeId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', episodeId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${episodeId}/posterImage`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${episodeId}/posterImage`, formData, callback);
+  return transformEpisode004(result.body);
 }

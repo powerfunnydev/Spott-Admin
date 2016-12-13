@@ -88,13 +88,15 @@ export async function searchPersons (baseUrl, authenticationToken, locale, { sea
 export async function uploadProfileImage (baseUrl, authenticationToken, locale, { personId, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/actors/${personId}/profileCover`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/actors/${personId}/profileCover`, formData, callback);
+  return transformPerson(result.body);
 }
 
 export async function uploadPortraitImage (baseUrl, authenticationToken, locale, { personId, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/actors/${personId}/portraitImage`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/actors/${personId}/portraitImage`, formData, callback);
+  return transformPerson(result.body);
 }
 
 export async function uploadFaceImage (baseUrl, authenticationToken, locale, { personId, image, callback }) {

@@ -89,11 +89,13 @@ export async function searchMovies (baseUrl, authenticationToken, locale, { sear
 export async function uploadProfileImage (baseUrl, authenticationToken, locale, { movieId, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${movieId}/profileCover`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${movieId}/profileCover`, formData, callback);
+  return transformMovie(result.body);
 }
 
 export async function uploadPosterImage (baseUrl, authenticationToken, locale, { movieId, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${movieId}/posterImage`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${movieId}/posterImage`, formData, callback);
+  return transformMovie(result.body);
 }

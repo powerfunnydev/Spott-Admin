@@ -160,13 +160,13 @@ function getRoutes ({ dispatch, getState }) {
         <Route component={PersonsList} path='persons'>
           <Route component={PersonsCreate} path ='create'/>
         </Route>
-        <Route component={MoviesList} path='movies'>
+        {/* <Route component={MoviesList} path='movies'>
           <Route component={MoviesCreate} path='create'/>
         </Route>
         <Route path='movies'>
           <Route component={MoviesRead} path='read/:movieId'/>
           <Route component={MoviesEdit} path='edit/:movieId'/>
-        </Route>
+        </Route> */}
         <Route path='persons'>
           <Route component={PersonsRead} path='read/:personId'/>
           <Route component={PersonsEdit} path='edit/:personId'/>

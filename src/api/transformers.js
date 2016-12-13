@@ -45,21 +45,8 @@ export function transformCharacterSubscription ({
   };
 }
 
-// TODO Taken from the old CMS, to be refactored! listMediumCategory <-> mediumCategory
-export function transformMediumCategory ({ defaultLocale, localeData, uuid: id }) {
-  const genre = {
-    basedOnDefaultLocale: {},
-    defaultLocale,
-    id,
-    locales: [],
-    name: {}
-  };
-  for (const data of localeData) {
-    genre.basedOnDefaultLocale[data.locale] = data.basedOnDefaultLocale;
-    genre.name[data.locale] = data.name;
-    genre.locales.push(data.locale);
-  }
-  return genre;
+export function transformListMediumCategory ({ name, uuid: id }) {
+  return { name, id };
 }
 
 /**

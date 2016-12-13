@@ -25,6 +25,7 @@ import LanguageBar from '../../../_common/components/languageBar';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import ImageDropzone from '../../../_common/dropzone/imageDropzone';
 import { ImageWithDropdown } from '../../../_common/components/imageWithDropdown';
+import { PROFILE_IMAGE } from '../../../../constants/imageTypes';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -262,22 +263,23 @@ export default class EditPerson extends Component {
                 <FormSubtitle>Images</FormSubtitle>
                 <div style={[ styles.paddingTop, styles.row ]}>
                   <div>
-                    <Label text='Profile image' />
-                    <ImageDropzone
-                      accept='image/*'
-                      downloadUrl={currentPerson.getIn([ 'profileImage', 'url' ])}
-                      imageUrl={currentPerson.getIn([ 'profileImage', 'url' ]) && `${currentPerson.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ personId: this.props.params.personId, image: file, callback }); }}
-                      onDelete={() => { deleteProfileImage({ personId: currentPerson.get('id') }); }}/>
-                  </div>
-                  <div style={styles.paddingLeftUploadImage}>
-                    <Label text='Poster image' />
+                    <Label text='Portrait image' />
                     <ImageDropzone
                       accept='image/*'
                       downloadUrl={currentPerson.getIn([ 'portraitImage', 'url' ])}
                       imageUrl={currentPerson.getIn([ 'portraitImage', 'url' ]) && `${currentPerson.getIn([ 'portraitImage', 'url' ])}?height=203&width=360`}
                       onChange={({ callback, file }) => { this.props.uploadPortraitImage({ personId: this.props.params.personId, image: file, callback }); }}
                       onDelete={() => { deletePortraitImage({ personId: currentPerson.get('id') }); }}/>
+                  </div>
+                  <div style={styles.paddingLeftUploadImage}>
+                    <Label text='Profile image' />
+                    <ImageDropzone
+                      accept='image/*'
+                      downloadUrl={currentPerson.getIn([ 'profileImage', 'url' ])}
+                      imageUrl={currentPerson.getIn([ 'profileImage', 'url' ]) && `${currentPerson.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
+                      type={PROFILE_IMAGE}
+                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ personId: this.props.params.personId, image: file, callback }); }}
+                      onDelete={() => { deleteProfileImage({ personId: currentPerson.get('id') }); }}/>
                   </div>
                 </div>
               </Section>

@@ -113,14 +113,14 @@ export async function searchSeasons (baseUrl, authenticationToken, locale, { sea
 
 export async function uploadProfileImage (baseUrl, authenticationToken, locale, { seriesEntryId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', seriesEntryId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${seriesEntryId}/profileCover`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${seriesEntryId}/profileCover`, formData, callback);
+  return transformSeriesEntry004(result.body);
 }
 
 export async function uploadPosterImage (baseUrl, authenticationToken, locale, { seriesEntryId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', seriesEntryId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${seriesEntryId}/posterImage`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${seriesEntryId}/posterImage`, formData, callback);
+  return transformSeriesEntry004(result.body);
 }
