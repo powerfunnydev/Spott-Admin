@@ -76,7 +76,7 @@ export async function deleteCommercials (baseUrl, authenticationToken, locale, {
 
 export async function uploadProfileImage (baseUrl, authenticationToken, locale, { commercialId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', commercialId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${commercialId}/profileCover`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${commercialId}/profileCover`, formData, callback);
+  return transformCommercial(result.body);
 }

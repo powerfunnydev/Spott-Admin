@@ -223,6 +223,9 @@ export default (state = fromJS({
     // Commercials
     // ///////////
 
+    case commercialActions.UPLOAD_PROFILE_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.commercialId ], action.data);
+
     case commercialActions.COMMERCIAL_FETCH_START:
       return fetchStart(state, [ 'entities', 'media', action.commercialId ]);
     case commercialActions.COMMERCIAL_FETCH_SUCCESS:
