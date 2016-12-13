@@ -16,19 +16,19 @@ import BreadCrumbs from '../../../_common/components/breadCrumbs';
 /* eslint-disable no-alert */
 
 @connect(selector, (dispatch) => ({
-  deleteCharacter: bindActionCreators(listActions.deleteCharacter, dispatch),
-  loadCharacter: bindActionCreators(actions.loadCharacter, dispatch),
+  deleteMovie: bindActionCreators(listActions.deleteMovie, dispatch),
+  loadMovie: bindActionCreators(actions.loadMovie, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @Radium
-export default class ReadCharacter extends Component {
+export default class ReadMovie extends Component {
 
   static propTypes = {
     children: PropTypes.node,
-    currentCharacter: PropTypes.object.isRequired,
-    deleteCharacter: PropTypes.func.isRequired,
+    currentMovie: PropTypes.object.isRequired,
+    deleteMovie: PropTypes.func.isRequired,
     error: PropTypes.any,
-    loadCharacter: PropTypes.func.isRequired,
+    loadMovie: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired
@@ -41,13 +41,13 @@ export default class ReadCharacter extends Component {
   }
 
   async componentWillMount () {
-    if (this.props.params.characterId) {
-      await this.props.loadCharacter(this.props.params.characterId);
+    if (this.props.params.movieId) {
+      await this.props.loadMovie(this.props.params.movieId);
     }
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/characters', true);
+    this.props.routerPushWithReturnTo('content/movies', true);
   }
 
   onChangeTab (index) {
@@ -59,22 +59,22 @@ export default class ReadCharacter extends Component {
   }
 
   render () {
-    const { params, children, currentCharacter, location, deleteCharacter } = this.props;
-    const defaultLocale = currentCharacter.getIn([ 'defaultLocale' ]);
+    const { params, children, currentMovie, location, deleteMovie } = this.props;
+    const defaultLocale = currentMovie.getIn([ 'defaultLocale' ]);
     return (
       <Root>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
-          { title: 'Characters', url: '/content/characters' },
-          { title: currentCharacter.getIn([ 'name', defaultLocale ]), url: location } ]}/>
+          { title: 'Movies', url: '/content/movies' },
+          { title: currentMovie.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         <Container>
-          {currentCharacter.get('_status') === 'loaded' && currentCharacter &&
+          {currentMovie.get('_status') === 'loaded' && currentMovie &&
             <EntityDetails
-              imageUrl={currentCharacter.getIn([ 'profileImage', 'url' ]) && `${currentCharacter.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
-              title={currentCharacter.getIn([ 'name', defaultLocale ])}
-              onEdit={() => { this.props.routerPushWithReturnTo(`content/characters/edit/${params.characterId}`); }}
-              onRemove={async () => { await deleteCharacter(currentCharacter.getIn([ 'id' ])); this.redirect(); }}/>}
+              imageUrl={currentMovie.getIn([ 'profileImage', 'url' ]) && `${currentMovie.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
+              title={currentMovie.getIn([ 'title', defaultLocale ])}
+              onEdit={() => { this.props.routerPushWithReturnTo(`content/movies/edit/${params.movieId}`); }}
+              onRemove={async () => { await deleteMovie(currentMovie.getIn([ 'id' ])); this.redirect(); }}/>}
         </Container>
         <Line/>
         {children}

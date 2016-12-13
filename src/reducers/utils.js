@@ -19,6 +19,7 @@ export const serializeFilterHasBroadcastChannels = serialize;
 export const serializeFilterHasBroadcasters = serialize;
 export const serializeFilterHasCharacters = serialize;
 export const serializeFilterHasContentProducers = serialize;
+export const serializeFilterHasMovies = serialize;
 export const serializeFilterHasPersons = serialize;
 export const serializeFilterHasSeasons = serialize;
 export const serializeFilterHasSeriesEntries = serialize;

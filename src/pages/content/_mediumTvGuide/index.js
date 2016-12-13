@@ -2,17 +2,17 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { routerPushWithReturnTo } from '../../../../../actions/global';
+import { routerPushWithReturnTo } from '../../../actions/global';
 import moment from 'moment';
-import { DropdownCel, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../../_common/components/table/index';
-import Line from '../../../../_common/components/line';
+import { DropdownCel, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table/index';
+import Line from '../../_common/components/line';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
-import Dropdown, { styles as dropdownStyles } from '../../../../_common/components/actionDropdown';
-import UtilsBar from '../../../../_common/components/table/utilsBar';
-import { confirmation } from '../../../../_common/askConfirmation';
-import { slowdown } from '../../../../../utils';
+import Dropdown, { styles as dropdownStyles } from '../../_common/components/actionDropdown';
+import UtilsBar from '../../_common/components/table/utilsBar';
+import { confirmation } from '../../_common/askConfirmation';
+import { slowdown } from '../../../utils';
 
 /* eslint-disable react/no-set-state*/
 
@@ -42,6 +42,8 @@ export default class TvGuideList extends Component {
       pathname: PropTypes.string.isRequired,
       query: PropTypes.object.isRequired
     }),
+    // used in selectors
+    mediumId: PropTypes.string.isRequired,
     pageCount: PropTypes.number,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
@@ -58,18 +60,20 @@ export default class TvGuideList extends Component {
     super(props);
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
     this.onClickNewEntry = ::this.onClickNewEntry;
+    this.onClickEditEntry = :: this.onClickEditEntry;
     this.slowSearch = slowdown(props.load, 300);
   }
 
   async componentWillMount () {
-    await this.props.load(this.props.location.query, this.props.params.seriesEntryId);
+    const { load, location, mediumId } = this.props;
+    await load(location.query, mediumId);
   }
 
   async componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
     if (isQueryChanged(query, nextQuery, prefix)) {
-      await this.slowSearch(nextProps.location.query, this.props.params.seriesEntryId);
+      await this.slowSearch(nextProps.location.query, this.props.mediumId);
     }
   }
 
@@ -109,14 +113,30 @@ export default class TvGuideList extends Component {
     const result = await confirmation();
     if (result) {
       await this.props.deleteTvGuideEntry(tvGuideEntryId);
-      await this.props.load(this.props.location.query, this.props.params.seriesEntryId);
+      await this.props.load(this.props.location.query, this.props.mediumId);
     }
   }
 
-  onClickNewEntry (e) {
-    e.preventDefault();
-    const { seriesEntryId } = this.props.params;
-    this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/create/tv-guide`);
+  onClickEditEntry (tvGuideId) {
+    const { seriesEntryId, seasonId, episodeId } = this.props.params;
+    if (seriesEntryId && seasonId && episodeId) {
+      this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/seasons/read/${seasonId}/episodes/read/${episodeId}/tv-guide/edit/${tvGuideId}`);
+    } else if (seriesEntryId && seasonId) {
+      this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/seasons/read/${seasonId}/tv-guide/edit/${tvGuideId}`);
+    } else if (seriesEntryId) {
+      this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/tv-guide/edit/${tvGuideId}`);
+    }
+  }
+
+  onClickNewEntry () {
+    const { seriesEntryId, seasonId, episodeId } = this.props.params;
+    if (seriesEntryId && seasonId && episodeId) {
+      this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/seasons/read/${seasonId}/episodes/read/${episodeId}/create/tv-guide`);
+    } else if (seriesEntryId && seasonId) {
+      this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/seasons/read/${seasonId}/create/tv-guide`);
+    } else if (seriesEntryId) {
+      this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/create/tv-guide`);
+    }
   }
 
   async onClickDeleteSelected () {
@@ -131,9 +151,9 @@ export default class TvGuideList extends Component {
   }
 
   render () {
-    const { isSelected, pageCount, selectAllCheckboxes,
+    const { mediumId, isSelected, pageCount, selectAllCheckboxes,
       selectCheckbox, totalResultCount, tvGuideEntries, location: { query: { tvGuidePage,
-        tvGuideSortField, tvGuideSortDirection } }, params: { seriesEntryId } } = this.props;
+        tvGuideSortField, tvGuideSortDirection } } } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
       <div style={generalStyles.border}>
@@ -157,7 +177,7 @@ export default class TvGuideList extends Component {
             <Table style={generalStyles.lightGrayBorder}>
               <Headers>
                 {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
+                <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes.bind(this.mediumId)}/>
                 <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Channel</CustomCel>
                 <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Title</CustomCel>
                 <CustomCel
@@ -181,8 +201,8 @@ export default class TvGuideList extends Component {
                   return (
                     <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                       {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                      <CheckBoxCel checked={isSelected.get(tvGuideEntry.get('id'))} onChange={selectCheckbox.bind(this, tvGuideEntry.get('id'))}/>
-                      <CustomCel getValue={this.getChannelName} objectToRender={tvGuideEntry} style={{ flex: 1 }} /* onClick={selectEntity.bind(this, tvGuideEntry.get('id'))} *//>
+                      <CheckBoxCel checked={isSelected.get(tvGuideEntry.get('id'))} onChange={selectCheckbox.bind(this, tvGuideEntry.get('id'), mediumId)}/>
+                      <CustomCel getValue={this.getChannelName} objectToRender={tvGuideEntry} style={{ flex: 1 }} />
                       <CustomCel getValue={this.getMediumTitle} objectToRender={tvGuideEntry} style={{ flex: 2 }}/>
                       <CustomCel getValue={this.getStartDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
                       <CustomCel getValue={this.getEndDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
@@ -190,7 +210,7 @@ export default class TvGuideList extends Component {
                       <CustomCel getValue={this.getLastUpdatedOn} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
                       <DropdownCel>
                         <Dropdown
-                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/tv-guide/edit/${tvGuideEntry.get('id')}`); }}>Edit</div>}>
+                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={this.onClickEditEntry.bind(this, tvGuideEntry.get('id'))}>Edit</div>}>
                           <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteTvGuideEntry(tvGuideEntry.get('id')); }}>Remove</div>
                         </Dropdown>
                       </DropdownCel>

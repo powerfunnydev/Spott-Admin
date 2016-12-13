@@ -5,6 +5,7 @@ import { searchSeasons as dataSearchSeasons, searchSeriesEntries as dataSearchSe
 import { searchBroadcasters as dataSearchBroadcasters } from '../../../../actions/broadcaster';
 import { searchContentProducers as dataSearchContentProducers } from '../../../../actions/contentProducer';
 import { searchCharacters as dataSearchCharacters } from '../../../../actions/character';
+import { searchMediumCategories as dataSearchMediumCategories } from '../../../../actions/mediumCategory';
 
 export { deleteProfileImage, deletePosterImage } from '../../../../actions/media';
 export { openModal, closeModal } from '../../../../actions/global';
@@ -16,6 +17,9 @@ export const MEDIUM_CHARACTERS_SEARCH_ERROR = 'EPISODE_EDIT/MEDIUM_CHARACTERS_SE
 
 export const CONTENT_PRODUCERS_SEARCH_START = 'EPISODE_EDIT/CONTENT_PRODUCERS_SEARCH_START';
 export const CONTENT_PRODUCERS_SEARCH_ERROR = 'EPISODE_EDIT/CONTENT_PRODUCERS_SEARCH_ERROR';
+
+export const MEDIUM_CATEGORIES_SEARCH_START = 'EPISODE_EDIT/MEDIUM_CATEGORIES_SEARCH_START';
+export const MEDIUM_CATEGORIES_SEARCH_ERROR = 'EPISODE_EDIT/MEDIUM_CATEGORIES_SEARCH_ERROR';
 
 export const BROADCASTERS_SEARCH_START = 'EPISODE_EDIT/BROADCASTERS_SEARCH_START';
 export const BROADCASTERS_SEARCH_ERROR = 'EPISODE_EDIT/BROADCASTERS_SEARCH_ERROR';
@@ -65,6 +69,18 @@ export function searchSeasons (searchString, seriesEntryId) {
       return await dispatch(dataSearchSeasons({ searchString, seriesEntryId }));
     } catch (error) {
       dispatch({ error, type: SERIES_ENTRY_SEASONS_SEARCH_ERROR });
+    }
+  };
+}
+
+export function searchMediumCategories (searchString) {
+  return async (dispatch, getState) => {
+    try {
+      console.log('searchString', searchString);
+      await dispatch({ type: MEDIUM_CATEGORIES_SEARCH_START, searchString });
+      return await dispatch(dataSearchMediumCategories({ searchString }));
+    } catch (error) {
+      dispatch({ error, type: MEDIUM_CATEGORIES_SEARCH_ERROR });
     }
   };
 }

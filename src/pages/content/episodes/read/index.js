@@ -13,7 +13,7 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
 import { generalStyles } from '../../../_common/components/table/index';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
-import TvGuideList from './tvGuide';
+import TvGuideList from '../../_mediumTvGuide';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 
 /* eslint-disable no-alert */
@@ -100,7 +100,7 @@ export default class ReadEpisode extends Component {
           <Container>
             <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
               <Tab title='TV Guide'>
-                <TvGuideList {...this.props}/>
+                <TvGuideList {...this.props} mediumId={this.props.params.episodeId}/>
               </Tab>
             </Tabs>
           </Container>

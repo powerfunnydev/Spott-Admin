@@ -44,6 +44,11 @@ export function transformCharacterSubscription ({
     medium: { id: mediumId, title }
   };
 }
+
+export function transformListMediumCategory ({ name, uuid: id }) {
+  return { name, id };
+}
+
 /**
  *  Light version of a medium. No locales includes.
  */
@@ -116,16 +121,17 @@ export function transformCharacter ({
  */
 export function transformMedium ({ availabilities, broadcasters, characters, contentProducers, number,
   auditInfo, type, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, serieInfo: serie, seasonInfo, uuid: id, publishStatus,
-  defaultTitle, localeData, video }) {
+  defaultTitle, localeData, video, categories: mediumCategories }) {
   let serieInfo = serie;
   if (seasonInfo) {
     serieInfo = seasonInfo.serie;
   }
   const medium = {
     availabilities: availabilities && availabilities.map(transformAvailability),
+    broadcasters: broadcasters && broadcasters.map((bc) => bc.uuid),
     characters: characters && characters.map(transformListCharacter),
     contentProducers: contentProducers && contentProducers.map((cp) => cp.uuid),
-    broadcasters: broadcasters && broadcasters.map((bc) => bc.uuid),
+    mediumCategories: mediumCategories && mediumCategories.map((mc) => mc.uuid),
     number,
     basedOnDefaultLocale: {},
     description: {},
@@ -133,6 +139,7 @@ export function transformMedium ({ availabilities, broadcasters, characters, con
     endYear: {},
     hasTitle: {},
     title: {},
+    subTitle: {},
     locales: [],
     posterImage: {},
     profileImage: {},
@@ -150,13 +157,14 @@ export function transformMedium ({ availabilities, broadcasters, characters, con
   };
   if (localeData) {
     for (const { hasTitle, basedOnDefaultLocale, description, locale,
-      posterImage, profileCover, endYear, startYear, title } of localeData) {
+      posterImage, profileCover, endYear, startYear, title, subTitle } of localeData) {
       medium.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
       medium.description[locale] = description;
       medium.startYear[locale] = startYear;
       medium.endYear[locale] = endYear;
       medium.hasTitle[locale] = hasTitle;
       medium.title[locale] = title;
+      medium.subTitle[locale] = subTitle;
       medium.locales.push(locale);
       medium.profileImage[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
       medium.posterImage[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
@@ -268,13 +276,17 @@ export function transformSeason ({ availabilities, characters, defaultLocale,
   }
   return season;
 }
+// Need to be refactored. Old versions need to be replaced by the 004 version.
 export const transformSeriesEntry004 = transformMedium;
 export const transformSeason004 = transformMedium;
 export const transformEpisode004 = transformMedium;
+// Already refactored -> OK
+export const transformMovie = transformMedium;
 
 export const transformListEpisode = transformListMedium;
 export const transformListSeason = transformListMedium;
 export const transformListSeriesEntry = transformListMedium;
+export const transformListMovie = transformListMedium;
 
 export function transformBroadcastChannel ({ name, uuid: id, logo, broadcaster }) {
   return {

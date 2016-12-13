@@ -8,17 +8,17 @@ import { FETCHING } from '../../../../constants/statusTypes';
 import { makeTextStyle, fontWeights, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
-import { EPISODE_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
+import { MOVIE_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Header from '../../../app/header';
 import Label from '../../../_common/inputs/_label';
 import localized from '../../../_common/decorators/localized';
 import Section from '../../../_common/components/section';
-import CheckboxInput from '../../../_common/inputs/checkbox';
 import SelectInput from '../../../_common/inputs/selectInput';
 import SpecificHeader from '../../header';
 import TextInput from '../../../_common/inputs/textInput';
+import NumberInput from '../../../_common/inputs/numberInput';
 import LanguageBar from '../../../_common/components/languageBar';
 import Availabilities from '../../_availabilities/list';
 import RelatedVideo from '../../../content/_relatedVideo/read';
@@ -30,11 +30,9 @@ import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { _activeLocale, defaultLocale, seriesEntryId, seasonId, title, hasTitle } = values.toJS();
+  const { _activeLocale, defaultLocale, title } = values.toJS();
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
-  if (!seriesEntryId) { validationErrors.seriesEntryId = t('common.errors.required'); }
-  if (!seasonId) { validationErrors.seasonId = t('common.errors.required'); }
-  if (hasTitle && title && hasTitle[_activeLocale] && !title[_activeLocale]) { validationErrors.title = validationErrors.title || {}; validationErrors.title[_activeLocale] = t('common.errors.required'); }
+  if (title && !title[_activeLocale]) { validationErrors.title = validationErrors.title || {}; validationErrors.title[_activeLocale] = t('common.errors.required'); }
   // Done
   return validationErrors;
 }
@@ -44,25 +42,23 @@ function validate (values, { t }) {
   closeModal: bindActionCreators(actions.closeModal, dispatch),
   deletePosterImage: bindActionCreators(actions.deletePosterImage, dispatch),
   deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
-  loadEpisode: bindActionCreators(actions.loadEpisode, dispatch),
+  loadMovie: bindActionCreators(actions.loadMovie, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
   searchCharacters: bindActionCreators(actions.searchCharacters, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
   searchMediumCategories: bindActionCreators(actions.searchMediumCategories, dispatch),
-  searchSeasons: bindActionCreators(actions.searchSeasons, dispatch),
-  searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadPosterImage: bindActionCreators(actions.uploadPosterImage, dispatch),
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch)
 }))
 @reduxForm({
-  form: 'episodeEdit',
+  form: 'movieEdit',
   validate
 })
 @Radium
-export default class EditEpisode extends Component {
+export default class EditMovie extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
@@ -73,23 +69,20 @@ export default class EditEpisode extends Component {
     children: PropTypes.node,
     closeModal: PropTypes.func.isRequired,
     contentProducersById: ImmutablePropTypes.map.isRequired,
-    currentEpisode: ImmutablePropTypes.map.isRequired,
     currentModal: PropTypes.string,
-    currentSeasonId: PropTypes.string,
-    currentSeriesEntryId: PropTypes.string,
+    currentMovie: ImmutablePropTypes.map.isRequired,
     defaultLocale: PropTypes.string,
     deletePosterImage: PropTypes.func.isRequired,
     deleteProfileImage: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
-    episodeCharacters: ImmutablePropTypes.map.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
     handleSubmit: PropTypes.func.isRequired,
-    hasTitle: ImmutablePropTypes.map,
     initialize: PropTypes.func.isRequired,
-    loadEpisode: PropTypes.func.isRequired,
+    loadMovie: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     mediumCategoriesById: ImmutablePropTypes.map.isRequired,
+    movieCharacters: ImmutablePropTypes.map.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
@@ -97,22 +90,15 @@ export default class EditEpisode extends Component {
     searchCharacters: PropTypes.func.isRequired,
     searchContentProducers: PropTypes.func.isRequired,
     searchMediumCategories: PropTypes.func.isRequired,
-    searchSeasons: PropTypes.func.isRequired,
-    searchSeriesEntries: PropTypes.func.isRequired,
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
     searchedCharacterIds: ImmutablePropTypes.map.isRequired,
     searchedContentProducerIds: ImmutablePropTypes.map.isRequired,
     searchedMediumCategoryIds: ImmutablePropTypes.map.isRequired,
-    searchedSeasonIds: ImmutablePropTypes.map.isRequired,
-    searchedSeriesEntryIds: ImmutablePropTypes.map.isRequired,
-    seasonsById: ImmutablePropTypes.map.isRequired,
-    seriesEntriesById: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
     uploadPosterImage: PropTypes.func.isRequired,
     uploadProfileImage: PropTypes.func.isRequired
-
   };
 
   constructor (props) {
@@ -127,21 +113,19 @@ export default class EditEpisode extends Component {
   }
 
   async componentWillMount () {
-    const { episodeId } = this.props.params;
-    if (episodeId) {
-      const editObj = await this.props.loadEpisode(episodeId);
+    const { movieId } = this.props.params;
+    if (movieId) {
+      const editObj = await this.props.loadMovie(movieId);
       console.log('editObj', editObj);
       this.props.initialize({
         ...editObj,
-        seasonId: editObj.season.id,
-        seriesEntryId: editObj.seriesEntry.id,
         _activeLocale: editObj.defaultLocale
       });
     }
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/series', true);
+    this.props.routerPushWithReturnTo('content/movies', true);
   }
 
   languageAdded (form) {
@@ -165,15 +149,15 @@ export default class EditEpisode extends Component {
   }
 
   openCreateLanguageModal () {
-    this.props.openModal(EPISODE_CREATE_LANGUAGE);
+    this.props.openModal(MOVIE_CREATE_LANGUAGE);
   }
 
   async submit (form) {
-    const { supportedLocales, params: { episodeId } } = this.props;
+    const { supportedLocales, params: { movieId } } = this.props;
     try {
       await this.props.submit({
         locales: supportedLocales.toArray(),
-        episodeId,
+        movieId,
         ...form.toJS()
       });
       this.redirect();
@@ -248,25 +232,21 @@ export default class EditEpisode extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      _activeLocale, closeModal, currentModal, currentSeasonId,
-      currentSeriesEntryId, searchSeriesEntries, contentProducersById,
-      searchContentProducers, searchedContentProducerIds, broadcastersById,
-      searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
-      seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
-      searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors,
-      searchedCharacterIds, charactersById, searchCharacters, deleteProfileImage, episodeCharacters,
-      deletePosterImage, mediumCategoriesById, searchMediumCategories, searchedMediumCategoryIds, location: { query: { tab } }
+      _activeLocale, closeModal, currentModal, contentProducersById,
+      searchContentProducers, searchMediumCategories, searchedContentProducerIds, broadcastersById,
+      searchBroadcasters, searchedBroadcasterIds, location, currentMovie, mediumCategoriesById,
+      defaultLocale, handleSubmit, supportedLocales, errors, searchedMediumCategoryIds,
+      searchedCharacterIds, charactersById, searchCharacters, deleteProfileImage, movieCharacters,
+      deletePosterImage, location: { query: { tab } }
     } = this.props;
     return (
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
-          { title: 'Series', url: '/content/series' },
-          { title: currentEpisode.getIn([ 'seriesEntry', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}` },
-          { title: currentEpisode.getIn([ 'season', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${this.props.params.seasonId}` },
-          { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: location } ]}/>
-        {currentModal === EPISODE_CREATE_LANGUAGE &&
+          { title: 'Series', url: '/content/movies' },
+          { title: currentMovie.getIn([ 'title', defaultLocale ]), url: location } ]}/>
+        {currentModal === MOVIE_CREATE_LANGUAGE &&
           <CreateLanguageModal
             supportedLocales={supportedLocales}
             onCloseClick={closeModal}
@@ -287,63 +267,34 @@ export default class EditEpisode extends Component {
               <Section>
                 <FormSubtitle first>General</FormSubtitle>
                 <Field
-                  component={SelectInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  getItemText={(id) => seriesEntriesById.getIn([ id, 'title' ])}
-                  getOptions={searchSeriesEntries}
-                  isLoading={searchedSeriesEntryIds.get('_status') === FETCHING}
-                  label='Series title'
-                  name='seriesEntryId'
-                  options={searchedSeriesEntryIds.get('data').toJS()}
-                  placeholder='Series title'
-                  required
-                  onChange={() => {
-                    this.props.dispatch(this.props.change('seasonId', null));
-                  }} />
-                {currentSeriesEntryId &&
-                  <Field
-                    component={SelectInput}
-                    disabled={_activeLocale !== defaultLocale}
-                    getItemText={(id) => seasonsById.getIn([ id, 'title' ])}
-                    getOptions={(searchString) => { searchSeasons(searchString, currentSeriesEntryId); }}
-                    isLoading={searchedSeasonIds.get('_status') === FETCHING}
-                    label='Season title'
-                    name='seasonId'
-                    options={searchedSeasonIds.get('data').toJS()}
-                    placeholder='Season title'
-                    required
-                    onChange={() => {
-                      this.props.dispatch(this.props.change('title', {}));
-                    }} />}
-                {currentSeriesEntryId && currentSeasonId &&
-                  <Field
-                    component={TextInput}
-                    disabled={_activeLocale !== defaultLocale}
-                    label='Episode number'
-                    name='number'
-                    placeholder='Episode number'
-                    required
-                    type='number'/>}
-                {currentSeriesEntryId && currentSeasonId &&
-                  <Field
-                    component={TextInput}
-                    content={
-                      <Field
-                        component={CheckboxInput}
-                        first
-                        label='Custom title'
-                        name={`hasTitle.${_activeLocale}`}
-                        style={styles.customTitle} />}
-                    disabled={hasTitle && !hasTitle.get(_activeLocale)}
-                    label='Episode title'
-                    labelStyle={styles.titleLabel}
-                    name={`title.${_activeLocale}`}
-                    placeholder='Episode title'
-                    required />}
+                  component={TextInput}
+                  label='Movie title'
+                  labelStyle={styles.titleLabel}
+                  name={`title.${_activeLocale}`}
+                  placeholder='Movie title'
+                  required />
+                <Field
+                  component={TextInput}
+                  label='Movie subtitle'
+                  labelStyle={styles.titleLabel}
+                  name={`subTitle.${_activeLocale}`}
+                  placeholder='Movie subtitle'/>
+                <Field
+                  component={NumberInput}
+                  label='Start year'
+                  labelStyle={styles.titleLabel}
+                  name={`startYear.${_activeLocale}`}
+                  placeholder='Start year'/>
+                <Field
+                  component={NumberInput}
+                  label='End year'
+                  labelStyle={styles.titleLabel}
+                  name={`endYear.${_activeLocale}`}
+                  placeholder='End year'/>
                 <Field
                   component={SelectInput}
                   disabled={_activeLocale !== defaultLocale}
-                  getItemText={(mediumCategory) => mediumCategoriesById.getIn([ mediumCategory, 'name' ])}
+                  getItemText={(mediumCategory) => mediumCategoriesById.getIn([ mediumCategory, 'name', _activeLocale ])}
                   getOptions={searchMediumCategories}
                   isLoading={searchedMediumCategoryIds.get('_status') === FETCHING}
                   label='Genres'
@@ -385,24 +336,24 @@ export default class EditEpisode extends Component {
                     <Label text='Poster image' />
                     <Dropzone
                       accept='image/*'
-                      downloadUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
-                        currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}
-                      imageUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
-                        `${currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310`}
+                      downloadUrl={currentMovie.getIn([ 'posterImage', _activeLocale ]) &&
+                        currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ])}
+                      imageUrl={currentMovie.getIn([ 'posterImage', _activeLocale ]) &&
+                        `${currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310`}
                       type={POSTER_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}
-                      onDelete={() => { deletePosterImage({ mediumId: currentEpisode.get('id') }); }}/>
+                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ movieId: this.props.params.movieId, image: file, callback }); }}
+                      onDelete={() => { deletePosterImage({ mediumId: currentMovie.get('id') }); }}/>
                   </div>
                   <div style={styles.paddingLeftUploadImage}>
                     <Label text='Profile image' />
                     <Dropzone
-                      downloadUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
-                        currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}
-                      imageUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
-                        `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      downloadUrl={currentMovie.getIn([ 'profileImage', _activeLocale ]) &&
+                        currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ])}
+                      imageUrl={currentMovie.getIn([ 'profileImage', _activeLocale ]) &&
+                        `${currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
                       type={PROFILE_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}
-                      onDelete={() => { deleteProfileImage({ mediumId: currentEpisode.get('id') }); }}/>
+                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ movieId: this.props.params.movieId, image: file, callback }); }}
+                      onDelete={() => { deleteProfileImage({ mediumId: currentMovie.get('id') }); }}/>
                   </div>
                 </div>
               </Section>
@@ -410,8 +361,8 @@ export default class EditEpisode extends Component {
            <Tab title='Helpers'>
               <Characters
                 charactersById={charactersById}
-                mediumCharacters={episodeCharacters}
-                mediumId={this.props.params.episodeId}
+                mediumCharacters={movieCharacters}
+                mediumId={this.props.params.movieId}
                 searchCharacters={searchCharacters}
                 searchedCharacterIds={searchedCharacterIds} />
             </Tab>
@@ -420,12 +371,12 @@ export default class EditEpisode extends Component {
                 <FormSubtitle first>Interactive video</FormSubtitle>
                 <Field
                   component={RelatedVideo}
-                  medium={currentEpisode}
+                  medium={currentMovie}
                   name='videoId' />
               </Section>
             </Tab>
             <Tab title='Availability'>
-              <Availabilities mediumId={this.props.params.episodeId} />
+              <Availabilities mediumId={this.props.params.movieId} />
             </Tab>
           </Tabs>
         </EditTemplate>

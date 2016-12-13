@@ -47,7 +47,7 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, {
   basedOnDefaultLocale, broadcasters, characters, contentProducers, defaultLocale,
   defaultTitle, description, endYear, episodeId, hasTitle, locales, number,
   publishStatus, relatedCharacterIds, seasonId, seriesEntryId, startYear, title,
-  lastEpisodeId
+  lastEpisodeId, mediumCategories
 }) {
   let episode = {};
   if (episodeId) {
@@ -55,7 +55,7 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, {
     episode = body;
   }
   // episode.characters = characters.map(({ id }) => ({ character: { uuid: id } }));
-  // episode.categories = mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
+  episode.categories = mediumCategories && mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
   episode.contentProducers = contentProducers && contentProducers.map((cp) => ({ uuid: cp }));
   episode.broadcasters = broadcasters && broadcasters.map((bc) => ({ uuid: bc }));
   episode.defaultLocale = defaultLocale;
