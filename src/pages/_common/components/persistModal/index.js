@@ -46,7 +46,8 @@ const dialogStyle = {
     padding: 0,
     display: 'flex',
     flexDirection: 'column',
-    maxHeight: '100%'
+    maxHeight: '100%',
+    overflow: 'auto'
   }
 };
 
@@ -123,7 +124,7 @@ export default class PersistModal extends Component {
       paddingTop: '1.875em',
       borderLeft: 'solid 1px #ced6da',
       borderRight: 'solid 1px #ced6da',
-      overflow: 'auto'
+      overflow: 'visible'
     },
     cross: {
       cursor: 'pointer',

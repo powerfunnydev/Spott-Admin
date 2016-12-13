@@ -215,6 +215,7 @@ export default class EditEpisodes extends Component {
         hasTitle, location, currentSeason, seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
         handleSubmit, supportedLocales, errors, deleteProfileImage, deletePosterImage } = this.props;
     const { styles } = this.constructor;
+    console.log('currentSeason', currentSeason.toJS());
     return (
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />
@@ -316,19 +317,6 @@ export default class EditEpisodes extends Component {
                 </div>
               </Section>
             </Tab>
-            {/* TODO
-            <Tab title='Helpers'>
-              <Section>
-                <FormSubtitle first>Content</FormSubtitle>
-                ...
-              </Section>
-            </Tab>
-            <Tab title='Audience'>
-              <Section>
-                <FormSubtitle first>Location</FormSubtitle>
-                ...
-              </Section>
-            </Tab>*/}
           </Tabs>
         </EditTemplate>
       </Root>
