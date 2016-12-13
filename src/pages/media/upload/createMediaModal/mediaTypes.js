@@ -1,6 +1,6 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
-import { MOVIE, EPISODE, COMMERCIAL, TRAILER } from '../../../../constants/mediaTypes';
+import { MOVIE, EPISODE, COMMERCIAL, TRAILER } from '../../../../constants/mediumTypes';
 import { colors } from '../../../_common/styles';
 
 @Radium

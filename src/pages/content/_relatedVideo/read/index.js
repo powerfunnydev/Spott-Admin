@@ -4,6 +4,7 @@ import React, { Component, PropTypes } from 'react';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Link } from 'react-router';
 import { buttonStyles, colors, fontWeights, makeTextStyle } from '../../../_common/styles';
 import EntityDetails from '../../../_common/entityDetails';
 import { confirmation } from '../../../_common/askConfirmation';
@@ -145,7 +146,7 @@ export default class RelatedVideo extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { input: { value: videoId }, medium, partialTaggerUrl, video, videoUploadStatus } = this.props;
+    const { input: { value: videoId }, medium, video, videoUploadStatus } = this.props;
 
     if (videoId) {
       if (video.get('_status') === 'loaded') {
@@ -157,13 +158,12 @@ export default class RelatedVideo extends Component {
                   <div>
                     {video.get('videoFilename')}
                     <div>
-                      <a
-                        href={`${partialTaggerUrl}#/episode/${medium.get('id')}/video/${videoId}`}
+                      <Link
                         key='tagger'
-                        style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue, styles.launchTagger ]}
-                        target='_blank'>
+                        style={{ ...buttonStyles.base, ...buttonStyles.small, ...buttonStyles.blue, ...styles.launchTagger }}
+                        to={`tagger/episode/${medium.get('id')}/video/${videoId}`}>
                         Launch Tagger
-                      </a>
+                      </Link>
                     </div>
                   </div>}
                 imageUrl={video.getIn([ 'scenes', 0, 'image' ]) && `${video.getIn([ 'scenes', 0, 'image', 'url' ])}?height=174&width=310`}

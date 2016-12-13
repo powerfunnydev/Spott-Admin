@@ -4,7 +4,7 @@ import { reduxForm } from 'redux-form/immutable';
 import { buttonStyles, colors } from '../../../../_common/styles';
 import createMediaStyles from '../styles';
 import Episode from './episode';
-import { EPISODE } from '../../../../../constants/mediaTypes';
+import { EPISODE } from '../../../../../constants/mediumTypes';
 
 function validate (values) {
   const errors = {};
