@@ -231,8 +231,6 @@ export default class EditCommercial extends Component {
       searchBrands, brandsById, searchedBrandIds, location: { query: { tab } }
     } = this.props;
 
-    console.warn('currentCommercial', hasBanner, currentCommercial && currentCommercial.toJS());
-
     return (
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />

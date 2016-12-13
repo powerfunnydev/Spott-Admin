@@ -74,10 +74,6 @@ export default class ReadCommercial extends Component {
     const { styles } = this.constructor;
     const defaultLocale = currentCommercial.get('defaultLocale');
 
-    console.warn('currentCommercial', currentCommercial && currentCommercial.toJS(), [
-      { title: 'Commercials', url: '/content/commercials' },
-      { title: currentCommercial.getIn([ 'title', defaultLocale ]), url: `content/commercials/read/${params.commercialId}` }
-    ]);
     return (
       <Root>
         <Header currentLocation={location} hideHomePageLinks />
@@ -95,7 +91,7 @@ export default class ReadCommercial extends Component {
               onRemove={async () => { await deleteCommercial(params.commercialId); this.redirect(); }}/>}
         </Container>
         <Line/>
-        <div style={[ generalStyles.fillPage, styles.table ]}>
+        {/* <div style={[ generalStyles.fillPage, styles.table ]}>
           <Container>
             <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
               <Tab title='TV Guide'>
@@ -104,7 +100,7 @@ export default class ReadCommercial extends Component {
             </Tabs>
           </Container>
         </div>
-        <Line/>
+        <Line/> */}
         {children}
       </Root>
     );

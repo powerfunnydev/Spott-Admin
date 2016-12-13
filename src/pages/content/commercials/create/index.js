@@ -16,12 +16,10 @@ import selector from './selector';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { defaultLocale, hasTitle, number, seriesEntryId, seasonId, title } = values.toJS();
-  if (!seriesEntryId) { validationErrors.seriesEntryId = t('common.errors.required'); }
-  if (!seasonId) { validationErrors.seasonId = t('common.errors.required'); }
+  const { brandId, defaultLocale, title } = values.toJS();
+  if (!brandId) { validationErrors.brandId = t('common.errors.required'); }
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
-  if (!number || number < 1) { validationErrors.number = t('common.errors.required'); }
-  if (hasTitle && !title) { validationErrors.title = t('common.errors.required'); }
+  if (!title) { validationErrors.title = t('common.errors.required'); }
   // Done
   return validationErrors;
 }
@@ -66,51 +64,9 @@ export default class CreateEpisodentryModal extends Component {
     this.onCloseClick = ::this.onCloseClick;
   }
 
-  async componentWillMount () {
-    // const { fetchLastEpisode, searchSeasons, initialize,
-    //     params: { seriesEntryId, seasonId }, currentLocale } = this.props;
-    // // We need to fetch seasons of a certain series. SelectInput component
-    // // will not do this automatically (cause we render first, and then initialize
-    // // our seasonId of our redux form).
-    // await searchSeasons(null, seriesEntryId);
-    // // 404 error when there is no last episode. We go further with the default value of
-    // // defaultLocale, content producers, broadcasters and number of an episode.
-    // let broadcasters;
-    // let characters;
-    // let contentProducers;
-    // let defaultLocale;
-    // let episodeNumber;
-    // // We need the id of the last episode for copying all characters.
-    // let lastEpisodeId;
-    // try {
-    //   const lastEpisode = await fetchLastEpisode(seasonId);
-    //   console.log('lastEpisode', lastEpisode);
-    //   broadcasters = lastEpisode.broadcasters;
-    //   characters = lastEpisode.characters;
-    //   contentProducers = lastEpisode.contentProducers;
-    //   defaultLocale = lastEpisode.defaultLocale;
-    //   episodeNumber = lastEpisode.number + 1;
-    //   lastEpisodeId = lastEpisode.id;
-    //   console.log('lastEpisodeId', lastEpisodeId);
-    // } catch (e) {
-    //   console.error('e', e);
-    //   broadcasters = [];
-    //   characters = [];
-    //   contentProducers = [];
-    //   // We will use the locale of the current user as default locale.
-    //   defaultLocale = currentLocale;
-    //   episodeNumber = 1;
-    // }
-    // await initialize({
-    //   broadcasters,
-    //   characters,
-    //   contentProducers,
-    //   defaultLocale,
-    //   lastEpisodeId,
-    //   number: episodeNumber,
-    //   seasonId,
-    //   seriesEntryId
-    // });
+  componentWillMount () {
+    const { currentLocale, initialize } = this.props;
+    initialize({ defaultLocale: currentLocale });
   }
 
   async submit (form) {

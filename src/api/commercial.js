@@ -48,7 +48,7 @@ export async function persistCommercial (baseUrl, authenticationToken, locale, {
       commercial.localeData.push(localeData);
     }
 
-    localeData.banner = hasBanner[locale] ? {
+    localeData.banner = hasBanner && hasBanner[locale] ? {
       barColor: bannerBarColor[locale],
       text: bannerText[locale],
       textColor: bannerTextColor[locale],
@@ -64,13 +64,13 @@ export async function persistCommercial (baseUrl, authenticationToken, locale, {
   return transformCommercial(result.body);
 }
 
-export async function deleteCommercial (baseUrl, authenticationToken, locale, { episodeId }) {
-  await del(authenticationToken, locale, `${baseUrl}/v004/media/serieCommercials/${episodeId}`);
+export async function deleteCommercial (baseUrl, authenticationToken, locale, { commercialId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/commercials/${commercialId}`);
 }
 
-export async function deleteCommercials (baseUrl, authenticationToken, locale, { episodeIds }) {
-  for (const episodeId of episodeIds) {
-    await deleteCommercial(baseUrl, authenticationToken, locale, { episodeId });
+export async function deleteCommercials (baseUrl, authenticationToken, locale, { commercialIds }) {
+  for (const commercialId of commercialIds) {
+    await deleteCommercial(baseUrl, authenticationToken, locale, { commercialId });
   }
 }
 

@@ -162,14 +162,16 @@ export default class Commercials extends Component {
                 <div style={generalStyles.row}>
                   {commercials.get('data').map((commercial, index) => (
                     <Tile
+                      checked={isSelected.get(commercial.get('id'))}
                       imageUrl={commercial.get('profileImage') && `${commercial.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                       key={`commercial${index}`}
                       text={commercial.get('title')}
+                      onCheckboxChange={selectCheckbox.bind(this, commercial.get('id'))}
                       onClick={() => { this.props.routerPushWithReturnTo(`content/commercials/read/${commercial.get('id')}`); }}
                       onDelete={async (e) => { e.preventDefault(); await this.deleteCommercial(commercial.get('id')); }}
                       onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/commercials/edit/${commercial.get('id')}`); }}/>
                   ))}
-                  <Tile key={'createCommercial'} onCreate={() => { this.props.routerPushWithReturnTo('content/commercials/create'); }}/>
+                  <Tile key='createCommercial' onCreate={() => { this.props.routerPushWithReturnTo('content/commercials/create'); }}/>
                 </div>
                 <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
               </div>

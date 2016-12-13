@@ -19,14 +19,15 @@ export function searchBrands (searchString) {
   };
 }
 
-export function submit ({ defaultLocale, ...restProps }) {
+export function submit ({ defaultLocale, title, ...restProps }) {
   return async (dispatch, getState) => {
     try {
       const commercial = {
         ...restProps,
+        basedOnDefaultLocale: { [defaultLocale]: true },
         defaultLocale,
         locales: [ defaultLocale ],
-        basedOnDefaultLocale: { [defaultLocale]: true }
+        title: { [defaultLocale]: title }
       };
       return await dispatch(persistCommercial(commercial));
     } catch (error) {
