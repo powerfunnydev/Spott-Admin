@@ -50,6 +50,7 @@ function validate (values, { t }) {
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
   searchCharacters: bindActionCreators(actions.searchCharacters, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
+  searchMediumCategories: bindActionCreators(actions.searchMediumCategories, dispatch),
   searchSeasons: bindActionCreators(actions.searchSeasons, dispatch),
   searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
@@ -88,17 +89,20 @@ export default class EditEpisode extends Component {
     initialize: PropTypes.func.isRequired,
     loadEpisode: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    mediumCategoriesById: ImmutablePropTypes.map.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
     searchCharacters: PropTypes.func.isRequired,
     searchContentProducers: PropTypes.func.isRequired,
+    searchMediumCategories: PropTypes.func.isRequired,
     searchSeasons: PropTypes.func.isRequired,
     searchSeriesEntries: PropTypes.func.isRequired,
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
     searchedCharacterIds: ImmutablePropTypes.map.isRequired,
     searchedContentProducerIds: ImmutablePropTypes.map.isRequired,
+    searchedMediumCategoryIds: ImmutablePropTypes.map.isRequired,
     searchedSeasonIds: ImmutablePropTypes.map.isRequired,
     searchedSeriesEntryIds: ImmutablePropTypes.map.isRequired,
     seasonsById: ImmutablePropTypes.map.isRequired,
@@ -251,9 +255,8 @@ export default class EditEpisode extends Component {
       seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
       searchSeasons, seasonsById, searchedSeasonIds, handleSubmit, supportedLocales, errors,
       searchedCharacterIds, charactersById, searchCharacters, deleteProfileImage, episodeCharacters,
-      deletePosterImage, location: { query: { tab } }
+      deletePosterImage, mediumCategoriesById, searchMediumCategories, searchedMediumCategoryIds, location: { query: { tab } }
     } = this.props;
-
     return (
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />
@@ -337,6 +340,17 @@ export default class EditEpisode extends Component {
                     name={`title.${_activeLocale}`}
                     placeholder='Episode title'
                     required />}
+                <Field
+                  component={SelectInput}
+                  disabled={_activeLocale !== defaultLocale}
+                  getItemText={(mediumCategory) => mediumCategoriesById.getIn([ mediumCategory, 'name' ])}
+                  getOptions={searchMediumCategories}
+                  isLoading={searchedMediumCategoryIds.get('_status') === FETCHING}
+                  label='Genres'
+                  multiselect
+                  name='mediumCategories'
+                  options={searchedMediumCategoryIds.get('data').toJS()}
+                  placeholder='Genres'/>
                 <Field
                   component={TextInput}
                   label='Description'

@@ -33,6 +33,7 @@ export default (state = fromJS({
     genders: {},
     listCharacters: {}, // listCharacters is the light version of characters, without locales
     listMedia: {}, // listMedia is the light version of media, without locales
+    listMediumCategories: {},
     listPersons: {}, // listCharacters is the light version of characters, without locales
     media: {}, // Completed version of media, with locales
     mediumCategories: {},
@@ -248,7 +249,7 @@ export default (state = fromJS({
       return searchStart(state, 'searchStringHasMediumCategories', action.searchString);
     case mediumCategoryActions.MEDIUM_CATEGORIES_SEARCH_SUCCESS:
       // TODO mediumCategories will be listMediumCategories, once the backend is updated.
-      return searchSuccess(state, 'mediumCategories', 'searchStringHasMediumCategories', action.searchString, action.data);
+      return searchSuccess(state, 'listMediumCategories', 'searchStringHasMediumCategories', action.searchString, action.data);
     case mediumCategoryActions.MEDIUM_CATEGORIES_SEARCH_ERROR:
       return searchError(state, 'searchStringHasMediumCategories', action.searchString, action.error);
 

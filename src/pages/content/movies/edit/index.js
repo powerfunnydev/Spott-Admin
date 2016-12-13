@@ -297,11 +297,11 @@ export default class EditMovie extends Component {
                   getItemText={(mediumCategory) => mediumCategoriesById.getIn([ mediumCategory, 'name', _activeLocale ])}
                   getOptions={searchMediumCategories}
                   isLoading={searchedMediumCategoryIds.get('_status') === FETCHING}
-                  label='Medium Categories'
+                  label='Genres'
                   multiselect
                   name='mediumCategories'
                   options={searchedMediumCategoryIds.get('data').toJS()}
-                  placeholder='Medium Categories'/>
+                  placeholder='Genres'/>
                 <Field
                   component={TextInput}
                   label='Description'

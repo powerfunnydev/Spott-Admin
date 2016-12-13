@@ -1,5 +1,5 @@
 import { get } from './request';
-import { transformMediumCategory } from './transformers';
+import { transformListMediumCategory } from './transformers';
 
 export async function fetchMediumCategories (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/mediumCategories?page=${page}&pageSize=${pageSize}`;
@@ -12,7 +12,7 @@ export async function fetchMediumCategories (baseUrl, authenticationToken, local
   const { body } = await get(authenticationToken, locale, url);
   // There is also usable data in body (not only in data field).
   // We need also fields page, pageCount,...
-  body.data = body.data.map(transformMediumCategory);
+  body.data = body.data.map(transformListMediumCategory);
   return body;
 }
 
@@ -23,5 +23,5 @@ export async function searchMediumCategories (baseUrl, authenticationToken, loca
     searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
   }
   const { body: { data } } = await get(authenticationToken, locale, searchUrl);
-  return data.map(transformMediumCategory);
+  return data.map(transformListMediumCategory);
 }

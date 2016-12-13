@@ -11,7 +11,7 @@ import {
   searchStringHasMediumCategoriesRelationsSelector,
   broadcastersEntitiesSelector,
   contentProducersEntitiesSelector,
-  mediumCategoriesEntitiesSelector,
+  listMediumCategoriesEntitiesSelector,
   mediumHasCharactersRelationsSelector,
   createEntitiesByRelationSelector
 } from '../../../../selectors/data';
@@ -47,7 +47,7 @@ export default createStructuredSelector({
   currentMovie: currentMovieSelector,
   currentModal: currentModalSelector,
   defaultLocale: currentDefaultLocaleSelector,
-  mediumCategoriesById: mediumCategoriesEntitiesSelector,
+  mediumCategoriesById: listMediumCategoriesEntitiesSelector,
   movieCharacters: movieCharactersSelector,
   errors: formErrorsSelector,
   searchedBroadcasterIds: searchedBroadcasterIdsSelector,

@@ -77,9 +77,9 @@ export default class Reporting extends Component {
               <div style={styles.tab.container}>
                 <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/content/persons'>People</Link>
               </div>
-              <div style={styles.tab.container}>
+              {/* <div style={styles.tab.container}>
                 <Link activeStyle={styles.tab.active} style={styles.tab.base} to='/content/movies'>Movies</Link>
-              </div>
+              </div> */}
             </div>
           </Container>
         </div>
