@@ -88,7 +88,11 @@ export function transformAvailability ({ country, endTimeStamp, startTimeStamp, 
   };
 }
 
-export function transformListBrand ({ defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, localeData, publishStatus, productCount, usedProductCount, subscriberCount, uuid: id }) {
+export function transformListBrand ({ name, uuid: id }) {
+  return { name, id };
+}
+
+export function transformBrand ({ defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, localeData, publishStatus, productCount, usedProductCount, subscriberCount, uuid: id }) {
   const brand = {
     description: {}, // Description for each locale
     logo: {}, // Locale data
