@@ -263,7 +263,7 @@ export default class EditPerson extends Component {
                 <FormSubtitle>Images</FormSubtitle>
                 <div style={[ styles.paddingTop, styles.row ]}>
                   <div>
-                    <Label text='Poster image' />
+                    <Label text='Portrait image' />
                     <ImageDropzone
                       accept='image/*'
                       downloadUrl={currentPerson.getIn([ 'portraitImage', 'url' ])}
