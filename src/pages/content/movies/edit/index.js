@@ -294,7 +294,7 @@ export default class EditMovie extends Component {
                 <Field
                   component={SelectInput}
                   disabled={_activeLocale !== defaultLocale}
-                  getItemText={(mediumCategory) => mediumCategoriesById.getIn([ mediumCategory, 'name', _activeLocale ])}
+                  getItemText={(mediumCategory) => mediumCategoriesById.getIn([ mediumCategory, 'name' ])}
                   getOptions={searchMediumCategories}
                   isLoading={searchedMediumCategoryIds.get('_status') === FETCHING}
                   label='Genres'
@@ -340,9 +340,10 @@ export default class EditMovie extends Component {
                         currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ])}
                       imageUrl={currentMovie.getIn([ 'posterImage', _activeLocale ]) &&
                         `${currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310`}
+                      showOnlyUploadedImage
                       type={POSTER_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ movieId: this.props.params.movieId, image: file, callback }); }}
-                      onDelete={() => { deletePosterImage({ mediumId: currentMovie.get('id') }); }}/>
+                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ locale: _activeLocale, movieId: this.props.params.movieId, image: file, callback }); }}
+                      onDelete={() => { deletePosterImage({ locale: _activeLocale, mediumId: currentMovie.get('id') }); }}/>
                   </div>
                   <div style={styles.paddingLeftUploadImage}>
                     <Label text='Profile image' />
@@ -351,9 +352,10 @@ export default class EditMovie extends Component {
                         currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ])}
                       imageUrl={currentMovie.getIn([ 'profileImage', _activeLocale ]) &&
                         `${currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      showOnlyUploadedImage
                       type={PROFILE_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ movieId: this.props.params.movieId, image: file, callback }); }}
-                      onDelete={() => { deleteProfileImage({ mediumId: currentMovie.get('id') }); }}/>
+                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, movieId: this.props.params.movieId, image: file, callback }); }}
+                      onDelete={() => { deleteProfileImage({ locale: _activeLocale, mediumId: currentMovie.get('id') }); }}/>
                   </div>
                 </div>
               </Section>

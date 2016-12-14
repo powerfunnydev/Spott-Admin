@@ -215,7 +215,6 @@ export default class EditEpisodes extends Component {
         hasTitle, location, currentSeason, seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
         handleSubmit, supportedLocales, errors, deleteProfileImage, deletePosterImage } = this.props;
     const { styles } = this.constructor;
-    console.log('currentSeason', currentSeason.toJS());
     return (
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />
@@ -298,9 +297,10 @@ export default class EditEpisodes extends Component {
                         currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ])}
                       imageUrl={currentSeason.getIn([ 'posterImage', _activeLocale ]) &&
                         `${currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310`}
+                      showOnlyUploadedImage
                       type={POSTER_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ seasonId: this.props.params.seasonId, image: file, callback }); }}
-                      onDelete={() => { deletePosterImage({ mediumId: currentSeason.get('id') }); }}/>
+                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ locale: _activeLocale, seasonId: this.props.params.seasonId, image: file, callback }); }}
+                      onDelete={() => { deletePosterImage({ locale: _activeLocale, mediumId: currentSeason.get('id') }); }}/>
                   </div>
                   <div style={styles.paddingLeftUploadImage}>
                     <Label text='Profile image' />
@@ -310,9 +310,10 @@ export default class EditEpisodes extends Component {
                         currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ])}
                       imageUrl={currentSeason.getIn([ 'profileImage', _activeLocale ]) &&
                         `${currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      showOnlyUploadedImage
                       type={PROFILE_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ seasonId: this.props.params.seasonId, image: file, callback }); }}
-                      onDelete={() => { deleteProfileImage({ mediumId: currentSeason.get('id') }); }}/>
+                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, seasonId: this.props.params.seasonId, image: file, callback }); }}
+                      onDelete={() => { deleteProfileImage({ locale: _activeLocale, mediumId: currentSeason.get('id') }); }}/>
                   </div>
                 </div>
               </Section>

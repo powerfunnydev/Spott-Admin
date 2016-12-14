@@ -86,16 +86,18 @@ export async function searchMovies (baseUrl, authenticationToken, locale, { sear
   return data.map(transformListMovie);
 }
 
-export async function uploadProfileImage (baseUrl, authenticationToken, locale, { movieId, image, callback }) {
+export async function uploadProfileImage (baseUrl, authenticationToken, locale, { locale: imageLocale, movieId, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);
+  formData.append('locale', imageLocale);
   const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${movieId}/profileCover`, formData, callback);
   return transformMovie(result.body);
 }
 
-export async function uploadPosterImage (baseUrl, authenticationToken, locale, { movieId, image, callback }) {
+export async function uploadPosterImage (baseUrl, authenticationToken, locale, { locale: imageLocale, movieId, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);
+  formData.append('locale', imageLocale);
   const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${movieId}/posterImage`, formData, callback);
   return transformMovie(result.body);
 }

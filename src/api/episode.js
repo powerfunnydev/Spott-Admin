@@ -107,16 +107,18 @@ export async function deleteEpisodes (baseUrl, authenticationToken, locale, { ep
   }
 }
 
-export async function uploadProfileImage (baseUrl, authenticationToken, locale, { episodeId, image, callback }) {
+export async function uploadProfileImage (baseUrl, authenticationToken, locale, { locale: imageLocale, episodeId, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);
+  formData.append('locale', imageLocale);
   const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${episodeId}/profileCover`, formData, callback);
   return transformEpisode004(result.body);
 }
 
-export async function uploadPosterImage (baseUrl, authenticationToken, locale, { episodeId, image, callback }) {
+export async function uploadPosterImage (baseUrl, authenticationToken, locale, { locale: imageLocale, episodeId, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);
+  formData.append('locale', imageLocale);
   const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${episodeId}/posterImage`, formData, callback);
   return transformEpisode004(result.body);
 }

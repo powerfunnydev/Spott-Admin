@@ -25,8 +25,8 @@ export async function fetchPerson (baseUrl, authenticationToken, locale, { perso
   return result;
 }
 
-export async function fetchFaceImages (baseUrl, authenticationToken, locale, { personId }) {
-  const url = `${baseUrl}/v004/media/actors/${personId}/faceImages`;
+export async function fetchFaceImages (baseUrl, authenticationToken, locale, { personId, sortDirection = 'DESC', sortField = 'ADDED_ON' }) {
+  const url = `${baseUrl}/v004/media/actors/${personId}/faceImages?sortDirection=${sortDirection}&sortField=${sortField}`;
   const { body } = await get(authenticationToken, locale, url);
   body.data = body.data.map(transformPersonFaceImage);
   return body;
