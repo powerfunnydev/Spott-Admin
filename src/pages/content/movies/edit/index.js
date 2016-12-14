@@ -244,7 +244,7 @@ export default class EditMovie extends Component {
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
-          { title: 'Series', url: '/content/movies' },
+          { title: 'Movies', url: '/content/movies' },
           { title: currentMovie.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         {currentModal === MOVIE_CREATE_LANGUAGE &&
           <CreateLanguageModal
