@@ -67,7 +67,7 @@ import UsersCreate from './pages/users/create';
 import UsersEdit from './pages/users/edit';
 import UsersList from './pages/users/list';
 import UsersRead from './pages/users/read';
-import TaggerApplication from './tagger/components/tagger/main';
+import TaggerApplication from './tagger/components/main';
 import { authenticationTokenSelector, userRolesSelector } from './selectors/global';
 import reducer from './reducers';
 import BreadCrumbs from './pages/_common/components/breadCrumbs';

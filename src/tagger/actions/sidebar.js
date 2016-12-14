@@ -1,4 +1,4 @@
-import { destroy } from 'redux-form';
+import { destroy } from 'redux-form/immutable';
 import { deleteVideoProduct, fetchProduct, fetchVideoProducts, persistVideoProduct } from './product';
 import { getProducts } from '../api/product';
 import { currentVideoIdSelector } from '../selectors/common';

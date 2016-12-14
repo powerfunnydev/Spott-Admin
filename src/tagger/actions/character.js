@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 /* eslint no-throw-literal: 0 */
 import { List } from 'immutable';
-import { destroy } from 'redux-form';
+import { destroy } from 'redux-form/immutable';
 import {
   CHARACTER_OF_SCENE_DELETE_START, CHARACTER_OF_SCENE_DELETE_SUCCESS, CHARACTER_OF_SCENE_DELETE_ERROR,
   CREATE_CHARACTER_MARKER_START, CREATE_CHARACTER_MARKER_SUCCESS, CREATE_CHARACTER_MARKER_ERROR, CREATE_CHARACTER_MARKER_CANCEL,

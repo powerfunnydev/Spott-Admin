@@ -1,5 +1,4 @@
 import { combineReducers } from 'redux-immutablejs';
-import { reducer as form } from 'redux-form';
 import { routerReducer as router } from 'react-router-redux';
 import globalReducer from './global';
 import app from './app';
@@ -16,7 +15,6 @@ import toast from './toast';
  */
 export default combineReducers({
   global: globalReducer,
-  form,
   router,
   tagger: combineReducers({
     app,

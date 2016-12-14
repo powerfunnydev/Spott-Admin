@@ -90,7 +90,7 @@ export async function postProductGroup (baseUrl, authenticationToken, locale, { 
   let productGroup = {};
 
   if (id) {
-    const { body } = await get(authenticationToken, locale, `/v003/media/media/${mediumId}/productGroups/${id}`);
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v003/media/media/${mediumId}/productGroups/${id}`);
     productGroup = body;
   }
 

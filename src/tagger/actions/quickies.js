@@ -1,4 +1,4 @@
-import { destroy } from 'redux-form';
+import { destroy } from 'redux-form/immutable';
 import { makeApiActionCreator } from '../actions/_utils';
 import {
   PRODUCT_GROUP_FETCH_START, PRODUCT_GROUP_FETCH_SUCCESS, PRODUCT_GROUP_FETCH_ERROR,
