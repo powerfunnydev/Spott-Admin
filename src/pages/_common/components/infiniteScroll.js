@@ -42,7 +42,6 @@ export default class InfiniteScroll extends Component {
         onInfiniteLoad={this.loadMore}>
         {children}
       </Infinite>
-      );
+    );
   }
-
 }
