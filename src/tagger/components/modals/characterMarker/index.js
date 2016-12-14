@@ -1,19 +1,15 @@
+/* eslint-disable react/no-set-state */
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import ReactModal from 'react-modal';
-import { reduxForm } from 'redux-form/immutable';
+import { connect } from 'react-redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import * as characterActions from '../../../actions/character';
 import characterMarkerSelector from '../../../selectors/characterMarker';
 import CharacterSearch from './search';
 import { buttonStyle, dialogStyle, modalStyle } from '../styles';
 
-@reduxForm({
-  fields: [ 'characterId' ],
-  form: 'createCharacterMarker',
-  // Get the form state.
-  getFormState: (state, reduxMountPoint) => state.get(reduxMountPoint)
-}, characterMarkerSelector, {
+@connect(characterMarkerSelector, {
   onCancel: characterActions.createCharacterMarkerCancel,
   onSubmit: characterActions.createCharacterMarkerModal,
   searchCharacters: characterActions.searchCharacters
@@ -23,9 +19,6 @@ export default class CreateCharacterMarker extends Component {
 
   static propTypes = {
     characterSearchResult: ImmutablePropTypes.map.isRequired,
-    fields: PropTypes.object.isRequired,
-    handleSubmit: PropTypes.func.isRequired,
-    initializeForm: PropTypes.func.isRequired,
     searchCharacters: PropTypes.func.isRequired,
     // Callback for closing the dialog and clearing the form.
     onCancel: PropTypes.func.isRequired,
@@ -34,9 +27,21 @@ export default class CreateCharacterMarker extends Component {
 
   constructor (props) {
     super(props);
+    this.submit = ::this.submit;
     this.onCancel = ::this.onCancel;
     this.onRequestClose = ::this.onRequestClose;
     this.onCharacterSelect = ::this.onCharacterSelect;
+    this.state = { characterId: null, errors: {} };
+  }
+
+  async submit (e) {
+    e.preventDefault();
+    // Validate
+    if (this.state.characterId) {
+      this.props.onSubmit({ characterId: this.state.characterId });
+    } else {
+      this.setState({ ...this.state, errors: { characterId: 'required' } });
+    }
   }
 
   onCancel (e) {
@@ -49,18 +54,23 @@ export default class CreateCharacterMarker extends Component {
   }
 
   onCharacterSelect (character) {
-    this.props.fields.characterId.onChange(character && character.get('id'));
+    this.setState({
+      ...this.state,
+      characterId: character && character.get('id'),
+      errors: {}
+    });
   }
 
   render () {
-    const { fields: { characterId }, handleSubmit, characterSearchResult, searchCharacters, onSubmit } = this.props;
+    const { characterSearchResult, searchCharacters } = this.props;
+    const { errors } = this.state;
 
     return (
       <ReactModal
         isOpen
         style={dialogStyle}
         onRequestClose={this.onRequestClose}>
-        <form noValidate onSubmit={handleSubmit}>
+        <form noValidate onSubmit={this.submit}>
           <div style={modalStyle.content}>
             <h1 style={modalStyle.title}>Add character</h1>
 
@@ -72,14 +82,14 @@ export default class CreateCharacterMarker extends Component {
                 options={characterSearchResult.get('data').toArray()}
                 search={searchCharacters}
                 onOptionSelected={this.onCharacterSelect} />
-              {characterId.error === 'required' && <span style={modalStyle.error}>Character is required.</span>}
+              {errors.characterId === 'required' && <span style={modalStyle.error}>Character is required.</span>}
             </div>
 
           </div>
 
           <div style={modalStyle.footer}>
             <button key='cancel' style={[ buttonStyle.base, buttonStyle.cancel ]} onClick={this.onCancel}>Cancel</button>
-            <button key='save' style={[ buttonStyle.base, buttonStyle.save ]} onClick={onSubmit}>Done</button>
+            <button key='save' style={[ buttonStyle.base, buttonStyle.save ]}>Done</button>
           </div>
         </form>
       </ReactModal>

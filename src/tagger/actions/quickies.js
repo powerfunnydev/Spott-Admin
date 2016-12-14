@@ -1,4 +1,3 @@
-import { destroy } from 'redux-form/immutable';
 import { makeApiActionCreator } from '../actions/_utils';
 import {
   PRODUCT_GROUP_FETCH_START, PRODUCT_GROUP_FETCH_SUCCESS, PRODUCT_GROUP_FETCH_ERROR,
@@ -99,13 +98,8 @@ export function persistProductGroup ({ id, name, products = [] }) {
     dispatch(fetchProductGroups({ mediumId }));
 
     if (id) { // Update a product group.
-      // Reset the edit form.
-      dispatch(destroy('editProductGroup'));
       // Deselect the product group which is edited.
       dispatch(selectProductGroupToEdit());
-    } else { // Create a product group.
-      // Reset the creation form.
-      dispatch(destroy('createProductGroup'));
     }
   };
 }
