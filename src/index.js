@@ -149,13 +149,32 @@ function getRoutes ({ dispatch, getState }) {
         <Route component={PersonsList} path='persons'>
           <Route component={PersonsCreate} path ='create'/>
         </Route>
-        {/* <Route component={MoviesList} path='movies'>
+        <Route component={MoviesList} path='movies'>
           <Route component={MoviesCreate} path='create'/>
         </Route>
         <Route path='movies'>
-          <Route component={MoviesRead} path='read/:movieId'/>
+          <Route component={MoviesRead} path='read/:movieId'>
+            <Route
+              component={TvGuideCreateEntry}
+              load={(props) => { dispatch(loadMediumTvGuide(props.location.query, props.params.movieId)); }}
+              path='create/tv-guide'/>
+          </Route>
+          <Route path='read/:movieId'>
+            <Route
+              component={TvGuideEditEntry}
+              path='tv-guide/edit/:tvGuideEntryId'
+              renderBreadCrumbs={(props) => {
+                const { params: { movieId }, currentTvGuideEntry } = props;
+                return (
+                  <BreadCrumbs hierarchy={[
+                    { title: 'Movies', url: '/content/movies' },
+                    { title: currentTvGuideEntry.getIn([ 'medium', 'title' ]), url: `content/movies/read/${movieId}` },
+                    { title: 'TV Guide', url: props.location }
+                  ]}/>);
+              }} />
+          </Route>
           <Route component={MoviesEdit} path='edit/:movieId'/>
-        </Route> */}
+        </Route>
         <Route path='persons'>
           <Route component={PersonsRead} path='read/:personId'/>
           <Route component={PersonsEdit} path='edit/:personId'/>

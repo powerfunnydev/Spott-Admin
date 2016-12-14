@@ -25,8 +25,8 @@ export async function fetchPerson (baseUrl, authenticationToken, locale, { perso
   return result;
 }
 
-export async function fetchFaceImages (baseUrl, authenticationToken, locale, { personId }) {
-  const url = `${baseUrl}/v004/media/actors/${personId}/faceImages`;
+export async function fetchFaceImages (baseUrl, authenticationToken, locale, { personId, sortDirection = 'DESC', sortField = 'ADDED_ON' }) {
+  const url = `${baseUrl}/v004/media/actors/${personId}/faceImages?sortDirection=${sortDirection}&sortField=${sortField}`;
   const { body } = await get(authenticationToken, locale, url);
   body.data = body.data.map(transformPersonFaceImage);
   return body;
@@ -88,13 +88,15 @@ export async function searchPersons (baseUrl, authenticationToken, locale, { sea
 export async function uploadProfileImage (baseUrl, authenticationToken, locale, { personId, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/actors/${personId}/profileCover`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/actors/${personId}/profileCover`, formData, callback);
+  return transformPerson(result.body);
 }
 
 export async function uploadPortraitImage (baseUrl, authenticationToken, locale, { personId, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/actors/${personId}/portraitImage`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/actors/${personId}/portraitImage`, formData, callback);
+  return transformPerson(result.body);
 }
 
 export async function uploadFaceImage (baseUrl, authenticationToken, locale, { personId, image, callback }) {

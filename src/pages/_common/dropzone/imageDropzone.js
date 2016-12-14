@@ -24,11 +24,12 @@ function mergeStyles (array) {
 export default class ImageDropzone extends Component {
 
   static propTypes = {
-    accept: PropTypes.string,
-    downloadUrl: PropTypes.string,
-    imageUrl: PropTypes.string,
-    multiple: PropTypes.bool,
-    noPreview: PropTypes.bool,
+    accept: PropTypes.string, // Accepts only the given formats.
+    downloadUrl: PropTypes.string, // Url to download the image. this is different from the imageUrl, cause the downloadUrl contains a image with higher resolution.
+    imageUrl: PropTypes.string, // Url retrieved from server
+    multiple: PropTypes.bool, // Possability to upload multiple images
+    noPreview: PropTypes.bool, // Never displays an image
+    showOnlyUploadedImage: PropTypes.bool, // Only dislays a image when this is uploaded to the server (imageUrl!==undefined), often used by entities with locales
     style: PropTypes.object,
     type: PropTypes.string,
     onChange: PropTypes.func,
@@ -53,6 +54,20 @@ export default class ImageDropzone extends Component {
     }, 0);
   }
 
+  componentWillReceiveProps (nextProps) {
+    // If chance from locale (=language), we need to reset the state.
+    if (this.props.showOnlyUploadedImage && nextProps.imageUrl !== this.props.imageUrl) {
+      this.setState({
+        ...this.state,
+        file: undefined,
+        showImage: false,
+        deleteImage: false,
+        progress: 0,
+        total: 0
+      });
+    }
+  }
+
   callback (progress, total) {
     this.setState(...this.state, { progress, total });
     if (progress === total) {
@@ -68,7 +83,7 @@ export default class ImageDropzone extends Component {
   async onDrop (acceptedFiles) {
     if (this.props.onChange) {
       for (const acceptedFile of acceptedFiles) {
-        this.setState(...this.state, { file: acceptedFile, showImage: false });
+        this.setState(...this.state, { file: acceptedFile, showImage: false, deleteImage: false });
         await this.props.onChange({ callback: this.callback, file: acceptedFile });
       }
     }
@@ -154,12 +169,12 @@ export default class ImageDropzone extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { accept, type, imageUrl, downloadUrl, onDelete, style, noPreview, multiple } = this.props;
+    const { accept, type, imageUrl, downloadUrl, onDelete, style, noPreview, multiple, showOnlyUploadedImage } = this.props;
     // If we have delete an image, we don't want to display the imageUrl or downloadUrl,
-    // cause it doesn't exist anymore. So we show the local image if there is one.
-    // Else, if we didn't delete an image, but there is an image, show that image.
-    const downloadUrlOrPreview = this.state.showImage && this.state.file && this.state.file.type.startsWith('image') && this.state.file.preview || !this.state.deleteImage && downloadUrl;
-    const imageUrlOrPreview = this.state.showImage && this.state.file && this.state.file.type.startsWith('image') && this.state.file.preview || !this.state.deleteImage && imageUrl;
+    // cause it doesn't exist anymore.
+    // If we didn't delete an image, but there is an image, show that image.
+    const downloadUrlOrPreview = !showOnlyUploadedImage && this.state.showImage && this.state.file && this.state.file.type.startsWith('image') && this.state.file.preview || !this.state.deleteImage && downloadUrl;
+    const imageUrlOrPreview = !showOnlyUploadedImage && this.state.showImage && this.state.file && this.state.file.type.startsWith('image') && this.state.file.preview || !this.state.deleteImage && imageUrl;
     return (
       <div style={{ position: 'relative' }}>
         {/* Render dropzone */}
@@ -184,9 +199,12 @@ export default class ImageDropzone extends Component {
                     <img src={completedIcon} style={styles.completedImage}/>
                     <div style={styles.completedText}>Completed</div>
                   </div>}
-                  {!noPreview && this.state.showImage && this.state.file && this.state.file.type.startsWith('image') &&
-                    <img src={this.state.file.preview} style={styles.chosenImage}/>
-                  }
+                  { // We want to display the in local image when we have uploaded an image (instant response).
+                    !noPreview && this.state.showImage && this.state.file && this.state.file.type.startsWith('image') &&
+                    (!showOnlyUploadedImage && <img src={this.state.file.preview} style={styles.chosenImage}/> ||
+                    // If we don't want to display the local image, we wait for the url of the server.
+                    showOnlyUploadedImage && imageUrlOrPreview && <img src={imageUrlOrPreview} style={styles.chosenImage}/> ||
+                    <div style={styles.completed}>Oops, no image to show...</div>) }
                 </div>) ||
             /* When there was already an image uploaded */
             ((!noPreview && imageUrlOrPreview) &&
