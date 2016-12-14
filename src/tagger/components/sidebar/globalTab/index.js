@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { reduxForm } from 'redux-form/immutable';
+import { connect } from 'react-redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
 import tabStyle from '../tabStyle';
@@ -11,15 +11,7 @@ import * as sidebarActions from '../../../actions/sidebar';
 import Product from './product';
 import colors from '../../colors';
 
-@reduxForm({
-  fields: [ 'productId', 'relevance' ],
-  form: 'createGlobalProduct',
-  initialValues: {
-    relevance: 'EXACT'
-  },
-  // Get the form state.
-  getFormState: (state, reduxMountPoint) => state.get(reduxMountPoint)
-}, globalTab, {
+@connect(globalTab, {
   hoverAppearance: appearanceActions.hover,
   leaveAppearance: appearanceActions.leave,
   removeAppearance: sidebarActions.deleteGlobalProduct,
@@ -34,7 +26,6 @@ import colors from '../../colors';
 export default class GlobalTab extends Component {
 
   static propTypes = {
-    fields: PropTypes.object.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     hoverAppearance: PropTypes.func.isRequired,
     hoveredAppearance: PropTypes.string,
@@ -49,7 +40,8 @@ export default class GlobalTab extends Component {
     selectAppearance: PropTypes.func.isRequired,
     selectedAppearance: PropTypes.string,
     style: PropTypes.object,
-    toggleSelectAppearance: PropTypes.func.isRequired
+    toggleSelectAppearance: PropTypes.func.isRequired,
+    onSubmit: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -62,13 +54,11 @@ export default class GlobalTab extends Component {
   }
 
   onProductSelect (product) {
-    const productId = product && product.get('id');
-    this.props.fields.productId.onChange(productId);
-
-    // Submit the create global product form, when selecting a product.
-    if (productId) {
-      // TODO: Why does the value of productId not directly update?
-      setTimeout(() => this.props.handleSubmit(), 0);
+    if (product) {
+      this.props.onSubmit({
+        productId: product.get('id'),
+        relevance: 'EXACT'
+      });
     }
   }
 
