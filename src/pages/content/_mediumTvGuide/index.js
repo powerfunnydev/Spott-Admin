@@ -118,24 +118,28 @@ export default class TvGuideList extends Component {
   }
 
   onClickEditEntry (tvGuideId) {
-    const { seriesEntryId, seasonId, episodeId } = this.props.params;
+    const { seriesEntryId, seasonId, episodeId, movieId } = this.props.params;
     if (seriesEntryId && seasonId && episodeId) {
       this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/seasons/read/${seasonId}/episodes/read/${episodeId}/tv-guide/edit/${tvGuideId}`);
     } else if (seriesEntryId && seasonId) {
       this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/seasons/read/${seasonId}/tv-guide/edit/${tvGuideId}`);
     } else if (seriesEntryId) {
       this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/tv-guide/edit/${tvGuideId}`);
+    } else if (movieId) {
+      this.props.routerPushWithReturnTo(`content/movies/read/${movieId}/tv-guide/edit/${tvGuideId}`);
     }
   }
 
   onClickNewEntry () {
-    const { seriesEntryId, seasonId, episodeId } = this.props.params;
+    const { seriesEntryId, seasonId, episodeId, movieId } = this.props.params;
     if (seriesEntryId && seasonId && episodeId) {
       this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/seasons/read/${seasonId}/episodes/read/${episodeId}/create/tv-guide`);
     } else if (seriesEntryId && seasonId) {
       this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/seasons/read/${seasonId}/create/tv-guide`);
     } else if (seriesEntryId) {
       this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/create/tv-guide`);
+    } else if (movieId) {
+      this.props.routerPushWithReturnTo(`content/movies/read/${movieId}/create/tv-guide`);
     }
   }
 

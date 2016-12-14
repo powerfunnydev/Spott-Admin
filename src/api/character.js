@@ -99,7 +99,8 @@ export async function deleteMediumCharacter (baseUrl, authenticationToken, local
 export async function uploadProfileImage (baseUrl, authenticationToken, locale, { characterId, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/profileCover`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/profileCover`, formData, callback);
+  return transformCharacter(result.body);
 }
 
 export async function uploadPortraitImage (baseUrl, authenticationToken, locale, { characterId, image, callback }) {
@@ -112,8 +113,7 @@ export async function uploadPortraitImage (baseUrl, authenticationToken, locale,
 export async function uploadFaceImage (baseUrl, authenticationToken, locale, { characterId, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);
-  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/faceImages`, formData, callback);
-  return transformCharacter(result.body);
+  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/faceImages`, formData, callback);
 }
 
 export async function deleteFaceImage (baseUrl, authenticationToken, locale, { characterId, faceImageId }) {

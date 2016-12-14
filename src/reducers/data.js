@@ -254,6 +254,11 @@ export default (state = fromJS({
     // Media
     // /////////////////
 
+    case mediaActions.DELETE_POSTER_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.mediumId ], action.data);
+    case mediaActions.DELETE_PROFILE_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.mediumId ], action.data);
+
     case mediaActions.TV_GUIDE_ENTRIES_FETCH_START:
       return searchStart(state, 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action));
     case mediaActions.TV_GUIDE_ENTRIES_FETCH_SUCCESS:
@@ -261,7 +266,7 @@ export default (state = fromJS({
     case mediaActions.TV_GUIDE_ENTRIES_FETCH_ERROR:
       return searchError(state, 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.error);
 
-    // Media
+    // Medium categories
     // /////////////////
 
     case mediumCategoryActions.MEDIUM_CATEGORIES_SEARCH_START:

@@ -225,9 +225,10 @@ export default class EditSeriesEntries extends Component {
                         currentSeriesEntry.getIn([ 'posterImage', _activeLocale, 'url' ])}
                       imageUrl={currentSeriesEntry.getIn([ 'posterImage', _activeLocale ]) &&
                         `${currentSeriesEntry.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310`}
+                      showOnlyUploadedImage
                       type={POSTER_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ seriesEntryId: this.props.params.seriesEntryId, image: file, callback }); }}
-                      onDelete={() => { deletePosterImage({ mediumId: currentSeriesEntry.get('id') }); }}/>
+                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ locale: _activeLocale, seriesEntryId: this.props.params.seriesEntryId, image: file, callback }); }}
+                      onDelete={() => { deletePosterImage({ locale: _activeLocale, mediumId: currentSeriesEntry.get('id') }); }}/>
                   </div>
                   <div style={styles.paddingLeftUploadImage}>
                     <Label text='Profile image' />
@@ -237,19 +238,14 @@ export default class EditSeriesEntries extends Component {
                         currentSeriesEntry.getIn([ 'profileImage', _activeLocale, 'url' ])}
                       imageUrl={currentSeriesEntry.getIn([ 'profileImage', _activeLocale ]) &&
                         `${currentSeriesEntry.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      showOnlyUploadedImage
                       type={PROFILE_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ seriesEntryId: this.props.params.seriesEntryId, image: file, callback }); }}
-                      onDelete={() => { deleteProfileImage({ mediumId: currentSeriesEntry.get('id') }); }}/>
+                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, seriesEntryId: this.props.params.seriesEntryId, image: file, callback }); }}
+                      onDelete={() => { deleteProfileImage({ locale: _activeLocale, mediumId: currentSeriesEntry.get('id') }); }}/>
                   </div>
                 </div>
               </Section>
             </Tab>
-            {/* TODO
-            <Tab title='Audience'>
-              <Section>
-                <FormSubtitle first>Audience</FormSubtitle>
-              </Section>
-            </Tab>*/}
           </Tabs>
         </EditTemplate>
       </Root>

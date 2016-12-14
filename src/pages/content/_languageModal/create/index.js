@@ -33,6 +33,7 @@ export default class CreateLanguageModal extends Component {
     filteredLocales: PropTypes.array.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     localeNames: ImmutablePropTypes.map.isRequired,
+    renderComponents: PropTypes.node,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list.isRequired,
     onCloseClick: PropTypes.func.isRequired,
@@ -40,7 +41,7 @@ export default class CreateLanguageModal extends Component {
   };
 
   render () {
-    const { onCloseClick, onCreate, localeNames, handleSubmit, filteredLocales } = this.props;
+    const { onCloseClick, onCreate, localeNames, handleSubmit, filteredLocales, renderComponents } = this.props;
     return (
       <PersistModal isOpen title='Add language' onClose={onCloseClick} onSubmit={handleSubmit(onCreate)}>
         <Field
@@ -51,6 +52,7 @@ export default class CreateLanguageModal extends Component {
           options={filteredLocales}
           placeholder='Language'
           required />
+        {renderComponents}
       </PersistModal>
     );
   }

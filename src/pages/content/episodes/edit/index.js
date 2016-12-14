@@ -66,6 +66,7 @@ export default class EditEpisode extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
+    addLanguageHasTitle: PropTypes.bool,
     broadcastersById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
     characters: ImmutablePropTypes.list,
@@ -145,12 +146,14 @@ export default class EditEpisode extends Component {
   }
 
   languageAdded (form) {
-    const { language } = form && form.toJS();
+    const { language, hasTitle, title } = form && form.toJS();
     const { closeModal, dispatch, change, supportedLocales } = this.props;
     if (language) {
       const newSupportedLocales = supportedLocales.push(language);
       dispatch(change('locales', newSupportedLocales));
       dispatch(change('_activeLocale', language));
+      dispatch(change(`hasTitle.${language}`, hasTitle));
+      dispatch(change(`title.${language}`, title));
     }
     closeModal();
   }
@@ -248,7 +251,7 @@ export default class EditEpisode extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      _activeLocale, closeModal, currentModal, currentSeasonId,
+      _activeLocale, addLanguageHasTitle, closeModal, currentModal, currentSeasonId,
       currentSeriesEntryId, searchSeriesEntries, contentProducersById,
       searchContentProducers, searchedContentProducerIds, broadcastersById,
       searchBroadcasters, searchedBroadcasterIds, hasTitle, location, currentEpisode,
@@ -257,6 +260,7 @@ export default class EditEpisode extends Component {
       searchedCharacterIds, charactersById, searchCharacters, deleteProfileImage, episodeCharacters,
       deletePosterImage, mediumCategoriesById, searchMediumCategories, searchedMediumCategoryIds, location: { query: { tab } }
     } = this.props;
+    console.log('currentEpisode', currentEpisode && currentEpisode.toJS());
     return (
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />
@@ -268,6 +272,25 @@ export default class EditEpisode extends Component {
           { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         {currentModal === EPISODE_CREATE_LANGUAGE &&
           <CreateLanguageModal
+            /* renderComponents={
+              <div>
+                <Field
+                  component={TextInput}
+                  content={
+                    <Field
+                      component={CheckboxInput}
+                      first
+                      label='Custom title'
+                      name='hasTitle'
+                      style={styles.customTitle} />}
+                  disabled={!addLanguageHasTitle}
+                  label='Episode title'
+                  labelStyle={styles.titleLabel}
+                  name='title'
+                  placeholder='Episode title'
+                  required />
+              </div>
+            }*/
             supportedLocales={supportedLocales}
             onCloseClick={closeModal}
             onCreate={this.languageAdded}/>}
@@ -389,9 +412,10 @@ export default class EditEpisode extends Component {
                         currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}
                       imageUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
                         `${currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310`}
+                      showOnlyUploadedImage
                       type={POSTER_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}
-                      onDelete={() => { deletePosterImage({ mediumId: currentEpisode.get('id') }); }}/>
+                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ locale: _activeLocale, episodeId: this.props.params.episodeId, image: file, callback }); }}
+                      onDelete={() => { deletePosterImage({ locale: _activeLocale, mediumId: currentEpisode.get('id') }); }}/>
                   </div>
                   <div style={styles.paddingLeftUploadImage}>
                     <Label text='Profile image' />
@@ -400,9 +424,10 @@ export default class EditEpisode extends Component {
                         currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}
                       imageUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
                         `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                      showOnlyUploadedImage
                       type={PROFILE_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ episodeId: this.props.params.episodeId, image: file, callback }); }}
-                      onDelete={() => { deleteProfileImage({ mediumId: currentEpisode.get('id') }); }}/>
+                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, episodeId: this.props.params.episodeId, image: file, callback }); }}
+                      onDelete={() => { deleteProfileImage({ locale: _activeLocale, mediumId: currentEpisode.get('id') }); }}/>
                   </div>
                 </div>
               </Section>
