@@ -27,6 +27,10 @@ import selector from './selector';
 import Characters from '../../_helpers/_characters/list';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
+import { withRouter } from 'react-router';
+import { alert } from '../../../_common/components/alert';
+
+const formName = 'movieEdit';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -39,6 +43,7 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
+  closePopUpMessage: bindActionCreators(actions.closePopUpMessage, dispatch),
   closeModal: bindActionCreators(actions.closeModal, dispatch),
   deletePosterImage: bindActionCreators(actions.deletePosterImage, dispatch),
   deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
@@ -54,11 +59,11 @@ function validate (values, { t }) {
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch)
 }))
 @reduxForm({
-  form: 'movieEdit',
+  form: formName,
   validate
 })
 @Radium
-export default class EditMovie extends Component {
+class EditMovie extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
@@ -68,12 +73,14 @@ export default class EditMovie extends Component {
     charactersById: ImmutablePropTypes.map.isRequired,
     children: PropTypes.node,
     closeModal: PropTypes.func.isRequired,
+    closePopUpMessage: PropTypes.func.isRequired,
     contentProducersById: ImmutablePropTypes.map.isRequired,
     currentModal: PropTypes.string,
     currentMovie: ImmutablePropTypes.map.isRequired,
     defaultLocale: PropTypes.string,
     deletePosterImage: PropTypes.func.isRequired,
     deleteProfileImage: PropTypes.func.isRequired,
+    dirty: PropTypes.bool.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
@@ -85,6 +92,11 @@ export default class EditMovie extends Component {
     movieCharacters: ImmutablePropTypes.map.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
+    popUpMessage: PropTypes.object,
+    route: PropTypes.object.isRequired,
+    router: PropTypes.shape({
+      setRouteLeaveHook: PropTypes.func.isRequired
+    }).isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
     searchCharacters: PropTypes.func.isRequired,
@@ -110,6 +122,7 @@ export default class EditMovie extends Component {
     this.languageAdded = :: this.languageAdded;
     this.removeLanguage = :: this.removeLanguage;
     this.onChangeTab = ::this.onChangeTab;
+    this.onBeforeChangeTab = ::this.onBeforeChangeTab;
   }
 
   async componentWillMount () {
@@ -124,6 +137,21 @@ export default class EditMovie extends Component {
     }
   }
 
+  componentDidMount () {
+    this.props.router.setRouteLeaveHook(this.props.route, () => {
+      if (this.props.dirty) {
+        return 'Are you sure you want to leave this page? There are still unsaved fields on this page.';
+      }
+      return true;
+    });
+  }
+
+  componentWillReceiveProps (nextProps) {
+    // When we edit the form after a save, we want to clear the popup.
+    if (this.props.popUpMessage && nextProps.dirty) {
+      this.props.closePopUpMessage();
+    }
+  }
   redirect () {
     this.props.routerPushWithReturnTo('content/movies', true);
   }
@@ -149,24 +177,36 @@ export default class EditMovie extends Component {
   }
 
   openCreateLanguageModal () {
-    this.props.openModal(MOVIE_CREATE_LANGUAGE);
+    if (this.onBeforeChangeTab()) {
+      this.props.openModal(MOVIE_CREATE_LANGUAGE);
+    }
   }
 
   async submit (form) {
-    const { supportedLocales, params: { movieId } } = this.props;
+    const { initialize, params: { movieId } } = this.props;
     try {
       await this.props.submit({
-        locales: supportedLocales.toArray(),
-        movieId,
-        ...form.toJS()
+        ...form.toJS(),
+        movieId
       });
-      this.redirect();
+      await initialize(form.toJS());
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
   }
 
+  onBeforeChangeTab () {
+    if (this.props.dirty) {
+      alert('There are still unsaved fields. You need to save this entity before you can trigger this action.');
+      return false;
+    }
+    return true;
+  }
+
   onChangeTab (tab) {
+    if (this.props.popUpMessage) {
+      this.props.closePopUpMessage();
+    }
     this.props.routerPushWithReturnTo({ ...this.props.location, query: { ...this.props.location.query, tab } });
   }
 
@@ -244,15 +284,34 @@ export default class EditMovie extends Component {
         <Header currentLocation={location} hideHomePageLinks />
         <SpecificHeader/>
         <BreadCrumbs hierarchy={[
-          { title: 'Series', url: '/content/movies' },
+          { title: 'Movies', url: '/content/movies' },
           { title: currentMovie.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         {currentModal === MOVIE_CREATE_LANGUAGE &&
           <CreateLanguageModal
+            /* renderComponents={
+              <div>
+                <Field
+                  component={TextInput}
+                  content={
+                    <Field
+                      component={CheckboxInput}
+                      first
+                      label='Custom title'
+                      name='hasTitle'
+                      style={styles.customTitle} />}
+                  disabled={!addLanguageHasTitle}
+                  label='Episode title'
+                  labelStyle={styles.titleLabel}
+                  name='title'
+                  placeholder='Episode title'
+                  required />
+              </div>
+            }*/
             supportedLocales={supportedLocales}
             onCloseClick={closeModal}
             onCreate={this.languageAdded}/>}
         <EditTemplate disableSubmit={tab > 1} onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-          <Tabs activeTab={tab} showPublishStatus onChange={this.onChangeTab}>
+          <Tabs activeTab={tab} showPublishStatus onBeforeChange={this.onBeforeChangeTab} onChange={this.onChangeTab}>
             <Tab title='Details'>
               <Section noPadding style={styles.background}>
                 <LanguageBar
@@ -264,7 +323,7 @@ export default class EditMovie extends Component {
                   supportedLocales={supportedLocales}
                   onSetDefaultLocale={this.onSetDefaultLocale}/>
               </Section>
-              <Section>
+              <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage} >
                 <FormSubtitle first>General</FormSubtitle>
                 <Field
                   component={TextInput}
@@ -385,5 +444,6 @@ export default class EditMovie extends Component {
       </Root>
     );
   }
-
 }
+
+export default withRouter(EditMovie);

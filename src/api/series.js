@@ -57,7 +57,7 @@ export async function persistSeriesEntry (baseUrl, authenticationToken, locale, 
   seriesEntry.publishStatus = publishStatus;
 
   // Update locale data.
-  seriesEntry.localeData = seriesEntry.localeData || []; // Ensure we have locale data
+  seriesEntry.localeData = [];
   locales.forEach((locale) => {
     // Get localeData, create if necessary in O(n^2)
     let localeData = seriesEntry.localeData.find((ld) => ld.locale === locale);

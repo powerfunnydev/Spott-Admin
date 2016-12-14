@@ -17,9 +17,9 @@ import {
 } from '../../../../selectors/data';
 import { createFormValueSelector } from '../../../../utils';
 
-const formName = 'movieEdit';
-const formErrorsSelector = (state) => state.getIn([ 'form', formName, 'syncErrors' ]);
+export const formName = 'movieEdit';
 
+const formErrorsSelector = (state) => state.getIn([ 'form', formName, 'syncErrors' ]);
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
 const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultLocale');
 const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
@@ -33,6 +33,7 @@ const currentCharactersSearchStringSelector = (state) => state.getIn([ 'content'
 const currentBroadcastersSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentBroadcastersSearchString' ]);
 const currentContentProducersSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentContentProducersSearchString' ]);
 const currentMediumCategoriesSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentMediumCategoriesSearchString' ]);
+const popUpMessageSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'popUpMessage' ]);
 
 const searchedBroadcasterIdsSelector = createEntityIdsByRelationSelector(searchStringHasBroadcastersRelationsSelector, currentBroadcastersSearchStringSelector);
 const searchedCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCharactersSearchStringSelector);
@@ -49,6 +50,7 @@ export default createStructuredSelector({
   defaultLocale: currentDefaultLocaleSelector,
   mediumCategoriesById: listMediumCategoriesEntitiesSelector,
   movieCharacters: movieCharactersSelector,
+  popUpMessage: popUpMessageSelector,
   errors: formErrorsSelector,
   searchedBroadcasterIds: searchedBroadcasterIdsSelector,
   searchedCharacterIds: searchedCharacterIdsSelector,

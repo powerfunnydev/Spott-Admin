@@ -68,7 +68,7 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, {
   episode.type = 'TV_SERIE_SEASON';
   episode.number = number;
   // Update locale data.
-  episode.localeData = episode.localeData || []; // Ensure we have locale data
+  episode.localeData = [];
   locales.forEach((locale) => {
     // Get localeData, create if necessary in O(n^2)
     let localeData = episode.localeData.find((ld) => ld.locale === locale);

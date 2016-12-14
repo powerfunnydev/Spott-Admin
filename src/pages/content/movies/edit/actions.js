@@ -29,9 +29,15 @@ export const MOVIE_FETCH_ENTRY_ERROR = 'MOVIES_EDIT/FETCH_ENTRY_ERROR';
 export const SHOW_CREATE_LANGUAGE_MODAL = 'MOVIES_EDIT/SHOW_CREATE_LANGUAGE_MODAL';
 export const REMOVE_CREATE_LANGUAGE_MODAL = 'MOVIES_EDIT/REMOVE_CREATE_LANGUAGE_MODAL';
 
+export const CLOSE_POP_UP_MESSAGE = 'MOVIES_EDIT/CLOSE_POP_UP_MESSAGE';
+
 export const submit = persistMovie;
 export const uploadProfileImage = dataUploadProfileImage;
 export const uploadPosterImage = dataUploadPosterImage;
+
+export function closePopUpMessage () {
+  return { type: CLOSE_POP_UP_MESSAGE };
+}
 
 export function loadMovie (movieId) {
   return async (dispatch, getState) => {

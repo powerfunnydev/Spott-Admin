@@ -45,14 +45,10 @@ export async function persistMovie (baseUrl, authenticationToken, locale, {
   movie.publishStatus = publishStatus;
   movie.type = 'MOVIE';
   // Update locale data.
-  movie.localeData = movie.localeData || []; // Ensure we have locale data
+  movie.localeData = [];
   locales.forEach((locale) => {
     // Get localeData, create if necessary in O(n^2)
-    let localeData = movie.localeData.find((ld) => ld.locale === locale);
-    if (!localeData) {
-      localeData = { locale };
-      movie.localeData.push(localeData);
-    }
+    const localeData = {};
     // basedOnDefaultLocale is always provided, no check needed
     localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
     localeData.description = description && description[locale];
@@ -60,6 +56,7 @@ export async function persistMovie (baseUrl, authenticationToken, locale, {
     localeData.startYear = startYear && startYear[locale];
     localeData.title = title && title[locale];
     localeData.subTitle = subTitle && subTitle[locale];
+    movie.localeData.push(localeData);
   });
   const url = `${baseUrl}/v004/media/movies`;
   const result = await post(authenticationToken, locale, url, movie);

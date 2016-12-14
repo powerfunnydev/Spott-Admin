@@ -10,6 +10,8 @@ import toastSelector from '../../../selectors/toast';
 import { colors, makeTextStyle, fontWeights } from '../styles';
 import CompletedSVG from '../images/completed';
 import PlusSVG from '../images/plus';
+import { BROADCAST_CHANNEL, BROADCASTER, CONTENT_PRODUCER, EPISODE, MOVIE, SEASON,
+    SERIES_ENTRY, USER, TV_GUIDE_ENTRY } from '../../../constants/entityTypes';
 
 @connect(null, (dispatch) => ({
   popToast: bindActionCreators(toastActions.pop, dispatch),
@@ -106,7 +108,6 @@ export class SuccessMessage extends Component {
     this.episodePersistSuccess = ::this.episodePersistSuccess;
     this.seriesEntryPersistSuccess = ::this.seriesEntryPersistSuccess;
     this.seriesEntryPersistSuccess = ::this.seriesEntryPersistSuccess;
-    this.userPersistSuccess = ::this.userPersistSuccess;
   }
 
   async redirect (url) {
@@ -153,6 +154,17 @@ export class SuccessMessage extends Component {
       <span>
         Episode <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/series/read/${episode.seriesEntry.id}/seasons/read/${episode.season.id}/episodes/read/${episode.id}`)}>
           {episode.title[episode.defaultLocale]}
+        </span> has been succesfully persisted.
+      </span>
+    );
+  }
+
+  moviePersistSuccess (movie) {
+    const { styles } = this.constructor;
+    return (
+      <span>
+        Movie <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/movies/read/${movie.id}`)}>
+          {movie.title[movie.defaultLocale]}
         </span> has been succesfully persisted.
       </span>
     );
@@ -215,21 +227,23 @@ export class SuccessMessage extends Component {
 
   render () {
     const { entityType, entity } = this.props;
-    if (entityType === 'broadcastChannel') {
+    if (entityType === BROADCAST_CHANNEL) {
       return this.broadcastChannelPersistSuccess(entity);
-    } else if (entityType === 'broadcaster') {
+    } else if (entityType === BROADCASTER) {
       return this.broadcasterPersistSuccess(entity);
-    } else if (entityType === 'contentProducer') {
+    } else if (entityType === CONTENT_PRODUCER) {
       return this.contentProducerPersistSuccess(entity);
-    } else if (entityType === 'episode') {
+    } else if (entityType === EPISODE) {
       return this.episodePersistSuccess(entity);
-    } else if (entityType === 'season') {
+    } else if (entityType === MOVIE) {
+      return this.moviePersistSuccess(entity);
+    } else if (entityType === SEASON) {
       return this.seasonPersistSuccess(entity);
-    } else if (entityType === 'seriesEntry') {
+    } else if (entityType === SERIES_ENTRY) {
       return this.seriesEntryPersistSuccess(entity);
-    } else if (entityType === 'tvGuideEntry') {
+    } else if (entityType === TV_GUIDE_ENTRY) {
       return this.tvGuideEntryPersistSuccess(entity);
-    } else if (entityType === 'user') {
+    } else if (entityType === USER) {
       return this.userPersistSuccess(entity);
     }
     return <span>Toast message of this entity isn't supported yet.</span>;

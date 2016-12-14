@@ -78,7 +78,7 @@ export async function persistSeason (baseUrl, authenticationToken, locale, { num
   season.number = number;
 
   // Update locale data.
-  season.localeData = season.localeData || []; // Ensure we have locale data
+  season.localeData = [];
   locales.forEach((locale) => {
     // Get localeData, create if necessary in O(n^2)
     let localeData = season.localeData.find((ld) => ld.locale === locale);
