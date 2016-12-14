@@ -1,4 +1,4 @@
-export const MOVIE = 'movie';
-export const EPISODE = 'episode';
-export const COMMERCIAL = 'commercial';
-export const TRAILER = 'trailer';
+export const MOVIE = 'MOVIE';
+export const EPISODE = 'TV_SERIE_EPISODE';
+export const COMMERCIAL = 'COMMERCIAL';
+export const TRAILER = 'TRAILER';
