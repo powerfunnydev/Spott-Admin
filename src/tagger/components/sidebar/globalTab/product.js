@@ -14,17 +14,7 @@ const threeLinesImage = require('../_helpers/images/threeLines.svg');
     onRemove: props.onRemove
   };
 })
-// @reduxForm({
-//   fields: [ 'appearanceId', 'productId', 'relevance' ],
-//   form: 'updateGlobalProduct',
-//   initialValues: {
-//     relevance: 'EXACT'
-//   },
-//   // Get the form state.
-//   getFormState: (state, reduxMountPoint) => state.get(reduxMountPoint)
-// }, null, {
-//   onSubmit: sidebarActions.updateGlobalProduct
-// })
+
 @Radium
 @ItemStyleDecorator
 export default class Product extends Component {
@@ -75,7 +65,6 @@ export default class Product extends Component {
     }
 
     // Render placeholder product in case the product is not yet successfully fetched.
-    // TODO: render something different in case of _status: 'error' or 'fetching'?
     return (
       <li>
         <div style={[ styles.wrapper.base, hovered && styles.wrapper.hovered, selected && styles.wrapper.selected ]}
@@ -83,11 +72,6 @@ export default class Product extends Component {
           <div style={styles.image}>&nbsp;</div>
           <div style={styles.text}>&nbsp;</div>
           <div style={styles.threeLines}><img src={threeLinesImage} /></div>
-          {/* <div style={styles.relevanceOptions}>
-            <RelevanceOption checkedColor='rgb(32, 142, 59)' color='rgb(172, 250, 159)' field={relevance} label='Exact' value='EXACT' />
-            <RelevanceOption checkedColor='rgb(248, 170, 15)' color='rgb(254, 238, 207)' field={relevance} label='Medium' value='MEDIUM' />
-            <RelevanceOption checkedColor='rgb(236, 65, 15)' color='rgb(251, 217, 207)' field={relevance} label='Low' value='LOW' />
-          </div> */}
         </div>
       </li>
     );

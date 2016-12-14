@@ -5,9 +5,10 @@ import React, { Component, PropTypes } from 'react';
 export default class RelevanceOption extends Component {
 
   static propTypes = {
+    checked: PropTypes.bool.isRequired,
     checkedColor: PropTypes.string.isRequired,
     color: PropTypes.string.isRequired,
-    field: PropTypes.object.isRequired,
+    input: PropTypes.object.isRequired,
     label: PropTypes.string.isRequired,
     value: PropTypes.string.isRequired
   };
@@ -19,7 +20,7 @@ export default class RelevanceOption extends Component {
 
   onClick (e) {
     e.preventDefault();
-    this.props.field.onChange(this.props.value);
+    this.props.input.onChange(this.props.value);
   }
 
   static styles = {
@@ -51,8 +52,7 @@ export default class RelevanceOption extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { checkedColor, color, field, label, value } = this.props;
-    const checked = field.value === value;
+    const { checked, checkedColor, color, label, value } = this.props;
 
     const radioButtonStyle = [ styles.radioButton ];
     const labelStyle = [ styles.label ];
@@ -73,11 +73,11 @@ export default class RelevanceOption extends Component {
     return (
       <label style={styles.container}>
         <input
-          {...field}
           checked={checked}
           id={value}
           style={styles.input}
-          type='radio' />
+          type='radio'
+          onChange={this.onClick} />
         <span style={radioButtonStyle} onClick={this.onClick} />
         <span htmlFor={value} style={labelStyle} onClick={this.onClick}>{label}</span>
       </label>

@@ -8,7 +8,7 @@ export default class Character extends Component {
 
   static propTypes = {
     character: ImmutablePropTypes.map,
-    field: PropTypes.object.isRequired
+    input: PropTypes.object.isRequired
   };
 
   constructor (props) {
@@ -18,7 +18,7 @@ export default class Character extends Component {
 
   onClick (e) {
     e.preventDefault();
-    this.props.field.onChange(this.props.character && this.props.character.get('id'));
+    this.props.input.onChange(this.props.character && this.props.character.get('id'));
   }
 
   static styles = {
@@ -68,21 +68,21 @@ export default class Character extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { character, field } = this.props;
+    const { character, input } = this.props;
 
     // Render a circle with in it a visualisation (photo) of the character
     if (character) {
-      const checked = field.value === character.get('id');
+      const checked = input.value === character.get('id');
       return (
         <div style={[ styles.border.base, checked && styles.border.checked ]} onClick={this.onClick}>
-          <div style={[ styles.character.base, { backgroundImage: `url('${character.get('portraitImageUrl')}?width=70&height=70')` } ]}></div>
+          <div style={[ styles.character.base, { backgroundImage: `url('${character.get('portraitImageUrl')}?width=70&height=70')` } ]} />
         </div>
       );
     }
 
     // Render a cross in a placeholder for a character, representing the
     // option "not associated with any character".
-    const checked = !field.value;
+    const checked = !input.value;
     return (
       <div style={[ styles.border.base, checked && styles.border.checked ]} onClick={this.onClick}>
         <div style={styles.noCharacter.base}>

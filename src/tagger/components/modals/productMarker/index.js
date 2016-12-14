@@ -1,6 +1,7 @@
-import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
-import { reduxForm } from 'redux-form/immutable';
+import Radium from 'radium';
+import { connect } from 'react-redux';
+import { reduxForm, Field } from 'redux-form/immutable';
 import ReactModal from 'react-modal';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Checkbox from '../../_helpers/checkbox';
@@ -153,6 +154,59 @@ export default class ProductSuggestions extends Component {
     );
   }
 
+}
+
+function renderInputField ({ input, meta, ...res }) {
+  return (
+    <input
+      {...input}
+      {...res} />
+  );
+}
+
+function renderRelevanceInput ({ style, ...props }) {
+  return (
+    <div style={style}>
+      <RelevanceOption
+        {...props}
+        checked={props.input.value === 'EXACT'}
+        checkedColor='rgb(32, 142, 59)'
+        color='rgb(172, 250, 159)'
+        label='Exact'
+        value='EXACT' />
+      <RelevanceOption
+        {...props}
+        checked={props.input.value === 'MEDIUM'}
+        checkedColor='rgb(248, 170, 15)'
+        color='rgb(254, 238, 207)'
+        label='Medium'
+        value='MEDIUM'/>
+      <RelevanceOption
+        {...props}
+        checked={props.input.value === 'LOW'}
+        checkedColor='rgb(236, 65, 15)'
+        color='rgb(251, 217, 207)'
+        label='Low'
+        value='LOW'/>
+    </div>
+  );
+}
+
+function renderCharacterInput ({ characters, style, ...props }) {
+  return (
+    <div style={style}>
+      <Character
+        {...props}
+        character={null}
+        key='none' />
+      {characters.map((character, i) => (
+        <Character
+          {...props}
+          character={character}
+          key={character.get('id')} />
+      ))}
+    </div>
+  );
 }
 
 @Radium
@@ -316,15 +370,12 @@ class ProductMarker extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      allowProductSuggestions, characters, fields: {
-      characterId, markerHidden, productId, productSuggestion, relevance,
-      search: { brandName, productOfferingPriceFrom, productOfferingPriceTo, productOfferingShopName }
-    }, handleSubmit, productSearchResult, productSuggestions, products, similarProducts, title, onSubmit
+      allowProductSuggestions, characters, handleSubmit, productSearchResult, productSuggestions, products, similarProducts, title, onSubmit
     } = this.props;
 
     // HACK: Redux-form will initialize the field with value: undefined, and initialValue: 'productIdToUpdate'.
     // We do a fallback on initialValue because otherwise the typeahead serach in ProductSearch won't rerender!
-    const product = products.get(productId.value || productId.initialValue);
+    // const product = products.get(productId.value || productId.initialValue);
 
     return (
       <ReactModal
@@ -341,50 +392,68 @@ class ProductMarker extends Component {
               <div style={modalStyle.search}>
 
                 <div style={styles.filters}>
-                  <input {...brandName} placeholder='Brand' style={[ styles.textInput.base, styles.textInput.first ]} type='text' />
-                  <input {...productOfferingPriceFrom} min='0' placeholder='€ from' style={styles.textInput.base} type='number' />
-                  <input {...productOfferingPriceTo} min='0' placeholder='€ to' style={styles.textInput.base} type='number' />
-                  <input {...productOfferingShopName} placeholder='Shop' style={styles.textInput.base} type='text' />
+                  <Field
+                    component={renderInputField}
+                    name='search.brandName'
+                    placeholder='Brand'
+                    style={[ styles.textInput.base, styles.textInput.first ]}
+                    type='text' />
+                  <Field
+                    component={renderInputField}
+                    min='0'
+                    name='search.productOfferingPriceFrom'
+                    placeholder='€ from'
+                    style={styles.textInput.base}
+                    type='number' />
+                  <Field
+                    component={renderInputField}
+                    min='0'
+                    name='search.productOfferingPriceTo'
+                    placeholder='€ to'
+                    style={styles.textInput.base}
+                    type='number' />
+                  <Field
+                    component={renderInputField}
+                    name='search.productOfferingShopName'
+                    placeholder='Shop'
+                    style={styles.textInput.base}
+                    type='text' />
                 </div>
 
-                <ProductSearch
+                {/* <ProductSearch
                   focus
                   options={productSearchResult.get('data').toArray()}
                   search={this.searchProducts}
                   value={product && product.get('shortName')}
-                  onOptionSelected={this.onProductSelect} />
-                {productId.error === 'required' && <span style={modalStyle.error}>Product is required.</span>}
+                  onOptionSelected={this.onProductSelect} /> */}
+                {/* {productId.error === 'required' && <span style={modalStyle.error}>Product is required.</span>} */}
 
-                <div style={styles.buttons}>
+                {/* <div style={styles.buttons}>
                   {this.renderSimilarProducts(product, similarProducts)}
                   {product && product.get('id') &&
                     <a href={`/#/content/products/edit/${product.get('id')}`} style={[ buttonStyle.base, buttonStyle.small, styles.grayButton, styles.link ]} target='_blank'>Edit product</a>}
 
                   {allowProductSuggestions &&
                     <button key='suggestions' style={[ buttonStyle.base, buttonStyle.small, styles.grayButton ]} onClick={this.onSeeProductSuggestions}>See suggestions</button>}
-                </div>
+                </div> */}
               </div>
 
-              <div style={styles.relevanceOptions}>
-                <RelevanceOption checkedColor='rgb(32, 142, 59)' color='rgb(172, 250, 159)' field={relevance} label='Exact' value='EXACT' />
-                <RelevanceOption checkedColor='rgb(248, 170, 15)' color='rgb(254, 238, 207)' field={relevance} label='Medium' value='MEDIUM' />
-                <RelevanceOption checkedColor='rgb(236, 65, 15)' color='rgb(251, 217, 207)' field={relevance} label='Low' value='LOW' />
-              </div>
+              <Field component={renderRelevanceInput} name='relevance' style={styles.relevanceOptions} />
 
               <h3 style={modalStyle.subtitle}>Worn by character</h3>
-              <div style={styles.characters}>
-                <Character field={characterId} />
-                {characters.map((character, i) => (
-                  <Character
-                    character={character}
-                    field={characterId}
-                    key={character.get('id')} />
-                ))}
-              </div>
+              <Field characters={characters} component={renderCharacterInput} name='characterId' style={styles.characters} />
 
-              <Checkbox field={markerHidden} label='Hide marker' style={[ styles.checkbox.base, styles.checkbox.first ]} />
+              <Field
+                component={Checkbox}
+                label='Hide marker'
+                name='markerHidden'
+                style={[ styles.checkbox.base, styles.checkbox.first ]} />
               {allowProductSuggestions &&
-                <Checkbox field={productSuggestion} label='Add for product suggestion' style={styles.checkbox.base} />}
+                <Field
+                  component={Checkbox}
+                  label='Add for product suggestion'
+                  name='productSuggestion'
+                  style={styles.checkbox.base} />}
             </div>
 
             <div style={modalStyle.footer}>
@@ -404,25 +473,13 @@ class ProductMarker extends Component {
 }
 
 @reduxForm({
-  fields: [
-    'characterId',
-    'markerHidden',
-    'productId',
-    'productSuggestion',
-    'relevance',
-    'search.brandName',
-    'search.productOfferingPriceFrom',
-    'search.productOfferingPriceTo',
-    'search.productOfferingShopName'
-  ],
   form: 'createProductMarker',
   initialValues: {
     markerHidden: false,
     relevance: 'EXACT'
-  },
-  // Get the form state.
-  getFormState: (state, reduxMountPoint) => state.get(reduxMountPoint)
-}, createProductMarkerSelector, {
+  }
+})
+@connect(createProductMarkerSelector, {
   fetchSimilarProducts: productActions.fetchSimilarProducts,
   searchProducts: productActions.searchProducts,
   onCancel: productActions.createProductMarkerCancel,
@@ -434,7 +491,6 @@ export class CreateProductMarker extends Component {
     allowProductSuggestions: PropTypes.bool,
     characters: ImmutablePropTypes.list.isRequired,
     fetchSimilarProducts: PropTypes.func.isRequired,
-    fields: PropTypes.object.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     initializeForm: PropTypes.func.isRequired,
     productSearchResult: ImmutablePropTypes.map.isRequired,
@@ -456,26 +512,27 @@ export class CreateProductMarker extends Component {
   }
 
 }
+// fields: [
+//   'appearanceId',
+//   'characterId',
+//   'markerHidden',
+//   'point',
+//   'product',
+//   'productId',
+//   'productSuggestion',
+//   'relevance',
+//   'search.brandName',
+//   'search.productOfferingPriceFrom',
+//   'search.productOfferingPriceTo',
+//   'search.productOfferingShopName'
+// ],
+// form: 'updateProductMarker',
+//
 
 @reduxForm({
-  fields: [
-    'appearanceId',
-    'characterId',
-    'markerHidden',
-    'point',
-    'product',
-    'productId',
-    'productSuggestion',
-    'relevance',
-    'search.brandName',
-    'search.productOfferingPriceFrom',
-    'search.productOfferingPriceTo',
-    'search.productOfferingShopName'
-  ],
-  form: 'updateProductMarker',
-  // Get the form state.
-  getFormState: (state, reduxMountPoint) => state.get(reduxMountPoint)
-}, updateProductMarkerSelector, {
+  form: 'updateProductMarker'
+})
+@connect(updateProductMarkerSelector, {
   fetchSimilarProducts: productActions.fetchSimilarProducts,
   searchProducts: productActions.searchProducts,
   onCancel: productActions.updateProductMarkerCancel,
@@ -487,7 +544,6 @@ export class UpdateProductMarker extends Component {
     allowProductSuggestions: PropTypes.bool,
     characters: ImmutablePropTypes.list.isRequired,
     fetchSimilarProducts: PropTypes.func.isRequired,
-    fields: PropTypes.object.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     initializeForm: PropTypes.func.isRequired,
     productSearchResult: ImmutablePropTypes.map.isRequired,

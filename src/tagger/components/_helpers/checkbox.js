@@ -5,7 +5,7 @@ import React, { Component, PropTypes } from 'react';
 export default class Checkbox extends Component {
 
   static propTypes = {
-    field: PropTypes.object.isRequired,
+    input: PropTypes.object.isRequired,
     label: PropTypes.string.isRequired,
     style: PropTypes.object.isRequired
   };
@@ -16,7 +16,7 @@ export default class Checkbox extends Component {
   }
 
   onClick () {
-    this.props.field.onChange(!this.props.field.value);
+    this.props.input.onChange(!this.props.input.value);
   }
 
   static styles = {
@@ -50,17 +50,17 @@ export default class Checkbox extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { field, label, style } = this.props;
+    const { input, label, style } = this.props;
 
     return (
       <div style={style}>
         <input
-          {...field}
+          {...input}
           style={styles.input}
           type='checkbox' />
         <span style={styles.checkbox} onClick={this.onClick}>
-          &nbsp;{field.value && '✓'}</span>
-        <label htmlFor={field.name} style={styles.label} onClick={this.onClick}>{label}</label>
+          &nbsp;{input.value && '✓'}</span>
+        <label htmlFor={input.name} style={styles.label} onClick={this.onClick}>{label}</label>
       </div>
     );
   }
