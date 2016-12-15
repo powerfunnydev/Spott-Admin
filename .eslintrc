@@ -267,6 +267,7 @@
         '/^on.+$/',
         'keyMap',
         'styles',
+        '/^render.+$/',
         'render'
       ]
     }],

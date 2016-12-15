@@ -58,15 +58,32 @@ export class Search extends Component {
       * filterOption: which items should be shown? Always show all options
       *               because filtering is done by the server.
       */
+
+    // Rerender the component bacause otherwise the initial value won't be shown.
+    if (value) {
+      return (
+        <Typeahead
+          customClasses={{ input: inputClass || 'search__input-blue' }}
+          customListComponent={customListComponent}
+          displayOption={displayOption}
+          filterOption={() => true}
+          key='typeahead'
+          options={options}
+          ref={(c) => this.typeahead = c}
+          value={value}
+          onChange={this.onChange}
+          onOptionSelected={onOptionSelected} />
+        );
+    }
     return (
       <Typeahead
         customClasses={{ input: inputClass || 'search__input-blue' }}
         customListComponent={customListComponent}
         displayOption={displayOption}
         filterOption={() => true}
+        key='typeahead2'
         options={options}
         ref={(c) => this.typeahead = c}
-        value={value}
         onChange={this.onChange}
         onOptionSelected={onOptionSelected} />
     );

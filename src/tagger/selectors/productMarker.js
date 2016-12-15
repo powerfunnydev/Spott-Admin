@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import { createSelector, createStructuredSelector } from 'reselect';
 import {
   appearanceEntitiesSelector, createEntityIdsByRelationSelector,
   createEntitiesByRelationSelector, productSearchRelationsSelector,
@@ -6,13 +6,11 @@ import {
   productHasSimilarProductsRelationsSelector
 } from './common';
 import { tooltipSelector } from './global';
+import { createFormValueSelector } from '../../utils';
 
 const productSearchResultSelector = createEntitiesByRelationSelector(productSearchRelationsSelector, productSearchStringSelector, productEntitiesSelector);
 
-const currentCreateProductMarkerProductIdSelector = (state) => {
-  const createProductMarkerForm = state.get('form').createProductMarker;
-  return createProductMarkerForm && createProductMarkerForm.productId && createProductMarkerForm.productId.value;
-};
+const currentCreateProductMarkerProductIdSelector = createFormValueSelector('createProductMarker', 'productId');
 
 const createProductMarkerSimilarProductsSelector = createSelector(
   productEntitiesSelector,
@@ -20,11 +18,12 @@ const createProductMarkerSimilarProductsSelector = createSelector(
   (productsById, relation) => relation.set('data', relation.get('data').map((rel) => rel.set('product', productsById.get(rel.get('productId')))))
 );
 
-export const createProductMarkerSelector = (state) => ({
-  products: productEntitiesSelector(state),
-  productSearchResult: productSearchResultSelector(state),
-  similarProducts: createProductMarkerSimilarProductsSelector(state),
-  tooltip: tooltipSelector(state)
+export const createProductMarkerSelector = createStructuredSelector({
+  productId: currentCreateProductMarkerProductIdSelector,
+  products: productEntitiesSelector,
+  productSearchResult: productSearchResultSelector,
+  similarProducts: createProductMarkerSimilarProductsSelector,
+  tooltip: tooltipSelector
 });
 
 export const appearanceSelector = createSelector(
@@ -38,25 +37,22 @@ export const appearanceSelector = createSelector(
 // The form will render without initialValues and then with.
 // Typeahead won't rerender the input value with the product name.
 // So we must ensure that all data is rendered correctly from the first time.
-const initialValuesSelector = createSelector(
-  appearanceSelector,
-  (appearance) => {
-    const { appearanceId, characterId, markerHidden, point, id: productId, relevance } = appearance.toJS();
-    return {
-      appearanceId,
-      characterId,
-      markerHidden,
-      point,
-      productId,
-      relevance
-    };
-  }
-);
+// const initialValuesSelector = createSelector(
+//   appearanceSelector,
+//   (appearance) => {
+//     const { appearanceId, characterId, markerHidden, point, id: productId, relevance } = appearance.toJS();
+//     return {
+//       appearanceId,
+//       characterId,
+//       markerHidden,
+//       point,
+//       productId,
+//       relevance
+//     };
+//   }
+// );
 
-const currentUpdateProductMarkerProductIdSelector = (state) => {
-  const updateProductMarkerForm = state.get('form').updateProductMarker;
-  return updateProductMarkerForm && updateProductMarkerForm.productId && updateProductMarkerForm.productId.value;
-};
+const currentUpdateProductMarkerProductIdSelector = createFormValueSelector('updateProductMarker', 'productId');
 
 const updateProductMarkerSimilarProductsSelector = createSelector(
   productEntitiesSelector,
@@ -64,10 +60,11 @@ const updateProductMarkerSimilarProductsSelector = createSelector(
   (productsById, relation) => relation.set('data', relation.get('data').map((rel) => rel.set('product', productsById.get(rel.get('productId')))))
 );
 
-export const updateProductMarkerSelector = (state) => ({
-  initialValues: initialValuesSelector(state),
-  products: productEntitiesSelector(state),
-  productSearchResult: productSearchResultSelector(state),
-  similarProducts: updateProductMarkerSimilarProductsSelector(state),
-  tooltip: tooltipSelector(state)
+export const updateProductMarkerSelector = (state) => createStructuredSelector({
+  appearance: appearanceSelector,
+  productId: currentUpdateProductMarkerProductIdSelector,
+  products: productEntitiesSelector,
+  productSearchResult: productSearchResultSelector,
+  similarProducts: updateProductMarkerSimilarProductsSelector,
+  tooltip: tooltipSelector
 });

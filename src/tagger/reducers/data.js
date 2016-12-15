@@ -371,7 +371,7 @@ export default (state = fromJS({
     case actionTypes.PRODUCT_SUGGESTION_ADD_IMAGE_SUCCESS:
       // When we add an image to a product, all existing image receive a new identifier. For this reason,
       // we patch the product in our state tree with its new image id.
-      return fetchSuccess([ 'entities', 'products', action.productId ], action.data);
+      return fetchSuccess(state, [ 'entities', 'products', action.productId ], action.data);
 
     case actionTypes.CHARACTER_OF_SCENE_DELETE_ERROR:
     case actionTypes.PRODUCT_OF_SCENE_DELETE_ERROR:

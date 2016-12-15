@@ -8,6 +8,7 @@ export default class SelectionArea extends Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     disable: PropTypes.bool.isRequired,
+    style: PropTypes.object.isRequired,
     // Event that will be fired when a selection was made.
     // Passed { height, width, x, y } of selection.
     onSelection: PropTypes.func.isRequired
@@ -132,6 +133,7 @@ export default class SelectionArea extends Component {
 	 * @return {ReactComponent}
 	 */
   render () {
+    const { style } = this.props;
     const { height, isSelecting, width, x, y } = this.state;
 
     const boxStyle = {
@@ -153,12 +155,11 @@ export default class SelectionArea extends Component {
     };
 
     return (
-			<div {...this.props} ref={(c) => this.component = c}>
+			<div ref={(c) => this.component = c} style={style}>
 				{isSelecting &&
           <div style={boxStyle}>
-            <span style={spanStyle}></span>
-          </div>
-				}
+            <span style={spanStyle} />
+          </div>}
 				{this.props.children}
 			</div>
 		);

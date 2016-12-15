@@ -33,7 +33,7 @@ export default class Region extends Component {
 
     return (
       <div style={boxStyle}>
-        <span style={styles.inner}></span>
+        <span style={styles.inner} />
       </div>
     );
   }

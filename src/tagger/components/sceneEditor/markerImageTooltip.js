@@ -45,7 +45,7 @@ export default class MarkerImageTooltip extends Component {
     const { imageUrl, relativeLeft, relativeTop } = this.props;
     return (
       <div style={[ styles.container, imageUrl && { backgroundImage: `url('${imageUrl}?width=160&height=160')`, left: `${relativeLeft}%`, top: `${relativeTop}%` } ]}>
-        <div style={styles.arrow}></div>
+        <div style={styles.arrow} />
       </div>
     );
   }

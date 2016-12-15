@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { connect } from 'react-redux';
-import { reduxForm, Field } from 'redux-form/immutable';
+import { reduxForm, Field, Fields } from 'redux-form/immutable';
 import ReactModal from 'react-modal';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Checkbox from '../../_helpers/checkbox';
@@ -156,41 +156,36 @@ export default class ProductSuggestions extends Component {
 
 }
 
-function renderInputField ({ input, meta, ...res }) {
-  return (
-    <input
-      {...input}
-      {...res} />
-  );
-}
-
-function renderRelevanceInput ({ style, ...props }) {
+function renderRelevanceInput ({ input, style }) {
   return (
     <div style={style}>
       <RelevanceOption
-        {...props}
-        checked={props.input.value === 'EXACT'}
+        checked={input.value === 'EXACT'}
         checkedColor='rgb(32, 142, 59)'
         color='rgb(172, 250, 159)'
+        input={input}
         label='Exact'
         value='EXACT' />
       <RelevanceOption
-        {...props}
-        checked={props.input.value === 'MEDIUM'}
+        checked={input.value === 'MEDIUM'}
         checkedColor='rgb(248, 170, 15)'
         color='rgb(254, 238, 207)'
+        input={input}
         label='Medium'
         value='MEDIUM'/>
       <RelevanceOption
-        {...props}
-        checked={props.input.value === 'LOW'}
+        checked={input.value === 'LOW'}
         checkedColor='rgb(236, 65, 15)'
         color='rgb(251, 217, 207)'
+        input={input}
         label='Low'
         value='LOW'/>
     </div>
   );
 }
+renderRelevanceInput.propTypes = {
+  input: PropTypes.object.isRequired
+};
 
 function renderCharacterInput ({ characters, style, ...props }) {
   return (
@@ -216,7 +211,6 @@ class ProductMarker extends Component {
     allowProductSuggestions: PropTypes.bool,
     characters: ImmutablePropTypes.list.isRequired,
     fetchSimilarProducts: PropTypes.func.isRequired,
-    fields: PropTypes.object.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     productSearchResult: ImmutablePropTypes.map.isRequired,
     productSuggestions: ImmutablePropTypes.list,
@@ -234,24 +228,24 @@ class ProductMarker extends Component {
 
   constructor (props) {
     super(props);
-    this.searchProducts = ::this.searchProducts;
+    this.renderSearchInputs = ::this.renderSearchInputs;
+    this.submit = ::this.submit;
     this.onCancel = ::this.onCancel;
     this.onRequestClose = ::this.onRequestClose;
-    this.onProductSelect = ::this.onProductSelect;
     this.onSuggestionsCancel = ::this.onSuggestionsCancel;
     this.onSuggestionSelect = ::this.onSuggestionSelect;
     this.onSeeProductSuggestions = ::this.onSeeProductSuggestions;
   }
 
-  searchProducts ({ searchString }) {
-    const { brandName, productOfferingPriceFrom, productOfferingPriceTo, productOfferingShopName } = this.props.fields.search;
-    this.props.searchProducts({
-      brandName: brandName.value,
-      productOfferingPriceFrom: productOfferingPriceFrom.value,
-      productOfferingPriceTo: productOfferingPriceTo.value,
-      productOfferingShopName: productOfferingShopName.value,
-      searchString
-    });
+  componentDidMount () {
+    const { appearance } = this.props;
+    if (appearance) {
+      this.props.initialize({ ...appearance.toJS(), productId: appearance.get('id') });
+    }
+  }
+
+  async submit (form) {
+    await this.props.onSubmit(form.toJS());
   }
 
   onCancel (e) {
@@ -263,20 +257,13 @@ class ProductMarker extends Component {
     this.props.onCancel();
   }
 
-  onProductSelect (product) {
-    const productId = product && product.get('id');
-    this.props.fields.productId.onChange(productId);
-    if (productId) {
-      this.props.fetchSimilarProducts({ productId });
-    }
-  }
-
   onSuggestionsCancel () {
     this.props.onClearProductSuggestions();
   }
 
   onSuggestionSelect (id) {
-    this.props.fields.productId.onChange(id);
+    const { change, dispatch } = this.props;
+    dispatch(change('productId', id));
     this.props.onClearProductSuggestions();
   }
 
@@ -367,15 +354,68 @@ class ProductMarker extends Component {
     }
   }
 
+  renderSearchInputs ({ fetchSimilarProducts, product, productId, productSearchResult, search }) {
+    const styles = this.constructor.styles;
+    return (
+      <div>
+        <div style={styles.filters}>
+          <input
+            {...search.brandName.input}
+            placeholder='Brand'
+            style={[ styles.textInput.base, styles.textInput.first ]}
+            type='text' />
+          <input
+            {...search.productOfferingPriceFrom.input}
+            min='0'
+            placeholder='€ from'
+            style={styles.textInput.base}
+            type='number' />
+          <input
+            {...search.productOfferingPriceTo.input}
+            min='0'
+            placeholder='€ to'
+            style={styles.textInput.base}
+            type='number' />
+          <input
+            {...search.productOfferingShopName.input}
+            placeholder='Shop'
+            style={styles.textInput.base}
+            type='text' />
+        </div>
+        <ProductSearch
+          focus
+          options={productSearchResult.get('data').toArray()}
+          search={({ searchString }) => {
+            const { brandName, productOfferingPriceFrom, productOfferingPriceTo, productOfferingShopName } = search;
+            this.props.searchProducts({
+              brandName: brandName.input.value,
+              productOfferingPriceFrom: productOfferingPriceFrom.input.value,
+              productOfferingPriceTo: productOfferingPriceTo.input.value,
+              productOfferingShopName: productOfferingShopName.input.value,
+              searchString
+            });
+          }}
+          value={product && product.get('shortName')}
+          onOptionSelected={(p) => {
+            const id = p && p.get('id');
+            productId.input.onChange(id);
+            if (id) {
+              fetchSimilarProducts({ productId: id });
+            }
+          }} />
+        {productId.meta.touched && productId.meta.error === 'required' && <span style={modalStyle.error}>Product is required.</span>}
+      </div>
+    );
+  }
+
   render () {
     const styles = this.constructor.styles;
     const {
-      allowProductSuggestions, characters, handleSubmit, productSearchResult, productSuggestions, products, similarProducts, title, onSubmit
+      allowProductSuggestions, characters, fetchSimilarProducts, handleSubmit, productId, products,
+      productSearchResult, productSuggestions, similarProducts, title, onSubmit
     } = this.props;
 
-    // HACK: Redux-form will initialize the field with value: undefined, and initialValue: 'productIdToUpdate'.
-    // We do a fallback on initialValue because otherwise the typeahead serach in ProductSearch won't rerender!
-    // const product = products.get(productId.value || productId.initialValue);
+    const product = products.get(productId);
 
     return (
       <ReactModal
@@ -383,7 +423,7 @@ class ProductMarker extends Component {
         style={dialogStyle}
         onRequestClose={this.onRequestClose}>
         {!productSuggestions &&
-          <form noValidate onSubmit={handleSubmit}>
+          <form noValidate onSubmit={handleSubmit(this.submit)}>
             <div style={modalStyle.content}>
               <h1 style={modalStyle.title}>{title}</h1>
 
@@ -391,51 +431,27 @@ class ProductMarker extends Component {
 
               <div style={modalStyle.search}>
 
-                <div style={styles.filters}>
-                  <Field
-                    component={renderInputField}
-                    name='search.brandName'
-                    placeholder='Brand'
-                    style={[ styles.textInput.base, styles.textInput.first ]}
-                    type='text' />
-                  <Field
-                    component={renderInputField}
-                    min='0'
-                    name='search.productOfferingPriceFrom'
-                    placeholder='€ from'
-                    style={styles.textInput.base}
-                    type='number' />
-                  <Field
-                    component={renderInputField}
-                    min='0'
-                    name='search.productOfferingPriceTo'
-                    placeholder='€ to'
-                    style={styles.textInput.base}
-                    type='number' />
-                  <Field
-                    component={renderInputField}
-                    name='search.productOfferingShopName'
-                    placeholder='Shop'
-                    style={styles.textInput.base}
-                    type='text' />
-                </div>
+                <Fields
+                  component={this.renderSearchInputs}
+                  fetchSimilarProducts={fetchSimilarProducts}
+                  names={[
+                    'productId',
+                    'search.brandName',
+                    'search.productOfferingPriceFrom',
+                    'search.productOfferingPriceTo',
+                    'search.productOfferingShopName'
+                  ]}
+                  product={product}
+                  productSearchResult={productSearchResult} />
 
-                {/* <ProductSearch
-                  focus
-                  options={productSearchResult.get('data').toArray()}
-                  search={this.searchProducts}
-                  value={product && product.get('shortName')}
-                  onOptionSelected={this.onProductSelect} /> */}
-                {/* {productId.error === 'required' && <span style={modalStyle.error}>Product is required.</span>} */}
-
-                {/* <div style={styles.buttons}>
+                <div style={styles.buttons}>
                   {this.renderSimilarProducts(product, similarProducts)}
                   {product && product.get('id') &&
                     <a href={`/#/content/products/edit/${product.get('id')}`} style={[ buttonStyle.base, buttonStyle.small, styles.grayButton, styles.link ]} target='_blank'>Edit product</a>}
 
                   {allowProductSuggestions &&
                     <button key='suggestions' style={[ buttonStyle.base, buttonStyle.small, styles.grayButton ]} onClick={this.onSeeProductSuggestions}>See suggestions</button>}
-                </div> */}
+                </div>
               </div>
 
               <Field component={renderRelevanceInput} name='relevance' style={styles.relevanceOptions} />
@@ -457,8 +473,8 @@ class ProductMarker extends Component {
             </div>
 
             <div style={modalStyle.footer}>
-              <button key='cancel' style={[ buttonStyle.base, buttonStyle.cancel ]} onClick={this.onCancel}>Cancel</button>
-              <button key='save' style={[ buttonStyle.base, buttonStyle.save ]} onClick={onSubmit}>Done</button>
+              <button key='cancel' style={[ buttonStyle.base, buttonStyle.cancel ]} type='button' onClick={this.onCancel}>Cancel</button>
+              <button key='save' style={[ buttonStyle.base, buttonStyle.save ]} type='submit'>Done</button>
             </div>
           </form>}
         {productSuggestions &&
@@ -472,18 +488,18 @@ class ProductMarker extends Component {
 
 }
 
+@connect(createProductMarkerSelector, {
+  fetchSimilarProducts: productActions.fetchSimilarProducts,
+  searchProducts: productActions.searchProducts,
+  onCancel: productActions.createProductMarkerCancel,
+  onSubmit: productActions.createProductMarkerModal
+})
 @reduxForm({
   form: 'createProductMarker',
   initialValues: {
     markerHidden: false,
     relevance: 'EXACT'
   }
-})
-@connect(createProductMarkerSelector, {
-  fetchSimilarProducts: productActions.fetchSimilarProducts,
-  searchProducts: productActions.searchProducts,
-  onCancel: productActions.createProductMarkerCancel,
-  onSubmit: productActions.createProductMarkerModal
 })
 export class CreateProductMarker extends Component {
 
@@ -492,7 +508,6 @@ export class CreateProductMarker extends Component {
     characters: ImmutablePropTypes.list.isRequired,
     fetchSimilarProducts: PropTypes.func.isRequired,
     handleSubmit: PropTypes.func.isRequired,
-    initializeForm: PropTypes.func.isRequired,
     productSearchResult: ImmutablePropTypes.map.isRequired,
     productSuggestions: ImmutablePropTypes.list,
     products: ImmutablePropTypes.map.isRequired, // To visualise the selected product.
@@ -512,31 +527,15 @@ export class CreateProductMarker extends Component {
   }
 
 }
-// fields: [
-//   'appearanceId',
-//   'characterId',
-//   'markerHidden',
-//   'point',
-//   'product',
-//   'productId',
-//   'productSuggestion',
-//   'relevance',
-//   'search.brandName',
-//   'search.productOfferingPriceFrom',
-//   'search.productOfferingPriceTo',
-//   'search.productOfferingShopName'
-// ],
-// form: 'updateProductMarker',
-//
 
-@reduxForm({
-  form: 'updateProductMarker'
-})
 @connect(updateProductMarkerSelector, {
   fetchSimilarProducts: productActions.fetchSimilarProducts,
   searchProducts: productActions.searchProducts,
   onCancel: productActions.updateProductMarkerCancel,
   onSubmit: productActions.updateProductMarker
+})
+@reduxForm({
+  form: 'updateProductMarker'
 })
 export class UpdateProductMarker extends Component {
 
@@ -545,7 +544,6 @@ export class UpdateProductMarker extends Component {
     characters: ImmutablePropTypes.list.isRequired,
     fetchSimilarProducts: PropTypes.func.isRequired,
     handleSubmit: PropTypes.func.isRequired,
-    initializeForm: PropTypes.func.isRequired,
     productSearchResult: ImmutablePropTypes.map.isRequired,
     productSuggestions: ImmutablePropTypes.list,
     products: ImmutablePropTypes.map.isRequired, // To visualise the selected product.
