@@ -19,6 +19,7 @@ import { createFormValueSelector } from '../../../../utils';
 
 export const formName = 'movieEdit';
 
+const valuesSelector = (state) => state.getIn([ 'form', formName, 'values' ]);
 const formErrorsSelector = (state) => state.getIn([ 'form', formName, 'syncErrors' ]);
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
 const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultLocale');
@@ -56,5 +57,6 @@ export default createStructuredSelector({
   searchedCharacterIds: searchedCharacterIdsSelector,
   searchedContentProducerIds: searchedContentProducerIdsSelector,
   searchedMediumCategoryIds: searchedMediumCategoryIdsSelector,
-  supportedLocales: supportedLocalesSelector
+  supportedLocales: supportedLocalesSelector,
+  formValues: valuesSelector
 });

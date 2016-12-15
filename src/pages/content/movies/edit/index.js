@@ -29,6 +29,7 @@ import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import { withRouter } from 'react-router';
 import { alert } from '../../../_common/components/alert';
+import { fromJS } from 'immutable';
 
 const formName = 'movieEdit';
 
@@ -84,6 +85,7 @@ class EditMovie extends Component {
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
+    formValues: ImmutablePropTypes.map,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
     loadMovie: PropTypes.func.isRequired,
@@ -142,6 +144,7 @@ class EditMovie extends Component {
       if (this.props.dirty) {
         return 'Are you sure you want to leave this page? There are still unsaved fields on this page.';
       }
+      this.props.closePopUpMessage();
       return true;
     });
   }
@@ -157,12 +160,17 @@ class EditMovie extends Component {
   }
 
   languageAdded (form) {
-    const { language } = form && form.toJS();
-    const { closeModal, dispatch, change, supportedLocales } = this.props;
+    const { language, title } = form && form.toJS();
+    const { closeModal, supportedLocales } = this.props;
+    const formValues = this.props.formValues.toJS();
     if (language) {
       const newSupportedLocales = supportedLocales.push(language);
-      dispatch(change('locales', newSupportedLocales));
-      dispatch(change('_activeLocale', language));
+      this.submit(fromJS({
+        ...formValues,
+        locales: newSupportedLocales.toJS(),
+        _activeLocale: language,
+        title: { ...formValues.title, [language]: title }
+      }));
     }
     closeModal();
   }
@@ -183,6 +191,7 @@ class EditMovie extends Component {
   }
 
   async submit (form) {
+    console.log('sumbit', form && form.toJS());
     const { initialize, params: { movieId } } = this.props;
     try {
       await this.props.submit({
@@ -288,25 +297,17 @@ class EditMovie extends Component {
           { title: currentMovie.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         {currentModal === MOVIE_CREATE_LANGUAGE &&
           <CreateLanguageModal
-            /* renderComponents={
+            renderComponents={
               <div>
                 <Field
                   component={TextInput}
-                  content={
-                    <Field
-                      component={CheckboxInput}
-                      first
-                      label='Custom title'
-                      name='hasTitle'
-                      style={styles.customTitle} />}
-                  disabled={!addLanguageHasTitle}
-                  label='Episode title'
+                  label='Movie title'
                   labelStyle={styles.titleLabel}
                   name='title'
-                  placeholder='Episode title'
+                  placeholder='Movie title'
                   required />
               </div>
-            }*/
+            }
             supportedLocales={supportedLocales}
             onCloseClick={closeModal}
             onCreate={this.languageAdded}/>}

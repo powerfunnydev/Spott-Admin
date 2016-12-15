@@ -2,7 +2,7 @@ import { persistMovie } from '../../../../actions/movie';
 
 export const MOVIE_PERSIST_ERROR = 'MOVIE_CREATE/MOVIE_PERSIST_ERROR';
 
-export function submit ({ personId, title, defaultLocale }) {
+export function submit ({ title, defaultLocale }) {
   return async (dispatch, getState) => {
     try {
       const movie = {
