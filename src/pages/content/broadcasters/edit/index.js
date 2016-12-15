@@ -17,6 +17,7 @@ import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Label from '../../../_common/inputs/_label';
 import selector from './selector';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
+import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -38,6 +39,7 @@ function validate (values, { t }) {
   form: 'broadcasterEdit',
   validate
 })
+@ensureEntityIsSaved
 @Radium
 export default class EditBroadcaster extends Component {
 
@@ -77,7 +79,7 @@ export default class EditBroadcaster extends Component {
   async submit (form) {
     try {
       await this.props.submit({ ...form.toJS(), id: this.props.params.broadcasterId });
-      this.redirect();
+      this.props.initialize(form.toJS());
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }

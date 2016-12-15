@@ -27,6 +27,10 @@ import selector from './selector';
 import Characters from '../../_helpers/_characters/list';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
+import { fromJS } from 'immutable';
+import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
+
+const formName = 'movieEdit';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -37,8 +41,10 @@ function validate (values, { t }) {
   return validationErrors;
 }
 
+// Decorators in this sequence!
 @localized
 @connect(selector, (dispatch) => ({
+  closePopUpMessage: bindActionCreators(actions.closePopUpMessage, dispatch),
   closeModal: bindActionCreators(actions.closeModal, dispatch),
   deletePosterImage: bindActionCreators(actions.deletePosterImage, dispatch),
   deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
@@ -54,9 +60,10 @@ function validate (values, { t }) {
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch)
 }))
 @reduxForm({
-  form: 'movieEdit',
+  form: formName,
   validate
 })
+@ensureEntityIsSaved
 @Radium
 export default class EditMovie extends Component {
 
@@ -68,15 +75,18 @@ export default class EditMovie extends Component {
     charactersById: ImmutablePropTypes.map.isRequired,
     children: PropTypes.node,
     closeModal: PropTypes.func.isRequired,
+    closePopUpMessage: PropTypes.func.isRequired,
     contentProducersById: ImmutablePropTypes.map.isRequired,
     currentModal: PropTypes.string,
     currentMovie: ImmutablePropTypes.map.isRequired,
     defaultLocale: PropTypes.string,
     deletePosterImage: PropTypes.func.isRequired,
     deleteProfileImage: PropTypes.func.isRequired,
+    dirty: PropTypes.bool.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
+    formValues: ImmutablePropTypes.map,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
     loadMovie: PropTypes.func.isRequired,
@@ -85,6 +95,7 @@ export default class EditMovie extends Component {
     movieCharacters: ImmutablePropTypes.map.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
+    popUpMessage: PropTypes.object,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
     searchCharacters: PropTypes.func.isRequired,
@@ -98,7 +109,9 @@ export default class EditMovie extends Component {
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
     uploadPosterImage: PropTypes.func.isRequired,
-    uploadProfileImage: PropTypes.func.isRequired
+    uploadProfileImage: PropTypes.func.isRequired,
+    onBeforeChangeTab: PropTypes.func.isRequired,
+    onChangeTab: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -109,7 +122,6 @@ export default class EditMovie extends Component {
     this.openCreateLanguageModal = :: this.openCreateLanguageModal;
     this.languageAdded = :: this.languageAdded;
     this.removeLanguage = :: this.removeLanguage;
-    this.onChangeTab = ::this.onChangeTab;
   }
 
   async componentWillMount () {
@@ -129,12 +141,17 @@ export default class EditMovie extends Component {
   }
 
   languageAdded (form) {
-    const { language } = form && form.toJS();
-    const { closeModal, dispatch, change, supportedLocales } = this.props;
+    const { language, title } = form && form.toJS();
+    const { closeModal, supportedLocales } = this.props;
+    const formValues = this.props.formValues.toJS();
     if (language) {
       const newSupportedLocales = supportedLocales.push(language);
-      dispatch(change('locales', newSupportedLocales));
-      dispatch(change('_activeLocale', language));
+      this.submit(fromJS({
+        ...formValues,
+        locales: newSupportedLocales.toJS(),
+        _activeLocale: language,
+        title: { ...formValues.title, [language]: title }
+      }));
     }
     closeModal();
   }
@@ -149,25 +166,22 @@ export default class EditMovie extends Component {
   }
 
   openCreateLanguageModal () {
-    this.props.openModal(MOVIE_CREATE_LANGUAGE);
-  }
-
-  async submit (form) {
-    const { supportedLocales, params: { movieId } } = this.props;
-    try {
-      await this.props.submit({
-        locales: supportedLocales.toArray(),
-        movieId,
-        ...form.toJS()
-      });
-      this.redirect();
-    } catch (error) {
-      throw new SubmissionError({ _error: 'common.errors.unexpected' });
+    if (this.props.onBeforeChangeTab()) {
+      this.props.openModal(MOVIE_CREATE_LANGUAGE);
     }
   }
 
-  onChangeTab (tab) {
-    this.props.routerPushWithReturnTo({ ...this.props.location, query: { ...this.props.location.query, tab } });
+  async submit (form) {
+    const { initialize, params: { movieId } } = this.props;
+    try {
+      await this.props.submit({
+        ...form.toJS(),
+        movieId
+      });
+      await initialize(form.toJS());
+    } catch (error) {
+      throw new SubmissionError({ _error: 'common.errors.unexpected' });
+    }
   }
 
   onSetDefaultLocale (locale) {
@@ -250,9 +264,19 @@ export default class EditMovie extends Component {
           <CreateLanguageModal
             supportedLocales={supportedLocales}
             onCloseClick={closeModal}
-            onCreate={this.languageAdded}/>}
+            onCreate={this.languageAdded}>
+              <div>
+                <Field
+                  component={TextInput}
+                  label='Movie title'
+                  labelStyle={styles.titleLabel}
+                  name='title'
+                  placeholder='Movie title'
+                  required />
+              </div>
+          </CreateLanguageModal>}
         <EditTemplate disableSubmit={tab > 1} onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-          <Tabs activeTab={tab} showPublishStatus onChange={this.onChangeTab}>
+          <Tabs activeTab={tab} showPublishStatus onBeforeChange={this.props.onBeforeChangeTab} onChange={this.props.onChangeTab}>
             <Tab title='Details'>
               <Section noPadding style={styles.background}>
                 <LanguageBar
@@ -264,7 +288,7 @@ export default class EditMovie extends Component {
                   supportedLocales={supportedLocales}
                   onSetDefaultLocale={this.onSetDefaultLocale}/>
               </Section>
-              <Section>
+              <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage} >
                 <FormSubtitle first>General</FormSubtitle>
                 <Field
                   component={TextInput}
@@ -336,26 +360,31 @@ export default class EditMovie extends Component {
                     <Label text='Poster image' />
                     <Dropzone
                       accept='image/*'
-                      downloadUrl={currentMovie.getIn([ 'posterImage', _activeLocale ]) &&
-                        currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ])}
+                      downloadUrl={
+                        currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ]) ||
+                        currentMovie.getIn([ 'posterImage', defaultLocale, 'url' ])}
                       imageUrl={currentMovie.getIn([ 'posterImage', _activeLocale ]) &&
-                        `${currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310`}
+                        `${currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310` ||
+                        currentMovie.getIn([ 'posterImage', defaultLocale ]) &&
+                        `${currentMovie.getIn([ 'posterImage', defaultLocale, 'url' ])}?height=459&width=310`}
                       showOnlyUploadedImage
                       type={POSTER_IMAGE}
                       onChange={({ callback, file }) => { this.props.uploadPosterImage({ locale: _activeLocale, movieId: this.props.params.movieId, image: file, callback }); }}
-                      onDelete={() => { deletePosterImage({ locale: _activeLocale, mediumId: currentMovie.get('id') }); }}/>
+                      onDelete={currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ]) ? () => { deletePosterImage({ locale: _activeLocale, mediumId: currentMovie.get('id') }); } : null}/>
                   </div>
                   <div style={styles.paddingLeftUploadImage}>
                     <Label text='Profile image' />
                     <Dropzone
-                      downloadUrl={currentMovie.getIn([ 'profileImage', _activeLocale ]) &&
-                        currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ])}
+                      downloadUrl={currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ]) ||
+                        currentMovie.getIn([ 'profileImage', defaultLocale, 'url' ])}
                       imageUrl={currentMovie.getIn([ 'profileImage', _activeLocale ]) &&
-                        `${currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                        `${currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360` ||
+                        currentMovie.getIn([ 'profileImage', defaultLocale ]) &&
+                        `${currentMovie.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
                       showOnlyUploadedImage
                       type={PROFILE_IMAGE}
                       onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, movieId: this.props.params.movieId, image: file, callback }); }}
-                      onDelete={() => { deleteProfileImage({ locale: _activeLocale, mediumId: currentMovie.get('id') }); }}/>
+                      onDelete={currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ]) ? () => { deleteProfileImage({ locale: _activeLocale, mediumId: currentMovie.get('id') }); } : null}/>
                   </div>
                 </div>
               </Section>
@@ -385,5 +414,4 @@ export default class EditMovie extends Component {
       </Root>
     );
   }
-
 }

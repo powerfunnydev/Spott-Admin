@@ -15,6 +15,7 @@ export class Tabs extends Component {
     ]),
     children: PropTypes.node.isRequired,
     showPublishStatus: PropTypes.bool,
+    onBeforeChange: PropTypes.func,
     onChange: PropTypes.func
   }
 
@@ -32,7 +33,7 @@ export class Tabs extends Component {
     }
   }
   render () {
-    const { showPublishStatus, children, activeTab, onChange } = this.props;
+    const { showPublishStatus, children, activeTab, onBeforeChange, onChange } = this.props;
     const { styles } = this.constructor;
     let tabActive = activeTab;
     if (typeof tabActive === 'string') {
@@ -40,7 +41,7 @@ export class Tabs extends Component {
     }
     return (
       <div style={styles.container}>
-        <ReactTabs tabActive={tabActive} onAfterChange={onChange}>
+        <ReactTabs tabActive={tabActive} onAfterChange={onChange} onBeforeChange={onBeforeChange}>
           {React.Children.toArray(children)}
         </ReactTabs>
         {showPublishStatus && <div style={styles.dropdownContainer}>

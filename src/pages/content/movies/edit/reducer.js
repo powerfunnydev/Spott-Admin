@@ -1,6 +1,7 @@
 import { Map } from 'immutable';
 import { MEDIUM_CATEGORIES_SEARCH_START, CHARACTERS_SEARCH_START, BROADCASTERS_SEARCH_START, CONTENT_PRODUCERS_SEARCH_START,
-    SHOW_CREATE_LANGUAGE_MODAL } from './actions';
+    SHOW_CREATE_LANGUAGE_MODAL, CLOSE_POP_UP_MESSAGE } from './actions';
+import { MOVIE_PERSIST_SUCCESS } from '../../../../actions/movie';
 
 export default (state = Map({}), action) => {
   switch (action.type) {
@@ -14,6 +15,10 @@ export default (state = Map({}), action) => {
       return state.set('currentMediumCategoriesSearchString', action.searchString);
     case SHOW_CREATE_LANGUAGE_MODAL:
       return state.set('showCreateLanguageModal', true);
+    case MOVIE_PERSIST_SUCCESS:
+      return state.set('popUpMessage', { type: 'hint', message: 'The movie is successful saved!' });
+    case CLOSE_POP_UP_MESSAGE:
+      return state.set('popUpMessage', null);
     // Uninteresting actions
     default:
       return state;

@@ -16,6 +16,7 @@ import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Label from '../../../_common/inputs/_label';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import selector from './selector';
+import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -37,6 +38,7 @@ function validate (values, { t }) {
   form: 'broadcastChannelEdit',
   validate
 })
+@ensureEntityIsSaved
 @Radium
 export default class EditBroadcastChannel extends Component {
 
@@ -77,7 +79,7 @@ export default class EditBroadcastChannel extends Component {
   async submit (form) {
     try {
       await this.props.submit({ id: this.props.params.id, ...form.toJS() });
-      this.redirect();
+      this.props.initialize(form.toJS());
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }

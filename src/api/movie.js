@@ -35,6 +35,7 @@ export async function persistMovie (baseUrl, authenticationToken, locale, {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/movies/${movieId}`);
     movie = body;
   }
+  console.log('title', title);
   movie.categories = mediumCategories && mediumCategories.map((mediumCategoryId) => ({ uuid: mediumCategoryId }));
   movie.contentProducers = contentProducers && contentProducers.map((cp) => ({ uuid: cp }));
   movie.broadcasters = broadcasters && broadcasters.map((bc) => ({ uuid: bc }));
@@ -58,6 +59,7 @@ export async function persistMovie (baseUrl, authenticationToken, locale, {
     localeData.locale = locale;
     movie.localeData.push(localeData);
   });
+  console.log('movie', movie);
   const url = `${baseUrl}/v004/media/movies`;
   const result = await post(authenticationToken, locale, url, movie);
   return transformMovie(result.body);
