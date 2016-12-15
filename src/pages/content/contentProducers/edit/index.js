@@ -17,6 +17,7 @@ import Label from '../../../_common/inputs/_label';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import selector from './selector';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
+import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -38,6 +39,7 @@ function validate (values, { t }) {
   form: 'contentProducersEdit',
   validate
 })
+@ensureEntityIsSaved
 @Radium
 export default class EditContentProducers extends Component {
 
@@ -78,7 +80,7 @@ export default class EditContentProducers extends Component {
   async submit (form) {
     try {
       await this.props.submit({ id: this.props.params.id, ...form.toJS() });
-      this.redirect();
+      this.props.initialize(form.toJS());
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }

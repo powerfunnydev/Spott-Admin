@@ -27,9 +27,8 @@ import selector from './selector';
 import Characters from '../../_helpers/_characters/list';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
-import { withRouter } from 'react-router';
-import { alert } from '../../../_common/components/alert';
 import { fromJS } from 'immutable';
+import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 
 const formName = 'movieEdit';
 
@@ -42,6 +41,7 @@ function validate (values, { t }) {
   return validationErrors;
 }
 
+// Decorators in this sequence!
 @localized
 @connect(selector, (dispatch) => ({
   closePopUpMessage: bindActionCreators(actions.closePopUpMessage, dispatch),
@@ -63,8 +63,9 @@ function validate (values, { t }) {
   form: formName,
   validate
 })
+@ensureEntityIsSaved
 @Radium
-class EditMovie extends Component {
+export default class EditMovie extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
@@ -95,10 +96,6 @@ class EditMovie extends Component {
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     popUpMessage: PropTypes.object,
-    route: PropTypes.object.isRequired,
-    router: PropTypes.shape({
-      setRouteLeaveHook: PropTypes.func.isRequired
-    }).isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
     searchCharacters: PropTypes.func.isRequired,
@@ -112,7 +109,9 @@ class EditMovie extends Component {
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
     uploadPosterImage: PropTypes.func.isRequired,
-    uploadProfileImage: PropTypes.func.isRequired
+    uploadProfileImage: PropTypes.func.isRequired,
+    onBeforeChangeTab: PropTypes.func.isRequired,
+    onChangeTab: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -123,8 +122,6 @@ class EditMovie extends Component {
     this.openCreateLanguageModal = :: this.openCreateLanguageModal;
     this.languageAdded = :: this.languageAdded;
     this.removeLanguage = :: this.removeLanguage;
-    this.onChangeTab = ::this.onChangeTab;
-    this.onBeforeChangeTab = ::this.onBeforeChangeTab;
   }
 
   async componentWillMount () {
@@ -139,22 +136,6 @@ class EditMovie extends Component {
     }
   }
 
-  componentDidMount () {
-    this.props.router.setRouteLeaveHook(this.props.route, () => {
-      if (this.props.dirty) {
-        return 'Are you sure you want to leave this page? There are still unsaved fields on this page.';
-      }
-      this.props.closePopUpMessage();
-      return true;
-    });
-  }
-
-  componentWillReceiveProps (nextProps) {
-    // When we edit the form after a save, we want to clear the popup.
-    if (this.props.popUpMessage && nextProps.dirty) {
-      this.props.closePopUpMessage();
-    }
-  }
   redirect () {
     this.props.routerPushWithReturnTo('content/movies', true);
   }
@@ -185,13 +166,12 @@ class EditMovie extends Component {
   }
 
   openCreateLanguageModal () {
-    if (this.onBeforeChangeTab()) {
+    if (this.props.onBeforeChangeTab()) {
       this.props.openModal(MOVIE_CREATE_LANGUAGE);
     }
   }
 
   async submit (form) {
-    console.log('sumbit', form && form.toJS());
     const { initialize, params: { movieId } } = this.props;
     try {
       await this.props.submit({
@@ -202,21 +182,6 @@ class EditMovie extends Component {
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
-  }
-
-  onBeforeChangeTab () {
-    if (this.props.dirty) {
-      alert('There are still unsaved fields. You need to save this entity before you can trigger this action.');
-      return false;
-    }
-    return true;
-  }
-
-  onChangeTab (tab) {
-    if (this.props.popUpMessage) {
-      this.props.closePopUpMessage();
-    }
-    this.props.routerPushWithReturnTo({ ...this.props.location, query: { ...this.props.location.query, tab } });
   }
 
   onSetDefaultLocale (locale) {
@@ -297,7 +262,9 @@ class EditMovie extends Component {
           { title: currentMovie.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         {currentModal === MOVIE_CREATE_LANGUAGE &&
           <CreateLanguageModal
-            renderComponents={
+            supportedLocales={supportedLocales}
+            onCloseClick={closeModal}
+            onCreate={this.languageAdded}>
               <div>
                 <Field
                   component={TextInput}
@@ -307,12 +274,9 @@ class EditMovie extends Component {
                   placeholder='Movie title'
                   required />
               </div>
-            }
-            supportedLocales={supportedLocales}
-            onCloseClick={closeModal}
-            onCreate={this.languageAdded}/>}
+          </CreateLanguageModal>}
         <EditTemplate disableSubmit={tab > 1} onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-          <Tabs activeTab={tab} showPublishStatus onBeforeChange={this.onBeforeChangeTab} onChange={this.onChangeTab}>
+          <Tabs activeTab={tab} showPublishStatus onBeforeChange={this.props.onBeforeChangeTab} onChange={this.props.onChangeTab}>
             <Tab title='Details'>
               <Section noPadding style={styles.background}>
                 <LanguageBar
@@ -396,26 +360,31 @@ class EditMovie extends Component {
                     <Label text='Poster image' />
                     <Dropzone
                       accept='image/*'
-                      downloadUrl={currentMovie.getIn([ 'posterImage', _activeLocale ]) &&
-                        currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ])}
+                      downloadUrl={
+                        currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ]) ||
+                        currentMovie.getIn([ 'posterImage', defaultLocale, 'url' ])}
                       imageUrl={currentMovie.getIn([ 'posterImage', _activeLocale ]) &&
-                        `${currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310`}
+                        `${currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310` ||
+                        currentMovie.getIn([ 'posterImage', defaultLocale ]) &&
+                        `${currentMovie.getIn([ 'posterImage', defaultLocale, 'url' ])}?height=459&width=310`}
                       showOnlyUploadedImage
                       type={POSTER_IMAGE}
                       onChange={({ callback, file }) => { this.props.uploadPosterImage({ locale: _activeLocale, movieId: this.props.params.movieId, image: file, callback }); }}
-                      onDelete={() => { deletePosterImage({ locale: _activeLocale, mediumId: currentMovie.get('id') }); }}/>
+                      onDelete={currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ]) ? () => { deletePosterImage({ locale: _activeLocale, mediumId: currentMovie.get('id') }); } : null}/>
                   </div>
                   <div style={styles.paddingLeftUploadImage}>
                     <Label text='Profile image' />
                     <Dropzone
-                      downloadUrl={currentMovie.getIn([ 'profileImage', _activeLocale ]) &&
-                        currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ])}
+                      downloadUrl={currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ]) ||
+                        currentMovie.getIn([ 'profileImage', defaultLocale, 'url' ])}
                       imageUrl={currentMovie.getIn([ 'profileImage', _activeLocale ]) &&
-                        `${currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                        `${currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360` ||
+                        currentMovie.getIn([ 'profileImage', defaultLocale ]) &&
+                        `${currentMovie.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
                       showOnlyUploadedImage
                       type={PROFILE_IMAGE}
                       onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, movieId: this.props.params.movieId, image: file, callback }); }}
-                      onDelete={() => { deleteProfileImage({ locale: _activeLocale, mediumId: currentMovie.get('id') }); }}/>
+                      onDelete={currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ]) ? () => { deleteProfileImage({ locale: _activeLocale, mediumId: currentMovie.get('id') }); } : null}/>
                   </div>
                 </div>
               </Section>
@@ -446,5 +415,3 @@ class EditMovie extends Component {
     );
   }
 }
-
-export default withRouter(EditMovie);

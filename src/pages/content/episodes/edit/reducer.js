@@ -1,6 +1,7 @@
 import { Map } from 'immutable';
-import { CHARACTERS_SEARCH_START, BROADCASTERS_SEARCH_START, CONTENT_PRODUCERS_SEARCH_START, MEDIUM_CATEGORIES_SEARCH_START,
+import { CLOSE_POP_UP_MESSAGE, CHARACTERS_SEARCH_START, BROADCASTERS_SEARCH_START, CONTENT_PRODUCERS_SEARCH_START, MEDIUM_CATEGORIES_SEARCH_START,
   SHOW_CREATE_LANGUAGE_MODAL, SERIES_ENTRIES_SEARCH_START, SERIES_ENTRY_SEASONS_SEARCH_START } from './actions';
+import { EPISODE_PERSIST_SUCCESS } from '../../../../actions/episode';
 
 export default (state = Map({}), action) => {
   switch (action.type) {
@@ -18,6 +19,10 @@ export default (state = Map({}), action) => {
       return state.set('currentMediumCategoriesSearchString', action.searchString);
     case SHOW_CREATE_LANGUAGE_MODAL:
       return state.set('showCreateLanguageModal', true);
+    case EPISODE_PERSIST_SUCCESS:
+      return state.set('popUpMessage', { type: 'hint', message: 'The episode is successful saved!' });
+    case CLOSE_POP_UP_MESSAGE:
+      return state.set('popUpMessage', null);
     // Uninteresting actions
     default:
       return state;

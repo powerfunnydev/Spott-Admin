@@ -23,6 +23,7 @@ import Checkbox from '../../_common/inputs/checkbox';
 import { INACTIVE, disabledReasons, userStatus as userStates } from '../../../constants/userRoles';
 import { FETCHING } from '../../../constants/statusTypes';
 import BreadCrumbs from '../../_common/components/breadCrumbs';
+import ensureEntityIsSaved from '../../_common/decorators/ensureEntityIsSaved';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -52,6 +53,7 @@ function validate (values, { t }) {
   form: 'userEdit',
   validate
 })
+@ensureEntityIsSaved
 @Radium
 export default class EditUser extends Component {
 
@@ -111,7 +113,7 @@ export default class EditUser extends Component {
   async submit (form) {
     try {
       await this.props.submit({ userId: this.props.params.id, ...form.toJS() });
-      this.redirect();
+      this.props.initialize(form.toJS());
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }

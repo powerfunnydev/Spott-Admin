@@ -15,9 +15,15 @@ export const SEASON_FETCH_ENTRY_ERROR = 'SEASONS_EDIT/FETCH_ENTRY_ERROR';
 export const SHOW_CREATE_LANGUAGE_MODAL = 'SEASONS_EDIT/SHOW_CREATE_LANGUAGE_MODAL';
 export const REMOVE_CREATE_LANGUAGE_MODAL = 'SEASONS_EDIT/REMOVE_CREATE_LANGUAGE_MODAL';
 
+export const CLOSE_POP_UP_MESSAGE = 'SEASONS_EDIT/CLOSE_POP_UP_MESSAGE';
+
 export const submit = persistSeason;
 export const uploadProfileImage = dataUploadProfileImage;
 export const uploadPosterImage = dataUploadPosterImage;
+
+export function closePopUpMessage () {
+  return { type: CLOSE_POP_UP_MESSAGE };
+}
 
 export function loadSeason (seasonId) {
   return async (dispatch, getState) => {

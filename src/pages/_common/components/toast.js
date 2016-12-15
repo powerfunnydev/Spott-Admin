@@ -10,7 +10,7 @@ import toastSelector from '../../../selectors/toast';
 import { colors, makeTextStyle, fontWeights } from '../styles';
 import CompletedSVG from '../images/completed';
 import PlusSVG from '../images/plus';
-import { BROADCAST_CHANNEL, BROADCASTER, CONTENT_PRODUCER, EPISODE, MOVIE, SEASON,
+import { BROADCAST_CHANNEL, BROADCASTER, CHARACTER, CONTENT_PRODUCER, EPISODE, MOVIE, PERSON, SEASON,
     SERIES_ENTRY, USER, TV_GUIDE_ENTRY } from '../../../constants/entityTypes';
 
 @connect(null, (dispatch) => ({
@@ -102,10 +102,12 @@ export class SuccessMessage extends Component {
     super(props);
     this.broadcastChannelPersistSuccess = ::this.broadcastChannelPersistSuccess;
     this.broadcasterPersistSuccess = ::this.broadcasterPersistSuccess;
+    this.characterPersistSuccess = ::this.characterPersistSuccess;
     this.contentProducerPersistSuccess = ::this.contentProducerPersistSuccess;
+    this.episodePersistSuccess = ::this.episodePersistSuccess;
+    this.personPersistSuccess = ::this.personPersistSuccess;
     this.userPersistSuccess = ::this.userPersistSuccess;
     this.seasonPersistSuccess = ::this.seasonPersistSuccess;
-    this.episodePersistSuccess = ::this.episodePersistSuccess;
     this.seriesEntryPersistSuccess = ::this.seriesEntryPersistSuccess;
     this.seriesEntryPersistSuccess = ::this.seriesEntryPersistSuccess;
   }
@@ -132,6 +134,17 @@ export class SuccessMessage extends Component {
       <span>
         Broadcaster <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/broadcasters/edit/${broadcaster.id}`)}>
           {broadcaster.name}
+        </span> has been succesfully persisted.
+      </span>
+    );
+  }
+
+  characterPersistSuccess (character) {
+    const { styles } = this.constructor;
+    return (
+      <span>
+        Character <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/characters/read/${character.id}`)}>
+          {character.name[character.defaultLocale]}
         </span> has been succesfully persisted.
       </span>
     );
@@ -165,6 +178,17 @@ export class SuccessMessage extends Component {
       <span>
         Movie <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/movies/read/${movie.id}`)}>
           {movie.title[movie.defaultLocale]}
+        </span> has been succesfully persisted.
+      </span>
+    );
+  }
+
+  personPersistSuccess (person) {
+    const { styles } = this.constructor;
+    return (
+      <span>
+        Person <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/persons/read/${person.id}`)}>
+          {person.fullName}
         </span> has been succesfully persisted.
       </span>
     );
@@ -231,12 +255,16 @@ export class SuccessMessage extends Component {
       return this.broadcastChannelPersistSuccess(entity);
     } else if (entityType === BROADCASTER) {
       return this.broadcasterPersistSuccess(entity);
+    } else if (entityType === CHARACTER) {
+      return this.characterPersistSuccess(entity);
     } else if (entityType === CONTENT_PRODUCER) {
       return this.contentProducerPersistSuccess(entity);
     } else if (entityType === EPISODE) {
       return this.episodePersistSuccess(entity);
     } else if (entityType === MOVIE) {
       return this.moviePersistSuccess(entity);
+    } else if (entityType === PERSON) {
+      return this.personPersistSuccess(entity);
     } else if (entityType === SEASON) {
       return this.seasonPersistSuccess(entity);
     } else if (entityType === SERIES_ENTRY) {

@@ -21,6 +21,7 @@ import episodesEdit from '../pages/content/episodes/edit/reducer';
 import moviesList from '../pages/content/movies/list/reducer';
 import moviesEdit from '../pages/content/movies/edit/reducer';
 import personsList from '../pages/content/persons/list/reducer';
+import personsEdit from '../pages/content/persons/edit/reducer';
 import LinkUserModal from '../pages/_common/components/linkUserModal/reducer';
 import reporting from '../pages/reporting/reducer';
 import relatedVideoPersist from '../pages/content/_relatedVideo/persist/reducer';
@@ -28,6 +29,7 @@ import seasonsCreate from '../pages/content/seasons/create/reducer';
 import seasonsEdit from '../pages/content/seasons/edit/reducer';
 import seasonsList from '../pages/content/seasons/list/reducer';
 import seasonsReadEpisodes from '../pages/content/seasons/read/episodes/reducer';
+import seriesEdit from '../pages/content/series/edit/reducer';
 import seriesList from '../pages/content/series/list/reducer';
 import seriesReadSeasons from '../pages/content/series/read/seasons/reducer';
 import tvGuideCreate from '../pages/tvGuide/create/reducer';
@@ -82,6 +84,7 @@ export default combineReducers({
       list: moviesList
     }),
     persons: combineReducers({
+      edit: personsEdit,
       list: personsList
     }),
     seasons: combineReducers({
@@ -93,6 +96,7 @@ export default combineReducers({
       })
     }),
     series: combineReducers({
+      edit: seriesEdit,
       list: seriesList,
       read: combineReducers({
         seasons: seriesReadSeasons
