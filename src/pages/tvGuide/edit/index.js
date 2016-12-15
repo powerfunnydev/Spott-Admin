@@ -17,6 +17,7 @@ import selector from './selector';
 import Section from '../../_common/components/section';
 import { routerPushWithReturnTo } from '../../../actions/global';
 import { Tabs, Tab } from '../../_common/components/formTabs';
+import ensureEntityIsSaved from '../../_common/decorators/ensureEntityIsSaved';
 
 function validate (values, { medium, t }) {
   const validationErrors = {};
@@ -67,6 +68,7 @@ function validate (values, { medium, t }) {
   form: 'tvGuideEditEntry',
   validate
 })
+@ensureEntityIsSaved
 @Radium
 export default class EditTvGuideEntry extends Component {
 
@@ -137,7 +139,7 @@ export default class EditTvGuideEntry extends Component {
   async submit (form) {
     try {
       await this.props.submit({ id: this.props.params.tvGuideEntryId, ...form.toJS() });
-      this.redirect();
+      this.props.initialize(form.toJS());
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }

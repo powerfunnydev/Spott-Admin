@@ -26,6 +26,7 @@ const formErrorsSelector = (state) => state.getIn([ 'form', formName, 'syncError
 // !!! selector of the addLanguage form !!!
 const addLanguageHasTitleSelector = createFormValueSelector('addLanguage', 'hasTitle');
 
+const valuesSelector = (state) => state.getIn([ 'form', formName, 'values' ]);
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
 const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultLocale');
 const currentSeasonIdSelector = createFormValueSelector(formName, 'seasonId');
@@ -41,6 +42,7 @@ const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'conte
 const currentBroadcastersSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentBroadcastersSearchString' ]);
 const currentContentProducersSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentContentProducersSearchString' ]);
 const currentMediumCategoriesSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentMediumCategoriesSearchString' ]);
+const popUpMessageSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'popUpMessage' ]);
 
 const searchedCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCharactersSearchStringSelector);
 const searchedSeriesEntryIdsSelector = createEntityIdsByRelationSelector(searchStringHasSeriesEntriesRelationsSelector, currentSeriesEntriesSearchStringSelector);
@@ -64,8 +66,10 @@ export default createStructuredSelector({
   defaultLocale: currentDefaultLocaleSelector,
   episodeCharacters: episodeCharactersSelector,
   errors: formErrorsSelector,
+  formValues: valuesSelector,
   hasTitle: hasTitleSelector,
   mediumCategoriesById: listMediumCategoriesEntitiesSelector,
+  popUpMessage: popUpMessageSelector,
   searchedBroadcasterIds: searchedBroadcasterIdsSelector,
   searchedCharacterIds: searchedCharacterIdsSelector,
   searchedContentProducerIds: searchedContentProducerIdsSelector,

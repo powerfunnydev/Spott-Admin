@@ -36,9 +36,15 @@ export const EPISODE_FETCH_ENTRY_ERROR = 'EPISODES_EDIT/FETCH_ENTRY_ERROR';
 export const SHOW_CREATE_LANGUAGE_MODAL = 'EPISODES_EDIT/SHOW_CREATE_LANGUAGE_MODAL';
 export const REMOVE_CREATE_LANGUAGE_MODAL = 'EPISODES_EDIT/REMOVE_CREATE_LANGUAGE_MODAL';
 
+export const CLOSE_POP_UP_MESSAGE = 'EPISODES_EDIT/CLOSE_POP_UP_MESSAGE';
+
 export const submit = persistEpisode;
 export const uploadProfileImage = dataUploadProfileImage;
 export const uploadPosterImage = dataUploadPosterImage;
+
+export function closePopUpMessage () {
+  return { type: CLOSE_POP_UP_MESSAGE };
+}
 
 export function loadEpisode (episodeId) {
   return async (dispatch, getState) => {

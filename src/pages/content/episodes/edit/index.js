@@ -27,6 +27,8 @@ import selector from './selector';
 import Characters from '../../_helpers/_characters/list';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
+import { fromJS } from 'immutable';
+import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -39,8 +41,10 @@ function validate (values, { t }) {
   return validationErrors;
 }
 
+// Decorators in this sequence!
 @localized
 @connect(selector, (dispatch) => ({
+  closePopUpMessage: bindActionCreators(actions.closePopUpMessage, dispatch),
   closeModal: bindActionCreators(actions.closeModal, dispatch),
   deletePosterImage: bindActionCreators(actions.deletePosterImage, dispatch),
   deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
@@ -61,6 +65,7 @@ function validate (values, { t }) {
   form: 'episodeEdit',
   validate
 })
+@ensureEntityIsSaved
 @Radium
 export default class EditEpisode extends Component {
 
@@ -73,6 +78,7 @@ export default class EditEpisode extends Component {
     charactersById: ImmutablePropTypes.map.isRequired,
     children: PropTypes.node,
     closeModal: PropTypes.func.isRequired,
+    closePopUpMessage: PropTypes.func.isRequired,
     contentProducersById: ImmutablePropTypes.map.isRequired,
     currentEpisode: ImmutablePropTypes.map.isRequired,
     currentModal: PropTypes.string,
@@ -81,10 +87,12 @@ export default class EditEpisode extends Component {
     defaultLocale: PropTypes.string,
     deletePosterImage: PropTypes.func.isRequired,
     deleteProfileImage: PropTypes.func.isRequired,
+    dirty: PropTypes.bool.isRequired,
     dispatch: PropTypes.func.isRequired,
     episodeCharacters: ImmutablePropTypes.map.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
+    formValues: ImmutablePropTypes.map,
     handleSubmit: PropTypes.func.isRequired,
     hasTitle: ImmutablePropTypes.map,
     initialize: PropTypes.func.isRequired,
@@ -93,6 +101,7 @@ export default class EditEpisode extends Component {
     mediumCategoriesById: ImmutablePropTypes.map.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
+    popUpMessage: PropTypes.object,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
     searchCharacters: PropTypes.func.isRequired,
@@ -112,8 +121,9 @@ export default class EditEpisode extends Component {
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
     uploadPosterImage: PropTypes.func.isRequired,
-    uploadProfileImage: PropTypes.func.isRequired
-
+    uploadProfileImage: PropTypes.func.isRequired,
+    onBeforeChangeTab: PropTypes.func.isRequired,
+    onChangeTab: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -124,7 +134,6 @@ export default class EditEpisode extends Component {
     this.openCreateLanguageModal = :: this.openCreateLanguageModal;
     this.languageAdded = :: this.languageAdded;
     this.removeLanguage = :: this.removeLanguage;
-    this.onChangeTab = ::this.onChangeTab;
   }
 
   async componentWillMount () {
@@ -142,18 +151,22 @@ export default class EditEpisode extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/series', true);
+    this.props.routerPushWithReturnTo(`content/series/read/${this.props.params.seriesEntryId}/seasons/read/${this.props.params.seasonId}`, true);
   }
 
   languageAdded (form) {
     const { language, hasTitle, title } = form && form.toJS();
-    const { closeModal, dispatch, change, supportedLocales } = this.props;
+    const { closeModal, supportedLocales } = this.props;
+    const formValues = this.props.formValues.toJS();
     if (language) {
       const newSupportedLocales = supportedLocales.push(language);
-      dispatch(change('locales', newSupportedLocales));
-      dispatch(change('_activeLocale', language));
-      dispatch(change(`hasTitle.${language}`, hasTitle));
-      dispatch(change(`title.${language}`, title));
+      this.submit(fromJS({
+        ...formValues,
+        locales: newSupportedLocales.toJS(),
+        _activeLocale: language,
+        title: { ...formValues.title, [language]: title },
+        hasTitle: { ...formValues.hasTitle, [language]: hasTitle }
+      }));
     }
     closeModal();
   }
@@ -168,25 +181,22 @@ export default class EditEpisode extends Component {
   }
 
   openCreateLanguageModal () {
-    this.props.openModal(EPISODE_CREATE_LANGUAGE);
-  }
-
-  async submit (form) {
-    const { supportedLocales, params: { episodeId } } = this.props;
-    try {
-      await this.props.submit({
-        locales: supportedLocales.toArray(),
-        episodeId,
-        ...form.toJS()
-      });
-      this.redirect();
-    } catch (error) {
-      throw new SubmissionError({ _error: 'common.errors.unexpected' });
+    if (this.props.onBeforeChangeTab()) {
+      this.props.openModal(EPISODE_CREATE_LANGUAGE);
     }
   }
 
-  onChangeTab (tab) {
-    this.props.routerPushWithReturnTo({ ...this.props.location, query: { ...this.props.location.query, tab } });
+  async submit (form) {
+    const { initialize, params: { episodeId } } = this.props;
+    try {
+      await this.props.submit({
+        ...form.toJS(),
+        episodeId
+      });
+      await initialize(form.toJS());
+    } catch (error) {
+      throw new SubmissionError({ _error: 'common.errors.unexpected' });
+    }
   }
 
   onSetDefaultLocale (locale) {
@@ -260,7 +270,6 @@ export default class EditEpisode extends Component {
       searchedCharacterIds, charactersById, searchCharacters, deleteProfileImage, episodeCharacters,
       deletePosterImage, mediumCategoriesById, searchMediumCategories, searchedMediumCategoryIds, location: { query: { tab } }
     } = this.props;
-    console.log('currentEpisode', currentEpisode && currentEpisode.toJS());
     return (
       <Root style={styles.backgroundRoot}>
         <Header currentLocation={location} hideHomePageLinks />
@@ -272,30 +281,27 @@ export default class EditEpisode extends Component {
           { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: location } ]}/>
         {currentModal === EPISODE_CREATE_LANGUAGE &&
           <CreateLanguageModal
-            /* renderComponents={
-              <div>
-                <Field
-                  component={TextInput}
-                  content={
-                    <Field
-                      component={CheckboxInput}
-                      first
-                      label='Custom title'
-                      name='hasTitle'
-                      style={styles.customTitle} />}
-                  disabled={!addLanguageHasTitle}
-                  label='Episode title'
-                  labelStyle={styles.titleLabel}
-                  name='title'
-                  placeholder='Episode title'
-                  required />
-              </div>
-            }*/
             supportedLocales={supportedLocales}
             onCloseClick={closeModal}
-            onCreate={this.languageAdded}/>}
+            onCreate={this.languageAdded}>
+            <Field
+              component={TextInput}
+              content={
+                <Field
+                  component={CheckboxInput}
+                  first
+                  label='Custom title'
+                  name='hasTitle'
+                  style={styles.customTitle} />}
+              disabled={!addLanguageHasTitle}
+              label='Episode title'
+              labelStyle={styles.titleLabel}
+              name='title'
+              placeholder='Episode title'
+              required />
+          </CreateLanguageModal>}
         <EditTemplate disableSubmit={tab > 1} onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-          <Tabs activeTab={tab} showPublishStatus onChange={this.onChangeTab}>
+          <Tabs activeTab={tab} showPublishStatus onBeforeChange={this.props.onBeforeChangeTab} onChange={this.props.onChangeTab}>
             <Tab title='Details'>
               <Section noPadding style={styles.background}>
                 <LanguageBar
@@ -307,7 +313,7 @@ export default class EditEpisode extends Component {
                   supportedLocales={supportedLocales}
                   onSetDefaultLocale={this.onSetDefaultLocale}/>
               </Section>
-              <Section>
+              <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage} >
                 <FormSubtitle first>General</FormSubtitle>
                 <Field
                   component={SelectInput}
@@ -408,26 +414,30 @@ export default class EditEpisode extends Component {
                     <Label text='Poster image' />
                     <Dropzone
                       accept='image/*'
-                      downloadUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
-                        currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}
+                      downloadUrl={currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ]) ||
+                        currentEpisode.getIn([ 'posterImage', defaultLocale, 'url' ])}
                       imageUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
-                        `${currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310`}
+                        `${currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310` ||
+                        currentEpisode.getIn([ 'posterImage', defaultLocale ]) &&
+                        `${currentEpisode.getIn([ 'posterImage', defaultLocale, 'url' ])}?height=459&width=310`}
                       showOnlyUploadedImage
                       type={POSTER_IMAGE}
                       onChange={({ callback, file }) => { this.props.uploadPosterImage({ locale: _activeLocale, episodeId: this.props.params.episodeId, image: file, callback }); }}
-                      onDelete={() => { deletePosterImage({ locale: _activeLocale, mediumId: currentEpisode.get('id') }); }}/>
+                      onDelete={currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ]) ? () => { deletePosterImage({ locale: _activeLocale, mediumId: currentEpisode.get('id') }); } : null}/>
                   </div>
                   <div style={styles.paddingLeftUploadImage}>
                     <Label text='Profile image' />
                     <Dropzone
-                      downloadUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
-                        currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}
+                      downloadUrl={currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ]) ||
+                        currentEpisode.getIn([ 'profileImage', defaultLocale, 'url' ])}
                       imageUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
-                        `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                        `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360` ||
+                        currentEpisode.getIn([ 'profileImage', defaultLocale ]) &&
+                        `${currentEpisode.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
                       showOnlyUploadedImage
                       type={PROFILE_IMAGE}
                       onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, episodeId: this.props.params.episodeId, image: file, callback }); }}
-                      onDelete={() => { deleteProfileImage({ locale: _activeLocale, mediumId: currentEpisode.get('id') }); }}/>
+                      onDelete={currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ]) ? () => { deleteProfileImage({ locale: _activeLocale, mediumId: currentEpisode.get('id') }); } : null}/>
                   </div>
                 </div>
               </Section>
@@ -457,5 +467,4 @@ export default class EditEpisode extends Component {
       </Root>
     );
   }
-
 }

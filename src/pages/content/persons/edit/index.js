@@ -26,6 +26,8 @@ import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import ImageDropzone from '../../../_common/dropzone/imageDropzone';
 import { ImageWithDropdown } from '../../../_common/components/imageWithDropdown';
 import { PROFILE_IMAGE } from '../../../../constants/imageTypes';
+import { fromJS } from 'immutable';
+import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -38,9 +40,11 @@ function validate (values, { t }) {
   return validationErrors;
 }
 
+// Decorators in this sequence!
 @localized
 @connect(selector, (dispatch) => ({
   closeModal: bindActionCreators(actions.closeModal, dispatch),
+  closePopUpMessage: bindActionCreators(actions.closePopUpMessage, dispatch),
   deleteFaceImage: bindActionCreators(actions.deleteFaceImage, dispatch),
   deletePortraitImage: bindActionCreators(actions.deletePortraitImage, dispatch),
   deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
@@ -57,6 +61,7 @@ function validate (values, { t }) {
   form: 'personEdit',
   validate
 })
+@ensureEntityIsSaved
 @Radium
 export default class EditPerson extends Component {
 
@@ -64,6 +69,7 @@ export default class EditPerson extends Component {
     _activeLocale: PropTypes.string,
     change: PropTypes.func.isRequired,
     closeModal: PropTypes.func.isRequired,
+    closePopUpMessage: PropTypes.func.isRequired,
     currentModal: PropTypes.string,
     currentPerson: ImmutablePropTypes.map.isRequired,
     defaultLocale: PropTypes.string,
@@ -75,6 +81,7 @@ export default class EditPerson extends Component {
     errors: PropTypes.object,
     faceImages: ImmutablePropTypes.map.isRequired,
     fetchFaceImages: PropTypes.func,
+    formValues: ImmutablePropTypes.map,
     genders: ImmutablePropTypes.map.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
@@ -82,13 +89,16 @@ export default class EditPerson extends Component {
     location: PropTypes.object.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
+    popUpMessage: PropTypes.object,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
     uploadFaceImage: PropTypes.func.isRequired,
     uploadPortraitImage: PropTypes.func.isRequired,
-    uploadProfileImage: PropTypes.func.isRequired
+    uploadProfileImage: PropTypes.func.isRequired,
+    onBeforeChangeTab: PropTypes.func.isRequired,
+    onChangeTab: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -119,11 +129,15 @@ export default class EditPerson extends Component {
 
   languageAdded (form) {
     const { language } = form && form.toJS();
-    const { closeModal, dispatch, change, supportedLocales } = this.props;
+    const { closeModal, supportedLocales } = this.props;
+    const formValues = this.props.formValues.toJS();
     if (language) {
       const newSupportedLocales = supportedLocales.push(language);
-      dispatch(change('locales', newSupportedLocales));
-      dispatch(change('_activeLocale', language));
+      this.submit(fromJS({
+        ...formValues,
+        locales: newSupportedLocales.toJS(),
+        _activeLocale: language
+      }));
     }
     closeModal();
   }
@@ -138,19 +152,20 @@ export default class EditPerson extends Component {
   }
 
   openCreateLanguageModal () {
-    this.props.openModal(PERSON_CREATE_LANGUAGE);
+    if (this.props.onBeforeChangeTab()) {
+      this.props.openModal(PERSON_CREATE_LANGUAGE);
+    }
   }
 
   async submit (form) {
-    const { supportedLocales, params: { personId } } = this.props;
+    const { initialize, params: { personId } } = this.props;
 
     try {
       await this.props.submit({
         ...form.toJS(),
-        locales: supportedLocales.toArray(),
         personId
       });
-      this.redirect();
+      await initialize(form.toJS());
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
@@ -202,7 +217,7 @@ export default class EditPerson extends Component {
     const styles = this.constructor.styles;
     const { _activeLocale, errors, currentModal, closeModal, genders, supportedLocales, defaultLocale,
       currentPerson, location, handleSubmit, deletePortraitImage, deleteProfileImage, faceImages,
-      deleteFaceImage, fetchFaceImages } = this.props;
+      deleteFaceImage, fetchFaceImages, location: { query: { tab } } } = this.props;
     return (
         <Root style={styles.backgroundRoot}>
           <Header currentLocation={location} hideHomePageLinks />
@@ -216,7 +231,7 @@ export default class EditPerson extends Component {
               onCloseClick={closeModal}
               onCreate={this.languageAdded}/>}
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-            <Tabs showPublishStatus>
+            <Tabs activeTab={tab} showPublishStatus onBeforeChange={this.props.onBeforeChangeTab} onChange={this.props.onChangeTab}>
               <Tab title='Details'>
                 <Section noPadding style={styles.background}>
                   <LanguageBar
@@ -228,7 +243,7 @@ export default class EditPerson extends Component {
                     supportedLocales={supportedLocales}
                     onSetDefaultLocale={this.onSetDefaultLocale}/>
                 </Section>
-                <Section>
+                <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage}>
                   <FormSubtitle first>General</FormSubtitle>
                   <Field
                     component={TextInput}
