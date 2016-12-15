@@ -76,51 +76,6 @@ export default class Dropdown extends Component {
     this.setState({ ...this.state, isOpen: false });
   }
 
-  renderTopElement () {
-    const { disabled, placeholder, getItemText, input } = this.props;
-    const { styles } = this.constructor;
-    return (
-      <div key='dropdownTopElement' style={[ styles.topElement, this.state.isOpen && styles.isOpen, disabled && styles.disabled ]} onMouseDown={!disabled && this.handleMouseDown.bind(this)}>
-        { // get label of selected item
-          input && input.value && <div style={styles.topElementText}>{getItemText(input.value)}</div> ||
-         // if there is not an item selected, show placeholder
-         <div style={[ styles.topElementText ]}>{placeholder}</div>}
-         <div style={styles.arrow}>
-          <ArrowSVG color={colors.darkGray2} style={[ !this.state.isOpen && styles.flipArrow ]} />
-         </div>
-      </div>);
-  }
-
-  renderMenu () {
-    const { createOption, createOptionText, input, options, getItemText } = this.props;
-    const { styles } = this.constructor;
-    return (
-      <div key='options' style={styles.options}>
-        {options.map((id, index) => {
-          return (
-            <div key={`dropdownOptionWithLine${index}`}>
-              <div
-                key={`dropdownOption${index}`}
-                style={styles.option}
-                onClick={this.optionSelected.bind(this, id)}>
-                  <div style={styles.optionText}>{getItemText(id)}</div>
-                  {input && input.value === id && <div style={styles.optionSelected}><SelectedSVG color={colors.primaryBlue}/></div>}
-              </div>
-              {options.length - 1 !== index && <div style={styles.line}/>}
-            </div>);
-        })}
-        {createOption &&
-          <div>
-            <div style={styles.line}/>
-            <div style={styles.createOption} onClick={this.onCreateOptionClick}>
-              <div style={styles.plus}><PlusSVG color={colors.primaryBlue}/></div>
-              {createOptionText || 'Create option' }
-            </div>
-          </div>}
-      </div>
-    );
-  }
-
   onCreateOptionClick () {
     const { createOption } = this.props;
     this.toggleOpen();
@@ -224,6 +179,51 @@ export default class Dropdown extends Component {
       paddingRight: '6px'
     }
   };
+
+  renderTopElement () {
+    const { disabled, placeholder, getItemText, input } = this.props;
+    const { styles } = this.constructor;
+    return (
+      <div key='dropdownTopElement' style={[ styles.topElement, this.state.isOpen && styles.isOpen, disabled && styles.disabled ]} onMouseDown={!disabled && this.handleMouseDown.bind(this)}>
+        { // get label of selected item
+          input && input.value && <div style={styles.topElementText}>{getItemText(input.value)}</div> ||
+         // if there is not an item selected, show placeholder
+         <div style={[ styles.topElementText ]}>{placeholder}</div>}
+         <div style={styles.arrow}>
+          <ArrowSVG color={colors.darkGray2} style={[ !this.state.isOpen && styles.flipArrow ]} />
+         </div>
+      </div>);
+  }
+
+  renderMenu () {
+    const { createOption, createOptionText, input, options, getItemText } = this.props;
+    const { styles } = this.constructor;
+    return (
+      <div key='options' style={styles.options}>
+        {options.map((id, index) => {
+          return (
+            <div key={`dropdownOptionWithLine${index}`}>
+              <div
+                key={`dropdownOption${index}`}
+                style={styles.option}
+                onClick={this.optionSelected.bind(this, id)}>
+                  <div style={styles.optionText}>{getItemText(id)}</div>
+                  {input && input.value === id && <div style={styles.optionSelected}><SelectedSVG color={colors.primaryBlue}/></div>}
+              </div>
+              {options.length - 1 !== index && <div style={styles.line}/>}
+            </div>);
+        })}
+        {createOption &&
+          <div>
+            <div style={styles.line}/>
+            <div style={styles.createOption} onClick={this.onCreateOptionClick}>
+              <div style={styles.plus}><PlusSVG color={colors.primaryBlue}/></div>
+              {createOptionText || 'Create option' }
+            </div>
+          </div>}
+      </div>
+    );
+  }
 
   render () {
     const { style } = this.props;

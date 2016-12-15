@@ -4,9 +4,6 @@ import { ATTENTION, DONE, REVIEW } from '../../constants/sceneStatusTypes';
 
 // Navigational images
 const arrowImage = require('./images/arrow.svg');
-// Frame visibility images
-const eyeImage = require('./images/eye.svg');
-const eyeCrossedImage = require('./images/eyeCrossed.svg');
 // Frame status images
 const doneImage = require('./images/done.svg');
 const doneActiveImage = require('./images/doneActive.svg');
@@ -144,58 +141,6 @@ class SceneStatusAndNavigator extends Component {
 
 }
 
-@Radium
-class FrameHider extends Component {
-
-  static propTypes = {
-    // Information visualized by this component
-    isHidden: PropTypes.bool.isRequired,
-    // Override the inline-styles of the root element.
-    style: PropTypes.object,
-    // Actions triggered by this component
-    onToggleHidden: PropTypes.func.isRequired
-  };
-
-  constructor (props) {
-    super(props);
-    this.onToggleHidden = ::this.onToggleHidden;
-  }
-
-  onToggleHidden (e) {
-    e.preventDefault();
-    this.props.onToggleHidden();
-  }
-
-  static styles = {
-    container: {
-      textAlign: 'right'
-    },
-    eye: {
-      cursor: 'pointer'
-    }
-  };
-
-  render () {
-    const { style, isHidden } = this.props;
-    const { styles } = this.constructor;
-
-    return (
-      <div style={[ styles.container, style ]}>
-        {/* TODO: The eye jumps because we need to reserve some space, on initial render. */}
-        {isHidden &&
-          <div style={styles.eye} title='Show this frame' onClick={this.onToggleHidden}>
-            <img src={eyeCrossedImage} />
-          </div>}
-        {!isHidden &&
-          <div style={styles.eye} title='Hide this frame' onClick={this.onToggleHidden}>
-            <img src={eyeImage} />
-          </div>}
-      </div>
-    );
-  }
-
-}
-
 class OffsetInSeconds extends Component {
 
   static propTypes = {
@@ -237,7 +182,6 @@ export default class Controls extends Component {
 
   static propTypes = {
     currentSceneNumber: PropTypes.number,
-    isHidden: PropTypes.bool,
     numScenes: PropTypes.number,
     offsetInSeconds: PropTypes.number,
     status: PropTypes.string,
@@ -266,7 +210,7 @@ export default class Controls extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { currentSceneNumber, isHidden, numScenes, offsetInSeconds, status, style, onSelectNext, onSelectPrevious, onUpdateStatusScene } = this.props;
+    const { currentSceneNumber, numScenes, offsetInSeconds, status, style, onSelectNext, onSelectPrevious, onUpdateStatusScene } = this.props;
 
     return (
       <div style={[ styles.container, style ]}>

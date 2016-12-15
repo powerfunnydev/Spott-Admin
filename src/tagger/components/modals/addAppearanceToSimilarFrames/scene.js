@@ -75,7 +75,7 @@ export default class Scene extends Component {
           style={[ styles.content.base, { paddingBottom: '60%' }, { backgroundImage: `url('${scene.get('imageUrl')}?width=160&height=90')` } ]}
           onClick={this.onClickScene}>
 
-          {isSelected && <div style={styles.selectedIcon}></div>}
+          {isSelected && <div style={styles.selectedIcon} />}
 
           {/* Render the scene number */}
           <div style={styles.sceneNumber}>{scene.get('sceneNumber')}</div>

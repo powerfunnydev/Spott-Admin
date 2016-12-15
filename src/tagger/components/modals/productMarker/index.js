@@ -184,7 +184,8 @@ function renderRelevanceInput ({ input, style }) {
   );
 }
 renderRelevanceInput.propTypes = {
-  input: PropTypes.object.isRequired
+  input: PropTypes.object.isRequired,
+  style: PropTypes.object
 };
 
 function renderCharacterInput ({ characters, style, ...props }) {
@@ -203,15 +204,24 @@ function renderCharacterInput ({ characters, style, ...props }) {
     </div>
   );
 }
+renderCharacterInput.propTypes = {
+  characters: ImmutablePropTypes.list.isRequired,
+  style: PropTypes.object
+};
 
 @Radium
 class ProductMarker extends Component {
 
   static propTypes = {
     allowProductSuggestions: PropTypes.bool,
+    appearance: ImmutablePropTypes.map,
+    change: PropTypes.func.isRequired,
     characters: ImmutablePropTypes.list.isRequired,
+    dispatch: PropTypes.func.isRequired,
     fetchSimilarProducts: PropTypes.func.isRequired,
     handleSubmit: PropTypes.func.isRequired,
+    initialize: PropTypes.func.isRequired,
+    productId: PropTypes.string,
     productSearchResult: ImmutablePropTypes.map.isRequired,
     productSuggestions: ImmutablePropTypes.list,
     products: ImmutablePropTypes.map.isRequired,
@@ -412,7 +422,7 @@ class ProductMarker extends Component {
     const styles = this.constructor.styles;
     const {
       allowProductSuggestions, characters, fetchSimilarProducts, handleSubmit, productId, products,
-      productSearchResult, productSuggestions, similarProducts, title, onSubmit
+      productSearchResult, productSuggestions, similarProducts, title
     } = this.props;
 
     const product = products.get(productId);

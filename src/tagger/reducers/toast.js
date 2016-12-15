@@ -5,9 +5,9 @@ function pushError (state, text) {
   return state.push(Map({ type: 'error', text }));
 }
 
-function pushInfo (state, text) {
-  return state.push(Map({ type: 'info', text }));
-}
+// function pushInfo (state, text) {
+//   return state.push(Map({ type: 'info', text }));
+// }
 
 function pushWarning (state, text) {
   return state.push(Map({ type: 'warning', text }));

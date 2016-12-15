@@ -50,7 +50,6 @@ class ProductItem extends Component {
 
   render () {
     const product = this.props.option;
-    const tooltip = this.state.tooltip;
     const imageUrl = product.get('imageUrl');
 
     /* eslint-disable no-return-assign */

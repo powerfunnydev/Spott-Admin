@@ -2,7 +2,6 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
-import { Map, List } from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { HotKeys } from 'react-hotkeys';
@@ -11,13 +10,9 @@ import Scene from './scene';
 import BottomBar from './bottomBar';
 import LargeSceneModal from './largeSceneModal';
 import PureRender from '../_helpers/pureRenderDecorator';
-import SmoothScrollableList from '../_helpers/smoothScrollableList';
 import { filterKeyEventsInInputFields } from '../_helpers/utils';
 import selector from '../../selectors/organizer';
-import * as appearanceActions from '../../actions/appearance';
-import * as sceneActions from '../../actions/scene';
 import * as organizeActions from '../../actions/organizer';
-import colors from '../colors';
 import SceneGroup from './sceneGroup';
 
 @connect(selector, (dispatch) => ({
@@ -166,7 +161,6 @@ export default class Organizer extends Component {
       numAllScenes, numVisibleScenes, minimizeScene, selectLeftScene, selectRightScene,
       selectScene, toggleSceneSize, toggleVisibilityScene, toggleHideHiddenFrames, toggleVisibilitySceneGroup
     } = this.props;
-    const similarScenes = (currentScene && currentScene.get('similarScenes')) || List();
 
     // From small images to large images. The number of images on each row shrinks, when sliding to the right.
     // this.props.scale is the number of images on a row.

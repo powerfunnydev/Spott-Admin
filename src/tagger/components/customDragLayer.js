@@ -78,7 +78,7 @@ export default class CustomDragLayer extends Component {
 
     return (
       <div style={styles.layer}>
-        <div style={this.getStyle()}></div>
+        <div style={this.getStyle()} />
       </div>
     );
   }

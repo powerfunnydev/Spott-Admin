@@ -105,8 +105,7 @@ export default class CharacterDropDown extends Component {
                   styles.image,
                   character && { backgroundImage: `url('${character.get('portraitImageUrl')}?width=95&height=95')` }
                 ]}
-                title={title}>
-              </div>
+                title={title} />
               <div
                 style={styles.name}
                 title={title}>

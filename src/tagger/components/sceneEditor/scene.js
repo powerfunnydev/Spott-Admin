@@ -160,7 +160,7 @@ export default class Scene extends Component {
     return (
       <ProportionalDiv aspectRatio={ASPECT_RATIO} style={styles.container}>
         {currentSceneImageUrl && connectDropTarget(
-          <div style={styles.outerWrapper} onHover={this.onHover} onLeave={this.onLeave}>
+          <div style={styles.outerWrapper}>
               {/* If an appearance is hovered we disable the region of interest selection. */}
               <SelectionArea
                 disable={Boolean(hoveredAppearanceTuple)}

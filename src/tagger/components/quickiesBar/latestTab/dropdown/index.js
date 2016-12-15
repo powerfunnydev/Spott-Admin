@@ -1,7 +1,8 @@
-/* eslint react/no-set-state: 0 */
+/* eslint-disable react/no-set-state */
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { colors } from '../../styles';
+
 @Radium
 export default class DropDown extends Component {
 

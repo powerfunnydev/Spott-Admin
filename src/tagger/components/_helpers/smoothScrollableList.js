@@ -99,14 +99,14 @@ export default class SmoothScrollableList extends React.Component {
     const childComponents = [];
     // Push the first row: this row is a dummy row with a carefully determined height
     const firstRowHeight = recordHeight * (displayStart / recordsPerRow) || 0;
-    childComponents.push(<div key='firstRow' style={{ height: firstRowHeight, width: '100%' }}></div>);
+    childComponents.push(<div key='firstRow' style={{ height: firstRowHeight, width: '100%' }} />);
     // Push items
     for (let i = displayStart; i < displayEnd; i++) {
       childComponents.push(renderRecord(i));
     }
     // Create last row: this row is once again a dummy row with a carefully determined height
     const lastRowHeight = recordHeight * ((numberOfRecords - displayEnd) / recordsPerRow) || 0;
-    childComponents.push(<div key='lastRow' style={{ height: lastRowHeight, width: '100%' }}></div>);
+    childComponents.push(<div key='lastRow' style={{ height: lastRowHeight, width: '100%' }} />);
     // Render it!
     return (
       <ScrollableDiv ref={(scrollable) => { this.scrollable = scrollable; }} style={[ style ]} onScroll={this.onScroll}>
