@@ -11,6 +11,7 @@ import ProgressBar from '../../../_common/components/progressBar';
 import PersistVideoModal from '../persist';
 import * as actions from './actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
+import { COMMERCIAL, EPISODE, MOVIE } from '../../../../constants/mediaTypes';
 import selector from './selector';
 
 import Spinner from '../../../_common/components/spinner';
@@ -41,10 +42,10 @@ export default class RelatedVideo extends Component {
     this.state = { create: false, edit: false };
   }
 
-  componentWillMount () {
-    const videoId = this.props.input.value;
-    if (videoId) {
-      this.props.loadVideo(videoId);
+  componentWillReceiveProps ({ input: { value: newVideoId } }) {
+    const oldVideoId = this.props.input.value;
+    if (newVideoId && oldVideoId !== newVideoId) {
+      this.props.loadVideo(newVideoId);
     }
   }
 
@@ -149,6 +150,19 @@ export default class RelatedVideo extends Component {
 
     if (videoId) {
       if (video.get('_status') === 'loaded') {
+        let taggerUrl;
+        switch (medium.get('type')) {
+          case COMMERCIAL:
+            taggerUrl = `${partialTaggerUrl}#/commercial/${medium.get('id')}/video/${videoId}`;
+            break;
+          case EPISODE:
+            taggerUrl = `${partialTaggerUrl}#/episode/${medium.get('id')}/video/${videoId}`;
+            break;
+          case MOVIE:
+            taggerUrl = `${partialTaggerUrl}#/movie/${medium.get('id')}/video/${videoId}`;
+            break;
+        }
+
         return (
           <div>
             <div style={styles.detailsContainer.base}>
@@ -158,7 +172,7 @@ export default class RelatedVideo extends Component {
                     {video.get('videoFilename')}
                     <div>
                       <a
-                        href={`${partialTaggerUrl}#/episode/${medium.get('id')}/video/${videoId}`}
+                        href={taggerUrl}
                         key='tagger'
                         style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue, styles.launchTagger ]}
                         target='_blank'>

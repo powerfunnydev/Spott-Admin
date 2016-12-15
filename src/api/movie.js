@@ -48,7 +48,6 @@ export async function persistMovie (baseUrl, authenticationToken, locale, {
   // Update locale data.
   movie.localeData = [];
   locales.forEach((locale) => {
-    // Get localeData, create if necessary in O(n^2)
     const localeData = {};
     // basedOnDefaultLocale is always provided, no check needed
     localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];

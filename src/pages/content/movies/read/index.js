@@ -78,7 +78,7 @@ export default class ReadMovie extends Component {
         <Container>
           {currentMovie.get('_status') === 'loaded' && currentMovie &&
             <EntityDetails
-              imageUrl={currentMovie.getIn([ 'profileImage', 'url' ]) && `${currentMovie.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
+              imageUrl={currentMovie.getIn([ 'profileImage', defaultLocale, 'url' ]) && `${currentMovie.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
               title={currentMovie.getIn([ 'title', defaultLocale ])}
               onEdit={() => { this.props.routerPushWithReturnTo(`content/movies/edit/${params.movieId}`); }}
               onRemove={async () => { await deleteMovie(currentMovie.getIn([ 'id' ])); this.redirect(); }}/>}

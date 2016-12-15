@@ -80,12 +80,7 @@ export async function persistSeason (baseUrl, authenticationToken, locale, { num
   // Update locale data.
   season.localeData = [];
   locales.forEach((locale) => {
-    // Get localeData, create if necessary in O(n^2)
-    let localeData = season.localeData.find((ld) => ld.locale === locale);
-    if (!localeData) {
-      localeData = { locale };
-      season.localeData.push(localeData);
-    }
+    const localeData = {};
     // basedOnDefaultLocale is always provided, no check needed
     localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
     localeData.description = description && description[locale];
@@ -94,6 +89,8 @@ export async function persistSeason (baseUrl, authenticationToken, locale, { num
     localeData.hasTitle = hasTitle && hasTitle[locale];
     // title is always provided, no check needed
     localeData.title = title && title[locale];
+    localeData.locale = locale;
+    season.localeData.push(localeData);
   });
   const url = `${baseUrl}/v004/media/serieSeasons`;
   const result = await post(authenticationToken, locale, url, season);
