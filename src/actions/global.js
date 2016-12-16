@@ -9,13 +9,15 @@ export const MODAL_CLOSE = 'MODAL_CLOSE';
 
 export function routerPushWithReturnTo (newUrlOrLocationObject, goBack) {
   return async (dispatch, getState) => {
-    // in case newUrlOrLocationObject is an location object, use this object.
-    if (typeof newUrlOrLocationObject === 'object') {
-      return dispatch(routerPush(newUrlOrLocationObject));
-    }
-    // current location
+    // Current location
     const location = getState().get('router').locationBeforeTransitions;
-    // when we want to go to the previous page, we check if there is a returnTo object.
+    // In case newUrlOrLocationObject is an location object, use this object.
+    if (typeof newUrlOrLocationObject === 'object') {
+      // Set returnTo, but there is still a posability to overwrite this by passing this object
+      // to newUrlOrLocationObject
+      return dispatch(routerPush({ state: { returnTo: location }, ...newUrlOrLocationObject }));
+    }
+    // When we want to go to the previous page, we check if there is a returnTo object.
     if (goBack && location && location.state && typeof location.state.returnTo === 'object') {
       return dispatch(routerPush(location.state.returnTo));
     }

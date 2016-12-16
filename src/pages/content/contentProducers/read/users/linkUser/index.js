@@ -30,7 +30,7 @@ export default class LinkUserToContentProducer extends Component {
   }
 
   onCreateOption (userName) {
-    this.props.routerPushWithReturnTo({ ...this.props.location, pathname: `/content/content-producers/read/${this.props.params.id}/create/user`, query: { ...this.props.location.query, userName } });
+    this.props.routerPushWithReturnTo({ pathname: `/content/content-producers/read/${this.props.params.id}/create/user`, query: { ...this.props.location.query, userName } });
   }
 
   async onSubmit (userForm) {
