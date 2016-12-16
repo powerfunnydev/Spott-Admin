@@ -19,12 +19,23 @@ const configuration = {
     ]
   },
   module: {
-    loaders: [
-      { exclude: /node_modules/, loader: 'strip-loader?strip[]=console.log!babel!eslint?failOnWarning=false&failOnError=false', test: /\.js$/ },
-      { loader: ExtractTextWebpackPlugin.extract('style', 'css'), test: /\.css$|\.less$/ },
-      { loader: 'json', test: /\.json/ },
-      { loader: 'file?name=[name]-[md5:hash].[ext]', test: /\.gif$|\.jpg$|\.jpeg$|\.png|\.eot$|\.svg$|\.ttf$|\.woff$|\.woff2$|\.pdf$/ }
-    ]
+    rules: [ {
+      exclude: /node_modules/,
+      loader: 'strip-loader?strip[]=console.log!babel-loader!eslint-loader?failOnWarning=false&failOnError=true',
+      test: /\.js$/
+    }, {
+      loader: ExtractTextWebpackPlugin.extract({
+        fallbackLoader: 'style-loader',
+        loader: 'css-loader'
+      }),
+      test: /\.css$|\.less$/
+    }, {
+      loader: 'json-loader',
+      test: /\.json/
+    }, {
+      loader: 'file-loader?name=[name]-[md5:hash].[ext]',
+      test: /\.gif$|\.jpg$|\.jpeg$|\.png|\.eot$|\.svg$|\.ttf$|\.woff$|\.woff2$|\.pdf$/
+    } ]
   },
   output: {
     chunkFilename: '[name]-[chunkhash].js',
@@ -46,12 +57,13 @@ const configuration = {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV)
       }
     }),
-    // Optimization: remove duplicates
-    new webpack.optimize.DedupePlugin(),
+    // Optimization: remove duplicates. Enabled by default.
+    // new webpack.optimize.DedupePlugin(),
     // Optimization: aggressive merging
     new webpack.optimize.AggressiveMergingPlugin(),
-    // Optimization: assign the module and chunk ids by occurrence count
-    new webpack.optimize.OccurenceOrderPlugin(),
+    // Optimization: assign the module and chunk ids by occurrence count.
+    // Enabled by default.
+    // new webpack.optimize.OccurenceOrderPlugin(),
     // Optimization: in production we minify
     new webpack.optimize.UglifyJsPlugin({
       compress: {
@@ -68,8 +80,7 @@ const configuration = {
       minify: {},
       template: './src/index.html'
     })
-  ],
-  progress: true
+  ]
 };
 
 module.exports = configuration;

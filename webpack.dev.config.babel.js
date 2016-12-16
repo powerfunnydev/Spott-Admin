@@ -9,24 +9,35 @@ const path = require('path');
  * @type {Object}
  */
 const configuration = {
-  devtool: 'source-map', // Enable line-based sourcemaps
+  // Enable line-based sourcemaps
+  devtool: 'source-map',
   entry: {
     main: [
       // Install babel-friendly environment
       'babel-polyfill',
       // Include our client source code
-      './src/index.js',
-      // Hot middleware
-      'webpack-dev-server/client?http://localhost:3003',
-      'webpack-hot-middleware/client?reload=true'
+      './src/index.js'
+      // // Hot middleware
+      // 'webpack-dev-server/client?http://localhost:3003',
+      // 'webpack-hot-middleware/client?reload=true'
     ]
   },
   module: {
-    loaders: [
-      { exclude: /node_modules/, loader: 'babel!eslint?failOnWarning=false&failOnError=false', test: /\.js$/ },
-      { loader: 'style!css', test: /\.css$|\.less$/ },
-      { loader: 'json', test: /\.json/ },
-      { loader: 'file?name=[name]-[md5:hash].[ext]', test: /\.gif$|\.jpg$|\.jpeg$|\.png|\.eot$|\.svg$|\.ttf$|\.woff$|\.woff2$|\.pdf$/ }
+    // Previously named 'loaders'.
+    rules: [ {
+      exclude: /node_modules/,
+      // .babelrc is loaded by default.
+      loader: 'babel-loader?cacheDirectory=true!eslint-loader?failOnWarning=false&failOnError=true',
+      test: /\.js$/
+    }, {
+      loader: 'style-loader!css-loader',
+      test: /\.css$|\.less$/
+    }, {
+      loader: 'json-loader',
+      test: /\.json/
+    }, {
+      loader: 'file-loader?name=[name]-[md5:hash].[ext]',
+      test: /\.gif$|\.jpg$|\.jpeg$|\.png|\.eot$|\.svg$|\.ttf$|\.woff$|\.woff2$|\.pdf$/ }
     ]
   },
   output: {
@@ -41,6 +52,9 @@ const configuration = {
     hot: true
   },
   plugins: [
+    // new webpack.LoaderOptionsPlugin({
+    //   debug: true
+    // }),
     new CopyWebpackPlugin([
       { from: './dev/version.json', to: 'version.json' },
       { from: './dev/config.json', to: 'config.json' }
@@ -48,7 +62,7 @@ const configuration = {
     // Protects against multiple React installs when npm linking
     new webpack.NormalModuleReplacementPlugin(/^react?$/, require.resolve('react')),
     // Enable hot reload
-    new webpack.HotModuleReplacementPlugin(),
+    // new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin(),
     // Define constants used throughout the codebase
     new webpack.DefinePlugin({
@@ -56,12 +70,6 @@ const configuration = {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV)
       }
     }),
-    // Optimization: remove duplicates
-    new webpack.optimize.DedupePlugin(),
-    // Optimization: aggressive merging
-    new webpack.optimize.AggressiveMergingPlugin(),
-    // Optimization: assign the module and chunk ids by occurrence count
-    new webpack.optimize.OccurenceOrderPlugin(),
     // Build index.html
     new HtmlWebpackPlugin({
       inject: 'body',
