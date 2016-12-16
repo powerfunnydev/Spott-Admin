@@ -99,8 +99,10 @@ export default class CreatePersonModal extends Component {
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}
-          getItemText={(language) => localeNames.get(language)}
-          getOptions={(language) => localeNames.keySeq().toArray()}
+          filter={(option, filter) => {
+            return option && filter ? localeNames.get(option.value).toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
+          }}
+          getItemText={(language) => { return localeNames.get(language); }}
           label='Default language'
           name='defaultLocale'
           options={localeNames.keySeq().toArray()}
@@ -113,6 +115,9 @@ export default class CreatePersonModal extends Component {
           required/>
         <Field
           component={SelectInput}
+          filter={(option, filter) => {
+            return option && filter ? genders.get(option.value).toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
+          }}
           getItemText={(gender) => genders.get(gender)}
           label='Gender'
           name='gender'

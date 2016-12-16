@@ -46,6 +46,9 @@ export default class CreateLanguageModal extends Component {
       <PersistModal isOpen title='Add language' onClose={onCloseClick} onSubmit={handleSubmit(onCreate)}>
         <Field
           component={SelectInput}
+          filter={(option, filter) => {
+            return option && filter ? localeNames.get(option.value).toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
+          }}
           getItemText={(language) => (localeNames.get(language))}
           label= 'Add language'
           name='language'
