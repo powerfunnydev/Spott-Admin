@@ -21,19 +21,35 @@ const configuration = {
   module: {
     rules: [ {
       exclude: /node_modules/,
-      loader: 'strip-loader?strip[]=console.log!babel-loader!eslint-loader?failOnWarning=false&failOnError=true',
+      use: [ {
+        loader: 'strip-loader',
+        options: {
+          strip: [ 'console.log' ]
+        }
+      }, {
+        loader: 'babel-loader'
+      }, {
+        loader: 'eslint-loader',
+        options: {
+          failOnWarning: false,
+          failOnError: true
+        }
+      } ],
       test: /\.js$/
     }, {
-      loader: ExtractTextWebpackPlugin.extract({
-        fallbackLoader: 'style-loader',
-        loader: 'css-loader'
-      }),
+      use: [
+        'style-loader',
+        'css-loader'
+      ],
       test: /\.css$|\.less$/
     }, {
-      loader: 'json-loader',
+      use: 'json-loader',
       test: /\.json/
     }, {
-      loader: 'file-loader?name=[name]-[md5:hash].[ext]',
+      query: {
+        name: '[name]-[md5:hash].[ext]'
+      },
+      use: 'file-loader',
       test: /\.gif$|\.jpg$|\.jpeg$|\.png|\.eot$|\.svg$|\.ttf$|\.woff$|\.woff2$|\.pdf$/
     } ]
   },
