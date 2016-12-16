@@ -7,6 +7,8 @@ import createStore from './createStore';
 import { getAuthorizedConfig, init } from './actions/global';
 import { LOGIN_SUCCESS } from './actions/user';
 import { ADMIN, BROADCASTER, CONTENT_MANAGER } from './constants/userRoles';
+import { TOGGLE_HOT_KEYS_INFO } from './tagger/actions/organizer';
+import { COMMERCIAL, EPISODE, MOVIE } from './constants/mediumTypes';
 
 import App from './pages/app';
 import BroadcastersList from './pages/content/broadcasters/list';
@@ -65,6 +67,7 @@ import UsersCreate from './pages/users/create';
 import UsersEdit from './pages/users/edit';
 import UsersList from './pages/users/list';
 import UsersRead from './pages/users/read';
+import TaggerApplication from './tagger/components/main';
 import { authenticationTokenSelector, userRolesSelector } from './selectors/global';
 import reducer from './reducers';
 import BreadCrumbs from './pages/_common/components/breadCrumbs';
@@ -101,6 +104,26 @@ function getRoutes ({ dispatch, getState }) {
         <Route component={ForgotPassword} path='forgotpassword' />
         <Route component={ResetPassword} path='resetPassword' />
       </Route>
+
+      {/* Tagger routes */}
+      <Route path='tagger'>
+        <Route
+          component={TaggerApplication}
+          mediumType={COMMERCIAL}
+          path='commercial/:mediumId/video/:videoId'
+          onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}/>
+        <Route
+          component={TaggerApplication}
+          mediumType={MOVIE}
+          path='movie/:mediumId/video/:videoId'
+          onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}/>
+        <Route
+          component={TaggerApplication}
+          mediumType={EPISODE}
+          path='episode/:mediumId/video/:videoId'
+          onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}/>
+      </Route>
+
       <Route component={MediaSinglePage} path='media' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <IndexRoute component={MediaHome}/>
         <Route component={MediaUpload} path='upload' />
@@ -315,8 +338,12 @@ async function boot () {
   // Load session from local storage.
   if (localStorage) {
     const session = localStorage.getItem('session');
+    const hotKeysInfoClosed = localStorage.getItem('hotKeysInfoClosed');
     if (session) {
       store.dispatch({ data: JSON.parse(session), type: LOGIN_SUCCESS });
+    }
+    if (hotKeysInfoClosed) {
+      store.dispatch({ type: TOGGLE_HOT_KEYS_INFO });
     }
   }
   // if user is logged in, retrieve authorized config files (languages,...)

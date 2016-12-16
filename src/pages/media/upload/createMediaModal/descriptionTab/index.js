@@ -4,7 +4,7 @@ import { reduxForm } from 'redux-form/immutable';
 import { buttonStyles, colors } from '../../../../_common/styles';
 import createMediaStyles from '../styles';
 import Episode from './episode';
-import { EPISODE } from '../../../../../constants/mediaTypes';
+import { EPISODE } from '../../../../../constants/mediumTypes';
 
 function validate (values) {
   const errors = {};
@@ -70,12 +70,6 @@ export default class DescriptionTab extends Component {
       <form noValidate onSubmit={handleSubmit}>
         <div style={createMediaStyles.body}>
           <h1 style={createMediaStyles.title}>About your upload</h1>
-
-          {/* TODO: support other media types
-            <MediaTypes
-            currentMediaType={currentMediaType}
-            style={styles.mediaTypes}
-            onMediaTypeClick={onSelectMediaType} />*/}
           <p>Note: currently, only episodes are supported.</p>
           {currentMediaType === EPISODE && <Episode />}
         </div>

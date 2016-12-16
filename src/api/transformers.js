@@ -379,13 +379,14 @@ function transformScene ({ hidden, image, offsetInSeconds, status, uuid: id }) {
 
 export function transformVideo ({ audioFingerprints, description,
   externalReference: { reference: externalReference, source: externalReferenceSource },
-  scenes, totalDurationInSeconds, uuid: id, videoFilename }) {
+  medium: { profileImage }, scenes, totalDurationInSeconds, uuid: id, videoFilename }) {
   return {
     audioFingerprints: audioFingerprints && audioFingerprints.map(transformFingerprint),
     description,
     externalReference,
     externalReferenceSource,
     id,
+    medium: { profileImage: profileImage && { id: profileImage.uuid, url: profileImage.url } },
     scenes: scenes && scenes.map(transformScene),
     totalDurationInSeconds,
     videoFilename

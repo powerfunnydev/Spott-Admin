@@ -1,0 +1,26 @@
+.search__input-blue {
+  background-size: 20px;
+  background: url('./blueSearch.svg') no-repeat 10px 8px;
+  border-radius: 4px;
+  border: 1px solid rgb(187, 190, 193);
+  font-family: 'Rubik-Medium';
+  font-size: 16px;
+  height: 38px;
+  padding: 6px 6px 6px 40px;
+  width: 100%;
+}
+
+.search__input-gray {
+  background-size: 20px;
+  background: url('./graySearch.svg') no-repeat 10px 6px;
+  background-color: '#202020';
+  border-radius: 4px;
+  border: 1px solid #8d8d8d;
+  color: #8d8d8d;
+  font-family: 'Rubik-Medium';
+  font-size: 16px;
+  height: 38px;
+  padding: 6px 6px 6px 40px;
+  width: 100%;
+  outline: none;
+}
