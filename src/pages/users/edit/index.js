@@ -23,6 +23,7 @@ import Checkbox from '../../_common/inputs/checkbox';
 import { INACTIVE, disabledReasons, userStatus as userStates } from '../../../constants/userRoles';
 import { FETCHING } from '../../../constants/statusTypes';
 import BreadCrumbs from '../../_common/components/breadCrumbs';
+import ensureEntityIsSaved from '../../_common/decorators/ensureEntityIsSaved';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -52,6 +53,7 @@ function validate (values, { t }) {
   form: 'userEdit',
   validate
 })
+@ensureEntityIsSaved
 @Radium
 export default class EditUser extends Component {
 
@@ -111,7 +113,7 @@ export default class EditUser extends Component {
   async submit (form) {
     try {
       await this.props.submit({ userId: this.props.params.id, ...form.toJS() });
-      this.redirect();
+      this.props.initialize(form.toJS());
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
@@ -207,6 +209,9 @@ export default class EditUser extends Component {
                   placeholder='dd/mm/yyyy'/>
                 <Field
                   component={SelectInput}
+                  filter={(option, filter) => {
+                    return option && filter ? genders.get(option.value).toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
+                  }}
                   getItemText={(gender) => genders.get(gender)}
                   getOptions={(gender) => genders.keySeq().toArray()}
                   label='Gender'
@@ -215,6 +220,9 @@ export default class EditUser extends Component {
                   placeholder='Gender'/>
                 <Field
                   component={SelectInput}
+                  filter={(option, filter) => {
+                    return option && filter ? localeNames.get(option.value).toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
+                  }}
                   getItemText={(language) => localeNames.get(language)}
                   getOptions={(language) => localeNames.keySeq().toArray()}
                   label='Language'
@@ -248,6 +256,9 @@ export default class EditUser extends Component {
                 <FormSubtitle first>Account status</FormSubtitle>
                 <Field
                   component={SelectInput}
+                  filter={(option, filter) => {
+                    return option && filter ? userStates[option.value].toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
+                  }}
                   getItemText={(disabled) => userStates[disabled]}
                   getOptions={() => Object.keys(userStates)}
                   label='User status'
@@ -257,6 +268,9 @@ export default class EditUser extends Component {
                   required/>
                 {currentUserStatus === INACTIVE && <Field
                   component={SelectInput}
+                  filter={(option, filter) => {
+                    return option && filter ? disabledReasons[option.value].toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
+                  }}
                   getItemText={(reason) => disabledReasons[reason]}
                   getOptions={() => Object.keys(disabledReasons)}
                   label='Reason'

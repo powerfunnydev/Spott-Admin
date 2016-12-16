@@ -12,6 +12,7 @@ import {
 const formName = 'personEdit';
 const formErrorsSelector = (state) => { return state.getIn([ 'form', formName, 'syncErrors' ]); };
 
+const valuesSelector = (state) => state.getIn([ 'form', formName, 'values' ]);
 const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultLocale');
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
 const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
@@ -21,6 +22,8 @@ const currentPersonSelector = createEntityByIdSelector(personsEntitiesSelector, 
 
 const faceImagesSelector = createEntitiesByRelationSelector(personHasFaceImagesRelationsSelector, currentPersonIdSelector, faceImagesEntitiesSelector);
 
+const popUpMessageSelector = (state) => state.getIn([ 'content', 'persons', 'edit', 'popUpMessage' ]);
+
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
   currentModal: currentModalSelector,
@@ -28,6 +31,8 @@ export default createStructuredSelector({
   defaultLocale: currentDefaultLocaleSelector,
   errors: formErrorsSelector,
   faceImages: faceImagesSelector,
+  formValues: valuesSelector,
   genders: gendersSelector,
+  popUpMessage: popUpMessageSelector,
   supportedLocales: supportedLocalesSelector
 });

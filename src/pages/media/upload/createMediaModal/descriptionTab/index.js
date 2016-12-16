@@ -70,12 +70,6 @@ export default class DescriptionTab extends Component {
       <form noValidate onSubmit={handleSubmit}>
         <div style={createMediaStyles.body}>
           <h1 style={createMediaStyles.title}>About your upload</h1>
-
-          {/* TODO: support other media types
-            <MediaTypes
-            currentMediaType={currentMediaType}
-            style={styles.mediaTypes}
-            onMediaTypeClick={onSelectMediaType} />*/}
           <p>Note: currently, only episodes are supported.</p>
           {currentMediaType === EPISODE && <Episode />}
         </div>

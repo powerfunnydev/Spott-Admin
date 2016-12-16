@@ -25,6 +25,8 @@ import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import ImageDropzone from '../../../_common/dropzone/imageDropzone';
 import { ImageWithDropdown } from '../../../_common/components/imageWithDropdown';
 import { PROFILE_IMAGE } from '../../../../constants/imageTypes';
+import { fromJS } from 'immutable';
+import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -36,8 +38,10 @@ function validate (values, { t }) {
   return validationErrors;
 }
 
+// Decorators in this sequence!
 @localized
 @connect(selector, (dispatch) => ({
+  closePopUpMessage: bindActionCreators(actions.closePopUpMessage, dispatch),
   fetchFaceImages: bindActionCreators(actions.fetchFaceImages, dispatch),
   loadCharacter: bindActionCreators(actions.loadCharacter, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
@@ -56,24 +60,29 @@ function validate (values, { t }) {
   form: 'characterEdit',
   validate
 })
+@ensureEntityIsSaved
 @Radium
 export default class EditCharacter extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
     change: PropTypes.func.isRequired,
+    children: PropTypes.node,
     closeModal: PropTypes.func.isRequired,
+    closePopUpMessage: PropTypes.func.isRequired,
     currentCharacter: ImmutablePropTypes.map.isRequired,
     currentModal: PropTypes.string,
     defaultLocale: PropTypes.string,
     deleteFaceImage: PropTypes.func,
     deletePortraitImage: PropTypes.func.isRequired,
     deleteProfileImage: PropTypes.func.isRequired,
+    dirty: PropTypes.bool.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
     faceImages: ImmutablePropTypes.map.isRequired,
     fetchFaceImages: PropTypes.func,
+    formValues: ImmutablePropTypes.map,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
     loadCharacter: PropTypes.func.isRequired,
@@ -81,6 +90,7 @@ export default class EditCharacter extends Component {
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     personsById: ImmutablePropTypes.map.isRequired,
+    popUpMessage: PropTypes.object,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchPersons: PropTypes.func.isRequired,
     searchedPersonIds: ImmutablePropTypes.map.isRequired,
@@ -89,7 +99,9 @@ export default class EditCharacter extends Component {
     t: PropTypes.func.isRequired,
     uploadFaceImage: PropTypes.func.isRequired,
     uploadPortraitImage: PropTypes.func.isRequired,
-    uploadProfileImage: PropTypes.func.isRequired
+    uploadProfileImage: PropTypes.func.isRequired,
+    onBeforeChangeTab: PropTypes.func.isRequired,
+    onChangeTab: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -97,9 +109,10 @@ export default class EditCharacter extends Component {
     this.submit = ::this.submit;
     this.redirect = ::this.redirect;
     this.onSetDefaultLocale = ::this.onSetDefaultLocale;
-    this.openCreateLanguageModal = :: this.openCreateLanguageModal;
-    this.languageAdded = :: this.languageAdded;
-    this.removeLanguage = :: this.removeLanguage;
+    this.openCreateLanguageModal = ::this.openCreateLanguageModal;
+    this.languageAdded = ::this.languageAdded;
+    this.removeLanguage = ::this.removeLanguage;
+    this.onCreateOption = ::this.onCreateOption;
   }
 
   async componentWillMount () {
@@ -118,12 +131,17 @@ export default class EditCharacter extends Component {
   }
 
   languageAdded (form) {
-    const { language } = form && form.toJS();
-    const { closeModal, dispatch, change, supportedLocales } = this.props;
+    const { language, name } = form && form.toJS();
+    const { closeModal, supportedLocales } = this.props;
+    const formValues = this.props.formValues.toJS();
     if (language) {
       const newSupportedLocales = supportedLocales.push(language);
-      dispatch(change('locales', newSupportedLocales));
-      dispatch(change('_activeLocale', language));
+      this.submit(fromJS({
+        ...formValues,
+        locales: newSupportedLocales.toJS(),
+        name: { ...formValues.name, [language]: name },
+        _activeLocale: language
+      }));
     }
     closeModal();
   }
@@ -138,22 +156,28 @@ export default class EditCharacter extends Component {
   }
 
   openCreateLanguageModal () {
-    this.props.openModal(CHARACTER_CREATE_LANGUAGE);
+    if (this.props.onBeforeChangeTab()) {
+      this.props.openModal(CHARACTER_CREATE_LANGUAGE);
+    }
   }
 
   async submit (form) {
-    const { supportedLocales, params: { characterId } } = this.props;
+    const { initialize, params: { characterId } } = this.props;
 
     try {
       await this.props.submit({
         ...form.toJS(),
-        locales: supportedLocales.toArray(),
         characterId
       });
-      this.redirect();
+      await initialize(form.toJS());
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
+  }
+
+  onCreateOption (fullName) {
+    console.log('location', this.props.location);
+    this.props.routerPushWithReturnTo({ pathname: `/content/characters/edit/${this.props.params.characterId}/create/person`, query: { ...this.props.location.query, fullName } });
   }
 
   onSetDefaultLocale (locale) {
@@ -200,8 +224,8 @@ export default class EditCharacter extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { _activeLocale, personsById, errors, closeModal, currentModal, searchPersons, searchedPersonIds, supportedLocales, defaultLocale,
-      currentCharacter, location, handleSubmit, deletePortraitImage, deleteProfileImage, deleteFaceImage, faceImages, fetchFaceImages } = this.props;
+    const { _activeLocale, children, personsById, errors, closeModal, currentModal, searchPersons, searchedPersonIds, supportedLocales, defaultLocale,
+      currentCharacter, location, handleSubmit, deletePortraitImage, deleteProfileImage, deleteFaceImage, faceImages, fetchFaceImages, location: { query: { tab } } } = this.props;
     return (
         <Root style={styles.backgroundRoot}>
           <Header currentLocation={location} hideHomePageLinks />
@@ -213,9 +237,17 @@ export default class EditCharacter extends Component {
             <CreateLanguageModal
               supportedLocales={supportedLocales}
               onCloseClick={closeModal}
-              onCreate={this.languageAdded}/>}
+              onCreate={this.languageAdded}>
+              <Field
+                component={TextInput}
+                label='Character name'
+                labelStyle={styles.titleLabel}
+                name='name'
+                placeholder='Character name'
+                required />
+            </CreateLanguageModal>}
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-            <Tabs showPublishStatus>
+            <Tabs activeTab={tab} showPublishStatus onBeforeChange={this.props.onBeforeChangeTab} onChange={this.props.onChangeTab}>
               <Tab title='Details'>
                 <Section noPadding style={styles.background}>
                   <LanguageBar
@@ -227,7 +259,7 @@ export default class EditCharacter extends Component {
                     supportedLocales={supportedLocales}
                     onSetDefaultLocale={this.onSetDefaultLocale}/>
                 </Section>
-                <Section>
+                <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage}>
                   <FormSubtitle first>General</FormSubtitle>
                   <Field
                     component={TextInput}
@@ -245,7 +277,8 @@ export default class EditCharacter extends Component {
                     name='personId'
                     options={searchedPersonIds.get('data').toJS()}
                     placeholder='Person'
-                    required/>
+                    required
+                    onCreateOption={this.onCreateOption}/>
                   <Field
                     component={TextInput}
                     label='Description'
@@ -303,6 +336,7 @@ export default class EditCharacter extends Component {
              </Tab>
           </Tabs>
         </EditTemplate>
+        {children}
       </Root>
     );
   }

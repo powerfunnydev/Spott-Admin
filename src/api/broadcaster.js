@@ -106,9 +106,9 @@ export async function deleteLinkUsers (baseUrl, authenticationToken, locale, { b
 
 export async function uploadBroadcasterImage (baseUrl, authenticationToken, locale, { broadcasterId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', broadcasterId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/broadcasters/${broadcasterId}/logo`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/broadcasters/${broadcasterId}/logo`, formData, callback);
+  return transformBroadcaster(result.body);
 }
 
 export async function deleteLogo (baseUrl, authenticationToken, locale, { broadcasterId }) {

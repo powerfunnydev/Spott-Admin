@@ -93,20 +93,21 @@ export async function persistMediumCharacter (baseUrl, authenticationToken, loca
 }
 
 export async function deleteMediumCharacter (baseUrl, authenticationToken, locale, { mediumId, characterId }) {
-  const { body } = await del(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/castMembers/${characterId}`, {});
-  return transformCharacter(body);
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/castMembers/${characterId}`, {});
 }
 
 export async function uploadProfileImage (baseUrl, authenticationToken, locale, { characterId, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/profileCover`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/profileCover`, formData, callback);
+  return transformCharacter(result.body);
 }
 
 export async function uploadPortraitImage (baseUrl, authenticationToken, locale, { characterId, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/portraitImage`, formData, callback);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/portraitImage`, formData, callback);
+  return transformCharacter(result.body);
 }
 
 export async function uploadFaceImage (baseUrl, authenticationToken, locale, { characterId, image, callback }) {

@@ -4,7 +4,10 @@ import * as userActions from '../actions/user';
 import * as contentProducerActions from '../actions/contentProducer';
 import * as broadcasterActions from '../actions/broadcaster';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
+import * as characterActions from '../actions/character';
 import * as episodeActions from '../actions/episode';
+import * as movieActions from '../actions/movie';
+import * as personActions from '../actions/person';
 import * as seasonActions from '../actions/season';
 import * as seriesActions from '../actions/series';
 import * as tvGuideActions from '../actions/tvGuide';
@@ -67,12 +70,18 @@ export default (state = List(), action) => {
       return pushSuccess(state, action.data, entityTypes.BROADCAST_CHANNEL);
     case broadcasterActions.BROADCASTER_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.BROADCASTER);
+    case characterActions.CHARACTER_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, entityTypes.CHARACTER);
     case userActions.USER_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.USER);
     case contentProducerActions.CONTENT_PRODUCER_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.CONTENT_PRODUCER);
     case episodeActions.EPISODE_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.EPISODE);
+    case movieActions.MOVIE_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, entityTypes.MOVIE);
+    case personActions.PERSON_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, entityTypes.PERSON);
     case seasonActions.SEASON_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.SEASON);
     case seriesActions.SERIES_ENTRY_PERSIST_SUCCESS:

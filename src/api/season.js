@@ -78,14 +78,9 @@ export async function persistSeason (baseUrl, authenticationToken, locale, { num
   season.number = number;
 
   // Update locale data.
-  season.localeData = season.localeData || []; // Ensure we have locale data
+  season.localeData = [];
   locales.forEach((locale) => {
-    // Get localeData, create if necessary in O(n^2)
-    let localeData = season.localeData.find((ld) => ld.locale === locale);
-    if (!localeData) {
-      localeData = { locale };
-      season.localeData.push(localeData);
-    }
+    const localeData = {};
     // basedOnDefaultLocale is always provided, no check needed
     localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
     localeData.description = description && description[locale];
@@ -94,6 +89,8 @@ export async function persistSeason (baseUrl, authenticationToken, locale, { num
     localeData.hasTitle = hasTitle && hasTitle[locale];
     // title is always provided, no check needed
     localeData.title = title && title[locale];
+    localeData.locale = locale;
+    season.localeData.push(localeData);
   });
   const url = `${baseUrl}/v004/media/serieSeasons`;
   const result = await post(authenticationToken, locale, url, season);
@@ -110,16 +107,18 @@ export async function deleteSeasons (baseUrl, authenticationToken, locale, { sea
   }
 }
 
-export async function uploadProfileImage (baseUrl, authenticationToken, locale, { seasonId, image, callback }) {
+export async function uploadProfileImage (baseUrl, authenticationToken, locale, { locale: imageLocale, seasonId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', seasonId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${seasonId}/profileCover`, formData, callback);
+  formData.append('locale', imageLocale);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${seasonId}/profileCover`, formData, callback);
+  return transformSeason004(result.body);
 }
 
-export async function uploadPosterImage (baseUrl, authenticationToken, locale, { seasonId, image, callback }) {
+export async function uploadPosterImage (baseUrl, authenticationToken, locale, { locale: imageLocale, seasonId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', seasonId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${seasonId}/posterImage`, formData, callback);
+  formData.append('locale', imageLocale);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${seasonId}/posterImage`, formData, callback);
+  return transformSeason004(result.body);
 }

@@ -62,6 +62,7 @@ export default class CreateCharacterModal extends Component {
     super(props);
     this.onCloseClick = ::this.onCloseClick;
     this.submit = ::this.submit;
+    this.onCreateOption = ::this.onCreateOption;
   }
 
   componentWillMount () {
@@ -90,6 +91,10 @@ export default class CreateCharacterModal extends Component {
     }
   }
 
+  onCreateOption (fullName) {
+    this.props.routerPushWithReturnTo({ pathname: '/content/persons/create', query: { ...this.props.location.query, fullName } });
+  }
+
   onCloseClick () {
     this.props.routerPushWithReturnTo('content/characters', true);
   }
@@ -97,10 +102,13 @@ export default class CreateCharacterModal extends Component {
   render () {
     const { personsById, handleSubmit, localeNames, searchPersons, searchedPersonIds } = this.props;
     return (
-      <PersistModal isOpen title='Create Character' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal createAnother isOpen title='Create Character' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}
+          filter={(option, filter) => {
+            return option && filter ? localeNames.get(option.value).toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
+          }}
           getItemText={(language) => localeNames.get(language)}
           getOptions={(language) => localeNames.keySeq().toArray()}
           label='Default language'
@@ -121,8 +129,9 @@ export default class CreateCharacterModal extends Component {
           label='Person'
           name='personId'
           options={searchedPersonIds.get('data').toJS()}
-          placeholder='Person'
-          required/>
+          placeholder='Person name'
+          required
+          onCreateOption={this.onCreateOption}/>
       </PersistModal>
     );
   }

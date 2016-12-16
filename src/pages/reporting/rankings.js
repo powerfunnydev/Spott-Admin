@@ -240,7 +240,6 @@ export default class Rankings extends Component {
     },
     rankingWidget: {
       height: 260,
-      overflowY: 'scroll',
       paddingBottom: 0,
       paddingLeft: 0,
       paddingRight: 0,

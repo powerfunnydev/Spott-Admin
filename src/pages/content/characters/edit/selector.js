@@ -15,6 +15,7 @@ import {
 const formName = 'characterEdit';
 const formErrorsSelector = (state) => { return state.getIn([ 'form', formName, 'syncErrors' ]); };
 
+const valuesSelector = (state) => state.getIn([ 'form', formName, 'values' ]);
 const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultLocale');
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
 const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
@@ -23,6 +24,7 @@ const currentCharacterIdSelector = (state, props) => { return props.params.chara
 const currentCharacterSelector = createEntityByIdSelector(charactersEntitiesSelector, currentCharacterIdSelector);
 
 const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'characters', 'edit', 'currentPersonSearchString' ]);
+const popUpMessageSelector = (state) => state.getIn([ 'content', 'characters', 'edit', 'popUpMessage' ]);
 
 const searchedPersonIdsSelector = createEntityIdsByRelationSelector(searchStringHasPersonsRelationsSelector, currentSeriesEntriesSearchStringSelector);
 const faceImagesSelector = createEntitiesByRelationSelector(characterHasFaceImagesRelationsSelector, currentCharacterIdSelector, faceImagesEntitiesSelector);
@@ -34,6 +36,8 @@ export default createStructuredSelector({
   defaultLocale: currentDefaultLocaleSelector,
   errors: formErrorsSelector,
   faceImages: faceImagesSelector,
+  formValues: valuesSelector,
+  popUpMessage: popUpMessageSelector,
   personsById: listPersonsEntitiesSelector,
   searchedPersonIds: searchedPersonIdsSelector,
   supportedLocales: supportedLocalesSelector

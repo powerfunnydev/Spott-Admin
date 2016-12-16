@@ -68,14 +68,9 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, {
   episode.type = 'TV_SERIE_SEASON';
   episode.number = number;
   // Update locale data.
-  episode.localeData = episode.localeData || []; // Ensure we have locale data
+  episode.localeData = [];
   locales.forEach((locale) => {
-    // Get localeData, create if necessary in O(n^2)
-    let localeData = episode.localeData.find((ld) => ld.locale === locale);
-    if (!localeData) {
-      localeData = { locale };
-      episode.localeData.push(localeData);
-    }
+    const localeData = {};
     // basedOnDefaultLocale is always provided, no check needed
     localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
     localeData.description = description && description[locale];
@@ -83,6 +78,8 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, {
     localeData.startYear = startYear && startYear[locale];
     localeData.hasTitle = hasTitle && hasTitle[locale];
     localeData.title = title && title[locale];
+    localeData.locale = locale;
+    episode.localeData.push(localeData);
   });
   const url = `${baseUrl}/v004/media/serieEpisodes`;
   const result = await post(authenticationToken, locale, url, episode);
@@ -107,16 +104,18 @@ export async function deleteEpisodes (baseUrl, authenticationToken, locale, { ep
   }
 }
 
-export async function uploadProfileImage (baseUrl, authenticationToken, locale, { episodeId, image, callback }) {
+export async function uploadProfileImage (baseUrl, authenticationToken, locale, { locale: imageLocale, episodeId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', episodeId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${episodeId}/profileCover`, formData, callback);
+  formData.append('locale', imageLocale);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${episodeId}/profileCover`, formData, callback);
+  return transformEpisode004(result.body);
 }
 
-export async function uploadPosterImage (baseUrl, authenticationToken, locale, { episodeId, image, callback }) {
+export async function uploadPosterImage (baseUrl, authenticationToken, locale, { locale: imageLocale, episodeId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', episodeId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${episodeId}/posterImage`, formData, callback);
+  formData.append('locale', imageLocale);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${episodeId}/posterImage`, formData, callback);
+  return transformEpisode004(result.body);
 }

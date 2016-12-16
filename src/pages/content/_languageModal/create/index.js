@@ -30,6 +30,7 @@ function validate (values, { t }) {
 export default class CreateLanguageModal extends Component {
 
   static propTypes = {
+    children: PropTypes.node,
     filteredLocales: PropTypes.array.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     localeNames: ImmutablePropTypes.map.isRequired,
@@ -40,17 +41,21 @@ export default class CreateLanguageModal extends Component {
   };
 
   render () {
-    const { onCloseClick, onCreate, localeNames, handleSubmit, filteredLocales } = this.props;
+    const { onCloseClick, onCreate, localeNames, handleSubmit, filteredLocales, children } = this.props;
     return (
       <PersistModal isOpen title='Add language' onClose={onCloseClick} onSubmit={handleSubmit(onCreate)}>
         <Field
           component={SelectInput}
+          filter={(option, filter) => {
+            return option && filter ? localeNames.get(option.value).toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
+          }}
           getItemText={(language) => (localeNames.get(language))}
           label= 'Add language'
           name='language'
           options={filteredLocales}
           placeholder='Language'
           required />
+        {children}
       </PersistModal>
     );
   }

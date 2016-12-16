@@ -57,14 +57,9 @@ export async function persistSeriesEntry (baseUrl, authenticationToken, locale, 
   seriesEntry.publishStatus = publishStatus;
 
   // Update locale data.
-  seriesEntry.localeData = seriesEntry.localeData || []; // Ensure we have locale data
+  seriesEntry.localeData = [];
   locales.forEach((locale) => {
-    // Get localeData, create if necessary in O(n^2)
-    let localeData = seriesEntry.localeData.find((ld) => ld.locale === locale);
-    if (!localeData) {
-      localeData = { locale };
-      seriesEntry.localeData.push(localeData);
-    }
+    const localeData = {};
     // basedOnDefaultLocale is always provided, no check needed
     localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
     localeData.description = description && description[locale];
@@ -72,6 +67,8 @@ export async function persistSeriesEntry (baseUrl, authenticationToken, locale, 
     localeData.startYear = startYear && startYear[locale];
     // title is always provided, no check needed
     localeData.title = title[locale];
+    localeData.locale = locale;
+    seriesEntry.localeData.push(localeData);
   });
   // console.log('seriesEntry', seriesEntry);
   const url = `${baseUrl}/v004/media/series`;
@@ -111,16 +108,18 @@ export async function searchSeasons (baseUrl, authenticationToken, locale, { sea
   return data.map(transformListSeason);
 }
 
-export async function uploadProfileImage (baseUrl, authenticationToken, locale, { seriesEntryId, image, callback }) {
+export async function uploadProfileImage (baseUrl, authenticationToken, locale, { locale: imageLocale, seriesEntryId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', seriesEntryId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${seriesEntryId}/profileCover`, formData, callback);
+  formData.append('locale', imageLocale);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${seriesEntryId}/profileCover`, formData, callback);
+  return transformSeriesEntry004(result.body);
 }
 
-export async function uploadPosterImage (baseUrl, authenticationToken, locale, { seriesEntryId, image, callback }) {
+export async function uploadPosterImage (baseUrl, authenticationToken, locale, { locale: imageLocale, seriesEntryId, image, callback }) {
   const formData = new FormData();
-  formData.append('uuid', seriesEntryId);
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${seriesEntryId}/posterImage`, formData, callback);
+  formData.append('locale', imageLocale);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${seriesEntryId}/posterImage`, formData, callback);
+  return transformSeriesEntry004(result.body);
 }
