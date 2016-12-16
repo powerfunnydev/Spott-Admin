@@ -67,6 +67,7 @@ export default class EditCharacter extends Component {
   static propTypes = {
     _activeLocale: PropTypes.string,
     change: PropTypes.func.isRequired,
+    children: PropTypes.node,
     closeModal: PropTypes.func.isRequired,
     closePopUpMessage: PropTypes.func.isRequired,
     currentCharacter: ImmutablePropTypes.map.isRequired,
@@ -108,9 +109,10 @@ export default class EditCharacter extends Component {
     this.submit = ::this.submit;
     this.redirect = ::this.redirect;
     this.onSetDefaultLocale = ::this.onSetDefaultLocale;
-    this.openCreateLanguageModal = :: this.openCreateLanguageModal;
-    this.languageAdded = :: this.languageAdded;
-    this.removeLanguage = :: this.removeLanguage;
+    this.openCreateLanguageModal = ::this.openCreateLanguageModal;
+    this.languageAdded = ::this.languageAdded;
+    this.removeLanguage = ::this.removeLanguage;
+    this.onCreateOption = ::this.onCreateOption;
   }
 
   async componentWillMount () {
@@ -173,6 +175,11 @@ export default class EditCharacter extends Component {
     }
   }
 
+  onCreateOption (fullName) {
+    console.log('location', this.props.location);
+    this.props.routerPushWithReturnTo({ pathname: `/content/characters/edit/${this.props.params.characterId}/create/person`, query: { ...this.props.location.query, fullName } });
+  }
+
   onSetDefaultLocale (locale) {
     const { change, dispatch, _activeLocale } = this.props;
     dispatch(change('defaultLocale', _activeLocale));
@@ -217,7 +224,7 @@ export default class EditCharacter extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { _activeLocale, personsById, errors, closeModal, currentModal, searchPersons, searchedPersonIds, supportedLocales, defaultLocale,
+    const { _activeLocale, children, personsById, errors, closeModal, currentModal, searchPersons, searchedPersonIds, supportedLocales, defaultLocale,
       currentCharacter, location, handleSubmit, deletePortraitImage, deleteProfileImage, deleteFaceImage, faceImages, fetchFaceImages, location: { query: { tab } } } = this.props;
     return (
         <Root style={styles.backgroundRoot}>
@@ -270,7 +277,8 @@ export default class EditCharacter extends Component {
                     name='personId'
                     options={searchedPersonIds.get('data').toJS()}
                     placeholder='Person'
-                    required/>
+                    required
+                    onCreateOption={this.onCreateOption}/>
                   <Field
                     component={TextInput}
                     label='Description'
@@ -328,6 +336,7 @@ export default class EditCharacter extends Component {
              </Tab>
           </Tabs>
         </EditTemplate>
+        {children}
       </Root>
     );
   }

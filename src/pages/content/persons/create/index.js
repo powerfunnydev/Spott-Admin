@@ -64,7 +64,8 @@ export default class CreatePersonModal extends Component {
 
   componentWillMount () {
     this.props.initialize({
-      defaultLocale: this.props.currentLocale
+      defaultLocale: this.props.currentLocale,
+      fullName: this.props.location.query.fullName
     });
   }
   async submit (form) {
@@ -95,7 +96,7 @@ export default class CreatePersonModal extends Component {
   render () {
     const { genders, handleSubmit, localeNames } = this.props;
     return (
-      <PersistModal isOpen title='Create Person' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal createAnother isOpen title='Create Person' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}
