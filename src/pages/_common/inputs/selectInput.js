@@ -26,6 +26,7 @@ export default class SelectInput extends Component {
 
   static propTypes = {
     disabled: PropTypes.bool,
+    filter: PropTypes.func,
     first: PropTypes.bool,
     getItemText: PropTypes.func.isRequired, // Takes a value (an id) and produces the string for its visualization.
     getOptions: PropTypes.func, // Triggered on search text change, responsible for getting the new options.
@@ -55,17 +56,23 @@ export default class SelectInput extends Component {
     }
   }
 
+  // Will be invoked when an item is selected, not when we are typing in the input (that triggers onInputChange, see render)
   onInternalChange (internalValue) {
     const { input, multiselect, onChange } = this.props;
-    const newValue = multiselect
-      ? internalValue.map((v) => v.value)
-      : internalValue.value;
-    // when the user clicked on 'Create option ...'
-    if (internalValue.className === 'Select-create-option-placeholder') {
-      this.props.onCreateOption(internalValue.value);
-    } else {
-      input.onChange && input.onChange(newValue);
-      onChange && onChange(newValue);
+    if (internalValue) { // When we have picked an item from the list.
+      const newValue = multiselect
+        ? internalValue.map((v) => v.value)
+        : internalValue.value;
+      // When the user clicked on 'Create option ...'
+      if (internalValue.className === 'Select-create-option-placeholder') {
+        this.props.onCreateOption(internalValue.value);
+      } else {
+        input.onChange && input.onChange(newValue);
+        onChange && onChange(newValue);
+      }
+    } else { // It is possible to clear our selectInput.
+      input.onChange && input.onChange(null);
+      onChange && onChange(null);
     }
   }
 
@@ -104,7 +111,7 @@ export default class SelectInput extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { onCreateOption, disabled, first, getItemText, getOptions, input, isLoading, label, meta, maxSelect, multiselect, placeholder, required, style } = this.props;
+    const { onCreateOption, disabled, first, getItemText, getOptions, filter, input, isLoading, label, meta, maxSelect, multiselect, placeholder, required, style } = this.props;
     const options = this.props.options ? this.props.options.map((o) => ({ value: o, label: getItemText(o) })) : [];
     onCreateOption && this.state.value && options.push({ value: this.state.value, label: `Add ${this.state.value}`, className: 'Select-create-option-placeholder' });
     let value;
@@ -126,9 +133,9 @@ export default class SelectInput extends Component {
         <WrappedSelect
           {...input}
           cache={false}
-          clearable={false}
+          clearable
           disabled={disabled}
-          filterOption={() => true}
+          filterOption={filter ? filter : () => true}
           isLoading={isLoading}
           multi={multiselect}
           options={maxSelected ? [] : options}

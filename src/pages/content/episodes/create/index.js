@@ -194,6 +194,9 @@ export default class CreateEpisodentryModal extends Component {
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}
+          filter={(option, filter) => {
+            return option && filter ? localeNames.get(option.value).toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
+          }}
           getItemText={(language) => localeNames.get(language)}
           getOptions={(language) => localeNames.keySeq().toArray()}
           label='Default language'
