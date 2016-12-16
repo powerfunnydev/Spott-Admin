@@ -39,10 +39,13 @@ import usersEdit from '../pages/users/edit/reducer';
 import usersList from '../pages/users/list/reducer';
 import Toast from './toast';
 
+import tagger from '../tagger/reducers';
+
 /**
  * The application's main reducer
  */
 export default combineReducers({
+  tagger,
   _relatedVideo: relatedVideoPersist,
   common: combineReducers({
     linkUserModal: LinkUserModal
