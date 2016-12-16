@@ -133,7 +133,9 @@ function getRoutes ({ dispatch, getState }) {
           <Route component={CharactersCreate} path='create'/>
         </Route>
         <Route path='characters'>
-          <Route component={CharactersEdit} path='edit/:characterId'/>
+          <Route component={CharactersEdit} path='edit/:characterId'>
+            <Route component={PersonsCreate} path='create/person'/>
+          </Route>
           <Route component={CharactersRead} path='read/:characterId'/>
         </Route>
         <Route component={ContentProducersList} path='content-producers'>

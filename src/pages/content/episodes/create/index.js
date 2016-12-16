@@ -105,7 +105,6 @@ export default class CreateEpisodentryModal extends Component {
       defaultLocale = lastEpisode.defaultLocale;
       episodeNumber = lastEpisode.number + 1;
       lastEpisodeId = lastEpisode.id;
-      console.log('lastEpisodeId', lastEpisodeId);
     } catch (e) {
       console.error('e', e);
       broadcasters = [];
