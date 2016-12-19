@@ -40,7 +40,9 @@ const configuration = {
         loader: 'eslint-loader',
         options: {
           // Use cache for speedup.
-          cache: true,
+          // Disable cache because there is a bug in eslint.
+          // Cache is not invalidated if the .eslintrc file was changed.
+          // cache: true,
           failOnWarning: false,
           failOnError: true
         }
