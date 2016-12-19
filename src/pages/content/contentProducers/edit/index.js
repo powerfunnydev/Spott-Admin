@@ -4,13 +4,11 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import TextInput from '../../../_common/inputs/textInput';
-import Header from '../../../app/header';
 import { tabStyles, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Section from '../../../_common/components/section';
-import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Label from '../../../_common/inputs/_label';
@@ -18,6 +16,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import selector from './selector';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
+import { SideMenu } from '../../../app/sideMenu';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -100,42 +99,42 @@ export default class EditContentProducers extends Component {
     const { currentContentProducer, location, handleSubmit, deleteLogo } = this.props;
     const { styles } = this.constructor;
     return (
-      <Root style={styles.background}>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <BreadCrumbs hierarchy={[
-          { title: 'Content producers', url: '/content/content-producers' },
-          { title: currentContentProducer.get('name'), url: location } ]}/>
-        <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-          <Tabs>
-            <TabList style={tabStyles.tabList}>
-              <Tab style={tabStyles.tab}>Details</Tab>
-            </TabList>
-            <TabPanel>
-              <Section first>
-                <FormSubtitle first>Content</FormSubtitle>
-                <Field
-                  component={TextInput}
-                  label='Name'
-                  name='name'
-                  placeholder='Name content producer'
-                  required/>
-                <div style={styles.paddingTop}>
-                  <Label text='Upload image' />
-                  <Dropzone
-                    accept='image/*'
-                    downloadUrl={currentContentProducer.get('logo') &&
-                      currentContentProducer.getIn([ 'logo', 'url' ])}
-                    imageUrl={currentContentProducer.get('logo') &&
-                      `${currentContentProducer.getIn([ 'logo', 'url' ])}?height=310&width=310`}
-                    onChange={({ callback, file }) => { this.props.uploadImage({ contentProducerId: this.props.params.id, image: file, callback }); }}
-                    onDelete={() => { deleteLogo({ contentProducerId: currentContentProducer.get('id') }); }}/>
-                </div>
-              </Section>
-            </TabPanel>
-          </Tabs>
-        </EditTemplate>
-      </Root>
+      <SideMenu location={location}>
+        <Root style={styles.background}>
+          <BreadCrumbs hierarchy={[
+            { title: 'Content producers', url: '/content/content-producers' },
+            { title: currentContentProducer.get('name'), url: location } ]}/>
+          <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
+            <Tabs>
+              <TabList style={tabStyles.tabList}>
+                <Tab style={tabStyles.tab}>Details</Tab>
+              </TabList>
+              <TabPanel>
+                <Section first>
+                  <FormSubtitle first>Content</FormSubtitle>
+                  <Field
+                    component={TextInput}
+                    label='Name'
+                    name='name'
+                    placeholder='Name content producer'
+                    required/>
+                  <div style={styles.paddingTop}>
+                    <Label text='Upload image' />
+                    <Dropzone
+                      accept='image/*'
+                      downloadUrl={currentContentProducer.get('logo') &&
+                        currentContentProducer.getIn([ 'logo', 'url' ])}
+                      imageUrl={currentContentProducer.get('logo') &&
+                        `${currentContentProducer.getIn([ 'logo', 'url' ])}?height=310&width=310`}
+                      onChange={({ callback, file }) => { this.props.uploadImage({ contentProducerId: this.props.params.id, image: file, callback }); }}
+                      onDelete={() => { deleteLogo({ contentProducerId: currentContentProducer.get('id') }); }}/>
+                  </div>
+                </Section>
+              </TabPanel>
+            </Tabs>
+          </EditTemplate>
+        </Root>
+      </SideMenu>
     );
   }
 

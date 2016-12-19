@@ -5,19 +5,18 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
-import Header from '../../../app/header';
 import { tabStyles, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Section from '../../../_common/components/section';
-import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Label from '../../../_common/inputs/_label';
 import selector from './selector';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
+import { SideMenu } from '../../../app/sideMenu';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -99,42 +98,42 @@ export default class EditBroadcaster extends Component {
     const { currentBroadcaster, location, handleSubmit, deleteLogo } = this.props;
     const { styles } = this.constructor;
     return (
-      <Root style={styles.background}>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <BreadCrumbs hierarchy={[
-          { title: 'Broadcasters', url: '/content/broadcasters' },
-          { title: currentBroadcaster.get('name'), url: location } ]}/>
-        <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-          <Tabs>
-            <TabList style={tabStyles.tabList}>
-              <Tab style={tabStyles.tab}>Details</Tab>
-            </TabList>
-            <TabPanel>
-              <Section first>
-                <FormSubtitle first>Content</FormSubtitle>
-                <Field
-                  component={TextInput}
-                  label='Name'
-                  name='name'
-                  placeholder='Name broadcaster'
-                  required/>
-                <div style={styles.paddingTop}>
-                  <Label text='Upload image' />
-                  <Dropzone
-                    accept='image/*'
-                    downloadUrl={currentBroadcaster.get('logo') &&
-                      currentBroadcaster.getIn([ 'logo', 'url' ])}
-                    imageUrl={currentBroadcaster.get('logo') &&
-                      `${currentBroadcaster.getIn([ 'logo', 'url' ])}?height=310&width=310`}
-                    onChange={({ callback, file }) => this.props.uploadImage({ broadcasterId: this.props.params.broadcasterId, image: file, callback })}
-                    onDelete={() => { deleteLogo({ broadcasterId: currentBroadcaster.get('id') }); }}/>
-                </div>
-              </Section>
-            </TabPanel>
-          </Tabs>
-        </EditTemplate>
-      </Root>
+      <SideMenu location={location}>
+        <Root style={styles.background}>
+          <BreadCrumbs hierarchy={[
+            { title: 'Broadcasters', url: '/content/broadcasters' },
+            { title: currentBroadcaster.get('name'), url: location } ]}/>
+          <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
+            <Tabs>
+              <TabList style={tabStyles.tabList}>
+                <Tab style={tabStyles.tab}>Details</Tab>
+              </TabList>
+              <TabPanel>
+                <Section first>
+                  <FormSubtitle first>Content</FormSubtitle>
+                  <Field
+                    component={TextInput}
+                    label='Name'
+                    name='name'
+                    placeholder='Name broadcaster'
+                    required/>
+                  <div style={styles.paddingTop}>
+                    <Label text='Upload image' />
+                    <Dropzone
+                      accept='image/*'
+                      downloadUrl={currentBroadcaster.get('logo') &&
+                        currentBroadcaster.getIn([ 'logo', 'url' ])}
+                      imageUrl={currentBroadcaster.get('logo') &&
+                        `${currentBroadcaster.getIn([ 'logo', 'url' ])}?height=310&width=310`}
+                      onChange={({ callback, file }) => this.props.uploadImage({ broadcasterId: this.props.params.broadcasterId, image: file, callback })}
+                      onDelete={() => { deleteLogo({ broadcasterId: currentBroadcaster.get('id') }); }}/>
+                  </div>
+                </Section>
+              </TabPanel>
+            </Tabs>
+          </EditTemplate>
+        </Root>
+      </SideMenu>
     );
   }
 

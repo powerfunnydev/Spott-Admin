@@ -2,10 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Header from '../../../app/header';
 import { Root, Container, colors } from '../../../_common/styles';
 import * as actions from './actions';
-import SpecificHeader from '../../header';
 import selector from './selector';
 import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
@@ -16,6 +14,7 @@ import SeriesEntrySeasonsList from './seasons';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
 import TvGuideList from '../../_mediumTvGuide';
+import { SideMenu } from '../../../app/sideMenu';
 
 /* eslint-disable no-alert */
 
@@ -84,40 +83,40 @@ export default class ReadSeriesEntry extends Component {
     const { styles } = this.constructor;
     const defaultLocale = currentSeriesEntry.getIn([ 'defaultLocale' ]);
     return (
-      <Root>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <BreadCrumbs hierarchy={[
-          { title: 'Series', url: '/content/series' },
-          { title: currentSeriesEntry.getIn([ 'title', defaultLocale ]), url: location.pathname }
-        ]}/>
-        <Container>
-          {currentSeriesEntry.get('_status') === 'loaded' && currentSeriesEntry &&
-            <EntityDetails
-              imageUrl={currentSeriesEntry.getIn([ 'profileImage', defaultLocale ]) && `${currentSeriesEntry.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
-              title={currentSeriesEntry.getIn([ 'title', defaultLocale ])}
-              onEdit={() => this.props.routerPushWithReturnTo(`content/series/edit/${currentSeriesEntry.getIn([ 'id' ])}`)}
-              onRemove={async () => {
-                await deleteSeriesEntry(currentSeriesEntry.getIn([ 'id' ]));
-                this.redirect();
-              }}/>}
-        </Container>
-        <Line/>
-        <div style={[ generalStyles.fillPage, styles.table ]}>
+      <SideMenu location={location}>
+        <Root>
+          <BreadCrumbs hierarchy={[
+            { title: 'Series', url: '/content/series' },
+            { title: currentSeriesEntry.getIn([ 'title', defaultLocale ]), url: location.pathname }
+          ]}/>
           <Container>
-            <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
-              <Tab title='Seasons'>
-                <SeriesEntrySeasonsList {...this.props}/>
-              </Tab>
-              <Tab title='TV Guide'>
-                <TvGuideList {...this.props} mediumId={this.props.params.seriesEntryId}/>
-              </Tab>
-            </Tabs>
+            {currentSeriesEntry.get('_status') === 'loaded' && currentSeriesEntry &&
+              <EntityDetails
+                imageUrl={currentSeriesEntry.getIn([ 'profileImage', defaultLocale ]) && `${currentSeriesEntry.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
+                title={currentSeriesEntry.getIn([ 'title', defaultLocale ])}
+                onEdit={() => this.props.routerPushWithReturnTo(`content/series/edit/${currentSeriesEntry.getIn([ 'id' ])}`)}
+                onRemove={async () => {
+                  await deleteSeriesEntry(currentSeriesEntry.getIn([ 'id' ]));
+                  this.redirect();
+                }}/>}
           </Container>
-        </div>
-        <Line/>
-        {children}
-      </Root>
+          <Line/>
+          <div style={[ generalStyles.fillPage, styles.table ]}>
+            <Container>
+              <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
+                <Tab title='Seasons'>
+                  <SeriesEntrySeasonsList {...this.props}/>
+                </Tab>
+                <Tab title='TV Guide'>
+                  <TvGuideList {...this.props} mediumId={this.props.params.seriesEntryId}/>
+                </Tab>
+              </Tabs>
+            </Container>
+          </div>
+          <Line/>
+          {children}
+        </Root>
+      </SideMenu>
     );
   }
 

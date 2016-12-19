@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Header from '../../app/header';
 import { Root, Container, colors } from '../../_common/styles';
 import * as actions from './actions';
 import selector from './selector';
@@ -12,6 +11,7 @@ import BreadCrumbs from '../../_common/components/breadCrumbs';
 import Line from '../../_common/components/line';
 import { generalStyles } from '../../_common/components/table/index';
 import * as listActions from '../list/actions';
+import { SideMenu } from '../../app/sideMenu';
 
 /* eslint-disable no-alert */
 
@@ -79,28 +79,28 @@ export default class ReadUser extends Component {
     const { children, currentUser, location, deleteUser } = this.props;
 
     return (
-      <Root>
-        <Header currentLocation={location} hideHomePageLinks />
-        <BreadCrumbs
-          hierarchy={[
-            { title: 'Users', url: '/users' },
-            { title: currentUser.get('userName'), url: location.pathname }
-          ]}/>
-        <Container>
-          {currentUser.get('_status') === 'loaded' && currentUser &&
-            <EntityDetails
-              imageUrl={currentUser.get('avatar') && `${currentUser.getIn([ 'avatar', 'url' ])}?height=310&width=310`}
-              subtitle={currentUser.get('email')}
-              title={`${currentUser.get('firstName')} ${currentUser.get('lastName')}`}
-              onEdit={() => this.props.routerPushWithReturnTo(`users/edit/${currentUser.get('id')}`)}
-              onRemove={async () => { await deleteUser(currentUser.getIn([ 'id' ])); this.redirect(); }}/>}
-        </Container>
-        <Line/>
-        <div style={[ generalStyles.fillPage, styles.table ]} />
-        <Line/>
-        {children}
-      </Root>
+      <SideMenu location={location}>
+        <Root>
+          <BreadCrumbs
+            hierarchy={[
+              { title: 'Users', url: '/users' },
+              { title: currentUser.get('userName'), url: location.pathname }
+            ]}/>
+          <Container>
+            {currentUser.get('_status') === 'loaded' && currentUser &&
+              <EntityDetails
+                imageUrl={currentUser.get('avatar') && `${currentUser.getIn([ 'avatar', 'url' ])}?height=310&width=310`}
+                subtitle={currentUser.get('email')}
+                title={`${currentUser.get('firstName')} ${currentUser.get('lastName')}`}
+                onEdit={() => this.props.routerPushWithReturnTo(`users/edit/${currentUser.get('id')}`)}
+                onRemove={async () => { await deleteUser(currentUser.getIn([ 'id' ])); this.redirect(); }}/>}
+          </Container>
+          <Line/>
+          <div style={[ generalStyles.fillPage, styles.table ]} />
+          <Line/>
+          {children}
+        </Root>
+      </SideMenu>
     );
   }
-
 }

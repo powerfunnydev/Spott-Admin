@@ -288,8 +288,10 @@ export const transformListSeason = transformListMedium;
 export const transformListSeriesEntry = transformListMedium;
 export const transformListMovie = transformListMedium;
 
-export function transformBroadcastChannel ({ name, uuid: id, logo, broadcaster }) {
+export function transformBroadcastChannel ({ name, auditInfo, uuid: id, logo, broadcaster }) {
   return {
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     broadcaster: broadcaster && { id: broadcaster.uuid },
     id,
     logo: logo && { id: logo.uuid, url: logo.url },

@@ -11,12 +11,10 @@ import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { MOVIE_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import Dropzone from '../../../_common/dropzone/imageDropzone';
-import Header from '../../../app/header';
 import Label from '../../../_common/inputs/_label';
 import localized from '../../../_common/decorators/localized';
 import Section from '../../../_common/components/section';
 import SelectInput from '../../../_common/inputs/selectInput';
-import SpecificHeader from '../../header';
 import TextInput from '../../../_common/inputs/textInput';
 import NumberInput from '../../../_common/inputs/numberInput';
 import LanguageBar from '../../../_common/components/languageBar';
@@ -29,6 +27,7 @@ import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
+import { SideMenu } from '../../../app/sideMenu';
 
 const formName = 'movieEdit';
 
@@ -254,164 +253,164 @@ export default class EditMovie extends Component {
       deletePosterImage, location: { query: { tab } }
     } = this.props;
     return (
-      <Root style={styles.backgroundRoot}>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <BreadCrumbs hierarchy={[
-          { title: 'Movies', url: '/content/movies' },
-          { title: currentMovie.getIn([ 'title', defaultLocale ]), url: location } ]}/>
-        {currentModal === MOVIE_CREATE_LANGUAGE &&
-          <CreateLanguageModal
-            supportedLocales={supportedLocales}
-            onCloseClick={closeModal}
-            onCreate={this.languageAdded}>
-              <div>
-                <Field
-                  component={TextInput}
-                  label='Movie title'
-                  labelStyle={styles.titleLabel}
-                  name='title'
-                  placeholder='Movie title'
-                  required />
-              </div>
-          </CreateLanguageModal>}
-        <EditTemplate disableSubmit={tab > 1} onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-          <Tabs activeTab={tab} showPublishStatus onBeforeChange={this.props.onBeforeChangeTab} onChange={this.props.onChangeTab}>
-            <Tab title='Details'>
-              <Section noPadding style={styles.background}>
-                <LanguageBar
-                  _activeLocale={_activeLocale}
-                  defaultLocale={defaultLocale}
-                  errors={errors}
-                  openCreateLanguageModal={this.openCreateLanguageModal}
-                  removeLanguage={this.removeLanguage}
-                  supportedLocales={supportedLocales}
-                  onSetDefaultLocale={this.onSetDefaultLocale}/>
-              </Section>
-              <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage} >
-                <FormSubtitle first>General</FormSubtitle>
-                <Field
-                  component={TextInput}
-                  label='Movie title'
-                  labelStyle={styles.titleLabel}
-                  name={`title.${_activeLocale}`}
-                  placeholder='Movie title'
-                  required />
-                <Field
-                  component={TextInput}
-                  label='Movie subtitle'
-                  labelStyle={styles.titleLabel}
-                  name={`subTitle.${_activeLocale}`}
-                  placeholder='Movie subtitle'/>
-                <Field
-                  component={NumberInput}
-                  label='Start year'
-                  labelStyle={styles.titleLabel}
-                  name={`startYear.${_activeLocale}`}
-                  placeholder='Start year'/>
-                <Field
-                  component={NumberInput}
-                  label='End year'
-                  labelStyle={styles.titleLabel}
-                  name={`endYear.${_activeLocale}`}
-                  placeholder='End year'/>
-                <Field
-                  component={SelectInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  getItemText={(mediumCategory) => mediumCategoriesById.getIn([ mediumCategory, 'name' ])}
-                  getOptions={searchMediumCategories}
-                  isLoading={searchedMediumCategoryIds.get('_status') === FETCHING}
-                  label='Genres'
-                  multiselect
-                  name='mediumCategories'
-                  options={searchedMediumCategoryIds.get('data').toJS()}
-                  placeholder='Genres'/>
-                <Field
-                  component={TextInput}
-                  label='Description'
-                  name={`description.${_activeLocale}`}
-                  placeholder='Description'
-                  type='multiline'/>
-                <Field
-                  component={SelectInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  getItemText={(contentProducerId) => contentProducersById.getIn([ contentProducerId, 'name' ])}
-                  getOptions={searchContentProducers}
-                  isLoading={searchedContentProducerIds.get('_status') === FETCHING}
-                  label='Content producers'
-                  multiselect
-                  name='contentProducers'
-                  options={searchedContentProducerIds.get('data').toJS()}
-                  placeholder='Content producers'/>
-                <Field
-                  component={SelectInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  getItemText={(broadcasterId) => broadcastersById.getIn([ broadcasterId, 'name' ])}
-                  getOptions={searchBroadcasters}
-                  isLoading={searchedBroadcasterIds.get('_status') === FETCHING}
-                  label='Broadcasters'
-                  multiselect
-                  name='broadcasters'
-                  options={searchedBroadcasterIds.get('data').toJS()}
-                  placeholder='Broadcaster companies'/>
-                <FormSubtitle>Images</FormSubtitle>
-                <div style={[ styles.paddingTop, styles.row ]}>
-                  <div>
-                    <Label text='Poster image' />
-                    <Dropzone
-                      accept='image/*'
-                      downloadUrl={
-                        currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ]) ||
-                        currentMovie.getIn([ 'posterImage', defaultLocale, 'url' ])}
-                      imageUrl={currentMovie.getIn([ 'posterImage', _activeLocale ]) &&
-                        `${currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310` ||
-                        currentMovie.getIn([ 'posterImage', defaultLocale ]) &&
-                        `${currentMovie.getIn([ 'posterImage', defaultLocale, 'url' ])}?height=459&width=310`}
-                      showOnlyUploadedImage
-                      type={POSTER_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ locale: _activeLocale, movieId: this.props.params.movieId, image: file, callback }); }}
-                      onDelete={currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ]) ? () => { deletePosterImage({ locale: _activeLocale, mediumId: currentMovie.get('id') }); } : null}/>
-                  </div>
-                  <div style={styles.paddingLeftUploadImage}>
-                    <Label text='Profile image' />
-                    <Dropzone
-                      downloadUrl={currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ]) ||
-                        currentMovie.getIn([ 'profileImage', defaultLocale, 'url' ])}
-                      imageUrl={currentMovie.getIn([ 'profileImage', _activeLocale ]) &&
-                        `${currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360` ||
-                        currentMovie.getIn([ 'profileImage', defaultLocale ]) &&
-                        `${currentMovie.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
-                      showOnlyUploadedImage
-                      type={PROFILE_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, movieId: this.props.params.movieId, image: file, callback }); }}
-                      onDelete={currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ]) ? () => { deleteProfileImage({ locale: _activeLocale, mediumId: currentMovie.get('id') }); } : null}/>
-                  </div>
+      <SideMenu location={location}>
+        <Root style={styles.backgroundRoot}>
+          <BreadCrumbs hierarchy={[
+            { title: 'Movies', url: '/content/movies' },
+            { title: currentMovie.getIn([ 'title', defaultLocale ]), url: location } ]}/>
+          {currentModal === MOVIE_CREATE_LANGUAGE &&
+            <CreateLanguageModal
+              supportedLocales={supportedLocales}
+              onCloseClick={closeModal}
+              onCreate={this.languageAdded}>
+                <div>
+                  <Field
+                    component={TextInput}
+                    label='Movie title'
+                    labelStyle={styles.titleLabel}
+                    name='title'
+                    placeholder='Movie title'
+                    required />
                 </div>
-              </Section>
-            </Tab>
-           <Tab title='Helpers'>
-              <Characters
-                charactersById={charactersById}
-                mediumCharacters={movieCharacters}
-                mediumId={this.props.params.movieId}
-                searchCharacters={searchCharacters}
-                searchedCharacterIds={searchedCharacterIds} />
-            </Tab>
-            <Tab title='Interactive video'>
-              <Section>
-                <FormSubtitle first>Interactive video</FormSubtitle>
-                <Field
-                  component={RelatedVideo}
-                  medium={currentMovie}
-                  name='videoId' />
-              </Section>
-            </Tab>
-            <Tab title='Availability'>
-              <Availabilities mediumId={this.props.params.movieId} />
-            </Tab>
-          </Tabs>
-        </EditTemplate>
-      </Root>
+            </CreateLanguageModal>}
+          <EditTemplate disableSubmit={tab > 1} onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
+            <Tabs activeTab={tab} showPublishStatus onBeforeChange={this.props.onBeforeChangeTab} onChange={this.props.onChangeTab}>
+              <Tab title='Details'>
+                <Section noPadding style={styles.background}>
+                  <LanguageBar
+                    _activeLocale={_activeLocale}
+                    defaultLocale={defaultLocale}
+                    errors={errors}
+                    openCreateLanguageModal={this.openCreateLanguageModal}
+                    removeLanguage={this.removeLanguage}
+                    supportedLocales={supportedLocales}
+                    onSetDefaultLocale={this.onSetDefaultLocale}/>
+                </Section>
+                <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage} >
+                  <FormSubtitle first>General</FormSubtitle>
+                  <Field
+                    component={TextInput}
+                    label='Movie title'
+                    labelStyle={styles.titleLabel}
+                    name={`title.${_activeLocale}`}
+                    placeholder='Movie title'
+                    required />
+                  <Field
+                    component={TextInput}
+                    label='Movie subtitle'
+                    labelStyle={styles.titleLabel}
+                    name={`subTitle.${_activeLocale}`}
+                    placeholder='Movie subtitle'/>
+                  <Field
+                    component={NumberInput}
+                    label='Start year'
+                    labelStyle={styles.titleLabel}
+                    name={`startYear.${_activeLocale}`}
+                    placeholder='Start year'/>
+                  <Field
+                    component={NumberInput}
+                    label='End year'
+                    labelStyle={styles.titleLabel}
+                    name={`endYear.${_activeLocale}`}
+                    placeholder='End year'/>
+                  <Field
+                    component={SelectInput}
+                    disabled={_activeLocale !== defaultLocale}
+                    getItemText={(mediumCategory) => mediumCategoriesById.getIn([ mediumCategory, 'name' ])}
+                    getOptions={searchMediumCategories}
+                    isLoading={searchedMediumCategoryIds.get('_status') === FETCHING}
+                    label='Genres'
+                    multiselect
+                    name='mediumCategories'
+                    options={searchedMediumCategoryIds.get('data').toJS()}
+                    placeholder='Genres'/>
+                  <Field
+                    component={TextInput}
+                    label='Description'
+                    name={`description.${_activeLocale}`}
+                    placeholder='Description'
+                    type='multiline'/>
+                  <Field
+                    component={SelectInput}
+                    disabled={_activeLocale !== defaultLocale}
+                    getItemText={(contentProducerId) => contentProducersById.getIn([ contentProducerId, 'name' ])}
+                    getOptions={searchContentProducers}
+                    isLoading={searchedContentProducerIds.get('_status') === FETCHING}
+                    label='Content producers'
+                    multiselect
+                    name='contentProducers'
+                    options={searchedContentProducerIds.get('data').toJS()}
+                    placeholder='Content producers'/>
+                  <Field
+                    component={SelectInput}
+                    disabled={_activeLocale !== defaultLocale}
+                    getItemText={(broadcasterId) => broadcastersById.getIn([ broadcasterId, 'name' ])}
+                    getOptions={searchBroadcasters}
+                    isLoading={searchedBroadcasterIds.get('_status') === FETCHING}
+                    label='Broadcasters'
+                    multiselect
+                    name='broadcasters'
+                    options={searchedBroadcasterIds.get('data').toJS()}
+                    placeholder='Broadcaster companies'/>
+                  <FormSubtitle>Images</FormSubtitle>
+                  <div style={[ styles.paddingTop, styles.row ]}>
+                    <div>
+                      <Label text='Poster image' />
+                      <Dropzone
+                        accept='image/*'
+                        downloadUrl={
+                          currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ]) ||
+                          currentMovie.getIn([ 'posterImage', defaultLocale, 'url' ])}
+                        imageUrl={currentMovie.getIn([ 'posterImage', _activeLocale ]) &&
+                          `${currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310` ||
+                          currentMovie.getIn([ 'posterImage', defaultLocale ]) &&
+                          `${currentMovie.getIn([ 'posterImage', defaultLocale, 'url' ])}?height=459&width=310`}
+                        showOnlyUploadedImage
+                        type={POSTER_IMAGE}
+                        onChange={({ callback, file }) => { this.props.uploadPosterImage({ locale: _activeLocale, movieId: this.props.params.movieId, image: file, callback }); }}
+                        onDelete={currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ]) ? () => { deletePosterImage({ locale: _activeLocale, mediumId: currentMovie.get('id') }); } : null}/>
+                    </div>
+                    <div style={styles.paddingLeftUploadImage}>
+                      <Label text='Profile image' />
+                      <Dropzone
+                        downloadUrl={currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ]) ||
+                          currentMovie.getIn([ 'profileImage', defaultLocale, 'url' ])}
+                        imageUrl={currentMovie.getIn([ 'profileImage', _activeLocale ]) &&
+                          `${currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360` ||
+                          currentMovie.getIn([ 'profileImage', defaultLocale ]) &&
+                          `${currentMovie.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
+                        showOnlyUploadedImage
+                        type={PROFILE_IMAGE}
+                        onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, movieId: this.props.params.movieId, image: file, callback }); }}
+                        onDelete={currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ]) ? () => { deleteProfileImage({ locale: _activeLocale, mediumId: currentMovie.get('id') }); } : null}/>
+                    </div>
+                  </div>
+                </Section>
+              </Tab>
+             <Tab title='Helpers'>
+                <Characters
+                  charactersById={charactersById}
+                  mediumCharacters={movieCharacters}
+                  mediumId={this.props.params.movieId}
+                  searchCharacters={searchCharacters}
+                  searchedCharacterIds={searchedCharacterIds} />
+              </Tab>
+              <Tab title='Interactive video'>
+                <Section>
+                  <FormSubtitle first>Interactive video</FormSubtitle>
+                  <Field
+                    component={RelatedVideo}
+                    medium={currentMovie}
+                    name='videoId' />
+                </Section>
+              </Tab>
+              <Tab title='Availability'>
+                <Availabilities mediumId={this.props.params.movieId} />
+              </Tab>
+            </Tabs>
+          </EditTemplate>
+        </Root>
+      </SideMenu>
     );
   }
 }
