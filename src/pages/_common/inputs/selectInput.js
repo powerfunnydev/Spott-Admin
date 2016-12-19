@@ -91,8 +91,8 @@ export default class SelectInput extends Component {
       border: `1px solid ${colors.errorColor}`
     },
     disabled: {
-      backgroundColor: colors.lightGray,
-      color: colors.darkerGray
+      backgroundColor: colors.lightGray4,
+      color: colors.lightGray3
     },
     info: {
       color: colors.lightGray2,
@@ -140,7 +140,12 @@ export default class SelectInput extends Component {
           multi={multiselect}
           options={maxSelected ? [] : options}
           placeholder={placeholder}
-          style={mergeStyles([ styles.base, disabled && styles.disabled, meta && meta.touched && meta.error && styles.error, styles.text ])}
+          style={mergeStyles([
+            styles.base,
+            styles.text,
+            disabled && styles.disabled,
+            meta && meta.touched && meta.error && styles.error
+          ])}
           value={value} // Overides value of of {...field}
           onBlur={() => input.onBlur && input.onBlur(input.value)} // Overides onBlur of {...field}
           onChange={this.onInternalChange}  // Overides onChange of {...field};

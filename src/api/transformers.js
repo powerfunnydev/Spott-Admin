@@ -75,6 +75,35 @@ export function transformAvailability ({ country, endTimeStamp, startTimeStamp, 
   };
 }
 
+export function transformListBrand ({ name, uuid: id }) {
+  return { name, id };
+}
+
+export function transformBrand ({ defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, localeData, publishStatus, productCount, usedProductCount, subscriberCount, uuid: id }) {
+  const brand = {
+    description: {}, // Description for each locale
+    logo: {}, // Locale data
+    name: {}, // Locale data
+    profileCover: {}, // Locale data
+    tagLine: {} // Locale data
+  };
+  for (const { description, locale, name, profileCover, logo, tagLine } of localeData) {
+    brand.description[locale] = description;
+    brand.logo[locale] = logo && { id: logo.uuid, url: logo.url };
+    brand.name[locale] = name;
+    brand.profileCover[locale] = profileCover && { id: profileCover.uuid, url: profileCover.url };
+    brand.tagLine[locale] = tagLine;
+  }
+  return {
+    description: brand.description[defaultLocale],
+    id,
+    logo: brand.logo[defaultLocale],
+    name: brand.name[defaultLocale],
+    profileCover: brand.profileCover[defaultLocale],
+    tagLine: brand.tagLine[defaultLocale]
+  };
+}
+
 export function transformListCharacter ({ auditInfo, profileImage, portraitImage, name, uuid: id }) {
   return {
     id,
@@ -119,7 +148,7 @@ export function transformCharacter ({
 /**
  *  Complete version of a medium. Locales includes.
  */
-export function transformMedium ({ availabilities, broadcasters, characters, contentProducers, number,
+export function transformMedium ({ availabilities, brand, broadcasters, characters, contentProducers, number,
   auditInfo, type, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, serieInfo: serie, seasonInfo, uuid: id, publishStatus,
   defaultTitle, localeData, video, categories: mediumCategories }) {
   let serieInfo = serie;
@@ -128,6 +157,7 @@ export function transformMedium ({ availabilities, broadcasters, characters, con
   }
   const medium = {
     availabilities: availabilities && availabilities.map(transformAvailability),
+    brandId: brand && brand.uuid,
     broadcasters: broadcasters && broadcasters.map((bc) => bc.uuid),
     characters: characters && characters.map(transformListCharacter),
     contentProducers: contentProducers && contentProducers.map((cp) => cp.uuid),
@@ -283,10 +313,40 @@ export const transformEpisode004 = transformMedium;
 // Already refactored -> OK
 export const transformMovie = transformMedium;
 
+export function transformCommercial (data) {
+  const commercial = transformMedium(data);
+  commercial.hasBanner = {};
+  commercial.bannerBarColor = {};
+  commercial.bannerLogo = {};
+  commercial.bannerText = {};
+  commercial.bannerTextColor = {};
+  commercial.bannerUrl = {};
+
+  const { localeData } = data;
+  for (const { banner, locale } of localeData) {
+    if (banner) {
+      const { barColor, logo, text, textColor, url } = banner;
+      commercial.hasBanner[locale] = true;
+      commercial.bannerBarColor[locale] = barColor;
+      commercial.bannerLogo[locale] = logo ? { id: logo.uuid, url: logo.url } : null;
+      commercial.bannerText[locale] = text;
+      commercial.bannerTextColor[locale] = textColor;
+      commercial.bannerUrl[locale] = url;
+    } else {
+      commercial.hasBanner[locale] = false;
+      commercial.bannerBarColor[locale] = '#000000';
+      commercial.bannerTextColor[locale] = '#000000';
+    }
+  }
+  return commercial;
+}
+
 export const transformListEpisode = transformListMedium;
 export const transformListSeason = transformListMedium;
 export const transformListSeriesEntry = transformListMedium;
 export const transformListMovie = transformListMedium;
+
+export const transformListCommercial = transformListMedium;
 
 export function transformBroadcastChannel ({ name, uuid: id, logo, broadcaster }) {
   return {
