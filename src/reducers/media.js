@@ -2,7 +2,7 @@ import { Map } from 'immutable';
 import * as actions from '../actions/media';
 import { LOCATION_CHANGE } from 'react-router-redux';
 import { DESCRIPTION_TAB } from '../constants/createMediaTabTypes';
-import { EPISODE } from '../constants/mediaTypes';
+import { EPISODE } from '../constants/mediumTypes';
 
 /**
  * The app reducer is responsible for storing the current open modal.

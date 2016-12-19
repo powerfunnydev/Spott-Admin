@@ -120,7 +120,7 @@
     "no-self-compare": 1,
     "no-sequences": 2,
     "no-throw-literal": 1,
-    "no-unused-expressions": [1, { "allowShortCircuit": true, "allowTernary": true }],
+    "no-unused-expressions": 0,
     "no-useless-call": 1,
     "no-useless-concat": 1,
     "no-void": 1,
@@ -227,11 +227,11 @@
     "prefer-template": 1,
     "require-yield": 2,
 
-    "babel/generator-star-spacing": [1, { "before": false, "after": true }],
+    "arrow-parens": 1,
+    "object-shorthand": 1,
+    "generator-star-spacing": [1, { "before": false, "after": true }],
     "babel/new-cap": [1, { "capIsNew": false, "newIsCap": true }],
     "babel/object-curly-spacing": [1, "always"],
-    "babel/object-shorthand": 1,
-    "babel/arrow-parens": 1,
 
     "react/display-name": 0,
     "react/forbid-prop-types": 0,
@@ -267,6 +267,7 @@
         '/^on.+$/',
         'keyMap',
         'styles',
+        '/^render.+$/',
         'render'
       ]
     }],

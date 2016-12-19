@@ -1,0 +1,18 @@
+import * as sceneGroupApi from '../api/sceneGroup';
+import { makeApiActionCreator } from '../actions/_utils';
+
+export const SCENE_GROUPS_FETCH_START = 'SCENE_GROUPS_FETCH_START';
+export const SCENE_GROUPS_FETCH_SUCCESS = 'SCENE_GROUPS_FETCH_SUCCESS';
+export const SCENE_GROUPS_FETCH_ERROR = 'SCENE_GROUPS_FETCH_ERROR';
+
+export const SCENE_GROUP_PERSIST_START = 'SCENE_GROUP_PERSIST_START';
+export const SCENE_GROUP_PERSIST_SUCCESS = 'SCENE_GROUP_PERSIST_SUCCESS';
+export const SCENE_GROUP_PERSIST_ERROR = 'SCENE_GROUP_PERSIST_ERROR';
+
+export const SCENE_GROUP_DELETE_START = 'SCENE_GROUP_DELETE_START';
+export const SCENE_GROUP_DELETE_SUCCESS = 'SCENE_GROUP_DELETE_SUCCESS';
+export const SCENE_GROUP_DELETE_ERROR = 'SCENE_GROUP_DELETE_ERROR';
+
+export const fetchSceneGroups = makeApiActionCreator(sceneGroupApi.getSceneGroups, SCENE_GROUPS_FETCH_START, SCENE_GROUPS_FETCH_SUCCESS, SCENE_GROUPS_FETCH_ERROR);
+export const persistSceneGroup = makeApiActionCreator(sceneGroupApi.persistSceneGroup, SCENE_GROUP_PERSIST_START, SCENE_GROUP_PERSIST_SUCCESS, SCENE_GROUP_PERSIST_ERROR);
+export const deleteSceneGroup = makeApiActionCreator(sceneGroupApi.deleteSceneGroup, SCENE_GROUP_DELETE_START, SCENE_GROUP_DELETE_SUCCESS, SCENE_GROUP_DELETE_ERROR);
