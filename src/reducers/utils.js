@@ -18,6 +18,7 @@ export function serialize ({ searchString = '', page = 0, pageSize = 25, sortDir
 export const serializeFilterHasBroadcastChannels = serialize;
 export const serializeFilterHasBroadcasters = serialize;
 export const serializeFilterHasCharacters = serialize;
+export const serializeFilterHasCommercials = serialize;
 export const serializeFilterHasContentProducers = serialize;
 export const serializeFilterHasMovies = serialize;
 export const serializeFilterHasPersons = serialize;

@@ -13,6 +13,9 @@ import broadcastersReadUsers from '../pages/content/broadcasters/read/users/list
 import charactersCreate from '../pages/content/characters/create/reducer';
 import charactersEdit from '../pages/content/characters/edit/reducer';
 import charactersList from '../pages/content/characters/list/reducer';
+import commercialsCreate from '../pages/content/commercials/create/reducer';
+import commercialsEdit from '../pages/content/commercials/edit/reducer';
+import commercialsList from '../pages/content/commercials/list/reducer';
 import contentProducersList from '../pages/content/contentProducers/list/reducer';
 import contentProducersReadUsers from '../pages/content/contentProducers/read/users/list/reducer';
 import episodesCreate from '../pages/content/episodes/create/reducer';
@@ -70,6 +73,11 @@ export default combineReducers({
       create: charactersCreate,
       edit: charactersEdit,
       list: charactersList
+    }),
+    commercials: combineReducers({
+      create: commercialsCreate,
+      edit: commercialsEdit,
+      list: commercialsList
     }),
     contentProducers: combineReducers({
       list: contentProducersList,

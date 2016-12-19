@@ -9,13 +9,12 @@ import { buttonStyles, colors, fontWeights, makeTextStyle } from '../../../_comm
 import EntityDetails from '../../../_common/entityDetails';
 import { confirmation } from '../../../_common/askConfirmation';
 import ProgressBar from '../../../_common/components/progressBar';
-import PersistVideoModal from '../persist';
-import * as actions from './actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { COMMERCIAL, EPISODE, MOVIE } from '../../../../constants/mediumTypes';
-import selector from './selector';
-
 import Spinner from '../../../_common/components/spinner';
+import PersistVideoModal from '../persist';
+import * as actions from './actions';
+import selector from './selector';
 
 const cross = require('../../../../assets/images/cross/cross-red.svg');
 

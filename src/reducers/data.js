@@ -1,12 +1,16 @@
 import { fromJS } from 'immutable';
-import { serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasSeriesEntries,
-    serializeFilterHasUsers, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
-    fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart,
-    fetchListSuccess, fetchListError } from './utils';
+import {
+  serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
+  serializeFilterHasUsers, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
+  fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart,
+  fetchListSuccess, fetchListError
+} from './utils';
 import * as availabilityActions from '../actions/availability';
+import * as brandActions from '../actions/brand';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcastersActions from '../actions/broadcaster';
 import * as charactersActions from '../actions/character';
+import * as commercialActions from '../actions/commercial';
 import * as contentProducersActions from '../actions/contentProducer';
 import * as episodeActions from '../actions/episode';
 import * as mediaActions from '../actions/media';
@@ -31,6 +35,7 @@ export default (state = fromJS({
     events: {},
     faceImages: {}, // Characters and persons has faceImages
     genders: {},
+    listBrands: {},
     listCharacters: {}, // listCharacters is the light version of characters, without locales
     listMedia: {}, // listMedia is the light version of media, without locales
     listMediumCategories: {},
@@ -51,6 +56,7 @@ export default (state = fromJS({
     filterHasBroadcastChannels: {},
     filterHasBroadcasters: {},
     filterHasCharacters: {},
+    filterHasCommercials: {},
     filterHasContentProducers: {},
     filterHasEpisodes: {},
     filterHasMovies: {},
@@ -60,6 +66,8 @@ export default (state = fromJS({
     filterHasTvGuideEntries: {},
     filterHasUsers: {},
 
+    searchStringHasActors: {},
+    searchStringHasBrands: {},
     searchStringHasBroadcastChannels: {},
     searchStringHasBroadcasters: {},
     searchStringHasCharacters: {},
@@ -90,6 +98,16 @@ export default (state = fromJS({
       return searchSuccess(state, 'availabilities', 'mediumHasAvailabilities', action.mediumId, action.data);
     case availabilityActions.AVAILABILITIES_FETCH_ERROR:
       return searchError(state, 'mediumHasAvailabilities', action.mediumId, action.error);
+
+    // Brands
+    // //////
+
+    case brandActions.BRAND_SEARCH_START:
+      return searchStart(state, 'searchStringHasBrands', action.searchString);
+    case brandActions.BRAND_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listBrands', 'searchStringHasBrands', action.searchString, action.data);
+    case brandActions.BRAND_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasBrands', action.searchString, action.error);
 
     // Broadcaster Channels
     // ////////////////////
@@ -201,6 +219,26 @@ export default (state = fromJS({
       return searchSuccess(state, 'listCharacters', 'mediumHasCharacters', action.mediumId, action.data);
     case charactersActions.MEDIUM_CHARACTER_SEARCH_ERROR:
       return searchError(state, 'mediumHasCharacters', action.mediumId, action.error);
+
+    // Commercials
+    // ///////////
+
+    case commercialActions.UPLOAD_PROFILE_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.commercialId ], action.data);
+
+    case commercialActions.COMMERCIAL_FETCH_START:
+      return fetchStart(state, [ 'entities', 'media', action.commercialId ]);
+    case commercialActions.COMMERCIAL_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.commercialId ], action.data);
+    case commercialActions.COMMERCIAL_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'media', action.commercialId ], action.error);
+
+    case commercialActions.COMMERCIALS_FETCH_START:
+      return searchStart(state, 'filterHasCommercials', serializeFilterHasCommercials(action));
+    case commercialActions.COMMERCIALS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'filterHasCommercials', serializeFilterHasCommercials(action), action.data.data);
+    case commercialActions.COMMERCIALS_FETCH_ERROR:
+      return searchError(state, 'filterHasCommercials', serializeFilterHasCommercials(action), action.error);
 
     // Content producers
     // /////////////////

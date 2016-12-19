@@ -55,7 +55,8 @@ export default class DateInput extends Component {
         color: colors.veryDarkGray
       },
       disabled: {
-        backgroundColor: colors.lightGray4
+        backgroundColor: colors.lightGray4,
+        color: colors.lightGray3
       }
     },
     theme: {

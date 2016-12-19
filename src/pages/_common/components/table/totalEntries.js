@@ -34,6 +34,9 @@ export class TotalEntries extends Component {
     row: {
       display: 'flex',
       flexDirection: 'row',
+       // When bulk operation dropdown is rendered the height changes...
+       // Set height fixed.
+      height: '2.625em',
       paddingBottom: '1.25em'
     },
     paddingLeft: {
