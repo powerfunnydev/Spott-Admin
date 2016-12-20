@@ -1,6 +1,7 @@
 export const BROADCAST_CHANNEL = 'broadcastChannel';
 export const BROADCASTER = 'broadcaster';
 export const CHARACTER = 'character';
+export const COMMERCIAL = 'commercial';
 export const CONTENT_PRODUCER = 'contentProducer';
 export const EPISODE = 'episode';
 export const MOVIE = 'movie';

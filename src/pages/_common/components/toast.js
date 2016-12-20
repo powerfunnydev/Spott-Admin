@@ -11,7 +11,7 @@ import { colors, makeTextStyle, fontWeights } from '../styles';
 import CompletedSVG from '../images/completed';
 import PlusSVG from '../images/plus';
 import { BROADCAST_CHANNEL, BROADCASTER, CHARACTER, CONTENT_PRODUCER, EPISODE, MOVIE, PERSON, SEASON,
-    SERIES_ENTRY, USER, TV_GUIDE_ENTRY } from '../../../constants/entityTypes';
+    SERIES_ENTRY, USER, TV_GUIDE_ENTRY, COMMERCIAL } from '../../../constants/entityTypes';
 
 @connect(null, (dispatch) => ({
   popToast: bindActionCreators(toastActions.pop, dispatch),
@@ -150,6 +150,17 @@ export class SuccessMessage extends Component {
     );
   }
 
+  commercialPersistSuccess (commercial) {
+    const { styles } = this.constructor;
+    return (
+      <span>
+        Commercial <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/commercials/read/${commercial.id}`)}>
+          {commercial.title[commercial.defaultLocale]}
+        </span> has been succesfully persisted.
+      </span>
+    );
+  }
+
   contentProducerPersistSuccess (contentProducer) {
     const { styles } = this.constructor;
     return (
@@ -251,6 +262,7 @@ export class SuccessMessage extends Component {
 
   render () {
     const { entityType, entity } = this.props;
+    console.log('entityType', entityType);
     if (entityType === BROADCAST_CHANNEL) {
       return this.broadcastChannelPersistSuccess(entity);
     } else if (entityType === BROADCASTER) {
@@ -259,6 +271,8 @@ export class SuccessMessage extends Component {
       return this.characterPersistSuccess(entity);
     } else if (entityType === CONTENT_PRODUCER) {
       return this.contentProducerPersistSuccess(entity);
+    } else if (entityType === COMMERCIAL) {
+      return this.commercialPersistSuccess(entity);
     } else if (entityType === EPISODE) {
       return this.episodePersistSuccess(entity);
     } else if (entityType === MOVIE) {

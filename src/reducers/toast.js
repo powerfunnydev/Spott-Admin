@@ -5,6 +5,7 @@ import * as contentProducerActions from '../actions/contentProducer';
 import * as broadcasterActions from '../actions/broadcaster';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as characterActions from '../actions/character';
+import * as commercialActions from '../actions/commercial';
 import * as episodeActions from '../actions/episode';
 import * as movieActions from '../actions/movie';
 import * as personActions from '../actions/person';
@@ -72,6 +73,8 @@ export default (state = List(), action) => {
       return pushSuccess(state, action.data, entityTypes.BROADCASTER);
     case characterActions.CHARACTER_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.CHARACTER);
+    case commercialActions.COMMERCIAL_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, entityTypes.COMMERCIAL);
     case userActions.USER_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.USER);
     case contentProducerActions.CONTENT_PRODUCER_PERSIST_SUCCESS:
