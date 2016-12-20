@@ -15,6 +15,7 @@ export function serialize ({ searchString = '', page = 0, pageSize = 25, sortDir
   return id;
 }
 
+export const serializeFilterHasBrands = serialize;
 export const serializeFilterHasBroadcastChannels = serialize;
 export const serializeFilterHasBroadcasters = serialize;
 export const serializeFilterHasCharacters = serialize;

@@ -15,6 +15,48 @@ export function transformContentProducer ({ uuid, name, auditInfo, logo }) {
   };
 }
 
+export function transformBrand ({ uuid, publishStatus, defaultLocale, localeData, auditInfo }) {
+  const brand = {
+    basedOnDefaultLocale: {},
+    createdOn: auditInfo && auditInfo.createdOn,
+    defaultLocale,
+    description: {},
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    locales: [],
+    logo: {},
+    publishStatus,
+    profileImage: {},
+    name: {},
+    tagLine: {}
+  };
+  if (localeData) {
+    for (const { basedOnDefaultLocale, description, logo, locale, name, profileCover, tagLine } of localeData) {
+      brand.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      brand.description[locale] = description;
+      brand.name[locale] = name;
+      brand.logo[locale] = logo && { id: logo.uuid, url: logo.url };
+      brand.profileImage[locale] = profileCover && { id: profileCover.uuid, url: profileCover.url };
+      brand.tagLine[locale] = tagLine;
+      brand.locales.push(locale);
+    }
+  }
+  return brand;
+}
+
+export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover }) {
+  return {
+    createdOn: auditInfo && auditInfo.createdOn,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    logo: logo && { id: logo.uuid, url: logo.url },
+    profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
+    name
+  };
+}
+
 export function transformBrandSubscription ({
   brand: { logo, name, uuid: brandId },
   count

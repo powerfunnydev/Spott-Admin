@@ -262,6 +262,17 @@ class VerticalSideMenu extends Component {
           {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
             <div>
               <div style={styles.category}>
+                <div style={styles.categoryTitle}>PRODUCTS</div>
+              </div>
+              <Link activeStyle={styles.sectionActive} key='brands' style={styles.section} to='/content/brands'>
+                <div style={styles.sectionTitle}>BRANDS</div>
+              </Link>
+              <div style={styles.seperator}/>
+            </div>
+          }
+          {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
+            <div>
+              <div style={styles.category}>
                 <div style={styles.categoryTitle}>PUBLISHING</div>
               </div>
               <Link activeStyle={styles.sectionActive} key='tvGuide' style={styles.section} to='/tv-guide'>

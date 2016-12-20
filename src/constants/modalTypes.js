@@ -1,4 +1,5 @@
 
+export const BRAND_CREATE_LANGUAGE = 'brandCreateLanguage';
 export const CHARACTER_CREATE_LANGUAGE = 'characterCreateLanguage';
 export const EPISODE_CREATE_LANGUAGE = 'episodeCreateLanguage';
 export const MOVIE_CREATE_LANGUAGE = 'movieCreateLanguage';

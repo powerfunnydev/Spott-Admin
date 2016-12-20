@@ -66,7 +66,7 @@ export default class ReadMovie extends Component {
   render () {
     const { styles } = this.constructor;
     const { params, children, currentMovie, location, location: { query: { tabIndex } }, deleteMovie } = this.props;
-    const defaultLocale = currentMovie.getIn([ 'defaultLocale' ]);
+    const defaultLocale = currentMovie.get('defaultLocale');
     return (
       <SideMenu location={location}>
         <Root>

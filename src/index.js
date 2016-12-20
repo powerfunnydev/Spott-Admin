@@ -11,6 +11,10 @@ import { TOGGLE_HOT_KEYS_INFO } from './tagger/actions/organizer';
 import { COMMERCIAL, EPISODE, MOVIE } from './constants/mediumTypes';
 
 import App from './pages/app';
+import BrandsCreate from './pages/content/brands/create';
+import BrandsEdit from './pages/content/brands/edit';
+import BrandsList from './pages/content/brands/list';
+import BrandsRead from './pages/content/brands/read';
 import BroadcastersList from './pages/content/broadcasters/list';
 import BroadcastersCreate from './pages/content/broadcasters/create';
 import BroadcastersEdit from './pages/content/broadcasters/edit';
@@ -135,6 +139,13 @@ function getRoutes ({ dispatch, getState }) {
       </Route>
       <Route path='content' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <IndexRedirect to='content-producers' />
+        <Route component={BrandsList} path='brands'>
+          <Route component={BrandsCreate} path ='create'/>
+        </Route>
+        <Route path='brands'>
+          <Route component={BrandsRead} path='read/:brandId'/>
+          <Route component={BrandsEdit} path='edit/:brandId'/>
+        </Route>
         <Route component={BroadcastersList} path='broadcasters'>
           <Route component={BroadcastersCreate} path='create'/>
         </Route>
@@ -171,9 +182,6 @@ function getRoutes ({ dispatch, getState }) {
             <Route component={UsersCreate} path='create/user'/>
           </Route>
         </Route>
-        <Route component={PersonsList} path='persons'>
-          <Route component={PersonsCreate} path ='create'/>
-        </Route>
         <Route component={MoviesList} path='movies'>
           <Route component={MoviesCreate} path='create'/>
         </Route>
@@ -199,6 +207,9 @@ function getRoutes ({ dispatch, getState }) {
               }} />
           </Route>
           <Route component={MoviesEdit} path='edit/:movieId'/>
+        </Route>
+        <Route component={PersonsList} path='persons'>
+          <Route component={PersonsCreate} path ='create'/>
         </Route>
         <Route path='persons'>
           <Route component={PersonsRead} path='read/:personId'/>

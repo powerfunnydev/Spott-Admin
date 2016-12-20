@@ -1,9 +1,10 @@
 import { fromJS } from 'immutable';
-import { serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasSeriesEntries,
+import { serializeFilterHasBrands, serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasSeriesEntries,
     serializeFilterHasUsers, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
     fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart,
     fetchListSuccess, fetchListError } from './utils';
 import * as availabilityActions from '../actions/availability';
+import * as brandActions from '../actions/brand';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcastersActions from '../actions/broadcaster';
 import * as charactersActions from '../actions/character';
@@ -24,6 +25,7 @@ export default (state = fromJS({
   entities: {
     ages: {},
     availabilities: {},
+    brands: {},
     broadcastChannels: {},
     broadcasters: {},
     characters: {},
@@ -31,6 +33,7 @@ export default (state = fromJS({
     events: {},
     faceImages: {}, // Characters and persons has faceImages
     genders: {},
+    listBrands: {},
     listCharacters: {}, // listCharacters is the light version of characters, without locales
     listMedia: {}, // listMedia is the light version of media, without locales
     listMediumCategories: {},
@@ -48,6 +51,7 @@ export default (state = fromJS({
     events: {},
     genders: {},
 
+    filterHasBrands: {},
     filterHasBroadcastChannels: {},
     filterHasBroadcasters: {},
     filterHasCharacters: {},
@@ -90,6 +94,35 @@ export default (state = fromJS({
       return searchSuccess(state, 'availabilities', 'mediumHasAvailabilities', action.mediumId, action.data);
     case availabilityActions.AVAILABILITIES_FETCH_ERROR:
       return searchError(state, 'mediumHasAvailabilities', action.mediumId, action.error);
+
+    // Brands
+    // /////////////////
+
+    case brandActions.UPLOAD_LOGO_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'brands', action.brandId ], action.data);
+    case brandActions.UPLOAD_PROFILE_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'brands', action.brandId ], action.data);
+
+    case brandActions.BRAND_FETCH_START:
+      return fetchStart(state, [ 'entities', 'brands', action.brandId ]);
+    case brandActions.BRAND_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'brands', action.brandId ], action.data);
+    case brandActions.BRAND_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'brands', action.brandId ], action.error);
+
+    case brandActions.BRANDS_FETCH_START:
+      return searchStart(state, 'filterHasBrands', serializeFilterHasBrands(action));
+    case brandActions.BRANDS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listBrands', 'filterHasBrands', serializeFilterHasBrands(action), action.data.data);
+    case brandActions.BRANDS_FETCH_ERROR:
+      return searchError(state, 'filterHasBrands', serializeFilterHasBrands(action), action.error);
+
+    case brandActions.BRAND_SEARCH_START:
+      return searchStart(state, 'searchStringHasContentProducers', action.searchString);
+    case brandActions.BRAND_SEARCH_SUCCESS:
+      return searchSuccess(state, 'brands', 'searchStringHasContentProducers', action.searchString, action.data);
+    case brandActions.BRAND_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasContentProducers', action.searchString, action.error);
 
     // Broadcaster Channels
     // ////////////////////

@@ -16,11 +16,9 @@ import selector from './selector';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { defaultLocale, gender, firstName, lastName } = values.toJS();
+  const { defaultLocale, name } = values.toJS();
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
-  if (!gender) { validationErrors.gender = t('common.errors.required'); }
-  if (!firstName) { validationErrors.firstName = t('common.errors.required'); }
-  if (!lastName) { validationErrors.lastName = t('common.errors.required'); }
+  if (!name) { validationErrors.name = t('common.errors.required'); }
 
   // Done
   return validationErrors;
@@ -33,11 +31,11 @@ function validate (values, { t }) {
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
-  form: 'personCreate',
+  form: 'brandCreate',
   validate
 })
 @Radium
-export default class CreatePersonModal extends Component {
+export default class CreateBrandModal extends Component {
 
   static propTypes = {
     change: PropTypes.func.isRequired,
@@ -64,8 +62,7 @@ export default class CreatePersonModal extends Component {
 
   componentWillMount () {
     this.props.initialize({
-      defaultLocale: this.props.currentLocale,
-      fullName: this.props.location.query.fullName
+      defaultLocale: this.props.currentLocale
     });
   }
   async submit (form) {
@@ -90,13 +87,13 @@ export default class CreatePersonModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo('content/persons', true);
+    this.props.routerPushWithReturnTo('content/brands', true);
   }
 
   render () {
-    const { genders, handleSubmit, localeNames } = this.props;
+    const { handleSubmit, localeNames } = this.props;
     return (
-      <PersistModal createAnother isOpen title='Create Person' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal createAnother isOpen title='Create Brand' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}
@@ -110,20 +107,9 @@ export default class CreatePersonModal extends Component {
           placeholder='Default language'/>
         <Field
           component={TextInput}
-          label='Full name'
-          name='fullName'
-          placeholder='E.g. Mark Zuckerberg'
-          required/>
-        <Field
-          component={SelectInput}
-          filter={(option, filter) => {
-            return option && filter ? genders.get(option.value).toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
-          }}
-          getItemText={(gender) => genders.get(gender)}
-          label='Gender'
-          name='gender'
-          options={genders.keySeq().toArray()}
-          placeholder='Gender'
+          label='Name brand'
+          name='name'
+          placeholder='Name brand'
           required/>
       </PersistModal>
     );
