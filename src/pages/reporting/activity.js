@@ -34,10 +34,10 @@ Highcharts.Highcharts.setOptions({
 export default class ReportingActivity extends Component {
 
   static propTypes = {
-    ageConfig: PropTypes.object.isRequired,
-    genderConfig: PropTypes.object.isRequired,
-    isLoadingAge: PropTypes.bool.isRequired,
-    isLoadingGender: PropTypes.bool.isRequired,
+    // ageConfig: PropTypes.object.isRequired,
+    // genderConfig: PropTypes.object.isRequired,
+    // isLoadingAge: PropTypes.bool.isRequired,
+    // isLoadingGender: PropTypes.bool.isRequired,
     isLoadingTimeline: PropTypes.bool.isRequired,
     loadActivities: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
@@ -56,7 +56,7 @@ export default class ReportingActivity extends Component {
     const query = {
       // We assume the ALL event will be always there.
       endDate: moment().startOf('day').format('YYYY-MM-DD'),
-      event: 'ALL',
+      events: [ 'ALL' ],
       startDate: moment().startOf('day').subtract(1, 'months').date(1).format('YYYY-MM-DD'),
       ...location.query
     };
@@ -135,7 +135,7 @@ export default class ReportingActivity extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { ageConfig, genderConfig, isLoadingAge, isLoadingGender, isLoadingTimeline, location: { query: { startDate, endDate, event } }, timelineConfig } = this.props;
+    const { ageConfig, genderConfig, isLoadingAge, isLoadingGender, isLoadingTimeline, location: { query: { startDate, endDate, events } }, timelineConfig } = this.props;
     return (
       <div>
         <div style={styles.charts}>
@@ -145,14 +145,14 @@ export default class ReportingActivity extends Component {
                 // TODO validation
                 endDate: moment(endDate),
                 startDate: moment(startDate),
-                event
+                events: typeof events === 'string' ? [ events ] : (events || [])
               }}
               style={styles.activityFilterForm}
               onChange={this.onChangeActivityFilter} />
             <Widget isLoading={isLoadingTimeline} style={largeWidgetStyle} title='Timeline'>
               <Highcharts config={timelineConfig} isPureConfig />
             </Widget>
-            <div style={styles.widgets}>
+            {/* <div style={styles.widgets}>
               <Widget isLoading={isLoadingAge} style={mediumWidgetStyle} title='Age'>
                 <Highcharts config={ageConfig} isPureConfig />
               </Widget>
@@ -161,8 +161,8 @@ export default class ReportingActivity extends Component {
               </Widget>
               {/* <Widget title='Location'>
                 <Highcharts config={locationConfig} isPureConfig />
-              </Widget> */}
-            </div>
+              </Widget>
+            </div> */}
           </Container>
         </div>
       </div>

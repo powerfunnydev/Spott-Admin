@@ -26,7 +26,7 @@ export default class ActivityFilterForm extends Component {
     eventsById: ImmutablePropTypes.map,
     fields: PropTypes.shape({
       endDate: PropTypes.object,
-      event: PropTypes.string,
+      events: PropTypes.array, // event ids
       startDate: PropTypes.object
     }).isRequired,
     loadEvents: PropTypes.func.isRequired,
@@ -65,13 +65,14 @@ export default class ActivityFilterForm extends Component {
         <SelectInput
           first
           getItemText={(id) => eventsById.getIn([ id, 'description' ])}
-          input={{ value: fields.event }}
+          input={{ value: fields.events }}
           isLoading={events.get('_status') === FETCHING}
+          multi
           name='event'
           options={events.get('data').map((e) => e.get('id')).toJS()}
           placeholder='Event'
           style={[ styles.field, { paddingRight: '0.75em' } ]}
-          onChange={onChange.bind(null, 'event', 'string')} />
+          onChange={onChange.bind(null, 'events', 'array')} />
         <DateInput
           dateFormat='D MMMM YYYY'
           first

@@ -16,6 +16,13 @@ import { locationSelector } from '../../selectors/global';
 import { ageConfig, genderConfig, timelineConfig } from './defaultHighchartsConfig';
 import { LAZY, isLoading } from '../../constants/statusTypes';
 
+function createQueryStringArraySelector (field) {
+  return createSelector(
+    locationSelector,
+    ({ query }) => typeof query[field] === 'string' ? [ query[field] ] : (query[field] || [])
+  );
+}
+
 export const ageDataSelector = (state) => state.getIn([ 'reporting', 'ageData' ]);
 export const genderDataSelector = (state) => state.getIn([ 'reporting', 'genderData' ]);
 export const timelineDataSelector = (state) => state.getIn([ 'reporting', 'timelineData' ]);
@@ -82,37 +89,34 @@ export const mediaFilterSelector = createStructuredSelector({
 // Activity tab
 // ////////////
 
+export const currentAgesSelector = createQueryStringArraySelector('ages');
+export const currentEventsSelector = createQueryStringArraySelector('events');
+export const currentGendersSelector = createQueryStringArraySelector('genders');
+export const currentMediaSelector = createQueryStringArraySelector('media');
+
 export const eventsFilterSelector = createStructuredSelector({
   events: eventsSelector,
   eventsById: eventsEntitiesSelector
 });
 
-function mediumIdsSelector (state, props) {
-  const query = props.location && props.location.query;
-  return typeof query.media === 'string' ? [ query.media ] : (query.media || []);
-}
-
-function eventIdSelector (state, props) {
-  const query = props.location && props.location.query;
-  return query.event || '';
-}
-
-const eventSelector = createSelector(
+const _eventsSelector = createSelector(
   eventsEntitiesSelector,
-  eventIdSelector,
-  (eventsById, eventId) => eventsById.get(eventId)
+  currentEventsSelector,
+  (eventsById, eventIds) => {
+    console.warn('eventIds', eventIds);
+    return eventIds.map((eventId) => eventsById.get(eventId)).filter((event) => event);
+  }
 );
 
 const timelineConfigSelector = createSelector(
-  eventSelector,
+  _eventsSelector,
   listMediaEntitiesSelector,
-  mediumIdsSelector,
+  currentMediaSelector,
   timelineDataSelector,
-  (event, mediaById, mediumIds, timelineData) => {
+  (events, mediaById, mediumIds, timelineData) => {
     const series = [];
-    let eventType = '';
-    if (event) {
-      eventType = event.get('description');
+    const eventTypes = events.map((event) => event.get('description')).join(', ');
+    if (eventTypes) {
       for (const mediumId of mediumIds) {
         const d = timelineData.getIn([ mediumId, 'data' ]) || [];
         // There should be data available, otherwise Highcharts will crash.
@@ -126,7 +130,7 @@ const timelineConfigSelector = createSelector(
     }
 
     return timelineConfig
-      .setIn([ 'tooltip', 'headerFormat' ], timelineConfig.getIn([ 'tooltip', 'headerFormat' ]).replace('{eventType}', eventType))
+      .setIn([ 'tooltip', 'headerFormat' ], timelineConfig.getIn([ 'tooltip', 'headerFormat' ]).replace('{eventType}', eventTypes))
       .set('series', series)
       .toJS();
   }
@@ -143,14 +147,14 @@ function isLoadingReducer (mediumIds, data) {
   return false;
 }
 
-const isLoadingTimelineSelector = createSelector(mediumIdsSelector, timelineDataSelector, isLoadingReducer);
-const isLoadingAgeSelector = createSelector(mediumIdsSelector, ageDataSelector, isLoadingReducer);
-const isLoadingGenderSelector = createSelector(mediumIdsSelector, genderDataSelector, isLoadingReducer);
+const isLoadingTimelineSelector = createSelector(currentMediaSelector, timelineDataSelector, isLoadingReducer);
+const isLoadingAgeSelector = createSelector(currentMediaSelector, ageDataSelector, isLoadingReducer);
+const isLoadingGenderSelector = createSelector(currentMediaSelector, genderDataSelector, isLoadingReducer);
 
 const ageConfigSelector = createSelector(
-  eventSelector,
+  currentEventsSelector,
   listMediaEntitiesSelector,
-  mediumIdsSelector,
+  currentMediaSelector,
   ageDataSelector,
   (event, mediaById, mediumIds, ageData) => {
     const series = [];
@@ -180,9 +184,9 @@ const ageConfigSelector = createSelector(
 );
 
 const genderConfigSelector = createSelector(
-  eventSelector,
+  currentEventsSelector,
   listMediaEntitiesSelector,
-  mediumIdsSelector,
+  currentMediaSelector,
   genderDataSelector,
   gendersEntitiesSelector,
   (event, mediaById, mediumIds, genderData, gendersById) => {
@@ -225,29 +229,18 @@ const genderConfigSelector = createSelector(
 );
 
 export const activitySelector = createStructuredSelector({
-  ageConfig: ageConfigSelector,
-  genderConfig: genderConfigSelector,
-  isLoadingAge: isLoadingAgeSelector,
-  isLoadingGender: isLoadingGenderSelector,
+  // ageConfig: ageConfigSelector,
+  // genderConfig: genderConfigSelector,
+  // isLoadingAge: isLoadingAgeSelector,
+  // isLoadingGender: isLoadingGenderSelector,
   isLoadingTimeline: isLoadingTimelineSelector,
   mediaById: listMediaEntitiesSelector,
-  mediumIds: mediumIdsSelector,
+  mediumIds: currentMediaSelector,
   timelineConfig: timelineConfigSelector
 });
 
 // Rankings tab
 // ////////////
-
-function createQueryStringArraySelector (field) {
-  return createSelector(
-    locationSelector,
-    ({ query }) => typeof query[field] === 'string' ? [ query[field] ] : (query[field] || [])
-  );
-}
-
-export const currentAgesSelector = createQueryStringArraySelector('ages');
-export const currentGendersSelector = createQueryStringArraySelector('genders');
-export const currentMediaSelector = createQueryStringArraySelector('media');
 
 export const rankingsFilterSelector = createStructuredSelector({
   ages: agesSelector,

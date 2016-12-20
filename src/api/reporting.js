@@ -35,14 +35,39 @@ export async function getGenders (baseUrl, authenticationToken, locale) {
   return genders.map(({ description, gender }) => ({ description, id: gender }));
 }
 
-export async function getTimelineData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
-  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v004/report/reports/mediumActivity?dataFormat=DATE_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}&aggregationLevel=DAY&fillGaps=true`);
+// { mediumId: [{ timestamp, value }] }
+export async function _getTimelineData (baseUrl, authenticationToken, locale, { endDate, eventId, mediumIds, startDate }) {
+  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v004/report/reports/mediumActivity?dataFormat=DATE_BASED&type=${eventId}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}&aggregationLevel=DAY&fillGaps=true`);
   return transformActivityData(data, (d) => {
     // Last entry is the always 0, skip it.
     // We want exclusive the end date, so the end date dot is not shown on charts.
     d.splice(-1, 1);
     return d;
   });
+}
+
+// Aggregates all data
+export async function getTimelineData (baseUrl, authenticationToken, locale, { endDate, eventIds, mediumIds, startDate }) {
+  let result;
+  // For each event we perform a call to the backend
+  for (const eventId of eventIds) {
+    // For each medium we have an array of tuples ({ timestamp, value }).
+    // { mediumId: [{ timestamp, value }] }
+    const data = await _getTimelineData(baseUrl, authenticationToken, locale, { endDate, eventId, mediumIds, startDate });
+    if (result) {
+      // Aggregate data the data for each medium.
+      for (const mediumId in data) {
+        const newValues = data[mediumId];
+        const resValues = result[mediumId];
+        for (let i = 0; i < newValues.length; i++) {
+          // Make sum of previous with the new value.
+          resValues[i].value += newValues[i].value;
+        }
+      }
+    } else {
+      result = data;
+    }
+  }
 }
 
 export async function getAgeData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
