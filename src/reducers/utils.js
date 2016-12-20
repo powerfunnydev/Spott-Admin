@@ -18,6 +18,7 @@ export function serialize ({ searchString = '', page = 0, pageSize = 25, sortDir
 export const serializeFilterHasBroadcastChannels = serialize;
 export const serializeFilterHasBroadcasters = serialize;
 export const serializeFilterHasCharacters = serialize;
+export const serializeFilterHasCommercials = serialize;
 export const serializeFilterHasContentProducers = serialize;
 export const serializeFilterHasMovies = serialize;
 export const serializeFilterHasPersons = serialize;
@@ -66,6 +67,16 @@ export function fetchError (state, path, error) {
 
 export function searchStart (state, relationsKey, key) {
   return fetchStart(state, [ 'relations', relationsKey, key ]);
+}
+
+export function mergeListOfEntities (state, path, listOfEntities) {
+  let newState = state;
+  listOfEntities.map((entity) => {
+    const copyPath = path.slice();
+    copyPath.push(entity.id);
+    newState = fetchSuccess(state, copyPath, entity);
+  });
+  return newState;
 }
 
 export function searchSuccess (state, entitiesKey, relationsKey, key, data) {

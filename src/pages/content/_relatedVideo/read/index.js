@@ -4,17 +4,17 @@ import React, { Component, PropTypes } from 'react';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Link } from 'react-router';
 import { buttonStyles, colors, fontWeights, makeTextStyle } from '../../../_common/styles';
 import EntityDetails from '../../../_common/entityDetails';
 import { confirmation } from '../../../_common/askConfirmation';
 import ProgressBar from '../../../_common/components/progressBar';
+import { routerPushWithReturnTo } from '../../../../actions/global';
+import { COMMERCIAL, EPISODE, MOVIE } from '../../../../constants/mediumTypes';
+import Spinner from '../../../_common/components/spinner';
 import PersistVideoModal from '../persist';
 import * as actions from './actions';
-import { routerPushWithReturnTo } from '../../../../actions/global';
-import { COMMERCIAL, EPISODE, MOVIE } from '../../../../constants/mediaTypes';
 import selector from './selector';
-
-import Spinner from '../../../_common/components/spinner';
 
 const cross = require('../../../../assets/images/cross/cross-red.svg');
 
@@ -40,6 +40,13 @@ export default class RelatedVideo extends Component {
     this.onUnlinkVideo = ::this.onUnlinkVideo;
     this.onClickCreate = ::this.onClickCreate;
     this.state = { create: false, edit: false };
+  }
+
+  componentDidMount () {
+    const { input: { value: videoId } } = this.props;
+    if (videoId) {
+      this.props.loadVideo(videoId);
+    }
   }
 
   componentWillReceiveProps ({ input: { value: newVideoId } }) {
@@ -146,20 +153,20 @@ export default class RelatedVideo extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { input: { value: videoId }, medium, partialTaggerUrl, video, videoUploadStatus } = this.props;
+    const { input: { value: videoId }, medium, video, videoUploadStatus } = this.props;
 
     if (videoId) {
       if (video.get('_status') === 'loaded') {
         let taggerUrl;
         switch (medium.get('type')) {
           case COMMERCIAL:
-            taggerUrl = `${partialTaggerUrl}#/commercial/${medium.get('id')}/video/${videoId}`;
+            taggerUrl = `tagger/commercial/${medium.get('id')}/video/${videoId}`;
             break;
           case EPISODE:
-            taggerUrl = `${partialTaggerUrl}#/episode/${medium.get('id')}/video/${videoId}`;
+            taggerUrl = `tagger/episode/${medium.get('id')}/video/${videoId}`;
             break;
           case MOVIE:
-            taggerUrl = `${partialTaggerUrl}#/movie/${medium.get('id')}/video/${videoId}`;
+            taggerUrl = `tagger/movie/${medium.get('id')}/video/${videoId}`;
             break;
         }
 
@@ -171,16 +178,15 @@ export default class RelatedVideo extends Component {
                   <div>
                     {video.get('videoFilename')}
                     <div>
-                      <a
-                        href={taggerUrl}
+                      <Link
                         key='tagger'
-                        style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue, styles.launchTagger ]}
-                        target='_blank'>
+                        style={{ ...buttonStyles.base, ...buttonStyles.small, ...buttonStyles.blue, ...styles.launchTagger }}
+                        to={taggerUrl}>
                         Launch Tagger
-                      </a>
+                      </Link>
                     </div>
                   </div>}
-                imageUrl={video.getIn([ 'scenes', 0, 'image' ]) && `${video.getIn([ 'scenes', 0, 'image', 'url' ])}?height=174&width=310`}
+                imageUrl={video.getIn([ 'medium', 'profileImage' ]) && `${video.getIn([ 'medium', 'profileImage', 'url' ])}?height=174&width=310`}
                 style={styles.details}
                 title={video.get('description')}
                 onEdit={() => this.props.routerPushWithReturnTo(`content/videos/edit/${videoId}`)}/>

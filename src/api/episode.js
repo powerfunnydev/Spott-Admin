@@ -1,20 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformListEpisode, transformEpisode004, transformTvGuideEntry } from './transformers';
-
-export async function fetchTvGuideEntries (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField, episodeId }) {
-  let url = `${baseUrl}/v004/media/media/${episodeId}/tvGuideEntries?page=${page}&pageSize=${pageSize}&mediumUuid=${episodeId}`;
-  if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
-  }
-  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
-    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
-  }
-  const { body } = await get(authenticationToken, locale, url);
-  // There is also usable data in body (not only in data field).
-  // We need also fields page, pageCount,...
-  body.data = body.data.map(transformTvGuideEntry);
-  return body;
-}
+import { transformListEpisode, transformEpisode004 } from './transformers';
 
 export async function fetchEpisodes (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/serieEpisodes?page=${page}&pageSize=${pageSize}`;
@@ -65,8 +50,9 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, {
   episode.publishStatus = publishStatus;
   episode.season = { uuid: seasonId };
   episode.serie = { uuid: seriesEntryId };
-  episode.type = 'TV_SERIE_SEASON';
+  episode.type = 'TV_SERIE_EPISODE';
   episode.number = number;
+  // episode.id = 'e7965a70-e455-4292-a043-170f5aca6d05';
   // Update locale data.
   episode.localeData = [];
   locales.forEach((locale) => {

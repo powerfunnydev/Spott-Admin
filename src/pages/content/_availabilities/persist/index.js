@@ -78,7 +78,6 @@ export default class AvailabilityModal extends Component {
 
   async submit (form) {
     try {
-      console.warn('form.toJS()', form.toJS());
       await this.props.onSubmit(form.toJS());
       this.onCloseClick();
     } catch (error) {

@@ -54,8 +54,8 @@ export default class TextInput extends Component {
       border: `1px solid ${colors.errorColor}`
     },
     disabled: {
-      backgroundColor: colors.lightGray,
-      color: colors.darkerGray
+      backgroundColor: colors.lightGray4,
+      color: colors.lightGray3
     },
     text: {
       paddingLeft: '10px',
@@ -69,25 +69,7 @@ export default class TextInput extends Component {
     textArea: {
       paddingTop: '8px',
       height: '60px'
-    },
-    // checkboxText: {
-    //   ...makeTextStyle(fontWeights.regular, '11px'),
-    //   color: colors.darkGray2,
-    //   paddingLeft: '8px'
-    // },
-    checkboxRow: {
-      display: 'flex',
-      flexDirection: 'row',
-      paddingBottom: '10px'
-    },
-    checkBox: {
-      display: 'inline-block'
     }
-    // checkboxWithText: {
-    //   display: 'flex',
-    //   flexDirection: 'row',
-    //   paddingRight: '10px'
-    // }
   };
 
   render () {
@@ -106,10 +88,10 @@ export default class TextInput extends Component {
             required={required}
             style={[
               styles.base,
-              disabled && styles.disabled,
-              meta && meta.touched && meta.error && styles.error,
               styles.text,
-              styles.lineHeight
+              styles.lineHeight,
+              disabled && styles.disabled,
+              meta && meta.touched && meta.error && styles.error
             ]}
             type={type}
             onChange={this.onChange} />}
@@ -122,10 +104,10 @@ export default class TextInput extends Component {
             required={required}
             style={[
               styles.base,
+              styles.text,
               styles.textArea,
               disabled && styles.disabled,
-              meta && meta.touched && meta.error && styles.error,
-              styles.text
+              meta && meta.touched && meta.error && styles.error
             ]}
             onChange={this.onChange} />}
         {meta && meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
