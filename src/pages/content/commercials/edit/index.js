@@ -119,6 +119,9 @@ export default class EditCommercial extends Component {
       const editObj = await this.props.loadCommercial(commercialId);
       this.props.initialize({
         ...editObj,
+        contentProducers: editObj.contentProducers && editObj.contentProducers.map((bc) => bc.id),
+        broadcasters: editObj.broadcasters && editObj.broadcasters.map((bc) => bc.id),
+        brandId: editObj.brand && editObj.brand.id,
         _activeLocale: editObj.defaultLocale
       });
     }

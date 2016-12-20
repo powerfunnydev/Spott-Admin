@@ -121,6 +121,7 @@ export default class EditCharacter extends Component {
       await this.props.fetchFaceImages({ characterId: this.props.params.characterId });
       this.props.initialize({
         ...editObj,
+        personId: editObj.person && editObj.person.id,
         _activeLocale: editObj.defaultLocale
       });
     }

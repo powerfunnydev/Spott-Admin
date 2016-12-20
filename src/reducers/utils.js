@@ -69,6 +69,16 @@ export function searchStart (state, relationsKey, key) {
   return fetchStart(state, [ 'relations', relationsKey, key ]);
 }
 
+export function mergeListOfEntities (state, path, listOfEntities) {
+  let newState = state;
+  listOfEntities.map((entity) => {
+    const copyPath = path.slice();
+    copyPath.push(entity.id);
+    newState = fetchSuccess(state, copyPath, entity);
+  });
+  return newState;
+}
+
 export function searchSuccess (state, entitiesKey, relationsKey, key, data) {
   data.forEach((item) => item._status = LOADED); // Add _status 'loaded' to each fetched entity.
   return state

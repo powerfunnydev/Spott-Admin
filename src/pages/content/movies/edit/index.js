@@ -131,6 +131,8 @@ export default class EditMovie extends Component {
       console.log('editObj', editObj);
       this.props.initialize({
         ...editObj,
+        contentProducers: editObj.contentProducers && editObj.contentProducers.map((bc) => bc.id),
+        broadcasters: editObj.broadcasters && editObj.broadcasters.map((bc) => bc.id),
         _activeLocale: editObj.defaultLocale
       });
     }
