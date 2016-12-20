@@ -21,10 +21,13 @@ function _transformVideoProducts (products) {
 }
 
 function transformDetailedProduct (product) {
+  // TODO: remove patch code once brandInfo has been removed.
+  // Some request return brandInfo others brand.
+  const brand = { ...product.brand, ...product.brandInfo };
   // Images are optional, take the first image url.
   // brandName is optional.
-  const { brandInfo: { uuid: brandId, name: brandName }, localeData: [ { images, shortName } ], uuid: id } = product;
-  return { brandId, brandName, id, imageUrl: images && images.length > 0 ? images[0].url : null, shortName };
+  const { localeData: [ { images, shortName } ], uuid: id } = product;
+  return { brandId: brand.uuid, brandName: brand.name, id, imageUrl: images && images.length > 0 ? images[0].url : null, shortName };
 }
 
 function transformSuggestedProducts (suggestedProducts) {
