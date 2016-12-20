@@ -26,36 +26,33 @@ import * as mediumTypes from '../../constants/mediumTypes';
  */
 export async function getMedium (baseUrl, authenticationToken, locale, { mediumId, mediumType }) {
   // Perform correct call based on medium type, fetch id and title
-  let characters;
   let id;
   let rootMediumId;
   let title;
   switch (mediumType) {
     // Request movie title
     case mediumTypes.MOVIE:
-      const { body: movieBody } = await get(authenticationToken, locale, `${baseUrl}/v003/media/movies/${mediumId}`);
-      characters = movieBody.characters;
+      const { body: movieBody } = await get(authenticationToken, locale, `${baseUrl}/v004/media/movies/${mediumId}`);
       id = movieBody.uuid;
       rootMediumId = id;
       title = movieBody.localeData[0].title;
       break;
     // Request episode title
     case mediumTypes.EPISODE:
-      const { body: serieEpisodeBody } = await get(authenticationToken, locale, `${baseUrl}/v003/media/serieEpisodes/${mediumId}`);
-      characters = serieEpisodeBody.characters;
+      const { body: serieEpisodeBody } = await get(authenticationToken, locale, `${baseUrl}/v004/media/serieEpisodes/${mediumId}`);
       id = serieEpisodeBody.uuid;
       rootMediumId = serieEpisodeBody.serie.uuid;
       title = serieEpisodeBody.localeData[0].title;
       break;
     // Request commercial title
     case mediumTypes.COMMERCIAL:
-      const { body: commercialBody } = await get(authenticationToken, locale, `${baseUrl}/v003/media/commercials/${mediumId}`);
-      characters = commercialBody.characters;
+      const { body: commercialBody } = await get(authenticationToken, locale, `${baseUrl}/v004/media/commercials/${mediumId}`);
       id = commercialBody.uuid;
       rootMediumId = id;
       title = commercialBody.localeData[0].title;
       break;
   }
+  const { body: { data: characters } } = await get(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/castMembers`);
   // Done. return.
-  return { characters: characters.map(({ character: { uuid }, weight }) => ({ id: uuid, weight })), id, rootMediumId, title, mediumType };
+  return { characters: characters.map(({ uuid }) => ({ id: uuid })), id, rootMediumId, title, mediumType };
 }

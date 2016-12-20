@@ -142,6 +142,8 @@ export default class EditEpisode extends Component {
       console.log('editObj', editObj);
       this.props.initialize({
         ...editObj,
+        contentProducers: editObj.contentProducers && editObj.contentProducers.map((bc) => bc.id),
+        broadcasters: editObj.broadcasters && editObj.broadcasters.map((bc) => bc.id),
         seasonId: editObj.season.id,
         seriesEntryId: editObj.seriesEntry.id,
         _activeLocale: editObj.defaultLocale

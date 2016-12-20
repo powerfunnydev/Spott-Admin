@@ -5,6 +5,7 @@ import * as contentProducerActions from '../actions/contentProducer';
 import * as broadcasterActions from '../actions/broadcaster';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as characterActions from '../actions/character';
+import * as commercialActions from '../actions/commercial';
 import * as episodeActions from '../actions/episode';
 import * as movieActions from '../actions/movie';
 import * as personActions from '../actions/person';
@@ -44,6 +45,14 @@ export default (state = List(), action) => {
     case broadcasterActions.BROADCASTERS_DELETE_ERROR:
     case broadcasterActions.BROADCASTER_PERSIST_ERROR:
       return pushError(state, action.error, entityTypes.BROADCASTER);
+    case characterActions.CHARACTER_DELETE_ERROR:
+    case characterActions.CHARACTERS_DELETE_ERROR:
+    case characterActions.CHARACTER_PERSIST_ERROR:
+      return pushError(state, action.error, entityTypes.CHARACTER);
+    case commercialActions.COMMERCIAL_DELETE_ERROR:
+    case commercialActions.COMMERCIALS_DELETE_ERROR:
+    case commercialActions.COMMERCIAL_PERSIST_ERROR:
+      return pushError(state, action.error, entityTypes.COMMERCIAL);
     case contentProducerActions.CONTENT_PRODUCER_DELETE_ERROR:
     case contentProducerActions.CONTENT_PRODUCERS_DELETE_ERROR:
     case contentProducerActions.CONTENT_PRODUCER_PERSIST_ERROR:
@@ -52,6 +61,14 @@ export default (state = List(), action) => {
     case episodeActions.EPISODES_DELETE_ERROR:
     case episodeActions.EPISODE_PERSIST_ERROR:
       return pushError(state, action.error, entityTypes.EPISODE);
+    case movieActions.MOVIE_DELETE_ERROR:
+    case movieActions.MOVIES_DELETE_ERROR:
+    case movieActions.MOVIE_PERSIST_ERROR:
+      return pushError(state, action.error, entityTypes.MOVIE);
+    case personActions.PERSON_DELETE_ERROR:
+    case personActions.PERSONS_DELETE_ERROR:
+    case personActions.PERSON_PERSIST_ERROR:
+      return pushError(state, action.error, entityTypes.PERSON);
     case seasonActions.SEASON_DELETE_ERROR:
     case seasonActions.SEASONS_DELETE_ERROR:
     case seasonActions.SEASON_PERSIST_ERROR:
@@ -60,6 +77,10 @@ export default (state = List(), action) => {
     case seriesActions.SERIES_ENTRIES_DELETE_ERROR:
     case seriesActions.SERIES_ENTRY_PERSIST_ERROR:
       return pushError(state, action.error, entityTypes.SERIES_ENTRY);
+    case tvGuideActions.TV_GUIDE_ENTRIES_DELETE_ERROR:
+    case tvGuideActions.TV_GUIDE_ENTRY_DELETE_ERROR:
+    case tvGuideActions.TV_GUIDE_ENTRY_PERSIST_ERROR:
+      return pushError(state, action.error, entityTypes.TV_GUIDE_ENTRY);
     case userActions.USERS_DELETE_ERROR:
     case userActions.USER_DELETE_ERROR:
     case userActions.USER_PERSIST_ERROR:
@@ -72,6 +93,8 @@ export default (state = List(), action) => {
       return pushSuccess(state, action.data, entityTypes.BROADCASTER);
     case characterActions.CHARACTER_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.CHARACTER);
+    case commercialActions.COMMERCIAL_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, entityTypes.COMMERCIAL);
     case userActions.USER_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.USER);
     case contentProducerActions.CONTENT_PRODUCER_PERSIST_SUCCESS:

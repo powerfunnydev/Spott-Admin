@@ -21,10 +21,13 @@ function _transformVideoProducts (products) {
 }
 
 function transformDetailedProduct (product) {
+  // TODO: remove patch code once brandInfo has been removed.
+  // Some request return brandInfo others brand.
+  const brand = { ...product.brand, ...product.brandInfo };
   // Images are optional, take the first image url.
   // brandName is optional.
-  const { brand: { uuid: brandId, localeData: brandLocaleData }, localeData: [ { images, shortName } ], uuid: id } = product;
-  return { brandId, brandName: brandLocaleData && brandLocaleData[0].name, id, imageUrl: images && images.length > 0 ? images[0].url : null, shortName };
+  const { localeData: [ { images, shortName } ], uuid: id } = product;
+  return { brandId: brand.uuid, brandName: brand.name, id, imageUrl: images && images.length > 0 ? images[0].url : null, shortName };
 }
 
 function transformSuggestedProducts (suggestedProducts) {
@@ -44,7 +47,7 @@ function transformSimilarProduct ({ matchPercentage, product, uuid: id }) {
 }
 
 /**
- * GET /video/videos/:videoId/scenes/:sceneId/products
+ * GET /video/scenes/:sceneId/products
  * Get the products of a scene.
  * @param {string} authenticationToken The authentication token of the logged in user.
  * @param {Object} data
@@ -75,7 +78,7 @@ function transformSimilarProduct ({ matchPercentage, product, uuid: id }) {
  * @throws UnexpectedError
  */
 export async function getSceneProducts (baseUrl, authenticationToken, locale, { sceneId, videoId }) {
-  const { body: products } = await get(authenticationToken, locale, `${baseUrl}/v003/video/videos/${videoId}/scenes/${sceneId}/products`);
+  const { body: { data: products } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/scenes/${sceneId}/products`);
   return transformSceneProducts(products);
 }
 
@@ -96,7 +99,7 @@ export async function getSceneProducts (baseUrl, authenticationToken, locale, { 
  */
 export async function getVideoProducts (baseUrl, authenticationToken, locale, { videoId }) {
   try {
-    const { body: products } = await get(authenticationToken, locale, `${baseUrl}/v003/video/videos/${videoId}/products`);
+    const { body: { data: products } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/products`);
     return _transformVideoProducts(products);
   } catch (error) {
     switch (error.statusCode) {
@@ -120,7 +123,7 @@ export async function getVideoProducts (baseUrl, authenticationToken, locale, { 
  * {
  *   brandId: 'brand-id'
  *   id: 'product-id',
- *   imageUrl: 'http://spott-cms-uat.appiness.mobi/apptvate/rest/v003/image/images/539766be-4ee4-4fee-83a7-99775471eb7c',
+ *   imageUrl: 'http://spott-cms-uat.appiness.mobi/apptvate/rest/v004/image/images/539766be-4ee4-4fee-83a7-99775471eb7c',
  *   shortName: '3 Pommes Jas bleu navy'
  * }
  * @throws UnauthorizedError
@@ -129,7 +132,7 @@ export async function getVideoProducts (baseUrl, authenticationToken, locale, { 
  */
 export async function getProduct (baseUrl, authenticationToken, locale, { productId }) {
   try {
-    const { body: { brand: { uuid: brandId }, localeData: [ { shortName, images } ], uuid: id } } = await get(authenticationToken, locale, `${baseUrl}/v003/product/products/${productId}`);
+    const { body: { brand: { uuid: brandId }, localeData: [ { shortName, images } ], uuid: id } } = await get(authenticationToken, locale, `${baseUrl}/v004/product/products/${productId}`);
     // Images are optional, take the first image url.
     return { brandId, id, imageUrl: images && images.length > 0 ? images[0].url : null, shortName };
   } catch (error) {
@@ -158,7 +161,7 @@ export async function getProduct (baseUrl, authenticationToken, locale, { produc
  * {
  *   brandName: 'Nike',
  *   id: 'product-id',
- *   imageUrl: 'http://spott-cms-uat.appiness.mobi/apptvate/rest/v003/image/images/539766be-4ee4-4fee-83a7-99775471eb7c',
+ *   imageUrl: 'http://spott-cms-uat.appiness.mobi/apptvate/rest/v004/image/images/539766be-4ee4-4fee-83a7-99775471eb7c',
  *   shortName: '3 Pommes BACK TO SCHOOL Winterjas bleu fonce'
  * }
  * @throws UnauthorizedError
@@ -168,7 +171,7 @@ export async function getProducts (baseUrl, authenticationToken, locale, { brand
   productOfferingPriceFrom = '', productOfferingPriceTo = '', productOfferingShopName = '',
   searchString = '', pageSize = 30 }) {
   if (searchString.trim().length > 0) {
-    const searchUrl = `${baseUrl}/v003/search?productFilter.brandName=${brandName}&pageSize=${pageSize}&productFilter.productOfferingPriceFrom=${productOfferingPriceFrom}&productFilter.productOfferingPriceTo=${productOfferingPriceTo}&productFilter.productOfferingShopName=${productOfferingShopName}&searchString=${searchString}&type=PRODUCT`;
+    const searchUrl = `${baseUrl}/v004/search?productFilter.brandName=${brandName}&pageSize=${pageSize}&productFilter.productOfferingPriceFrom=${productOfferingPriceFrom}&productFilter.productOfferingPriceTo=${productOfferingPriceTo}&productFilter.productOfferingShopName=${productOfferingShopName}&searchString=${searchString}&type=PRODUCT`;
     const { body: { data: products } } = await get(authenticationToken, locale, searchUrl);
     return products.map((p) => transformDetailedProduct(p.entity));
   }
@@ -191,11 +194,11 @@ export async function getProducts (baseUrl, authenticationToken, locale, { brand
  * @throws UnexpectedError
  */
 export async function getSimilarProducts (baseUrl, authenticationToken, locale, { productId }) {
-  const { body: { pageCount, data } } = await get(authenticationToken, locale, `${baseUrl}/v003/product/products/${productId}/similar?page=0`);
+  const { body: { pageCount, data } } = await get(authenticationToken, locale, `${baseUrl}/v004/product/products/${productId}/similar?page=0`);
 
   let similarProducts = data;
   for (let page = 1; page < pageCount; page++) {
-    const { body: { data: products } } = await get(authenticationToken, locale, `${baseUrl}/v003/product/products/${productId}/similar?page=${page}`);
+    const { body: { data: products } } = await get(authenticationToken, locale, `${baseUrl}/v004/product/products/${productId}/similar?page=${page}`);
     similarProducts = similarProducts.concat(products);
   }
 
@@ -203,7 +206,7 @@ export async function getSimilarProducts (baseUrl, authenticationToken, locale, 
 }
 
 /**
- * POST /video/videos/:videoId/scenes/:sceneId/products
+ * POST /video/scenes/:sceneId/products
  * Add a product to a scene, return the new list of products on that scene.
  * @param {string} authenticationToken The authentication token of the logged in user.
  * @param {Object} data
@@ -244,8 +247,8 @@ export async function getSimilarProducts (baseUrl, authenticationToken, locale, 
 // TODO add region
 export async function postSceneProduct (baseUrl, authenticationToken, locale, { appearanceId, characterId, markerHidden, markerStatus, point, productId, relevance, sceneId, videoId }) {
   try {
-    const { body: products } = await post(authenticationToken, 'en', `${baseUrl}/v003/video/videos/${videoId}/scenes/${sceneId}/products`, {
-      character: {
+    const { body: { data: products } } = await post(authenticationToken, 'en', `${baseUrl}/v004/video/scenes/${sceneId}/products`, {
+      character: characterId && {
         uuid: characterId
       },
       markerHidden,
@@ -300,7 +303,7 @@ export async function postSceneProduct (baseUrl, authenticationToken, locale, { 
  */
 export async function postVideoProduct (baseUrl, authenticationToken, locale, { appearanceId, productId, relevance, videoId }) {
   try {
-    const { body: products } = await post(authenticationToken, 'en', `${baseUrl}/v003/video/videos/${videoId}/products`, {
+    const { body: { data: products } } = await post(authenticationToken, 'en', `${baseUrl}/v004/video/videos/${videoId}/products`, {
       product: {
         uuid: productId
       },
@@ -330,7 +333,7 @@ export async function postVideoProduct (baseUrl, authenticationToken, locale, { 
 }
 
 /**
- * DELETE /video/videos/:videoId/scenes/:sceneId/products/:productAppearanceId
+ * DELETE /video/scenes/:sceneId/products/:productAppearanceId
  * Remove a product from a scene, return the new list of products on that scene.
  * @param {string} authenticationToken The authentication token of the logged in user.
  * @param {Object} data
@@ -363,7 +366,7 @@ export async function postVideoProduct (baseUrl, authenticationToken, locale, { 
  */
 export async function deleteSceneProduct (baseUrl, authenticationToken, locale, { productAppearanceId, sceneId, videoId }) {
   try {
-    const { body: products } = await del(authenticationToken, 'en', `${baseUrl}/v003/video/videos/${videoId}/scenes/${sceneId}/products/${productAppearanceId}`);
+    const { body: { data: products } } = await del(authenticationToken, 'en', `${baseUrl}/v004/video/scenes/${sceneId}/products/${productAppearanceId}`);
     return transformSceneProducts(products);
   } catch (error) {
     switch (error.statusCode) {
@@ -397,12 +400,12 @@ export async function deleteSceneProduct (baseUrl, authenticationToken, locale, 
  * @throws UnexpectedError
  */
 export async function deleteVideoProduct (baseUrl, authenticationToken, locale, { appearanceId, videoId }) {
-  const { body: products } = await del(authenticationToken, locale, `${baseUrl}/v003/video/videos/${videoId}/products/${appearanceId}`);
+  const { body: { data: products } } = await del(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/products/${appearanceId}`);
   return _transformVideoProducts(products);
 }
 
 /**
- * GET /rest/v003/image/searches/products
+ * GET /rest/v004/image/searches/products
  * Searches for product suggestions given a rectangular part of the given image.
  * @param {string} authenticationToken The authentication token of the logged in user.
  * @param {Object} data
@@ -420,7 +423,7 @@ export async function deleteVideoProduct (baseUrl, authenticationToken, locale, 
  */
 export async function getProductSuggestions (baseUrl, authenticationToken, locale, { imageId, region: { x, y, width, height } }) {
   try {
-    const { body } = await get(authenticationToken, 'en', `${baseUrl}/v003/image/searches/products?imageUUid=${imageId}&x=${x}&y=${y}&width=${width}&height=${height}&maxResults=50`);
+    const { body } = await get(authenticationToken, 'en', `${baseUrl}/v004/image/searches/products?imageUUid=${imageId}&x=${x}&y=${y}&width=${width}&height=${height}&maxResults=50`);
     return transformSuggestedProducts(body);
   } catch (error) {
     switch (error.statusCode) {
@@ -436,8 +439,8 @@ export async function getProductSuggestions (baseUrl, authenticationToken, local
 }
 
 /**
- * GET /rest/v003/image/images/{imageUuid}/cropAsJson
- * POST /rest/v003/product/products/{productUuid}/images
+ * GET /rest/v004/image/images/{imageUuid}/cropAsJson
+ * POST /rest/v004/product/products/{productUuid}/images
  * Associates a rectangular part of the given image with the given product,
  * for product suggestion purposes.
  * @param {string} authenticationToken The authentication token of the logged in user.
@@ -457,9 +460,9 @@ export async function getProductSuggestions (baseUrl, authenticationToken, local
 export async function postProductSuggestionImage (baseUrl, authenticationToken, locale, { imageId, region: { x, y, width, height }, productId }) {
   try {
     // Crop the image
-    const { body: cropBody } = await get(authenticationToken, locale, `${baseUrl}/v003/image/images/${imageId}/cropAsJson?x=${x}&y=${y}&width=${width}&height=${height}`);
+    const { body: cropBody } = await get(authenticationToken, locale, `${baseUrl}/v004/image/images/${imageId}/cropAsJson?x=${x}&y=${y}&width=${width}&height=${height}`);
     // Post as product image
-    const { body: postProductImageBody } = await post(authenticationToken, locale, `${baseUrl}/v003/product/products/${productId}/croppedImages`, {
+    const { body: postProductImageBody } = await post(authenticationToken, locale, `${baseUrl}/v004/product/products/${productId}/croppedImages`, {
       data: cropBody.data
     });
     // Return product data

@@ -162,6 +162,6 @@ export default class SelectionArea extends Component {
           </div>}
 				{this.props.children}
 			</div>
-		);
+    );
   }
 }

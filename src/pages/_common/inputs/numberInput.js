@@ -53,8 +53,8 @@ export default class NumberInput extends Component {
       border: `1px solid ${colors.errorColor}`
     },
     disabled: {
-      backgroundColor: colors.lightGray,
-      color: colors.darkerGray
+      backgroundColor: colors.lightGray4,
+      color: colors.lightGray3
     },
     text: {
       paddingLeft: '10px',
@@ -86,10 +86,10 @@ export default class NumberInput extends Component {
           required={required}
           style={[
             styles.base,
-            disabled && styles.disabled,
-            meta && meta.touched && meta.error && styles.error,
             styles.text,
-            styles.lineHeight
+            styles.lineHeight,
+            disabled && styles.disabled,
+            meta && meta.touched && meta.error && styles.error
           ]}
           type='number'
           onChange={this.onChange} />

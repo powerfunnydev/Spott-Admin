@@ -62,7 +62,7 @@ class VerticalSideMenu extends Component {
   }
 
   isMedia () {
-    return this.checkUrl([ '/content/series', '/content/seasons', '/content/episodes', '/content/movies' ]);
+    return this.checkUrl([ '/content/series', '/content/seasons', '/content/episodes', '/content/movies', '/content/commercials' ]);
   }
 
   isPeople () {
@@ -212,6 +212,9 @@ class VerticalSideMenu extends Component {
                     </Link>
                     <Link activeStyle={styles.subSectionActive} key='movies' style={mergeStyles([ styles.section, styles.subSectionTitle, styles.subSection ])} to='/content/movies'>
                       Movies
+                    </Link>
+                    <Link activeStyle={styles.subSectionActive} key='commercials' style={mergeStyles([ styles.section, styles.subSectionTitle, styles.subSection ])} to='/content/commercials'>
+                      Commercials
                     </Link>
                   </div>
               }

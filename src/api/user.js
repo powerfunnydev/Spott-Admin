@@ -1,6 +1,6 @@
 import { del, get, post, postFormData } from './request';
 import { transformPaging, transformUser } from './transformers';
-import { ACTIVE, ADMIN, CONTENT_MANAGER, CONTENT_PRODUCER, BROADCASTER } from '../constants/userRoles';
+import { INACTIVE, ADMIN, CONTENT_MANAGER, CONTENT_PRODUCER, BROADCASTER } from '../constants/userRoles';
 
 export async function login (baseUrl, { authenticationToken, email, password }) {
   try {
@@ -94,7 +94,7 @@ export async function persistUser (baseUrl, authenticationToken, locale, { dateO
   user.email = email;
   user.firstName = firstName;
   user.lastName = lastName;
-  user.disabled = userStatus === ACTIVE || user.disabled || false;
+  user.disabled = userStatus === INACTIVE || user.disabled || false;
   user.userName = userName;
   user.gender = gender || user.gender;
   user.disabledReason = disabledReason || user.disabledReason;
