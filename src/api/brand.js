@@ -7,6 +7,5 @@ export async function searchBrands (baseUrl, authenticationToken, locale, { sear
     url = url.concat(`&searchString=${searchString}`);
   }
   const { body: { data } } = await get(authenticationToken, locale, url);
-  console.log('data', data);
   return data.map(transformListBrand);
 }

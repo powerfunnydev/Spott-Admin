@@ -50,8 +50,9 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, {
   episode.publishStatus = publishStatus;
   episode.season = { uuid: seasonId };
   episode.serie = { uuid: seriesEntryId };
-  episode.type = 'TV_SERIE_SEASON';
+  episode.type = 'TV_SERIE_EPISODE';
   episode.number = number;
+  // episode.id = 'e7965a70-e455-4292-a043-170f5aca6d05';
   // Update locale data.
   episode.localeData = [];
   locales.forEach((locale) => {

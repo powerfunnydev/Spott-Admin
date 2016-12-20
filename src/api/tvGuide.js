@@ -28,7 +28,7 @@ export async function persistTvGuideEntry (baseUrl, authenticationToken, locale,
   const end = endDate.hours(endTime.hours()).minutes(endTime.minutes());
   const result = await post(authenticationToken, locale, `${baseUrl}/v004/media/tvGuideEntries`, {
     uuid: id,
-    channel: broadcastChannelId,
+    channel: { uuid: broadcastChannelId },
     end: end.format(),
     start: start.format(),
     medium: { uuid: episodeId || mediumId }

@@ -36,13 +36,15 @@ export function fetchLastEpisode (seasonId) {
   return dataFetchLastEpisode({ seasonId });
 }
 
-export function submit ({ defaultLocale, ...restProps }) {
+export function submit ({ broadcasters, contentProducers, defaultLocale, ...restProps }) {
   return async (dispatch, getState) => {
     try {
       // contains defaultLocale (from previous), locales, number (from previous) , basedOnDefaultLocale, hasTitle
       // seasonId, seriesEntryId, broadcasters (from previous), lastEpisodeId and content producers (from previous)
       const seriesEntry = {
         ...restProps,
+        broadcasters: broadcasters && broadcasters.map((bc) => bc.id),
+        contentProducers: contentProducers && contentProducers.map((cp) => cp.id),
         defaultLocale,
         locales: [ defaultLocale ],
         basedOnDefaultLocale: { [defaultLocale]: false },
