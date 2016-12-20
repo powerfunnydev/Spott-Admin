@@ -262,7 +262,6 @@ export class SuccessMessage extends Component {
 
   render () {
     const { entityType, entity } = this.props;
-    console.log('entityType', entityType);
     if (entityType === BROADCAST_CHANNEL) {
       return this.broadcastChannelPersistSuccess(entity);
     } else if (entityType === BROADCASTER) {
