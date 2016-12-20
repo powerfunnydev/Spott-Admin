@@ -26,7 +26,6 @@ import colors from '../../colors';
 export default class GlobalTab extends Component {
 
   static propTypes = {
-    handleSubmit: PropTypes.func.isRequired,
     hoverAppearance: PropTypes.func.isRequired,
     hoveredAppearance: PropTypes.string,
     leaveAppearance: PropTypes.func.isRequired,
@@ -82,7 +81,7 @@ export default class GlobalTab extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { handleSubmit, hoverAppearance, hoveredAppearance, leaveAppearance, productSearchResult, productTuples, removeAppearance, searchProducts, selectAppearance, selectedAppearance, toggleSelectAppearance } = this.props;
+    const { hoverAppearance, hoveredAppearance, leaveAppearance, productSearchResult, productTuples, removeAppearance, searchProducts, selectAppearance, selectedAppearance, toggleSelectAppearance } = this.props;
 
     return (
       <div role='tabpanel' style={this.props.style}>
@@ -94,7 +93,7 @@ export default class GlobalTab extends Component {
           These products will be visible on <span style={styles.description.emph}>every</span> frame before any other product is shown.
         </div>
 
-        <form noValidate style={styles.searchBox} onSubmit={handleSubmit}>
+        <form noValidate style={styles.searchBox}>
           <ProductSearch
             options={productSearchResult.get('data').toArray()}
             search={searchProducts}

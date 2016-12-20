@@ -21,7 +21,7 @@ function transformProductGroup ({ uuid: id, name, products }) {
  * @throws UnexpectedError
  */
 export async function deleteProductGroup (baseUrl, authenticationToken, locale, { mediumId, productGroupId }) {
-  await del(authenticationToken, locale, `${baseUrl}/v003/media/media/${mediumId}/productGroups/${productGroupId}`);
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/productGroups/${productGroupId}`);
 }
 
 /**
@@ -42,7 +42,7 @@ export async function deleteProductGroup (baseUrl, authenticationToken, locale, 
  * @throws UnexpectedError
  */
 export async function getProductGroup (baseUrl, authenticationToken, locale, { mediumId, productGroupId }) {
-  const { body } = await get(authenticationToken, locale, `${baseUrl}/v003/media/media/${mediumId}/productGroups/${productGroupId}`);
+  const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/productGroups/${productGroupId}`);
   return transformProductGroup(body);
 }
 
@@ -63,7 +63,7 @@ export async function getProductGroup (baseUrl, authenticationToken, locale, { m
  * @throws UnexpectedError
  */
 export async function getProductGroups (baseUrl, authenticationToken, locale, { mediumId }) {
-  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/media/media/${mediumId}/productGroups?pageSize=1000`);
+  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/productGroups?pageSize=1000`);
   return data.map(transformProductGroup);
 }
 
@@ -90,7 +90,7 @@ export async function postProductGroup (baseUrl, authenticationToken, locale, { 
   let productGroup = {};
 
   if (id) {
-    const { body } = await get(authenticationToken, locale, `${baseUrl}/v003/media/media/${mediumId}/productGroups/${id}`);
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/productGroups/${id}`);
     productGroup = body;
   }
 
@@ -102,6 +102,6 @@ export async function postProductGroup (baseUrl, authenticationToken, locale, { 
     relevance
   }));
 
-  const { body } = await post(authenticationToken, locale, `${baseUrl}/v003/media/media/${mediumId}/productGroups`, productGroup);
+  const { body } = await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/productGroups`, productGroup);
   return transformProductGroup(body);
 }

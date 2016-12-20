@@ -1,4 +1,5 @@
 import { createSelector, createStructuredSelector } from 'reselect';
+import { cmsNextBaseUrlSelector } from '../../selectors/global';
 import {
   appearanceEntitiesSelector, createEntityIdsByRelationSelector,
   createEntitiesByRelationSelector, productSearchRelationsSelector,
@@ -19,6 +20,7 @@ const createProductMarkerSimilarProductsSelector = createSelector(
 );
 
 export const createProductMarkerSelector = createStructuredSelector({
+  cmsNextBaseUrl: cmsNextBaseUrlSelector,
   productId: currentCreateProductMarkerProductIdSelector,
   products: productEntitiesSelector,
   productSearchResult: productSearchResultSelector,
@@ -62,6 +64,7 @@ const updateProductMarkerSimilarProductsSelector = createSelector(
 
 export const updateProductMarkerSelector = (state) => createStructuredSelector({
   appearance: appearanceSelector,
+  cmsNextBaseUrl: cmsNextBaseUrlSelector,
   productId: currentUpdateProductMarkerProductIdSelector,
   products: productEntitiesSelector,
   productSearchResult: productSearchResultSelector,
