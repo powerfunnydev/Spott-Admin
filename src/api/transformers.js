@@ -115,11 +115,49 @@ export function transformListCharacter ({ auditInfo, profileImage, portraitImage
   };
 }
 
+// Temporary solution. Person is almost the same as character, except name calls fullName here...
+export const transformListPerson = (person) => {
+  const result = transformListCharacter(person);
+  result.fullName = person.fullName;
+  return result;
+};
+
+export function transformPerson ({
+  auditInfo, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, uuid: id, publishStatus,
+  localeData, portraitImage, profileCover, fullName, gender, dateOfBirth, placeOfBirth }) {
+  const person = {
+    basedOnDefaultLocale: {},
+    dateOfBirth,
+    description: {},
+    fullName,
+    gender,
+    locales: [],
+    placeOfBirth,
+    profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
+    portraitImage: portraitImage && { id: portraitImage.uuid, url: portraitImage.url },
+    defaultLocale,
+    externalReference,
+    externalReferenceSource,
+    id,
+    publishStatus,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
+  };
+  if (localeData) {
+    for (const { basedOnDefaultLocale, description, locale } of localeData) {
+      person.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      person.description[locale] = description;
+      person.locales.push(locale);
+    }
+  }
+  return person;
+}
+
 export function transformCharacter ({
   actor, auditInfo, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, uuid: id, publishStatus,
  localeData, portraitImage, profileCover }) {
   const character = {
-    personId: actor.uuid,
+    person: transformListPerson(actor),
     basedOnDefaultLocale: {},
     description: {},
     name: {},
@@ -149,18 +187,14 @@ export function transformCharacter ({
  *  Complete version of a medium. Locales includes.
  */
 export function transformMedium ({ availabilities, brand, broadcasters, characters, contentProducers, number,
-  auditInfo, type, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, serieInfo: serie, seasonInfo, uuid: id, publishStatus,
+  auditInfo, type, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, serie, season, uuid: id, publishStatus,
   defaultTitle, localeData, video, categories: mediumCategories }) {
-  let serieInfo = serie;
-  if (seasonInfo) {
-    serieInfo = seasonInfo.serie;
-  }
   const medium = {
     availabilities: availabilities && availabilities.map(transformAvailability),
-    brandId: brand && brand.uuid,
-    broadcasters: broadcasters && broadcasters.map((bc) => bc.uuid),
+    brand: brand && transformListBrand(brand),
+    broadcasters: broadcasters && broadcasters.map(transformBroadcaster),
     characters: characters && characters.map(transformListCharacter),
-    contentProducers: contentProducers && contentProducers.map((cp) => cp.uuid),
+    contentProducers: contentProducers && contentProducers.map(transformContentProducer),
     mediumCategories: mediumCategories && mediumCategories.map((mc) => mc.uuid),
     number,
     basedOnDefaultLocale: {},
@@ -181,8 +215,8 @@ export function transformMedium ({ availabilities, brand, broadcasters, characte
     type,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
-    season: seasonInfo && { title: seasonInfo.title, id: seasonInfo.uuid },
-    seriesEntry: serieInfo && { title: serieInfo.title, id: serieInfo.uuid },
+    season: season && { title: season.title, id: season.uuid },
+    seriesEntry: serie && { title: serie.title, id: serie.uuid },
     videoId: video && video.uuid
   };
   if (localeData) {
@@ -368,14 +402,14 @@ export function transformTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastUpdated
 }
 
 // TODO channel and channelInfo must be one object (task for backend).
-export function transformSingleTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastUpdatedOn }, uuid: id, start, end, mediumInfo,
-  mediumInfo: { season }, channel: { uuid: channelUuid }, channelInfo }) {
+export function transformSingleTvGuideEntry ({ auditInfo: { lastUpdatedBy, lastUpdatedOn }, uuid: id, start, end, medium,
+  season, channel }) {
   return {
     start, end, id, lastUpdatedBy, lastUpdatedOn,
-    medium: transformListMedium(mediumInfo),
-    channel: transformBroadcastChannel(channelInfo),
-    season: season && transformListMedium(season),
-    serie: season && season.serie && transformListMedium(season.serie)
+    medium: transformListMedium(medium),
+    channel: channel && transformBroadcastChannel(channel),
+    season: medium.season && transformListMedium(medium.season),
+    serie: medium.serie && transformListMedium(medium.serie)
   };
 }
 
@@ -406,7 +440,7 @@ export function transformUser ({ profileImage, avatar, languages, dateOfBirth, d
     contentProducers,
     avatar: avatar && { id: avatar.uuid, url: avatar.url },
     profileImage: profileImage && { id: profileImage.uuid, url: profileImage.url },
-    userStatus: disabled && ACTIVE || INACTIVE,
+    userStatus: disabled && INACTIVE || ACTIVE,
     languages,
     disabledReason,
     dateOfBirth,
@@ -452,43 +486,6 @@ export function transformVideo ({ audioFingerprints, description,
     videoFilename
   };
 }
-
-export function transformPerson ({
-  auditInfo, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, uuid: id, publishStatus,
-  localeData, portraitImage, profileCover, fullName, gender, dateOfBirth, placeOfBirth }) {
-  const person = {
-    basedOnDefaultLocale: {},
-    dateOfBirth,
-    description: {},
-    fullName,
-    gender,
-    locales: [],
-    placeOfBirth,
-    profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
-    portraitImage: portraitImage && { id: portraitImage.uuid, url: portraitImage.url },
-    defaultLocale,
-    externalReference,
-    externalReferenceSource,
-    id,
-    publishStatus,
-    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
-    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
-  };
-  if (localeData) {
-    for (const { basedOnDefaultLocale, description, locale } of localeData) {
-      person.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
-      person.description[locale] = description;
-      person.locales.push(locale);
-    }
-  }
-  return person;
-}
-// Temporary solution. Person is almost the same as character, except name calls fullName here...
-export const transformListPerson = (person) => {
-  const result = transformListCharacter(person);
-  result.fullName = person.fullName;
-  return result;
-};
 
 export function transformCharacterFaceImage ({ image, uuid: id }) {
   return {

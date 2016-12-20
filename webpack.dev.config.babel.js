@@ -11,7 +11,7 @@ const path = require('path');
 const configuration = {
   // Offers SourceMaps that only maps lines (no column mappings).
   // Much faster as using 'source-map'. Increases the main file size.
-  devtool: 'eval-cheap-module-source-map', // TODO: eval-cheap-module-source-map
+  devtool: 'source-map', // TODO: eval-cheap-module-source-map
   entry: {
     main: [
       // Install babel-friendly environment

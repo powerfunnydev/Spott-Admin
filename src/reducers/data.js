@@ -3,7 +3,7 @@ import {
   serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
   serializeFilterHasUsers, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart,
-  fetchListSuccess, fetchListError
+  fetchListSuccess, fetchListError, mergeListOfEntities
 } from './utils';
 import * as availabilityActions from '../actions/availability';
 import * as brandActions from '../actions/brand';
@@ -187,8 +187,10 @@ export default (state = fromJS({
 
     case charactersActions.CHARACTER_FETCH_START:
       return fetchStart(state, [ 'entities', 'characters', action.characterId ]);
-    case charactersActions.CHARACTER_FETCH_SUCCESS:
-      return fetchSuccess(state, [ 'entities', 'characters', action.characterId ], action.data);
+    case charactersActions.CHARACTER_FETCH_SUCCESS: {
+      const newState = action.data.person && fetchSuccess(state, [ 'entities', 'listPersons', action.data.person.id ], action.data.person) || state;
+      return fetchSuccess(newState, [ 'entities', 'characters', action.characterId ], action.data);
+    }
     case charactersActions.CHARACTER_FETCH_ERROR:
       return fetchError(state, [ 'entities', 'characters', action.characterId ], action.error);
 
@@ -228,8 +230,11 @@ export default (state = fromJS({
 
     case commercialActions.COMMERCIAL_FETCH_START:
       return fetchStart(state, [ 'entities', 'media', action.commercialId ]);
-    case commercialActions.COMMERCIAL_FETCH_SUCCESS:
-      return fetchSuccess(state, [ 'entities', 'media', action.commercialId ], action.data);
+    case commercialActions.COMMERCIAL_FETCH_SUCCESS: {
+      let newState = action.data.brand && fetchSuccess(state, [ 'entities', 'listBrands', action.data.brand.id ], action.data.brand) || state;
+      newState = action.data.contentProducers && mergeListOfEntities(newState, [ 'entities', 'contentProducers' ], action.data.contentProducers) || newState;
+      return fetchSuccess(newState, [ 'entities', 'media', action.commercialId ], action.data);
+    }
     case commercialActions.COMMERCIAL_FETCH_ERROR:
       return fetchError(state, [ 'entities', 'media', action.commercialId ], action.error);
 
@@ -284,8 +289,12 @@ export default (state = fromJS({
 
     case episodeActions.EPISODE_FETCH_START:
       return fetchStart(state, [ 'entities', 'media', action.episodeId ]);
-    case episodeActions.EPISODE_FETCH_SUCCESS:
-      return fetchSuccess(state, [ 'entities', 'media', action.episodeId ], action.data);
+    case episodeActions.EPISODE_FETCH_SUCCESS: {
+      let newState = state;
+      newState = action.data.broadcasters && mergeListOfEntities(newState, [ 'entities', 'broadcasters' ], action.data.broadcasters) || newState;
+      newState = action.data.contentProducers && mergeListOfEntities(newState, [ 'entities', 'contentProducers' ], action.data.contentProducers) || newState;
+      return fetchSuccess(newState, [ 'entities', 'media', action.episodeId ], action.data);
+    }
     case episodeActions.EPISODE_FETCH_ERROR:
       return fetchError(state, [ 'entities', 'media', action.episodeId ], action.error);
 
@@ -325,8 +334,12 @@ export default (state = fromJS({
 
     case moviesActions.MOVIE_FETCH_START:
       return fetchStart(state, [ 'entities', 'media', action.movieId ]);
-    case moviesActions.MOVIE_FETCH_SUCCESS:
-      return fetchSuccess(state, [ 'entities', 'media', action.movieId ], action.data);
+    case moviesActions.MOVIE_FETCH_SUCCESS: {
+      let newState = state;
+      newState = action.data.broadcasters && mergeListOfEntities(newState, [ 'entities', 'broadcasters' ], action.data.broadcasters) || newState;
+      newState = action.data.contentProducers && mergeListOfEntities(newState, [ 'entities', 'contentProducers' ], action.data.contentProducers) || newState;
+      return fetchSuccess(newState, [ 'entities', 'media', action.movieId ], action.data);
+    }
     case moviesActions.MOVIE_FETCH_ERROR:
       return fetchError(state, [ 'entities', 'media', action.movieId ], action.error);
 
@@ -457,13 +470,14 @@ export default (state = fromJS({
 
     case tvGuideActions.TV_GUIDE_ENTRY_FETCH_START:
       return fetchStart(state, [ 'entities', 'tvGuideEntries', action.tvGuideEntryId ]);
-    case tvGuideActions.TV_GUIDE_ENTRY_FETCH_SUCCESS:
+    case tvGuideActions.TV_GUIDE_ENTRY_FETCH_SUCCESS: {
       let newState = fetchSuccess(state, [ 'entities', 'tvGuideEntries', action.tvGuideEntryId ], action.data);
       if (action.data.medium.type === 'TV_SERIE_EPISODE') {
         newState = fetchSuccess(newState, [ 'entities', 'listMedia', action.data.serie.id ], action.data.serie);
         newState = fetchSuccess(newState, [ 'entities', 'listMedia', action.data.season.id ], action.data.season);
       }
       return fetchSuccess(newState, [ 'entities', 'listMedia', action.data.medium.id ], action.data.medium);
+    }
     case tvGuideActions.TV_GUIDE_ENTRY_FETCH_ERROR:
       return fetchError(state, [ 'entities', 'tvGuideEntries', action.tvGuideEntryId ], action.error);
 
