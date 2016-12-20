@@ -24,7 +24,7 @@ function _transformScenes (scenes) {
  *     scenes: [{
  *       hidden: true,
  *       id: 'scene-id',
- *       imageUrl: 'http://spott-cms-uat.appiness.mobi/apptvate/rest/v003/image/images/539766be-4ee4-4fee-83a7-99775471eb7c',
+ *       imageUrl: 'http://spott-cms-uat.appiness.mobi/apptvate/rest/v004/image/images/539766be-4ee4-4fee-83a7-99775471eb7c',
  *       offsetInSeconds: 120,
  *       sceneNumber: 20,
  *       status: 'UNKNOWN or DONE or REVIEW or ATTENTION'
@@ -35,9 +35,9 @@ function _transformScenes (scenes) {
  * @throws UnexpectedError
  */
 export async function getVideo (baseUrl, authenticationToken, locale, { videoId }) {
-  const { body: { scenes, uuid: id } } = await get(authenticationToken, locale, `${baseUrl}/v003/video/videos/${videoId}`);
+  const { body: { data: scenes } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/scenes`);
   return {
-    id,
+    id: videoId,
     // Array comprehension, destructure every scene, transform it to a scene
     // which only holds relevant information for the UI.
     scenes: _transformScenes(scenes)

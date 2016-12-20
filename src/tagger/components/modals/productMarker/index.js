@@ -217,6 +217,7 @@ class ProductMarker extends Component {
     appearance: ImmutablePropTypes.map,
     change: PropTypes.func.isRequired,
     characters: ImmutablePropTypes.list.isRequired,
+    cmsNextBaseUrl: PropTypes.string.isRequired,
     dispatch: PropTypes.func.isRequired,
     fetchSimilarProducts: PropTypes.func.isRequired,
     handleSubmit: PropTypes.func.isRequired,
@@ -421,7 +422,7 @@ class ProductMarker extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      allowProductSuggestions, characters, fetchSimilarProducts, handleSubmit, productId, products,
+      allowProductSuggestions, characters, cmsNextBaseUrl, fetchSimilarProducts, handleSubmit, productId, products,
       productSearchResult, productSuggestions, similarProducts, title
     } = this.props;
 
@@ -457,7 +458,7 @@ class ProductMarker extends Component {
                 <div style={styles.buttons}>
                   {this.renderSimilarProducts(product, similarProducts)}
                   {product && product.get('id') &&
-                    <a href={`/#/content/products/edit/${product.get('id')}`} style={[ buttonStyle.base, buttonStyle.small, styles.grayButton, styles.link ]} target='_blank'>Edit product</a>}
+                    <a href={`${cmsNextBaseUrl}/#/content/products/edit/${product.get('id')}`} style={[ buttonStyle.base, buttonStyle.small, styles.grayButton, styles.link ]} target='_blank'>Edit product</a>}
 
                   {allowProductSuggestions &&
                     <button key='suggestions' style={[ buttonStyle.base, buttonStyle.small, styles.grayButton ]} onClick={this.onSeeProductSuggestions}>See suggestions</button>}
@@ -516,6 +517,7 @@ export class CreateProductMarker extends Component {
   static propTypes = {
     allowProductSuggestions: PropTypes.bool,
     characters: ImmutablePropTypes.list.isRequired,
+    cmsNextBaseUrl: PropTypes.string.isRequired,
     fetchSimilarProducts: PropTypes.func.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     productSearchResult: ImmutablePropTypes.map.isRequired,
@@ -552,6 +554,7 @@ export class UpdateProductMarker extends Component {
   static propTypes = {
     allowProductSuggestions: PropTypes.bool,
     characters: ImmutablePropTypes.list.isRequired,
+    cmsNextBaseUrl: PropTypes.string.isRequired,
     fetchSimilarProducts: PropTypes.func.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     productSearchResult: ImmutablePropTypes.map.isRequired,

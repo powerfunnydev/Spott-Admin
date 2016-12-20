@@ -1,32 +1,17 @@
 import { del, get, post, BadRequestError, NotFoundError, UnexpectedError } from '../../api/request';
 import { PRODUCT_QUICKY } from '../constants/itemTypes';
 
-
 // TODO: Currently we take the first entry in localeData. Later on when localization
 // is implemented, we can change this.
 
-function transformCharacters (characters) {
-  const result = [];
-  for (const { character: { uuid: id }, markerHidden, markerStatus, point, region, uuid: appearanceId } of characters) {
-    result.push({ appearanceId, id, markerHidden, markerStatus, point, region });
-  }
-  return result;
+function transformCharacter ({ character: { uuid: id }, markerHidden, markerStatus, point, region, uuid: appearanceId }) {
+  return { appearanceId, id, markerHidden, markerStatus, point, region };
 }
 
 function transformDetailedCharacter (character) {
   const { localeData: [ { name } ], portraitImage, uuid: id } = character;
   // Portrait image is optional.
   return { id, name, portraitImageUrl: portraitImage ? portraitImage.url : null };
-}
-
-function transformDetailedCharacters (characters) {
-  const result = [];
-  for (const character of characters) {
-    const { entity: { localeData: [ { name } ], portraitImage, uuid: id } } = character;
-    // Portrait image is optional.
-    result.push({ id, name, portraitImageUrl: portraitImage ? portraitImage.url : null });
-  }
-  return result;
 }
 
 function transformProduct (characterId, { product: { uuid: productId }, relevance }) {
@@ -53,9 +38,9 @@ function transformProductGroup (characterId, { uuid: id, name, products }) {
  * @throws NotFoundError
  * @throws UnexpectedError
  */
-export async function getSceneCharacters (baseUrl, authenticationToken, locale, { sceneId, videoId }) {
-  const { body: characters } = await get(authenticationToken, locale, `${baseUrl}/v003/video/videos/${videoId}/scenes/${sceneId}/characters`);
-  return transformCharacters(characters);
+export async function getSceneCharacters (baseUrl, authenticationToken, locale, { sceneId }) {
+  const { body: { data: characters } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/scenes/${sceneId}/characters`);
+  return characters.map(transformCharacter);
 }
 
 /**
@@ -69,15 +54,17 @@ export async function getSceneCharacters (baseUrl, authenticationToken, locale, 
  * [{
  *   id: 'character-id'
  *   name: 'Tom De Decker',
- *   portraitImageUrl: 'http://spott-cms-uat.appiness.mobi/apptvate/rest/v003/image/images/539766be-4ee4-4fee-83a7-99775471eb7c'
+ *   portraitImageUrl: 'http://spott-cms-uat.appiness.mobi/apptvate/rest/v004/image/images/539766be-4ee4-4fee-83a7-99775471eb7c'
  * }]
  * @throws UnauthorizedError
  * @throws UnexpectedError
  */
 export async function getCharacters (baseUrl, authenticationToken, locale, { searchString = '', pageSize = 30 }) {
   if (searchString.trim().length > 0) {
-    const { body: { data: characters } } = await get(authenticationToken, locale, `${baseUrl}/v003/search?pageSize=${pageSize}&searchString=${encodeURIComponent(searchString)}&type=CHARACTER`);
-    return transformDetailedCharacters(characters);
+    const { body: { data: characters } } = await get(authenticationToken, locale, `${baseUrl}/v004/media/characters?pageSize=${pageSize}&searchString=${encodeURIComponent(searchString)}`);
+    return characters.map(({ uuid: id, name, portraitImage }) => ({
+      id, name, portraitImageUrl: portraitImage ? portraitImage.url : null
+    }));
   }
   return [];
 }
@@ -92,14 +79,14 @@ export async function getCharacters (baseUrl, authenticationToken, locale, { sea
  * {
  *   id: 'character-id'
  *   name: 'Tom De Decker',
- *   portraitImageUrl: 'http://spott-cms-uat.appiness.mobi/apptvate/rest/v003/image/images/539766be-4ee4-4fee-83a7-99775471eb7c'
+ *   portraitImageUrl: 'http://spott-cms-uat.appiness.mobi/apptvate/rest/v004/image/images/539766be-4ee4-4fee-83a7-99775471eb7c'
  * }
  * @throws UnauthorizedError
  * @throws NotFoundError
  * @throws UnexpectedError
  */
 export async function getCharacter (baseUrl, authenticationToken, locale, { characterId }) {
-  const { body: { uuid: id, localeData: [ { name } ], portraitImage } } = await get(authenticationToken, locale, `${baseUrl}/v003/media/characters/${characterId}`);
+  const { body: { uuid: id, localeData: [ { name } ], portraitImage } } = await get(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}`);
   // Portrait image is optional.
   return { id, name, portraitImageUrl: portraitImage ? portraitImage.url : null };
 }
@@ -128,7 +115,7 @@ export async function getCharacter (baseUrl, authenticationToken, locale, { char
  */
 export async function postSceneCharacter (baseUrl, authenticationToken, locale, { appearanceId, characterId, markerHidden, markerStatus, point, region, sceneId, videoId }) {
   try {
-    const { body: characters } = await post(authenticationToken, 'en', `${baseUrl}/v003/video/videos/${videoId}/scenes/${sceneId}/characters`, {
+    const { body: { data: characters } } = await post(authenticationToken, 'en', `${baseUrl}/v004/video/scenes/${sceneId}/characters`, {
       character: {
         uuid: characterId
       },
@@ -142,7 +129,7 @@ export async function postSceneCharacter (baseUrl, authenticationToken, locale, 
       sortOrder: 0,
       uuid: appearanceId
     });
-    return transformCharacters(characters);
+    return characters.map(transformCharacter);
   } catch (error) {
     switch (error.statusCode) {
       case 400:
@@ -187,8 +174,8 @@ export async function postSceneCharacter (baseUrl, authenticationToken, locale, 
  */
 export async function deleteSceneCharacter (baseUrl, authenticationToken, locale, { characterAppearanceId, sceneId, videoId }) {
   try {
-    const { body: characters } = await del(authenticationToken, 'en', `${baseUrl}/v003/video/videos/${videoId}/scenes/${sceneId}/characters/${characterAppearanceId}`);
-    return transformCharacters(characters);
+    const { body: { data: characters } } = await del(authenticationToken, 'en', `${baseUrl}/v004/video/scenes/${sceneId}/characters/${characterAppearanceId}`);
+    return characters.map(transformCharacter);
   } catch (error) {
     switch (error.statusCode) {
       // case 403:
@@ -204,8 +191,8 @@ export async function deleteSceneCharacter (baseUrl, authenticationToken, locale
 }
 
 /**
- * GET /rest/v003/image/images/{imageUuid}/cropAsJson
- * POST /rest/v003/media/characters/{characterUuid}/faces
+ * GET /rest/v004/image/images/{imageUuid}/cropAsJson
+ * POST /rest/v004/media/characters/{characterUuid}/faces
  * Associates a rectangular part of the given image with the given character,
  * for face recognition purposes.
  * @param {string} authenticationToken The authentication token of the logged in user.
@@ -220,7 +207,7 @@ export async function deleteSceneCharacter (baseUrl, authenticationToken, locale
  * {
  *   id: '50ed4223-ed90-4326-9af4-33494b88e135',
  *   name: 'Tom De Decker',
- *   portraitImageUrl: 'https://spott-cms-rest-tst.appiness.mobi:443/apptvate/rest/v003/image/images/abc5ad3a-25f2-4eaf-bdf1-853e773bdc28'
+ *   portraitImageUrl: 'https://spott-cms-rest-tst.appiness.mobi:443/apptvate/rest/v004/image/images/abc5ad3a-25f2-4eaf-bdf1-853e773bdc28'
  * }
  * @throws UnauthorizedError
  * @throws NotFoundError
@@ -229,9 +216,9 @@ export async function deleteSceneCharacter (baseUrl, authenticationToken, locale
 export async function postCharacterFace (baseUrl, authenticationToken, locale, { imageId, region: { x, y, width, height }, characterId }) {
   try {
     // Crop the image
-    const { body: cropBody } = await get(authenticationToken, locale, `${baseUrl}/v003/image/images/${imageId}/cropAsJson?x=${x}&y=${y}&width=${width}&height=${height}`);
+    const { body: cropBody } = await get(authenticationToken, locale, `${baseUrl}/v004/image/images/${imageId}/cropAsJson?x=${x}&y=${y}&width=${width}&height=${height}`);
     // Post to faces
-    const { body: postFaceBody } = await post(authenticationToken, locale, `${baseUrl}/v003/media/characters/${characterId}/faces`, {
+    const { body: postFaceBody } = await post(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/faces`, {
       data: cropBody.data
     });
     // Return character data
@@ -262,7 +249,7 @@ export async function postCharacterFace (baseUrl, authenticationToken, locale, {
  * @throws UnexpectedError
  */
 export async function deleteProductGroup (baseUrl, authenticationToken, locale, { characterId, productGroupId }) {
-  await del(authenticationToken, locale, `${baseUrl}/v003/media/characters/${characterId}/productGroups/${productGroupId}`);
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/productGroups/${productGroupId}`);
 }
 
 /**
@@ -283,7 +270,7 @@ export async function deleteProductGroup (baseUrl, authenticationToken, locale, 
  * @throws UnexpectedError
  */
 export async function getProductGroup (baseUrl, authenticationToken, locale, { characterId, productGroupId }) {
-  const { body } = await get(authenticationToken, locale, `${baseUrl}/v003/media/characters/${characterId}/productGroups/${productGroupId}`);
+  const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/productGroups/${productGroupId}`);
   return transformProductGroup(characterId, body);
 }
 
@@ -304,7 +291,7 @@ export async function getProductGroup (baseUrl, authenticationToken, locale, { c
  * @throws UnexpectedError
  */
 export async function getProductGroups (baseUrl, authenticationToken, locale, { characterId }) {
-  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v003/media/characters/${characterId}/productGroups?pageSize=1000`);
+  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/productGroups?pageSize=1000`);
   return data.map(transformProductGroup.bind(null, characterId));
 }
 
@@ -330,7 +317,7 @@ export async function postProductGroup (baseUrl, authenticationToken, locale, { 
   let productGroup = {};
 
   if (id) {
-    const { body } = await get(authenticationToken, locale, `${baseUrl}/v003/media/characters/${characterId}/productGroups/${id}`);
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/productGroups/${id}`);
     productGroup = body;
   }
 
@@ -340,6 +327,6 @@ export async function postProductGroup (baseUrl, authenticationToken, locale, { 
     relevance
   }));
 
-  const { body } = await post(authenticationToken, locale, `${baseUrl}/v003/media/characters/${characterId}/productGroups`, productGroup);
+  const { body } = await post(authenticationToken, locale, `${baseUrl}/v004/media/characters/${characterId}/productGroups`, productGroup);
   return transformProductGroup(characterId, body);
 }
