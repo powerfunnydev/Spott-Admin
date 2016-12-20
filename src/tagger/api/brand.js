@@ -16,6 +16,6 @@ import { get } from '../../api/request';
  * @throws UnexpectedError
  */
 export async function getBrand (baseUrl, authenticationToken, locale, { brandId }) {
-  const { body: { localeData: [ { name } ], uuid: id } } = await get(authenticationToken, locale, `${baseUrl}/v003/product/brands/${brandId}`);
+  const { body: { localeData: [ { name } ], uuid: id } } = await get(authenticationToken, locale, `${baseUrl}/v004/product/brands/${brandId}`);
   return { id, name };
 }

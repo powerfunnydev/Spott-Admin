@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import { createSelector, createStructuredSelector } from 'reselect';
 import { List, Map } from 'immutable';
 import {
   appearanceEntitiesSelector,
@@ -48,10 +48,10 @@ const productSuggestionsSelector = createSelector(
   }
 );
 
-export default (state) => ({
-  currentModal: currentModalSelector(state),
-  characters: charactersSelector(state),
-  productSuggestions: productSuggestionsSelector(state),
-  region: newMarkerRegionSelector(state),
-  tooltip: tooltipSelector(state)
+export default createStructuredSelector({
+  currentModal: currentModalSelector,
+  characters: charactersSelector,
+  productSuggestions: productSuggestionsSelector,
+  region: newMarkerRegionSelector,
+  tooltip: tooltipSelector
 });

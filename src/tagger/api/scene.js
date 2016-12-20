@@ -5,7 +5,7 @@ function _transformScene ({ hidden, image: { id: imageId, url: imageUrl }, offse
 }
 
 /**
- * POST /video/videos/:videoId/scenes/:sceneId
+ * POST /video/scenes/:sceneId
  * Partially update a scene.
  * @param {string} authenticationToken The authentication token of the logged in user.
  * @param {Object} ids
@@ -19,15 +19,15 @@ function _transformScene ({ hidden, image: { id: imageId, url: imageUrl }, offse
  *   {
  *     hidden: true,
  *     id: 'scene-id',
- *     imageUrl: 'http://spott-cms-uat.appiness.mobi/apptvate/rest/v003/image/images/539766be-4ee4-4fee-83a7-99775471eb7c',
+ *     imageUrl: 'http://spott-cms-uat.appiness.mobi/apptvate/rest/v004/image/images/539766be-4ee4-4fee-83a7-99775471eb7c',
  *     status: 'DONE'
  *   }
  * @throws UnauthorizedError
  * @throws NotFoundError
  * @throws UnexpectedError
  */
-export async function postScene (baseUrl, authenticationToken, locale, { sceneId, videoId }, { hidden, status }) {
-  const { body: scene } = await get(authenticationToken, locale, `${baseUrl}/v003/video/videos/${videoId}/scenes/${sceneId}`);
+export async function postScene (baseUrl, authenticationToken, locale, { sceneId }, { hidden, status }) {
+  const { body: scene } = await get(authenticationToken, locale, `${baseUrl}/v004/video/scenes/${sceneId}`);
 
   // Update the fields that are passed as argument.
   if (typeof scene.hidden === 'boolean') {
@@ -38,14 +38,14 @@ export async function postScene (baseUrl, authenticationToken, locale, { sceneId
   }
 
   // Update the scene.
-  const { body: updatedScene } = await post(authenticationToken, locale, `${baseUrl}/v003/video/videos/${videoId}/scenes/${sceneId}`, scene);
+  const { body: updatedScene } = await post(authenticationToken, locale, `${baseUrl}/v004/video/scenes/${sceneId}`, scene);
 
   // Format updated scene.
   return _transformScene(updatedScene);
 }
 
 /**
- * GET /video/videos/:videoId/scenes/:sceneId
+ * GET /video/scenes/:sceneId
  * Get the details of the scene, including the similar frames.
  * @param {string} authenticationToken The authentication token of the logged in user.
  * @param {Object} ids
@@ -56,15 +56,15 @@ export async function postScene (baseUrl, authenticationToken, locale, { sceneId
  *   {
  *     hidden: true,
  *     id: 'scene-id',
- *     imageUrl: 'http://spott-cms-uat.appiness.mobi/apptvate/rest/v003/image/images/539766be-4ee4-4fee-83a7-99775471eb7c',
+ *     imageUrl: 'http://spott-cms-uat.appiness.mobi/apptvate/rest/v004/image/images/539766be-4ee4-4fee-83a7-99775471eb7c',
  *     status: 'DONE'
  *   }
  * @throws UnauthorizedError
  * @throws NotFoundError
  * @throws UnexpectedError
  */
-export async function getScene (baseUrl, authenticationToken, locale, { sceneId, videoId }) {
-  const { body: scene } = await get(authenticationToken, locale, `${baseUrl}/v003/video/videos/${videoId}/scenes/${sceneId}`);
+export async function getScene (baseUrl, authenticationToken, locale, { sceneId }) {
+  const { body: scene } = await get(authenticationToken, locale, `${baseUrl}/v004/video/scenes/${sceneId}`);
   // Format updated scene.
   return _transformScene(scene);
 }
