@@ -102,10 +102,7 @@ export const eventsFilterSelector = createStructuredSelector({
 const _eventsSelector = createSelector(
   eventsEntitiesSelector,
   currentEventsSelector,
-  (eventsById, eventIds) => {
-    console.warn('eventIds', eventIds);
-    return eventIds.map((eventId) => eventsById.get(eventId)).filter((event) => event);
-  }
+  (eventsById, eventIds) => eventIds.map((eventId) => eventsById.get(eventId)).filter((event) => event)
 );
 
 const timelineConfigSelector = createSelector(
@@ -152,16 +149,15 @@ const isLoadingAgeSelector = createSelector(currentMediaSelector, ageDataSelecto
 const isLoadingGenderSelector = createSelector(currentMediaSelector, genderDataSelector, isLoadingReducer);
 
 const ageConfigSelector = createSelector(
-  currentEventsSelector,
+  _eventsSelector,
   listMediaEntitiesSelector,
   currentMediaSelector,
   ageDataSelector,
-  (event, mediaById, mediumIds, ageData) => {
+  (events, mediaById, mediumIds, ageData) => {
     const series = [];
-    let eventType = '';
+    const eventTypes = events.map((event) => event.get('description')).join(', ');
     let d;
-    if (event) {
-      eventType = event.get('description');
+    if (eventTypes) {
       for (const mediumId of mediumIds) {
         d = ageData.getIn([ mediumId, 'data' ]) || [];
         // There should be data available, otherwise Highcharts will crash.
@@ -177,24 +173,23 @@ const ageConfigSelector = createSelector(
 
     return ageConfig
       .setIn([ 'xAxis', 'categories' ], (d && d.map(({ label }) => label)) || [])
-      .setIn([ 'tooltip', 'headerFormat' ], ageConfig.getIn([ 'tooltip', 'headerFormat' ]).replace('{eventType}', eventType))
+      .setIn([ 'tooltip', 'headerFormat' ], ageConfig.getIn([ 'tooltip', 'headerFormat' ]).replace('{eventType}', eventTypes))
       .set('series', series)
       .toJS();
   }
 );
 
 const genderConfigSelector = createSelector(
-  currentEventsSelector,
+  _eventsSelector,
   listMediaEntitiesSelector,
   currentMediaSelector,
   genderDataSelector,
   gendersEntitiesSelector,
-  (event, mediaById, mediumIds, genderData, gendersById) => {
+  (events, mediaById, mediumIds, genderData, gendersById) => {
     let series = [ { name: 'Male', data: [] }, { name: 'Female', data: [] } ];
-    let eventType = '';
+    const eventTypes = events.map((event) => event.get('description')).join(', ');
 
-    if (event) {
-      eventType = event.get('description');
+    if (eventTypes) {
       series[0].name = gendersById.getIn([ 'MALE', 'description' ]);
       series[1].name = gendersById.getIn([ 'FEMALE', 'description' ]);
 
@@ -222,17 +217,17 @@ const genderConfigSelector = createSelector(
     return genderConfig
       // x-axis = categories = media names.
       .setIn([ 'xAxis', 'categories' ], mediumIds.map((mediumId) => mediaById.getIn([ mediumId, 'title' ])))
-      .setIn([ 'tooltip', 'headerFormat' ], genderConfig.getIn([ 'tooltip', 'headerFormat' ]).replace('{eventType}', eventType))
+      .setIn([ 'tooltip', 'headerFormat' ], genderConfig.getIn([ 'tooltip', 'headerFormat' ]).replace('{eventType}', eventTypes))
       .set('series', series)
       .toJS();
   }
 );
 
 export const activitySelector = createStructuredSelector({
-  // ageConfig: ageConfigSelector,
-  // genderConfig: genderConfigSelector,
-  // isLoadingAge: isLoadingAgeSelector,
-  // isLoadingGender: isLoadingGenderSelector,
+  ageConfig: ageConfigSelector,
+  genderConfig: genderConfigSelector,
+  isLoadingAge: isLoadingAgeSelector,
+  isLoadingGender: isLoadingGenderSelector,
   isLoadingTimeline: isLoadingTimelineSelector,
   mediaById: listMediaEntitiesSelector,
   mediumIds: currentMediaSelector,

@@ -67,10 +67,10 @@ export default class ActivityFilterForm extends Component {
           getItemText={(id) => eventsById.getIn([ id, 'description' ])}
           input={{ value: fields.events }}
           isLoading={events.get('_status') === FETCHING}
-          multi
-          name='event'
+          multiselect
+          name='events'
           options={events.get('data').map((e) => e.get('id')).toJS()}
-          placeholder='Event'
+          placeholder='Events'
           style={[ styles.field, { paddingRight: '0.75em' } ]}
           onChange={onChange.bind(null, 'events', 'array')} />
         <DateInput

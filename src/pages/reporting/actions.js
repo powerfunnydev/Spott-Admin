@@ -53,9 +53,9 @@ export function loadActivities () {
 
         // We need to load the genders to show in the gender chart.
         await dispatch(loadGenders());
-        dispatch(fetchTimelineData({ startDate, endDate, eventIds, mediumIds }));
-        // dispatch(fetchAgeData({ startDate, endDate, eventIds, mediumIds }));
-        // dispatch(fetchGenderData({ startDate, endDate, eventIds, mediumIds }));
+        await dispatch(fetchTimelineData({ startDate, endDate, eventIds, mediumIds }));
+        await dispatch(fetchAgeData({ startDate, endDate, eventIds, mediumIds }));
+        await dispatch(fetchGenderData({ startDate, endDate, eventIds, mediumIds }));
       }
     } catch (error) {
       dispatch({ error, type: ACTIVITIES_FETCH_ERROR });

@@ -46,10 +46,7 @@ export async function fetchSeasons (baseUrl, authenticationToken, locale, { sear
 export async function fetchSeason (baseUrl, authenticationToken, locale, { seasonId }) {
   const url = `${baseUrl}/v004/media/serieSeasons/${seasonId}`;
   const { body } = await get(authenticationToken, locale, url);
-  // console.log('before transform', { ...body });
-  const result = transformSeason004(body);
-  // console.log('after tranform', result);
-  return result;
+  return transformSeason004(body);
 }
 
 export async function fetchLastEpisode (baseUrl, authenticationToken, locale, { seasonId }) {

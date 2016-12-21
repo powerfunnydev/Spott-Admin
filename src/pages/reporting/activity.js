@@ -34,10 +34,10 @@ Highcharts.Highcharts.setOptions({
 export default class ReportingActivity extends Component {
 
   static propTypes = {
-    // ageConfig: PropTypes.object.isRequired,
-    // genderConfig: PropTypes.object.isRequired,
-    // isLoadingAge: PropTypes.bool.isRequired,
-    // isLoadingGender: PropTypes.bool.isRequired,
+    ageConfig: PropTypes.object.isRequired,
+    genderConfig: PropTypes.object.isRequired,
+    isLoadingAge: PropTypes.bool.isRequired,
+    isLoadingGender: PropTypes.bool.isRequired,
     isLoadingTimeline: PropTypes.bool.isRequired,
     loadActivities: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
@@ -69,7 +69,7 @@ export default class ReportingActivity extends Component {
     const query = this.props.location.query;
 
     if (query.endDate !== nextQuery.endDate ||
-      query.event !== nextQuery.event ||
+      !arraysEqual(query.events, nextQuery.events) ||
       query.startDate !== nextQuery.startDate ||
       !arraysEqual(query.media, nextQuery.media)) {
       this.loadActivities(nextProps.location.query);
@@ -152,17 +152,19 @@ export default class ReportingActivity extends Component {
             <Widget isLoading={isLoadingTimeline} style={largeWidgetStyle} title='Timeline'>
               <Highcharts config={timelineConfig} isPureConfig />
             </Widget>
-            {/* <div style={styles.widgets}>
+            <div style={styles.widgets}>
               <Widget isLoading={isLoadingAge} style={mediumWidgetStyle} title='Age'>
                 <Highcharts config={ageConfig} isPureConfig />
               </Widget>
               <Widget isLoading={isLoadingGender} style={mediumWidgetStyle} title='Gender'>
                 <Highcharts config={genderConfig} isPureConfig />
               </Widget>
-              {/* <Widget title='Location'>
+              {/*
+              <Widget title='Location'>
                 <Highcharts config={locationConfig} isPureConfig />
               </Widget>
-            </div> */}
+              */}
+            </div>
           </Container>
         </div>
       </div>
