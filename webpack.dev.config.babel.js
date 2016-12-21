@@ -44,7 +44,7 @@ const configuration = {
           // Cache is not invalidated if the .eslintrc file was changed.
           // cache: true,
           failOnWarning: false,
-          failOnError: true
+          failOnError: false
         }
       } ],
       test: /\.js$/

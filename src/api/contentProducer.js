@@ -39,7 +39,6 @@ export async function persistContentProducer (baseUrl, authenticationToken, loca
   let cp = {};
   if (id) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/contentProducers/${id}`);
-    // console.log('body', body);
     cp = body;
   }
   const url = `${baseUrl}/v004/media/contentProducers`;

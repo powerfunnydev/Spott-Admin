@@ -218,7 +218,7 @@ export async function postProcess (baseUrl, authenticationToken, { description, 
  * @throws UnexpectedError
  */
 export async function searchMedia (baseUrl, authenticationToken, locale, { searchString = '' }) {
-  let searchUrl = `${baseUrl}/v003/media/media?pageSize=25&types=TV_SERIE,MOVIE,COMMERCIAL`;
+  let searchUrl = `${baseUrl}/v003/media/media?pageSize=1000&types=TV_SERIE,MOVIE,COMMERCIAL`;
   if (searchString) {
     searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
   }
@@ -229,7 +229,7 @@ export async function searchMedia (baseUrl, authenticationToken, locale, { searc
 export async function deletePosterImage (baseUrl, authenticationToken, locale, { locale: mediumLocale, mediumId }) {
   let url = `${baseUrl}/v004/media/media/${mediumId}/posterImage`;
   if (mediumLocale) {
-    url = `${url }?locale=${mediumLocale}`;
+    url = `${url}?locale=${mediumLocale}`;
   }
   const result = await del(authenticationToken, locale, url);
   return transformMedium(result.body);

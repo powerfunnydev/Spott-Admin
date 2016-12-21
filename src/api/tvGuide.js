@@ -16,10 +16,7 @@ export async function fetchTvGuideEntries (baseUrl, authenticationToken, locale,
 export async function fetchTvGuideEntry (baseUrl, authenticationToken, locale, { tvGuideEntryId }) {
   const url = `${baseUrl}/v004/media/tvGuideEntries/${tvGuideEntryId}`;
   const { body } = await get(authenticationToken, locale, url);
-  // console.log('before transform', { ...body });
-  const result = transformSingleTvGuideEntry(body);
-  // console.log('after tranform', result);
-  return result;
+  return transformSingleTvGuideEntry(body);
 }
 
 export async function persistTvGuideEntry (baseUrl, authenticationToken, locale, { id, mediumId, episodeId, broadcastChannelId, startDate, startTime, endDate, endTime }) {

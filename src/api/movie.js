@@ -19,10 +19,7 @@ export async function fetchMovies (baseUrl, authenticationToken, locale, { searc
 export async function fetchMovie (baseUrl, authenticationToken, locale, { movieId }) {
   const url = `${baseUrl}/v004/media/movies/${movieId}`;
   const { body } = await get(authenticationToken, locale, url);
-  // console.log('before transform', { ...body });
-  const result = transformMovie(body);
-  // console.log('after tranform', result);
-  return result;
+  return transformMovie(body);
 }
 
 export async function persistMovie (baseUrl, authenticationToken, locale, {

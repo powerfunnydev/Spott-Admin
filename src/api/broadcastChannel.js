@@ -28,10 +28,7 @@ export async function fetchBroadcastChannels (baseUrl, authenticationToken, loca
 export async function fetchBroadcastChannel (baseUrl, authenticationToken, locale, { broadcastChannelId }) {
   const url = `${baseUrl}/v004/media/broadcastChannels/${broadcastChannelId}`;
   const { body } = await get(authenticationToken, locale, url);
-  // console.log('before transform', { ...body });
-  const result = transformBroadcastChannel(body);
-  // console.log('after tranform', result);
-  return result;
+  return transformBroadcastChannel(body);
 }
 
 export async function persistBroadcastChannel (baseUrl, authenticationToken, locale, { id, name, broadcasterId }) {
