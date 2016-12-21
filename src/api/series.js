@@ -34,10 +34,7 @@ export async function fetchSeriesEntries (baseUrl, authenticationToken, locale, 
 export async function fetchSeriesEntry (baseUrl, authenticationToken, locale, { seriesEntryId }) {
   const url = `${baseUrl}/v004/media/series/${seriesEntryId}`;
   const { body } = await get(authenticationToken, locale, url);
-  // console.log('before transform', { ...body });
-  const result = transformSeriesEntry004(body);
-  // console.log('after tranform', result);
-  return result;
+  return transformSeriesEntry004(body);
 }
 
 export async function persistSeriesEntry (baseUrl, authenticationToken, locale, {
@@ -70,7 +67,6 @@ export async function persistSeriesEntry (baseUrl, authenticationToken, locale, 
     localeData.locale = locale;
     seriesEntry.localeData.push(localeData);
   });
-  // console.log('seriesEntry', seriesEntry);
   const url = `${baseUrl}/v004/media/series`;
   const result = await post(authenticationToken, locale, url, seriesEntry);
   return transformSeriesEntry004(result.body);

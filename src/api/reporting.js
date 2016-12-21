@@ -35,8 +35,9 @@ export async function getGenders (baseUrl, authenticationToken, locale) {
   return genders.map(({ description, gender }) => ({ description, id: gender }));
 }
 
-export async function getTimelineData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
-  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v004/report/reports/mediumActivity?dataFormat=DATE_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}&aggregationLevel=DAY&fillGaps=true`);
+// { mediumId: [{ timestamp, value }] }
+export async function _getTimelineData (baseUrl, authenticationToken, locale, { endDate, eventId, mediumIds, startDate }) {
+  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v004/report/reports/mediumActivity?dataFormat=DATE_BASED&type=${eventId}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}&aggregationLevel=DAY&fillGaps=true`);
   return transformActivityData(data, (d) => {
     // Last entry is the always 0, skip it.
     // We want exclusive the end date, so the end date dot is not shown on charts.
@@ -45,15 +46,65 @@ export async function getTimelineData (baseUrl, authenticationToken, locale, { e
   });
 }
 
-export async function getAgeData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
-  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v004/report/reports/mediumActivity?dataFormat=AGE_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}&aggregationLevel=DAY&fillGaps=true`);
+function mergeValues (result, newData) {
+  if (!result) {
+    return newData;
+  }
+  // Aggregate the data for each medium.
+  for (const mediumId in newData) {
+    const newValues = newData[mediumId];
+    const resValues = result[mediumId];
+    for (let i = 0; i < newValues.length; i++) {
+      // Make sum of previous with the new value.
+      resValues[i].value += newValues[i].value;
+    }
+  }
+  return result;
+}
+
+// Aggregates the data for all events.
+export async function getTimelineData (baseUrl, authenticationToken, locale, { endDate, eventIds, mediumIds, startDate }) {
+  let result;
+  // For each event we retrieve the data for the given media.
+  for (const eventId of eventIds) {
+    // For each medium we have an array of tuples ({ timestamp, value }).
+    // { mediumId: [{ timestamp, value }] }
+    const newData = await _getTimelineData(baseUrl, authenticationToken, locale, { endDate, eventId, mediumIds, startDate });
+    result = mergeValues(result, newData);
+  }
+  return result;
+}
+
+export async function _getAgeData (baseUrl, authenticationToken, locale, { endDate, eventId, mediumIds, startDate }) {
+  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v004/report/reports/mediumActivity?dataFormat=AGE_BASED&type=${eventId}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}&aggregationLevel=DAY&fillGaps=true`);
   // There is no need for an id for ages.
   return transformActivityData(data, (d) => d.map(({ ageRange: { from, to }, value }) => ({ label: to ? `${from}-${to}` : `${from}+`, value })));
 }
 
-export async function getGenderData (baseUrl, authenticationToken, locale, { endDate, eventType, mediumIds, startDate }) {
-  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v004/report/reports/mediumActivity?dataFormat=GENDER_BASED&type=${eventType}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}&aggregationLevel=DAY&fillGaps=true`);
+// Aggregates the data for all events.
+export async function getAgeData (baseUrl, authenticationToken, locale, { endDate, eventIds, mediumIds, startDate }) {
+  let result;
+  // For each event we retrieve the data for the given media.
+  for (const eventId of eventIds) {
+    const newData = await _getAgeData(baseUrl, authenticationToken, locale, { endDate, eventId, mediumIds, startDate });
+    result = mergeValues(result, newData);
+  }
+  return result;
+}
+
+export async function _getGenderData (baseUrl, authenticationToken, locale, { endDate, eventId, mediumIds, startDate }) {
+  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v004/report/reports/mediumActivity?dataFormat=GENDER_BASED&type=${eventId}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}&aggregationLevel=DAY&fillGaps=true`);
   return transformActivityData(data, (d) => d.map(({ gender, value }) => ({ id: gender, value })));
+}
+
+export async function getGenderData (baseUrl, authenticationToken, locale, { endDate, eventIds, mediumIds, startDate }) {
+  let result;
+  // For each event we retrieve the data for the given media.
+  for (const eventId of eventIds) {
+    const newData = await _getGenderData(baseUrl, authenticationToken, locale, { endDate, eventId, mediumIds, startDate });
+    result = mergeValues(result, newData);
+  }
+  return result;
 }
 
 export async function getRankingCharacterSubscriptions (baseUrl, authenticationToken, locale, { ages, genders, mediumIds, page = 0 }) {
