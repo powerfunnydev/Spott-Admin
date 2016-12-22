@@ -34,8 +34,32 @@ export default class ActivityFilterForm extends Component {
     onChange: PropTypes.func.isRequired
   };
 
+  constructor (props) {
+    super(props);
+    this.onChangeEvents = ::this.onChangeEvents;
+  }
+
   componentDidMount () {
     this.props.loadEvents();
+  }
+
+  // Perform some deselect logic. We can have 'ALL' selected and other
+  // event types. ALL is one of the event types.
+  onChangeEvents (newEvents) {
+    const { fields: { events: prevEvents }, onChange } = this.props;
+
+    // Deselect other options if we selected ALL.
+    if (!prevEvents.includes('ALL') && newEvents.includes('ALL')) {
+      return onChange('events', 'array', [ 'ALL' ]);
+    }
+    // ALL was selected but we (de)selected something else, unselect ALL.
+    const allIndex = prevEvents.indexOf('ALL');
+    if (allIndex > -1) {
+      // Destructive change to array, remove 'ALL'.
+      newEvents.splice(allIndex, 1);
+      return onChange('events', 'array', newEvents);
+    }
+    onChange('events', 'array', newEvents);
   }
 
   static styles = {
@@ -72,7 +96,7 @@ export default class ActivityFilterForm extends Component {
           options={events.get('data').map((e) => e.get('id')).toJS()}
           placeholder='Events'
           style={[ styles.field, { paddingRight: '0.75em' } ]}
-          onChange={onChange.bind(null, 'events', 'array')} />
+          onChange={this.onChangeEvents} />
         <DateInput
           dateFormat='D MMMM YYYY'
           first
