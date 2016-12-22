@@ -97,7 +97,6 @@ export default class CreateEpisodentryModal extends Component {
     let lastEpisodeId;
     try {
       const lastEpisode = await fetchLastEpisode(seasonId);
-      console.log('lastEpisode', lastEpisode);
       broadcasters = lastEpisode.broadcasters;
       characters = lastEpisode.characters;
       mediumCategories = lastEpisode.mediumCategories;
@@ -106,7 +105,6 @@ export default class CreateEpisodentryModal extends Component {
       episodeNumber = lastEpisode.number + 1;
       lastEpisodeId = lastEpisode.id;
     } catch (e) {
-      console.error('e', e);
       broadcasters = [];
       characters = [];
       contentProducers = [];
@@ -129,13 +127,17 @@ export default class CreateEpisodentryModal extends Component {
 
   async submit (form) {
     try {
-      const { change, dispatch, location, params, submit, untouch } = this.props;
+      const { route: { loadEpisodesOfSeriesEntry }, change, dispatch, location, params, submit, untouch } = this.props;
       await submit(form.toJS());
       const createAnother = form.get('createAnother');
       // Load the new list of items, using the location query of the previous page.
       const loc = location && location.state && location.state.returnTo;
       if (loc && loc.query) {
-        this.props.loadEpisodes(loc.query, params.seasonId);
+        if (loadEpisodesOfSeriesEntry) {
+          loadEpisodesOfSeriesEntry(this.props);
+        } else {
+          this.props.loadEpisodes(loc.query, params.seasonId);
+        }
       }
       if (createAnother) {
         // If we create another episode, set the next episode number

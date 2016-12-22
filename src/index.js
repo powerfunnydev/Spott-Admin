@@ -82,6 +82,7 @@ import BreadCrumbs from './pages/_common/components/breadCrumbs';
 
 import { load as loadTvGuide } from './pages/tvGuide/list/actions';
 import { load as loadMediumTvGuide } from './pages/content/_mediumTvGuide/actions';
+import { loadEpisodes } from './pages/content/series/read/episodes/actions';
 /**
  * The application routes
  */
@@ -235,7 +236,7 @@ function getRoutes ({ dispatch, getState }) {
         <Route path='series'>
           <Route component={SeriesRead} path='read/:seriesEntryId'>
             <Route component={SeasonCreate} path='create/season'/>
-            <Route component={EpisodeCreate} path='create/episode'/>
+            <Route component={EpisodeCreate} loadEpisodesOfSeriesEntry={(props) => { dispatch(loadEpisodes(props.location.query, props.params.seriesEntryId)); }} path='create/episode'/>
             <Route
               component={TvGuideCreateEntry}
               load={(props) => { dispatch(loadMediumTvGuide(props.location.query, props.params.seriesEntryId)); }}

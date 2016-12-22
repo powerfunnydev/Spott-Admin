@@ -56,6 +56,7 @@ export const mediumHasCharactersRelationsSelector = (state) => state.getIn([ 'da
 export const mediumHasTvGuideEntriesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasTvGuideEntries' ]);
 export const personHasFaceImagesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'personHasFaceImages' ]);
 export const seriesEntryHasSeasonsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'seriesEntryHasSeasons' ]);
+export const seriesEntryHasEpisodesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'seriesEntryHasEpisodes' ]);
 export const seasonHasEpisodesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'seasonHasEpisodes' ]);
 
 export const agesListSelector = (state) => state.getIn([ 'data', 'lists', 'ages' ]);

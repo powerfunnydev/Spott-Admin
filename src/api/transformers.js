@@ -94,12 +94,15 @@ export function transformListMediumCategory ({ name, uuid: id }) {
 /**
  *  Light version of a medium. No locales includes.
  */
-export function transformListMedium ({ number, auditInfo, title, type, posterImage, profileImage, uuid: id }) {
+export function transformListMedium ({ number, publishStatus, auditInfo, title, type, posterImage, profileImage, uuid: id, season, serie }) {
   return {
     id,
     title,
     type,
     number,
+    publishStatus,
+    season: season && transformListMedium(season),
+    serie: serie && transformListMedium(serie),
     posterImage: posterImage && { id: posterImage.uuid, url: posterImage. url },
     profileImage: profileImage && { id: profileImage.uuid, url: profileImage. url },
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,

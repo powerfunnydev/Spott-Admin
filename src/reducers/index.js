@@ -37,6 +37,7 @@ import seasonsReadEpisodes from '../pages/content/seasons/read/episodes/reducer'
 import seriesEdit from '../pages/content/series/edit/reducer';
 import seriesList from '../pages/content/series/list/reducer';
 import seriesReadSeasons from '../pages/content/series/read/seasons/reducer';
+import seriesReadEpisodes from '../pages/content/series/read/episodes/reducer';
 import tvGuideCreate from '../pages/tvGuide/create/reducer';
 import tvGuideEdit from '../pages/tvGuide/edit/reducer';
 import tvGuideList from '../pages/tvGuide/list/reducer';
@@ -116,7 +117,8 @@ export default combineReducers({
       edit: seriesEdit,
       list: seriesList,
       read: combineReducers({
-        seasons: seriesReadSeasons
+        seasons: seriesReadSeasons,
+        episodes: seriesReadEpisodes
       })
     })
   }),

@@ -11,6 +11,7 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import Line from '../../../_common/components/line';
 import SeriesEntrySeasonsList from './seasons';
+import SeriesEntryEpisodesList from './episodes';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
 import TvGuideList from '../../_mediumTvGuide';
@@ -104,6 +105,9 @@ export default class ReadSeriesEntry extends Component {
           <div style={[ generalStyles.fillPage, styles.table ]}>
             <Container>
               <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
+                <Tab title='Episodes'>
+                  <SeriesEntryEpisodesList {...this.props}/>
+                </Tab>
                 <Tab title='Seasons'>
                   <SeriesEntrySeasonsList {...this.props}/>
                 </Tab>

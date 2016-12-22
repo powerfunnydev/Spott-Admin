@@ -86,6 +86,7 @@ export default (state = fromJS({
     mediumHasTvGuideEntries: {},
     personHasFaceImages: {},
     seriesEntryHasSeasons: {},
+    seriesEntryHasEpisodes: {},
     seasonHasEpisodes: {},
     mediumHasAvailabilities: {}
   }
@@ -458,6 +459,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'listMedia', 'seriesEntryHasSeasons', action.seriesEntryId, action.data.data);
     case seriesActions.SERIES_ENTRY_SEASONS_FETCH_ERROR:
       return searchError(state, 'seriesEntryHasSeasons', action.seriesEntryId, action.error);
+
+    case seriesActions.SERIES_ENTRY_EPISODES_FETCH_START:
+      return searchStart(state, 'seriesEntryHasEpisodes', action.seriesEntryId);
+    case seriesActions.SERIES_ENTRY_EPISODES_FETCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'seriesEntryHasEpisodes', action.seriesEntryId, action.data.data);
+    case seriesActions.SERIES_ENTRY_EPISODES_FETCH_ERROR:
+      return searchError(state, 'seriesEntryHasEpisodes', action.seriesEntryId, action.error);
 
     case seriesActions.SERIES_ENTRIES_FETCH_START:
       return searchStart(state, 'filterHasSeriesEntries', serializeFilterHasSeriesEntries(action));
