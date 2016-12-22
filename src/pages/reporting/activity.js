@@ -56,7 +56,7 @@ export default class ReportingActivity extends Component {
     const query = {
       // We assume the ALL event will be always there.
       endDate: moment().startOf('day').format('YYYY-MM-DD'),
-      events: [ 'ALL' ],
+      events: [ 'MEDIUM_SUBSCRIPTIONS' ],
       startDate: moment().startOf('day').subtract(1, 'months').date(1).format('YYYY-MM-DD'),
       ...location.query
     };

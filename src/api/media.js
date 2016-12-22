@@ -218,7 +218,7 @@ export async function postProcess (baseUrl, authenticationToken, { description, 
  * @throws UnexpectedError
  */
 export async function searchMedia (baseUrl, authenticationToken, locale, { searchString = '' }) {
-  let searchUrl = `${baseUrl}/v003/media/media?pageSize=1000&types=TV_SERIE,MOVIE,COMMERCIAL`;
+  let searchUrl = `${baseUrl}/v004/media/media?pageSize=1000&types=TV_SERIE,MOVIE,COMMERCIAL`;
   if (searchString) {
     searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
   }
