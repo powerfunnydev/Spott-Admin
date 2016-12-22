@@ -17,8 +17,8 @@ const configuration = {
       // Install babel-friendly environment
       'babel-polyfill',
       // Hot reloading for React.
-      'webpack-dev-server/client?http://0.0.0.0:3003', // WebpackDevServer host and port
-      'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors.
+      // 'webpack-dev-server/client?http://0.0.0.0:3003', // WebpackDevServer host and port
+      // 'webpack/hot/only-dev-server', // "only" prevents reload on syntax errors.
       // Include our client source code
       './src/index.js'
     ]

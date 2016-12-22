@@ -12,9 +12,11 @@ import * as sceneActions from '../actions/scene';
 import * as videoActions from '../actions/video';
 import * as organizerActions from '../actions/organizer';
 import { mainSelector } from '../selectors/main';
-import { ORGANIZE, TAG } from '../constants/mainTabTypes';
+import { CURATE, ORGANIZE, TAG } from '../constants/mainTabTypes';
 import { filterKeyEventsInInputFields } from './_helpers/utils';
 import ContextMenus from './contextMenus';
+import Curator from './curator';
+import CuratorSidebar from './curator/sidebar';
 import CustomDragLayer from './customDragLayer';
 import Modals from './modals';
 import Organizer from './organizer';
@@ -140,19 +142,15 @@ export default class TaggerApplication extends Component {
       flexDirection: 'column'
     },
     sidebar: {
-      borderLeft: '3px solid black',
-      flex: '0 0 370px',
-      // height: '100%',
-      width: 370,
-      borderBottom: '3px solid black'
-    },
-    quickiesBar: {
       borderRight: '3px solid black',
       flex: '0 0 370px',
       height: '100%',
       width: 370
     },
     organizer: {
+      flex: '1 0'
+    },
+    curator: {
       flex: '1 0'
     },
     sceneSelector: {
@@ -211,7 +209,7 @@ export default class TaggerApplication extends Component {
             </HotKeys>}
           {activeTab === TAG &&
             <HotKeys handlers={filterKeyEventsInInputFields(tagHandlers)} keyMap={tagKeyMap} style={styles.body}>
-              <QuickiesBar style={styles.quickiesBar} />
+              <QuickiesBar style={styles.sidebar} />
               <div style={styles.middleBar}>
                 <div style={styles.middleBarInner}>
                   <div style={{ display: 'flex', height: '100%' }}>
@@ -222,6 +220,11 @@ export default class TaggerApplication extends Component {
                 </div>
               </div>
             </HotKeys>}
+            {activeTab === CURATE &&
+              <HotKeys handlers={filterKeyEventsInInputFields(organizerHandlers)} keyMap={organizerKeyMap} style={styles.body}>
+                <CuratorSidebar style={styles.sidebar} />
+                <Curator style={styles.curator} />
+              </HotKeys>}
           <Modals />
           <ContextMenus />
           <Toast />

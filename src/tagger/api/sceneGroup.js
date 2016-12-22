@@ -1,8 +1,14 @@
 import { del, get, post } from '../../api/request';
 
-function transformSceneGroup ({ firstScene, label, uuid: id }) {
+function transformSceneGroup ({ firstScene, keyScene, label, uuid: id }) {
   // Scenes will be filled in the selector.
-  return { firstSceneId: firstScene && firstScene.uuid, id, label, scenes: [] };
+  return {
+    firstSceneId: firstScene && firstScene.uuid,
+    id,
+    keySceneId: keyScene && keyScene.uuid,
+    label,
+    scenes: []
+  };
 }
 
 export async function getSceneGroups (baseUrl, authenticationToken, locale, { videoId }) {
