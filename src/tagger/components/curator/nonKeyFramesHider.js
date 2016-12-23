@@ -11,23 +11,23 @@ export default class NonKeyFramesHider extends Component {
 
   static propTypes = {
     // Information visualized by this component
-    isHidden: PropTypes.bool.isRequired,
+    isKeyFrame: PropTypes.bool.isRequired,
     // Hide one frame?
     single: PropTypes.bool,
     // Override the inline-styles of the root element.
     style: PropTypes.object,
     // Actions triggered by this component
-    onToggleHidden: PropTypes.func.isRequired
+    onToggleKeyFrame: PropTypes.func.isRequired
   };
 
   constructor (props) {
     super(props);
-    this.onToggleHidden = ::this.onToggleHidden;
+    this.onToggleKeyFrame = ::this.onToggleKeyFrame;
   }
 
-  onToggleHidden (e) {
+  onToggleKeyFrame (e) {
     e.preventDefault();
-    this.props.onToggleHidden();
+    this.props.onToggleKeyFrame();
   }
 
   static styles = {
@@ -40,7 +40,7 @@ export default class NonKeyFramesHider extends Component {
         justifyContent: 'center',
         width: 24
       },
-      hidden: {
+      keyFrame: {
         backgroundColor: colors.vividOrange,
         border: `1px solid ${colors.vividOrange}`
       }
@@ -52,11 +52,11 @@ export default class NonKeyFramesHider extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { isHidden, single, style } = this.props;
+    const { isKeyFrame, single, style } = this.props;
 
     return (
-      <button style={[ styles.button.base, style && style.base, isHidden && styles.button.hidden, isHidden && style && style.hidden ]} title={isHidden ? (single ? 'Mark as non key frame' : 'Show non key frames') : (single ? 'Mark as key frame' : 'Hide non key frames')} onClick={this.onToggleHidden}>
-        <img src={isHidden ? starFilledImage : starEmptyImage} style={styles.image}/>
+      <button style={[ styles.button.base, style && style.base, isKeyFrame && styles.button.keyFrame, isKeyFrame && style && style.hidden ]} title={isKeyFrame ? (single ? 'Mark as non key frame' : 'Show non key frames') : (single ? 'Mark as key frame' : 'Hide non key frames')} onClick={this.onToggleKeyFrame}>
+        <img src={isKeyFrame ? starFilledImage : starEmptyImage} style={styles.image}/>
       </button>
     );
   }

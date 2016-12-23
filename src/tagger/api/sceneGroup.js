@@ -16,13 +16,19 @@ export async function getSceneGroups (baseUrl, authenticationToken, locale, { vi
   return data.map(transformSceneGroup);
 }
 
-export async function persistSceneGroup (baseUrl, authenticationToken, locale, { firstSceneId, id, label }) {
+export async function persistSceneGroup (baseUrl, authenticationToken, locale, { firstSceneId, id, keySceneId, label }) {
   let sceneGroup = {};
   if (id && id !== 'fake') {
     const res = await get(authenticationToken, locale, `${baseUrl}/v004/video/sceneGroups/${id}`);
     sceneGroup = res.body;
   }
-  await post(authenticationToken, locale, `${baseUrl}/v004/video/sceneGroups`, { ...sceneGroup, firstScene: { uuid: firstSceneId }, label });
+  const newSceneGroup = await post(authenticationToken, locale, `${baseUrl}/v004/video/sceneGroups`, {
+    ...sceneGroup,
+    firstScene: firstSceneId && { uuid: firstSceneId },
+    keyScene: keySceneId && { uuid: keySceneId },
+    label
+  });
+  return transformSceneGroup(newSceneGroup);
 }
 
 export async function deleteSceneGroup (baseUrl, authenticationToken, locale, { sceneGroupId }) {

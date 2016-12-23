@@ -29,19 +29,17 @@ export default class Curator extends Component {
 
   static propTypes = {
     currentScene: ImmutablePropTypes.map,
+    currentSceneGroup: ImmutablePropTypes.map,
     enlargeFrame: PropTypes.bool.isRequired,
     hideNonKeyFrames: PropTypes.bool.isRequired,
-    minimizeScene: PropTypes.func.isRequired,
+    minimizeFrame: PropTypes.func.isRequired,
     numAllScenes: PropTypes.number.isRequired,
     numVisibleScenes: PropTypes.number.isRequired,
-    persistSceneGroup: PropTypes.func.isRequired,
-    removeSceneGroup: PropTypes.func.isRequired,
     scale: PropTypes.number.isRequired,
-    sceneGroups: ImmutablePropTypes.list.isRequired,
     scenes: ImmutablePropTypes.list.isRequired,
     selectFrame: PropTypes.func.isRequired,
-    selectLeftScene: PropTypes.func.isRequired,
-    selectRightScene: PropTypes.func.isRequired,
+    selectLeftFrame: PropTypes.func.isRequired,
+    selectRightFrame: PropTypes.func.isRequired,
     style: PropTypes.object,
     toggleFrameSize: PropTypes.func.isRequired,
     toggleHideNonKeyFrames: PropTypes.func.isRequired,
@@ -51,7 +49,6 @@ export default class Curator extends Component {
 
   constructor (props) {
     super(props);
-    this.onCreateSceneGroup = ::this.onCreateSceneGroup;
     this.onScaleChange = ::this.onScaleChange;
   }
 
@@ -67,10 +64,6 @@ export default class Curator extends Component {
     }
   }
 
-  onCreateSceneGroup (scene) {
-    this.props.persistSceneGroup({ firstSceneId: scene.get('id') });
-  }
-
   onScaleChange (scale) {
     this.props.updateScale(scale);
   }
@@ -81,7 +74,7 @@ export default class Curator extends Component {
   // triggers the function.
   static keyMap = {
     toggleFrameSize: 'space',
-    minimizeScene: 'esc'
+    minimizeFrame: 'esc'
   };
 
   static styles = {
@@ -128,9 +121,8 @@ export default class Curator extends Component {
   render () {
     const { keyMap, styles } = this.constructor;
     const {
-      currentScene, hideNonKeyFrames,
-      hideSceneGroup, removeSceneGroup, scenes, sceneGroups, enlargeFrame,
-      numAllScenes, numVisibleScenes, minimizeFrame, selectLeftFrame, selectRightFrame,
+      currentScene, currentSceneGroup, hideNonKeyFrames, enlargeFrame, minimizeFrame,
+      selectLeftFrame, selectRightFrame, scenes,
       selectFrame, toggleFrameSize, toggleKeyFrame, toggleHideNonKeyFrames
     } = this.props;
 
@@ -146,27 +138,26 @@ export default class Curator extends Component {
       minimizeFrame
     };
 
-    const sceneGroup = sceneGroups.first();
-
-    const sceneIndex = 0;
     // Calculate the procentual width of each item
     return (
       // The HotKeys component does not use Radium, therefore we need to join the styles manually.
       <HotKeys handlers={filterKeyEventsInInputFields(handlers)} keyMap={keyMap} style={{ ...styles.container, ...this.props.style }}>
         <LargeFrameModal
           currentFrame={currentScene}
+          isKeyFrame={(currentSceneGroup && currentSceneGroup.get('keySceneId')) === (currentScene && currentScene.get('id'))}
           isOpen={enlargeFrame}
           onClose={minimizeFrame}
           onSelectLeftFrame={selectLeftFrame}
           onSelectRightFrame={selectRightFrame}
           onToggleKeyFrame={toggleKeyFrame} />
-        {/* Render list of scenes */}
+        {/* Render the list of scenes of the current scene group. */}
         <div style={styles.scenes.listContainer}>
-          {sceneGroup.get('scenes') && sceneGroup.get('scenes').map((scene, j) => (
+          {scenes.map((frame, j) => (
             <Frame
-              frame={scene}
-              isSelected={currentScene === scene}
-              key={scene.get('id')}
+              frame={frame}
+              isKeyFrame={currentSceneGroup && currentSceneGroup.get('keySceneId') === frame.get('id')}
+              isSelected={currentScene === frame}
+              key={frame.get('id')}
               procentualHeightOfWidth={60}
               procentualWidth={100 / reverseScale}
               size={this.props.scale > 6 ? 'big' : 'small'}

@@ -110,7 +110,7 @@ export default class LargeSceneModal extends Component {
     if (isOpen && currentScene) {
       return (
         <div style={styles.overlay} onClick={this.onClose}>
-          <button style={styles.close} onClick={this.onClose}>
+          <button style={styles.close}>
             <img src={crossLarge} title='Close' />
           </button>
           <div style={styles.content} onClick={(e) => e.stopPropagation()}>

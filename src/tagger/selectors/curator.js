@@ -12,6 +12,7 @@ import {
 const _sceneGroupsSelector = createEntitiesByRelationSelector(videoHasSceneGroupsRelationsSelector, currentVideoIdSelector, sceneGroupEntitiesSelector);
 
 export const currentSceneIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'currentSceneId' ]);
+export const currentSceneGroupIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'currentSceneGroupId' ]);
 export const enlargeFrameSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'enlargeFrame' ]);
 export const hideNonKeyFramesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'hideNonKeyFrames' ]);
 export const scaleSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'scale' ]);
@@ -32,15 +33,6 @@ export const allScenesSelector = createSelector(
      return sceneIds.map((sceneId) => scenes.get(sceneId));
    }
  );
-
-/**
- * Extracts the scenes of the current video from the state tree.
- */
-export const visibleScenesSelector = createSelector(
-   allScenesSelector,
-   hideNonKeyFramesSelector,
-   (scenes, hideNonKeyFrames) => hideNonKeyFrames ? scenes.filter((s) => !s.get('hidden')) : scenes
-);
 
 export const sceneGroupsSelector = createSelector(
    _sceneGroupsSelector,
@@ -80,6 +72,26 @@ export const sceneGroupsSelector = createSelector(
    }
  );
 
+export const currentSceneGroupSelector = createSelector(
+   currentSceneGroupIdSelector,
+   sceneGroupsSelector,
+   (sceneGroupId, sceneGroups) => sceneGroups.find((sceneGroup) => sceneGroup.get('id') === sceneGroupId)
+ );
+
+export const visibleScenesSelector = createSelector(
+  currentSceneGroupSelector,
+  hideNonKeyFramesSelector,
+  (currentSceneGroup, hideNonKeyFrames) => {
+    if (currentSceneGroup) {
+      return currentSceneGroup
+        .get('scenes')
+        .filter((frame) => !frame.get('hidden') &&
+          (!hideNonKeyFrames || currentSceneGroup.get('keySceneId') === frame.get('id')));
+    }
+    return List();
+  }
+);
+
 const numAllScenesSelector = createSelector(
    allScenesSelector,
    (scenes) => scenes.size
@@ -91,17 +103,18 @@ const numVisibleScenesSelector = createSelector(
 );
 
 export const sidebarSelector = createStructuredSelector({
+  currentSceneGroup: currentSceneGroupSelector,
   sceneGroups: sceneGroupsSelector
 });
 
 export default createStructuredSelector({
   currentScene: currentSceneSelector,
+  currentSceneGroup: currentSceneGroupSelector,
   enlargeFrame: enlargeFrameSelector,
   hideNonKeyFrames: hideNonKeyFramesSelector,
   hideSceneGroup: hideSceneGroupSelector,
   numAllScenes: numAllScenesSelector,
   numVisibleScenes: numVisibleScenesSelector,
   scale: scaleSelector,
-  scenes: visibleScenesSelector,
-  sceneGroups: sceneGroupsSelector
+  scenes: visibleScenesSelector
 });

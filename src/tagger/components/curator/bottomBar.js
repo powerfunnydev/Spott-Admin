@@ -80,9 +80,9 @@ export default class BottomBar extends Component {
         <div style={styles.buttonContainer}>
           {/* Hide/show all hidden frames. */}
           <NonKeyFramesHider
-            isHidden={hideNonKeyFrames}
+            isKeyFrame={hideNonKeyFrames}
             style={styles.framesHider}
-            onToggleHidden={onToggleHideNonKeyFrames} />
+            onToggleKeyFrame={onToggleHideNonKeyFrames} />
         </div>
       </div>
     );

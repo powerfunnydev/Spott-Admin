@@ -11,11 +11,12 @@ export default class LargeFrameModal extends Component {
 
   static propTypes = {
     currentFrame: PropTypes.object,
+    isKeyFrame: PropTypes.bool.isRequired,
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    onSelectLeftScene: PropTypes.func.isRequired,
-    onSelectRightScene: PropTypes.func.isRequired,
-    onToggleVisibilityScene: PropTypes.func.isRequired
+    onSelectLeftFrame: PropTypes.func.isRequired,
+    onSelectRightFrame: PropTypes.func.isRequired,
+    onToggleKeyFrame: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -85,7 +86,7 @@ export default class LargeFrameModal extends Component {
         lineHeight: 0,
         position: 'relative'
       },
-      active: {
+      isKeyFrame: {
         border: `1px solid ${colors.vividOrange}`
       }
     }
@@ -93,32 +94,32 @@ export default class LargeFrameModal extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { currentFrame, isOpen, onSelectLeftScene, onSelectRightScene, onToggleVisibilityScene } = this.props;
+    const { currentFrame, isKeyFrame, isOpen, onSelectLeftFrame, onSelectRightFrame, onToggleKeyFrame } = this.props;
 
     if (isOpen && currentFrame) {
       return (
         <div style={styles.overlay} onClick={this.onClose}>
-          <button style={styles.close} onClick={this.onClose}>
+          <button style={styles.close}>
             <img src={crossLarge} title='Close' />
           </button>
           <div style={styles.content} onClick={(e) => e.stopPropagation()}>
             <div style={styles.imageContainer}>
-              <button style={styles.left} onClick={onSelectLeftScene}>
+              <button style={styles.left} onClick={onSelectLeftFrame}>
                 <img src={arrow} style={styles.arrowLeft} title='Previous frame' />
               </button>
-              <div style={[ styles.imageWrapper.base, currentFrame.get('hidden') && styles.imageWrapper.active ]}>
+              <div style={[ styles.imageWrapper.base, isKeyFrame && styles.imageWrapper.isKeyFrame ]}>
                 <img src={`${currentFrame.get('imageUrl')}?height=699&width=1242`} style={styles.image} />
               </div>
 
-              <button style={styles.right} onClick={onSelectRightScene}>
+              <button style={styles.right} onClick={onSelectRightFrame}>
                 <img src={arrow} title='Next frame' />
               </button>
             </div>
             <div style={styles.framesHider}>
               <NonKeyFramesHider
-                isHidden={currentFrame.get('hidden')}
+                isKeyFrame={isKeyFrame}
                 single
-                onToggleHidden={onToggleVisibilityScene}/>
+                onToggleKeyFrame={onToggleKeyFrame}/>
             </div>
           </div>
         </div>

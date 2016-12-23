@@ -11,6 +11,7 @@ import * as quickiesActions from '../actions/quickies';
 import * as sceneActions from '../actions/scene';
 import * as videoActions from '../actions/video';
 import * as organizerActions from '../actions/organizer';
+import * as curatorActions from '../actions/curator';
 import { mainSelector } from '../selectors/main';
 import { CURATE, ORGANIZE, TAG } from '../constants/mainTabTypes';
 import { filterKeyEventsInInputFields } from './_helpers/utils';
@@ -36,6 +37,13 @@ import Toast from './toast';
   organizerSelectBottomScene: bindActionCreators(organizerActions.selectBottomScene, dispatch),
   organizerSelectTopScene: bindActionCreators(organizerActions.selectTopScene, dispatch),
   organizerToggleVisibilityScene: bindActionCreators(organizerActions.toggleVisibilityScene, dispatch),
+
+  curatorSelectLeftFrame: bindActionCreators(curatorActions.selectLeftFrame, dispatch),
+  curatorSelectRightFrame: bindActionCreators(curatorActions.selectRightFrame, dispatch),
+  curatorSelectBottomFrame: bindActionCreators(curatorActions.selectBottomFrame, dispatch),
+  curatorSelectTopFrame: bindActionCreators(curatorActions.selectTopFrame, dispatch),
+  curatorToggleKeyFrame: bindActionCreators(curatorActions.toggleKeyFrame, dispatch),
+
   selectCharacterByShortkey: bindActionCreators(quickiesActions.selectCharacterByShortkey, dispatch),
   selectVideo: bindActionCreators(videoActions.select, dispatch),
   tagSelectLeftScene: bindActionCreators(sceneActions.selectLeftScene, dispatch),
@@ -47,6 +55,11 @@ export default class TaggerApplication extends Component {
 
   static propTypes = {
     activeTab: PropTypes.string.isRequired,
+    curatorSelectBottomFrame: PropTypes.func.isRequired,
+    curatorSelectLeftFrame: PropTypes.func.isRequired,
+    curatorSelectRightFrame: PropTypes.func.isRequired,
+    curatorSelectTopFrame: PropTypes.func.isRequired,
+    curatorToggleKeyFrame: PropTypes.func.isRequired,
     fetchMedium: PropTypes.func.isRequired,
     loadQuickies: PropTypes.func.isRequired,
     organizerInsertSceneGroup: PropTypes.func.isRequired,
@@ -103,6 +116,14 @@ export default class TaggerApplication extends Component {
     selectRightScene: 'right',
     selectTopScene: 'up',
     toggleVisibilityScene: 'x'
+  };
+
+  static curatorKeyMap = {
+    selectBottomFrame: 'down',
+    selectLeftFrame: 'left',
+    selectRightFrame: 'right',
+    selectTopFrame: 'up',
+    toggleKeyFrame: 'x'
   };
 
   static styles = {
@@ -164,12 +185,13 @@ export default class TaggerApplication extends Component {
   };
 
   render () {
-    const { organizerKeyMap, tagKeyMap, styles } = this.constructor;
+    const { curatorKeyMap, organizerKeyMap, tagKeyMap, styles } = this.constructor;
     const {
       activeTab, organizerInsertSceneGroup, organizerSelectLeftScene, organizerSelectRightScene,
       organizerSelectBottomScene, organizerSelectTopScene,
       tagSelectLeftScene, tagSelectRightScene, selectCharacterByShortkey,
-      toggleVisibilityScene
+      curatorSelectLeftFrame, curatorSelectRightFrame, curatorSelectBottomFrame, curatorSelectTopFrame,
+      toggleVisibilityScene, curatorToggleKeyFrame
     } = this.props;
 
     const tagHandlers = {
@@ -199,6 +221,17 @@ export default class TaggerApplication extends Component {
       insertSceneGroup: organizerInsertSceneGroup
     };
 
+    const curatorHandlers = {
+      selectLeftFrame: curatorSelectLeftFrame,
+      selectRightFrame: curatorSelectRightFrame,
+      selectBottomFrame: curatorSelectBottomFrame,
+      selectTopFrame: curatorSelectTopFrame,
+      // When no scene was provided, the is key frame of the current scene will be toggled.
+      toggleKeyFrame: () => {
+        curatorToggleKeyFrame();
+      }
+    };
+
     return (
       <StyleRoot style={styles.container}>
         <CustomDragLayer />
@@ -221,7 +254,7 @@ export default class TaggerApplication extends Component {
               </div>
             </HotKeys>}
             {activeTab === CURATE &&
-              <HotKeys handlers={filterKeyEventsInInputFields(organizerHandlers)} keyMap={organizerKeyMap} style={styles.body}>
+              <HotKeys handlers={filterKeyEventsInInputFields(curatorHandlers)} keyMap={curatorKeyMap} style={styles.body}>
                 <CuratorSidebar style={styles.sidebar} />
                 <Curator style={styles.curator} />
               </HotKeys>}
