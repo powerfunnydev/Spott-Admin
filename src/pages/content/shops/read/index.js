@@ -15,19 +15,19 @@ import { SideMenu } from '../../../app/sideMenu';
 /* eslint-disable no-alert */
 
 @connect(selector, (dispatch) => ({
-  deletePerson: bindActionCreators(listActions.deletePerson, dispatch),
-  loadPerson: bindActionCreators(actions.loadPerson, dispatch),
+  deleteShop: bindActionCreators(listActions.deleteShop, dispatch),
+  loadShop: bindActionCreators(actions.loadShop, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @Radium
-export default class ReadPerson extends Component {
+export default class ReadShop extends Component {
 
   static propTypes = {
     children: PropTypes.node,
-    currentPerson: PropTypes.object.isRequired,
-    deletePerson: PropTypes.func.isRequired,
+    currentShop: PropTypes.object.isRequired,
+    deleteShop: PropTypes.func.isRequired,
     error: PropTypes.any,
-    loadPerson: PropTypes.func.isRequired,
+    loadShop: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired
@@ -40,8 +40,8 @@ export default class ReadPerson extends Component {
   }
 
   async componentWillMount () {
-    if (this.props.params.personId) {
-      await this.props.loadPerson(this.props.params.personId);
+    if (this.props.params.shopId) {
+      await this.props.loadShop(this.props.params.shopId);
     }
   }
 
@@ -58,20 +58,21 @@ export default class ReadPerson extends Component {
   }
 
   render () {
-    const { params, children, currentPerson, location, deletePerson } = this.props;
+    const { params, children, currentShop, location, deleteShop } = this.props;
+    const defaultLocale = currentShop.get('defaultLocale');
     return (
       <SideMenu>
         <Root>
           <BreadCrumbs hierarchy={[
-            { title: 'People', url: '/content/persons' },
-            { title: currentPerson.get('fullName'), url: location } ]}/>
+            { title: 'Shops', url: '/content/shops' },
+            { title: currentShop.getIn([ 'name', defaultLocale ]), url: location } ]}/>
           <Container>
-            {currentPerson.get('_status') === 'loaded' && currentPerson &&
+            {currentShop.get('_status') === 'loaded' && currentShop &&
               <EntityDetails
-                imageUrl={currentPerson.getIn([ 'profileImage', 'url' ]) && `${currentPerson.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
-                title={currentPerson.get('fullName')}
-                onEdit={() => { this.props.routerPushWithReturnTo(`content/persons/edit/${params.personId}`); }}
-                onRemove={async () => { await deletePerson(currentPerson.get('id')); this.redirect(); }}/>}
+                imageUrl={currentShop.getIn([ 'logo', defaultLocale, 'url' ]) && `${currentShop.getIn([ 'logo', defaultLocale, 'url' ])}?height=203&width=360`}
+                title={currentShop.getIn([ 'name', defaultLocale ])}
+                onEdit={() => { this.props.routerPushWithReturnTo(`content/shops/edit/${params.shopId}`); }}
+                onRemove={async () => { await deleteShop(currentShop.get('id')); this.redirect(); }}/>}
           </Container>
           <Line/>
           {children}

@@ -71,7 +71,7 @@ export default class ReadCommercial extends Component {
     const defaultLocale = currentCommercial.get('defaultLocale');
 
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root>
           <BreadCrumbs hierarchy={[
             { title: 'Commercials', url: '/content/commercials' },

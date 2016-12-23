@@ -255,7 +255,7 @@ export default class EditMovie extends Component {
       deletePosterImage, location: { query: { tab } }
     } = this.props;
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root style={styles.backgroundRoot}>
           <BreadCrumbs hierarchy={[
             { title: 'Movies', url: '/content/movies' },

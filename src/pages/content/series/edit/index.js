@@ -191,7 +191,7 @@ export default class EditSeries extends Component {
       currentSeriesEntry, location, handleSubmit, deletePosterImage, deleteProfileImage, location: { query: { tab } } } = this.props;
 
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root style={styles.backgroundRoot}>
           <BreadCrumbs hierarchy={[
             { title: 'Series', url: '/content/series' },

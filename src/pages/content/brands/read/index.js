@@ -61,7 +61,7 @@ export default class ReadBrand extends Component {
     const { params, children, currentBrand, location, deleteBrand } = this.props;
     const defaultLocale = currentBrand.get('defaultLocale');
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root>
           <BreadCrumbs hierarchy={[
             { title: 'Brands', url: '/content/brands' },

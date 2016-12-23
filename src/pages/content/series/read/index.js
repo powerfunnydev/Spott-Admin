@@ -84,7 +84,7 @@ export default class ReadSeriesEntry extends Component {
     const { styles } = this.constructor;
     const defaultLocale = currentSeriesEntry.getIn([ 'defaultLocale' ]);
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root>
           <BreadCrumbs hierarchy={[
             { title: 'Series', url: '/content/series' },

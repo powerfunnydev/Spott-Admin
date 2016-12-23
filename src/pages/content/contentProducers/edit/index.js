@@ -99,7 +99,7 @@ export default class EditContentProducers extends Component {
     const { currentContentProducer, location, handleSubmit, deleteLogo } = this.props;
     const { styles } = this.constructor;
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root style={styles.background}>
           <BreadCrumbs hierarchy={[
             { title: 'Content producers', url: '/content/content-producers' },

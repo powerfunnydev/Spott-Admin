@@ -218,7 +218,7 @@ export default class EditPerson extends Component {
       currentPerson, location, handleSubmit, deletePortraitImage, deleteProfileImage, faceImages,
       deleteFaceImage, fetchFaceImages, location: { query: { tab } } } = this.props;
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root style={styles.backgroundRoot}>
           <BreadCrumbs hierarchy={[
             { title: 'People', url: '/content/persons' },

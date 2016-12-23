@@ -82,7 +82,7 @@ export default class ReadBroadcaster extends Component {
     } = this.props;
 
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root>
           <BreadCrumbs
             hierarchy={[

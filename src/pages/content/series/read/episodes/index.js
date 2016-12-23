@@ -243,7 +243,7 @@ export default class List extends Component {
                           <CustomCel style={{ minWidth: 60 }}>{episode.get('number')}</CustomCel>
                           <CustomCel style={{ flex: 5 }} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${episode.getIn([ 'season', 'id' ])}`); }}>{episode.getIn([ 'season', 'title' ])}</CustomCel>
                           <CustomCel style={{ minWidth: 100 }}>{episode.getIn([ 'season', 'number' ])}</CustomCel>
-                          <CustomCel style={{ minWidth: 130 }}>{episode.get('publishStatus')}</CustomCel>
+                          <CustomCel style={{ minWidth: 130 }}>{publishStatusTypes[episode.get('publishStatus')]}</CustomCel>
                           <CustomCel style={{ flex: 3 }}>{episode.get('lastUpdatedBy')}</CustomCel>
                           <CustomCel style={{ flex: 3 }}>{this.getLastUpdatedOn(episode)}</CustomCel>
                           <DropdownCel>

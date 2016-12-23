@@ -60,6 +60,10 @@ import ResetPassword from './pages/resetPassword';
 import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
 import ReportingRankings from './pages/reporting/rankings';
+import ShopsCreate from './pages/content/shops/create';
+import ShopsEdit from './pages/content/shops/edit';
+import ShopsList from './pages/content/shops/list';
+import ShopsRead from './pages/content/shops/read';
 import SeasonList from './pages/content/seasons/list';
 import SeasonRead from './pages/content/seasons/read';
 import SeasonEdit from './pages/content/seasons/edit';
@@ -232,6 +236,13 @@ function getRoutes ({ dispatch, getState }) {
           <Route component={SeriesCreate} path='create'/>
           <Route component={SeasonCreate} path='create/season'/>
           <Route component={EpisodeCreate} path='create/episode'/>
+        </Route>
+        <Route component={ShopsList} path='shops'>
+          <Route component={ShopsCreate} path ='create'/>
+        </Route>
+        <Route path='shops'>
+          <Route component={ShopsRead} path='read/:shopId'/>
+          <Route component={ShopsEdit} path='edit/:shopId'/>
         </Route>
         <Route path='series'>
           <Route component={SeriesRead} path='read/:seriesEntryId'>

@@ -61,7 +61,7 @@ export default class ReadCharacter extends Component {
     const { params, children, currentCharacter, location, deleteCharacter } = this.props;
     const defaultLocale = currentCharacter.getIn([ 'defaultLocale' ]);
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root>
           <BreadCrumbs hierarchy={[
             { title: 'Characters', url: '/content/characters' },

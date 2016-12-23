@@ -95,7 +95,7 @@ export default class EditBroadcastChannel extends Component {
     const { deleteLogo, currentBroadcastChannel, location, handleSubmit } = this.props;
     const { styles } = this.constructor;
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root style={styles.background}>
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
             <Tabs>

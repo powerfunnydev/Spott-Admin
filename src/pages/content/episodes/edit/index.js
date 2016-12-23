@@ -272,7 +272,7 @@ export default class EditEpisode extends Component {
       deletePosterImage, mediumCategoriesById, searchMediumCategories, searchedMediumCategoryIds, location: { query: { tab } }
     } = this.props;
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root style={styles.backgroundRoot}>
           <BreadCrumbs hierarchy={[
             { title: 'Series', url: '/content/series' },

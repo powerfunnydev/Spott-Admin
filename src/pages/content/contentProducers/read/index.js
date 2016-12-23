@@ -70,7 +70,7 @@ export default class ReadContentProducer extends Component {
        location, deleteContentProducer, location: { query: { tabIndex } } } = this.props;
     const { styles } = this.constructor;
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root>
           <BreadCrumbs hierarchy={[
             { title: 'Content producers', url: '/content/content-producers' },

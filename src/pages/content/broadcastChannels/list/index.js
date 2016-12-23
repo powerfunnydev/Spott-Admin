@@ -23,7 +23,7 @@ export default class BroadcastChannel extends Component {
     const { children, location } = this.props;
 
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root>
           <List location={location}/>
           {children}

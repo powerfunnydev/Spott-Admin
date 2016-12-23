@@ -234,7 +234,7 @@ export default class EditCommercial extends Component {
     } = this.props;
 
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root style={styles.backgroundRoot}>
           <BreadCrumbs hierarchy={[
             { title: 'Commercials', url: '/content/commercials' },

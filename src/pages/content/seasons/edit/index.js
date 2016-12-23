@@ -234,7 +234,7 @@ export default class EditSeason extends Component {
         handleSubmit, supportedLocales, errors, deleteProfileImage, deletePosterImage, location: { query: { tab } } } = this.props;
     const { styles } = this.constructor;
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root style={styles.backgroundRoot}>
           <BreadCrumbs hierarchy={[
             { title: 'Series', url: '/content/series' },

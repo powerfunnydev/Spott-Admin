@@ -3,7 +3,6 @@ import Radium from 'radium';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Link as ReactRouterLink, withRouter } from 'react-router';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import ApptvateLogoSVG from '../../_common/images/apptvateLogo';
 import { colors, makeTextStyle, fontWeights, buttonStyles } from '../../_common/styles';
@@ -57,7 +56,11 @@ class VerticalSideMenu extends Component {
     return null;
   }
 
-  isBroadcaster () {
+  isProducts () {
+    return this.checkUrl([ '/content/products', '/content/brands', '/content/shops' ]);
+  }
+
+  isBroadcasters () {
     return this.checkUrl([ '/content/broadcasters', '/content/broadcast-channels' ]);
   }
 
@@ -180,30 +183,26 @@ class VerticalSideMenu extends Component {
             </Link>
           </div>
           <div style={styles.line}/>
-          <div style={styles.seperator}/>
           {isAuthenticated && (userRoles.includes(ADMIN)) &&
             <div>
+              <div style={styles.seperator}/>
               <div style={styles.category}>
                 <div style={styles.categoryTitle}>GENERAL</div>
               </div>
               <Link activeStyle={styles.sectionActive} key='users' onlyActiveOnIndex style={styles.section} to='/users'>
                 <div style={styles.sectionTitle}>USERS</div>
               </Link>
-              <div style={styles.seperator}/>
             </div>
           }
           {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
           <div>
+            <div style={styles.seperator}/>
             <div style={styles.category}>
               <div style={styles.categoryTitle}>CONTENT</div>
             </div>
             <Link key='media' style={mergeStyles([ styles.section, styles.sectionTitle, this.isMedia() && styles.sectionActive ])} to='/content/series'>
               MEDIA
             </Link>
-            <ReactCSSTransitionGroup
-              transitionEnterTimeout={1000}
-              transitionLeaveTimeout={1000}
-              transitionName='dropdown'>
               { // Show dropdown
                 this.isMedia() &&
                   <div key='mediaDropdown' style={styles.dropdownOpen}>
@@ -218,17 +217,12 @@ class VerticalSideMenu extends Component {
                     </Link>
                   </div>
               }
-            </ReactCSSTransitionGroup>
             <Link activeStyle={styles.sectionActive} key='persons' onlyActiveOnIndex style={styles.section} to='/content/persons'>
               <div style={styles.sectionTitle}>PEOPLE</div>
             </Link>
-            <ReactCSSTransitionGroup
-              transitionEnterTimeout={1000}
-              transitionLeaveTimeout={1000}
-              transitionName='dropdown'>
               { // Show dropdown
                 this.isPeople() &&
-                  <div key='mediaDropdown' style={styles.dropdownOpen}>
+                  <div key='peopleDropdown' style={styles.dropdownOpen}>
                     <Link activeStyle={styles.subSectionActive} key='persons' style={mergeStyles([ styles.section, styles.subSectionTitle, styles.subSection ])} to='/content/persons'>
                       People
                     </Link>
@@ -237,19 +231,14 @@ class VerticalSideMenu extends Component {
                     </Link>
                   </div>
               }
-            </ReactCSSTransitionGroup>
             <Link activeStyle={styles.sectionActive} key='contentProducers' onlyActiveOnIndex style={styles.section} to='/content/content-producers'>
               <div style={styles.sectionTitle}>CONTENT PRODUCERS</div>
             </Link>
             <Link activeStyle={styles.sectionActive} key='broadcasters' onlyActiveOnIndex style={styles.section} to='/content/broadcasters'>
               <div style={styles.sectionTitle}>BROADCASTERS</div>
             </Link>
-            <ReactCSSTransitionGroup
-              transitionEnterTimeout={1000}
-              transitionLeaveTimeout={1000}
-              transitionName='dropdown'>
               { // Show dropdown
-                this.isBroadcaster() &&
+                this.isBroadcasters() &&
                   <div key='broadcasterDropdown' style={styles.dropdownOpen}>
                     <Link activeStyle={styles.subSectionActive} key='broadcasters' style={mergeStyles([ styles.section, styles.subSectionTitle, styles.subSection ])} to='/content/broadcasters'>
                       Broadcasters
@@ -259,33 +248,41 @@ class VerticalSideMenu extends Component {
                     </Link>
                   </div>
               }
-            </ReactCSSTransitionGroup>
-            <div style={styles.seperator}/>
           </div>}
           {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
             <div>
-              <div style={styles.category}>
-                <div style={styles.categoryTitle}>PRODUCTS</div>
-              </div>
-              <Link activeStyle={styles.sectionActive} key='brands' style={styles.section} to='/content/brands'>
-                <div style={styles.sectionTitle}>BRANDS</div>
+              <Link activeStyle={styles.sectionActive} key='products' onlyActiveOnIndex style={styles.section} to='/content/brands'>
+                <div style={styles.sectionTitle}>PRODUCTS</div>
               </Link>
-              <div style={styles.seperator}/>
+                { // Show dropdown
+                  this.isProducts() &&
+                    <div key='productsDropdown' style={styles.dropdownOpen}>
+                      {/* <Link activeStyle={styles.subSectionActive} key='products' style={mergeStyles([ styles.section, styles.subSectionTitle, styles.subSection ])} to='/content/products'>
+                        Products
+                      </Link>*/}
+                      <Link activeStyle={styles.subSectionActive} key='brands' style={mergeStyles([ styles.section, styles.subSectionTitle, styles.subSection ])} to='/content/brands'>
+                        Brands
+                      </Link>
+                      <Link activeStyle={styles.subSectionActive} key='shops' style={mergeStyles([ styles.section, styles.subSectionTitle, styles.subSection ])} to='/content/shops'>
+                        Shops
+                      </Link>
+                  </div>}
             </div>
           }
           {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
             <div>
+              <div style={styles.seperator}/>
               <div style={styles.category}>
                 <div style={styles.categoryTitle}>PUBLISHING</div>
               </div>
               <Link activeStyle={styles.sectionActive} key='tvGuide' style={styles.section} to='/tv-guide'>
                 <div style={styles.sectionTitle}>TV-GUIDE</div>
               </Link>
-              <div style={styles.seperator}/>
             </div>
           }
           {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER) || userRoles.includes(BROADCASTER)) &&
             <div>
+              <div style={styles.seperator}/>
               <div style={styles.category}>
                 <div style={styles.categoryTitle}>REPORTING</div>
               </div>

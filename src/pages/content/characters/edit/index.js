@@ -227,7 +227,7 @@ export default class EditCharacter extends Component {
     const { _activeLocale, children, personsById, errors, closeModal, currentModal, searchPersons, searchedPersonIds, supportedLocales, defaultLocale,
       currentCharacter, location, handleSubmit, deletePortraitImage, deleteProfileImage, deleteFaceImage, faceImages, fetchFaceImages, location: { query: { tab } } } = this.props;
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root style={styles.backgroundRoot}>
           <BreadCrumbs hierarchy={[
             { title: 'Characters', url: '/content/characters' },

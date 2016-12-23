@@ -45,6 +45,30 @@ export function transformBrand ({ uuid, publishStatus, defaultLocale, localeData
   return brand;
 }
 
+export function transformShop ({ uuid, publishStatus, defaultLocale, localeData }) {
+  const shop = {
+    basedOnDefaultLocale: {},
+    defaultLocale,
+    description: {},
+    id: uuid,
+    locales: [],
+    logo: {},
+    url: {},
+    publishStatus,
+    name: {}
+  };
+  if (localeData) {
+    for (const { basedOnDefaultLocale, logo, locale, name, url } of localeData) {
+      shop.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      shop.name[locale] = name;
+      shop.url[locale] = url;
+      shop.logo[locale] = logo && { id: logo.uuid, url: logo.url };
+      shop.locales.push(locale);
+    }
+  }
+  return shop;
+}
+
 export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover }) {
   return {
     createdOn: auditInfo && auditInfo.createdOn,
@@ -54,6 +78,18 @@ export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover 
     logo: logo && { id: logo.uuid, url: logo.url },
     profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
     name
+  };
+}
+
+export function transformListShop ({ uuid, name, publishStatus, auditInfo, logo, profileCover }) {
+  return {
+    createdOn: auditInfo && auditInfo.createdOn,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    logo: logo && { id: logo.uuid, url: logo.url },
+    name,
+    publishStatus
   };
 }
 

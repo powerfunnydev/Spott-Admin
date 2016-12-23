@@ -77,7 +77,7 @@ export default class ReadEpisode extends Component {
     const { styles } = this.constructor;
     const defaultLocale = currentEpisode.getIn([ 'defaultLocale' ]);
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root>
           <BreadCrumbs hierarchy={[
             { title: 'Series', url: '/content/series' },

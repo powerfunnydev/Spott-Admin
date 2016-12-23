@@ -3,8 +3,8 @@ import { persistBrand, fetchBrand as dataFetchBrand,
       uploadLogoImage as dataUploadLogoImage } from '../../../../actions/brand';
 
 export { deleteLogoImage, deleteProfileImage } from '../../../../actions/brand';
-export const PERSON_FETCH_ENTRY_ERROR = 'PERSONS_EDIT/FETCH_ENTRY_ERROR';
-export const CLOSE_POP_UP_MESSAGE = 'PERSONS_EDIT/CLOSE_POP_UP_MESSAGE';
+export const BRAND_FETCH_ENTRY_ERROR = 'BRANDS_EDIT/FETCH_ENTRY_ERROR';
+export const CLOSE_POP_UP_MESSAGE = 'BRANDS_EDIT/CLOSE_POP_UP_MESSAGE';
 
 export { openModal, closeModal } from '../../../../actions/global';
 
@@ -21,7 +21,7 @@ export function loadBrand (brandId) {
     try {
       return await dispatch(dataFetchBrand({ brandId }));
     } catch (error) {
-      dispatch({ error, type: PERSON_FETCH_ENTRY_ERROR });
+      dispatch({ error, type: BRAND_FETCH_ENTRY_ERROR });
     }
   };
 }

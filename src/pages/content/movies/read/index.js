@@ -68,7 +68,7 @@ export default class ReadMovie extends Component {
     const { params, children, currentMovie, location, location: { query: { tabIndex } }, deleteMovie } = this.props;
     const defaultLocale = currentMovie.get('defaultLocale');
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root>
           <BreadCrumbs hierarchy={[
             { title: 'Movies', url: '/content/movies' },

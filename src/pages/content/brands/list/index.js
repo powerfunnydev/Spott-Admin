@@ -99,12 +99,28 @@ export default class Brands extends Component {
     await this.props.load(this.props.location.query);
   }
 
+  static styles = {
+    logo: {
+      width: '22px',
+      height: '22px',
+      borderRadius: '2px'
+    },
+    logoContainer: {
+      paddingRight: '10px',
+      display: 'inline-flex'
+    },
+    logoPlaceholder: {
+      paddingRight: '32px'
+    }
+  }
+
   render () {
-    const { brands, children, isSelected, location, location: { query, query: { display, page, searchString, sortField, sortDirection } },
+    const { brands, children, isSelected, location: { query, query: { display, page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString } = this.props;
+    const { styles } = this.constructor;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root>
           <div style={generalStyles.backgroundBar}>
             <Container>
@@ -144,11 +160,11 @@ export default class Brands extends Component {
                           <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                             <CheckBoxCel checked={isSelected.get(brand.get('id'))} onChange={selectCheckbox.bind(this, brand.get('id'))}/>
-                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/brands/read/${brand.get('id')}`); }}>
-                              {brand.get('name')}
+                            <CustomCel style={{ flex: 2, alignItems: 'center' }} onClick={() => { this.props.routerPushWithReturnTo(`content/brands/read/${brand.get('id')}`); }}>
+                              {brand.get('logo') && <div style={styles.logoContainer}><img src={`${brand.getIn([ 'logo', 'url' ])}?height=70&width=70`} style={styles.logo} /></div> || <div style={styles.logoPlaceholder}/>} {brand.get('name')}
                             </CustomCel>
                             <CustomCel style={{ flex: 2 }}>
-                              {brand.get('lastUpdatedBy')}
+                                {brand.get('lastUpdatedBy')}
                             </CustomCel>
                             <CustomCel getValue={this.getLastUpdatedOn} objectToRender={brand} style={{ flex: 2 }}/>
                             <DropdownCel>

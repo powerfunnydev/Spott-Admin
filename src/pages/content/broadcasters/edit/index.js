@@ -98,7 +98,7 @@ export default class EditBroadcaster extends Component {
     const { currentBroadcaster, location, handleSubmit, deleteLogo } = this.props;
     const { styles } = this.constructor;
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root style={styles.background}>
           <BreadCrumbs hierarchy={[
             { title: 'Broadcasters', url: '/content/broadcasters' },

@@ -76,7 +76,6 @@
     "radium-grid": "2.0.1",
     "rc-time-picker": "2.0.2",
     "react": "15.3.1",
-    "react-addons-css-transition-group": "15.4.1",
     "react-addons-shallow-compare": "15.3.1",
     "react-addons-test-utils": "15.3.1",
     "react-contextmenu": "0.3.0",

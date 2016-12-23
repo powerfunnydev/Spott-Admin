@@ -30,6 +30,8 @@ import personsEdit from '../pages/content/persons/edit/reducer';
 import LinkUserModal from '../pages/_common/components/linkUserModal/reducer';
 import reporting from '../pages/reporting/reducer';
 import relatedVideoPersist from '../pages/content/_relatedVideo/persist/reducer';
+import shopsEdit from '../pages/content/shops/edit/reducer';
+import shopsList from '../pages/content/shops/list/reducer';
 import seasonsCreate from '../pages/content/seasons/create/reducer';
 import seasonsEdit from '../pages/content/seasons/edit/reducer';
 import seasonsList from '../pages/content/seasons/list/reducer';
@@ -104,6 +106,10 @@ export default combineReducers({
     persons: combineReducers({
       edit: personsEdit,
       list: personsList
+    }),
+    shops: combineReducers({
+      edit: shopsEdit,
+      list: shopsList
     }),
     seasons: combineReducers({
       create: seasonsCreate,

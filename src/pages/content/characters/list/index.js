@@ -104,7 +104,7 @@ export default class Characters extends Component {
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
-      <SideMenu location={location}>
+      <SideMenu>
         <Root>
           <div style={generalStyles.backgroundBar}>
             <Container>
