@@ -64,7 +64,7 @@ export default class ReadBroadcaster extends Component {
     e.preventDefault();
     const broadcasterId = this.props.params.broadcasterId;
     if (broadcasterId) {
-      this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcasterId}/create/broadcast-channel`);
+      this.props.routerPushWithReturnTo(`/content/broadcasters/read/${broadcasterId}/create/broadcast-channel`);
     }
   }
 
@@ -94,7 +94,7 @@ export default class ReadBroadcaster extends Component {
               <EntityDetails
                 imageUrl={currentBroadcaster.get('logo') && `${currentBroadcaster.getIn([ 'logo', 'url' ])}?height=310&width=310`}
                 title={currentBroadcaster.getIn([ 'name' ])}
-                onEdit={() => this.props.routerPushWithReturnTo(`content/broadcasters/edit/${currentBroadcaster.getIn([ 'id' ])}`)}
+                onEdit={() => this.props.routerPushWithReturnTo(`/content/broadcasters/edit/${currentBroadcaster.getIn([ 'id' ])}`)}
                 onRemove={async () => {
                   await deleteBroadcaster(currentBroadcaster.getIn([ 'id' ]));
                   this.redirect();

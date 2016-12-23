@@ -160,7 +160,7 @@ export default class Shops extends Component {
                           <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                             <CheckBoxCel checked={isSelected.get(shop.get('id'))} onChange={selectCheckbox.bind(this, shop.get('id'))}/>
-                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/shops/read/${shop.get('id')}`); }}>
+                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/shops/read/${shop.get('id')}`); }}>
                               {shop.get('logo') && <div style={styles.logoContainer}><img src={`${shop.getIn([ 'logo', 'url' ])}?height=70&width=70`} style={styles.logo} /></div> || <div style={styles.logoPlaceholder}/>} {shop.get('name')}
                             </CustomCel>
                             <CustomCel style={{ flex: 2 }}>
@@ -169,7 +169,7 @@ export default class Shops extends Component {
                             <CustomCel getValue={this.getLastUpdatedOn} objectToRender={shop} style={{ flex: 2 }}/>
                             <DropdownCel>
                               <Dropdown
-                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/shops/edit/${shop.get('id')}`); }}>Edit</div>}>
+                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/shops/edit/${shop.get('id')}`); }}>Edit</div>}>
                                 <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteShop(shop.get('id')); }}>Remove</div>
                               </Dropdown>
                             </DropdownCel>
@@ -191,9 +191,9 @@ export default class Shops extends Component {
                         key={`shop${index}`}
                         text={shop.get('name')}
                         onCheckboxChange={selectCheckbox.bind(this, shop.get('id'))}
-                        onClick={() => { this.props.routerPushWithReturnTo(`content/shops/read/${shop.get('id')}`); }}
+                        onClick={() => { this.props.routerPushWithReturnTo(`/content/shops/read/${shop.get('id')}`); }}
                         onDelete={async (e) => { e.preventDefault(); await this.deleteShop(shop.get('id')); }}
-                        onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/shops/edit/${shop.get('id')}`); }}/>
+                        onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/shops/edit/${shop.get('id')}`); }}/>
                     ))}
                     <Tile key={'createShop'} onCreate={() => { this.props.routerPushWithReturnTo('content/shops/create'); }}/>
                   </div>

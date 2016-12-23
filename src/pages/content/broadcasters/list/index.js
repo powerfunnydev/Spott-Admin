@@ -138,10 +138,10 @@ export default class Broadcasters extends Component {
                             <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                               {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                               <CheckBoxCel checked={isSelected.get(broadcaster.get('id'))} onChange={selectCheckbox.bind(this, broadcaster.get('id'))}/>
-                              <CustomCel style={{ flex: 5 }} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcaster.get('id')}`); }}>{broadcaster.get('name')}</CustomCel>
+                              <CustomCel style={{ flex: 5 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/broadcasters/read/${broadcaster.get('id')}`); }}>{broadcaster.get('name')}</CustomCel>
                               <DropdownCel>
                                 <Dropdown
-                                  elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/edit/${broadcaster.get('id')}`); }}>Edit</div>}>
+                                  elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/broadcasters/edit/${broadcaster.get('id')}`); }}>Edit</div>}>
                                   <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcaster(broadcaster.get('id')); }}>Remove</div>
                                 </Dropdown>
                               </DropdownCel>
@@ -163,14 +163,14 @@ export default class Broadcasters extends Component {
                         key={`broadcaster${index}`}
                         text={broadcaster.get('name')}
                         onCheckboxChange={selectCheckbox.bind(this, broadcaster.get('id'))}
-                        onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcaster.get('id')}`); }}
+                        onClick={() => { this.props.routerPushWithReturnTo(`/content/broadcasters/read/${broadcaster.get('id')}`); }}
                         onDelete={async (e) => {
                           e.preventDefault();
                           await this.deleteBroadcaster(broadcaster.get('id'));
                         }}
                         onEdit={(e) => {
                           e.preventDefault();
-                          this.props.routerPushWithReturnTo(`content/broadcasters/edit/${broadcaster.get('id')}`);
+                          this.props.routerPushWithReturnTo(`/content/broadcasters/edit/${broadcaster.get('id')}`);
                         }}/>
                     ))}
                     <Tile key={'createBroadcaster'} onCreate={() => this.props.routerPushWithReturnTo('content/broadcasters/create')}/>

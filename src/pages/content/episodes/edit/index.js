@@ -152,7 +152,7 @@ export default class EditEpisode extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo(`content/series/read/${this.props.params.seriesEntryId}/seasons/read/${this.props.params.seasonId}`, true);
+    this.props.routerPushWithReturnTo(`/content/series/read/${this.props.params.seriesEntryId}/seasons/read/${this.props.params.seasonId}`, true);
   }
 
   languageAdded (form) {
@@ -276,8 +276,8 @@ export default class EditEpisode extends Component {
         <Root style={styles.backgroundRoot}>
           <BreadCrumbs hierarchy={[
             { title: 'Series', url: '/content/series' },
-            { title: currentEpisode.getIn([ 'seriesEntry', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}` },
-            { title: currentEpisode.getIn([ 'season', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${this.props.params.seasonId}` },
+            { title: currentEpisode.getIn([ 'seriesEntry', 'title' ]), url: `/content/series/read/${this.props.params.seriesEntryId}` },
+            { title: currentEpisode.getIn([ 'season', 'title' ]), url: `/content/series/read/${this.props.params.seriesEntryId}/seasons/read/${this.props.params.seasonId}` },
             { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: location } ]}/>
           {currentModal === EPISODE_CREATE_LANGUAGE &&
             <CreateLanguageModal

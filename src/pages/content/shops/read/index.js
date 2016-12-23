@@ -71,7 +71,7 @@ export default class ReadShop extends Component {
               <EntityDetails
                 imageUrl={currentShop.getIn([ 'logo', defaultLocale, 'url' ]) && `${currentShop.getIn([ 'logo', defaultLocale, 'url' ])}?height=203&width=360`}
                 title={currentShop.getIn([ 'name', defaultLocale ])}
-                onEdit={() => { this.props.routerPushWithReturnTo(`content/shops/edit/${params.shopId}`); }}
+                onEdit={() => { this.props.routerPushWithReturnTo(`/content/shops/edit/${params.shopId}`); }}
                 onRemove={async () => { await deleteShop(currentShop.get('id')); this.redirect(); }}/>}
           </Container>
           <Line/>

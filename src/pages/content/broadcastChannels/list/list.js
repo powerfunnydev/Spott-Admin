@@ -149,7 +149,7 @@ export default class BroadcastChannelList extends Component {
                           <CustomCel getValue={this.getLastUpdatedOn} objectToRender={broadcastChannel} style={{ flex: 2 }}/>
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]}onClick={() => { this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}>Edit</div>}>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]}onClick={() => { this.props.routerPushWithReturnTo(`/content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}>Edit</div>}>
                               <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
@@ -176,7 +176,7 @@ export default class BroadcastChannelList extends Component {
                       }}
                       onEdit={(e) => {
                         e.preventDefault();
-                        this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`);
+                        this.props.routerPushWithReturnTo(`/content/broadcast-channels/edit/${broadcastChannel.get('id')}`);
                       }}/>
                   ))}
                   <Tile key={'createBroadcastChannel'} onCreate={() => { this.props.routerPushWithReturnTo('content/broadcast-channels/create'); }}/>

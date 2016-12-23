@@ -138,12 +138,12 @@ export default class Commercials extends Component {
                           <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                             <CheckBoxCel checked={isSelected.get(commercial.get('id'))} onChange={selectCheckbox.bind(this, commercial.get('id'))}/>
-                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/commercials/read/${commercial.get('id')}`); }}>{commercial.get('title')}</CustomCel>
+                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/commercials/read/${commercial.get('id')}`); }}>{commercial.get('title')}</CustomCel>
                             <CustomCel style={{ flex: 2 }}>{commercial.get('lastUpdatedBy')}</CustomCel>
                             <CustomCel objectToRender={commercial} style={{ flex: 2 }}>{moment(new Date(commercial.get('lastUpdatedOn'))).format('YYYY-MM-DD HH:mm')}</CustomCel>
                             <DropdownCel>
                               <Dropdown
-                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/commercials/edit/${commercial.get('id')}`); }}>Edit</div>}>
+                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/commercials/edit/${commercial.get('id')}`); }}>Edit</div>}>
                                 <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteCommercial(commercial.get('id')); }}>Remove</div>
                               </Dropdown>
                             </DropdownCel>
@@ -165,9 +165,9 @@ export default class Commercials extends Component {
                         key={`commercial${index}`}
                         text={commercial.get('title')}
                         onCheckboxChange={selectCheckbox.bind(this, commercial.get('id'))}
-                        onClick={() => { this.props.routerPushWithReturnTo(`content/commercials/read/${commercial.get('id')}`); }}
+                        onClick={() => { this.props.routerPushWithReturnTo(`/content/commercials/read/${commercial.get('id')}`); }}
                         onDelete={async (e) => { e.preventDefault(); await this.deleteCommercial(commercial.get('id')); }}
-                        onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/commercials/edit/${commercial.get('id')}`); }}/>
+                        onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/commercials/edit/${commercial.get('id')}`); }}/>
                     ))}
                     <Tile key='createCommercial' onCreate={() => { this.props.routerPushWithReturnTo('content/commercials/create'); }}/>
                   </div>

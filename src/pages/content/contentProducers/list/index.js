@@ -144,12 +144,12 @@ export default class ContentProducers extends Component {
                           <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                             <CheckBoxCel checked={isSelected.get(cp.get('id'))} onChange={selectCheckbox.bind(this, cp.get('id'))}/>
-                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/content-producers/read/${cp.get('id')}`); }}>{cp.get('name')}</CustomCel>
+                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/content-producers/read/${cp.get('id')}`); }}>{cp.get('name')}</CustomCel>
                             <CustomCel style={{ flex: 2 }}>{cp.get('lastUpdatedBy')}</CustomCel>
                             <CustomCel getValue={this.getLastUpdatedOn} objectToRender={cp} style={{ flex: 2 }}/>
                             <DropdownCel>
                               <Dropdown
-                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/content-producers/edit/${cp.get('id')}`); }}>Edit</div>}>
+                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/content-producers/edit/${cp.get('id')}`); }}>Edit</div>}>
                                 <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteContentProducer(cp.get('id')); }}>Remove</div>
                               </Dropdown>
                             </DropdownCel>
@@ -171,14 +171,14 @@ export default class ContentProducers extends Component {
                         key={`contentProducer${index}`}
                         text={contentProducer.get('name')}
                         onCheckboxChange={selectCheckbox.bind(this, contentProducer.get('id'))}
-                        onClick={() => { this.props.routerPushWithReturnTo(`content/content-producers/read/${contentProducer.get('id')}`); }}
+                        onClick={() => { this.props.routerPushWithReturnTo(`/content/content-producers/read/${contentProducer.get('id')}`); }}
                         onDelete={async (e) => {
                           e.preventDefault();
                           await this.deleteContentProducer(contentProducer.get('id'));
                         }}
                         onEdit={(e) => {
                           e.preventDefault();
-                          this.props.routerPushWithReturnTo(`content/content-producers/edit/${contentProducer.get('id')}`);
+                          this.props.routerPushWithReturnTo(`/content/content-producers/edit/${contentProducer.get('id')}`);
                         }}/>
                     ))}
                     <Tile key={'createBroadcaster'} onCreate={() => { this.props.routerPushWithReturnTo('content/content-producers/create'); }}/>

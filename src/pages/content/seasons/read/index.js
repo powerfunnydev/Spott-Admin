@@ -64,7 +64,7 @@ export default class ReadSeason extends Component {
     e.preventDefault();
     const seasonId = this.props.params.seasonId;
     if (seasonId) {
-      this.props.routerPushWithReturnTo(`content/seasons/read/${seasonId}/create/season`);
+      this.props.routerPushWithReturnTo(`/content/seasons/read/${seasonId}/create/season`);
     }
   }
 
@@ -85,14 +85,14 @@ export default class ReadSeason extends Component {
         <Root>
           <BreadCrumbs hierarchy={[
             { title: 'Series', url: '/content/series' },
-            { title: currentSeason.getIn([ 'seriesEntry', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}` },
+            { title: currentSeason.getIn([ 'seriesEntry', 'title' ]), url: `/content/series/read/${this.props.params.seriesEntryId}` },
             { title: currentSeason.getIn([ 'title', defaultLocale ]), url: location } ]}/>
           <Container>
             {currentSeason.get('_status') === 'loaded' && currentSeason &&
               <EntityDetails
                 imageUrl={currentSeason.getIn([ 'profileImage', defaultLocale ]) && `${currentSeason.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
                 title={currentSeason.getIn([ 'title', defaultLocale ])}
-                onEdit={() => this.props.routerPushWithReturnTo(`content/series/read/${this.props.params.seriesEntryId}/seasons/edit/${currentSeason.get('id')}`)}
+                onEdit={() => this.props.routerPushWithReturnTo(`/content/series/read/${this.props.params.seriesEntryId}/seasons/edit/${currentSeason.get('id')}`)}
                 onRemove={async () => {
                   await deleteSeason(currentSeason.get('id'));
                   this.redirect();

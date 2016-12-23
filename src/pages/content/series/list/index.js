@@ -112,7 +112,7 @@ export default class SeriesEntries extends Component {
   }
 
   render () {
-    const { seriesEntries, children, isSelected, location, location: { query, query: { display, page, searchString, sortField, sortDirection } },
+    const { seriesEntries, children, isSelected, location: { query, query: { display, page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
@@ -166,7 +166,7 @@ export default class SeriesEntries extends Component {
                           <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                             <CheckBoxCel checked={isSelected.get(seriesEntry.get('id'))} onChange={selectCheckbox.bind(this, seriesEntry.get('id'))}/>
-                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${seriesEntry.get('id')}`); }}>
+                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/series/read/${seriesEntry.get('id')}`); }}>
                               {seriesEntry.get('title')}
                             </CustomCel>
                             <CustomCel style={{ flex: 2 }}>
@@ -175,7 +175,7 @@ export default class SeriesEntries extends Component {
                             <CustomCel getValue={this.getLastUpdatedOn} objectToRender={seriesEntry} style={{ flex: 2 }}/>
                             <DropdownCel>
                               <Dropdown
-                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/series/edit/${seriesEntry.get('id')}`); }}>Edit</div>}>
+                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/series/edit/${seriesEntry.get('id')}`); }}>Edit</div>}>
                                 <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}>Remove</div>
                               </Dropdown>
                             </DropdownCel>
@@ -197,9 +197,9 @@ export default class SeriesEntries extends Component {
                         key={`seriesEntry${index}`}
                         text={seriesEntry.get('title')}
                         onCheckboxChange={selectCheckbox.bind(this, seriesEntry.get('id'))}
-                        onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${seriesEntry.get('id')}`); }}
+                        onClick={() => { this.props.routerPushWithReturnTo(`/content/series/read/${seriesEntry.get('id')}`); }}
                         onDelete={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}
-                        onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/series/edit/${seriesEntry.get('id')}`); }}/>
+                        onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/series/edit/${seriesEntry.get('id')}`); }}/>
                     ))}
                     <Tile key={'createSeriesEntry'} onCreate={() => { this.props.routerPushWithReturnTo('content/series/create'); }}/>
                   </div>

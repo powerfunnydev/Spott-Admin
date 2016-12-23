@@ -71,7 +71,7 @@ export default class ReadBrand extends Component {
               <EntityDetails
                 imageUrl={currentBrand.getIn([ 'logo', defaultLocale, 'url' ]) && `${currentBrand.getIn([ 'logo', defaultLocale, 'url' ])}?height=203&width=360`}
                 title={currentBrand.getIn([ 'name', defaultLocale ])}
-                onEdit={() => { this.props.routerPushWithReturnTo(`content/brands/edit/${params.brandId}`); }}
+                onEdit={() => { this.props.routerPushWithReturnTo(`/content/brands/edit/${params.brandId}`); }}
                 onRemove={async () => { await deleteBrand(currentBrand.get('id')); this.redirect(); }}/>}
           </Container>
           <Line/>

@@ -75,14 +75,14 @@ export default class ReadCommercial extends Component {
         <Root>
           <BreadCrumbs hierarchy={[
             { title: 'Commercials', url: '/content/commercials' },
-            { title: currentCommercial.getIn([ 'title', defaultLocale ]), url: `content/commercials/read/${params.commercialId}` }
+            { title: currentCommercial.getIn([ 'title', defaultLocale ]), url: `/content/commercials/read/${params.commercialId}` }
           ]}/>
           <Container>
             {currentCommercial.get('_status') === 'loaded' && currentCommercial &&
               <EntityDetails
                 imageUrl={currentCommercial.getIn([ 'profileImage', defaultLocale ]) && `${currentCommercial.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
                 title={currentCommercial.getIn([ 'title', defaultLocale ])}
-                onEdit={() => this.props.routerPushWithReturnTo(`content/commercials/edit/${params.commercialId}`)}
+                onEdit={() => this.props.routerPushWithReturnTo(`/content/commercials/edit/${params.commercialId}`)}
                 onRemove={async () => { await deleteCommercial(params.commercialId); this.redirect(); }}/>}
           </Container>
           <Line/>

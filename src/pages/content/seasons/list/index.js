@@ -146,14 +146,14 @@ export default class Seasons extends Component {
                             <CheckBoxCel checked={isSelected.get(season.get('id'))} onChange={selectCheckbox.bind(this, season.get('id'))}/>
                             <CustomCel
                               style={{ flex: 2 }}
-                              onClick={() => { this.props.routerPushWithReturnTo(`content/seasons/read/${season.get('id')}`); }}>
+                              onClick={() => { this.props.routerPushWithReturnTo(`/content/seasons/read/${season.get('id')}`); }}>
                                 {season.get('title')}
                             </CustomCel>
                             <CustomCel style={{ flex: 2 }}>{season.get('updatedBy')}</CustomCel>
                             <CustomCel getValue={this.getLastUpdatedOn} objectToRender={season} style={{ flex: 2 }}/>
                             <DropdownCel>
                               <Dropdown
-                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/seasons/edit/${season.get('id')}`); }}>Edit</div>}>
+                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/seasons/edit/${season.get('id')}`); }}>Edit</div>}>
                                 <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteSeason(season.get('id')); }}>Remove</div>
                               </Dropdown>
                             </DropdownCel>
@@ -175,14 +175,14 @@ export default class Seasons extends Component {
                         key={`season${index}`}
                         text={this.getTitle(season)}
                         onCheckboxChange={selectCheckbox.bind(this, season.get('id'))}
-                        onClick={() => { this.props.routerPushWithReturnTo(`content/seasons/read/${season.get('id')}`); }}
+                        onClick={() => { this.props.routerPushWithReturnTo(`/content/seasons/read/${season.get('id')}`); }}
                         onDelete={async (e) => {
                           e.preventDefault();
                           await this.deleteSeason(season.get('id'));
                         }}
                         onEdit={(e) => {
                           e.preventDefault();
-                          this.props.routerPushWithReturnTo(`content/seasons/edit/${season.get('id')}`);
+                          this.props.routerPushWithReturnTo(`/content/seasons/edit/${season.get('id')}`);
                         }}/>
                     ))}
                     <Tile key={'createSeason'} onCreate={() => { this.props.routerPushWithReturnTo('content/seasons/create'); }}/>

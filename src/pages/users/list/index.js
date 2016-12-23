@@ -72,7 +72,7 @@ export default class Users extends Component {
   }
 
   onEditEntry (userId) {
-    this.props.routerPushWithReturnTo(`users/edit/${userId}`);
+    this.props.routerPushWithReturnTo(`/users/edit/${userId}`);
   }
 
   onClickNewEntry (e) {
@@ -136,7 +136,7 @@ export default class Users extends Component {
                           <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                             <CheckBoxCel checked={isSelected.get(user.get('id'))} onChange={selectCheckbox.bind(this, user.get('id'))}/>
-                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`users/read/${user.get('id')}`); }}>{user.get('userName')}</CustomCel>
+                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/users/read/${user.get('id')}`); }}>{user.get('userName')}</CustomCel>
                             <CustomCel style={{ flex: 2 }}>{user.get('email')}</CustomCel>
                             <CustomCel style={{ flex: 1 }}>{user.get('firstName')}</CustomCel>
                             <CustomCel style={{ flex: 1 }}>{user.get('lastName')}</CustomCel>
@@ -169,7 +169,7 @@ export default class Users extends Component {
                         key={`user${index}`}
                         text={user.get('name')}
                         onCheckboxChange={selectCheckbox.bind(this, user.get('id'))}
-                        onClick={() => { this.props.routerPushWithReturnTo(`users/read/${user.get('id')}`); }}
+                        onClick={() => { this.props.routerPushWithReturnTo(`/users/read/${user.get('id')}`); }}
                         onDelete={this.onDeleteUser.bind(this, user.get('id'))}
                         onEdit={this.onEditEntry.bind(this, user.get('id'))}/>
                     ))}

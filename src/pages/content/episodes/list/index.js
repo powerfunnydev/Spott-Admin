@@ -143,12 +143,12 @@ export default class Episodes extends Component {
                           <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                             <CheckBoxCel checked={isSelected.get(season.get('id'))} onChange={selectCheckbox.bind(this, season.get('id'))}/>
-                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/seasons/read/${season.get('id')}`); }}>{season.get('title')}</CustomCel>
+                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/seasons/read/${season.get('id')}`); }}>{season.get('title')}</CustomCel>
                             <CustomCel style={{ flex: 2 }}>{season.get('updatedBy')}</CustomCel>
                             <CustomCel getValue={this.getLastUpdatedOn} objectToRender={season} style={{ flex: 2 }}/>
                             <DropdownCel>
                               <Dropdown
-                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/seasons/edit/${season.get('id')}`); }}>Edit</div>}>
+                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/seasons/edit/${season.get('id')}`); }}>Edit</div>}>
                                 <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteEpisode(season.get('id')); }}>Remove</div>
                               </Dropdown>
                             </DropdownCel>
@@ -170,9 +170,9 @@ export default class Episodes extends Component {
                         key={`season${index}`}
                         text={this.getTitle(season)}
                         onCheckboxChange={selectCheckbox.bind(this, season.get('id'))}
-                        onClick={() => { this.props.routerPushWithReturnTo(`content/seasons/read/${season.get('id')}`); }}
+                        onClick={() => { this.props.routerPushWithReturnTo(`/content/seasons/read/${season.get('id')}`); }}
                         onDelete={async (e) => { e.preventDefault(); await this.deleteEpisode(season.get('id')); }}
-                        onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/seasons/edit/${season.get('id')}`); }}/>
+                        onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/seasons/edit/${season.get('id')}`); }}/>
                     ))}
                     <Tile key={'createEpisode'} onCreate={() => { this.props.routerPushWithReturnTo('content/seasons/create'); }}/>
                   </div>

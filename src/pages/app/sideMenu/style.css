@@ -17,3 +17,13 @@
   max-height: 0px;
   transition: max-height 1s ease;
 }
+
+.dropdown-appear {
+  max-height: 0px;
+  overflow: hidden;
+}
+
+.dropdown-appear.dropdown-appear-active {
+  max-height: 100px;
+  transition: max-height 1s ease;
+}

@@ -67,7 +67,7 @@ export default class ReadSeriesEntry extends Component {
     e.preventDefault();
     const seriesEntryId = this.props.params.seriesEntryId;
     if (seriesEntryId) {
-      this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/create/season`);
+      this.props.routerPushWithReturnTo(`/content/series/read/${seriesEntryId}/create/season`);
     }
   }
 
@@ -95,7 +95,7 @@ export default class ReadSeriesEntry extends Component {
               <EntityDetails
                 imageUrl={currentSeriesEntry.getIn([ 'profileImage', defaultLocale ]) && `${currentSeriesEntry.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
                 title={currentSeriesEntry.getIn([ 'title', defaultLocale ])}
-                onEdit={() => this.props.routerPushWithReturnTo(`content/series/edit/${currentSeriesEntry.getIn([ 'id' ])}`)}
+                onEdit={() => this.props.routerPushWithReturnTo(`/content/series/edit/${currentSeriesEntry.getIn([ 'id' ])}`)}
                 onRemove={async () => {
                   await deleteSeriesEntry(currentSeriesEntry.getIn([ 'id' ]));
                   this.redirect();

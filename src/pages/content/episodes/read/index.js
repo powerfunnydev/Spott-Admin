@@ -61,7 +61,7 @@ export default class ReadEpisode extends Component {
     e.preventDefault();
     const seasonId = this.props.params.seasonId;
     if (seasonId) {
-      this.props.routerPushWithReturnTo(`content/seasons/read/${seasonId}/create/season`);
+      this.props.routerPushWithReturnTo(`/content/seasons/read/${seasonId}/create/season`);
     }
   }
 
@@ -81,16 +81,16 @@ export default class ReadEpisode extends Component {
         <Root>
           <BreadCrumbs hierarchy={[
             { title: 'Series', url: '/content/series' },
-            { title: currentEpisode.getIn([ 'seriesEntry', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}` },
-            { title: currentEpisode.getIn([ 'season', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}` },
-            { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/read/${params.episodeId}` }
+            { title: currentEpisode.getIn([ 'seriesEntry', 'title' ]), url: `/content/series/read/${this.props.params.seriesEntryId}` },
+            { title: currentEpisode.getIn([ 'season', 'title' ]), url: `/content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}` },
+            { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: `/content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/read/${params.episodeId}` }
           ]}/>
           <Container>
             {currentEpisode.get('_status') === 'loaded' && currentEpisode &&
               <EntityDetails
                 imageUrl={currentEpisode.getIn([ 'profileImage', defaultLocale ]) && `${currentEpisode.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
                 title={currentEpisode.getIn([ 'title', defaultLocale ])}
-                onEdit={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/edit/${currentEpisode.get('id')}`); }}
+                onEdit={() => { this.props.routerPushWithReturnTo(`/content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/edit/${currentEpisode.get('id')}`); }}
                 onRemove={async () => { await deleteEpisode(currentEpisode.getIn([ 'id' ])); this.redirect(); }}/>}
           </Container>
           <Line/>

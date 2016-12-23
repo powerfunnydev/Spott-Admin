@@ -63,7 +63,7 @@ export default class ReadUser extends Component {
     e.preventDefault();
     const broadcasterId = this.props.params.id;
     if (broadcasterId) {
-      this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcasterId}/create/broadcast-channel`);
+      this.props.routerPushWithReturnTo(`/content/broadcasters/read/${broadcasterId}/create/broadcast-channel`);
     }
   }
 
@@ -92,7 +92,7 @@ export default class ReadUser extends Component {
                 imageUrl={currentUser.get('avatar') && `${currentUser.getIn([ 'avatar', 'url' ])}?height=310&width=310`}
                 subtitle={currentUser.get('email')}
                 title={`${currentUser.get('firstName')} ${currentUser.get('lastName')}`}
-                onEdit={() => this.props.routerPushWithReturnTo(`users/edit/${currentUser.get('id')}`)}
+                onEdit={() => this.props.routerPushWithReturnTo(`/users/edit/${currentUser.get('id')}`)}
                 onRemove={async () => { await deleteUser(currentUser.getIn([ 'id' ])); this.redirect(); }}/>}
           </Container>
           <Line/>

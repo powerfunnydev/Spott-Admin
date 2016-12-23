@@ -121,7 +121,7 @@ export default class EditSeason extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo(`content/series/read/${this.props.params.seriesEntryId}`, true);
+    this.props.routerPushWithReturnTo(`/content/series/read/${this.props.params.seriesEntryId}`, true);
   }
 
   languageAdded (form) {
@@ -238,7 +238,7 @@ export default class EditSeason extends Component {
         <Root style={styles.backgroundRoot}>
           <BreadCrumbs hierarchy={[
             { title: 'Series', url: '/content/series' },
-            { title: currentSeason.getIn([ 'seriesEntry', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}` },
+            { title: currentSeason.getIn([ 'seriesEntry', 'title' ]), url: `/content/series/read/${this.props.params.seriesEntryId}` },
             { title: currentSeason.getIn([ 'title', defaultLocale ]), url: location } ]}/>
           {currentModal === SEASON_CREATE_LANGUAGE &&
             <CreateLanguageModal

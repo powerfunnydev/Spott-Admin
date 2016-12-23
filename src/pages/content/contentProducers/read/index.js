@@ -81,7 +81,7 @@ export default class ReadContentProducer extends Component {
               <EntityDetails
                 imageUrl={currentContentProducer.get('logo') && `${currentContentProducer.getIn([ 'logo', 'url' ])}?height=310&width=310`}
                 title={currentContentProducer.getIn([ 'name' ])}
-                onEdit={() => this.props.routerPushWithReturnTo(`content/content-producers/edit/${currentContentProducer.getIn([ 'id' ])}`)}
+                onEdit={() => this.props.routerPushWithReturnTo(`/content/content-producers/edit/${currentContentProducer.getIn([ 'id' ])}`)}
                 onRemove={async () => {
                   await deleteContentProducer(currentContentProducer.getIn([ 'id' ]));
                   this.redirect();

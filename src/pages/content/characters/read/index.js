@@ -71,7 +71,7 @@ export default class ReadCharacter extends Component {
               <EntityDetails
                 imageUrl={currentCharacter.getIn([ 'profileImage', 'url' ]) && `${currentCharacter.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                 title={currentCharacter.getIn([ 'name', defaultLocale ])}
-                onEdit={() => { this.props.routerPushWithReturnTo(`content/characters/edit/${params.characterId}`); }}
+                onEdit={() => { this.props.routerPushWithReturnTo(`/content/characters/edit/${params.characterId}`); }}
                 onRemove={async () => { await deleteCharacter(currentCharacter.getIn([ 'id' ])); this.redirect(); }}/>}
           </Container>
           <Line/>

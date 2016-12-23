@@ -217,7 +217,7 @@ function getRoutes ({ dispatch, getState }) {
                 return (
                   <BreadCrumbs hierarchy={[
                     { title: 'Movies', url: '/content/movies' },
-                    { title: currentTvGuideEntry.getIn([ 'medium', 'title' ]), url: `content/movies/read/${movieId}` },
+                    { title: currentTvGuideEntry.getIn([ 'medium', 'title' ]), url: `/content/movies/read/${movieId}` },
                     { title: 'TV Guide', url: props.location }
                   ]}/>);
               }} />
@@ -263,7 +263,7 @@ function getRoutes ({ dispatch, getState }) {
                 return (
                   <BreadCrumbs hierarchy={[
                     { title: 'Series', url: '/content/series' },
-                    { title: currentTvGuideEntry.getIn([ 'serie', 'title' ]), url: `content/series/read/${seriesEntryId}` },
+                    { title: currentTvGuideEntry.getIn([ 'serie', 'title' ]), url: `/content/series/read/${seriesEntryId}` },
                     { title: 'TV Guide', url: props.location }
                   ]}/>);
               }} />
@@ -285,8 +285,8 @@ function getRoutes ({ dispatch, getState }) {
                   return (
                     <BreadCrumbs hierarchy={[
                       { title: 'Series', url: '/content/series' },
-                      { title: currentTvGuideEntry.getIn([ 'serie', 'title' ]), url: `content/series/read/${seriesEntryId}` },
-                      { title: currentTvGuideEntry.getIn([ 'season', 'title' ]), url: `content/series/read/${seriesEntryId}/seasons/read/${seasonId}` },
+                      { title: currentTvGuideEntry.getIn([ 'serie', 'title' ]), url: `/content/series/read/${seriesEntryId}` },
+                      { title: currentTvGuideEntry.getIn([ 'season', 'title' ]), url: `/content/series/read/${seriesEntryId}/seasons/read/${seasonId}` },
                       { title: 'TV Guide', url: props.location }
                     ]}/>);
                 }} />
@@ -305,9 +305,9 @@ function getRoutes ({ dispatch, getState }) {
                       return (
                         <BreadCrumbs hierarchy={[
                           { title: 'Series', url: '/content/series' },
-                          { title: currentTvGuideEntry.getIn([ 'serie', 'title' ]), url: `content/series/read/${seriesEntryId}` },
-                          { title: currentTvGuideEntry.getIn([ 'season', 'title' ]), url: `content/series/read/${seriesEntryId}/seasons/read/${seasonId}` },
-                          { title: currentTvGuideEntry.getIn([ 'medium', 'title' ]), url: `content/series/read/${seriesEntryId}/seasons/read/${seasonId}/episodes/read/${episodeId}` },
+                          { title: currentTvGuideEntry.getIn([ 'serie', 'title' ]), url: `/content/series/read/${seriesEntryId}` },
+                          { title: currentTvGuideEntry.getIn([ 'season', 'title' ]), url: `/content/series/read/${seriesEntryId}/seasons/read/${seasonId}` },
+                          { title: currentTvGuideEntry.getIn([ 'medium', 'title' ]), url: `/content/series/read/${seriesEntryId}/seasons/read/${seasonId}/episodes/read/${episodeId}` },
                           { title: 'TV Guide', url: location }
                         ]}/>);
                     }} />

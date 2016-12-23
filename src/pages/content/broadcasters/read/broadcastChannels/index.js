@@ -103,7 +103,7 @@ export default class List extends Component {
     e.preventDefault();
     const broadcasterId = this.props.params.broadcasterId;
     if (broadcasterId) {
-      this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcasterId}/create/broadcast-channel`);
+      this.props.routerPushWithReturnTo(`/content/broadcasters/read/${broadcasterId}/create/broadcast-channel`);
     }
   }
 
@@ -152,7 +152,7 @@ export default class List extends Component {
                           <CustomCel getValue={this.getName} objectToRender={broadcastChannel} style={{ flex: 5 }} />
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}>Edit</div>}>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}>Edit</div>}>
                               <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
@@ -177,7 +177,7 @@ export default class List extends Component {
                     }}
                     onEdit={(e) => {
                       e.preventDefault();
-                      this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`);
+                      this.props.routerPushWithReturnTo(`/content/broadcast-channels/edit/${broadcastChannel.get('id')}`);
                     }}/>
                 ))}
                 <Tile key={'createBroadcastChannel'} onCreate={this.onClickNewEntry}/>

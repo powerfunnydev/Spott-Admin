@@ -160,7 +160,7 @@ export default class Brands extends Component {
                           <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                             <CheckBoxCel checked={isSelected.get(brand.get('id'))} onChange={selectCheckbox.bind(this, brand.get('id'))}/>
-                            <CustomCel style={{ flex: 2, alignItems: 'center' }} onClick={() => { this.props.routerPushWithReturnTo(`content/brands/read/${brand.get('id')}`); }}>
+                            <CustomCel style={{ flex: 2, alignItems: 'center' }} onClick={() => { this.props.routerPushWithReturnTo(`/content/brands/read/${brand.get('id')}`); }}>
                               {brand.get('logo') && <div style={styles.logoContainer}><img src={`${brand.getIn([ 'logo', 'url' ])}?height=70&width=70`} style={styles.logo} /></div> || <div style={styles.logoPlaceholder}/>} {brand.get('name')}
                             </CustomCel>
                             <CustomCel style={{ flex: 2 }}>
@@ -169,7 +169,7 @@ export default class Brands extends Component {
                             <CustomCel getValue={this.getLastUpdatedOn} objectToRender={brand} style={{ flex: 2 }}/>
                             <DropdownCel>
                               <Dropdown
-                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/brands/edit/${brand.get('id')}`); }}>Edit</div>}>
+                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/brands/edit/${brand.get('id')}`); }}>Edit</div>}>
                                 <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteBrand(brand.get('id')); }}>Remove</div>
                               </Dropdown>
                             </DropdownCel>
@@ -191,9 +191,9 @@ export default class Brands extends Component {
                         key={`brand${index}`}
                         text={brand.get('name')}
                         onCheckboxChange={selectCheckbox.bind(this, brand.get('id'))}
-                        onClick={() => { this.props.routerPushWithReturnTo(`content/brands/read/${brand.get('id')}`); }}
+                        onClick={() => { this.props.routerPushWithReturnTo(`/content/brands/read/${brand.get('id')}`); }}
                         onDelete={async (e) => { e.preventDefault(); await this.deleteBrand(brand.get('id')); }}
-                        onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/brands/edit/${brand.get('id')}`); }}/>
+                        onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/brands/edit/${brand.get('id')}`); }}/>
                     ))}
                     <Tile key={'createBrand'} onCreate={() => { this.props.routerPushWithReturnTo('content/brands/create'); }}/>
                   </div>

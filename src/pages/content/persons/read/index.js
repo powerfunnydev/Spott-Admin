@@ -70,7 +70,7 @@ export default class ReadPerson extends Component {
               <EntityDetails
                 imageUrl={currentPerson.getIn([ 'profileImage', 'url' ]) && `${currentPerson.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
                 title={currentPerson.get('fullName')}
-                onEdit={() => { this.props.routerPushWithReturnTo(`content/persons/edit/${params.personId}`); }}
+                onEdit={() => { this.props.routerPushWithReturnTo(`/content/persons/edit/${params.personId}`); }}
                 onRemove={async () => { await deletePerson(currentPerson.get('id')); this.redirect(); }}/>}
           </Container>
           <Line/>
