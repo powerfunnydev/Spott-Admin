@@ -3,6 +3,7 @@ import * as actions from '../actions/curator';
 
 /**
   * organizer
+  * -> currentCharacterId
   * -> currentSceneId
   * -> currentSceneGroupId
   * -> enlargeFrame
@@ -23,7 +24,13 @@ export default (state = Map({ enlargeFrame: false, hideNonKeyFrames: false, scal
     case actions.CURRENT_FRAME_UPDATE:
       return state.set('currentSceneId', action.sceneId);
     case actions.SELECT_SCENE_GROUP:
-      return state.set('currentSceneGroupId', action.sceneGroupId);
+      return state
+        .delete('currentCharacterId')
+        .set('currentSceneGroupId', action.sceneGroupId);
+    case actions.SELECT_CHARACTER:
+      return state
+        .delete('currentSceneGroupId')
+        .set('currentCharacterId', action.characterId);
     default:
       return state;
   }

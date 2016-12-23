@@ -11,10 +11,13 @@ export const FRAME_UPDATE_SUCCESS = 'CURATOR/FRAME_UPDATE_SUCCESS';
 export const FRAME_UPDATE_ERROR = 'CURATOR/FRAME_UPDATE_ERROR';
 
 export const SELECT_SCENE_GROUP = 'CURATOR/SELECT_SCENE_GROUP';
+export const SELECT_CHARACTER = 'CURATOR/SELECT_CHARACTER';
 
 export const TOGGLE_VISIBILITY_FRAME_GROUP = 'CURATOR/TOGGLE_VISIBILITY_FRAME_GROUP';
 
 export const SCALE_UPDATE = 'CURATOR/SCALE_UPDATE';
+
+export { loadCharacters } from './quickies';
 
 export function toggleFrameSize () {
   return { type: TOGGLE_FRAME_SIZE };
@@ -170,5 +173,12 @@ export function selectSceneGroup (sceneGroupId) {
   return (dispatch) => {
     dispatch({ sceneGroupId, type: SELECT_SCENE_GROUP });
     dispatch(selectFirstScene());
+  };
+}
+
+export function selectCharacter (characterId) {
+  return (dispatch) => {
+    dispatch({ characterId, type: SELECT_CHARACTER });
+    // dispatch(selectFirstScene());
   };
 }

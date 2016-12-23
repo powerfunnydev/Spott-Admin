@@ -3,14 +3,17 @@ import { List, Map } from 'immutable';
 import {
   createEntitiesByRelationSelector,
   currentVideoIdSelector,
+  characterEntitiesSelector,
   sceneEntitiesSelector,
   videoHasScenesRelationsSelector,
   videoHasSceneGroupsRelationsSelector,
   sceneGroupEntitiesSelector
  } from './common';
+import { mediumCharactersSelector } from './quickiesBar/charactersTab';
 
 const _sceneGroupsSelector = createEntitiesByRelationSelector(videoHasSceneGroupsRelationsSelector, currentVideoIdSelector, sceneGroupEntitiesSelector);
 
+export const currentCharacterIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'currentCharacterId' ]);
 export const currentSceneIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'currentSceneId' ]);
 export const currentSceneGroupIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'currentSceneGroupId' ]);
 export const enlargeFrameSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'enlargeFrame' ]);
@@ -22,6 +25,12 @@ export const currentSceneSelector = createSelector(
   currentSceneIdSelector,
   sceneEntitiesSelector,
   (sceneId, scenes) => (sceneId && scenes ? scenes.get(sceneId) : null)
+);
+
+export const currentCharacterSelector = createSelector(
+  currentCharacterIdSelector,
+  characterEntitiesSelector,
+  (characterId, characters) => (characterId && characters ? characters.get(characterId) : null)
 );
 
 export const allScenesSelector = createSelector(
@@ -103,6 +112,8 @@ const numVisibleScenesSelector = createSelector(
 );
 
 export const sidebarSelector = createStructuredSelector({
+  characters: mediumCharactersSelector,
+  currentCharacter: currentCharacterSelector,
   currentSceneGroup: currentSceneGroupSelector,
   sceneGroups: sceneGroupsSelector
 });

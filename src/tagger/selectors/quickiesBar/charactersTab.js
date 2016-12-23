@@ -13,7 +13,7 @@ export const openCharacterIdSelector = (state) => state.getIn([ 'tagger', 'tagge
 export const mediumCharactersSelector = createSelector(
   currentMediumSelector,
   characterEntitiesSelector,
-  (medium, characters) => (medium && medium.get('characters') && medium.get('characters').map((rel) => characters.get(rel.get('id')))) || List()
+  (medium, characters) => (medium && medium.get('characters') && medium.get('characters').map((rel) => characters.get(rel.get('id')))).filter((c) => c && c.get('id')) || List()
 );
 
 export const currentCharacterSelector = createSelector(
