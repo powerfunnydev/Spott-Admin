@@ -88,6 +88,7 @@ export const selectedAppearanceSelector = (state) => state.getIn([ 'tagger', 'ta
 export const updateAppearanceIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'app', 'updateAppearanceId' ]);
 
 // Selectors related to the `data.relations` part of the state tree.
+export const characterHasAppearancesRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'characterHasAppearances' ]);
 export const characterSearchRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'characterSearch' ]);
 export const characterHasProductGroupsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'characterHasProductGroups' ]);
 export const mediumHasProductGroupsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'mediumHasProductGroups' ]);

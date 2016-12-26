@@ -1,6 +1,8 @@
 import { createSelector, createStructuredSelector } from 'reselect';
 import { List, Map } from 'immutable';
 import {
+  appearanceEntitiesSelector,
+  characterHasAppearancesRelationsSelector,
   createEntitiesByRelationSelector,
   currentVideoIdSelector,
   characterEntitiesSelector,
@@ -11,8 +13,6 @@ import {
  } from './common';
 import { mediumCharactersSelector } from './quickiesBar/charactersTab';
 
-const _sceneGroupsSelector = createEntitiesByRelationSelector(videoHasSceneGroupsRelationsSelector, currentVideoIdSelector, sceneGroupEntitiesSelector);
-
 export const currentCharacterIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'currentCharacterId' ]);
 export const currentSceneIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'currentSceneId' ]);
 export const currentSceneGroupIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'currentSceneGroupId' ]);
@@ -20,6 +20,9 @@ export const enlargeFrameSelector = (state) => state.getIn([ 'tagger', 'tagger',
 export const hideNonKeyFramesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'hideNonKeyFrames' ]);
 export const scaleSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'scale' ]);
 export const hideSceneGroupSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'hideSceneGroup' ]);
+
+const _sceneGroupsSelector = createEntitiesByRelationSelector(videoHasSceneGroupsRelationsSelector, currentVideoIdSelector, sceneGroupEntitiesSelector);
+const _characterAppearancesSelector = createEntitiesByRelationSelector(characterHasAppearancesRelationsSelector, currentCharacterIdSelector, appearanceEntitiesSelector);
 
 export const currentSceneSelector = createSelector(
   currentSceneIdSelector,
@@ -89,15 +92,23 @@ export const currentSceneGroupSelector = createSelector(
 
 export const visibleScenesSelector = createSelector(
   currentSceneGroupSelector,
+  currentCharacterIdSelector,
+  _characterAppearancesSelector,
+  sceneEntitiesSelector,
   hideNonKeyFramesSelector,
-  (currentSceneGroup, hideNonKeyFrames) => {
+  (currentSceneGroup, currentCharacterId, characterAppearances, scenesById, hideNonKeyFrames) => {
+    let result = List();
     if (currentSceneGroup) {
-      return currentSceneGroup
-        .get('scenes')
-        .filter((frame) => !frame.get('hidden') &&
-          (!hideNonKeyFrames || currentSceneGroup.get('keySceneId') === frame.get('id')));
+      result = currentSceneGroup.get('scenes');
     }
-    return List();
+    if (currentCharacterId) {
+      result = characterAppearances.get('data').map((a) => {
+        return scenesById.get(a.get('sceneId')).set('appearance', a);
+      }).filter((s) => s);
+    }
+    return result
+      .filter((frame) => !frame.get('hidden') &&
+        (!hideNonKeyFrames || currentSceneGroup.get('keySceneId') === frame.get('id')));
   }
 );
 

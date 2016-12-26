@@ -5,6 +5,7 @@ import * as sceneGroupActions from '../actions/sceneGroup';
 import { CHARACTER, PRODUCT } from '../constants/appearanceTypes';
 import * as organizer from '../actions/organizer';
 import { ERROR, FETCHING, LOADED, UPDATING } from '../constants/statusTypes';
+import * as characterActions from '../actions/character';
 
 const appearance = new Schema('appearances', { idAttribute: 'appearanceId' });
 const character = new Schema('characters');
@@ -128,6 +129,7 @@ function stripSimilarProducts (similarProducts) {
   *    -> media
   *    -> videos
   * -> relations
+  *    -> characterHasAppearances
   *    -> characterSearch { searchString: [ id ] }
   *    -> characterHasProductGroups { characterId: [ { id, name, products: [ { characterId, productId, relevance } ] } ] }
   *    -> mediumHasProductGroups { mediumId: [ { id, name, products: [ { characterId, productId, relevance } ] } ] }
@@ -145,7 +147,7 @@ export default (state = fromJS({
     productGroups: {}, sceneGroups: {}, scenes: {}, media: {}, videos: {}
   },
   relations: {
-    characterSearch: {}, characterHasProductGroups: {}, mediumHasProductGroups: {},
+    characterHasAppearances: {}, characterSearch: {}, characterHasProductGroups: {}, mediumHasProductGroups: {},
     productHasSimilarProducts: {}, productSearch: {}, sceneHasCharacters: {},
     sceneHasProducts: {}, videoHasProducts: {}, videoHasScenes: {}, videoHasSceneGroups: {}
   }
@@ -336,6 +338,16 @@ export default (state = fromJS({
     case actionTypes.CHARACTERS_OF_SCENE_FETCH_START:
       // Do nothing when start to fetch the character ids. We will use the characters in the cache.
       return state;
+    case characterActions.CHARACTER_APPEARANCES_FETCH_SUCCESS: {
+      const data = action.data;
+      // Set the type of appearance to character.
+      for (const characterAppearance of data) {
+        characterAppearance.type = CHARACTER;
+      }
+      const { entities: { appearances: appearanceEntities }, result: appearancesResult } = normalize(data, arrayOf(appearance));
+      return state.mergeIn([ 'entities', 'appearances' ], appearanceEntities)
+        .setIn([ 'relations', 'characterHasAppearances', action.characterId ], Map({ type: LOADED, data: fromJS(appearancesResult) }));
+    }
     case actionTypes.CREATE_CHARACTER_MARKER_SUCCESS:
     case actionTypes.UPDATE_CHARACTER_MARKER_SUCCESS:
     case actionTypes.CHARACTERS_OF_SCENE_FETCH_SUCCESS:

@@ -30,6 +30,12 @@ import { apiBaseUrlSelector, authenticationTokenSelector, currentLocaleSelector 
 import { CHARACTER } from '../constants/appearanceTypes';
 import { REVIEW } from '../constants/markerStatusTypes';
 
+export const CHARACTER_APPEARANCES_FETCH_START = 'CHARACTER/CHARACTER_APPEARANCES_FETCH_START';
+export const CHARACTER_APPEARANCES_FETCH_SUCCESS = 'CHARACTER/CHARACTER_APPEARANCES_FETCH_SUCCESS';
+export const CHARACTER_APPEARANCES_FETCH_ERROR = 'CHARACTER/CHARACTER_APPEARANCES_FETCH_ERROR';
+
+export const fetchCharacterAppearances = makeApiActionCreator(characterApi.getCharacterAppearances, CHARACTER_APPEARANCES_FETCH_START, CHARACTER_APPEARANCES_FETCH_SUCCESS, CHARACTER_APPEARANCES_FETCH_ERROR);
+
 function _getCharactersOfScene (state) {
   const sceneId = currentSceneIdSelector(state);
   return sceneHasCharactersRelationsSelector(state).get(sceneId) || List();

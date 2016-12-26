@@ -155,8 +155,8 @@ export default class Curator extends Component {
           {scenes.map((frame, j) => (
             <Frame
               frame={frame}
-              isKeyFrame={currentSceneGroup && currentSceneGroup.get('keySceneId') === frame.get('id')}
-              isSelected={currentScene === frame}
+              isKeyFrame={(currentSceneGroup && currentSceneGroup.get('keySceneId') === frame.get('id')) || frame.getIn([ 'appearance', 'keyAppearance' ])}
+              isSelected={(currentScene && currentScene.get('id')) === frame.get('id')}
               key={frame.get('id')}
               procentualHeightOfWidth={60}
               procentualWidth={100 / reverseScale}
