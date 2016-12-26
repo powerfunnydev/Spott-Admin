@@ -6,6 +6,7 @@ export const CONTENT_PRODUCER = 'contentProducer';
 export const EPISODE = 'episode';
 export const MOVIE = 'movie';
 export const PERSON = 'person';
+export const PRODUCT = 'product';
 export const SEASON = 'season';
 export const SERIES_ENTRY = 'seriesEntry';
 export const USER = 'user';

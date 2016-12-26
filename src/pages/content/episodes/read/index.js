@@ -50,7 +50,7 @@ export default class ReadEpisode extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/seasons', true);
+    this.props.routerPushWithReturnTo('/content/seasons', true);
   }
 
   onChangeTab (index) {

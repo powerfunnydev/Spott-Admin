@@ -104,7 +104,7 @@ export default class EditShop extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/shops', true);
+    this.props.routerPushWithReturnTo('/content/shops', true);
   }
 
   languageAdded (form) {

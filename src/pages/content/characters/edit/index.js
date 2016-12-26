@@ -127,7 +127,7 @@ export default class EditCharacter extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/characters', true);
+    this.props.routerPushWithReturnTo('/content/characters', true);
   }
 
   languageAdded (form) {

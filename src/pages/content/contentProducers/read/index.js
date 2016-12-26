@@ -51,7 +51,7 @@ export default class ReadContentProducer extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/contentProducers', true);
+    this.props.routerPushWithReturnTo('/content/contentProducers', true);
   }
 
   onChangeTab (index) {

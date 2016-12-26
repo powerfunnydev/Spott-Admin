@@ -56,7 +56,7 @@ export default class ReadSeriesEntry extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/series', true);
+    this.props.routerPushWithReturnTo('/content/series', true);
   }
 
   onChangeTab (index) {

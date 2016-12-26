@@ -87,7 +87,7 @@ export default class CreateBrandModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo('content/brands', true);
+    this.props.routerPushWithReturnTo('/content/brands', true);
   }
 
   render () {

@@ -85,7 +85,7 @@ export default class Persons extends Component {
 
   onCreatePerson (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/persons/create');
+    this.props.routerPushWithReturnTo('/content/persons/create');
   }
 
   async onClickDeleteSelected () {
@@ -179,7 +179,7 @@ export default class Persons extends Component {
                         onDelete={async (e) => { e.preventDefault(); await this.deletePerson(person.get('id')); }}
                         onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/persons/edit/${person.get('id')}`); }}/>
                     ))}
-                    <Tile key={'createPerson'} onCreate={() => { this.props.routerPushWithReturnTo('content/persons/create'); }}/>
+                    <Tile key={'createPerson'} onCreate={() => { this.props.routerPushWithReturnTo('/content/persons/create'); }}/>
                   </div>
                   <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
                 </div>

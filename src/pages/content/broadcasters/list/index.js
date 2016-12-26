@@ -78,7 +78,7 @@ export default class Broadcasters extends Component {
 
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/broadcasters/create');
+    this.props.routerPushWithReturnTo('/content/broadcasters/create');
   }
 
   async onClickDeleteSelected () {
@@ -173,7 +173,7 @@ export default class Broadcasters extends Component {
                           this.props.routerPushWithReturnTo(`/content/broadcasters/edit/${broadcaster.get('id')}`);
                         }}/>
                     ))}
-                    <Tile key={'createBroadcaster'} onCreate={() => this.props.routerPushWithReturnTo('content/broadcasters/create')}/>
+                    <Tile key={'createBroadcaster'} onCreate={() => this.props.routerPushWithReturnTo('/content/broadcasters/create')}/>
                   </div>
                   <Pagination currentPage={(broadcastersPage && (parseInt(broadcastersPage, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(broadcastersPage, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(broadcastersPage, 10), true); }}/>
                 </div>

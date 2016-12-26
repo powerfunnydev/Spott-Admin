@@ -53,7 +53,7 @@ export default class ReadBroadcaster extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/broadcasters', true);
+    this.props.routerPushWithReturnTo('/content/broadcasters', true);
   }
 
   onChangeTab (tab) {

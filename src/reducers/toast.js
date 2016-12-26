@@ -9,6 +9,7 @@ import * as commercialActions from '../actions/commercial';
 import * as episodeActions from '../actions/episode';
 import * as movieActions from '../actions/movie';
 import * as personActions from '../actions/person';
+import * as productActions from '../actions/product';
 import * as seasonActions from '../actions/season';
 import * as seriesActions from '../actions/series';
 import * as tvGuideActions from '../actions/tvGuide';
@@ -69,6 +70,10 @@ export default (state = List(), action) => {
     case personActions.PERSONS_DELETE_ERROR:
     case personActions.PERSON_PERSIST_ERROR:
       return pushError(state, action.error, entityTypes.PERSON);
+    case productActions.PRODUCT_DELETE_ERROR:
+    case productActions.PRODUCTS_DELETE_ERROR:
+    case productActions.PRODUCT_PERSIST_ERROR:
+      return pushError(state, action.error, entityTypes.PRODUCT);
     case seasonActions.SEASON_DELETE_ERROR:
     case seasonActions.SEASONS_DELETE_ERROR:
     case seasonActions.SEASON_PERSIST_ERROR:
@@ -105,6 +110,8 @@ export default (state = List(), action) => {
       return pushSuccess(state, action.data, entityTypes.MOVIE);
     case personActions.PERSON_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.PERSON);
+    case productActions.PRODUCT_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, entityTypes.PRODUCT);
     case seasonActions.SEASON_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.SEASON);
     case seriesActions.SERIES_ENTRY_PERSIST_SUCCESS:

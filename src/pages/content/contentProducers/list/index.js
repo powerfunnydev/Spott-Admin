@@ -85,7 +85,7 @@ export default class ContentProducers extends Component {
 
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/content-producers/create');
+    this.props.routerPushWithReturnTo('/content/content-producers/create');
   }
 
   async onClickDeleteSelected () {
@@ -181,7 +181,7 @@ export default class ContentProducers extends Component {
                           this.props.routerPushWithReturnTo(`/content/content-producers/edit/${contentProducer.get('id')}`);
                         }}/>
                     ))}
-                    <Tile key={'createBroadcaster'} onCreate={() => { this.props.routerPushWithReturnTo('content/content-producers/create'); }}/>
+                    <Tile key={'createBroadcaster'} onCreate={() => { this.props.routerPushWithReturnTo('/content/content-producers/create'); }}/>
                   </div>
                   <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
                 </div>

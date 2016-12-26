@@ -85,7 +85,7 @@ export default class Movies extends Component {
 
   onCreateMovie (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/movies/create');
+    this.props.routerPushWithReturnTo('/content/movies/create');
   }
 
   async onClickDeleteSelected () {
@@ -179,7 +179,7 @@ export default class Movies extends Component {
                         onDelete={async (e) => { e.preventDefault(); await this.deleteMovie(movie.get('id')); }}
                         onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/movies/edit/${movie.get('id')}`); }}/>
                     ))}
-                    <Tile key={'createMovie'} onCreate={() => { this.props.routerPushWithReturnTo('content/movies/create'); }}/>
+                    <Tile key={'createMovie'} onCreate={() => { this.props.routerPushWithReturnTo('/content/movies/create'); }}/>
                   </div>
                   <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
                 </div>

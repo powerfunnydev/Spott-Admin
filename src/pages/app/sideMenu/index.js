@@ -251,15 +251,15 @@ class VerticalSideMenu extends Component {
           </div>}
           {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
             <div>
-              <Link activeStyle={styles.sectionActive} key='products' onlyActiveOnIndex style={styles.section} to='/content/brands'>
+              <Link activeStyle={styles.sectionActive} key='products' onlyActiveOnIndex style={styles.section} to='/content/products'>
                 <div style={styles.sectionTitle}>PRODUCTS</div>
               </Link>
                 { // Show dropdown
                   this.isProducts() &&
                     <div key='productsDropdown' style={styles.dropdownOpen}>
-                      {/* <Link activeStyle={styles.subSectionActive} key='products' style={mergeStyles([ styles.section, styles.subSectionTitle, styles.subSection ])} to='/content/products'>
+                      <Link activeStyle={styles.subSectionActive} key='products' style={mergeStyles([ styles.section, styles.subSectionTitle, styles.subSection ])} to='/content/products'>
                         Products
-                      </Link>*/}
+                      </Link>
                       <Link activeStyle={styles.subSectionActive} key='brands' style={mergeStyles([ styles.section, styles.subSectionTitle, styles.subSection ])} to='/content/brands'>
                         Brands
                       </Link>

@@ -73,7 +73,7 @@ export default class EditContentProducers extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/content-producers', true);
+    this.props.routerPushWithReturnTo('/content/content-producers', true);
   }
 
   async submit (form) {

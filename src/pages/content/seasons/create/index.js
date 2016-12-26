@@ -106,7 +106,7 @@ export default class CreateSeasonEntryModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo('content/seasons', true);
+    this.props.routerPushWithReturnTo('/content/seasons', true);
   }
 
   static styles = {

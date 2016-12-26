@@ -108,7 +108,7 @@ export default class EditBrand extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/brands', true);
+    this.props.routerPushWithReturnTo('/content/brands', true);
   }
 
   languageAdded (form) {

@@ -85,7 +85,7 @@ export default class Shops extends Component {
 
   onCreateShop (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/shops/create');
+    this.props.routerPushWithReturnTo('/content/shops/create');
   }
 
   async onClickDeleteSelected () {
@@ -195,7 +195,7 @@ export default class Shops extends Component {
                         onDelete={async (e) => { e.preventDefault(); await this.deleteShop(shop.get('id')); }}
                         onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/shops/edit/${shop.get('id')}`); }}/>
                     ))}
-                    <Tile key={'createShop'} onCreate={() => { this.props.routerPushWithReturnTo('content/shops/create'); }}/>
+                    <Tile key={'createShop'} onCreate={() => { this.props.routerPushWithReturnTo('/content/shops/create'); }}/>
                   </div>
                   <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
                 </div>

@@ -85,7 +85,7 @@ export default class List extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/broadcasters', true);
+    this.props.routerPushWithReturnTo('/content/broadcasters', true);
   }
 
   async onClickDeleteSelected () {

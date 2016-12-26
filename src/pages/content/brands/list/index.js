@@ -85,7 +85,7 @@ export default class Brands extends Component {
 
   onCreateBrand (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/brands/create');
+    this.props.routerPushWithReturnTo('/content/brands/create');
   }
 
   async onClickDeleteSelected () {
@@ -195,7 +195,7 @@ export default class Brands extends Component {
                         onDelete={async (e) => { e.preventDefault(); await this.deleteBrand(brand.get('id')); }}
                         onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/brands/edit/${brand.get('id')}`); }}/>
                     ))}
-                    <Tile key={'createBrand'} onCreate={() => { this.props.routerPushWithReturnTo('content/brands/create'); }}/>
+                    <Tile key={'createBrand'} onCreate={() => { this.props.routerPushWithReturnTo('/content/brands/create'); }}/>
                   </div>
                   <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
                 </div>

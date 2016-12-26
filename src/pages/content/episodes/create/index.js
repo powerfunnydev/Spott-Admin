@@ -172,7 +172,7 @@ export default class CreateEpisodentryModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo('content/series', true);
+    this.props.routerPushWithReturnTo('/content/series', true);
   }
 
   static styles = {

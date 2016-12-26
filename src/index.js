@@ -56,6 +56,10 @@ import PersonsCreate from './pages/content/persons/create';
 import PersonsEdit from './pages/content/persons/edit';
 import PersonsList from './pages/content/persons/list';
 import PersonsRead from './pages/content/persons/read';
+import ProductsCreate from './pages/content/products/create';
+import ProductsEdit from './pages/content/products/edit';
+import ProductsList from './pages/content/products/list';
+import ProductsRead from './pages/content/products/read';
 import ResetPassword from './pages/resetPassword';
 import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
@@ -236,6 +240,13 @@ function getRoutes ({ dispatch, getState }) {
           <Route component={SeriesCreate} path='create'/>
           <Route component={SeasonCreate} path='create/season'/>
           <Route component={EpisodeCreate} path='create/episode'/>
+        </Route>
+        <Route component={ProductsList} path='products'>
+        <Route component={ProductsCreate} path ='create'/>
+        </Route>
+        <Route path='products'>
+          <Route component={ProductsRead} path='read/:productId'/>
+          <Route component={ProductsEdit} path='edit/:productId'/>
         </Route>
         <Route component={ShopsList} path='shops'>
           <Route component={ShopsCreate} path ='create'/>

@@ -80,7 +80,7 @@ export default class EditVideo extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/series', true);
+    this.props.routerPushWithReturnTo('/content/series', true);
   }
 
   async submit (form) {

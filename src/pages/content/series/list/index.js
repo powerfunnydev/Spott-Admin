@@ -87,17 +87,17 @@ export default class SeriesEntries extends Component {
 
   onCreateSeriesEntry (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/series/create');
+    this.props.routerPushWithReturnTo('/content/series/create');
   }
 
   onCreateSeason (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/series/create/season');
+    this.props.routerPushWithReturnTo('/content/series/create/season');
   }
 
   onCreateEpisode (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/series/create/episode');
+    this.props.routerPushWithReturnTo('/content/series/create/episode');
   }
 
   async onClickDeleteSelected () {
@@ -201,7 +201,7 @@ export default class SeriesEntries extends Component {
                         onDelete={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}
                         onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/series/edit/${seriesEntry.get('id')}`); }}/>
                     ))}
-                    <Tile key={'createSeriesEntry'} onCreate={() => { this.props.routerPushWithReturnTo('content/series/create'); }}/>
+                    <Tile key={'createSeriesEntry'} onCreate={() => { this.props.routerPushWithReturnTo('/content/series/create'); }}/>
                   </div>
                   <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
                 </div>

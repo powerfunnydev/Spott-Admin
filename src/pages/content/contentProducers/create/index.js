@@ -73,7 +73,7 @@ export default class CreateContentProducerModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo('content/content-producers', true);
+    this.props.routerPushWithReturnTo('/content/content-producers', true);
   }
 
   render () {

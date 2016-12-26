@@ -72,7 +72,7 @@ export default class EditBroadcaster extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/broadcasters', true);
+    this.props.routerPushWithReturnTo('/content/broadcasters', true);
   }
 
   async submit (form) {

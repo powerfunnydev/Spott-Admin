@@ -87,7 +87,7 @@ export default class CreateShopModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo('content/shops', true);
+    this.props.routerPushWithReturnTo('/content/shops', true);
   }
 
   render () {

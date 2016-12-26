@@ -49,7 +49,7 @@ export default class ReadMovie extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/movies', true);
+    this.props.routerPushWithReturnTo('/content/movies', true);
   }
 
   onChangeTab (index) {

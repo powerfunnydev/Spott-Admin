@@ -1,5 +1,28 @@
 import { ACTIVE, INACTIVE, ADMIN, CONTENT_MANAGER, CONTENT_PRODUCER, BROADCASTER } from '../constants/userRoles';
 
+export function transformListProduct ({ uuid, shortName, auditInfo, image: logo }) {
+  return {
+    createdOn: auditInfo && auditInfo.createdOn,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    logo: logo && { id: logo.uuid, url: logo.url },
+    shortName
+  };
+}
+
+export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover }) {
+  return {
+    createdOn: auditInfo && auditInfo.createdOn,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    logo: logo && { id: logo.uuid, url: logo.url },
+    profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
+    name
+  };
+}
+
 export function transformBroadcaster ({ logo, name, uuid }) {
   return { logo: logo && { id: logo.uuid, url: logo.url }, name, id: uuid };
 }
@@ -69,16 +92,35 @@ export function transformShop ({ uuid, publishStatus, defaultLocale, localeData 
   return shop;
 }
 
-export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover }) {
-  return {
+export function transformProduct ({ uuid, brand, publishStatus, defaultLocale, localeData, auditInfo }) {
+  const product = {
+    basedOnDefaultLocale: {},
     createdOn: auditInfo && auditInfo.createdOn,
+    defaultLocale,
+    description: {},
     id: uuid,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
-    logo: logo && { id: logo.uuid, url: logo.url },
-    profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
-    name
+    locales: [],
+    logo: {},
+    publishStatus,
+    profileImage: {},
+    shortName: {},
+    fullName: {},
+    brand: brand && transformListBrand(brand)
   };
+  if (localeData) {
+    for (const { basedOnDefaultLocale, description, images, locale, shortName, fullName, profileCover } of localeData) {
+      product.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      product.description[locale] = description;
+      product.shortName[locale] = shortName;
+      product.fullName[locale] = fullName;
+      product.logo[locale] = images && images[0] && { id: images[0].uuid, url: images[0].url };
+      product.profileImage[locale] = profileCover && { id: profileCover.uuid, url: profileCover.url };
+      product.locales.push(locale);
+    }
+  }
+  return product;
 }
 
 export function transformListShop ({ uuid, name, publishStatus, auditInfo, logo, profileCover }) {

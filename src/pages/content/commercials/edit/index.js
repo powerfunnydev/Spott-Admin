@@ -127,7 +127,7 @@ export default class EditCommercial extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/commercials', true);
+    this.props.routerPushWithReturnTo('/content/commercials', true);
   }
 
   languageAdded (form) {

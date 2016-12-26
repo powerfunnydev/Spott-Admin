@@ -47,7 +47,7 @@ export default class ReadCommercial extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/commercials', true);
+    this.props.routerPushWithReturnTo('/content/commercials', true);
   }
 
   onChangeTab (index) {
@@ -56,7 +56,7 @@ export default class ReadCommercial extends Component {
 
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/commercials');
+    this.props.routerPushWithReturnTo('/content/commercials');
   }
 
   static styles= {

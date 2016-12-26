@@ -85,7 +85,7 @@ export default class Seasons extends Component {
 
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/seasons/create');
+    this.props.routerPushWithReturnTo('/content/seasons/create');
   }
 
   async onClickDeleteSelected () {
@@ -185,7 +185,7 @@ export default class Seasons extends Component {
                           this.props.routerPushWithReturnTo(`/content/seasons/edit/${season.get('id')}`);
                         }}/>
                     ))}
-                    <Tile key={'createSeason'} onCreate={() => { this.props.routerPushWithReturnTo('content/seasons/create'); }}/>
+                    <Tile key={'createSeason'} onCreate={() => { this.props.routerPushWithReturnTo('/content/seasons/create'); }}/>
                   </div>
                   <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
                 </div>

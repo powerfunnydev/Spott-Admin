@@ -88,7 +88,7 @@ export default class List extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/seasons', true);
+    this.props.routerPushWithReturnTo('/content/seasons', true);
   }
 
   onCreateEpisode (e) {

@@ -123,7 +123,7 @@ export default class EditPerson extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/persons', true);
+    this.props.routerPushWithReturnTo('/content/persons', true);
   }
 
   languageAdded (form) {

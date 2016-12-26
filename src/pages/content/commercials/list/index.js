@@ -80,7 +80,7 @@ export default class Commercials extends Component {
 
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/commercials/create');
+    this.props.routerPushWithReturnTo('/content/commercials/create');
   }
 
   async onClickDeleteSelected () {
@@ -169,7 +169,7 @@ export default class Commercials extends Component {
                         onDelete={async (e) => { e.preventDefault(); await this.deleteCommercial(commercial.get('id')); }}
                         onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/commercials/edit/${commercial.get('id')}`); }}/>
                     ))}
-                    <Tile key='createCommercial' onCreate={() => { this.props.routerPushWithReturnTo('content/commercials/create'); }}/>
+                    <Tile key='createCommercial' onCreate={() => { this.props.routerPushWithReturnTo('/content/commercials/create'); }}/>
                   </div>
                   <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
                 </div>

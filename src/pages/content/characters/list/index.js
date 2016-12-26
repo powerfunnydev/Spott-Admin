@@ -85,7 +85,7 @@ export default class Characters extends Component {
 
   onCreateCharacter (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/characters/create');
+    this.props.routerPushWithReturnTo('/content/characters/create');
   }
 
   async onClickDeleteSelected () {
@@ -179,7 +179,7 @@ export default class Characters extends Component {
                         onDelete={async (e) => { e.preventDefault(); await this.deleteCharacter(character.get('id')); }}
                         onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/characters/edit/${character.get('id')}`); }}/>
                     ))}
-                    <Tile key={'createCharacter'} onCreate={() => { this.props.routerPushWithReturnTo('content/characters/create'); }}/>
+                    <Tile key={'createCharacter'} onCreate={() => { this.props.routerPushWithReturnTo('/content/characters/create'); }}/>
                   </div>
                   <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
                 </div>

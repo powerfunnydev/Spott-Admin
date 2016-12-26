@@ -46,7 +46,7 @@ export default class ReadCharacter extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/characters', true);
+    this.props.routerPushWithReturnTo('/content/characters', true);
   }
 
   onChangeTab (index) {

@@ -138,7 +138,7 @@ export default class EditMovie extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/movies', true);
+    this.props.routerPushWithReturnTo('/content/movies', true);
   }
 
   languageAdded (form) {
