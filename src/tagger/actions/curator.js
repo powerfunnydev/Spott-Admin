@@ -1,6 +1,6 @@
 import { currentVideoIdSelector } from '../selectors/common';
-import { currentSceneSelector, currentSceneIdSelector, scaleSelector, hideNonKeyFramesSelector, currentSceneGroupSelector, visibleScenesSelector } from '../selectors/curator';
-import { fetchCharacterAppearances as dataFetchCharacterAppearances } from './character';
+import { characterAppearancesSelector, currentSceneSelector, currentSceneIdSelector, scaleSelector, hideNonKeyFramesSelector, currentSceneGroupSelector, visibleScenesSelector } from '../selectors/curator';
+import { fetchCharacterAppearances as dataFetchCharacterAppearances, persistCharacterAppearance as dataPersistCharacterAppearance } from './character';
 import { fetchSceneGroups as dataFetchSceneGroups, persistSceneGroup as dataPersistSceneGroup } from './sceneGroup';
 
 export const TOGGLE_FRAME_SIZE = 'CURATOR/TOGGLE_FRAME_SIZE';
@@ -136,27 +136,45 @@ export function toggleKeyFrame (scene) {
   return async (dispatch, getState) => {
     const state = getState();
 
+    const videoId = currentVideoIdSelector(state);
     const currentSceneGroup = currentSceneGroupSelector(state);
     // When using HotKeys no scene is provided.
     const currentScene = scene || currentSceneSelector(state);
 
     // Do nothing if there is no scene selected.
-    if (!currentScene || !currentSceneGroup) {
+    if (!currentScene) {
       return;
     }
 
     const hideNonKeyFrames = hideNonKeyFramesSelector(state);
-    const nextScene = getNextScene(state, scene);
 
-    const updatedSceneGroup = await dispatch(persistSceneGroup({
-      ...currentSceneGroup.toJS(),
-      keySceneId: currentSceneGroup.get('keySceneId') === currentScene.get('id') ? null : currentScene.get('id')
-    }));
+    if (currentSceneGroup) {
+      await dispatch(persistSceneGroup({
+        ...currentSceneGroup.toJS(),
+        keySceneId: currentSceneGroup.get('keySceneId') === currentScene.get('id') ? null : currentScene.get('id')
+      }));
+    }
 
-    // When non key frames are hiiden and the current scene was a non key frame,
-    // then select the right scene.
-    if (hideNonKeyFrames && !updatedSceneGroup.keySceneId) {
-      dispatch(selectFrame(nextScene));
+    const characterAppearances = characterAppearancesSelector(state);
+    // Find the right appearance.
+    for (const characterAppearance of characterAppearances.get('data')) {
+      if (characterAppearance.get('sceneId') === currentScene.get('id')) {
+        const characterId = characterAppearance.get('id');
+        const appearance = {
+          ...characterAppearance.toJS(),
+          characterId,
+          keyAppearance: !characterAppearance.get('keyAppearance')
+        };
+        await dispatch(dataPersistCharacterAppearance(appearance));
+        await dispatch(dataFetchCharacterAppearances({ characterId, videoId }));
+        break;
+      }
+    }
+
+    // When non key frames are hidden and the current scene was a non key frame,
+    // deselect the frame.
+    if (hideNonKeyFrames) {
+      dispatch(selectFrame(null));
     }
   };
 }

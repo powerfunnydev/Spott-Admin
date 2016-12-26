@@ -143,8 +143,7 @@ export default class Curator extends Component {
       // The HotKeys component does not use Radium, therefore we need to join the styles manually.
       <HotKeys handlers={filterKeyEventsInInputFields(handlers)} keyMap={keyMap} style={{ ...styles.container, ...this.props.style }}>
         <LargeFrameModal
-          currentFrame={currentScene}
-          isKeyFrame={(currentSceneGroup && currentSceneGroup.get('keySceneId')) === (currentScene && currentScene.get('id'))}
+          frame={currentScene}
           isOpen={enlargeFrame}
           onClose={minimizeFrame}
           onSelectLeftFrame={selectLeftFrame}
@@ -155,7 +154,7 @@ export default class Curator extends Component {
           {scenes.map((frame, j) => (
             <Frame
               frame={frame}
-              isKeyFrame={(currentSceneGroup && currentSceneGroup.get('keySceneId') === frame.get('id')) || frame.getIn([ 'appearance', 'keyAppearance' ])}
+              isKeyFrame={frame.get('isKeyFrame')}
               isSelected={(currentScene && currentScene.get('id')) === frame.get('id')}
               key={frame.get('id')}
               procentualHeightOfWidth={60}

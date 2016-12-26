@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import colors from '../colors';
 import NonKeyFramesHider from './nonKeyFramesHider';
 
@@ -10,8 +11,7 @@ const arrow = require('../sceneEditor/images/arrow.svg');
 export default class LargeFrameModal extends Component {
 
   static propTypes = {
-    currentFrame: PropTypes.object,
-    isKeyFrame: PropTypes.bool.isRequired,
+    frame: ImmutablePropTypes.map,
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
     onSelectLeftFrame: PropTypes.func.isRequired,
@@ -94,9 +94,9 @@ export default class LargeFrameModal extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { currentFrame, isKeyFrame, isOpen, onSelectLeftFrame, onSelectRightFrame, onToggleKeyFrame } = this.props;
+    const { frame, isOpen, onSelectLeftFrame, onSelectRightFrame, onToggleKeyFrame } = this.props;
 
-    if (isOpen && currentFrame) {
+    if (isOpen && frame) {
       return (
         <div style={styles.overlay} onClick={this.onClose}>
           <button style={styles.close}>
@@ -107,8 +107,8 @@ export default class LargeFrameModal extends Component {
               <button style={styles.left} onClick={onSelectLeftFrame}>
                 <img src={arrow} style={styles.arrowLeft} title='Previous frame' />
               </button>
-              <div style={[ styles.imageWrapper.base, isKeyFrame && styles.imageWrapper.isKeyFrame ]}>
-                <img src={`${currentFrame.get('imageUrl')}?height=699&width=1242`} style={styles.image} />
+              <div style={[ styles.imageWrapper.base, frame.get('isKeyFrame') && styles.imageWrapper.isKeyFrame ]}>
+                <img src={`${frame.get('imageUrl')}?height=699&width=1242`} style={styles.image} />
               </div>
 
               <button style={styles.right} onClick={onSelectRightFrame}>
@@ -117,7 +117,7 @@ export default class LargeFrameModal extends Component {
             </div>
             <div style={styles.framesHider}>
               <NonKeyFramesHider
-                isKeyFrame={isKeyFrame}
+                isKeyFrame={frame.get('isKeyFrame')}
                 single
                 onToggleKeyFrame={onToggleKeyFrame}/>
             </div>

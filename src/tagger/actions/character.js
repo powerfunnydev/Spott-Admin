@@ -34,6 +34,10 @@ export const CHARACTER_APPEARANCES_FETCH_START = 'CHARACTER/CHARACTER_APPEARANCE
 export const CHARACTER_APPEARANCES_FETCH_SUCCESS = 'CHARACTER/CHARACTER_APPEARANCES_FETCH_SUCCESS';
 export const CHARACTER_APPEARANCES_FETCH_ERROR = 'CHARACTER/CHARACTER_APPEARANCES_FETCH_ERROR';
 
+export const CHARACTER_APPEARANCE_PERSIST_START = 'CHARACTER/CHARACTER_APPEARANCE_PERSIST_START';
+export const CHARACTER_APPEARANCE_PERSIST_SUCCESS = 'CHARACTER/CHARACTER_APPEARANCE_PERSIST_SUCCESS';
+export const CHARACTER_APPEARANCE_PERSIST_ERROR = 'CHARACTER/CHARACTER_APPEARANCE_PERSIST_ERROR';
+
 export const fetchCharacterAppearances = makeApiActionCreator(characterApi.getCharacterAppearances, CHARACTER_APPEARANCES_FETCH_START, CHARACTER_APPEARANCES_FETCH_SUCCESS, CHARACTER_APPEARANCES_FETCH_ERROR);
 
 function _getCharactersOfScene (state) {
@@ -93,6 +97,8 @@ export function createCharacterMarker ({ characterId, markerStatus = REVIEW, poi
     }
   };
 }
+
+export const persistCharacterAppearance = makeApiActionCreator(characterApi.postSceneCharacter, CHARACTER_APPEARANCE_PERSIST_START, CHARACTER_APPEARANCE_PERSIST_SUCCESS, CHARACTER_APPEARANCE_PERSIST_ERROR);
 
 export function createCharacterMarkerQuickies ({ characterId, point }) {
   // When a character marker is created via the quickiesbar, the marker has no region.

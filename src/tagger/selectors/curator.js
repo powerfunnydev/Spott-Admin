@@ -22,13 +22,7 @@ export const scaleSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curat
 export const hideSceneGroupSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'hideSceneGroup' ]);
 
 const _sceneGroupsSelector = createEntitiesByRelationSelector(videoHasSceneGroupsRelationsSelector, currentVideoIdSelector, sceneGroupEntitiesSelector);
-const _characterAppearancesSelector = createEntitiesByRelationSelector(characterHasAppearancesRelationsSelector, currentCharacterIdSelector, appearanceEntitiesSelector);
-
-export const currentSceneSelector = createSelector(
-  currentSceneIdSelector,
-  sceneEntitiesSelector,
-  (sceneId, scenes) => (sceneId && scenes ? scenes.get(sceneId) : null)
-);
+export const characterAppearancesSelector = createEntitiesByRelationSelector(characterHasAppearancesRelationsSelector, currentCharacterIdSelector, appearanceEntitiesSelector);
 
 export const currentCharacterSelector = createSelector(
   currentCharacterIdSelector,
@@ -93,23 +87,35 @@ export const currentSceneGroupSelector = createSelector(
 export const visibleScenesSelector = createSelector(
   currentSceneGroupSelector,
   currentCharacterIdSelector,
-  _characterAppearancesSelector,
+  characterAppearancesSelector,
   sceneEntitiesSelector,
   hideNonKeyFramesSelector,
   (currentSceneGroup, currentCharacterId, characterAppearances, scenesById, hideNonKeyFrames) => {
     let result = List();
     if (currentSceneGroup) {
-      result = currentSceneGroup.get('scenes');
+      result = currentSceneGroup
+        .get('scenes')
+        .map((f) => f.set('isKeyFrame', currentSceneGroup.get('keySceneId') === f.get('id')));
     }
     if (currentCharacterId) {
-      result = characterAppearances.get('data').map((a) => {
-        return scenesById.get(a.get('sceneId')).set('appearance', a);
-      }).filter((s) => s);
+      result = characterAppearances
+        .get('data')
+        .map((a) => {
+          return scenesById.get(a.get('sceneId')).set('appearance', a);
+        })
+        .filter((f) => f)
+        .map((f) => f.set('isKeyFrame', f.getIn([ 'appearance', 'keyAppearance' ])));
     }
     return result
-      .filter((frame) => !frame.get('hidden') &&
-        (!hideNonKeyFrames || currentSceneGroup.get('keySceneId') === frame.get('id')));
+      .filter((f) => !f.get('hidden') &&
+        (!hideNonKeyFrames || f.get('isKeyFrame')));
   }
+);
+
+export const currentSceneSelector = createSelector(
+  currentSceneIdSelector,
+  visibleScenesSelector,
+  (sceneId, scenes) => scenes.find((s) => s.get('id') === sceneId)
 );
 
 const numAllScenesSelector = createSelector(

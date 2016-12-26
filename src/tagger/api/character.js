@@ -118,12 +118,13 @@ export async function getCharacter (baseUrl, authenticationToken, locale, { char
  * @throws NotFoundError
  * @throws UnexpectedError
  */
-export async function postSceneCharacter (baseUrl, authenticationToken, locale, { appearanceId, characterId, markerHidden, markerStatus, point, region, sceneId, videoId }) {
+export async function postSceneCharacter (baseUrl, authenticationToken, locale, { appearanceId, characterId, keyAppearance, markerHidden, markerStatus, point, region, sceneId }) {
   try {
     const { body: { data: characters } } = await post(authenticationToken, 'en', `${baseUrl}/v004/video/scenes/${sceneId}/characters`, {
       character: {
         uuid: characterId
       },
+      keyAppearance,
       markerHidden,
       markerStatus,
       point,
