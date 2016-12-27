@@ -121,7 +121,7 @@ export default class Curator extends Component {
   render () {
     const { keyMap, styles } = this.constructor;
     const {
-      currentScene, currentSceneGroup, hideNonKeyFrames, enlargeFrame, minimizeFrame,
+      currentScene, hideNonKeyFrames, enlargeFrame, minimizeFrame,
       selectLeftFrame, selectRightFrame, scenes,
       selectFrame, toggleFrameSize, toggleKeyFrame, toggleHideNonKeyFrames
     } = this.props;

@@ -3,13 +3,9 @@ import { del, get, post, BadRequestError, NotFoundError, UnexpectedError } from 
 // TODO: Currently we take the first entry in localeData. Later on when localization
 // is implemented, we can change this.
 
-function transformSceneProducts (products) {
-  const result = [];
-  for (const { character, markerHidden, markerStatus, product: { uuid: id }, relevance, uuid: appearanceId, point, region } of products) {
-    // Character is optional.
-    result.push({ appearanceId, characterId: character && character.uuid, id, markerHidden, markerStatus, point, region, relevance });
-  }
-  return result;
+function transformProductAppearance ({ character, keyAppearance, markerHidden, markerStatus, product: { uuid: id }, relevance, uuid: appearanceId, point, region }) {
+  // Character is optional.
+  return { appearanceId, characterId: character && character.uuid, id, keyAppearance, markerHidden, markerStatus, point, region, relevance };
 }
 
 function _transformVideoProducts (products) {
@@ -26,8 +22,12 @@ function transformDetailedProduct (product) {
   const brand = { ...product.brand, ...product.brandInfo };
   // Images are optional, take the first image url.
   // brandName is optional.
-  const { localeData: [ { images, shortName } ], uuid: id } = product;
-  return { brandId: brand.uuid, brandName: brand.name, id, imageUrl: images && images.length > 0 ? images[0].url : null, shortName };
+  const { image, shortName, uuid: id } = product;
+  if (product.localeData) {
+    const { localeData: [ { images, shortName } ] } = product;
+    return { brandId: brand.uuid, brandName: brand.name, id, imageUrl: images && images.length > 0 ? images[0].url : null, shortName };
+  }
+  return { brandId: brand.uuid, brandName: brand.name, id, imageUrl: image && image.url, shortName };
 }
 
 function transformSuggestedProducts (suggestedProducts) {
@@ -77,9 +77,19 @@ function transformSimilarProduct ({ matchPercentage, product, uuid: id }) {
  * @throws NotFoundError
  * @throws UnexpectedError
  */
-export async function getSceneProducts (baseUrl, authenticationToken, locale, { sceneId, videoId }) {
+export async function getSceneProducts (baseUrl, authenticationToken, locale, { sceneId }) {
   const { body: { data: products } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/scenes/${sceneId}/products`);
-  return transformSceneProducts(products);
+  return products.map(transformProductAppearance);
+}
+
+export async function getVideoProducts (baseUrl, authenticationToken, locale, { videoId }) {
+  const { body: { data: products } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/allProducts`);
+  return products.map(transformDetailedProduct);
+}
+
+export async function getProductAppearances (baseUrl, authenticationToken, locale, { productId, videoId }) {
+  const { body: { data: products } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/sceneProducts?productUuid=${productId}`);
+  return products.map(transformProductAppearance);
 }
 
 /**
@@ -97,7 +107,7 @@ export async function getSceneProducts (baseUrl, authenticationToken, locale, { 
  * @throws NotFoundError
  * @throws UnexpectedError
  */
-export async function getVideoProducts (baseUrl, authenticationToken, locale, { videoId }) {
+export async function getGlobalProducts (baseUrl, authenticationToken, locale, { videoId }) {
   try {
     const { body: { data: products } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/products`);
     return _transformVideoProducts(products);
@@ -244,13 +254,13 @@ export async function getSimilarProducts (baseUrl, authenticationToken, locale, 
  * @throws NotFoundError
  * @throws UnexpectedError
  */
-// TODO add region
-export async function postSceneProduct (baseUrl, authenticationToken, locale, { appearanceId, characterId, markerHidden, markerStatus, point, productId, relevance, sceneId, videoId }) {
+export async function postSceneProduct (baseUrl, authenticationToken, locale, { appearanceId, characterId, keyAppearance, markerHidden, markerStatus, point, productId, relevance, sceneId, videoId }) {
   try {
     const { body: { data: products } } = await post(authenticationToken, 'en', `${baseUrl}/v004/video/scenes/${sceneId}/products`, {
       character: characterId && {
         uuid: characterId
       },
+      keyAppearance,
       markerHidden,
       markerStatus,
       point,
@@ -264,7 +274,7 @@ export async function postSceneProduct (baseUrl, authenticationToken, locale, { 
       sortOrder: 0,
       uuid: appearanceId
     });
-    return transformSceneProducts(products);
+    return products.map(transformProductAppearance);
   } catch (error) {
     switch (error.statusCode) {
       case 400:
@@ -311,6 +321,7 @@ export async function postVideoProduct (baseUrl, authenticationToken, locale, { 
       sortOrder: 0,
       uuid: appearanceId
     });
+    console.warn('products', _transformVideoProducts(products));
     return _transformVideoProducts(products);
   } catch (error) {
     switch (error.statusCode) {
@@ -367,7 +378,7 @@ export async function postVideoProduct (baseUrl, authenticationToken, locale, { 
 export async function deleteSceneProduct (baseUrl, authenticationToken, locale, { productAppearanceId, sceneId, videoId }) {
   try {
     const { body: { data: products } } = await del(authenticationToken, 'en', `${baseUrl}/v004/video/scenes/${sceneId}/products/${productAppearanceId}`);
-    return transformSceneProducts(products);
+    return products.map(transformProductAppearance);
   } catch (error) {
     switch (error.statusCode) {
       // case 403:

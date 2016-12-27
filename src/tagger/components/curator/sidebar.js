@@ -8,6 +8,7 @@ import { sidebarSelector } from '../../selectors/curator';
 import colors from '../colors';
 import Character from './character';
 import SceneGroup from './sceneGroup';
+import Section from '../_helpers/section';
 
 @connect(sidebarSelector, (dispatch) => ({
   loadCharacters: bindActionCreators(actions.loadCharacters, dispatch),
@@ -39,6 +40,9 @@ export default class Sidebar extends Component {
       padding: 0,
       margin: 0,
       width: '100%'
+    },
+    activeSection: {
+      boxShadow: 'none'
     }
   };
 
@@ -48,21 +52,28 @@ export default class Sidebar extends Component {
 
     return (
       <ul style={[ style, styles.container ]}>
-        {sceneGroups.map((sceneGroup, i) => (
-          <SceneGroup
-            key={sceneGroup.get('id')}
-            number={i + 1}
-            sceneGroup={sceneGroup}
-            selected={sceneGroup === currentSceneGroup}
-            onClick={selectSceneGroup.bind(null, sceneGroup.get('id'))}/>
-        ))}
-        {characters.map((character) => (
-          <Character
-            character={character}
-            key={character.get('id')}
-            selected={character === currentCharacter}
-            onClick={selectCharacter.bind(null, character.get('id'))} />
-        ))}
+        <Section activeStyle={styles.activeSection} title='Scenes'>
+          {sceneGroups.map((sceneGroup, i) => (
+            <SceneGroup
+              key={sceneGroup.get('id')}
+              number={i + 1}
+              sceneGroup={sceneGroup}
+              selected={sceneGroup === currentSceneGroup}
+              onClick={selectSceneGroup.bind(null, sceneGroup.get('id'))}/>
+          ))}
+        </Section>
+        <Section activeStyle={styles.activeSection} title='Characters'>
+          {characters.map((character) => (
+            <Character
+              character={character}
+              key={character.get('id')}
+              selected={character === currentCharacter}
+              onClick={selectCharacter.bind(null, character.get('id'))} />
+          ))}
+        </Section>
+        <Section activeStyle={styles.activeSection} title='Products'>
+          Test
+        </Section>
       </ul>
     );
   }

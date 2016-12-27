@@ -1,6 +1,6 @@
 import { currentVideoIdSelector } from '../selectors/common';
 import { characterAppearancesSelector, currentSceneSelector, currentSceneIdSelector, scaleSelector, hideNonKeyFramesSelector, currentSceneGroupSelector, visibleScenesSelector } from '../selectors/curator';
-import { fetchCharacterAppearances as dataFetchCharacterAppearances, persistCharacterAppearance as dataPersistCharacterAppearance } from './character';
+import { fetchVideoCharacters as dataFetchVideoCharacters, fetchCharacterAppearances as dataFetchCharacterAppearances, persistCharacterAppearance as dataPersistCharacterAppearance } from './character';
 import { fetchSceneGroups as dataFetchSceneGroups, persistSceneGroup as dataPersistSceneGroup } from './sceneGroup';
 
 export const TOGGLE_FRAME_SIZE = 'CURATOR/TOGGLE_FRAME_SIZE';
@@ -18,7 +18,17 @@ export const TOGGLE_VISIBILITY_FRAME_GROUP = 'CURATOR/TOGGLE_VISIBILITY_FRAME_GR
 
 export const SCALE_UPDATE = 'CURATOR/SCALE_UPDATE';
 
-export { loadCharacters } from './quickies';
+// Load characters
+// Load appearances of each character.
+export function loadCharacters () {
+  return async (dispatch, getState) => {
+    const videoId = currentVideoIdSelector(getState());
+    const characters = await dispatch(dataFetchVideoCharacters({ videoId }));
+    for (const { id: characterId } of characters) {
+      await dispatch(dataFetchCharacterAppearances({ characterId, videoId }));
+    }
+  };
+}
 
 export function toggleFrameSize () {
   return { type: TOGGLE_FRAME_SIZE };
@@ -196,11 +206,8 @@ export function selectSceneGroup (sceneGroupId) {
 }
 
 export function selectCharacter (characterId) {
-  return async (dispatch, getState) => {
-    const videoId = currentVideoIdSelector(getState());
+  return (dispatch) => {
     dispatch({ characterId, type: SELECT_CHARACTER });
-    // First we get the appearances of a character with a relation to its scene.
-    await dispatch(dataFetchCharacterAppearances({ characterId, videoId }));
     dispatch(selectFirstScene());
   };
 }

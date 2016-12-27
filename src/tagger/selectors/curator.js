@@ -24,10 +24,26 @@ export const hideSceneGroupSelector = (state) => state.getIn([ 'tagger', 'tagger
 const _sceneGroupsSelector = createEntitiesByRelationSelector(videoHasSceneGroupsRelationsSelector, currentVideoIdSelector, sceneGroupEntitiesSelector);
 export const characterAppearancesSelector = createEntitiesByRelationSelector(characterHasAppearancesRelationsSelector, currentCharacterIdSelector, appearanceEntitiesSelector);
 
+const charactersSelector = createSelector(
+  mediumCharactersSelector,
+  characterHasAppearancesRelationsSelector,
+  appearanceEntitiesSelector,
+  (characters, charactersHasAppearances, appearancesById) => (
+    characters.map((c) => {
+      const appearanceIds = charactersHasAppearances.getIn([ c.get('id'), 'data' ]) || List();
+      const countKeyAppearances = appearanceIds.reduce((i, id) => {
+        const a = appearancesById.get(id);
+        return a && a.get('keyAppearance') ? i + 1 : i;
+      }, 0);
+      return c.set('countKeyAppearances', countKeyAppearances);
+    })
+  )
+);
+
 export const currentCharacterSelector = createSelector(
   currentCharacterIdSelector,
-  characterEntitiesSelector,
-  (characterId, characters) => (characterId && characters ? characters.get(characterId) : null)
+  charactersSelector,
+  (characterId, characters) => characters.find((c) => c.get('id') === characterId)
 );
 
 export const allScenesSelector = createSelector(
@@ -129,7 +145,7 @@ const numVisibleScenesSelector = createSelector(
 );
 
 export const sidebarSelector = createStructuredSelector({
-  characters: mediumCharactersSelector,
+  characters: charactersSelector,
   currentCharacter: currentCharacterSelector,
   currentSceneGroup: currentSceneGroupSelector,
   sceneGroups: sceneGroupsSelector

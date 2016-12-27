@@ -6,12 +6,10 @@ import colors from '../colors';
 const starFilledImage = require('./images/starFilled.svg');
 
 @Radium
-export default class SceneGroup extends Component {
+export default class Product extends Component {
 
   static propTypes = {
-    // The scene group number, to create a default label.
-    number: PropTypes.number.isRequired,
-    sceneGroup: ImmutablePropTypes.map.isRequired,
+    product: ImmutablePropTypes.map.isRequired,
     selected: PropTypes.bool.isRequired,
     onClick: PropTypes.func.isRequired
   };
@@ -20,6 +18,7 @@ export default class SceneGroup extends Component {
     super(props);
     this.onClick = ::this.onClick;
   }
+
   onClick (e) {
     e.preventDefault();
     this.props.onClick();
@@ -35,7 +34,10 @@ export default class SceneGroup extends Component {
         cursor: 'pointer',
         display: 'flex',
         marginBottom: 1,
-        padding: '11px 16px',
+        paddingBottom: '0.16em',
+        paddingLeft: '0.65em',
+        paddingRight: '0.65em',
+        paddingTop: '0.16em',
         width: '100%'
       },
       selected: {
@@ -43,11 +45,24 @@ export default class SceneGroup extends Component {
         borderLeft: `4px solid ${colors.strongBlue}`
       }
     },
+    image: {
+      // Positioning
+      flex: '0 0 30px',
+      height: 30,
+      width: 30,
+      // Background properties. The background-image gets injected in JavaScript.
+      backgroundColor: 'transparent',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'contain'
+    },
     name: {
       display: 'flex',
       flex: '1 1',
-      fontSize: '0.75em',
+      fontSize: '14px',
       justifyContent: 'space-between',
+      paddingLeft: 10,
+      paddingRight: 10,
       // Prevent long item names to overflow by wrapping to the next line
       overflow: 'hidden',
       textOverflow: 'ellipsis',
@@ -81,13 +96,14 @@ export default class SceneGroup extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { number, sceneGroup, selected } = this.props;
+    const { product, selected } = this.props;
 
     return (
       <li style={[ styles.container.base, selected && styles.container.selected ]} onClick={this.onClick}>
-        <div style={styles.name}>{sceneGroup.get('label') || `Scene ${number}`}</div>
-        {sceneGroup.get('keySceneId')
-          ? <div style={[ styles.badge.base, styles.badge.star ]}><img src={starFilledImage} style={styles.starImage} />1</div>
+        <div style={[ styles.image, { backgroundImage: `url('${product.get('portraitImageUrl')}?width=95&height=95')` } ]} title={product.get('name')}>&nbsp;</div>
+        <div style={styles.name}>{product.get('shortName')}</div>
+        {product.get('countKeyAppearances') > 0
+          ? <div style={[ styles.badge.base, styles.badge.star ]}><img src={starFilledImage} style={styles.starImage} />{product.get('countKeyAppearances')}</div>
           : <div style={[ styles.badge.base, styles.badge.none ]}>0</div>}
       </li>
     );

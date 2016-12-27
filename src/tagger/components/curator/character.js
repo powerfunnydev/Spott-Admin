@@ -98,13 +98,12 @@ export default class Character extends Component {
     const styles = this.constructor.styles;
     const { character, selected } = this.props;
 
-    // TODO: badge!
     return (
       <li style={[ styles.container.base, selected && styles.container.selected ]} onClick={this.onClick}>
         <div style={[ styles.image, { backgroundImage: `url('${character.get('portraitImageUrl')}?width=95&height=95')` } ]} title={character.get('name')}>&nbsp;</div>
         <div style={styles.name}>{character.get('name')}</div>
-        {character.get('keySceneId')
-          ? <div style={[ styles.badge.base, styles.badge.star ]}><img src={starFilledImage} style={styles.starImage} />1</div>
+        {character.get('countKeyAppearances') > 0
+          ? <div style={[ styles.badge.base, styles.badge.star ]}><img src={starFilledImage} style={styles.starImage} />{character.get('countKeyAppearances')}</div>
           : <div style={[ styles.badge.base, styles.badge.none ]}>0</div>}
       </li>
     );

@@ -9,7 +9,10 @@ function transformCharacterAppearance ({ character: { uuid: id }, keyAppearance,
 }
 
 function transformDetailedCharacter (character) {
-  const { localeData: [ { name } ], portraitImage, uuid: id } = character;
+  const { name, portraitImage, uuid: id } = character;
+  if (character.localeData) {
+    return { id, name: character.localeData[0].name, portraitImageUrl: portraitImage ? portraitImage.url : null };
+  }
   // Portrait image is optional.
   return { id, name, portraitImageUrl: portraitImage ? portraitImage.url : null };
 }
@@ -41,6 +44,11 @@ function transformProductGroup (characterId, { uuid: id, name, products }) {
 export async function getSceneCharacters (baseUrl, authenticationToken, locale, { sceneId }) {
   const { body: { data: characters } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/scenes/${sceneId}/characters`);
   return characters.map(transformCharacterAppearance);
+}
+
+export async function getVideoCharacters (baseUrl, authenticationToken, locale, { videoId }) {
+  const { body: { data: characters } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/allCharacters`);
+  return characters.map(transformDetailedCharacter);
 }
 
 export async function getCharacterAppearances (baseUrl, authenticationToken, locale, { characterId, videoId }) {
