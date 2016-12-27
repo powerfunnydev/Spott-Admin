@@ -73,17 +73,13 @@ export default class CreateBroadcasterEntryModal extends Component {
 
   async submit (form) {
     try {
-      const { loadBroadcasterChannels, params, location, submit, dispatch, change, reset } = this.props;
+      const { loadBroadcasterChannels, params, submit, dispatch, change, reset, location: { query } } = this.props;
       await submit(form.toJS());
       const createAnother = form.get('createAnother');
       if (params.broadcasterId) {
         await loadBroadcasterChannels(params.broadcasterId);
       } else {
-        // Load the new list of items, using the location query of the previous page.
-        const loc = location && location.state && location.state.returnTo;
-        if (loc && loc.query) {
-          loadList(loc.query);
-        }
+        loadList(query);
       }
       if (createAnother) {
         await dispatch(reset());
@@ -97,7 +93,7 @@ export default class CreateBroadcasterEntryModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo(this.props.params.broadcasterId && `/content/broadcasters/read/${this.props.params.broadcasterId}` || '/content/broadcasters', true);
+    this.props.routerPushWithReturnTo(this.props.params.broadcasterId && `/content/broadcasters/read/${this.props.params.broadcasterId}` || '/content/broadcast-channels', true);
   }
 
   render () {
