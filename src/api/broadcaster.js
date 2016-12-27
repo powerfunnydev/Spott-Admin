@@ -49,10 +49,7 @@ export async function fetchBroadcasterChannels (baseUrl, authenticationToken, lo
 export async function fetchBroadcaster (baseUrl, authenticationToken, locale, { broadcasterId }) {
   const url = `${baseUrl}/v004/media/broadcasters/${broadcasterId}`;
   const { body } = await get(authenticationToken, locale, url);
-  // console.log('before transform', { ...body });
-  const result = transformBroadcaster(body);
-  // console.log('after tranform', result);
-  return result;
+  return transformBroadcaster(body);
 }
 
 export async function persistBroadcaster (baseUrl, authenticationToken, locale, { id, name }) {
@@ -60,7 +57,6 @@ export async function persistBroadcaster (baseUrl, authenticationToken, locale, 
   if (id) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/broadcasters/${id}`);
     broadcaster = body;
-    // console.log('body', body);
   }
   const url = `${baseUrl}/v004/media/broadcasters`;
   const result = await post(authenticationToken, locale, url, { ...broadcaster, uuid: id, name });
@@ -98,7 +94,6 @@ export async function deleteLinkUser (baseUrl, authenticationToken, locale, { br
 }
 
 export async function deleteLinkUsers (baseUrl, authenticationToken, locale, { broadcasterId, userIds }) {
-  console.log('userIds', userIds);
   for (const userId of userIds) {
     await deleteLinkUser(baseUrl, authenticationToken, locale, { broadcasterId, userId });
   }
