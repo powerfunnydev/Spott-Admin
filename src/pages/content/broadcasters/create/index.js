@@ -73,7 +73,7 @@ export default class CreateBroadcasterEntryModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo('content/broadcasters', true);
+    this.props.routerPushWithReturnTo('/content/broadcasters', true);
   }
 
   render () {

@@ -3,18 +3,17 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import moment from 'moment';
-import Header from '../../../app/header';
 import { Root, Container } from '../../../_common/styles';
 import { DropdownCel, Tile, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
 import Line from '../../../_common/components/line';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
-import SpecificHeader from '../../header';
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/actionDropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
+import { SideMenu } from '../../../app/sideMenu';
 
 const numberOfRows = 25;
 
@@ -86,7 +85,7 @@ export default class Persons extends Component {
 
   onCreatePerson (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/persons/create');
+    this.props.routerPushWithReturnTo('/content/persons/create');
   }
 
   async onClickDeleteSelected () {
@@ -105,93 +104,91 @@ export default class Persons extends Component {
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
-      <Root>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <div style={generalStyles.backgroundBar}>
-          <Container>
-            <UtilsBar
-              display={display}
-              isLoading={persons.get('_status') !== 'loaded'}
-              numberSelected={numberSelected}
-              searchString={searchString}
-              textCreateButton='New Person'
-              onChangeDisplay={onChangeDisplay}
-              onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
-              onClickNewEntry={this.onCreatePerson}/>
-          </Container>
-        </div>
-        <Line/>
-        <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
-          <Container style={generalStyles.paddingTable}>
-            <TotalEntries
-              entityType='Persons'
-              numberSelected={numberSelected}
-              totalResultCount={totalResultCount}
-              onDeleteSelected={this.onClickDeleteSelected}/>
-            {(display === undefined || display === 'list') &&
-              <div>
-                <Table>
-                  <Headers>
-                    {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                    <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'FULL_NAME')} sortDirection = {sortField === 'FULL_NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>FULL NAME</CustomCel>
-                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
-                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
-                    <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
-                  </Headers>
-                  <Rows isLoading={persons.get('_status') !== 'loaded'}>
-                    {persons.get('data').map((person, index) => {
-                      return (
-                        <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
-                          {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                          <CheckBoxCel checked={isSelected.get(person.get('id'))} onChange={selectCheckbox.bind(this, person.get('id'))}/>
-                          <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/persons/read/${person.get('id')}`); }}>
-                            {person.get('fullName')}
-                          </CustomCel>
-                          <CustomCel style={{ flex: 2 }}>
-                            {person.get('lastUpdatedBy')}
-                          </CustomCel>
-                          <CustomCel getValue={this.getLastUpdatedOn} objectToRender={person} style={{ flex: 2 }}/>
-                          <DropdownCel>
-                            <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/persons/edit/${person.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deletePerson(person.get('id')); }}>Remove</div>
-                            </Dropdown>
-                          </DropdownCel>
-                        </Row>
-                      );
-                    })}
-                  </Rows>
-                </Table>
-                <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
-              </div>
-            }
-            {display === 'grid' &&
-              <div>
-                <div style={generalStyles.row}>
-                  {persons.get('data').map((person, index) => (
-                    <Tile
-                      checked={isSelected.get(person.get('id'))}
-                      imageUrl={person.get('profileImage') && `${person.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
-                      key={`person${index}`}
-                      text={person.get('name')}
-                      onCheckboxChange={selectCheckbox.bind(this, person.get('id'))}
-                      onClick={() => { this.props.routerPushWithReturnTo(`content/persons/read/${person.get('id')}`); }}
-                      onDelete={async (e) => { e.preventDefault(); await this.deletePerson(person.get('id')); }}
-                      onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/persons/edit/${person.get('id')}`); }}/>
-                  ))}
-                  <Tile key={'createPerson'} onCreate={() => { this.props.routerPushWithReturnTo('content/persons/create'); }}/>
+      <SideMenu>
+        <Root>
+          <div style={generalStyles.backgroundBar}>
+            <Container>
+              <UtilsBar
+                display={display}
+                isLoading={persons.get('_status') !== 'loaded'}
+                numberSelected={numberSelected}
+                searchString={searchString}
+                textCreateButton='New Person'
+                onChangeDisplay={onChangeDisplay}
+                onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
+                onClickNewEntry={this.onCreatePerson}/>
+            </Container>
+          </div>
+          <Line/>
+          <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
+            <Container style={generalStyles.paddingTable}>
+              <TotalEntries
+                entityType='Persons'
+                numberSelected={numberSelected}
+                totalResultCount={totalResultCount}
+                onDeleteSelected={this.onClickDeleteSelected}/>
+              {(display === undefined || display === 'list') &&
+                <div>
+                  <Table>
+                    <Headers>
+                      {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                      <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
+                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'FULL_NAME')} sortDirection = {sortField === 'FULL_NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>FULL NAME</CustomCel>
+                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
+                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
+                      <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
+                    </Headers>
+                    <Rows isLoading={persons.get('_status') !== 'loaded'}>
+                      {persons.get('data').map((person, index) => {
+                        return (
+                          <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
+                            {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                            <CheckBoxCel checked={isSelected.get(person.get('id'))} onChange={selectCheckbox.bind(this, person.get('id'))}/>
+                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/persons/read/${person.get('id')}`); }}>
+                              {person.get('fullName')}
+                            </CustomCel>
+                            <CustomCel style={{ flex: 2 }}>
+                              {person.get('lastUpdatedBy')}
+                            </CustomCel>
+                            <CustomCel getValue={this.getLastUpdatedOn} objectToRender={person} style={{ flex: 2 }}/>
+                            <DropdownCel>
+                              <Dropdown
+                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/persons/edit/${person.get('id')}`); }}>Edit</div>}>
+                                <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deletePerson(person.get('id')); }}>Remove</div>
+                              </Dropdown>
+                            </DropdownCel>
+                          </Row>
+                        );
+                      })}
+                    </Rows>
+                  </Table>
+                  <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
                 </div>
-                <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
-              </div>
-            }
-          </Container>
-        </div>
-        {children}
-      </Root>
-
+              }
+              {display === 'grid' &&
+                <div>
+                  <div style={generalStyles.row}>
+                    {persons.get('data').map((person, index) => (
+                      <Tile
+                        checked={isSelected.get(person.get('id'))}
+                        imageUrl={person.get('profileImage') && `${person.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
+                        key={`person${index}`}
+                        text={person.get('name')}
+                        onCheckboxChange={selectCheckbox.bind(this, person.get('id'))}
+                        onClick={() => { this.props.routerPushWithReturnTo(`/content/persons/read/${person.get('id')}`); }}
+                        onDelete={async (e) => { e.preventDefault(); await this.deletePerson(person.get('id')); }}
+                        onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/persons/edit/${person.get('id')}`); }}/>
+                    ))}
+                    <Tile key={'createPerson'} onCreate={() => { this.props.routerPushWithReturnTo('/content/persons/create'); }}/>
+                  </div>
+                  <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
+                </div>
+              }
+            </Container>
+          </div>
+          {children}
+        </Root>
+      </SideMenu>
     );
   }
-
 }

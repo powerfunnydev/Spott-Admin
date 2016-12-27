@@ -9,10 +9,9 @@ import Line from '../../../_common/components/line';
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/actionDropdown';
 import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
-import Header from '../../../app/header';
-import SpecificHeader from '../../header';
 import * as actions from './actions';
 import selector from './selector';
+import { SideMenu } from '../../../app/sideMenu';
 const numberOfRows = 25;
 
 export const prefix = 'broadcasters';
@@ -79,7 +78,7 @@ export default class Broadcasters extends Component {
 
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/broadcasters/create');
+    this.props.routerPushWithReturnTo('/content/broadcasters/create');
   }
 
   async onClickDeleteSelected () {
@@ -100,91 +99,91 @@ export default class Broadcasters extends Component {
     onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
-      <Root>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <div style={generalStyles.tableFillPage}>
-          <div style={generalStyles.backgroundBar}>
-            <Container >
-              <UtilsBar
-                display={broadcastersDisplay}
-                isLoading={broadcasters.get('_status') !== 'loaded'}
-                numberSelected={numberSelected}
-                searchString={broadcastersSearchString}
-                textCreateButton='New Broadcaster'
-                onChangeDisplay={onChangeDisplay}
-                onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, broadcastersSearchString: value }); }}
-                onClickNewEntry={this.onClickNewEntry}/>
-            </Container>
-          </div>
-          <Line/>
-          <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
-            <Container style={generalStyles.paddingTable}>
-              <TotalEntries
-                entityType='Broadcasters'
-                numberSelected={numberSelected}
-                totalResultCount={totalResultCount}
-                onDeleteSelected={this.onClickDeleteSelected}/>
-              {(broadcastersDisplay === undefined || broadcastersDisplay === 'list') &&
+      <SideMenu>
+        <Root>
+          <div style={generalStyles.tableFillPage}>
+            <div style={generalStyles.backgroundBar}>
+              <Container >
+                <UtilsBar
+                  display={broadcastersDisplay}
+                  isLoading={broadcasters.get('_status') !== 'loaded'}
+                  numberSelected={numberSelected}
+                  searchString={broadcastersSearchString}
+                  textCreateButton='New Broadcaster'
+                  onChangeDisplay={onChangeDisplay}
+                  onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, broadcastersSearchString: value }); }}
+                  onClickNewEntry={this.onClickNewEntry}/>
+              </Container>
+            </div>
+            <Line/>
+            <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
+              <Container style={generalStyles.paddingTable}>
+                <TotalEntries
+                  entityType='Broadcasters'
+                  numberSelected={numberSelected}
+                  totalResultCount={totalResultCount}
+                  onDeleteSelected={this.onClickDeleteSelected}/>
+                {(broadcastersDisplay === undefined || broadcastersDisplay === 'list') &&
+                  <div>
+                    <Table>
+                      <Headers>
+                        {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                        <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
+                        <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {broadcastersSortField === 'NAME' ? sortDirections[broadcastersSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 5 } ]}>NAME</CustomCel>
+                        <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
+                      </Headers>
+                      <Rows isLoading={broadcasters.get('_status') !== 'loaded'}>
+                        {broadcasters.get('data').map((broadcaster, index) => {
+                          return (
+                            <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
+                              {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                              <CheckBoxCel checked={isSelected.get(broadcaster.get('id'))} onChange={selectCheckbox.bind(this, broadcaster.get('id'))}/>
+                              <CustomCel style={{ flex: 5 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/broadcasters/read/${broadcaster.get('id')}`); }}>{broadcaster.get('name')}</CustomCel>
+                              <DropdownCel>
+                                <Dropdown
+                                  elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/broadcasters/edit/${broadcaster.get('id')}`); }}>Edit</div>}>
+                                  <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcaster(broadcaster.get('id')); }}>Remove</div>
+                                </Dropdown>
+                              </DropdownCel>
+                            </Row>
+                          );
+                        })}
+                      </Rows>
+                    </Table>
+                    <Pagination currentPage={(broadcastersPage && (parseInt(broadcastersPage, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(broadcastersPage, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(broadcastersPage, 10), true); }}/>
+                  </div>
+                }
+                {broadcastersDisplay === 'grid' &&
                 <div>
-                  <Table>
-                    <Headers>
-                      {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                      <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {broadcastersSortField === 'NAME' ? sortDirections[broadcastersSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 5 } ]}>NAME</CustomCel>
-                      <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
-                    </Headers>
-                    <Rows isLoading={broadcasters.get('_status') !== 'loaded'}>
-                      {broadcasters.get('data').map((broadcaster, index) => {
-                        return (
-                          <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
-                            {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                            <CheckBoxCel checked={isSelected.get(broadcaster.get('id'))} onChange={selectCheckbox.bind(this, broadcaster.get('id'))}/>
-                            <CustomCel style={{ flex: 5 }} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcaster.get('id')}`); }}>{broadcaster.get('name')}</CustomCel>
-                            <DropdownCel>
-                              <Dropdown
-                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/edit/${broadcaster.get('id')}`); }}>Edit</div>}>
-                                <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcaster(broadcaster.get('id')); }}>Remove</div>
-                              </Dropdown>
-                            </DropdownCel>
-                          </Row>
-                        );
-                      })}
-                    </Rows>
-                  </Table>
+                  <div style={generalStyles.row}>
+                    {broadcasters.get('data').map((broadcaster, index) => (
+                      <Tile
+                        checked={isSelected.get(broadcaster.get('id'))}
+                        imageUrl={broadcaster.get('logo') && `${broadcaster.getIn([ 'logo', 'url' ])}?height=310&width=310`}
+                        key={`broadcaster${index}`}
+                        text={broadcaster.get('name')}
+                        onCheckboxChange={selectCheckbox.bind(this, broadcaster.get('id'))}
+                        onClick={() => { this.props.routerPushWithReturnTo(`/content/broadcasters/read/${broadcaster.get('id')}`); }}
+                        onDelete={async (e) => {
+                          e.preventDefault();
+                          await this.deleteBroadcaster(broadcaster.get('id'));
+                        }}
+                        onEdit={(e) => {
+                          e.preventDefault();
+                          this.props.routerPushWithReturnTo(`/content/broadcasters/edit/${broadcaster.get('id')}`);
+                        }}/>
+                    ))}
+                    <Tile key={'createBroadcaster'} onCreate={() => this.props.routerPushWithReturnTo('/content/broadcasters/create')}/>
+                  </div>
                   <Pagination currentPage={(broadcastersPage && (parseInt(broadcastersPage, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(broadcastersPage, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(broadcastersPage, 10), true); }}/>
                 </div>
-              }
-              {broadcastersDisplay === 'grid' &&
-              <div>
-                <div style={generalStyles.row}>
-                  {broadcasters.get('data').map((broadcaster, index) => (
-                    <Tile
-                      checked={isSelected.get(broadcaster.get('id'))}
-                      imageUrl={broadcaster.get('logo') && `${broadcaster.getIn([ 'logo', 'url' ])}?height=310&width=310`}
-                      key={`broadcaster${index}`}
-                      text={broadcaster.get('name')}
-                      onCheckboxChange={selectCheckbox.bind(this, broadcaster.get('id'))}
-                      onClick={() => { this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcaster.get('id')}`); }}
-                      onDelete={async (e) => {
-                        e.preventDefault();
-                        await this.deleteBroadcaster(broadcaster.get('id'));
-                      }}
-                      onEdit={(e) => {
-                        e.preventDefault();
-                        this.props.routerPushWithReturnTo(`content/broadcasters/edit/${broadcaster.get('id')}`);
-                      }}/>
-                  ))}
-                  <Tile key={'createBroadcaster'} onCreate={() => this.props.routerPushWithReturnTo('content/broadcasters/create')}/>
-                </div>
-                <Pagination currentPage={(broadcastersPage && (parseInt(broadcastersPage, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(broadcastersPage, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(broadcastersPage, 10), true); }}/>
-              </div>
-              }
-            </Container>
+                }
+              </Container>
+            </div>
           </div>
-        </div>
-        {children}
-      </Root>
+          {children}
+        </Root>
+      </SideMenu>
     );
   }
 }

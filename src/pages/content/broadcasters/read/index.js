@@ -2,10 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Header from '../../../app/header';
 import { Root, Container, colors } from '../../../_common/styles';
 import * as actions from './actions';
-import SpecificHeader from '../../header';
 import selector from './selector';
 import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
@@ -16,6 +14,7 @@ import BroadcastChannelList from './broadcastChannels';
 import UserList from './users/list';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
+import { SideMenu } from '../../../app/sideMenu';
 
 @connect(selector, (dispatch) => ({
   deleteBroadcaster: bindActionCreators(listActions.deleteBroadcaster, dispatch),
@@ -54,7 +53,7 @@ export default class ReadBroadcaster extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/broadcasters', true);
+    this.props.routerPushWithReturnTo('/content/broadcasters', true);
   }
 
   onChangeTab (tab) {
@@ -65,7 +64,7 @@ export default class ReadBroadcaster extends Component {
     e.preventDefault();
     const broadcasterId = this.props.params.broadcasterId;
     if (broadcasterId) {
-      this.props.routerPushWithReturnTo(`content/broadcasters/read/${broadcasterId}/create/broadcast-channel`);
+      this.props.routerPushWithReturnTo(`/content/broadcasters/read/${broadcasterId}/create/broadcast-channel`);
     }
   }
 
@@ -83,41 +82,41 @@ export default class ReadBroadcaster extends Component {
     } = this.props;
 
     return (
-      <Root>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <BreadCrumbs
-          hierarchy={[
-            { title: 'Broadcasters', url: '/content/broadcasters' },
-            { title: currentBroadcaster.get('name'), url: location.pathname }
-          ]}/>
-        <Container>
-          {currentBroadcaster.get('_status') === 'loaded' && currentBroadcaster &&
-            <EntityDetails
-              imageUrl={currentBroadcaster.get('logo') && `${currentBroadcaster.getIn([ 'logo', 'url' ])}?height=310&width=310`}
-              title={currentBroadcaster.getIn([ 'name' ])}
-              onEdit={() => this.props.routerPushWithReturnTo(`content/broadcasters/edit/${currentBroadcaster.getIn([ 'id' ])}`)}
-              onRemove={async () => {
-                await deleteBroadcaster(currentBroadcaster.getIn([ 'id' ]));
-                this.redirect();
-              }}/>}
-        </Container>
-        <Line/>
-        <div style={[ generalStyles.fillPage, styles.table ]}>
+      <SideMenu>
+        <Root>
+          <BreadCrumbs
+            hierarchy={[
+              { title: 'Broadcasters', url: '/content/broadcasters' },
+              { title: currentBroadcaster.get('name'), url: location.pathname }
+            ]}/>
           <Container>
-            <Tabs activeTab={tab} onChange={this.onChangeTab}>
-              <Tab title='Broadcast Channels'>
-                <BroadcastChannelList {...this.props}/>
-              </Tab>
-              <Tab title='Users'>
-                <UserList {...this.props}/>
-              </Tab>
-            </Tabs>
+            {currentBroadcaster.get('_status') === 'loaded' && currentBroadcaster &&
+              <EntityDetails
+                imageUrl={currentBroadcaster.get('logo') && `${currentBroadcaster.getIn([ 'logo', 'url' ])}?height=310&width=310`}
+                title={currentBroadcaster.getIn([ 'name' ])}
+                onEdit={() => this.props.routerPushWithReturnTo(`/content/broadcasters/edit/${currentBroadcaster.getIn([ 'id' ])}`)}
+                onRemove={async () => {
+                  await deleteBroadcaster(currentBroadcaster.getIn([ 'id' ]));
+                  this.redirect();
+                }}/>}
           </Container>
-        </div>
-        <Line/>
-        {children}
-      </Root>
+          <Line/>
+          <div style={[ generalStyles.fillPage, styles.table ]}>
+            <Container>
+              <Tabs activeTab={tab} onChange={this.onChangeTab}>
+                <Tab title='Broadcast Channels'>
+                  <BroadcastChannelList {...this.props}/>
+                </Tab>
+                <Tab title='Users'>
+                  <UserList {...this.props}/>
+                </Tab>
+              </Tabs>
+            </Container>
+          </div>
+          <Line/>
+          {children}
+        </Root>
+      </SideMenu>
     );
   }
 

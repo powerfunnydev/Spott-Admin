@@ -189,7 +189,7 @@ export default class RelatedVideo extends Component {
                 imageUrl={video.getIn([ 'medium', 'profileImage' ]) && `${video.getIn([ 'medium', 'profileImage', 'url' ])}?height=174&width=310`}
                 style={styles.details}
                 title={video.get('description')}
-                onEdit={() => this.props.routerPushWithReturnTo(`content/videos/edit/${videoId}`)}/>
+                onEdit={() => this.props.routerPushWithReturnTo(`/content/videos/edit/${videoId}`)}/>
             </div>
             <div style={styles.unlink} onClick={this.onUnlinkVideo}>
               <img src={cross} />&nbsp;&nbsp;&nbsp;Unlink

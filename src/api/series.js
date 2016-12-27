@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformListSeriesEntry, transformSeriesEntry004, transformListSeason } from './transformers';
+import { transformListSeriesEntry, transformSeriesEntry004, transformListSeason, transformListEpisode } from './transformers';
 
 export async function fetchSeriesEntrySeasons (baseUrl, authenticationToken, locale, { seriesEntryId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/series/${seriesEntryId}/seasons?page=${page}&pageSize=${pageSize}`;
@@ -13,6 +13,24 @@ export async function fetchSeriesEntrySeasons (baseUrl, authenticationToken, loc
   // There is also usable data in body (not only in data field).
   // We need also fields page, pageCount,...
   body.data = body.data.map(transformListSeason);
+  return body;
+}
+
+export async function fetchSeriesEntryEpisodes (baseUrl, authenticationToken, locale, { publishStatus, seriesEntryId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/media/series/${seriesEntryId}/episodes?page=${page}&pageSize=${pageSize}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${searchString}`);
+  }
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  if (publishStatus) {
+    url = url.concat(`&publishStatus=${publishStatus}`);
+  }
+  const { body } = await get(authenticationToken, locale, url);
+  // There is also usable data in body (not only in data field).
+  // We need also fields page, pageCount,...
+  body.data = body.data.map(transformListEpisode);
   return body;
 }
 
@@ -34,10 +52,7 @@ export async function fetchSeriesEntries (baseUrl, authenticationToken, locale, 
 export async function fetchSeriesEntry (baseUrl, authenticationToken, locale, { seriesEntryId }) {
   const url = `${baseUrl}/v004/media/series/${seriesEntryId}`;
   const { body } = await get(authenticationToken, locale, url);
-  // console.log('before transform', { ...body });
-  const result = transformSeriesEntry004(body);
-  // console.log('after tranform', result);
-  return result;
+  return transformSeriesEntry004(body);
 }
 
 export async function persistSeriesEntry (baseUrl, authenticationToken, locale, {
@@ -70,7 +85,6 @@ export async function persistSeriesEntry (baseUrl, authenticationToken, locale, 
     localeData.locale = locale;
     seriesEntry.localeData.push(localeData);
   });
-  // console.log('seriesEntry', seriesEntry);
   const url = `${baseUrl}/v004/media/series`;
   const result = await post(authenticationToken, locale, url, seriesEntry);
   return transformSeriesEntry004(result.body);

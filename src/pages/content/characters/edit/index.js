@@ -6,14 +6,12 @@ import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
 import SelectInput from '../../../_common/inputs/selectInput';
-import Header from '../../../app/header';
 // import Line from '../../../_common/components/line';
 import { Root, FormSubtitle, colors, EditTemplate, FormDescription } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import Section from '../../../_common/components/section';
-import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Label from '../../../_common/inputs/_label';
 import selector from './selector';
@@ -27,6 +25,7 @@ import { ImageWithDropdown } from '../../../_common/components/imageWithDropdown
 import { PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
+import { SideMenu } from '../../../app/sideMenu';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -128,7 +127,7 @@ export default class EditCharacter extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/characters', true);
+    this.props.routerPushWithReturnTo('/content/characters', true);
   }
 
   languageAdded (form) {
@@ -228,9 +227,8 @@ export default class EditCharacter extends Component {
     const { _activeLocale, children, personsById, errors, closeModal, currentModal, searchPersons, searchedPersonIds, supportedLocales, defaultLocale,
       currentCharacter, location, handleSubmit, deletePortraitImage, deleteProfileImage, deleteFaceImage, faceImages, fetchFaceImages, location: { query: { tab } } } = this.props;
     return (
+      <SideMenu>
         <Root style={styles.backgroundRoot}>
-          <Header currentLocation={location} hideHomePageLinks />
-          <SpecificHeader/>
           <BreadCrumbs hierarchy={[
             { title: 'Characters', url: '/content/characters' },
             { title: currentCharacter.getIn([ 'name', defaultLocale ]), url: location } ]}/>
@@ -339,6 +337,7 @@ export default class EditCharacter extends Component {
         </EditTemplate>
         {children}
       </Root>
+    </SideMenu>
     );
   }
 

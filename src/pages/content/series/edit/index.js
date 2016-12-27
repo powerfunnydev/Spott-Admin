@@ -5,14 +5,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
-import Header from '../../../app/header';
 // import Line from '../../../_common/components/line';
 import { Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import Section from '../../../_common/components/section';
-import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Label from '../../../_common/inputs/_label';
@@ -24,6 +22,7 @@ import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import selector from './selector';
 import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
+import { SideMenu } from '../../../app/sideMenu';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -109,7 +108,7 @@ export default class EditSeries extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/series', true);
+    this.props.routerPushWithReturnTo('/content/series', true);
   }
 
   languageAdded (form) {
@@ -192,9 +191,8 @@ export default class EditSeries extends Component {
       currentSeriesEntry, location, handleSubmit, deletePosterImage, deleteProfileImage, location: { query: { tab } } } = this.props;
 
     return (
+      <SideMenu>
         <Root style={styles.backgroundRoot}>
-          <Header currentLocation={location} hideHomePageLinks />
-          <SpecificHeader/>
           <BreadCrumbs hierarchy={[
             { title: 'Series', url: '/content/series' },
             { title: currentSeriesEntry.getIn([ 'title', defaultLocale ]), url: location }
@@ -277,6 +275,7 @@ export default class EditSeries extends Component {
           </Tabs>
         </EditTemplate>
       </Root>
+    </SideMenu>
     );
   }
 }

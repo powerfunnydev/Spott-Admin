@@ -4,19 +4,18 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import TextInput from '../../../_common/inputs/textInput';
-import Header from '../../../app/header';
 import { tabStyles, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Section from '../../../_common/components/section';
-import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Label from '../../../_common/inputs/_label';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import selector from './selector';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
+import { SideMenu } from '../../../app/sideMenu';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -73,7 +72,7 @@ export default class EditBroadcastChannel extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/broadcasters', true);
+    this.props.routerPushWithReturnTo('/content/broadcasters', true);
   }
 
   async submit (form) {
@@ -96,39 +95,39 @@ export default class EditBroadcastChannel extends Component {
     const { deleteLogo, currentBroadcastChannel, location, handleSubmit } = this.props;
     const { styles } = this.constructor;
     return (
-      <Root style={styles.background}>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-          <Tabs>
-            <TabList style={tabStyles.tabList}>
-              <Tab style={tabStyles.tab}>Details</Tab>
-            </TabList>
-            <TabPanel>
-              <Section first>
-                <FormSubtitle first>Content</FormSubtitle>
-                <Field
-                  component={TextInput}
-                  label='Name'
-                  name='name'
-                  placeholder='Name Broadcast Channel'
-                  required/>
-                <div style={{ paddingTop: '1.25em' }}>
-                  <Label text='Upload image' />
-                  <Dropzone
-                    accept='image/*'
-                    downloadUrl={currentBroadcastChannel.get('logo') &&
-                      currentBroadcastChannel.getIn([ 'logo', 'url' ])}
-                    imageUrl={currentBroadcastChannel.get('logo') &&
-                      `${currentBroadcastChannel.getIn([ 'logo', 'url' ])}?height=310&width=310`}
-                    onChange={({ callback, file }) => { this.props.uploadImage({ broadcastChannelId: this.props.params.id, image: file, callback }); }}
-                    onDelete={() => { deleteLogo({ broadcastChannelId: currentBroadcastChannel.get('id') }); }}/>
-                </div>
-              </Section>
-            </TabPanel>
-          </Tabs>
-        </EditTemplate>
-      </Root>
+      <SideMenu>
+        <Root style={styles.background}>
+          <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
+            <Tabs>
+              <TabList style={tabStyles.tabList}>
+                <Tab style={tabStyles.tab}>Details</Tab>
+              </TabList>
+              <TabPanel>
+                <Section first>
+                  <FormSubtitle first>Content</FormSubtitle>
+                  <Field
+                    component={TextInput}
+                    label='Name'
+                    name='name'
+                    placeholder='Name Broadcast Channel'
+                    required/>
+                  <div style={{ paddingTop: '1.25em' }}>
+                    <Label text='Upload image' />
+                    <Dropzone
+                      accept='image/*'
+                      downloadUrl={currentBroadcastChannel.get('logo') &&
+                        currentBroadcastChannel.getIn([ 'logo', 'url' ])}
+                      imageUrl={currentBroadcastChannel.get('logo') &&
+                        `${currentBroadcastChannel.getIn([ 'logo', 'url' ])}?height=310&width=310`}
+                      onChange={({ callback, file }) => { this.props.uploadImage({ broadcastChannelId: this.props.params.id, image: file, callback }); }}
+                      onDelete={() => { deleteLogo({ broadcastChannelId: currentBroadcastChannel.get('id') }); }}/>
+                  </div>
+                </Section>
+              </TabPanel>
+            </Tabs>
+          </EditTemplate>
+        </Root>
+      </SideMenu>
     );
   }
 }

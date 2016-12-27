@@ -6,7 +6,7 @@ import {
   fetchGenderData, fetchCharacterSubscriptions, fetchProductBuys,
   fetchProductImpressions, fetchProductViews
 } from '../../actions/reporting';
-import { currentAgesSelector, currentGendersSelector, currentMediaSelector } from './selector';
+import { currentAgesSelector, currentGendersSelector, currentEventsSelector, currentMediaSelector } from './selector';
 import { locationSelector } from '../../selectors/global';
 
 // Action types
@@ -45,17 +45,17 @@ export function loadActivities () {
     try {
       dispatch({ type: SAVE_FILTER_QUERY, query });
 
-      if (query.endDate && query.event && query.startDate && query.media) {
+      if (query.endDate && query.events && query.startDate && query.media) {
         const endDate = moment(query.endDate);
         const startDate = moment(query.startDate);
-        const eventType = query.event;
+        const eventIds = currentEventsSelector(state);
         const mediumIds = currentMediaSelector(state);
 
         // We need to load the genders to show in the gender chart.
         await dispatch(loadGenders());
-        dispatch(fetchTimelineData({ startDate, endDate, eventType, mediumIds }));
-        dispatch(fetchAgeData({ startDate, endDate, eventType, mediumIds }));
-        dispatch(fetchGenderData({ startDate, endDate, eventType, mediumIds }));
+        await dispatch(fetchTimelineData({ startDate, endDate, eventIds, mediumIds }));
+        await dispatch(fetchAgeData({ startDate, endDate, eventIds, mediumIds }));
+        await dispatch(fetchGenderData({ startDate, endDate, eventIds, mediumIds }));
       }
     } catch (error) {
       dispatch({ error, type: ACTIVITIES_FETCH_ERROR });

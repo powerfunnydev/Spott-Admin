@@ -86,7 +86,7 @@ export default class CreateMovieModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo('content/movies', true);
+    this.props.routerPushWithReturnTo('/content/movies', true);
   }
 
   render () {

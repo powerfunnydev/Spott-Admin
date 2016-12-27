@@ -11,13 +11,11 @@ import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { EPISODE_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import Dropzone from '../../../_common/dropzone/imageDropzone';
-import Header from '../../../app/header';
 import Label from '../../../_common/inputs/_label';
 import localized from '../../../_common/decorators/localized';
 import Section from '../../../_common/components/section';
 import CheckboxInput from '../../../_common/inputs/checkbox';
 import SelectInput from '../../../_common/inputs/selectInput';
-import SpecificHeader from '../../header';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
 import Availabilities from '../../_availabilities/list';
@@ -29,6 +27,7 @@ import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
+import { SideMenu } from '../../../app/sideMenu';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -153,7 +152,7 @@ export default class EditEpisode extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo(`content/series/read/${this.props.params.seriesEntryId}/seasons/read/${this.props.params.seasonId}`, true);
+    this.props.routerPushWithReturnTo(`/content/series/read/${this.props.params.seriesEntryId}/seasons/read/${this.props.params.seasonId}`, true);
   }
 
   languageAdded (form) {
@@ -273,200 +272,200 @@ export default class EditEpisode extends Component {
       deletePosterImage, mediumCategoriesById, searchMediumCategories, searchedMediumCategoryIds, location: { query: { tab } }
     } = this.props;
     return (
-      <Root style={styles.backgroundRoot}>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <BreadCrumbs hierarchy={[
-          { title: 'Series', url: '/content/series' },
-          { title: currentEpisode.getIn([ 'seriesEntry', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}` },
-          { title: currentEpisode.getIn([ 'season', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}/seasons/read/${this.props.params.seasonId}` },
-          { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: location } ]}/>
-        {currentModal === EPISODE_CREATE_LANGUAGE &&
-          <CreateLanguageModal
-            supportedLocales={supportedLocales}
-            onCloseClick={closeModal}
-            onCreate={this.languageAdded}>
-            <Field
-              component={TextInput}
-              content={
-                <Field
-                  component={CheckboxInput}
-                  first
-                  label='Custom title'
-                  name='hasTitle'
-                  style={styles.customTitle} />}
-              disabled={!addLanguageHasTitle}
-              label='Episode title'
-              labelStyle={styles.titleLabel}
-              name='title'
-              placeholder='Episode title'
-              required />
-          </CreateLanguageModal>}
-        <EditTemplate disableSubmit={tab > 1} onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-          <Tabs activeTab={tab} showPublishStatus onBeforeChange={this.props.onBeforeChangeTab} onChange={this.props.onChangeTab}>
-            <Tab title='Details'>
-              <Section noPadding style={styles.background}>
-                <LanguageBar
-                  _activeLocale={_activeLocale}
-                  defaultLocale={defaultLocale}
-                  errors={errors}
-                  openCreateLanguageModal={this.openCreateLanguageModal}
-                  removeLanguage={this.removeLanguage}
-                  supportedLocales={supportedLocales}
-                  onSetDefaultLocale={this.onSetDefaultLocale}/>
-              </Section>
-              <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage} >
-                <FormSubtitle first>General</FormSubtitle>
-                <Field
-                  component={SelectInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  getItemText={(id) => seriesEntriesById.getIn([ id, 'title' ])}
-                  getOptions={searchSeriesEntries}
-                  isLoading={searchedSeriesEntryIds.get('_status') === FETCHING}
-                  label='Series title'
-                  name='seriesEntryId'
-                  options={searchedSeriesEntryIds.get('data').toJS()}
-                  placeholder='Series title'
-                  required
-                  onChange={() => {
-                    this.props.dispatch(this.props.change('seasonId', null));
-                  }} />
-                {currentSeriesEntryId &&
+      <SideMenu>
+        <Root style={styles.backgroundRoot}>
+          <BreadCrumbs hierarchy={[
+            { title: 'Series', url: '/content/series' },
+            { title: currentEpisode.getIn([ 'seriesEntry', 'title' ]), url: `/content/series/read/${this.props.params.seriesEntryId}` },
+            { title: currentEpisode.getIn([ 'season', 'title' ]), url: `/content/series/read/${this.props.params.seriesEntryId}/seasons/read/${this.props.params.seasonId}` },
+            { title: currentEpisode.getIn([ 'title', defaultLocale ]), url: location } ]}/>
+          {currentModal === EPISODE_CREATE_LANGUAGE &&
+            <CreateLanguageModal
+              supportedLocales={supportedLocales}
+              onCloseClick={closeModal}
+              onCreate={this.languageAdded}>
+              <Field
+                component={TextInput}
+                content={
+                  <Field
+                    component={CheckboxInput}
+                    first
+                    label='Custom title'
+                    name='hasTitle'
+                    style={styles.customTitle} />}
+                disabled={!addLanguageHasTitle}
+                label='Episode title'
+                labelStyle={styles.titleLabel}
+                name='title'
+                placeholder='Episode title'
+                required />
+            </CreateLanguageModal>}
+          <EditTemplate disableSubmit={tab > 1} onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
+            <Tabs activeTab={tab} showPublishStatus onBeforeChange={this.props.onBeforeChangeTab} onChange={this.props.onChangeTab}>
+              <Tab title='Details'>
+                <Section noPadding style={styles.background}>
+                  <LanguageBar
+                    _activeLocale={_activeLocale}
+                    defaultLocale={defaultLocale}
+                    errors={errors}
+                    openCreateLanguageModal={this.openCreateLanguageModal}
+                    removeLanguage={this.removeLanguage}
+                    supportedLocales={supportedLocales}
+                    onSetDefaultLocale={this.onSetDefaultLocale}/>
+                </Section>
+                <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage} >
+                  <FormSubtitle first>General</FormSubtitle>
                   <Field
                     component={SelectInput}
                     disabled={_activeLocale !== defaultLocale}
-                    getItemText={(id) => seasonsById.getIn([ id, 'title' ])}
-                    getOptions={(searchString) => { searchSeasons(searchString, currentSeriesEntryId); }}
-                    isLoading={searchedSeasonIds.get('_status') === FETCHING}
-                    label='Season title'
-                    name='seasonId'
-                    options={searchedSeasonIds.get('data').toJS()}
-                    placeholder='Season title'
+                    getItemText={(id) => seriesEntriesById.getIn([ id, 'title' ])}
+                    getOptions={searchSeriesEntries}
+                    isLoading={searchedSeriesEntryIds.get('_status') === FETCHING}
+                    label='Series title'
+                    name='seriesEntryId'
+                    options={searchedSeriesEntryIds.get('data').toJS()}
+                    placeholder='Series title'
                     required
                     onChange={() => {
-                      this.props.dispatch(this.props.change('title', {}));
-                    }} />}
-                {currentSeriesEntryId && currentSeasonId &&
+                      this.props.dispatch(this.props.change('seasonId', null));
+                    }} />
+                  {currentSeriesEntryId &&
+                    <Field
+                      component={SelectInput}
+                      disabled={_activeLocale !== defaultLocale}
+                      getItemText={(id) => seasonsById.getIn([ id, 'title' ])}
+                      getOptions={(searchString) => { searchSeasons(searchString, currentSeriesEntryId); }}
+                      isLoading={searchedSeasonIds.get('_status') === FETCHING}
+                      label='Season title'
+                      name='seasonId'
+                      options={searchedSeasonIds.get('data').toJS()}
+                      placeholder='Season title'
+                      required
+                      onChange={() => {
+                        this.props.dispatch(this.props.change('title', {}));
+                      }} />}
+                  {currentSeriesEntryId && currentSeasonId &&
+                    <Field
+                      component={TextInput}
+                      disabled={_activeLocale !== defaultLocale}
+                      label='Episode number'
+                      name='number'
+                      placeholder='Episode number'
+                      required
+                      type='number'/>}
+                  {currentSeriesEntryId && currentSeasonId &&
+                    <Field
+                      component={TextInput}
+                      content={
+                        <Field
+                          component={CheckboxInput}
+                          first
+                          label='Custom title'
+                          name={`hasTitle.${_activeLocale}`}
+                          style={styles.customTitle} />}
+                      disabled={hasTitle && !hasTitle.get(_activeLocale)}
+                      label='Episode title'
+                      labelStyle={styles.titleLabel}
+                      name={`title.${_activeLocale}`}
+                      placeholder='Episode title'
+                      required />}
                   <Field
-                    component={TextInput}
+                    component={SelectInput}
                     disabled={_activeLocale !== defaultLocale}
-                    label='Episode number'
-                    name='number'
-                    placeholder='Episode number'
-                    required
-                    type='number'/>}
-                {currentSeriesEntryId && currentSeasonId &&
+                    getItemText={(mediumCategory) => mediumCategoriesById.getIn([ mediumCategory, 'name' ])}
+                    getOptions={searchMediumCategories}
+                    isLoading={searchedMediumCategoryIds.get('_status') === FETCHING}
+                    label='Genres'
+                    multiselect
+                    name='mediumCategories'
+                    options={searchedMediumCategoryIds.get('data').toJS()}
+                    placeholder='Genres'/>
                   <Field
                     component={TextInput}
-                    content={
-                      <Field
-                        component={CheckboxInput}
-                        first
-                        label='Custom title'
-                        name={`hasTitle.${_activeLocale}`}
-                        style={styles.customTitle} />}
-                    disabled={hasTitle && !hasTitle.get(_activeLocale)}
-                    label='Episode title'
-                    labelStyle={styles.titleLabel}
-                    name={`title.${_activeLocale}`}
-                    placeholder='Episode title'
-                    required />}
-                <Field
-                  component={SelectInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  getItemText={(mediumCategory) => mediumCategoriesById.getIn([ mediumCategory, 'name' ])}
-                  getOptions={searchMediumCategories}
-                  isLoading={searchedMediumCategoryIds.get('_status') === FETCHING}
-                  label='Genres'
-                  multiselect
-                  name='mediumCategories'
-                  options={searchedMediumCategoryIds.get('data').toJS()}
-                  placeholder='Genres'/>
-                <Field
-                  component={TextInput}
-                  label='Description'
-                  name={`description.${_activeLocale}`}
-                  placeholder='Description'
-                  type='multiline'/>
-                <Field
-                  component={SelectInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  getItemText={(contentProducerId) => contentProducersById.getIn([ contentProducerId, 'name' ])}
-                  getOptions={searchContentProducers}
-                  isLoading={searchedContentProducerIds.get('_status') === FETCHING}
-                  label='Content producers'
-                  multiselect
-                  name='contentProducers'
-                  options={searchedContentProducerIds.get('data').toJS()}
-                  placeholder='Content producers'/>
-                <Field
-                  component={SelectInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  getItemText={(broadcasterId) => broadcastersById.getIn([ broadcasterId, 'name' ])}
-                  getOptions={searchBroadcasters}
-                  isLoading={searchedBroadcasterIds.get('_status') === FETCHING}
-                  label='Broadcasters'
-                  multiselect
-                  name='broadcasters'
-                  options={searchedBroadcasterIds.get('data').toJS()}
-                  placeholder='Broadcaster companies'/>
-                <FormSubtitle>Images</FormSubtitle>
-                <div style={[ styles.paddingTop, styles.row ]}>
-                  <div>
-                    <Label text='Poster image' />
-                    <Dropzone
-                      accept='image/*'
-                      downloadUrl={currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ]) ||
-                        currentEpisode.getIn([ 'posterImage', defaultLocale, 'url' ])}
-                      imageUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
-                        `${currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310` ||
-                        currentEpisode.getIn([ 'posterImage', defaultLocale ]) &&
-                        `${currentEpisode.getIn([ 'posterImage', defaultLocale, 'url' ])}?height=459&width=310`}
-                      showOnlyUploadedImage
-                      type={POSTER_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ locale: _activeLocale, episodeId: this.props.params.episodeId, image: file, callback }); }}
-                      onDelete={currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ]) ? () => { deletePosterImage({ locale: _activeLocale, mediumId: currentEpisode.get('id') }); } : null}/>
+                    label='Description'
+                    name={`description.${_activeLocale}`}
+                    placeholder='Description'
+                    type='multiline'/>
+                  <Field
+                    component={SelectInput}
+                    disabled={_activeLocale !== defaultLocale}
+                    getItemText={(contentProducerId) => contentProducersById.getIn([ contentProducerId, 'name' ])}
+                    getOptions={searchContentProducers}
+                    isLoading={searchedContentProducerIds.get('_status') === FETCHING}
+                    label='Content producers'
+                    multiselect
+                    name='contentProducers'
+                    options={searchedContentProducerIds.get('data').toJS()}
+                    placeholder='Content producers'/>
+                  <Field
+                    component={SelectInput}
+                    disabled={_activeLocale !== defaultLocale}
+                    getItemText={(broadcasterId) => broadcastersById.getIn([ broadcasterId, 'name' ])}
+                    getOptions={searchBroadcasters}
+                    isLoading={searchedBroadcasterIds.get('_status') === FETCHING}
+                    label='Broadcasters'
+                    multiselect
+                    name='broadcasters'
+                    options={searchedBroadcasterIds.get('data').toJS()}
+                    placeholder='Broadcaster companies'/>
+                  <FormSubtitle>Images</FormSubtitle>
+                  <div style={[ styles.paddingTop, styles.row ]}>
+                    <div>
+                      <Label text='Poster image' />
+                      <Dropzone
+                        accept='image/*'
+                        downloadUrl={currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ]) ||
+                          currentEpisode.getIn([ 'posterImage', defaultLocale, 'url' ])}
+                        imageUrl={currentEpisode.getIn([ 'posterImage', _activeLocale ]) &&
+                          `${currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310` ||
+                          currentEpisode.getIn([ 'posterImage', defaultLocale ]) &&
+                          `${currentEpisode.getIn([ 'posterImage', defaultLocale, 'url' ])}?height=459&width=310`}
+                        showOnlyUploadedImage
+                        type={POSTER_IMAGE}
+                        onChange={({ callback, file }) => { this.props.uploadPosterImage({ locale: _activeLocale, episodeId: this.props.params.episodeId, image: file, callback }); }}
+                        onDelete={currentEpisode.getIn([ 'posterImage', _activeLocale, 'url' ]) ? () => { deletePosterImage({ locale: _activeLocale, mediumId: currentEpisode.get('id') }); } : null}/>
+                    </div>
+                    <div style={styles.paddingLeftUploadImage}>
+                      <Label text='Profile image' />
+                      <Dropzone
+                        downloadUrl={currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ]) ||
+                          currentEpisode.getIn([ 'profileImage', defaultLocale, 'url' ])}
+                        imageUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
+                          `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360` ||
+                          currentEpisode.getIn([ 'profileImage', defaultLocale ]) &&
+                          `${currentEpisode.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
+                        showOnlyUploadedImage
+                        type={PROFILE_IMAGE}
+                        onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, episodeId: this.props.params.episodeId, image: file, callback }); }}
+                        onDelete={currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ]) ? () => { deleteProfileImage({ locale: _activeLocale, mediumId: currentEpisode.get('id') }); } : null}/>
+                    </div>
                   </div>
-                  <div style={styles.paddingLeftUploadImage}>
-                    <Label text='Profile image' />
-                    <Dropzone
-                      downloadUrl={currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ]) ||
-                        currentEpisode.getIn([ 'profileImage', defaultLocale, 'url' ])}
-                      imageUrl={currentEpisode.getIn([ 'profileImage', _activeLocale ]) &&
-                        `${currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360` ||
-                        currentEpisode.getIn([ 'profileImage', defaultLocale ]) &&
-                        `${currentEpisode.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
-                      showOnlyUploadedImage
-                      type={PROFILE_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, episodeId: this.props.params.episodeId, image: file, callback }); }}
-                      onDelete={currentEpisode.getIn([ 'profileImage', _activeLocale, 'url' ]) ? () => { deleteProfileImage({ locale: _activeLocale, mediumId: currentEpisode.get('id') }); } : null}/>
-                  </div>
-                </div>
-              </Section>
-            </Tab>
-           <Tab title='Helpers'>
-              <Characters
-                charactersById={charactersById}
-                mediumCharacters={episodeCharacters}
-                mediumId={this.props.params.episodeId}
-                searchCharacters={searchCharacters}
-                searchedCharacterIds={searchedCharacterIds} />
-            </Tab>
-            <Tab title='Interactive video'>
-              <Section>
-                <FormSubtitle first>Interactive video</FormSubtitle>
-                <Field
-                  component={RelatedVideo}
-                  medium={currentEpisode}
-                  name='videoId' />
-              </Section>
-            </Tab>
-            <Tab title='Availability'>
-              <Availabilities mediumId={this.props.params.episodeId} />
-            </Tab>
-          </Tabs>
-        </EditTemplate>
-      </Root>
+                </Section>
+              </Tab>
+             <Tab title='Helpers'>
+                <Characters
+                  charactersById={charactersById}
+                  mediumCharacters={episodeCharacters}
+                  mediumId={this.props.params.episodeId}
+                  searchCharacters={searchCharacters}
+                  searchedCharacterIds={searchedCharacterIds} />
+              </Tab>
+              <Tab title='Interactive video'>
+                <Section>
+                  <FormSubtitle first>Interactive video</FormSubtitle>
+                  <Field
+                    component={RelatedVideo}
+                    medium={currentEpisode}
+                    name='videoId' />
+                </Section>
+              </Tab>
+              <Tab title='Availability'>
+                <Availabilities mediumId={this.props.params.episodeId} />
+              </Tab>
+            </Tabs>
+          </EditTemplate>
+        </Root>
+      </SideMenu>
     );
   }
 }

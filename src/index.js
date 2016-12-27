@@ -11,6 +11,10 @@ import { TOGGLE_HOT_KEYS_INFO } from './tagger/actions/organizer';
 import { COMMERCIAL, EPISODE, MOVIE } from './constants/mediumTypes';
 
 import App from './pages/app';
+import BrandsCreate from './pages/content/brands/create';
+import BrandsEdit from './pages/content/brands/edit';
+import BrandsList from './pages/content/brands/list';
+import BrandsRead from './pages/content/brands/read';
 import BroadcastersList from './pages/content/broadcasters/list';
 import BroadcastersCreate from './pages/content/broadcasters/create';
 import BroadcastersEdit from './pages/content/broadcasters/edit';
@@ -52,10 +56,18 @@ import PersonsCreate from './pages/content/persons/create';
 import PersonsEdit from './pages/content/persons/edit';
 import PersonsList from './pages/content/persons/list';
 import PersonsRead from './pages/content/persons/read';
+import ProductsCreate from './pages/content/products/create';
+import ProductsEdit from './pages/content/products/edit';
+import ProductsList from './pages/content/products/list';
+import ProductsRead from './pages/content/products/read';
 import ResetPassword from './pages/resetPassword';
 import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
 import ReportingRankings from './pages/reporting/rankings';
+import ShopsCreate from './pages/content/shops/create';
+import ShopsEdit from './pages/content/shops/edit';
+import ShopsList from './pages/content/shops/list';
+import ShopsRead from './pages/content/shops/read';
 import SeasonList from './pages/content/seasons/list';
 import SeasonRead from './pages/content/seasons/read';
 import SeasonEdit from './pages/content/seasons/edit';
@@ -78,6 +90,7 @@ import BreadCrumbs from './pages/_common/components/breadCrumbs';
 
 import { load as loadTvGuide } from './pages/tvGuide/list/actions';
 import { load as loadMediumTvGuide } from './pages/content/_mediumTvGuide/actions';
+import { loadEpisodes } from './pages/content/series/read/episodes/actions';
 /**
  * The application routes
  */
@@ -139,6 +152,13 @@ function getRoutes ({ dispatch, getState }) {
       </Route>
       <Route path='content' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <IndexRedirect to='content-producers' />
+        <Route component={BrandsList} path='brands'>
+          <Route component={BrandsCreate} path ='create'/>
+        </Route>
+        <Route path='brands'>
+          <Route component={BrandsRead} path='read/:brandId'/>
+          <Route component={BrandsEdit} path='edit/:brandId'/>
+        </Route>
         <Route component={BroadcastersList} path='broadcasters'>
           <Route component={BroadcastersCreate} path='create'/>
         </Route>
@@ -182,9 +202,6 @@ function getRoutes ({ dispatch, getState }) {
             <Route component={UsersCreate} path='create/user'/>
           </Route>
         </Route>
-        <Route component={PersonsList} path='persons'>
-          <Route component={PersonsCreate} path ='create'/>
-        </Route>
         <Route component={MoviesList} path='movies'>
           <Route component={MoviesCreate} path='create'/>
         </Route>
@@ -204,12 +221,15 @@ function getRoutes ({ dispatch, getState }) {
                 return (
                   <BreadCrumbs hierarchy={[
                     { title: 'Movies', url: '/content/movies' },
-                    { title: currentTvGuideEntry.getIn([ 'medium', 'title' ]), url: `content/movies/read/${movieId}` },
+                    { title: currentTvGuideEntry.getIn([ 'medium', 'title' ]), url: `/content/movies/read/${movieId}` },
                     { title: 'TV Guide', url: props.location }
                   ]}/>);
               }} />
           </Route>
           <Route component={MoviesEdit} path='edit/:movieId'/>
+        </Route>
+        <Route component={PersonsList} path='persons'>
+          <Route component={PersonsCreate} path ='create'/>
         </Route>
         <Route path='persons'>
           <Route component={PersonsRead} path='read/:personId'/>
@@ -221,10 +241,24 @@ function getRoutes ({ dispatch, getState }) {
           <Route component={SeasonCreate} path='create/season'/>
           <Route component={EpisodeCreate} path='create/episode'/>
         </Route>
+        <Route component={ProductsList} path='products'>
+        <Route component={ProductsCreate} path ='create'/>
+        </Route>
+        <Route path='products'>
+          <Route component={ProductsRead} path='read/:productId'/>
+          <Route component={ProductsEdit} path='edit/:productId'/>
+        </Route>
+        <Route component={ShopsList} path='shops'>
+          <Route component={ShopsCreate} path ='create'/>
+        </Route>
+        <Route path='shops'>
+          <Route component={ShopsRead} path='read/:shopId'/>
+          <Route component={ShopsEdit} path='edit/:shopId'/>
+        </Route>
         <Route path='series'>
           <Route component={SeriesRead} path='read/:seriesEntryId'>
             <Route component={SeasonCreate} path='create/season'/>
-            <Route component={EpisodeCreate} path='create/episode'/>
+            <Route component={EpisodeCreate} loadEpisodesOfSeriesEntry={(props) => { dispatch(loadEpisodes(props.location.query, props.params.seriesEntryId)); }} path='create/episode'/>
             <Route
               component={TvGuideCreateEntry}
               load={(props) => { dispatch(loadMediumTvGuide(props.location.query, props.params.seriesEntryId)); }}
@@ -240,7 +274,7 @@ function getRoutes ({ dispatch, getState }) {
                 return (
                   <BreadCrumbs hierarchy={[
                     { title: 'Series', url: '/content/series' },
-                    { title: currentTvGuideEntry.getIn([ 'serie', 'title' ]), url: `content/series/read/${seriesEntryId}` },
+                    { title: currentTvGuideEntry.getIn([ 'serie', 'title' ]), url: `/content/series/read/${seriesEntryId}` },
                     { title: 'TV Guide', url: props.location }
                   ]}/>);
               }} />
@@ -262,8 +296,8 @@ function getRoutes ({ dispatch, getState }) {
                   return (
                     <BreadCrumbs hierarchy={[
                       { title: 'Series', url: '/content/series' },
-                      { title: currentTvGuideEntry.getIn([ 'serie', 'title' ]), url: `content/series/read/${seriesEntryId}` },
-                      { title: currentTvGuideEntry.getIn([ 'season', 'title' ]), url: `content/series/read/${seriesEntryId}/seasons/read/${seasonId}` },
+                      { title: currentTvGuideEntry.getIn([ 'serie', 'title' ]), url: `/content/series/read/${seriesEntryId}` },
+                      { title: currentTvGuideEntry.getIn([ 'season', 'title' ]), url: `/content/series/read/${seriesEntryId}/seasons/read/${seasonId}` },
                       { title: 'TV Guide', url: props.location }
                     ]}/>);
                 }} />
@@ -282,9 +316,9 @@ function getRoutes ({ dispatch, getState }) {
                       return (
                         <BreadCrumbs hierarchy={[
                           { title: 'Series', url: '/content/series' },
-                          { title: currentTvGuideEntry.getIn([ 'serie', 'title' ]), url: `content/series/read/${seriesEntryId}` },
-                          { title: currentTvGuideEntry.getIn([ 'season', 'title' ]), url: `content/series/read/${seriesEntryId}/seasons/read/${seasonId}` },
-                          { title: currentTvGuideEntry.getIn([ 'medium', 'title' ]), url: `content/series/read/${seriesEntryId}/seasons/read/${seasonId}/episodes/read/${episodeId}` },
+                          { title: currentTvGuideEntry.getIn([ 'serie', 'title' ]), url: `/content/series/read/${seriesEntryId}` },
+                          { title: currentTvGuideEntry.getIn([ 'season', 'title' ]), url: `/content/series/read/${seriesEntryId}/seasons/read/${seasonId}` },
+                          { title: currentTvGuideEntry.getIn([ 'medium', 'title' ]), url: `/content/series/read/${seriesEntryId}/seasons/read/${seasonId}/episodes/read/${episodeId}` },
                           { title: 'TV Guide', url: location }
                         ]}/>);
                     }} />

@@ -2,18 +2,15 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Header from '../../../app/header';
 import { Root, Container, colors } from '../../../_common/styles';
 import * as actions from './actions';
-import SpecificHeader from '../../header';
 import selector from './selector';
 import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
-import { generalStyles } from '../../../_common/components/table/index';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
-import { Tabs, Tab } from '../../../_common/components/formTabs';
+import { SideMenu } from '../../../app/sideMenu';
 
 /* eslint-disable no-alert */
 
@@ -50,7 +47,7 @@ export default class ReadCommercial extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/commercials', true);
+    this.props.routerPushWithReturnTo('/content/commercials', true);
   }
 
   onChangeTab (index) {
@@ -59,7 +56,7 @@ export default class ReadCommercial extends Component {
 
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/commercials');
+    this.props.routerPushWithReturnTo('/content/commercials');
   }
 
   static styles= {
@@ -70,39 +67,28 @@ export default class ReadCommercial extends Component {
   }
 
   render () {
-    const { params, children, currentCommercial, location: { query: { tabIndex } }, deleteCommercial } = this.props;
-    const { styles } = this.constructor;
+    const { params, children, currentCommercial, location, deleteCommercial } = this.props;
     const defaultLocale = currentCommercial.get('defaultLocale');
 
     return (
-      <Root>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <BreadCrumbs hierarchy={[
-          { title: 'Commercials', url: '/content/commercials' },
-          { title: currentCommercial.getIn([ 'title', defaultLocale ]), url: `content/commercials/read/${params.commercialId}` }
-        ]}/>
-        <Container>
-          {currentCommercial.get('_status') === 'loaded' && currentCommercial &&
-            <EntityDetails
-              imageUrl={currentCommercial.getIn([ 'profileImage', defaultLocale ]) && `${currentCommercial.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
-              title={currentCommercial.getIn([ 'title', defaultLocale ])}
-              onEdit={() => this.props.routerPushWithReturnTo(`content/commercials/edit/${params.commercialId}`)}
-              onRemove={async () => { await deleteCommercial(params.commercialId); this.redirect(); }}/>}
-        </Container>
-        <Line/>
-        {/* <div style={[ generalStyles.fillPage, styles.table ]}>
+      <SideMenu>
+        <Root>
+          <BreadCrumbs hierarchy={[
+            { title: 'Commercials', url: '/content/commercials' },
+            { title: currentCommercial.getIn([ 'title', defaultLocale ]), url: `/content/commercials/read/${params.commercialId}` }
+          ]}/>
           <Container>
-            <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
-              <Tab title='TV Guide'>
-                Tv guide
-              </Tab>
-            </Tabs>
+            {currentCommercial.get('_status') === 'loaded' && currentCommercial &&
+              <EntityDetails
+                imageUrl={currentCommercial.getIn([ 'profileImage', defaultLocale ]) && `${currentCommercial.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
+                title={currentCommercial.getIn([ 'title', defaultLocale ])}
+                onEdit={() => this.props.routerPushWithReturnTo(`/content/commercials/edit/${params.commercialId}`)}
+                onRemove={async () => { await deleteCommercial(params.commercialId); this.redirect(); }}/>}
           </Container>
-        </div>
-        <Line/> */}
-        {children}
-      </Root>
+          <Line/>
+          {children}
+        </Root>
+      </SideMenu>
     );
   }
 

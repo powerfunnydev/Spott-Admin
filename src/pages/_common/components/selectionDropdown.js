@@ -163,7 +163,7 @@ export default class Dropdown extends Component {
     options: {
       zIndex: 10,
       position: 'absolute',
-      left: -15,
+      left: 0,
       top: 30,
       minWidth: '140px',
       borderRadius: '2px',

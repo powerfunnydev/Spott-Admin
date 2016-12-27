@@ -56,7 +56,7 @@ export default class ReportingActivity extends Component {
     const query = {
       // We assume the ALL event will be always there.
       endDate: moment().startOf('day').format('YYYY-MM-DD'),
-      event: 'ALL',
+      events: [ 'MEDIUM_SUBSCRIPTIONS' ],
       startDate: moment().startOf('day').subtract(1, 'months').date(1).format('YYYY-MM-DD'),
       ...location.query
     };
@@ -69,7 +69,7 @@ export default class ReportingActivity extends Component {
     const query = this.props.location.query;
 
     if (query.endDate !== nextQuery.endDate ||
-      query.event !== nextQuery.event ||
+      !arraysEqual(query.events, nextQuery.events) ||
       query.startDate !== nextQuery.startDate ||
       !arraysEqual(query.media, nextQuery.media)) {
       this.loadActivities(nextProps.location.query);
@@ -135,7 +135,7 @@ export default class ReportingActivity extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { ageConfig, genderConfig, isLoadingAge, isLoadingGender, isLoadingTimeline, location: { query: { startDate, endDate, event } }, timelineConfig } = this.props;
+    const { ageConfig, genderConfig, isLoadingAge, isLoadingGender, isLoadingTimeline, location: { query: { startDate, endDate, events } }, timelineConfig } = this.props;
     return (
       <div>
         <div style={styles.charts}>
@@ -145,7 +145,7 @@ export default class ReportingActivity extends Component {
                 // TODO validation
                 endDate: moment(endDate),
                 startDate: moment(startDate),
-                event
+                events: typeof events === 'string' ? [ events ] : (events || [])
               }}
               style={styles.activityFilterForm}
               onChange={this.onChangeActivityFilter} />
@@ -159,9 +159,11 @@ export default class ReportingActivity extends Component {
               <Widget isLoading={isLoadingGender} style={mediumWidgetStyle} title='Gender'>
                 <Highcharts config={genderConfig} isPureConfig />
               </Widget>
-              {/* <Widget title='Location'>
+              {/*
+              <Widget title='Location'>
                 <Highcharts config={locationConfig} isPureConfig />
-              </Widget> */}
+              </Widget>
+              */}
             </div>
           </Container>
         </div>

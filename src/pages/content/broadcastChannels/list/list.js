@@ -13,7 +13,7 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 import UtilsBar from '../../../_common/components/table/utilsBar';
 import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
-
+import moment from 'moment';
 /* eslint-disable no-alert */
 
 const numberOfRows = 25;
@@ -54,7 +54,7 @@ export default class BroadcastChannelList extends Component {
 
   constructor (props) {
     super(props);
-    this.onClickNew = ::this.onClickNew;
+    this.onClickNewEntry = ::this.onClickNewEntry;
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
     this.slowSearch = slowdown(props.load, 300);
   }
@@ -79,9 +79,14 @@ export default class BroadcastChannelList extends Component {
     }
   }
 
+  getLastUpdatedOn (cp) {
+    const date = new Date(cp.get('lastUpdatedOn'));
+    return moment(date).format('YYYY-MM-DD HH:mm');
+  }
+
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/broadcast-channels/create');
+    this.props.routerPushWithReturnTo('/content/broadcast-channels/create');
   }
 
   async onClickDeleteSelected () {
@@ -128,7 +133,9 @@ export default class BroadcastChannelList extends Component {
                   <Headers>
                     {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                     <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 5 } ]}>NAME</CustomCel>
+                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>NAME</CustomCel>
+                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
+                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
                     <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
                   </Headers>
                   <Rows isLoading={broadcastChannels.get('_status') !== 'loaded'}>
@@ -137,10 +144,12 @@ export default class BroadcastChannelList extends Component {
                         <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                           <CheckBoxCel checked={isSelected.get(broadcastChannel.get('id'))} onChange={selectCheckbox.bind(this, broadcastChannel.get('id'))}/>
-                          <CustomCel style={{ flex: 5 }}>{broadcastChannel.get('name')}</CustomCel>
+                          <CustomCel style={{ flex: 2 }}>{broadcastChannel.get('name')}</CustomCel>
+                          <CustomCel style={{ flex: 2 }}>{broadcastChannel.get('lastUpdatedBy')}</CustomCel>
+                          <CustomCel getValue={this.getLastUpdatedOn} objectToRender={broadcastChannel} style={{ flex: 2 }}/>
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]}onClick={() => { this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}>Edit</div>}>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]}onClick={() => { this.props.routerPushWithReturnTo(`/content/broadcast-channels/edit/${broadcastChannel.get('id')}`); }}>Edit</div>}>
                               <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcastChannel(broadcastChannel.get('id')); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
@@ -167,10 +176,10 @@ export default class BroadcastChannelList extends Component {
                       }}
                       onEdit={(e) => {
                         e.preventDefault();
-                        this.props.routerPushWithReturnTo(`content/broadcast-channels/edit/${broadcastChannel.get('id')}`);
+                        this.props.routerPushWithReturnTo(`/content/broadcast-channels/edit/${broadcastChannel.get('id')}`);
                       }}/>
                   ))}
-                  <Tile key={'createBroadcastChannel'} onCreate={() => { this.props.routerPushWithReturnTo('content/broadcast-channels/create'); }}/>
+                  <Tile key={'createBroadcastChannel'} onCreate={() => { this.props.routerPushWithReturnTo('/content/broadcast-channels/create'); }}/>
                 </div>
                 <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
               </div>

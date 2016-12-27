@@ -40,9 +40,21 @@ export default class Application extends Component {
     }
   }
 
+  static styles = {
+    fullHeight: {
+      height: '100%'
+    },
+    container: {
+      width: 'auto',
+      marginLeft: '200px',
+      overflow: 'auto'
+    }
+  }
+
   render () {
+    const { styles } = this.constructor;
     return (
-      <StyleRoot style={{ height: '100%' }}>
+      <StyleRoot key='root' style={styles.fullHeight}>
         <Toast/>
         {this.props.children}
       </StyleRoot>
