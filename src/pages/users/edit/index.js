@@ -9,7 +9,6 @@ import { Root, FormSubtitle, colors, EditTemplate } from '../../_common/styles';
 import * as actions from './actions';
 import Button from '../../_common/components/buttons/button';
 import DateInput from '../../_common/inputs/dateInput';
-import Header from '../../app/header';
 import Label from '../../_common/inputs/_label';
 import localized from '../../_common/decorators/localized';
 import Section from '../../_common/components/section';
@@ -24,6 +23,7 @@ import { INACTIVE, disabledReasons, userStatus as userStates } from '../../../co
 import { FETCHING } from '../../../constants/statusTypes';
 import BreadCrumbs from '../../_common/components/breadCrumbs';
 import ensureEntityIsSaved from '../../_common/decorators/ensureEntityIsSaved';
+import { SideMenu } from '../../app/sideMenu';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -162,188 +162,188 @@ export default class EditUser extends Component {
     const { currentUser, currentUserStatus, contentProducersById, searchedContentProducerIds, searchContentProducers,
       broadcastersById, searchedBroadcasterIds, searchBroadcasters, location, handleSubmit, localeNames, genders } = this.props;
     return (
-      <Root style={styles.background}>
-        <Header currentLocation={location} hideHomePageLinks />
-        <BreadCrumbs hierarchy={[
-          { title: 'Users', url: '/users' },
-          { title: `${currentUser.get('firstName')} ${currentUser.get('lastName')}`, url: location } ]}/>
-        <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-          <Tabs>
-            <Tab title='Details'>
-              <Section clearPopUpMessage={this.props.clearPopUpMessage} popUpObject={this.props.popUpMessage}>
-                <FormSubtitle first>Account</FormSubtitle>
-                <Field
-                  component={TextInput}
-                  label='Email'
-                  name='email'
-                  placeholder='Email'
-                  required/>
-                <Field
-                  component={TextInput}
-                  disabled
-                  label='Username'
-                  name='userName'
-                  placeholder='Username'
-                  required/>
-                <div style={styles.paddingTop}>
-                  <Label text='Password' />
-                  <Button first style={{ paddingLeft: '2em', paddingRight: '2em' }} text='Reset password' onClick={this.resetPassword}/>
-                </div>
-                <FormSubtitle>General</FormSubtitle>
-                <Field
-                  component={TextInput}
-                  label='First Name'
-                  name='firstName'
-                  placeholder='First Name'
-                  required/>
-                <Field
-                  component={TextInput}
-                  label='Last Name'
-                  name='lastName'
-                  placeholder='Last Name'
-                  required/>
-                <Field
-                  component={DateInput}
-                  label='Date of birth'
-                  name='dateOfBirth'
-                  placeholder='dd/mm/yyyy'/>
-                <Field
-                  component={SelectInput}
-                  filter={(option, filter) => {
-                    return option && filter ? genders.get(option.value).toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
-                  }}
-                  getItemText={(gender) => genders.get(gender)}
-                  getOptions={(gender) => genders.keySeq().toArray()}
-                  label='Gender'
-                  name='gender'
-                  options={genders.keySeq().toArray()}
-                  placeholder='Gender'/>
-                <Field
-                  component={SelectInput}
-                  filter={(option, filter) => {
-                    return option && filter ? localeNames.get(option.value).toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
-                  }}
-                  getItemText={(language) => localeNames.get(language)}
-                  getOptions={(language) => localeNames.keySeq().toArray()}
-                  label='Language'
-                  multiselect
-                  name='languages'
-                  options={localeNames.keySeq().toArray()}
-                  placeholder='Language'/>
-                <FormSubtitle>Images</FormSubtitle>
-                <div style={[ styles.paddingTop, styles.row ]}>
-                  <div>
-                    <Label text='Profile image' />
-                    <Dropzone
-                      accept='image/*'
-                      downloadUrl={currentUser.get('profileImage') && currentUser.getIn([ 'profileImage', 'url' ])}
-                      imageUrl={currentUser.get('profileImage') && `${currentUser.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ userId: this.props.params.id, image: file, callback }); }}/>
+      <SideMenu location={location}>
+        <Root style={styles.background}>
+          <BreadCrumbs hierarchy={[
+            { title: 'Users', url: '/users' },
+            { title: `${currentUser.get('firstName')} ${currentUser.get('lastName')}`, url: location } ]}/>
+          <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
+            <Tabs>
+              <Tab title='Details'>
+                <Section clearPopUpMessage={this.props.clearPopUpMessage} popUpObject={this.props.popUpMessage}>
+                  <FormSubtitle first>Account</FormSubtitle>
+                  <Field
+                    component={TextInput}
+                    label='Email'
+                    name='email'
+                    placeholder='Email'
+                    required/>
+                  <Field
+                    component={TextInput}
+                    disabled
+                    label='Username'
+                    name='userName'
+                    placeholder='Username'
+                    required/>
+                  <div style={styles.paddingTop}>
+                    <Label text='Password' />
+                    <Button first style={{ paddingLeft: '2em', paddingRight: '2em' }} text='Reset password' onClick={this.resetPassword}/>
                   </div>
-                  <div style={styles.paddingLeftBackgroudImage}>
-                    <Label text='Avatar image' />
-                    <Dropzone
-                      accept='image/*'
-                      downloadUrl={currentUser.get('avatar') && currentUser.getIn([ 'avatar', 'url' ])}
-                      imageUrl={currentUser.get('avatar') && `${currentUser.getIn([ 'avatar', 'url' ])}?height=310&width=310`}
-                      onChange={({ callback, file }) => { this.props.uploadBackgroundImage({ userId: this.props.params.id, image: file, callback }); }}/>
+                  <FormSubtitle>General</FormSubtitle>
+                  <Field
+                    component={TextInput}
+                    label='First Name'
+                    name='firstName'
+                    placeholder='First Name'
+                    required/>
+                  <Field
+                    component={TextInput}
+                    label='Last Name'
+                    name='lastName'
+                    placeholder='Last Name'
+                    required/>
+                  <Field
+                    component={DateInput}
+                    label='Date of birth'
+                    name='dateOfBirth'
+                    placeholder='dd/mm/yyyy'/>
+                  <Field
+                    component={SelectInput}
+                    filter={(option, filter) => {
+                      return option && filter ? genders.get(option.value).toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
+                    }}
+                    getItemText={(gender) => genders.get(gender)}
+                    getOptions={(gender) => genders.keySeq().toArray()}
+                    label='Gender'
+                    name='gender'
+                    options={genders.keySeq().toArray()}
+                    placeholder='Gender'/>
+                  <Field
+                    component={SelectInput}
+                    filter={(option, filter) => {
+                      return option && filter ? localeNames.get(option.value).toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
+                    }}
+                    getItemText={(language) => localeNames.get(language)}
+                    getOptions={(language) => localeNames.keySeq().toArray()}
+                    label='Language'
+                    multiselect
+                    name='languages'
+                    options={localeNames.keySeq().toArray()}
+                    placeholder='Language'/>
+                  <FormSubtitle>Images</FormSubtitle>
+                  <div style={[ styles.paddingTop, styles.row ]}>
+                    <div>
+                      <Label text='Profile image' />
+                      <Dropzone
+                        accept='image/*'
+                        downloadUrl={currentUser.get('profileImage') && currentUser.getIn([ 'profileImage', 'url' ])}
+                        imageUrl={currentUser.get('profileImage') && `${currentUser.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
+                        onChange={({ callback, file }) => { this.props.uploadProfileImage({ userId: this.props.params.id, image: file, callback }); }}/>
+                    </div>
+                    <div style={styles.paddingLeftBackgroudImage}>
+                      <Label text='Avatar image' />
+                      <Dropzone
+                        accept='image/*'
+                        downloadUrl={currentUser.get('avatar') && currentUser.getIn([ 'avatar', 'url' ])}
+                        imageUrl={currentUser.get('avatar') && `${currentUser.getIn([ 'avatar', 'url' ])}?height=310&width=310`}
+                        onChange={({ callback, file }) => { this.props.uploadBackgroundImage({ userId: this.props.params.id, image: file, callback }); }}/>
+                    </div>
                   </div>
-                </div>
+                  </Section>
+              </Tab>
+              <Tab title='Permissions'>
+                <Section clearPopUpMessage={this.props.clearPopUpMessage} popUpObject={this.props.popUpMessage}>
+                  <FormSubtitle first>Account status</FormSubtitle>
+                  <Field
+                    component={SelectInput}
+                    filter={(option, filter) => {
+                      return option && filter ? userStates[option.value].toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
+                    }}
+                    getItemText={(disabled) => userStates[disabled]}
+                    getOptions={() => Object.keys(userStates)}
+                    label='User status'
+                    name='userStatus'
+                    options={Object.keys(userStates)}
+                    placeholder='User status'
+                    required/>
+                  {currentUserStatus === INACTIVE && <Field
+                    component={SelectInput}
+                    filter={(option, filter) => {
+                      return option && filter ? disabledReasons[option.value].toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
+                    }}
+                    getItemText={(reason) => disabledReasons[reason]}
+                    getOptions={() => Object.keys(disabledReasons)}
+                    label='Reason'
+                    name='disabledReason'
+                    options={Object.keys(disabledReasons)}
+                    placeholder='Reason'/>}
+                  <FormSubtitle>Roles</FormSubtitle>
+                  <div style={styles.paddingTop}>
+                    <div style={styles.row}>
+                      <Field
+                        component={Checkbox}
+                        first
+                        name='sysAdmin'/>
+                      <div style={[ styles.paddingLeftCheckbox, styles.fontSize ]}>System admin</div>
+                    </div>
+                    <div style={[ styles.row, styles.paddingTopRow ]}>
+                      <Field
+                        component={Checkbox}
+                        first
+                        name='broadcaster'/>
+                      <div style={[ styles.paddingLeftCheckbox, styles.column ]}>
+                        <div style={styles.fontSize}>Broadcaster</div>
+                        <div style={styles.paddingTopSpecificCheckbox}>
+                          <Label required text='Broadcaster companies'/>
+                          <Field
+                            component={SelectInput}
+                            getItemText={(broadcasterId) => broadcastersById.getIn([ broadcasterId, 'name' ])}
+                            getOptions={searchBroadcasters}
+                            isLoading={searchedBroadcasterIds.get('_status') === FETCHING}
+                            multiselect
+                            name='broadcasters'
+                            options={searchedBroadcasterIds.get('data').toJS()}
+                            placeholder='Broadcaster companies'
+                            style={styles.paddingTopMultiselect}/>
+                        </div>
+                      </div>
+                    </div>
+                    <div style={[ styles.row, styles.paddingTopRow ]}>
+                      <Field
+                        component={Checkbox}
+                        first
+                        name='contentManager'/>
+                      <div style={[ styles.paddingLeftCheckbox, styles.fontSize ]}>Content manager</div>
+                    </div>
+                    <div style={[ styles.row, styles.paddingTopRow ]}>
+                      <Field
+                        component={Checkbox}
+                        first
+                        name='contentProducer'/>
+                      <div style={[ styles.paddingLeftCheckbox, styles.column ]}>
+                        <div style={styles.fontSize}>Content producer</div>
+                        <div style={styles.paddingTopSpecificCheckbox}>
+                          <Label required text='Content producers'/>
+                          <Field
+                            component={SelectInput}
+                            getItemText={(contentProducerId) => contentProducersById.getIn([ contentProducerId, 'name' ])}
+                            getOptions={searchContentProducers}
+                            isLoading={searchedContentProducerIds.get('_status') === FETCHING}
+                            multiselect
+                            name='contentProducers'
+                            options={searchedContentProducerIds.get('data').toJS()}
+                            placeholder='Content producers'
+                            style={styles.paddingTopMultiselect}/>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </Section>
-            </Tab>
-            <Tab title='Permissions'>
-              <Section clearPopUpMessage={this.props.clearPopUpMessage} popUpObject={this.props.popUpMessage}>
-                <FormSubtitle first>Account status</FormSubtitle>
-                <Field
-                  component={SelectInput}
-                  filter={(option, filter) => {
-                    return option && filter ? userStates[option.value].toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
-                  }}
-                  getItemText={(disabled) => userStates[disabled]}
-                  getOptions={() => Object.keys(userStates)}
-                  label='User status'
-                  name='userStatus'
-                  options={Object.keys(userStates)}
-                  placeholder='User status'
-                  required/>
-                {currentUserStatus === INACTIVE && <Field
-                  component={SelectInput}
-                  filter={(option, filter) => {
-                    return option && filter ? disabledReasons[option.value].toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
-                  }}
-                  getItemText={(reason) => disabledReasons[reason]}
-                  getOptions={() => Object.keys(disabledReasons)}
-                  label='Reason'
-                  name='disabledReason'
-                  options={Object.keys(disabledReasons)}
-                  placeholder='Reason'/>}
-                <FormSubtitle>Roles</FormSubtitle>
-                <div style={styles.paddingTop}>
-                  <div style={styles.row}>
-                    <Field
-                      component={Checkbox}
-                      first
-                      name='sysAdmin'/>
-                    <div style={[ styles.paddingLeftCheckbox, styles.fontSize ]}>System admin</div>
-                  </div>
-                  <div style={[ styles.row, styles.paddingTopRow ]}>
-                    <Field
-                      component={Checkbox}
-                      first
-                      name='broadcaster'/>
-                    <div style={[ styles.paddingLeftCheckbox, styles.column ]}>
-                      <div style={styles.fontSize}>Broadcaster</div>
-                      <div style={styles.paddingTopSpecificCheckbox}>
-                        <Label required text='Broadcaster companies'/>
-                        <Field
-                          component={SelectInput}
-                          getItemText={(broadcasterId) => broadcastersById.getIn([ broadcasterId, 'name' ])}
-                          getOptions={searchBroadcasters}
-                          isLoading={searchedBroadcasterIds.get('_status') === FETCHING}
-                          multiselect
-                          name='broadcasters'
-                          options={searchedBroadcasterIds.get('data').toJS()}
-                          placeholder='Broadcaster companies'
-                          style={styles.paddingTopMultiselect}/>
-                      </div>
-                    </div>
-                  </div>
-                  <div style={[ styles.row, styles.paddingTopRow ]}>
-                    <Field
-                      component={Checkbox}
-                      first
-                      name='contentManager'/>
-                    <div style={[ styles.paddingLeftCheckbox, styles.fontSize ]}>Content manager</div>
-                  </div>
-                  <div style={[ styles.row, styles.paddingTopRow ]}>
-                    <Field
-                      component={Checkbox}
-                      first
-                      name='contentProducer'/>
-                    <div style={[ styles.paddingLeftCheckbox, styles.column ]}>
-                      <div style={styles.fontSize}>Content producer</div>
-                      <div style={styles.paddingTopSpecificCheckbox}>
-                        <Label required text='Content producers'/>
-                        <Field
-                          component={SelectInput}
-                          getItemText={(contentProducerId) => contentProducersById.getIn([ contentProducerId, 'name' ])}
-                          getOptions={searchContentProducers}
-                          isLoading={searchedContentProducerIds.get('_status') === FETCHING}
-                          multiselect
-                          name='contentProducers'
-                          options={searchedContentProducerIds.get('data').toJS()}
-                          placeholder='Content producers'
-                          style={styles.paddingTopMultiselect}/>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Section>
-            </Tab>
-          </Tabs>
-        </EditTemplate>
-      </Root>
+              </Tab>
+            </Tabs>
+          </EditTemplate>
+        </Root>
+      </SideMenu>
     );
   }
-
 }

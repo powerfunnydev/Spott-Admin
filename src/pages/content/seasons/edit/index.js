@@ -11,13 +11,11 @@ import * as actions from './actions';
 import { SEASON_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import Dropzone from '../../../_common/dropzone/imageDropzone';
-import Header from '../../../app/header';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Label from '../../../_common/inputs/_label';
 import localized from '../../../_common/decorators/localized';
 import Section from '../../../_common/components/section';
 import SelectInput from '../../../_common/inputs/selectInput';
-import SpecificHeader from '../../header';
 import CheckboxInput from '../../../_common/inputs/checkbox';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
@@ -26,6 +24,7 @@ import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import selector from './selector';
 import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
+import { SideMenu } from '../../../app/sideMenu';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -122,7 +121,7 @@ export default class EditSeason extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo(`content/series/read/${this.props.params.seriesEntryId}`, true);
+    this.props.routerPushWithReturnTo(`/content/series/read/${this.props.params.seriesEntryId}`, true);
   }
 
   languageAdded (form) {
@@ -235,131 +234,131 @@ export default class EditSeason extends Component {
         handleSubmit, supportedLocales, errors, deleteProfileImage, deletePosterImage, location: { query: { tab } } } = this.props;
     const { styles } = this.constructor;
     return (
-      <Root style={styles.backgroundRoot}>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <BreadCrumbs hierarchy={[
-          { title: 'Series', url: '/content/series' },
-          { title: currentSeason.getIn([ 'seriesEntry', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}` },
-          { title: currentSeason.getIn([ 'title', defaultLocale ]), url: location } ]}/>
-        {currentModal === SEASON_CREATE_LANGUAGE &&
-          <CreateLanguageModal
-            supportedLocales={supportedLocales}
-            onCloseClick={closeModal}
-            onCreate={this.languageAdded}>
-            <Field
-              component={TextInput}
-              content={
-                <Field
-                  component={CheckboxInput}
-                  first
-                  label='Custom title'
-                  name='hasTitle'
-                  style={styles.customTitle} />}
-              disabled={!addLanguageHasTitle}
-              label='Season title'
-              labelStyle={styles.titleLabel}
-              name='title'
-              placeholder='Season title'
-              required />
-          </CreateLanguageModal>}
-        <EditTemplate disableSubmit={tab > 1} onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-          <Tabs activeTab={tab} showPublishStatus onBeforeChange={this.props.onBeforeChangeTab} onChange={this.props.onChangeTab}>
-            <Tab title='Details'>
-              <Section noPadding style={styles.background}>
-                <LanguageBar
-                  _activeLocale={_activeLocale}
-                  defaultLocale={defaultLocale}
-                  errors={errors}
-                  openCreateLanguageModal={this.openCreateLanguageModal}
-                  removeLanguage={this.removeLanguage}
-                  supportedLocales={supportedLocales}
-                  onSetDefaultLocale={this.onSetDefaultLocale}/>
-              </Section>
-              <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage}>
-                <FormSubtitle first>General</FormSubtitle>
-                <Field
-                  component={SelectInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  getItemText={(id) => seriesEntriesById.getIn([ id, 'title' ])}
-                  getOptions={searchSeriesEntries}
-                  isLoading={searchedSeriesEntryIds.get('_status') === FETCHING}
-                  label='Series title'
-                  name='seriesEntryId'
-                  options={searchedSeriesEntryIds.get('data').toJS()}
-                  placeholder='Series title'
-                  required
-                  onChange={() => {
-                    this.props.dispatch(this.props.change('seasonId', null));
-                  }} />
-                {currentSeriesEntryId && <Field
-                  component={TextInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  label='Season number'
-                  name='number'
-                  placeholder='Season number'
-                  required
-                  type='number'/>}
-                {currentSeriesEntryId &&
+      <SideMenu>
+        <Root style={styles.backgroundRoot}>
+          <BreadCrumbs hierarchy={[
+            { title: 'Series', url: '/content/series' },
+            { title: currentSeason.getIn([ 'seriesEntry', 'title' ]), url: `/content/series/read/${this.props.params.seriesEntryId}` },
+            { title: currentSeason.getIn([ 'title', defaultLocale ]), url: location } ]}/>
+          {currentModal === SEASON_CREATE_LANGUAGE &&
+            <CreateLanguageModal
+              supportedLocales={supportedLocales}
+              onCloseClick={closeModal}
+              onCreate={this.languageAdded}>
+              <Field
+                component={TextInput}
+                content={
+                  <Field
+                    component={CheckboxInput}
+                    first
+                    label='Custom title'
+                    name='hasTitle'
+                    style={styles.customTitle} />}
+                disabled={!addLanguageHasTitle}
+                label='Season title'
+                labelStyle={styles.titleLabel}
+                name='title'
+                placeholder='Season title'
+                required />
+            </CreateLanguageModal>}
+          <EditTemplate disableSubmit={tab > 1} onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
+            <Tabs activeTab={tab} showPublishStatus onBeforeChange={this.props.onBeforeChangeTab} onChange={this.props.onChangeTab}>
+              <Tab title='Details'>
+                <Section noPadding style={styles.background}>
+                  <LanguageBar
+                    _activeLocale={_activeLocale}
+                    defaultLocale={defaultLocale}
+                    errors={errors}
+                    openCreateLanguageModal={this.openCreateLanguageModal}
+                    removeLanguage={this.removeLanguage}
+                    supportedLocales={supportedLocales}
+                    onSetDefaultLocale={this.onSetDefaultLocale}/>
+                </Section>
+                <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage}>
+                  <FormSubtitle first>General</FormSubtitle>
+                  <Field
+                    component={SelectInput}
+                    disabled={_activeLocale !== defaultLocale}
+                    getItemText={(id) => seriesEntriesById.getIn([ id, 'title' ])}
+                    getOptions={searchSeriesEntries}
+                    isLoading={searchedSeriesEntryIds.get('_status') === FETCHING}
+                    label='Series title'
+                    name='seriesEntryId'
+                    options={searchedSeriesEntryIds.get('data').toJS()}
+                    placeholder='Series title'
+                    required
+                    onChange={() => {
+                      this.props.dispatch(this.props.change('seasonId', null));
+                    }} />
+                  {currentSeriesEntryId && <Field
+                    component={TextInput}
+                    disabled={_activeLocale !== defaultLocale}
+                    label='Season number'
+                    name='number'
+                    placeholder='Season number'
+                    required
+                    type='number'/>}
+                  {currentSeriesEntryId &&
+                    <Field
+                      component={TextInput}
+                      content={
+                        <Field
+                          component={CheckboxInput}
+                          first
+                          label='Custom title'
+                          name={`hasTitle.${_activeLocale}`}
+                          style={styles.customTitle} />}
+                      disabled={hasTitle && !hasTitle.get(_activeLocale)}
+                      label='Season title'
+                      labelStyle={styles.titleLabel}
+                      name={`title.${_activeLocale}`}
+                      placeholder='Season title'
+                      required />}
                   <Field
                     component={TextInput}
-                    content={
-                      <Field
-                        component={CheckboxInput}
-                        first
-                        label='Custom title'
-                        name={`hasTitle.${_activeLocale}`}
-                        style={styles.customTitle} />}
-                    disabled={hasTitle && !hasTitle.get(_activeLocale)}
-                    label='Season title'
-                    labelStyle={styles.titleLabel}
-                    name={`title.${_activeLocale}`}
-                    placeholder='Season title'
-                    required />}
-                <Field
-                  component={TextInput}
-                  label='Description'
-                  name={`description.${_activeLocale}`}
-                  placeholder='Description'
-                  type='multiline'/>
-                <FormSubtitle>Images</FormSubtitle>
-                <div style={[ styles.paddingTop, styles.row ]}>
-                  <div>
-                    <Label text='Poster image' />
-                    <Dropzone
-                      accept='image/*'
-                      downloadUrl={currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ]) ||
-                        currentSeason.getIn([ 'posterImage', defaultLocale, 'url' ])}
-                      imageUrl={currentSeason.getIn([ 'posterImage', _activeLocale ]) &&
-                        `${currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310` ||
-                        currentSeason.getIn([ 'posterImage', defaultLocale ]) &&
-                        `${currentSeason.getIn([ 'posterImage', defaultLocale, 'url' ])}?height=459&width=310`}
-                      showOnlyUploadedImage
-                      type={POSTER_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadPosterImage({ locale: _activeLocale, seasonId: this.props.params.seasonId, image: file, callback }); }}
-                      onDelete={currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ]) ? () => { deletePosterImage({ locale: _activeLocale, mediumId: currentSeason.get('id') }); } : null}/>
+                    label='Description'
+                    name={`description.${_activeLocale}`}
+                    placeholder='Description'
+                    type='multiline'/>
+                  <FormSubtitle>Images</FormSubtitle>
+                  <div style={[ styles.paddingTop, styles.row ]}>
+                    <div>
+                      <Label text='Poster image' />
+                      <Dropzone
+                        accept='image/*'
+                        downloadUrl={currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ]) ||
+                          currentSeason.getIn([ 'posterImage', defaultLocale, 'url' ])}
+                        imageUrl={currentSeason.getIn([ 'posterImage', _activeLocale ]) &&
+                          `${currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310` ||
+                          currentSeason.getIn([ 'posterImage', defaultLocale ]) &&
+                          `${currentSeason.getIn([ 'posterImage', defaultLocale, 'url' ])}?height=459&width=310`}
+                        showOnlyUploadedImage
+                        type={POSTER_IMAGE}
+                        onChange={({ callback, file }) => { this.props.uploadPosterImage({ locale: _activeLocale, seasonId: this.props.params.seasonId, image: file, callback }); }}
+                        onDelete={currentSeason.getIn([ 'posterImage', _activeLocale, 'url' ]) ? () => { deletePosterImage({ locale: _activeLocale, mediumId: currentSeason.get('id') }); } : null}/>
+                    </div>
+                    <div style={styles.paddingLeftUploadImage}>
+                      <Label text='Profile image' />
+                      <Dropzone
+                        accept='image/*'
+                        downloadUrl={currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ]) ||
+                          currentSeason.getIn([ 'profileImage', defaultLocale, 'url' ])}
+                        imageUrl={currentSeason.getIn([ 'profileImage', _activeLocale ]) &&
+                          `${currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360` ||
+                          currentSeason.getIn([ 'profileImage', defaultLocale ]) &&
+                          `${currentSeason.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
+                        showOnlyUploadedImage
+                        type={PROFILE_IMAGE}
+                        onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, seasonId: this.props.params.seasonId, image: file, callback }); }}
+                        onDelete={currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ]) ? () => { deleteProfileImage({ locale: _activeLocale, mediumId: currentSeason.get('id') }); } : null}/>
+                    </div>
                   </div>
-                  <div style={styles.paddingLeftUploadImage}>
-                    <Label text='Profile image' />
-                    <Dropzone
-                      accept='image/*'
-                      downloadUrl={currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ]) ||
-                        currentSeason.getIn([ 'profileImage', defaultLocale, 'url' ])}
-                      imageUrl={currentSeason.getIn([ 'profileImage', _activeLocale ]) &&
-                        `${currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360` ||
-                        currentSeason.getIn([ 'profileImage', defaultLocale ]) &&
-                        `${currentSeason.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
-                      showOnlyUploadedImage
-                      type={PROFILE_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, seasonId: this.props.params.seasonId, image: file, callback }); }}
-                      onDelete={currentSeason.getIn([ 'profileImage', _activeLocale, 'url' ]) ? () => { deleteProfileImage({ locale: _activeLocale, mediumId: currentSeason.get('id') }); } : null}/>
-                  </div>
-                </div>
-              </Section>
-            </Tab>
-          </Tabs>
-        </EditTemplate>
-      </Root>
+                </Section>
+              </Tab>
+            </Tabs>
+          </EditTemplate>
+        </Root>
+      </SideMenu>
     );
   }
 }

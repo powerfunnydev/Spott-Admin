@@ -13,6 +13,7 @@ export default class UtilsBar extends Component {
 
   static propTypes = {
     display: PropTypes.string,
+    filterContent: PropTypes.object,
     isLoading: PropTypes.bool,
     menu: PropTypes.node,
     numberSelected: PropTypes.number,
@@ -37,11 +38,11 @@ export default class UtilsBar extends Component {
 
   render () {
     const { display, isLoading, searchString, onChangeDisplay, onChangeSearchString,
-      textCreateButton, onClickNewEntry, topElement, menu } = this.props;
+      textCreateButton, onClickNewEntry, topElement, menu, filterContent } = this.props;
     const { styles } = this.constructor;
     return (
       <div style={generalStyles.searchContainer}>
-        { onChangeSearchString && <SearchInput isLoading={isLoading} value={searchString} onChange={onChangeSearchString}/>}
+        { onChangeSearchString && <SearchInput filterContent={filterContent} isLoading={isLoading} value={searchString} onChange={onChangeSearchString}/>}
         <DisplayMode display={display} onChangeDisplay={onChangeDisplay}/>
         <div style={generalStyles.floatRight}>
           { /* if there is an topElement and menu, render dropdown */ }

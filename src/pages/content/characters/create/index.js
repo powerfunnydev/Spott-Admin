@@ -96,7 +96,7 @@ export default class CreateCharacterModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo('content/characters', true);
+    this.props.routerPushWithReturnTo('/content/characters', true);
   }
 
   render () {

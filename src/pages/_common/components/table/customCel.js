@@ -50,7 +50,8 @@ export class CustomCel extends Component {
       color: colors.veryDarkGray
     },
     inlineFlex: {
-      display: 'inline-flex'
+      display: 'inline-flex',
+      alignItems: 'center'
     }
   }
 

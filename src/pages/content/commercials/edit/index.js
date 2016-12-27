@@ -11,14 +11,12 @@ import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { COMMERCIAL_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import Dropzone from '../../../_common/dropzone/imageDropzone';
-import Header from '../../../app/header';
 import Label from '../../../_common/inputs/_label';
 import localized from '../../../_common/decorators/localized';
 import CheckboxInput from '../../../_common/inputs/checkbox';
 import Section from '../../../_common/components/section';
 import ColorInput from '../../../_common/inputs/colorInput';
 import SelectInput from '../../../_common/inputs/selectInput';
-import SpecificHeader from '../../header';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
 import Availabilities from '../../_availabilities/list';
@@ -28,6 +26,7 @@ import selector from './selector';
 import Characters from '../../_helpers/_characters/list';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { PROFILE_IMAGE } from '../../../../constants/imageTypes';
+import { SideMenu } from '../../../app/sideMenu';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -128,7 +127,7 @@ export default class EditCommercial extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/commercials', true);
+    this.props.routerPushWithReturnTo('/content/commercials', true);
   }
 
   languageAdded (form) {
@@ -235,162 +234,162 @@ export default class EditCommercial extends Component {
     } = this.props;
 
     return (
-      <Root style={styles.backgroundRoot}>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <BreadCrumbs hierarchy={[
-          { title: 'Commercials', url: '/content/commercials' },
-          { title: currentCommercial.getIn([ 'title', defaultLocale ]), url: location } ]}/>
-        {currentModal === COMMERCIAL_CREATE_LANGUAGE &&
-          <CreateLanguageModal
-            supportedLocales={supportedLocales}
-            onCloseClick={closeModal}
-            onCreate={this.languageAdded}/>}
-        <EditTemplate disableSubmit={tab > 2} onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-          <Tabs activeTab={tab} showPublishStatus onChange={this.onChangeTab}>
-            <Tab title='Details'>
-              <Section noPadding style={styles.background}>
-                <LanguageBar
-                  _activeLocale={_activeLocale}
-                  defaultLocale={defaultLocale}
-                  errors={errors}
-                  openCreateLanguageModal={this.openCreateLanguageModal}
-                  removeLanguage={this.removeLanguage}
-                  supportedLocales={supportedLocales}
-                  onSetDefaultLocale={this.onSetDefaultLocale}/>
-              </Section>
-              <Section>
-                <FormSubtitle first>General</FormSubtitle>
-                <Field
-                  component={SelectInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  getItemText={(id) => brandsById.getIn([ id, 'name' ])}
-                  getOptions={searchBrands}
-                  isLoading={searchedBrandIds.get('_status') === FETCHING}
-                  label='Brand'
-                  name='brandId'
-                  options={searchedBrandIds.get('data').toJS()}
-                  placeholder='Brand'
-                  required />
-                <Field
-                  component={TextInput}
-                  label='Title'
-                  name={`title.${_activeLocale}`}
-                  placeholder='Title'
-                  required />
-                <Field
-                  component={TextInput}
-                  label='Description'
-                  name={`description.${_activeLocale}`}
-                  placeholder='Description'
-                  type='multiline'/>
-                <Field
-                  component={SelectInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  getItemText={(contentProducerId) => contentProducersById.getIn([ contentProducerId, 'name' ])}
-                  getOptions={searchContentProducers}
-                  isLoading={searchedContentProducerIds.get('_status') === FETCHING}
-                  label='Content producers'
-                  multiselect
-                  name='contentProducers'
-                  options={searchedContentProducerIds.get('data').toJS()}
-                  placeholder='Content producers'/>
-                <Field
-                  component={SelectInput}
-                  disabled={_activeLocale !== defaultLocale}
-                  getItemText={(broadcasterId) => broadcastersById.getIn([ broadcasterId, 'name' ])}
-                  getOptions={searchBroadcasters}
-                  isLoading={searchedBroadcasterIds.get('_status') === FETCHING}
-                  label='Broadcasters'
-                  multiselect
-                  name='broadcasters'
-                  options={searchedBroadcasterIds.get('data').toJS()}
-                  placeholder='Broadcaster companies'/>
-                <FormSubtitle>Images</FormSubtitle>
-                <div style={[ styles.paddingTop, styles.row ]}>
-                  <div>
-                    <Label text='Profile image' />
-                    <Dropzone
-                      accept='image/*'
-                      downloadUrl={currentCommercial.getIn([ 'profileImage', _activeLocale ]) &&
-                        currentCommercial.getIn([ 'profileImage', _activeLocale, 'url' ])}
-                      imageUrl={currentCommercial.getIn([ 'profileImage', _activeLocale ]) &&
-                        `${currentCommercial.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
-                      type={PROFILE_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ commercialId: this.props.params.commercialId, image: file, callback }); }}
-                      onDelete={() => { deleteProfileImage({ mediumId: currentCommercial.get('id') }); }}/>
+      <SideMenu>
+        <Root style={styles.backgroundRoot}>
+          <BreadCrumbs hierarchy={[
+            { title: 'Commercials', url: '/content/commercials' },
+            { title: currentCommercial.getIn([ 'title', defaultLocale ]), url: location } ]}/>
+          {currentModal === COMMERCIAL_CREATE_LANGUAGE &&
+            <CreateLanguageModal
+              supportedLocales={supportedLocales}
+              onCloseClick={closeModal}
+              onCreate={this.languageAdded}/>}
+          <EditTemplate disableSubmit={tab > 2} onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
+            <Tabs activeTab={tab} showPublishStatus onChange={this.onChangeTab}>
+              <Tab title='Details'>
+                <Section noPadding style={styles.background}>
+                  <LanguageBar
+                    _activeLocale={_activeLocale}
+                    defaultLocale={defaultLocale}
+                    errors={errors}
+                    openCreateLanguageModal={this.openCreateLanguageModal}
+                    removeLanguage={this.removeLanguage}
+                    supportedLocales={supportedLocales}
+                    onSetDefaultLocale={this.onSetDefaultLocale}/>
+                </Section>
+                <Section>
+                  <FormSubtitle first>General</FormSubtitle>
+                  <Field
+                    component={SelectInput}
+                    disabled={_activeLocale !== defaultLocale}
+                    getItemText={(id) => brandsById.getIn([ id, 'name' ])}
+                    getOptions={searchBrands}
+                    isLoading={searchedBrandIds.get('_status') === FETCHING}
+                    label='Brand'
+                    name='brandId'
+                    options={searchedBrandIds.get('data').toJS()}
+                    placeholder='Brand'
+                    required />
+                  <Field
+                    component={TextInput}
+                    label='Title'
+                    name={`title.${_activeLocale}`}
+                    placeholder='Title'
+                    required />
+                  <Field
+                    component={TextInput}
+                    label='Description'
+                    name={`description.${_activeLocale}`}
+                    placeholder='Description'
+                    type='multiline'/>
+                  <Field
+                    component={SelectInput}
+                    disabled={_activeLocale !== defaultLocale}
+                    getItemText={(contentProducerId) => contentProducersById.getIn([ contentProducerId, 'name' ])}
+                    getOptions={searchContentProducers}
+                    isLoading={searchedContentProducerIds.get('_status') === FETCHING}
+                    label='Content producers'
+                    multiselect
+                    name='contentProducers'
+                    options={searchedContentProducerIds.get('data').toJS()}
+                    placeholder='Content producers'/>
+                  <Field
+                    component={SelectInput}
+                    disabled={_activeLocale !== defaultLocale}
+                    getItemText={(broadcasterId) => broadcastersById.getIn([ broadcasterId, 'name' ])}
+                    getOptions={searchBroadcasters}
+                    isLoading={searchedBroadcasterIds.get('_status') === FETCHING}
+                    label='Broadcasters'
+                    multiselect
+                    name='broadcasters'
+                    options={searchedBroadcasterIds.get('data').toJS()}
+                    placeholder='Broadcaster companies'/>
+                  <FormSubtitle>Images</FormSubtitle>
+                  <div style={[ styles.paddingTop, styles.row ]}>
+                    <div>
+                      <Label text='Profile image' />
+                      <Dropzone
+                        accept='image/*'
+                        downloadUrl={currentCommercial.getIn([ 'profileImage', _activeLocale ]) &&
+                          currentCommercial.getIn([ 'profileImage', _activeLocale, 'url' ])}
+                        imageUrl={currentCommercial.getIn([ 'profileImage', _activeLocale ]) &&
+                          `${currentCommercial.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360`}
+                        type={PROFILE_IMAGE}
+                        onChange={({ callback, file }) => { this.props.uploadProfileImage({ commercialId: this.props.params.commercialId, image: file, callback }); }}
+                        onDelete={() => { deleteProfileImage({ mediumId: currentCommercial.get('id') }); }}/>
+                    </div>
                   </div>
-                </div>
-              </Section>
-            </Tab>
-            <Tab title='Banner'>
-              <Section noPadding style={styles.background}>
-                <LanguageBar
-                  _activeLocale={_activeLocale}
-                  defaultLocale={defaultLocale}
-                  errors={errors}
-                  openCreateLanguageModal={this.openCreateLanguageModal}
-                  removeLanguage={this.removeLanguage}
-                  supportedLocales={supportedLocales}
-                  onSetDefaultLocale={this.onSetDefaultLocale}/>
-              </Section>
-              <Section>
-                <FormSubtitle first>Banner</FormSubtitle>
-                <Field
-                  component={CheckboxInput}
-                  label='Has banner'
-                  name={`hasBanner.${_activeLocale}`} />
-                <Field
-                  component={TextInput}
-                  disabled={hasBanner && !hasBanner.get(_activeLocale)}
-                  label='Text'
-                  name={`bannerText.${_activeLocale}`}
-                  placeholder='Text'
-                  required />
-                <Field
-                  component={TextInput}
-                  disabled={hasBanner && !hasBanner.get(_activeLocale)}
-                  label='Url'
-                  name={`bannerUrl.${_activeLocale}`}
-                  placeholder='Url'
-                  required />
-                <Field
-                  component={ColorInput}
-                  disabled={hasBanner && !hasBanner.get(_activeLocale)}
-                  label='Text color'
-                  name={`bannerTextColor.${_activeLocale}`}
-                  required />
-                <Field
-                  component={ColorInput}
-                  disabled={hasBanner && !hasBanner.get(_activeLocale)}
-                  label='Bar color'
-                  name={`bannerBarColor.${_activeLocale}`}
-                  required />
-              </Section>
-            </Tab>
-           <Tab title='Helpers'>
-              <Characters
-                charactersById={charactersById}
-                mediumCharacters={commercialCharacters}
-                mediumId={this.props.params.commercialId}
-                searchCharacters={searchCharacters}
-                searchedCharacterIds={searchedCharacterIds} />
-            </Tab>
-            <Tab title='Interactive video'>
-              <Section>
-                <FormSubtitle first>Interactive video</FormSubtitle>
-                <Field
-                  component={RelatedVideo}
-                  medium={currentCommercial}
-                  name='videoId' />
-              </Section>
-            </Tab>
-            <Tab title='Availability'>
-              <Availabilities mediumId={this.props.params.commercialId} />
-            </Tab>
-          </Tabs>
-        </EditTemplate>
-      </Root>
+                </Section>
+              </Tab>
+              <Tab title='Banner'>
+                <Section noPadding style={styles.background}>
+                  <LanguageBar
+                    _activeLocale={_activeLocale}
+                    defaultLocale={defaultLocale}
+                    errors={errors}
+                    openCreateLanguageModal={this.openCreateLanguageModal}
+                    removeLanguage={this.removeLanguage}
+                    supportedLocales={supportedLocales}
+                    onSetDefaultLocale={this.onSetDefaultLocale}/>
+                </Section>
+                <Section>
+                  <FormSubtitle first>Banner</FormSubtitle>
+                  <Field
+                    component={CheckboxInput}
+                    label='Has banner'
+                    name={`hasBanner.${_activeLocale}`} />
+                  <Field
+                    component={TextInput}
+                    disabled={hasBanner && !hasBanner.get(_activeLocale)}
+                    label='Text'
+                    name={`bannerText.${_activeLocale}`}
+                    placeholder='Text'
+                    required />
+                  <Field
+                    component={TextInput}
+                    disabled={hasBanner && !hasBanner.get(_activeLocale)}
+                    label='Url'
+                    name={`bannerUrl.${_activeLocale}`}
+                    placeholder='Url'
+                    required />
+                  <Field
+                    component={ColorInput}
+                    disabled={hasBanner && !hasBanner.get(_activeLocale)}
+                    label='Text color'
+                    name={`bannerTextColor.${_activeLocale}`}
+                    required />
+                  <Field
+                    component={ColorInput}
+                    disabled={hasBanner && !hasBanner.get(_activeLocale)}
+                    label='Bar color'
+                    name={`bannerBarColor.${_activeLocale}`}
+                    required />
+                </Section>
+              </Tab>
+             <Tab title='Helpers'>
+                <Characters
+                  charactersById={charactersById}
+                  mediumCharacters={commercialCharacters}
+                  mediumId={this.props.params.commercialId}
+                  searchCharacters={searchCharacters}
+                  searchedCharacterIds={searchedCharacterIds} />
+              </Tab>
+              <Tab title='Interactive video'>
+                <Section>
+                  <FormSubtitle first>Interactive video</FormSubtitle>
+                  <Field
+                    component={RelatedVideo}
+                    medium={currentCommercial}
+                    name='videoId' />
+                </Section>
+              </Tab>
+              <Tab title='Availability'>
+                <Availabilities mediumId={this.props.params.commercialId} />
+              </Tab>
+            </Tabs>
+          </EditTemplate>
+        </Root>
+      </SideMenu>
     );
   }
 

@@ -3,18 +3,17 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import moment from 'moment';
-import Header from '../../../app/header';
 import { Root, Container } from '../../../_common/styles';
 import { DropdownCel, Tile, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
 import Line from '../../../_common/components/line';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
-import SpecificHeader from '../../header';
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/actionDropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
+import { SideMenu } from '../../../app/sideMenu';
 
 const numberOfRows = 25;
 
@@ -88,17 +87,17 @@ export default class SeriesEntries extends Component {
 
   onCreateSeriesEntry (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/series/create');
+    this.props.routerPushWithReturnTo('/content/series/create');
   }
 
   onCreateSeason (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/series/create/season');
+    this.props.routerPushWithReturnTo('/content/series/create/season');
   }
 
   onCreateEpisode (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo('content/series/create/episode');
+    this.props.routerPushWithReturnTo('/content/series/create/episode');
   }
 
   async onClickDeleteSelected () {
@@ -113,106 +112,105 @@ export default class SeriesEntries extends Component {
   }
 
   render () {
-    const { seriesEntries, children, isSelected, location, location: { query, query: { display, page, searchString, sortField, sortDirection } },
+    const { seriesEntries, children, isSelected, location: { query, query: { display, page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
-      <Root>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <div style={generalStyles.backgroundBar}>
-          <Container>
-            <UtilsBar
-              display={display}
-              isLoading={seriesEntries.get('_status') !== 'loaded'}
-              menu= {<div style={[ dropdownStyles.floatOptions, dropdownStyles.extraWide ]}>
-                <div key='menuElementSeason' style={[ dropdownStyles.floatOption ]} onClick={this.onCreateSeason}>
-                  Add Season
+      <SideMenu>
+        <Root>
+          <div style={generalStyles.backgroundBar}>
+            <Container>
+              <UtilsBar
+                display={display}
+                isLoading={seriesEntries.get('_status') !== 'loaded'}
+                menu= {<div style={[ dropdownStyles.floatOptions, dropdownStyles.extraWide ]}>
+                  <div key='menuElementSeason' style={[ dropdownStyles.floatOption ]} onClick={this.onCreateSeason}>
+                    Add Season
+                  </div>
+                  <div style={dropdownStyles.line}/>
+                  <div key='menuElementEpisode' style={[ dropdownStyles.floatOption ]} onClick={this.onCreateEpisode}>
+                    Add Episode
+                  </div>
+                </div>}
+                numberSelected={numberSelected}
+                searchString={searchString}
+                textCreateButton='New Series Entry'
+                topElement={<div onClick={this.onCreateSeriesEntry}>Add Series</div>}
+                onChangeDisplay={onChangeDisplay}
+                onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
+                onClickNewEntry={this.onCreateSeriesEntry}/>
+            </Container>
+          </div>
+          <Line/>
+          <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
+            <Container style={generalStyles.paddingTable}>
+              <TotalEntries
+                entityType='Series'
+                numberSelected={numberSelected}
+                totalResultCount={totalResultCount}
+                onDeleteSelected={this.onClickDeleteSelected}/>
+              {(display === undefined || display === 'list') &&
+                <div>
+                  <Table>
+                    <Headers>
+                      {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                      <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
+                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'TITLE')} sortDirection = {sortField === 'TITLE' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>TITLE</CustomCel>
+                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
+                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
+                      <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
+                    </Headers>
+                    <Rows isLoading={seriesEntries.get('_status') !== 'loaded'}>
+                      {seriesEntries.get('data').map((seriesEntry, index) => {
+                        return (
+                          <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
+                            {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                            <CheckBoxCel checked={isSelected.get(seriesEntry.get('id'))} onChange={selectCheckbox.bind(this, seriesEntry.get('id'))}/>
+                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/series/read/${seriesEntry.get('id')}`); }}>
+                              {seriesEntry.get('title')}
+                            </CustomCel>
+                            <CustomCel style={{ flex: 2 }}>
+                              {seriesEntry.get('lastUpdatedBy')}
+                            </CustomCel>
+                            <CustomCel getValue={this.getLastUpdatedOn} objectToRender={seriesEntry} style={{ flex: 2 }}/>
+                            <DropdownCel>
+                              <Dropdown
+                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/series/edit/${seriesEntry.get('id')}`); }}>Edit</div>}>
+                                <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}>Remove</div>
+                              </Dropdown>
+                            </DropdownCel>
+                          </Row>
+                        );
+                      })}
+                    </Rows>
+                  </Table>
+                  <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
                 </div>
-                <div style={dropdownStyles.line}/>
-                <div key='menuElementEpisode' style={[ dropdownStyles.floatOption ]} onClick={this.onCreateEpisode}>
-                  Add Episode
+              }
+              {display === 'grid' &&
+                <div>
+                  <div style={generalStyles.row}>
+                    {seriesEntries.get('data').map((seriesEntry, index) => (
+                      <Tile
+                        checked={isSelected.get(seriesEntry.get('id'))}
+                        imageUrl={seriesEntry.get('profileImage') && `${seriesEntry.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
+                        key={`seriesEntry${index}`}
+                        text={seriesEntry.get('title')}
+                        onCheckboxChange={selectCheckbox.bind(this, seriesEntry.get('id'))}
+                        onClick={() => { this.props.routerPushWithReturnTo(`/content/series/read/${seriesEntry.get('id')}`); }}
+                        onDelete={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}
+                        onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/series/edit/${seriesEntry.get('id')}`); }}/>
+                    ))}
+                    <Tile key={'createSeriesEntry'} onCreate={() => { this.props.routerPushWithReturnTo('/content/series/create'); }}/>
+                  </div>
+                  <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
                 </div>
-              </div>}
-              numberSelected={numberSelected}
-              searchString={searchString}
-              textCreateButton='New Series Entry'
-              topElement={<div onClick={this.onCreateSeriesEntry}>Add Series</div>}
-              onChangeDisplay={onChangeDisplay}
-              onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
-              onClickNewEntry={this.onCreateSeriesEntry}/>
-          </Container>
-        </div>
-        <Line/>
-        <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
-          <Container style={generalStyles.paddingTable}>
-            <TotalEntries
-              entityType='Series'
-              numberSelected={numberSelected}
-              totalResultCount={totalResultCount}
-              onDeleteSelected={this.onClickDeleteSelected}/>
-            {(display === undefined || display === 'list') &&
-              <div>
-                <Table>
-                  <Headers>
-                    {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                    <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'TITLE')} sortDirection = {sortField === 'TITLE' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>TITLE</CustomCel>
-                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
-                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
-                    <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
-                  </Headers>
-                  <Rows isLoading={seriesEntries.get('_status') !== 'loaded'}>
-                    {seriesEntries.get('data').map((seriesEntry, index) => {
-                      return (
-                        <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
-                          {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                          <CheckBoxCel checked={isSelected.get(seriesEntry.get('id'))} onChange={selectCheckbox.bind(this, seriesEntry.get('id'))}/>
-                          <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${seriesEntry.get('id')}`); }}>
-                            {seriesEntry.get('title')}
-                          </CustomCel>
-                          <CustomCel style={{ flex: 2 }}>
-                            {seriesEntry.get('lastUpdatedBy')}
-                          </CustomCel>
-                          <CustomCel getValue={this.getLastUpdatedOn} objectToRender={seriesEntry} style={{ flex: 2 }}/>
-                          <DropdownCel>
-                            <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`content/series/edit/${seriesEntry.get('id')}`); }}>Edit</div>}>
-                              <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}>Remove</div>
-                            </Dropdown>
-                          </DropdownCel>
-                        </Row>
-                      );
-                    })}
-                  </Rows>
-                </Table>
-                <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
-              </div>
-            }
-            {display === 'grid' &&
-              <div>
-                <div style={generalStyles.row}>
-                  {seriesEntries.get('data').map((seriesEntry, index) => (
-                    <Tile
-                      checked={isSelected.get(seriesEntry.get('id'))}
-                      imageUrl={seriesEntry.get('profileImage') && `${seriesEntry.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
-                      key={`seriesEntry${index}`}
-                      text={seriesEntry.get('title')}
-                      onCheckboxChange={selectCheckbox.bind(this, seriesEntry.get('id'))}
-                      onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${seriesEntry.get('id')}`); }}
-                      onDelete={async (e) => { e.preventDefault(); await this.deleteSeriesEntry(seriesEntry.get('id')); }}
-                      onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`content/series/edit/${seriesEntry.get('id')}`); }}/>
-                  ))}
-                  <Tile key={'createSeriesEntry'} onCreate={() => { this.props.routerPushWithReturnTo('content/series/create'); }}/>
-                </div>
-                <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
-              </div>
-            }
-          </Container>
-        </div>
-        {children}
-      </Root>
-
+              }
+            </Container>
+          </div>
+          {children}
+        </Root>
+      </SideMenu>
     );
   }
 

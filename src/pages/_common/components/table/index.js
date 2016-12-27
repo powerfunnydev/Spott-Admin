@@ -94,6 +94,15 @@ export function concatCamelCase (word, prefix) {
   return word;
 }
 
+export function convertString (string) {
+  if (string === 'false') {
+    return false;
+  } else if (string === 'true') {
+    return true;
+  }
+  return string;
+}
+
 export const sortDirections = {
   ASC: 1,
   DESC: 2
@@ -120,13 +129,19 @@ export function determineSortDirection (sortField, querySortField, querySortDire
   return directionToString((sortDirection + 1) % 3);
 }
 
-export const isQueryChanged = (query, nextQuery, prefix) => {
+export const isQueryChanged = (query, nextQuery, prefix, filterArray) => {
   const prefixPage = concatCamelCase('page', prefix);
   const prefixSearchString = concatCamelCase('searchString', prefix);
   const prefixPageSize = concatCamelCase('pageSize', prefix);
   const prefixSortDirection = concatCamelCase('sortDirection', prefix);
   const prefixSortField = concatCamelCase('sortField', prefix);
-
+  if (filterArray) {
+    // filterArray contains all the filters that can trigger a rerender.
+    for (const filter of filterArray) {
+      const prefixFilter = concatCamelCase(filter.concat('Filter'), prefix);
+      if (query[prefixFilter] !== nextQuery[prefixFilter]) { return true; }
+    }
+  }
   return (
     (query[prefixPage] !== nextQuery[prefixPage]) ||
     (query[prefixSearchString] !== nextQuery[prefixSearchString]) ||
@@ -135,8 +150,17 @@ export const isQueryChanged = (query, nextQuery, prefix) => {
     (query[prefixSortField] !== nextQuery[prefixSortField]));
 };
 
-export function getInformationFromQuery (query, prefix) {
+export function getInformationFromQuery (query, prefix, filterArray) {
+  const obj = {};
+  if (filterArray) {
+    // filterArray contains all the filters that can trigger a rerender.
+    for (const filter of filterArray) {
+      const prefixFilter = concatCamelCase(filter.concat('Filter'), prefix);
+      obj[filter] = convertString(query[prefixFilter]);
+    }
+  }
   return {
+    ...obj,
     page: query[concatCamelCase('page', prefix)],
     searchString: query[concatCamelCase('searchString', prefix)],
     display: query[concatCamelCase('display', prefix)],

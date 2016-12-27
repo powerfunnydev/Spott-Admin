@@ -74,12 +74,12 @@ export default class Users extends Component {
   }
 
   onEditEntry (userId) {
-    this.props.routerPushWithReturnTo(`users/edit/${userId}`);
+    this.props.routerPushWithReturnTo(`/users/edit/${userId}`);
   }
 
   onClickNewEntry (e) {
     e.preventDefault();
-    this.props.routerPushWithReturnTo(`content/broadcasters/read/${this.props.params.broadcasterId}/link/user`);
+    this.props.routerPushWithReturnTo(`/content/broadcasters/read/${this.props.params.broadcasterId}/link/user`);
   }
 
   async onClickDeleteSelected () {

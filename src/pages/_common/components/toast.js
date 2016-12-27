@@ -11,7 +11,7 @@ import { colors, makeTextStyle, fontWeights } from '../styles';
 import CompletedSVG from '../images/completed';
 import PlusSVG from '../images/plus';
 import { BROADCAST_CHANNEL, BROADCASTER, CHARACTER, CONTENT_PRODUCER, EPISODE, MOVIE, PERSON, SEASON,
-    SERIES_ENTRY, USER, TV_GUIDE_ENTRY, COMMERCIAL } from '../../../constants/entityTypes';
+    SERIES_ENTRY, USER, TV_GUIDE_ENTRY, COMMERCIAL, PRODUCT } from '../../../constants/entityTypes';
 
 @connect(null, (dispatch) => ({
   popToast: bindActionCreators(toastActions.pop, dispatch),
@@ -106,6 +106,7 @@ export class SuccessMessage extends Component {
     this.contentProducerPersistSuccess = ::this.contentProducerPersistSuccess;
     this.episodePersistSuccess = ::this.episodePersistSuccess;
     this.personPersistSuccess = ::this.personPersistSuccess;
+    this.productPersistSuccess = ::this.productPersistSuccess;
     this.userPersistSuccess = ::this.userPersistSuccess;
     this.seasonPersistSuccess = ::this.seasonPersistSuccess;
     this.seriesEntryPersistSuccess = ::this.seriesEntryPersistSuccess;
@@ -189,6 +190,17 @@ export class SuccessMessage extends Component {
       <span>
         Movie <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/movies/read/${movie.id}`)}>
           {movie.title[movie.defaultLocale]}
+        </span> has been succesfully persisted.
+      </span>
+    );
+  }
+
+  productPersistSuccess (product) {
+    const { styles } = this.constructor;
+    return (
+      <span>
+        Product <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/products/read/${product.id}`)}>
+          {product.fullName[product.defaultLocale]}
         </span> has been succesfully persisted.
       </span>
     );
@@ -278,6 +290,8 @@ export class SuccessMessage extends Component {
       return this.moviePersistSuccess(entity);
     } else if (entityType === PERSON) {
       return this.personPersistSuccess(entity);
+    } else if (entityType === PRODUCT) {
+      return this.productPersistSuccess(entity);
     } else if (entityType === SEASON) {
       return this.seasonPersistSuccess(entity);
     } else if (entityType === SERIES_ENTRY) {

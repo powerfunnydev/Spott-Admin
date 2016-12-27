@@ -1,9 +1,8 @@
 import React, { Component, PropTypes } from 'react';
-import Header from '../../../app/header';
 import { Root } from '../../../_common/styles';
 import Radium from 'radium';
-import SpecificHeader from '../../header';
 import List from './list';
+import { SideMenu } from '../../../app/sideMenu';
 
 @Radium
 export default class BroadcastChannel extends Component {
@@ -24,12 +23,12 @@ export default class BroadcastChannel extends Component {
     const { children, location } = this.props;
 
     return (
-      <Root>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <List location={location}/>
-        {children}
-      </Root>
+      <SideMenu>
+        <Root>
+          <List location={location}/>
+          {children}
+        </Root>
+      </SideMenu>
     );
   }
 }

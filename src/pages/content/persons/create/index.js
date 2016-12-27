@@ -33,7 +33,7 @@ function validate (values, { t }) {
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
-  form: 'characterCreate',
+  form: 'personCreate',
   validate
 })
 @Radium
@@ -90,7 +90,7 @@ export default class CreatePersonModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo('content/persons', true);
+    this.props.routerPushWithReturnTo('/content/persons', true);
   }
 
   render () {

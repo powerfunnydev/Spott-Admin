@@ -1,5 +1,60 @@
 import { ACTIVE, INACTIVE, ADMIN, CONTENT_MANAGER, CONTENT_PRODUCER, BROADCASTER } from '../constants/userRoles';
 
+export function transformListProduct ({ uuid, shortName, auditInfo, image: logo }) {
+  return {
+    createdOn: auditInfo && auditInfo.createdOn,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    logo: logo && { id: logo.uuid, url: logo.url },
+    shortName
+  };
+}
+
+export function transformTag ({ uuid, publishStatus, defaultLocale, localeData, auditInfo }) {
+  const tag = {
+    basedOnDefaultLocale: {},
+    createdOn: auditInfo && auditInfo.createdOn,
+    defaultLocale,
+    description: {},
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    locales: [],
+    name: {}
+  };
+  if (localeData) {
+    for (const { basedOnDefaultLocale, locale, name } of localeData) {
+      tag.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      tag.name[locale] = name;
+      tag.locales.push(locale);
+    }
+  }
+  return tag;
+}
+
+export function transformListTag ({ uuid, name, auditInfo, logo }) {
+  return {
+    createdOn: auditInfo && auditInfo.createdOn,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    name
+  };
+}
+
+export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover }) {
+  return {
+    createdOn: auditInfo && auditInfo.createdOn,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    logo: logo && { id: logo.uuid, url: logo.url },
+    profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
+    name
+  };
+}
+
 export function transformBroadcaster ({ logo, name, uuid }) {
   return { logo: logo && { id: logo.uuid, url: logo.url }, name, id: uuid };
 }
@@ -12,6 +67,105 @@ export function transformContentProducer ({ uuid, name, auditInfo, logo }) {
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     logo: logo && { id: logo.uuid, url: logo.url },
     name
+  };
+}
+
+export function transformBrand ({ uuid, publishStatus, defaultLocale, localeData, auditInfo }) {
+  const brand = {
+    basedOnDefaultLocale: {},
+    createdOn: auditInfo && auditInfo.createdOn,
+    defaultLocale,
+    description: {},
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    locales: [],
+    logo: {},
+    publishStatus,
+    profileImage: {},
+    name: {},
+    tagLine: {}
+  };
+  if (localeData) {
+    for (const { basedOnDefaultLocale, description, logo, locale, name, profileCover, tagLine } of localeData) {
+      brand.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      brand.description[locale] = description;
+      brand.name[locale] = name;
+      brand.logo[locale] = logo && { id: logo.uuid, url: logo.url };
+      brand.profileImage[locale] = profileCover && { id: profileCover.uuid, url: profileCover.url };
+      brand.tagLine[locale] = tagLine;
+      brand.locales.push(locale);
+    }
+  }
+  return brand;
+}
+
+export function transformShop ({ uuid, publishStatus, defaultLocale, localeData }) {
+  const shop = {
+    basedOnDefaultLocale: {},
+    defaultLocale,
+    description: {},
+    id: uuid,
+    locales: [],
+    logo: {},
+    url: {},
+    publishStatus,
+    name: {}
+  };
+  if (localeData) {
+    for (const { basedOnDefaultLocale, logo, locale, name, url } of localeData) {
+      shop.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      shop.name[locale] = name;
+      shop.url[locale] = url;
+      shop.logo[locale] = logo && { id: logo.uuid, url: logo.url };
+      shop.locales.push(locale);
+    }
+  }
+  return shop;
+}
+
+export function transformProduct ({ uuid, brand, tags, categories, publishStatus, defaultLocale, localeData, auditInfo }) {
+  const product = {
+    basedOnDefaultLocale: {},
+    createdOn: auditInfo && auditInfo.createdOn,
+    defaultLocale,
+    description: {},
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    locales: [],
+    logo: {},
+    publishStatus,
+    profileImage: {},
+    shortName: {},
+    fullName: {},
+    brand: brand && transformListBrand(brand),
+    tags: tags && tags.map((tag) => tag.uuid),
+    categories: categories && categories.map((category) => category.uuid)
+  };
+  if (localeData) {
+    for (const { basedOnDefaultLocale, description, images, locale, shortName, fullName, profileCover } of localeData) {
+      product.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      product.description[locale] = description;
+      product.shortName[locale] = shortName;
+      product.fullName[locale] = fullName;
+      product.logo[locale] = images && images[0] && { id: images[0].uuid, url: images[0].url };
+      product.profileImage[locale] = profileCover && { id: profileCover.uuid, url: profileCover.url };
+      product.locales.push(locale);
+    }
+  }
+  return product;
+}
+
+export function transformListShop ({ uuid, name, publishStatus, auditInfo, logo, profileCover }) {
+  return {
+    createdOn: auditInfo && auditInfo.createdOn,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    logo: logo && { id: logo.uuid, url: logo.url },
+    name,
+    publishStatus
   };
 }
 
@@ -49,15 +203,19 @@ export function transformListMediumCategory ({ name, uuid: id }) {
   return { name, id };
 }
 
+export const transformListProductCategory = transformListMediumCategory;
 /**
  *  Light version of a medium. No locales includes.
  */
-export function transformListMedium ({ number, auditInfo, title, type, posterImage, profileImage, uuid: id }) {
+export function transformListMedium ({ number, publishStatus, auditInfo, title, type, posterImage, profileImage, uuid: id, season, serie }) {
   return {
     id,
     title,
     type,
     number,
+    publishStatus,
+    season: season && transformListMedium(season),
+    serie: serie && transformListMedium(serie),
     posterImage: posterImage && { id: posterImage.uuid, url: posterImage. url },
     profileImage: profileImage && { id: profileImage.uuid, url: profileImage. url },
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
@@ -72,35 +230,6 @@ export function transformAvailability ({ country, endTimeStamp, startTimeStamp, 
     countryId: country && country.uuid,
     id,
     videoStatus
-  };
-}
-
-export function transformListBrand ({ name, uuid: id }) {
-  return { name, id };
-}
-
-export function transformBrand ({ defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, localeData, publishStatus, productCount, usedProductCount, subscriberCount, uuid: id }) {
-  const brand = {
-    description: {}, // Description for each locale
-    logo: {}, // Locale data
-    name: {}, // Locale data
-    profileCover: {}, // Locale data
-    tagLine: {} // Locale data
-  };
-  for (const { description, locale, name, profileCover, logo, tagLine } of localeData) {
-    brand.description[locale] = description;
-    brand.logo[locale] = logo && { id: logo.uuid, url: logo.url };
-    brand.name[locale] = name;
-    brand.profileCover[locale] = profileCover && { id: profileCover.uuid, url: profileCover.url };
-    brand.tagLine[locale] = tagLine;
-  }
-  return {
-    description: brand.description[defaultLocale],
-    id,
-    logo: brand.logo[defaultLocale],
-    name: brand.name[defaultLocale],
-    profileCover: brand.profileCover[defaultLocale],
-    tagLine: brand.tagLine[defaultLocale]
   };
 }
 
@@ -382,8 +511,10 @@ export const transformListMovie = transformListMedium;
 
 export const transformListCommercial = transformListMedium;
 
-export function transformBroadcastChannel ({ name, uuid: id, logo, broadcaster }) {
+export function transformBroadcastChannel ({ name, auditInfo, uuid: id, logo, broadcaster }) {
   return {
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     broadcaster: broadcaster && { id: broadcaster.uuid },
     id,
     logo: logo && { id: logo.uuid, url: logo.url },

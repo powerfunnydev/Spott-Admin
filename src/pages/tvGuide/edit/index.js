@@ -5,7 +5,6 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
-import Header from '../../app/header';
 import { Root, FormSubtitle, colors, EditTemplate } from '../../_common/styles';
 import DateInput from '../../_common/inputs/dateInput';
 import TimeInput from '../../_common/inputs/timeInput';
@@ -18,6 +17,7 @@ import Section from '../../_common/components/section';
 import { routerPushWithReturnTo } from '../../../actions/global';
 import { Tabs, Tab } from '../../_common/components/formTabs';
 import ensureEntityIsSaved from '../../_common/decorators/ensureEntityIsSaved';
+import { SideMenu } from '../../app/sideMenu';
 
 function validate (values, { medium, t }) {
   const validationErrors = {};
@@ -189,96 +189,97 @@ export default class EditTvGuideEntry extends Component {
       searchedEpisodeIds, searchedSeasonIds, searchedMediumIds, medium, t, route: { renderBreadCrumbs }
     } = this.props;
     return (
-      <Root style={styles.background}>
-        <Header currentLocation={location} hideHomePageLinks />
-        {renderBreadCrumbs(this.props)}
-        <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-        <Tabs>
-          <Tab title='Details'>
-            <Section>
-              <FormSubtitle>Content</FormSubtitle>
-              <Field
-                component={SelectInput}
-                getItemText={(id) => mediaById.getIn([ id, 'title' ]) && `${mediaById.getIn([ id, 'title' ])} (${t(`mediaTypes.${mediaById.getIn([ id, 'type' ])}`)})`}
-                getOptions={searchMedia}
-                isLoading={searchedMediumIds.get('_status') === FETCHING}
-                label='Medium title'
-                name='mediumId'
-                options={searchedMediumIds.get('data').toJS()}
-                placeholder='Medium title'
-                required
-                onChange={() => {
-                  this.props.dispatch(this.props.change('seasonId', null));
-                  this.props.dispatch(this.props.change('episodeId', null));
-                }} />
-              {medium.get('type') === 'TV_SERIE' &&
-                <div>
+      <SideMenu location={location}>
+        <Root style={styles.background}>
+          {renderBreadCrumbs(this.props)}
+          <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
+          <Tabs>
+            <Tab title='Details'>
+              <Section>
+                <FormSubtitle>Content</FormSubtitle>
+                <Field
+                  component={SelectInput}
+                  getItemText={(id) => mediaById.getIn([ id, 'title' ]) && `${mediaById.getIn([ id, 'title' ])} (${t(`mediaTypes.${mediaById.getIn([ id, 'type' ])}`)})`}
+                  getOptions={searchMedia}
+                  isLoading={searchedMediumIds.get('_status') === FETCHING}
+                  label='Medium title'
+                  name='mediumId'
+                  options={searchedMediumIds.get('data').toJS()}
+                  placeholder='Medium title'
+                  required
+                  onChange={() => {
+                    this.props.dispatch(this.props.change('seasonId', null));
+                    this.props.dispatch(this.props.change('episodeId', null));
+                  }} />
+                {medium.get('type') === 'TV_SERIE' &&
+                  <div>
+                    <Field
+                      component={SelectInput}
+                      getItemText={(id) => mediaById.getIn([ id, 'title' ])}
+                      getOptions={searchSeasons}
+                      isLoading={searchedSeasonIds.get('_status') === FETCHING}
+                      label='Season'
+                      name='seasonId'
+                      options={searchedSeasonIds.get('data').toJS()}
+                      placeholder='Season'
+                      required
+                      onChange={() => {
+                        this.props.dispatch(this.props.change('episodeId', null));
+                      }} />
+                    <Field
+                      component={SelectInput}
+                      getItemText={(id) => mediaById.getIn([ id, 'title' ])}
+                      getOptions={searchEpisodes}
+                      isLoading={searchedEpisodeIds.get('_status') === FETCHING}
+                      label='Episode'
+                      name='episodeId'
+                      options={searchedEpisodeIds.get('data').toJS()}
+                      placeholder='Episode'
+                      required />
+                  </div>}
+                <FormSubtitle>Airtime</FormSubtitle>
+                <Field
+                  component={SelectInput}
+                  getItemText={(id) => broadcastChannelsById.getIn([ id, 'name' ])}
+                  getOptions={searchBroadcastChannels}
+                  isLoading={searchedBroadcastChannelIds.get('_status') === FETCHING}
+                  label='Channel'
+                  name='broadcastChannelId'
+                  options={searchedBroadcastChannelIds.get('data').toJS()}
+                  placeholder='Channel'
+                  required />
+                <div style={styles.dividedFields}>
                   <Field
-                    component={SelectInput}
-                    getItemText={(id) => mediaById.getIn([ id, 'title' ])}
-                    getOptions={searchSeasons}
-                    isLoading={searchedSeasonIds.get('_status') === FETCHING}
-                    label='Season'
-                    name='seasonId'
-                    options={searchedSeasonIds.get('data').toJS()}
-                    placeholder='Season'
+                    component={DateInput}
+                    label='Start'
+                    name='startDate'
                     required
-                    onChange={() => {
-                      this.props.dispatch(this.props.change('episodeId', null));
-                    }} />
+                    style={styles.dateInput} />
                   <Field
-                    component={SelectInput}
-                    getItemText={(id) => mediaById.getIn([ id, 'title' ])}
-                    getOptions={searchEpisodes}
-                    isLoading={searchedEpisodeIds.get('_status') === FETCHING}
-                    label='Episode'
-                    name='episodeId'
-                    options={searchedEpisodeIds.get('data').toJS()}
-                    placeholder='Episode'
-                    required />
-                </div>}
-              <FormSubtitle>Airtime</FormSubtitle>
-              <Field
-                component={SelectInput}
-                getItemText={(id) => broadcastChannelsById.getIn([ id, 'name' ])}
-                getOptions={searchBroadcastChannels}
-                isLoading={searchedBroadcastChannelIds.get('_status') === FETCHING}
-                label='Channel'
-                name='broadcastChannelId'
-                options={searchedBroadcastChannelIds.get('data').toJS()}
-                placeholder='Channel'
-                required />
-              <div style={styles.dividedFields}>
-                <Field
-                  component={DateInput}
-                  label='Start'
-                  name='startDate'
-                  required
-                  style={styles.dateInput} />
-                <Field
-                  component={TimeInput}
-                  name='startTime'
-                  required
-                  style={styles.timeInput} />
-              </div>
-              <div style={styles.dividedFields}>
-                <Field
-                  component={DateInput}
-                  label='End'
-                  name='endDate'
-                  required
-                  style={styles.dateInput} />
-                <Field
-                  component={TimeInput}
-                  name='endTime'
-                  required
-                  style={styles.timeInput} />
-              </div>
-              </Section>
-            </Tab>
-          </Tabs>
-        </EditTemplate>
-      </Root>
+                    component={TimeInput}
+                    name='startTime'
+                    required
+                    style={styles.timeInput} />
+                </div>
+                <div style={styles.dividedFields}>
+                  <Field
+                    component={DateInput}
+                    label='End'
+                    name='endDate'
+                    required
+                    style={styles.dateInput} />
+                  <Field
+                    component={TimeInput}
+                    name='endTime'
+                    required
+                    style={styles.timeInput} />
+                </div>
+                </Section>
+              </Tab>
+            </Tabs>
+          </EditTemplate>
+        </Root>
+      </SideMenu>
     );
   }
 

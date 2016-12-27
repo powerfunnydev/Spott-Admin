@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { routerPushWithReturnTo } from '../../../actions/global';
 import moment from 'moment';
-import Header from '../../app/header';
 import { Root, Container } from '../../_common/styles';
 import { DropdownCel, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table/index';
 import Line from '../../_common/components/line';
@@ -14,6 +13,7 @@ import selector from './selector';
 import Dropdown, { styles as dropdownStyles } from '../../_common/components/actionDropdown';
 import UtilsBar from '../../_common/components/table/utilsBar';
 import { confirmation } from '../../_common/askConfirmation';
+import { SideMenu } from '../../app/sideMenu';
 
 /* eslint-disable react/no-set-state*/
 
@@ -130,75 +130,74 @@ export default class TvGuideList extends Component {
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, tvGuideEntries } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
-      <Root>
-        <Header currentLocation={location} hideHomePageLinks />
-        <div style={generalStyles.backgroundBar}>
-          <Container>
-            <UtilsBar
-              textCreateButton='New Tv Guide Entry'
-              onClickNewEntry={this.onClickNewEntry}/>
-          </Container>
-        </div>
-        <Line/>
-        <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
-          <Container style={generalStyles.paddingTable}>
-            <TotalEntries
-              entityType='TV Guide'
-              numberSelected={numberSelected}
-              totalResultCount={totalResultCount}
-              onDeleteSelected={this.onClickDeleteSelected}/>
-            <Table>
-              <Headers>
-                {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Channel</CustomCel>
-                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Title</CustomCel>
-                <CustomCel
-                  sortColumn={this.props.onSortField.bind(this, 'START')}
-                  sortDirection={sortField === 'START' ? sortDirections[sortDirection] : NONE}
-                  style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>
-                  Start
-                </CustomCel>
-                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>End</CustomCel>
-                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 0.8 } ]}>Updated by</CustomCel>
-                <CustomCel
-                  sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')}
-                  sortDirection={sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE}
-                  style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>
-                  Last updated on
-                </CustomCel>
-                <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
-              </Headers>
-              <Rows isLoading={tvGuideEntries.get('_status') !== 'loaded'}>
-                {tvGuideEntries.get('data').map((tvGuideEntry, index) => {
-                  return (
-                    <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
-                      {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                      <CheckBoxCel checked={isSelected.get(tvGuideEntry.get('id'))} onChange={selectCheckbox.bind(this, tvGuideEntry.get('id'))}/>
-                      <CustomCel getValue={this.getChannelName} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
-                      <CustomCel getValue={this.getMediumTitle} objectToRender={tvGuideEntry} style={{ flex: 2 }}/>
-                      <CustomCel getValue={this.getStartDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
-                      <CustomCel getValue={this.getEndDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
-                      <CustomCel getValue={this.getUpdatedBy} objectToRender={tvGuideEntry} style={{ flex: 0.8 }}/>
-                      <CustomCel getValue={this.getLastUpdatedOn} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
-                      <DropdownCel>
-                        <Dropdown
-                          elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`tv-guide/edit/${tvGuideEntry.get('id')}`); }}>Edit</div>}>
-                          <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteTvGuideEntry(tvGuideEntry.get('id')); }}>Remove</div>
-                        </Dropdown>
-                      </DropdownCel>
-                    </Row>
-                  );
-                })}
-              </Rows>
-            </Table>
-            <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
-          </Container>
-        </div>
-        {children}
-      </Root>
-
+      <SideMenu location={location}>
+        <Root>
+          <div style={generalStyles.backgroundBar}>
+            <Container>
+              <UtilsBar
+                textCreateButton='New Tv Guide Entry'
+                onClickNewEntry={this.onClickNewEntry}/>
+            </Container>
+          </div>
+          <Line/>
+          <div style={[ generalStyles.backgroundTable, generalStyles.fillPage ]}>
+            <Container style={generalStyles.paddingTable}>
+              <TotalEntries
+                entityType='TV Guide'
+                numberSelected={numberSelected}
+                totalResultCount={totalResultCount}
+                onDeleteSelected={this.onClickDeleteSelected}/>
+              <Table>
+                <Headers>
+                  {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                  <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
+                  <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Channel</CustomCel>
+                  <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Title</CustomCel>
+                  <CustomCel
+                    sortColumn={this.props.onSortField.bind(this, 'START')}
+                    sortDirection={sortField === 'START' ? sortDirections[sortDirection] : NONE}
+                    style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>
+                    Start
+                  </CustomCel>
+                  <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>End</CustomCel>
+                  <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 0.8 } ]}>Updated by</CustomCel>
+                  <CustomCel
+                    sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')}
+                    sortDirection={sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE}
+                    style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>
+                    Last updated on
+                  </CustomCel>
+                  <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
+                </Headers>
+                <Rows isLoading={tvGuideEntries.get('_status') !== 'loaded'}>
+                  {tvGuideEntries.get('data').map((tvGuideEntry, index) => {
+                    return (
+                      <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
+                        {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                        <CheckBoxCel checked={isSelected.get(tvGuideEntry.get('id'))} onChange={selectCheckbox.bind(this, tvGuideEntry.get('id'))}/>
+                        <CustomCel getValue={this.getChannelName} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
+                        <CustomCel getValue={this.getMediumTitle} objectToRender={tvGuideEntry} style={{ flex: 2 }}/>
+                        <CustomCel getValue={this.getStartDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
+                        <CustomCel getValue={this.getEndDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
+                        <CustomCel getValue={this.getUpdatedBy} objectToRender={tvGuideEntry} style={{ flex: 0.8 }}/>
+                        <CustomCel getValue={this.getLastUpdatedOn} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
+                        <DropdownCel>
+                          <Dropdown
+                            elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/tv-guide/edit/${tvGuideEntry.get('id')}`); }}>Edit</div>}>
+                            <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteTvGuideEntry(tvGuideEntry.get('id')); }}>Remove</div>
+                          </Dropdown>
+                        </DropdownCel>
+                      </Row>
+                    );
+                  })}
+                </Rows>
+              </Table>
+              <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
+            </Container>
+          </div>
+          {children}
+        </Root>
+      </SideMenu>
     );
   }
-
 }

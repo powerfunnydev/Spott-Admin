@@ -2,10 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Header from '../../../app/header';
 import { Root, Container, colors } from '../../../_common/styles';
 import * as actions from './actions';
-import SpecificHeader from '../../header';
 import selector from './selector';
 import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
@@ -16,6 +14,7 @@ import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import TvGuideList from '../../_mediumTvGuide';
+import { SideMenu } from '../../../app/sideMenu';
 
 @connect(selector, (dispatch) => ({
   deleteSeason: bindActionCreators(listActions.deleteSeason, dispatch),
@@ -54,7 +53,7 @@ export default class ReadSeason extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/seasons', true);
+    this.props.routerPushWithReturnTo('/content/seasons', true);
   }
 
   onChangeTab (index) {
@@ -65,7 +64,7 @@ export default class ReadSeason extends Component {
     e.preventDefault();
     const seasonId = this.props.params.seasonId;
     if (seasonId) {
-      this.props.routerPushWithReturnTo(`content/seasons/read/${seasonId}/create/season`);
+      this.props.routerPushWithReturnTo(`/content/seasons/read/${seasonId}/create/season`);
     }
   }
 
@@ -82,40 +81,40 @@ export default class ReadSeason extends Component {
     const { styles } = this.constructor;
     const defaultLocale = currentSeason.getIn([ 'defaultLocale' ]);
     return (
-      <Root>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <BreadCrumbs hierarchy={[
-          { title: 'Series', url: '/content/series' },
-          { title: currentSeason.getIn([ 'seriesEntry', 'title' ]), url: `content/series/read/${this.props.params.seriesEntryId}` },
-          { title: currentSeason.getIn([ 'title', defaultLocale ]), url: location } ]}/>
-        <Container>
-          {currentSeason.get('_status') === 'loaded' && currentSeason &&
-            <EntityDetails
-              imageUrl={currentSeason.getIn([ 'profileImage', defaultLocale ]) && `${currentSeason.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
-              title={currentSeason.getIn([ 'title', defaultLocale ])}
-              onEdit={() => this.props.routerPushWithReturnTo(`content/series/read/${this.props.params.seriesEntryId}/seasons/edit/${currentSeason.get('id')}`)}
-              onRemove={async () => {
-                await deleteSeason(currentSeason.get('id'));
-                this.redirect();
-              }}/>}
-        </Container>
-        <Line/>
-        <div style={[ generalStyles.fillPage, styles.table ]}>
+      <SideMenu>
+        <Root>
+          <BreadCrumbs hierarchy={[
+            { title: 'Series', url: '/content/series' },
+            { title: currentSeason.getIn([ 'seriesEntry', 'title' ]), url: `/content/series/read/${this.props.params.seriesEntryId}` },
+            { title: currentSeason.getIn([ 'title', defaultLocale ]), url: location } ]}/>
           <Container>
-            <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
-              <Tab title='Episodes'>
-                <SeasonEpisodesList {...this.props}/>
-              </Tab>
-              <Tab title='TV Guide'>
-                <TvGuideList {...this.props} mediumId={this.props.params.seasonId}/>
-              </Tab>
-            </Tabs>
+            {currentSeason.get('_status') === 'loaded' && currentSeason &&
+              <EntityDetails
+                imageUrl={currentSeason.getIn([ 'profileImage', defaultLocale ]) && `${currentSeason.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
+                title={currentSeason.getIn([ 'title', defaultLocale ])}
+                onEdit={() => this.props.routerPushWithReturnTo(`/content/series/read/${this.props.params.seriesEntryId}/seasons/edit/${currentSeason.get('id')}`)}
+                onRemove={async () => {
+                  await deleteSeason(currentSeason.get('id'));
+                  this.redirect();
+                }}/>}
           </Container>
-        </div>
-        <Line/>
-        {children}
-      </Root>
+          <Line/>
+          <div style={[ generalStyles.fillPage, styles.table ]}>
+            <Container>
+              <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
+                <Tab title='Episodes'>
+                  <SeasonEpisodesList {...this.props}/>
+                </Tab>
+                <Tab title='TV Guide'>
+                  <TvGuideList {...this.props} mediumId={this.props.params.seasonId}/>
+                </Tab>
+              </Tabs>
+            </Container>
+          </div>
+          <Line/>
+          {children}
+        </Root>
+      </SideMenu>
     );
   }
 

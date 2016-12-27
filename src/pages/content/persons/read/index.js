@@ -2,16 +2,15 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Header from '../../../app/header';
 import { Root, Container } from '../../../_common/styles';
 import * as actions from './actions';
-import SpecificHeader from '../../header';
 import selector from './selector';
 import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
+import { SideMenu } from '../../../app/sideMenu';
 
 /* eslint-disable no-alert */
 
@@ -47,7 +46,7 @@ export default class ReadPerson extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/characters', true);
+    this.props.routerPushWithReturnTo('/content/characters', true);
   }
 
   onChangeTab (index) {
@@ -61,23 +60,23 @@ export default class ReadPerson extends Component {
   render () {
     const { params, children, currentPerson, location, deletePerson } = this.props;
     return (
-      <Root>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <BreadCrumbs hierarchy={[
-          { title: 'People', url: '/content/persons' },
-          { title: currentPerson.get('fullName'), url: location } ]}/>
-        <Container>
-          {currentPerson.get('_status') === 'loaded' && currentPerson &&
-            <EntityDetails
-              imageUrl={currentPerson.getIn([ 'profileImage', 'url' ]) && `${currentPerson.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
-              title={currentPerson.get('fullName')}
-              onEdit={() => { this.props.routerPushWithReturnTo(`content/persons/edit/${params.personId}`); }}
-              onRemove={async () => { await deletePerson(currentPerson.get('id')); this.redirect(); }}/>}
-        </Container>
-        <Line/>
-        {children}
-      </Root>
+      <SideMenu>
+        <Root>
+          <BreadCrumbs hierarchy={[
+            { title: 'People', url: '/content/persons' },
+            { title: currentPerson.get('fullName'), url: location } ]}/>
+          <Container>
+            {currentPerson.get('_status') === 'loaded' && currentPerson &&
+              <EntityDetails
+                imageUrl={currentPerson.getIn([ 'profileImage', 'url' ]) && `${currentPerson.getIn([ 'profileImage', 'url' ])}?height=203&width=360`}
+                title={currentPerson.get('fullName')}
+                onEdit={() => { this.props.routerPushWithReturnTo(`/content/persons/edit/${params.personId}`); }}
+                onRemove={async () => { await deletePerson(currentPerson.get('id')); this.redirect(); }}/>}
+          </Container>
+          <Line/>
+          {children}
+        </Root>
+      </SideMenu>
     );
   }
 

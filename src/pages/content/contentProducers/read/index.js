@@ -2,10 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Header from '../../../app/header';
 import { Root, Container, colors } from '../../../_common/styles';
 import * as actions from './actions';
-import SpecificHeader from '../../header';
 import selector from './selector';
 import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
@@ -15,6 +13,7 @@ import Line from '../../../_common/components/line';
 import UserList from './users/list';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
+import { SideMenu } from '../../../app/sideMenu';
 
 @connect(selector, (dispatch) => ({
   deleteContentProducer: bindActionCreators(listActions.deleteContentProducer, dispatch),
@@ -52,7 +51,7 @@ export default class ReadContentProducer extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/contentProducers', true);
+    this.props.routerPushWithReturnTo('/content/contentProducers', true);
   }
 
   onChangeTab (index) {
@@ -71,37 +70,37 @@ export default class ReadContentProducer extends Component {
        location, deleteContentProducer, location: { query: { tabIndex } } } = this.props;
     const { styles } = this.constructor;
     return (
-      <Root>
-        <Header currentLocation={location} hideHomePageLinks />
-        <SpecificHeader/>
-        <BreadCrumbs hierarchy={[
-          { title: 'Content producers', url: '/content/content-producers' },
-          { title: currentContentProducer.get('name'), url: location.pathname }
-        ]}/>
-        <Container>
-          {currentContentProducer.get('_status') === 'loaded' && currentContentProducer &&
-            <EntityDetails
-              imageUrl={currentContentProducer.get('logo') && `${currentContentProducer.getIn([ 'logo', 'url' ])}?height=310&width=310`}
-              title={currentContentProducer.getIn([ 'name' ])}
-              onEdit={() => this.props.routerPushWithReturnTo(`content/content-producers/edit/${currentContentProducer.getIn([ 'id' ])}`)}
-              onRemove={async () => {
-                await deleteContentProducer(currentContentProducer.getIn([ 'id' ]));
-                this.redirect();
-              }}/>}
-        </Container>
-        <Line/>
-        <div style={[ generalStyles.fillPage, styles.table ]}>
+      <SideMenu>
+        <Root>
+          <BreadCrumbs hierarchy={[
+            { title: 'Content producers', url: '/content/content-producers' },
+            { title: currentContentProducer.get('name'), url: location.pathname }
+          ]}/>
           <Container>
-            <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
-              <Tab title='Users'>
-                <UserList {...this.props}/>
-              </Tab>
-            </Tabs>
+            {currentContentProducer.get('_status') === 'loaded' && currentContentProducer &&
+              <EntityDetails
+                imageUrl={currentContentProducer.get('logo') && `${currentContentProducer.getIn([ 'logo', 'url' ])}?height=310&width=310`}
+                title={currentContentProducer.getIn([ 'name' ])}
+                onEdit={() => this.props.routerPushWithReturnTo(`/content/content-producers/edit/${currentContentProducer.getIn([ 'id' ])}`)}
+                onRemove={async () => {
+                  await deleteContentProducer(currentContentProducer.getIn([ 'id' ]));
+                  this.redirect();
+                }}/>}
           </Container>
-        </div>
-        <Line/>
-        {children}
-      </Root>
+          <Line/>
+          <div style={[ generalStyles.fillPage, styles.table ]}>
+            <Container>
+              <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
+                <Tab title='Users'>
+                  <UserList {...this.props}/>
+                </Tab>
+              </Tabs>
+            </Container>
+          </div>
+          <Line/>
+          {children}
+        </Root>
+      </SideMenu>
     );
   }
 

@@ -5,10 +5,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Link } from 'react-router';
 
-import Header from '../app/header';
 import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
 import MediaFilterForm from './forms/mediaFilterForm';
 import * as actions from './actions';
+import { SideMenu } from '../app/sideMenu';
 
 @connect(null, (dispatch) => ({
   loadActivities: bindActionCreators(actions.loadActivities, dispatch),
@@ -67,6 +67,9 @@ export default class Reporting extends Component {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'flex-end'
+    },
+    fullWidth: {
+      width: '100%'
     }
   };
 
@@ -75,38 +78,39 @@ export default class Reporting extends Component {
     const { children, location } = this.props;
     const { query: { media } } = location;
     return (
-      <div>
-        <Header currentLocation={location} hideHomePageLinks />
-        <div style={styles.tabs}>
-          <Container style={styles.wrapper}>
-            <div>
-              <div style={styles.tab.container}>
-                <Link activeStyle={styles.tab.active} style={styles.tab.base} to={{
-                  ...location,
-                  pathname: '/reporting/activity'
-                }}>Activity</Link>
+      <SideMenu location={location}>
+        <div style={styles.fullWidth}>
+          <div style={styles.tabs}>
+            <Container style={styles.wrapper}>
+              <div>
+                <div style={styles.tab.container}>
+                  <Link activeStyle={styles.tab.active} style={styles.tab.base} to={{
+                    ...location,
+                    pathname: '/reporting/activity'
+                  }}>Activity</Link>
+                </div>
+                <div style={styles.tab.container}>
+                  <Link activeStyle={styles.tab.active} style={styles.tab.base} to={{
+                    ...location,
+                    pathname: '/reporting/rankings'
+                  }}>Rankings</Link>
+                </div>
               </div>
-              <div style={styles.tab.container}>
-                <Link activeStyle={styles.tab.active} style={styles.tab.base} to={{
+              <MediaFilterForm fields={{
+                media: typeof media === 'string' ? [ media ] : media
+              }} style={styles.mediaFilterForm} onChange={(field, type, value) => {
+                this.props.routerPushWithReturnTo({
                   ...location,
-                  pathname: '/reporting/rankings'
-                }}>Rankings</Link>
-              </div>
-            </div>
-            <MediaFilterForm fields={{
-              media: typeof media === 'string' ? [ media ] : media
-            }} style={styles.mediaFilterForm} onChange={(field, type, value) => {
-              this.props.routerPushWithReturnTo({
-                ...location,
-                query: {
-                  ...location.query,
-                  [field]: type === 'string' || type === 'array' ? value : value.format('YYYY-MM-DD') }
-              });
-            }} />
-          </Container>
+                  query: {
+                    ...location.query,
+                    [field]: type === 'string' || type === 'array' ? value : value.format('YYYY-MM-DD') }
+                });
+              }} />
+            </Container>
+          </div>
+          {children}
         </div>
-        {children}
-      </div>
+      </SideMenu>
     );
   }
 }

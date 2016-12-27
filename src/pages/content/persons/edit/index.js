@@ -8,14 +8,12 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
 import SelectInput from '../../../_common/inputs/selectInput';
 import DateInput from '../../../_common/inputs/dateInput';
-import Header from '../../../app/header';
 // import Line from '../../../_common/components/line';
 import { Root, FormSubtitle, colors, EditTemplate, FormDescription } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import Section from '../../../_common/components/section';
-import SpecificHeader from '../../header';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Label from '../../../_common/inputs/_label';
 import { PERSON_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
@@ -28,6 +26,7 @@ import { ImageWithDropdown } from '../../../_common/components/imageWithDropdown
 import { PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
+import { SideMenu } from '../../../app/sideMenu';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -124,7 +123,7 @@ export default class EditPerson extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/persons', true);
+    this.props.routerPushWithReturnTo('/content/persons', true);
   }
 
   languageAdded (form) {
@@ -219,9 +218,8 @@ export default class EditPerson extends Component {
       currentPerson, location, handleSubmit, deletePortraitImage, deleteProfileImage, faceImages,
       deleteFaceImage, fetchFaceImages, location: { query: { tab } } } = this.props;
     return (
+      <SideMenu>
         <Root style={styles.backgroundRoot}>
-          <Header currentLocation={location} hideHomePageLinks />
-          <SpecificHeader/>
           <BreadCrumbs hierarchy={[
             { title: 'People', url: '/content/persons' },
             { title: currentPerson.get('fullName'), url: location } ]}/>
@@ -327,7 +325,7 @@ export default class EditPerson extends Component {
           </Tabs>
         </EditTemplate>
       </Root>
+    </SideMenu>
     );
   }
-
 }

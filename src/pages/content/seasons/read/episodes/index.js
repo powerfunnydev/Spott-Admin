@@ -87,7 +87,7 @@ export default class List extends Component {
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('content/series', true);
+    this.props.routerPushWithReturnTo('/content/series', true);
   }
 
   async onClickDeleteSelected () {
@@ -106,7 +106,7 @@ export default class List extends Component {
     const seasonId = this.props.params.seasonId;
     const seriesEntryId = this.props.params.seriesEntryId;
     if (seriesEntryId && seasonId) {
-      this.props.routerPushWithReturnTo(`content/series/read/${seriesEntryId}/seasons/read/${seasonId}/create/episode`);
+      this.props.routerPushWithReturnTo(`/content/series/read/${seriesEntryId}/seasons/read/${seasonId}/create/episode`);
     }
   }
 
@@ -158,7 +158,7 @@ export default class List extends Component {
                           <CheckBoxCel checked={isSelected.get(episode.get('id'))} onChange={selectCheckbox.bind(this, episode.get('id'))}/>
                           <CustomCel
                             style={{ flex: 5 }}
-                            onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/read/${episode.get('id')}`); }}>
+                            onClick={() => { this.props.routerPushWithReturnTo(`/content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/read/${episode.get('id')}`); }}>
                               {episode.get('title')}
                           </CustomCel>
                           <CustomCel
@@ -169,7 +169,7 @@ export default class List extends Component {
                           <CustomCel style={{ flex: 2 }}>{this.getLastUpdatedOn(episode)}</CustomCel>
                           <DropdownCel>
                             <Dropdown
-                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]}onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/edit/${episode.get('id')}`); }}>Edit</div>}>
+                              elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]}onClick={() => { this.props.routerPushWithReturnTo(`/content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/edit/${episode.get('id')}`); }}>Edit</div>}>
                               <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteEpisode(episode.get('id')); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
@@ -191,14 +191,14 @@ export default class List extends Component {
                       key={`episode${index}`}
                       text={episode.get('title')}
                       onCheckboxChange={selectCheckbox.bind(this, episode.get('id'))}
-                      onClick={() => { this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/read/${episode.get('id')}`); }}
+                      onClick={() => { this.props.routerPushWithReturnTo(`/content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/read/${episode.get('id')}`); }}
                       onDelete={async (e) => {
                         e.preventDefault();
                         await this.deleteEpisode(episode.get('id'));
                       }}
                       onEdit={(e) => {
                         e.preventDefault();
-                        this.props.routerPushWithReturnTo(`content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/edit/${episode.get('id')}`);
+                        this.props.routerPushWithReturnTo(`/content/series/read/${params.seriesEntryId}/seasons/read/${params.seasonId}/episodes/edit/${episode.get('id')}`);
                       }}/>
                   ))}
                   <Tile key={'createEpisode'} onCreate={this.onClickNewEntry}/>
