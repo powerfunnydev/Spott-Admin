@@ -23,7 +23,7 @@ export async function fetchProduct (baseUrl, authenticationToken, locale, { prod
 
 export async function persistProduct (baseUrl, authenticationToken, locale, {
   basedOnDefaultLocale, defaultLocale, description, locales, publishStatus,
-  productId, shortName, fullName, brandId }) {
+  categories, tags, productId, shortName, fullName, brandId }) {
   let product = {};
   if (productId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/product/products/${productId}`);
@@ -32,6 +32,8 @@ export async function persistProduct (baseUrl, authenticationToken, locale, {
   product.defaultLocale = defaultLocale;
   product.publishStatus = publishStatus;
   product.brand = { uuid: brandId };
+  product.categories = categories && categories.map((id) => ({ uuid: id }));
+  product.tags = tags && tags.map((id) => ({ uuid: id }));
   // Update locale data.
   product.localeData = []; // Ensure we have locale data
   locales.forEach((locale) => {

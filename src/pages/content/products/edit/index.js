@@ -46,6 +46,8 @@ function validate (values, { t }) {
   openModal: bindActionCreators(actions.openModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchBrands: bindActionCreators(actions.searchBrands, dispatch),
+  searchProductCategories: bindActionCreators(actions.searchProductCategories, dispatch),
+  searchTags: bindActionCreators(actions.searchTags, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadImage: bindActionCreators(actions.uploadImage, dispatch)
 }))
@@ -78,12 +80,18 @@ export default class EditProduct extends Component {
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     popUpMessage: PropTypes.object,
+    productCategoriesById: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBrands: PropTypes.func.isRequired,
+    searchProductCategories: PropTypes.func.isRequired,
+    searchTags: PropTypes.func.isRequired,
     searchedBrandIds: ImmutablePropTypes.map.isRequired,
+    searchedProductCategoryIds: ImmutablePropTypes.map.isRequired,
+    searchedTagIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
+    tagsById: ImmutablePropTypes.map.isRequired,
     uploadImage: PropTypes.func.isRequired,
     onBeforeChangeTab: PropTypes.func.isRequired,
     onChangeTab: PropTypes.func.isRequired
@@ -205,8 +213,10 @@ export default class EditProduct extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { _activeLocale, brandsById, errors, currentModal, closeModal, supportedLocales, defaultLocale,
-      currentProduct, location, handleSubmit, searchBrands, searchedBrandIds, deleteImage, location: { query: { tab } } } = this.props;
+    const { _activeLocale, brandsById, productCategoriesById, errors, currentModal, closeModal, supportedLocales, defaultLocale,
+      currentProduct, location, handleSubmit, searchBrands, searchProductCategories, searchedProductCategoryIds, searchedBrandIds, deleteImage,
+      tagsById, searchTags, searchedTagIds, location: { query: { tab } } } = this.props;
+    console.log('productCategoriesById', productCategoriesById && productCategoriesById.toJS());
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
@@ -220,15 +230,15 @@ export default class EditProduct extends Component {
               onCreate={this.languageAdded}>
               <Field
                 component={TextInput}
-                label='Short name product'
-                name={'shortName'}
-                placeholder='Short name product'
+                label='Product name'
+                name={'fullName'}
+                placeholder='Product name'
                 required/>
               <Field
                 component={TextInput}
-                label='Full name product'
-                name={'fullName'}
-                placeholder='Full name product'
+                label='Short name'
+                name={'shortName'}
+                placeholder='Short name product'
                 required/>
             </CreateLanguageModal>}
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
@@ -250,16 +260,17 @@ export default class EditProduct extends Component {
                     component={TextInput}
                     label='Short name product'
                     name={`shortName.${_activeLocale}`}
-                    placeholder='Short name product'
+                    placeholder='Short name'
                     required/>
                   <Field
                     component={TextInput}
                     label='Full name product'
                     name={`fullName.${_activeLocale}`}
-                    placeholder='Full name product'
+                    placeholder='Full name'
                     required/>
                   <Field
                     component={SelectInput}
+                    disabled={_activeLocale !== defaultLocale}
                     getItemText={(id) => brandsById.getIn([ id, 'name' ])}
                     getOptions={searchBrands}
                     isLoading={searchedBrandIds.get('_status') === FETCHING}
@@ -268,10 +279,40 @@ export default class EditProduct extends Component {
                     options={searchedBrandIds.get('data').toJS()}
                     placeholder='Brand name'
                     required/>
+                  <Field
+                    component={SelectInput}
+                    disabled={_activeLocale !== defaultLocale}
+                    getItemText={(id) => productCategoriesById.getIn([ id, 'name' ])}
+                    getOptions={searchProductCategories}
+                    isLoading={searchedProductCategoryIds.get('_status') === FETCHING}
+                    label='Product categories'
+                    multiselect
+                    name='categories'
+                    options={searchedProductCategoryIds.get('data').toJS()}
+                    placeholder='Product categories'
+                    required/>
+                  {/* <Field
+                    component={SelectInput}
+                    disabled={_activeLocale !== defaultLocale}
+                    getItemText={(id) => tagsById.getIn([ id, 'name' ])}
+                    getOptions={searchTags}
+                    isLoading={searchedTagIds.get('_status') === FETCHING}
+                    label='Tags'
+                    multiselect
+                    name='tags'
+                    options={searchedTagIds.get('data').toJS()}
+                    placeholder='Tag names'
+                    required/>*/}
+                  <Field
+                    component={TextInput}
+                    label='Description'
+                    name={`description.${_activeLocale}`}
+                    placeholder='Description'
+                    type='multiline'/>
                 <FormSubtitle>Images</FormSubtitle>
                 <div style={[ styles.paddingTop, styles.row ]}>
                   <div>
-                    <Label text='Logo image' />
+                    <Label text='Primary image' />
                     <ImageDropzone
                       accept='image/*'
                       downloadUrl={currentProduct.getIn([ 'logo', _activeLocale, 'url' ]) ||

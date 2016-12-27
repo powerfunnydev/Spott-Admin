@@ -2,7 +2,7 @@ import { fromJS } from 'immutable';
 import {
   serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
   serializeFilterHasUsers, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
-  fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart,
+  fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasProducts
 } from './utils';
 
@@ -18,11 +18,13 @@ import * as mediaActions from '../actions/media';
 import * as mediumCategoryActions from '../actions/mediumCategory';
 import * as moviesActions from '../actions/movie';
 import * as personActions from '../actions/person';
+import * as productCategoryActions from '../actions/productCategory';
 import * as productActions from '../actions/product';
 import * as reportingActions from '../actions/reporting';
 import * as shopActions from '../actions/shop';
 import * as seasonActions from '../actions/season';
 import * as seriesActions from '../actions/series';
+import * as tagActions from '../actions/tag';
 import * as tvGuideActions from '../actions/tvGuide';
 import * as userActions from '../actions/user';
 import * as videoActions from '../actions/video';
@@ -44,7 +46,9 @@ export default (state = fromJS({
     listMedia: {}, // listMedia is the light version of media, without locales
     listMediumCategories: {},
     listProducts: {},
+    listProductCategories: {},
     listShops: {},
+    listTags: {},
     listPersons: {}, // listCharacters is the light version of characters, without locales
     media: {}, // Completed version of media, with locales
     mediumCategories: {},
@@ -74,6 +78,7 @@ export default (state = fromJS({
     filterHasProducts: {},
     filterHasSeasons: {},
     filterHasSeriesEntries: {},
+    filterHasTags: {},
     filterHasTvGuideEntries: {},
     filterHasUsers: {},
 
@@ -87,7 +92,9 @@ export default (state = fromJS({
     searchStringHasMediumCategories: {},
     searchStringHasPersons: {},
     searchStringHasProducts: {},
+    searchStringHasProductCategories: {},
     searchStringHasSeriesEntries: {},
+    searchStringHasTags: {},
     searchStringHasUsers: {},
 
     characterHasFaceImages: {},
@@ -358,7 +365,6 @@ export default (state = fromJS({
     case mediumCategoryActions.MEDIUM_CATEGORIES_SEARCH_START:
       return searchStart(state, 'searchStringHasMediumCategories', action.searchString);
     case mediumCategoryActions.MEDIUM_CATEGORIES_SEARCH_SUCCESS:
-      // TODO mediumCategories will be listMediumCategories, once the backend is updated.
       return searchSuccess(state, 'listMediumCategories', 'searchStringHasMediumCategories', action.searchString, action.data);
     case mediumCategoryActions.MEDIUM_CATEGORIES_SEARCH_ERROR:
       return searchError(state, 'searchStringHasMediumCategories', action.searchString, action.error);
@@ -450,6 +456,16 @@ export default (state = fromJS({
       return searchSuccess(state, 'listProducts', 'searchStringHasProducts', action.searchString, action.data);
     case productActions.PRODUCT_SEARCH_ERROR:
       return searchError(state, 'searchStringHasProducts', action.searchString, action.error);
+
+    // Product categories
+    // /////////////////
+
+    case productCategoryActions.PRODUCT_CATEGORIES_SEARCH_START:
+      return searchStart(state, 'searchStringHasProductCategories', action.searchString);
+    case productCategoryActions.PRODUCT_CATEGORIES_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listProductCategories', 'searchStringHasProductCategories', action.searchString, action.data);
+    case productCategoryActions.PRODUCT_CATEGORIES_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasProductCategories', action.searchString, action.error);
 
     // Shops
     // /////////////////
@@ -556,6 +572,30 @@ export default (state = fromJS({
       return searchSuccess(state, 'listMedia', 'seriesEntryHasSeasons', action.seriesEntryId, action.data);
     case seriesActions.SEASONS_SEARCH_ERROR:
       return searchError(state, 'seriesEntryHasSeasons', action.seriesEntryId, action.error);
+
+    // Tags
+    // //////////////
+
+    case tagActions.TAG_FETCH_START:
+      return fetchStart(state, [ 'entities', 'tags', action.tagId ]);
+    case tagActions.TAG_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'tags', action.tagId ], action.data);
+    case tagActions.TAG_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'tags', action.tagId ], action.error);
+
+    case tagActions.TAGS_FETCH_START:
+      return searchStart(state, 'filterHasTags', serializeFilterHasTags(action));
+    case tagActions.TAGS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listTags', 'filterHasTags', serializeFilterHasTags(action), action.data.data);
+    case tagActions.TAGS_FETCH_ERROR:
+      return searchError(state, 'filterHasTags', serializeFilterHasTags(action), action.error);
+
+    case tagActions.TAG_SEARCH_START:
+      return searchStart(state, 'searchStringHasTags', action.searchString);
+    case tagActions.TAG_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listTags', 'searchStringHasTags', action.searchString, action.data);
+    case tagActions.TAG_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasTags', action.searchString, action.error);
 
     // Tv Guide
     // /////////////////

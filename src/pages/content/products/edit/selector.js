@@ -5,8 +5,12 @@ import {
   productsEntitiesSelector,
   createEntityByIdSelector,
   listBrandsEntitiesSelector,
+  listProductCategoriesEntitiesSelector,
+  listTagsEntitiesSelector,
   createEntityIdsByRelationSelector,
-  searchStringHasBrandsRelationsSelector
+  searchStringHasBrandsRelationsSelector,
+  searchStringHasProductCategoriesRelationsSelector,
+  searchStringHasTagsRelationsSelector
 } from '../../../../selectors/data';
 
 const formName = 'productEdit';
@@ -22,13 +26,19 @@ const currentProductSelector = createEntityByIdSelector(productsEntitiesSelector
 
 const popUpMessageSelector = (state) => state.getIn([ 'content', 'products', 'edit', 'popUpMessage' ]);
 
-export const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'products', 'edit', 'currentBrandSearchString' ]);
+const currentBrandsSearchStringSelector = (state) => state.getIn([ 'content', 'products', 'edit', 'currentBrandsSearchString' ]);
+const currentTagsSearchStringSelector = (state) => state.getIn([ 'content', 'products', 'edit', 'currentTagsSearchString' ]);
+const currentProductCategoriesSearchStringSelector = (state) => state.getIn([ 'content', 'products', 'edit', 'currentProductCategoriesSearchString' ]);
 
-export const searchedBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentSeriesEntriesSearchStringSelector);
+const searchedBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentBrandsSearchStringSelector);
+const searchedTagIdsSelector = createEntityIdsByRelationSelector(searchStringHasTagsRelationsSelector, currentTagsSearchStringSelector);
+const searchedProductCategoryIdsSelector = createEntityIdsByRelationSelector(searchStringHasProductCategoriesRelationsSelector, currentProductCategoriesSearchStringSelector);
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
   brandsById: listBrandsEntitiesSelector,
+  productCategoriesById: listProductCategoriesEntitiesSelector,
+  tagsById: listTagsEntitiesSelector,
   currentModal: currentModalSelector,
   currentProduct: currentProductSelector,
   defaultLocale: currentDefaultLocaleSelector,
@@ -36,5 +46,7 @@ export default createStructuredSelector({
   formValues: valuesSelector,
   popUpMessage: popUpMessageSelector,
   searchedBrandIds: searchedBrandIdsSelector,
+  searchedProductCategoryIds: searchedProductCategoryIdsSelector,
+  searchedTagIds: searchedTagIdsSelector,
   supportedLocales: supportedLocalesSelector
 });

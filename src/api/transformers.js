@@ -11,6 +11,38 @@ export function transformListProduct ({ uuid, shortName, auditInfo, image: logo 
   };
 }
 
+export function transformTag ({ uuid, publishStatus, defaultLocale, localeData, auditInfo }) {
+  const tag = {
+    basedOnDefaultLocale: {},
+    createdOn: auditInfo && auditInfo.createdOn,
+    defaultLocale,
+    description: {},
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    locales: [],
+    name: {}
+  };
+  if (localeData) {
+    for (const { basedOnDefaultLocale, locale, name } of localeData) {
+      tag.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      tag.name[locale] = name;
+      tag.locales.push(locale);
+    }
+  }
+  return tag;
+}
+
+export function transformListTag ({ uuid, name, auditInfo, logo }) {
+  return {
+    createdOn: auditInfo && auditInfo.createdOn,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    name
+  };
+}
+
 export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover }) {
   return {
     createdOn: auditInfo && auditInfo.createdOn,
@@ -92,7 +124,7 @@ export function transformShop ({ uuid, publishStatus, defaultLocale, localeData 
   return shop;
 }
 
-export function transformProduct ({ uuid, brand, publishStatus, defaultLocale, localeData, auditInfo }) {
+export function transformProduct ({ uuid, brand, tags, categories, publishStatus, defaultLocale, localeData, auditInfo }) {
   const product = {
     basedOnDefaultLocale: {},
     createdOn: auditInfo && auditInfo.createdOn,
@@ -107,7 +139,9 @@ export function transformProduct ({ uuid, brand, publishStatus, defaultLocale, l
     profileImage: {},
     shortName: {},
     fullName: {},
-    brand: brand && transformListBrand(brand)
+    brand: brand && transformListBrand(brand),
+    tags: tags && tags.map((tag) => tag.uuid),
+    categories: categories && categories.map((category) => category.uuid)
   };
   if (localeData) {
     for (const { basedOnDefaultLocale, description, images, locale, shortName, fullName, profileCover } of localeData) {
@@ -169,6 +203,7 @@ export function transformListMediumCategory ({ name, uuid: id }) {
   return { name, id };
 }
 
+export const transformListProductCategory = transformListMediumCategory;
 /**
  *  Light version of a medium. No locales includes.
  */
