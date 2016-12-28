@@ -23,6 +23,7 @@ import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
 import { FETCHING } from '../../../../constants/statusTypes';
+import ProductOfferings from './productOfferings/list';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -208,6 +209,20 @@ export default class EditProduct extends Component {
       flexDirection: 'row',
       flexWrap: 'wrap',
       marginTop: '20px'
+    },
+    primaryPaddingRight: {
+      paddingRight: '26px'
+    },
+    secondaryPadding: {
+      paddingRight: '9px',
+      paddingBottom: '9px'
+    },
+    flexWrap: {
+      flexWrap: 'wrap'
+    },
+    secondaryImage: {
+      height: '116px',
+      width: '116px'
     }
   };
 
@@ -216,7 +231,7 @@ export default class EditProduct extends Component {
     const { _activeLocale, brandsById, productCategoriesById, errors, currentModal, closeModal, supportedLocales, defaultLocale,
       currentProduct, location, handleSubmit, searchBrands, searchProductCategories, searchedProductCategoryIds, searchedBrandIds, deleteImage,
       tagsById, searchTags, searchedTagIds, location: { query: { tab } } } = this.props;
-    console.log('productCategoriesById', productCategoriesById && productCategoriesById.toJS());
+    console.log('currentProduct', currentProduct && currentProduct.toJS());
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
@@ -258,15 +273,15 @@ export default class EditProduct extends Component {
                   <FormSubtitle first>General</FormSubtitle>
                   <Field
                     component={TextInput}
-                    label='Short name product'
-                    name={`shortName.${_activeLocale}`}
-                    placeholder='Short name'
-                    required/>
-                  <Field
-                    component={TextInput}
                     label='Full name product'
                     name={`fullName.${_activeLocale}`}
                     placeholder='Full name'
+                    required/>
+                  <Field
+                    component={TextInput}
+                    label='Short name product'
+                    name={`shortName.${_activeLocale}`}
+                    placeholder='Short name'
                     required/>
                   <Field
                     component={SelectInput}
@@ -311,7 +326,7 @@ export default class EditProduct extends Component {
                     type='multiline'/>
                 <FormSubtitle>Images</FormSubtitle>
                 <div style={[ styles.paddingTop, styles.row ]}>
-                  <div>
+                  <div style={styles.primaryPaddingRight}>
                     <Label text='Primary image' />
                     <ImageDropzone
                       accept='image/*'
@@ -320,11 +335,40 @@ export default class EditProduct extends Component {
                       imageUrl={currentProduct.getIn([ 'logo', _activeLocale, 'url' ]) && `${currentProduct.getIn([ 'logo', _activeLocale, 'url' ])}?height=203&width=360` ||
                                 currentProduct.getIn([ 'logo', defaultLocale, 'url' ]) && `${currentProduct.getIn([ 'logo', defaultLocale, 'url' ])}?height=203&width=360`}
                       showOnlyUploadedImage
-                      onChange={({ callback, file }) => { this.props.uploadImage({ locale: _activeLocale, productId: this.props.params.productId, image: file, callback }); }}
-                      onDelete={currentProduct.getIn([ 'logo', _activeLocale, 'url' ]) ? () => { deleteImage({ locale: _activeLocale, productId: currentProduct.get('id') }); } : null}/>
+                      onChange={currentProduct.getIn([ 'logo', _activeLocale, 'url' ]) ? null : ({ callback, file }) => { this.props.uploadImage({ locale: _activeLocale, productId: this.props.params.productId, image: file, callback }); }}
+                      onDelete={currentProduct.getIn([ 'logo', _activeLocale, 'url' ]) ? () => { deleteImage({ locale: _activeLocale, productId: currentProduct.get('id'), imageId: currentProduct.getIn([ 'logo', _activeLocale, 'id' ]) }); } : null}/>
                   </div>
+                  {(currentProduct.getIn([ 'logo', _activeLocale, 'url' ]) || currentProduct.getIn([ 'logo', defaultLocale, 'url' ])) &&
+                    <div>
+                      <Label text='Secondary images' />
+                      <div style={[ styles.row, styles.flexWrap ]}>
+                        {currentProduct.getIn([ 'secondaryImages', _activeLocale ]) && currentProduct.getIn([ 'secondaryImages', _activeLocale ]).map((image, index) => {
+                          return (
+                            <div style={styles.secondaryPadding}>
+                              <ImageDropzone
+                                accept='image/*'
+                                downloadUrl={image.get('url')}
+                                imageUrl={`${image.get('url')}?height=203&width=360`}
+                                key={`image${index}`}
+                                showOnlyUploadedImage
+                                style={styles.secondaryImage}
+                                onDelete={image.get('id') ? () => { deleteImage({ locale: _activeLocale, productId: currentProduct.get('id'), imageId: image.get('id') }); } : null}/>
+                            </div>
+                          );
+                        })}
+                        <ImageDropzone
+                          accept='image/*'
+                          showNoImage
+                          style={styles.secondaryImage}
+                          onChange={({ callback, file }) => { this.props.uploadImage({ locale: _activeLocale, productId: this.props.params.productId, image: file, callback }); }}/>
+                      </div>
+                    </div>
+                  }
                 </div>
               </Section>
+            </Tab>
+            <Tab title='Offerings'>
+              <ProductOfferings productId={this.props.params.productId} />
             </Tab>
           </Tabs>
         </EditTemplate>

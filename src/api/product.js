@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformProduct, transformListProduct } from './transformers';
+import { transformProduct, transformListProduct, transformProductOffering } from './transformers';
 
 export async function fetchProducts (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/product/products?page=${page}&pageSize=${pageSize}`;
@@ -11,6 +11,19 @@ export async function fetchProducts (baseUrl, authenticationToken, locale, { sea
   }
   const { body } = await get(authenticationToken, locale, url);
   body.data = body.data.map(transformListProduct);
+  return body;
+}
+
+export async function fetchProductOfferings (baseUrl, authenticationToken, locale, { productId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/product/products/${productId}/offerings?page=${page}&pageSize=${pageSize}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${searchString}`);
+  }
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  const { body } = await get(authenticationToken, locale, url);
+  body.data = body.data.map(transformProductOffering);
   return body;
 }
 
@@ -72,12 +85,19 @@ export async function searchProducts (baseUrl, authenticationToken, locale, { se
   return data.map(transformListProduct);
 }
 
-export async function uploadImage (baseUrl, authenticationToken, locale, { productId, image, callback }) {
+export async function uploadImage (baseUrl, authenticationToken, locale, { productId, locale: imageLocale, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);
-  await postFormData(authenticationToken, locale, `${baseUrl}/v004/product/products/${productId}/images`, formData, callback);
+  formData.append('locale', imageLocale);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/product/products/${productId}/images`, formData, callback);
+  return transformProduct(result.body);
 }
 
-export async function deleteImage (baseUrl, authenticationToken, locale, { productId, imageId }) {
-  await del(authenticationToken, locale, `${baseUrl}/v004/product/products/${productId}/images/${imageId}`);
+export async function deleteImage (baseUrl, authenticationToken, locale, { productId, locale: imageLocale, imageId }) {
+  let url = `${baseUrl}/v004/product/products/${productId}/images/${imageId}`;
+  if (imageLocale) {
+    url = `${url}?locale=${imageLocale}`;
+  }
+  const result = await del(authenticationToken, locale, url);
+  return transformProduct(result.body);
 }
