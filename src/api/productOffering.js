@@ -16,7 +16,7 @@ export async function persistProductOffering (baseUrl, authenticationToken, loca
   productOffering.buyUrl = buyUrl;
   productOffering.shop = { uuid: shopId };
   productOffering.price = { amount, currency };
-  productOffering.locale = locale;
+  productOffering.locale = offeringLocale;
   productOffering.product = { uuid: productId };
   const { body } = await post(authenticationToken, locale, `${baseUrl}/v004/product/offerings`, productOffering);
   return transformProductOffering(body);
