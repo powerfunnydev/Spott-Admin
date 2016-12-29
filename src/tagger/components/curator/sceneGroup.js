@@ -9,8 +9,6 @@ const starFilledImage = require('./images/starFilled.svg');
 export default class SceneGroup extends Component {
 
   static propTypes = {
-    // The scene group number, to create a default label.
-    number: PropTypes.number.isRequired,
     sceneGroup: ImmutablePropTypes.map.isRequired,
     selected: PropTypes.bool.isRequired,
     onClick: PropTypes.func.isRequired
@@ -80,11 +78,10 @@ export default class SceneGroup extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { number, sceneGroup, selected } = this.props;
-
+    const { sceneGroup, selected } = this.props;
     return (
       <li style={[ styles.container.base, selected && styles.container.selected ]} onClick={this.onClick}>
-        <div style={styles.name}>{sceneGroup.get('label') || `Scene ${number}`}</div>
+        <div style={styles.name}>{sceneGroup.get('label')}</div>
         {sceneGroup.get('keySceneId')
           ? <div style={[ styles.badge.base, styles.badge.star ]}><img src={starFilledImage} style={styles.starImage} />1</div>
           : <div style={[ styles.badge.base, styles.badge.none ]}>0</div>}

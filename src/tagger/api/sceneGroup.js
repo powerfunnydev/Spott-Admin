@@ -1,12 +1,12 @@
 import { del, get, post } from '../../api/request';
 
-function transformSceneGroup ({ firstScene, keyScene, label, uuid: id }) {
+function transformSceneGroup ({ firstScene, keyScene, label, uuid: id }, i) {
   // Scenes will be filled in the selector.
   return {
     firstSceneId: firstScene && firstScene.uuid,
     id,
     keySceneId: keyScene && keyScene.uuid,
-    label,
+    label: label || `Scene ${i + 1}`,
     scenes: []
   };
 }

@@ -60,10 +60,9 @@ export default class Sidebar extends Component {
     return (
       <ul style={[ style, styles.container ]}>
         <Section activeStyle={styles.activeSection} title='Scenes'>
-          {sceneGroups.map((sceneGroup, i) => (
+          {sceneGroups.map((sceneGroup) => (
             <SceneGroup
               key={sceneGroup.get('id')}
-              number={i + 1}
               sceneGroup={sceneGroup}
               selected={sceneGroup === currentSceneGroup}
               onClick={selectSceneGroup.bind(null, sceneGroup.get('id'))}/>
