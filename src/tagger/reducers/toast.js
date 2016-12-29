@@ -1,4 +1,5 @@
 import { Map, List } from 'immutable';
+import * as productActions from '../actions/product';
 import * as actionTypes from '../constants/actionTypes';
 
 function pushError (state, text) {
@@ -36,7 +37,7 @@ export default (state = List(), action) => {
       return pushError(state, 'Could not add the selected region for product suggestion of the specified product.');
     case actionTypes.VIDEO_PRODUCT_DELETE_ERROR:
       return pushError(state, 'Could not remove the global product from the video.');
-    case actionTypes.VIDEO_PRODUCTS_FETCH_ERROR:
+    case productActions.GLOBAL_PRODUCTS_FETCH_ERROR:
       return pushError(state, 'Could not retrieve global products.');
     case actionTypes.VIDEO_PRODUCT_PERSIST_ERROR:
       if (action.error.name === 'BadRequestError' && action.error.code && action.error.code.productId === 'alreadyExists') {

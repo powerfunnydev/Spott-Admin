@@ -4,7 +4,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Clock from './clock';
-import { ORGANIZE, TAG } from '../../constants/mainTabTypes';
+import { CURATE, ORGANIZE, TAG } from '../../constants/mainTabTypes';
 import { currentMediumSelector } from '../../selectors/header';
 import { selectTab } from '../../actions/global';
 import colors from '../colors';
@@ -118,6 +118,9 @@ class Header extends Component {
           </button>
           <button style={[ styles.tab.base, activeTab === TAG && styles.tab.selected ]} onClick={this.onTabSelect.bind(this, TAG)}>
             Tag
+          </button>
+          <button style={[ styles.tab.base, activeTab === CURATE && styles.tab.selected ]} onClick={this.onTabSelect.bind(this, CURATE)}>
+            Curate
           </button>
         </div>
       </div>

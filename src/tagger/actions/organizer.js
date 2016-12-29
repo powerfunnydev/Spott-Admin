@@ -49,10 +49,10 @@ export function minimizeScene () {
   return { type: MINIMIZE_SCENE };
 }
 
-export function persistSceneGroup ({ firstSceneId, id, label }) {
+export function persistSceneGroup (sceneGroupData) {
   return async (dispatch, getState) => {
     const videoId = currentVideoIdSelector(getState());
-    await dispatch(dataPersistSceneGroup({ firstSceneId, id, label }));
+    await dispatch(dataPersistSceneGroup(sceneGroupData));
     await dispatch(dataFetchSceneGroups({ videoId }));
   };
 }

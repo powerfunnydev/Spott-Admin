@@ -4,6 +4,7 @@ export const authenticationTokenSelector = (state) => state.getIn([ 'global', 'a
 export const cmsBaseUrlSelector = (state) => state.getIn([ 'global', 'configuration', 'urls', 'cms' ]);
 export const cmsNextBaseUrlSelector = (state) => state.getIn([ 'global', 'configuration', 'urls', 'cmsNext' ]);
 export const countriesSelector = (state) => state.getIn([ 'global', 'configuration', 'countries' ]);
+export const currenciesSelector = (state) => state.getIn([ 'global', 'configuration', 'currencies' ]);
 export const currentLocaleSelector = (state) => state.getIn([ 'global', 'configuration', 'currentLocale' ]);
 export const currentModalSelector = (state) => state.getIn([ 'global', 'currentModal' ]);
 export const isAuthenticatedSelector = (state) => Boolean(state.getIn([ 'global', 'authentication', 'authenticationToken' ]));

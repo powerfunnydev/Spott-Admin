@@ -8,6 +8,7 @@ const arrowImage = require('./images/arrow.svg');
 export default class Section extends Component {
 
   static propTypes = {
+    activeStyle: PropTypes.object,
     children: PropTypes.node,
     title: PropTypes.node,
     onOpen: PropTypes.func
@@ -40,7 +41,7 @@ export default class Section extends Component {
       },
       active: {
         backgroundColor: '#2e2e2e',
-        boxShadow: 'inset 5px 0 0 0 #0073d3',
+        boxShadow: 'inset 4px 0 0 0 #0073d3',
         color: 'white'
       }
     },
@@ -65,7 +66,8 @@ export default class Section extends Component {
       fontSize: '14px',
       justifyContent: 'space-between',
       padding: '11px 20px',
-      transition: 'color 0.25s ease-in'
+      transition: 'color 0.25s ease-in',
+      userSelect: 'none'
     },
     content: {
       base: {
@@ -82,10 +84,10 @@ export default class Section extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { children, title } = this.props;
+    const { activeStyle, children, title } = this.props;
     const { open } = this.state;
     return (
-      <div style={[ styles.container.base, open && styles.container.active ]}>
+      <div style={[ styles.container.base, open && styles.container.active, open && activeStyle ]}>
         <div style={styles.title} onClick={this.handleClick}>
           {title}
           <span style={[ styles.arrow.base, open && styles.arrow.open ]}>

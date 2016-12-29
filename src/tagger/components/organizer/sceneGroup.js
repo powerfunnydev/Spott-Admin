@@ -27,7 +27,7 @@ export default class SceneGroup extends Component {
     this.onToggleVisibility = ::this.onToggleVisibility;
     this.state = {
       hovered: {},
-      label: props.sceneGroup.get('label') || `Scene Section ${props.number}`
+      label: props.sceneGroup.get('label') || `Scene ${props.number}`
     };
   }
 
@@ -35,7 +35,7 @@ export default class SceneGroup extends Component {
   componentWillReceiveProps (newProps) {
     if (this.props.sceneGroup.get('label') !== newProps.sceneGroup.get('label') ||
       this.props.number !== newProps.number) {
-      this.setState({ ...this.state, label: newProps.sceneGroup.get('label') || `Scene Section ${newProps.number}` });
+      this.setState({ ...this.state, label: newProps.sceneGroup.get('label') || `Scene ${newProps.number}` });
     }
   }
 
@@ -43,8 +43,7 @@ export default class SceneGroup extends Component {
     const sceneGroup = this.props.sceneGroup;
     e.preventDefault();
     this.props.onSubmit({
-      firstSceneId: sceneGroup.get('firstSceneId'),
-      id: sceneGroup.get('id'),
+      ...sceneGroup.toJS(),
       label: this.state.label
     });
   }
@@ -158,7 +157,7 @@ export default class SceneGroup extends Component {
       <div>
         <div style={styles.titleContainer} onMouseEnter={this.onMouseEnter.bind(this, 'title')} onMouseLeave={this.onMouseLeave.bind(this, 'title')}>
           <div style={styles.side}>
-            <button style={styles.visibilityButton} title='Toggle Visibility' onClick={this.onToggleVisibility} onMouseEnter={this.onMouseEnter.bind(this, 'visibility')} onMouseLeave={this.onMouseLeave.bind(this, 'visibility')}>
+            <button style={styles.visibilityButton} title='Toggle visibility' onClick={this.onToggleVisibility} onMouseEnter={this.onMouseEnter.bind(this, 'visibility')} onMouseLeave={this.onMouseLeave.bind(this, 'visibility')}>
               <Arrow color={(hovered.visibility && '#fff') || (hovered.title && colors.warmGray) || colors.black4} position={hidden ? 'UP' : 'DOWN'} />
             </button>
           </div>
@@ -169,7 +168,7 @@ export default class SceneGroup extends Component {
           <div style={[ styles.line.base, hovered.title && styles.line.highlight ]} />
           {onRemove
             ? <div style={[ styles.side, styles.sideRight ]}>
-                <button style={styles.removeButton} title='Remove Scene Section' onClick={this.onRemove} onMouseEnter={this.onMouseEnter.bind(this, 'remove')} onMouseLeave={this.onMouseLeave.bind(this, 'remove')}>
+                <button style={styles.removeButton} title='Remove Scene' onClick={this.onRemove} onMouseEnter={this.onMouseEnter.bind(this, 'remove')} onMouseLeave={this.onMouseLeave.bind(this, 'remove')}>
                   <Cross color={(hovered.remove && '#fff') || (hovered.title && colors.warmGray) || colors.black4} />
                 </button>
               </div>

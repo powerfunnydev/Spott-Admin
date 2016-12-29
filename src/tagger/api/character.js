@@ -4,12 +4,15 @@ import { PRODUCT_QUICKY } from '../constants/itemTypes';
 // TODO: Currently we take the first entry in localeData. Later on when localization
 // is implemented, we can change this.
 
-function transformCharacter ({ character: { uuid: id }, markerHidden, markerStatus, point, region, uuid: appearanceId }) {
-  return { appearanceId, id, markerHidden, markerStatus, point, region };
+function transformCharacterAppearance ({ character: { uuid: id }, keyAppearance, markerHidden, markerStatus, point, region, scene, uuid: appearanceId }) {
+  return { appearanceId, id, markerHidden, markerStatus, keyAppearance, point, region, sceneId: scene.uuid };
 }
 
 function transformDetailedCharacter (character) {
-  const { localeData: [ { name } ], portraitImage, uuid: id } = character;
+  const { name, portraitImage, uuid: id } = character;
+  if (character.localeData) {
+    return { id, name: character.localeData[0].name, portraitImageUrl: portraitImage ? portraitImage.url : null };
+  }
   // Portrait image is optional.
   return { id, name, portraitImageUrl: portraitImage ? portraitImage.url : null };
 }
@@ -40,7 +43,17 @@ function transformProductGroup (characterId, { uuid: id, name, products }) {
  */
 export async function getSceneCharacters (baseUrl, authenticationToken, locale, { sceneId }) {
   const { body: { data: characters } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/scenes/${sceneId}/characters`);
-  return characters.map(transformCharacter);
+  return characters.map(transformCharacterAppearance);
+}
+
+export async function getVideoCharacters (baseUrl, authenticationToken, locale, { videoId }) {
+  const { body: { data: characters } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/allCharacters`);
+  return characters.map(transformDetailedCharacter);
+}
+
+export async function getCharacterAppearances (baseUrl, authenticationToken, locale, { characterId, videoId }) {
+  const { body: { data: characters } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/sceneCharacters?characterUuid=${characterId}`);
+  return characters.map(transformCharacterAppearance);
 }
 
 /**
@@ -113,12 +126,13 @@ export async function getCharacter (baseUrl, authenticationToken, locale, { char
  * @throws NotFoundError
  * @throws UnexpectedError
  */
-export async function postSceneCharacter (baseUrl, authenticationToken, locale, { appearanceId, characterId, markerHidden, markerStatus, point, region, sceneId, videoId }) {
+export async function postSceneCharacter (baseUrl, authenticationToken, locale, { appearanceId, characterId, keyAppearance, markerHidden, markerStatus, point, region, sceneId }) {
   try {
     const { body: { data: characters } } = await post(authenticationToken, 'en', `${baseUrl}/v004/video/scenes/${sceneId}/characters`, {
       character: {
         uuid: characterId
       },
+      keyAppearance,
       markerHidden,
       markerStatus,
       point,
@@ -129,7 +143,7 @@ export async function postSceneCharacter (baseUrl, authenticationToken, locale, 
       sortOrder: 0,
       uuid: appearanceId
     });
-    return characters.map(transformCharacter);
+    return characters.map(transformCharacterAppearance);
   } catch (error) {
     switch (error.statusCode) {
       case 400:
@@ -175,7 +189,7 @@ export async function postSceneCharacter (baseUrl, authenticationToken, locale, 
 export async function deleteSceneCharacter (baseUrl, authenticationToken, locale, { characterAppearanceId, sceneId, videoId }) {
   try {
     const { body: { data: characters } } = await del(authenticationToken, 'en', `${baseUrl}/v004/video/scenes/${sceneId}/characters/${characterAppearanceId}`);
-    return characters.map(transformCharacter);
+    return characters.map(transformCharacterAppearance);
   } catch (error) {
     switch (error.statusCode) {
       // case 403:

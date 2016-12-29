@@ -54,6 +54,7 @@ export default (state = fromJS({
     mediumCategories: {},
     persons: {},
     products: {},
+    productOfferings: {},
     tvGuideEntries: {},
     shops: {},
     users: {},
@@ -93,6 +94,7 @@ export default (state = fromJS({
     searchStringHasPersons: {},
     searchStringHasProducts: {},
     searchStringHasProductCategories: {},
+    searchStringHasShops: {},
     searchStringHasSeriesEntries: {},
     searchStringHasTags: {},
     searchStringHasUsers: {},
@@ -101,6 +103,7 @@ export default (state = fromJS({
     mediumHasCharacters: {},
     mediumHasTvGuideEntries: {},
     personHasFaceImages: {},
+    productHasProductOfferings: {},
     seriesEntryHasSeasons: {},
     seriesEntryHasEpisodes: {},
     seasonHasEpisodes: {},
@@ -434,6 +437,11 @@ export default (state = fromJS({
     // Products
     // ////////
 
+    case productActions.UPLOAD_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'products', action.productId ], action.data);
+    case productActions.DELETE_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'products', action.productId ], action.data);
+
     case productActions.PRODUCT_FETCH_START:
       return fetchStart(state, [ 'entities', 'products', action.productId ]);
     case productActions.PRODUCT_FETCH_SUCCESS: {
@@ -456,6 +464,21 @@ export default (state = fromJS({
       return searchSuccess(state, 'listProducts', 'searchStringHasProducts', action.searchString, action.data);
     case productActions.PRODUCT_SEARCH_ERROR:
       return searchError(state, 'searchStringHasProducts', action.searchString, action.error);
+
+    case productActions.PRODUCT_OFFERINGS_FETCH_START:
+      return searchStart(state, 'productHasProductOfferings', action.productId);
+    case productActions.PRODUCT_OFFERINGS_FETCH_SUCCESS: {
+      let newState = state;
+      if (action.data.data) {
+        // Iterate through all the product offerings and extract the shop of every product offering.
+        for (const productOffering of action.data.data) {
+          newState = fetchSuccess(state, [ 'entities', 'listShops', productOffering.shop.id ], productOffering.shop);
+        }
+      }
+      return searchSuccess(newState, 'productOfferings', 'productHasProductOfferings', action.productId, action.data.data);
+    }
+    case productActions.PRODUCT_OFFERINGS_FETCH_ERROR:
+      return searchError(state, 'productHasProductOfferings', action.productId, action.error);
 
     // Product categories
     // /////////////////

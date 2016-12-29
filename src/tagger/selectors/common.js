@@ -88,15 +88,18 @@ export const selectedAppearanceSelector = (state) => state.getIn([ 'tagger', 'ta
 export const updateAppearanceIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'app', 'updateAppearanceId' ]);
 
 // Selectors related to the `data.relations` part of the state tree.
+export const characterHasAppearancesRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'characterHasAppearances' ]);
 export const characterSearchRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'characterSearch' ]);
 export const characterHasProductGroupsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'characterHasProductGroups' ]);
 export const mediumHasProductGroupsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'mediumHasProductGroups' ]);
+export const productHasAppearancesRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'productHasAppearances' ]);
 export const productHasSimilarProductsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'productHasSimilarProducts' ]);
 export const productSearchRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'productSearch' ]);
 export const productSuggestionsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'productSuggestions' ]);
 export const sceneHasCharactersRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'sceneHasCharacters' ]);
 export const sceneHasProductsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'sceneHasProducts' ]);
 export const videoHasProductsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'videoHasProducts' ]);
+export const videoHasGlobalProductsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'videoHasGlobalProducts' ]);
 export const videoHasScenesRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'videoHasScenes' ]);
 export const videoHasSceneGroupsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'videoHasSceneGroups' ]);
 

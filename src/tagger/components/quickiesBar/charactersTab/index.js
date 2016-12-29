@@ -156,12 +156,10 @@ export default class CharactersTab extends Component {
     return (
       <ul style={[ styles.container, style ]}>
         {mediumCharacters.map((character) => (
-          character && character.get('id') && (
-            <Character
-              character={character}
-              key={character.get('id')}
-              onClick={openCharacter.bind(null, character.get('id'))} />
-          )
+          <Character
+            character={character}
+            key={character.get('id')}
+            onClick={openCharacter.bind(null, character.get('id'))} />
         ))}
       </ul>
     );

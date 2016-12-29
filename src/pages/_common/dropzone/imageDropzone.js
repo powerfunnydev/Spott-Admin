@@ -29,6 +29,7 @@ export default class ImageDropzone extends Component {
     imageUrl: PropTypes.string, // Url retrieved from server
     multiple: PropTypes.bool, // Possability to upload multiple images
     noPreview: PropTypes.bool, // Never displays an image
+    showNoImage: PropTypes.bool, // Used we use this dropzone to upload images, without displaying the uploaded image.
     showOnlyUploadedImage: PropTypes.bool, // Only dislays a image when this is uploaded to the server (imageUrl!==undefined), often used by entities with locales
     style: PropTypes.object,
     type: PropTypes.string,
@@ -115,8 +116,7 @@ export default class ImageDropzone extends Component {
       borderRadius: '2px',
       ...makeTextStyle(fontWeights.medium, '12px'),
       fontWeight: 500,
-      color: colors.darkGray2,
-      cursor: 'pointer'
+      color: colors.darkGray2
     },
     activeDropzone: {
       backgroundColor: 'rgba(230, 248, 253, 0.5)',
@@ -157,29 +157,32 @@ export default class ImageDropzone extends Component {
       margin: 'auto'
     },
     progressBar: {
-      width: '130px'
+      width: '100%'
     },
     dropdownButton: {
       position: 'absolute',
       right: 7,
       top: 7,
       zIndex: 12
+    },
+    pointer: {
+      cursor: 'pointer'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { accept, type, imageUrl, downloadUrl, onDelete, style, noPreview, multiple, showOnlyUploadedImage } = this.props;
+    const { accept, type, imageUrl, downloadUrl, onDelete, style, onChange, noPreview, multiple, showOnlyUploadedImage, showNoImage } = this.props;
     // If we have delete an image, we don't want to display the imageUrl or downloadUrl,
     // cause it doesn't exist anymore.
     // If we didn't delete an image, but there is an image, show that image.
-    const downloadUrlOrPreview = !showOnlyUploadedImage && this.state.showImage && this.state.file && this.state.file.type.startsWith('image') && this.state.file.preview || !this.state.deleteImage && downloadUrl;
-    const imageUrlOrPreview = !showOnlyUploadedImage && this.state.showImage && this.state.file && this.state.file.type.startsWith('image') && this.state.file.preview || !this.state.deleteImage && imageUrl;
+    const downloadUrlOrPreview = !showNoImage && !showOnlyUploadedImage && this.state.showImage && this.state.file && this.state.file.type.startsWith('image') && this.state.file.preview || !this.state.deleteImage && downloadUrl;
+    const imageUrlOrPreview = !showNoImage && !showOnlyUploadedImage && this.state.showImage && this.state.file && this.state.file.type.startsWith('image') && this.state.file.preview || !this.state.deleteImage && imageUrl;
     return (
       <div style={{ position: 'relative' }}>
         {/* Render dropzone */}
-        <ReactDropzone accept={accept || 'image/*'} activeStyle={styles.activeDropzone} multiple={multiple} ref={(x) => { this.dropzone = x; }}
-          style={mergeStyles([ styles.dropzone, { width: 200 * (aspectRatios[type] || 1) }, style ])} onDrop={this.onDrop} >
+        <ReactDropzone accept={accept || 'image/*'} activeStyle={styles.activeDropzone} disableClick={onChange ? false : true} multiple={multiple} ref={(x) => { this.dropzone = x; }}
+          style={mergeStyles([ styles.dropzone, onChange && styles.pointer, { width: 200 * (aspectRatios[type] || 1) }, style ])} onDrop={this.onDrop} >
           <div>
             {downloadUrlOrPreview && <Dropdown style={styles.dropdownButton}>
               {downloadUrlOrPreview && <div key='downloadImage' style={dropdownStyles.floatOption} onClick={(e) => { downloadFile(downloadUrlOrPreview); }}>Download</div>}
@@ -193,7 +196,7 @@ export default class ImageDropzone extends Component {
                   style={styles.progressBar}
                   total={this.state.total}/>) ||
             /* Upload completed */
-            (this.state.progress && this.state.total && this.state.progress === this.state.total &&
+            (!showNoImage && this.state.progress && this.state.total && this.state.progress === this.state.total &&
                 <div>
                   {!this.state.showImage && <div style={styles.completed}>
                     <img src={completedIcon} style={styles.completedImage}/>
