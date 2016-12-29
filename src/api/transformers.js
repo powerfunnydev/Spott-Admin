@@ -131,6 +131,7 @@ export function transformProduct ({ uuid, brand, tags, categories, publishStatus
     defaultLocale,
     description: {},
     id: uuid,
+    secondaryImages: {},
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     locales: [],
@@ -150,6 +151,8 @@ export function transformProduct ({ uuid, brand, tags, categories, publishStatus
       product.shortName[locale] = shortName;
       product.fullName[locale] = fullName;
       product.logo[locale] = images && images[0] && { id: images[0].uuid, url: images[0].url };
+      const secondaryImages = images && images.slice(1);
+      product.secondaryImages[locale] = secondaryImages && secondaryImages.map((image) => ({ id: image.uuid, url: image.url }));
       product.profileImage[locale] = profileCover && { id: profileCover.uuid, url: profileCover.url };
       product.locales.push(locale);
     }
@@ -166,6 +169,17 @@ export function transformListShop ({ uuid, name, publishStatus, auditInfo, logo,
     logo: logo && { id: logo.uuid, url: logo.url },
     name,
     publishStatus
+  };
+}
+
+export function transformProductOffering ({ uuid, buyUrl, locale, price, product, shop }) {
+  return {
+    id: uuid,
+    buyUrl,
+    locale,
+    price: price && { amount: price.amount, currency: price.currency },
+    product: product && transformListProduct(product),
+    shop: shop && transformListShop(shop)
   };
 }
 
