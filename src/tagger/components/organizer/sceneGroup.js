@@ -27,7 +27,7 @@ export default class SceneGroup extends Component {
     this.onToggleVisibility = ::this.onToggleVisibility;
     this.state = {
       hovered: {},
-      label: props.sceneGroup.get('label') || `Scene ${props.number}`
+      label: props.sceneGroup.get('label')
     };
   }
 
