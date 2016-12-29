@@ -113,54 +113,9 @@ export function selectRightScene () {
   };
 }
 
-// export function toggleHideHiddenFrames () {
-//   return async (dispatch, getState) => {
-//     const state = getState();
-//     const currentScene = currentSceneSelector(state);
-//     const hideHiddenScenes = hideHiddenFramesSelector(state);
-//
-//     // When hiding the hidden frames, and the current scene was hidden, then deselect the current scene.
-//     // We inverse hideHiddenScenes, because it's not adjusted yet.
-//     if (!hideHiddenScenes && currentScene && currentScene.get('hidden')) {
-//       dispatch(updateCurrentScene(null));
-//     }
-//
-//     dispatch({ type: TOGGLE_HIDE_HIDDEN_FRAMES });
-//   };
-// }
-
 export function toggleHideDifferentFrames () {
   return { type: TOGGLE_HIDE_DIFFERENT_FRAMES };
 }
-
-// Toggle the visibility of the current scene or the scene that was provided.
-// export function toggleVisibilityScene (scene) {
-//   return async (dispatch, getState) => {
-//     const state = getState();
-//     const authenticationToken = authenticationTokenSelector(state);
-//
-//     const currentScene = scene || currentSceneSelector(state);
-//     const hideHiddenScenes = hideHiddenFramesSelector(state);
-//     const nextScene = getNextScene(state, scene);
-//     const args = {
-//       videoId: currentVideoIdSelector(state),
-//       sceneId: currentScene.get('id')
-//     };
-//
-//     dispatch(updateRecordStart(SCENE_UPDATE_START, currentScene, args));
-//
-//     try {
-//       const updatedScene = await postScene(authenticationToken, args, { hidden: !currentScene.get('hidden') });
-//       dispatch(updateRecordSuccess(SCENE_UPDATE_SUCCESS, updatedScene, args));
-//       // When hiding the hidden frames, and the current scene was hidden, then select the right scene.
-//       if (hideHiddenScenes && updatedScene.hidden) {
-//         dispatch(updateCurrentScene(nextScene));
-//       }
-//     } catch (error) {
-//       dispatch(updateRecordError(SCENE_UPDATE_ERROR, error, args));
-//     }
-//   };
-// }
 
 export function updateStatusScene (status) {
   return async (dispatch, getState) => {

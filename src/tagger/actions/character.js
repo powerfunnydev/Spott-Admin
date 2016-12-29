@@ -30,6 +30,20 @@ import { apiBaseUrlSelector, authenticationTokenSelector, currentLocaleSelector 
 import { CHARACTER } from '../constants/appearanceTypes';
 import { REVIEW } from '../constants/markerStatusTypes';
 
+export const CHARACTER_APPEARANCES_FETCH_START = 'CHARACTER/CHARACTER_APPEARANCES_FETCH_START';
+export const CHARACTER_APPEARANCES_FETCH_SUCCESS = 'CHARACTER/CHARACTER_APPEARANCES_FETCH_SUCCESS';
+export const CHARACTER_APPEARANCES_FETCH_ERROR = 'CHARACTER/CHARACTER_APPEARANCES_FETCH_ERROR';
+
+export const VIDEO_CHARACTERS_FETCH_START = 'CHARACTER/VIDEO_CHARACTERS_FETCH_START';
+export const VIDEO_CHARACTERS_FETCH_SUCCESS = 'CHARACTER/VIDEO_CHARACTERS_FETCH_SUCCESS';
+export const VIDEO_CHARACTERS_FETCH_ERROR = 'CHARACTER/VIDEO_CHARACTERS_FETCH_ERROR';
+
+export const CHARACTER_APPEARANCE_PERSIST_START = 'CHARACTER/CHARACTER_APPEARANCE_PERSIST_START';
+export const CHARACTER_APPEARANCE_PERSIST_SUCCESS = 'CHARACTER/CHARACTER_APPEARANCE_PERSIST_SUCCESS';
+export const CHARACTER_APPEARANCE_PERSIST_ERROR = 'CHARACTER/CHARACTER_APPEARANCE_PERSIST_ERROR';
+
+export const fetchCharacterAppearances = makeApiActionCreator(characterApi.getCharacterAppearances, CHARACTER_APPEARANCES_FETCH_START, CHARACTER_APPEARANCES_FETCH_SUCCESS, CHARACTER_APPEARANCES_FETCH_ERROR);
+
 function _getCharactersOfScene (state) {
   const sceneId = currentSceneIdSelector(state);
   return sceneHasCharactersRelationsSelector(state).get(sceneId) || List();
@@ -41,6 +55,8 @@ export const fetchCharactersOfScene = makeFetchRecordsActionCreator(characterApi
 }), CHARACTERS_OF_SCENE_FETCH_START, CHARACTERS_OF_SCENE_FETCH_SUCCESS, CHARACTERS_OF_SCENE_FETCH_ERROR);
 
 export const fetchCharacter = makeApiActionCreator(characterApi.getCharacter, CHARACTER_FETCH_START, CHARACTER_FETCH_SUCCESS, CHARACTER_FETCH_ERROR);
+export const fetchVideoCharacters = makeApiActionCreator(characterApi.getVideoCharacters, VIDEO_CHARACTERS_FETCH_START, VIDEO_CHARACTERS_FETCH_SUCCESS, VIDEO_CHARACTERS_FETCH_ERROR);
+
 /**
  * Fetch all characters on the current scene. We only get details of the relation
  * between the scene and the characters, which is the character id and appearanceId.
@@ -87,6 +103,8 @@ export function createCharacterMarker ({ characterId, markerStatus = REVIEW, poi
     }
   };
 }
+
+export const persistCharacterAppearance = makeApiActionCreator(characterApi.postSceneCharacter, CHARACTER_APPEARANCE_PERSIST_START, CHARACTER_APPEARANCE_PERSIST_SUCCESS, CHARACTER_APPEARANCE_PERSIST_ERROR);
 
 export function createCharacterMarkerQuickies ({ characterId, point }) {
   // When a character marker is created via the quickiesbar, the marker has no region.

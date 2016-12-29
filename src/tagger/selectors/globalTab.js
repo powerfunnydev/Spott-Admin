@@ -10,7 +10,7 @@ import {
   hoveredAppearanceSelector,
   productEntitiesSelector,
   selectedAppearanceSelector,
-  videoHasProductsRelationsSelector
+  videoHasGlobalProductsRelationsSelector
 } from './common';
 
 /**
@@ -18,13 +18,13 @@ import {
  */
 const productsSelector = createSelector(
   currentVideoIdSelector,
-  videoHasProductsRelationsSelector,
+  videoHasGlobalProductsRelationsSelector,
   globalAppearanceEntitiesSelector,
   brandEntitiesSelector,
   productEntitiesSelector,
-  (videoId, videoHasProducts, globalAppearances, brands, products) => {
-    // videoHasProducts and products are always present, but can be empty Immutable Map's.
-    const globalProductAppearances = videoId && videoHasProducts.get(videoId);
+  (videoId, videoHasGlobalProducts, globalAppearances, brands, products) => {
+    // videoHasGlobalProducts and products are always present, but can be empty Immutable Map's.
+    const globalProductAppearances = videoId && videoHasGlobalProducts.get(videoId);
     if (globalProductAppearances) {
       return globalProductAppearances.map((appearanceId) => {
         // A video product has an appearanceId, id (product id) and relavance.

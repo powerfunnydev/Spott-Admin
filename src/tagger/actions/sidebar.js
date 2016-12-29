@@ -1,5 +1,5 @@
 import { destroy } from 'redux-form/immutable';
-import { deleteVideoProduct, fetchProduct, fetchVideoProducts, persistVideoProduct } from './product';
+import { deleteVideoProduct, fetchProduct, fetchGlobalProducts, persistVideoProduct } from './product';
 import { getProducts } from '../api/product';
 import { currentVideoIdSelector } from '../selectors/common';
 import {
@@ -27,7 +27,7 @@ export function loadGlobalProducts () {
     const videoId = currentVideoIdSelector(state);
 
     // Fetch the global product appearances in a video.
-    const globalAppearances = await dispatch(fetchVideoProducts({ videoId }));
+    const globalAppearances = await dispatch(fetchGlobalProducts({ videoId }));
     return Promise.all(globalAppearances.map(({ id }) => dispatch(fetchProduct({ productId: id }))));
   };
 }

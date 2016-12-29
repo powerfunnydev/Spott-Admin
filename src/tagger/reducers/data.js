@@ -5,6 +5,8 @@ import * as sceneGroupActions from '../actions/sceneGroup';
 import { CHARACTER, PRODUCT } from '../constants/appearanceTypes';
 import * as organizer from '../actions/organizer';
 import { ERROR, FETCHING, LOADED, UPDATING } from '../constants/statusTypes';
+import * as characterActions from '../actions/character';
+import * as productActions from '../actions/product';
 
 const appearance = new Schema('appearances', { idAttribute: 'appearanceId' });
 const character = new Schema('characters');
@@ -128,14 +130,17 @@ function stripSimilarProducts (similarProducts) {
   *    -> media
   *    -> videos
   * -> relations
+  *    -> characterHasAppearances
   *    -> characterSearch { searchString: [ id ] }
   *    -> characterHasProductGroups { characterId: [ { id, name, products: [ { characterId, productId, relevance } ] } ] }
   *    -> mediumHasProductGroups { mediumId: [ { id, name, products: [ { characterId, productId, relevance } ] } ] }
+  *    -> productHasAppearances
   *    -> productHasSimilarProducts { productId: [ { id, matchPercentage, product, productId } ] }
   *    -> productSearch { searchString: [ id ] }
   *    -> sceneHasCharacters [{ id, appearanceId }]
   *    -> sceneHasProducts [{ appearanceId, id, point: { x, y }, relevance }]
-  *    -> videoHasProducts [{ appearanceId, id, relevance }]
+  *    -> videoHasProducts
+  *    -> videoHasGlobalProducts [{ appearanceId, id, relevance }]
   *    -> videoHasSceneGroups [sceneGroupId]
   *    -> videoHasScenes
   */
@@ -145,9 +150,9 @@ export default (state = fromJS({
     productGroups: {}, sceneGroups: {}, scenes: {}, media: {}, videos: {}
   },
   relations: {
-    characterSearch: {}, characterHasProductGroups: {}, mediumHasProductGroups: {},
-    productHasSimilarProducts: {}, productSearch: {}, sceneHasCharacters: {},
-    sceneHasProducts: {}, videoHasProducts: {}, videoHasScenes: {}, videoHasSceneGroups: {}
+    characterHasAppearances: {}, characterSearch: {}, characterHasProductGroups: {}, mediumHasProductGroups: {},
+    productHasAppearances: {}, productHasSimilarProducts: {}, productSearch: {}, sceneHasCharacters: {},
+    sceneHasProducts: {}, videoHasProducts: {}, videoHasGlobalProducts: {}, videoHasScenes: {}, videoHasSceneGroups: {}
   }
 }), action) => {
   switch (action.type) {
@@ -250,18 +255,24 @@ export default (state = fromJS({
       const { entities: { appearances: appearanceEntities }, result: appearancesResult } = normalize(action.data, arrayOf(appearance));
       return state
         .mergeIn([ 'entities', 'globalAppearances' ], appearanceEntities)
-        .setIn([ 'relations', 'videoHasProducts', action.videoId ], List(appearancesResult));
+        .setIn([ 'relations', 'videoHasGlobalProducts', action.videoId ], List(appearancesResult));
     }
 
+    case productActions.VIDEO_PRODUCTS_FETCH_SUCCESS: {
+      const { entities: { products: productEntities }, result: productsResult } = normalize(action.data, arrayOf(product));
+      return state
+        .mergeIn([ 'entities', 'products' ], productEntities)
+        .setIn([ 'relations', 'videoHasProducts', action.videoId ], Map({ _status: LOADED, data: fromJS(productsResult) }));
+    }
     case actionTypes.VIDEO_PRODUCT_PERSIST_SUCCESS:
-    case actionTypes.VIDEO_PRODUCTS_FETCH_SUCCESS: {
+    case productActions.GLOBAL_PRODUCTS_FETCH_SUCCESS: {
       const { entities: { appearances: appearanceEntities }, result: appearancesResult } = normalize(action.data, arrayOf(appearance));
       return state
         .mergeIn([ 'entities', 'globalAppearances' ], appearanceEntities)
-        .setIn([ 'relations', 'videoHasProducts', action.videoId ], List(appearancesResult));
+        .setIn([ 'relations', 'videoHasGlobalProducts', action.videoId ], List(appearancesResult));
     }
-    case actionTypes.VIDEO_PRODUCTS_FETCH_ERROR:
-      return state.setIn([ 'relations', 'videoHasProducts', action.videoId ], List());
+    case productActions.GLOBAL_PRODUCTS_FETCH_ERROR:
+      return state.setIn([ 'relations', 'videoHasGlobalProducts', action.videoId ], List());
 
     // Scene groups
     // ------------
@@ -333,9 +344,25 @@ export default (state = fromJS({
       // We add a sceneNumber in the API layer.
       return state.mergeIn([ 'entities', 'scenes', action.sceneId ], Map(action.record));
 
+    case characterActions.VIDEO_CHARACTERS_FETCH_SUCCESS: {
+      const { entities: { characters: characterEntities } } = normalize(action.data, arrayOf(character));
+      // Relations are stored in video.
+      return state.mergeIn([ 'entities', 'characters' ], characterEntities);
+    }
+
     case actionTypes.CHARACTERS_OF_SCENE_FETCH_START:
       // Do nothing when start to fetch the character ids. We will use the characters in the cache.
       return state;
+    case characterActions.CHARACTER_APPEARANCES_FETCH_SUCCESS: {
+      const data = action.data;
+      // Set the type of appearance to character.
+      for (const characterAppearance of data) {
+        characterAppearance.type = CHARACTER;
+      }
+      const { entities: { appearances: appearanceEntities }, result: appearancesResult } = normalize(data, arrayOf(appearance));
+      return state.mergeIn([ 'entities', 'appearances' ], appearanceEntities)
+        .setIn([ 'relations', 'characterHasAppearances', action.characterId ], Map({ type: LOADED, data: fromJS(appearancesResult) }));
+    }
     case actionTypes.CREATE_CHARACTER_MARKER_SUCCESS:
     case actionTypes.UPDATE_CHARACTER_MARKER_SUCCESS:
     case actionTypes.CHARACTERS_OF_SCENE_FETCH_SUCCESS:
@@ -398,6 +425,17 @@ export default (state = fromJS({
       return state
         .mergeIn([ 'entities', 'products' ], productEntities)
         .setIn([ 'relations', 'productSuggestions' ], fromJS(suggestions));
+    }
+
+    case productActions.PRODUCT_APPEARANCES_FETCH_SUCCESS: {
+      const data = action.data;
+      // Set the type of appearance to character.
+      for (const productAppearance of data) {
+        productAppearance.type = PRODUCT;
+      }
+      const { entities: { appearances: appearanceEntities }, result: appearancesResult } = normalize(data, arrayOf(appearance));
+      return state.mergeIn([ 'entities', 'appearances' ], appearanceEntities)
+        .setIn([ 'relations', 'productHasAppearances', action.productId ], Map({ type: LOADED, data: fromJS(appearancesResult) }));
     }
     default:
       return state;

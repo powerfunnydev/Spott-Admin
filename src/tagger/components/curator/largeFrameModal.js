@@ -1,21 +1,22 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import colors from '../colors';
-import FramesHider from './framesHider';
+import NonKeyFramesHider from './nonKeyFramesHider';
 
 const crossLarge = require('./images/crossLarge.svg');
 const arrow = require('../sceneEditor/images/arrow.svg');
 
 @Radium
-export default class LargeSceneModal extends Component {
+export default class LargeFrameModal extends Component {
 
   static propTypes = {
-    currentScene: PropTypes.object,
+    frame: ImmutablePropTypes.map,
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
-    onSelectLeftScene: PropTypes.func.isRequired,
-    onSelectRightScene: PropTypes.func.isRequired,
-    onToggleVisibilityScene: PropTypes.func.isRequired
+    onSelectLeftFrame: PropTypes.func.isRequired,
+    onSelectRightFrame: PropTypes.func.isRequired,
+    onToggleKeyFrame: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -81,33 +82,21 @@ export default class LargeSceneModal extends Component {
       transform: 'rotate(180deg)'
     },
     imageWrapper: {
-      lineHeight: 0,
-      position: 'relative'
-    },
-    hiddenSceneOverlay: {
-      container: {
-        backgroundColor: 'rgba(236, 65, 15, 0.25)',
-        boxShadow: 'inset 0px 0px 0px 1px rgb(236, 65, 15)', // vividRed
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        width: '100%',
-        height: '100%'
+      base: {
+        lineHeight: 0,
+        position: 'relative'
       },
-      line: {
-        stroke: colors.vividRed,
-        strokeWidth: 1
+      isKeyFrame: {
+        border: `1px solid ${colors.vividOrange}`
       }
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { currentScene, isOpen, onSelectLeftScene, onSelectRightScene, onToggleVisibilityScene } = this.props;
+    const { frame, isOpen, onSelectLeftFrame, onSelectRightFrame, onToggleKeyFrame } = this.props;
 
-    if (isOpen && currentScene) {
+    if (isOpen && frame) {
       return (
         <div style={styles.overlay} onClick={this.onClose}>
           <button style={styles.close}>
@@ -115,27 +104,22 @@ export default class LargeSceneModal extends Component {
           </button>
           <div style={styles.content} onClick={(e) => e.stopPropagation()}>
             <div style={styles.imageContainer}>
-              <button style={styles.left} onClick={onSelectLeftScene}>
-                <img src={arrow} style={styles.arrowLeft} title='Previous scene' />
+              <button style={styles.left} onClick={onSelectLeftFrame}>
+                <img src={arrow} style={styles.arrowLeft} title='Previous frame' />
               </button>
-              <div style={styles.imageWrapper}>
-                <img src={`${currentScene.get('imageUrl')}?height=699&width=1242`} style={styles.image} />
-                {currentScene.get('hidden') && // Render a red cross overlay if the scene is hidden.
-                  <svg preserveAspectRatio='none' style={styles.hiddenSceneOverlay.container} viewBox='0 0 200 200'>
-                    <line style={styles.hiddenSceneOverlay.line} x1='0' x2='200' y1='0' y2='200' />
-                    <line style={styles.hiddenSceneOverlay.line} x1='200' x2='0' y1='0' y2='200' />
-                  </svg>}
+              <div style={[ styles.imageWrapper.base, frame.get('isKeyFrame') && styles.imageWrapper.isKeyFrame ]}>
+                <img src={`${frame.get('imageUrl')}?height=699&width=1242`} style={styles.image} />
               </div>
 
-              <button style={styles.right} onClick={onSelectRightScene}>
-                <img src={arrow} title='Next scene' />
+              <button style={styles.right} onClick={onSelectRightFrame}>
+                <img src={arrow} title='Next frame' />
               </button>
             </div>
             <div style={styles.framesHider}>
-              <FramesHider
-                isHidden={currentScene.get('hidden')}
+              <NonKeyFramesHider
+                isKeyFrame={frame.get('isKeyFrame')}
                 single
-                onToggleHidden={onToggleVisibilityScene}/>
+                onToggleKeyFrame={onToggleKeyFrame}/>
             </div>
           </div>
         </div>

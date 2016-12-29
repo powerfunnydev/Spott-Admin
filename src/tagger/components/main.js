@@ -11,10 +11,13 @@ import * as quickiesActions from '../actions/quickies';
 import * as sceneActions from '../actions/scene';
 import * as videoActions from '../actions/video';
 import * as organizerActions from '../actions/organizer';
+import * as curatorActions from '../actions/curator';
 import { mainSelector } from '../selectors/main';
-import { ORGANIZE, TAG } from '../constants/mainTabTypes';
+import { CURATE, ORGANIZE, TAG } from '../constants/mainTabTypes';
 import { filterKeyEventsInInputFields } from './_helpers/utils';
 import ContextMenus from './contextMenus';
+import Curator from './curator';
+import CuratorSidebar from './curator/sidebar';
 import CustomDragLayer from './customDragLayer';
 import Modals from './modals';
 import Organizer from './organizer';
@@ -34,6 +37,13 @@ import Toast from './toast';
   organizerSelectBottomScene: bindActionCreators(organizerActions.selectBottomScene, dispatch),
   organizerSelectTopScene: bindActionCreators(organizerActions.selectTopScene, dispatch),
   organizerToggleVisibilityScene: bindActionCreators(organizerActions.toggleVisibilityScene, dispatch),
+
+  curatorSelectLeftFrame: bindActionCreators(curatorActions.selectLeftFrame, dispatch),
+  curatorSelectRightFrame: bindActionCreators(curatorActions.selectRightFrame, dispatch),
+  curatorSelectBottomFrame: bindActionCreators(curatorActions.selectBottomFrame, dispatch),
+  curatorSelectTopFrame: bindActionCreators(curatorActions.selectTopFrame, dispatch),
+  curatorToggleKeyFrame: bindActionCreators(curatorActions.toggleKeyFrame, dispatch),
+
   selectCharacterByShortkey: bindActionCreators(quickiesActions.selectCharacterByShortkey, dispatch),
   selectVideo: bindActionCreators(videoActions.select, dispatch),
   tagSelectLeftScene: bindActionCreators(sceneActions.selectLeftScene, dispatch),
@@ -45,6 +55,11 @@ export default class TaggerApplication extends Component {
 
   static propTypes = {
     activeTab: PropTypes.string.isRequired,
+    curatorSelectBottomFrame: PropTypes.func.isRequired,
+    curatorSelectLeftFrame: PropTypes.func.isRequired,
+    curatorSelectRightFrame: PropTypes.func.isRequired,
+    curatorSelectTopFrame: PropTypes.func.isRequired,
+    curatorToggleKeyFrame: PropTypes.func.isRequired,
     fetchMedium: PropTypes.func.isRequired,
     loadQuickies: PropTypes.func.isRequired,
     organizerInsertSceneGroup: PropTypes.func.isRequired,
@@ -103,6 +118,14 @@ export default class TaggerApplication extends Component {
     toggleVisibilityScene: 'x'
   };
 
+  static curatorKeyMap = {
+    selectBottomFrame: 'down',
+    selectLeftFrame: 'left',
+    selectRightFrame: 'right',
+    selectTopFrame: 'up',
+    toggleKeyFrame: 'x'
+  };
+
   static styles = {
     container: {
       position: 'absolute',
@@ -140,19 +163,16 @@ export default class TaggerApplication extends Component {
       flexDirection: 'column'
     },
     sidebar: {
-      borderLeft: '3px solid black',
-      flex: '0 0 370px',
-      // height: '100%',
-      width: 370,
-      borderBottom: '3px solid black'
-    },
-    quickiesBar: {
       borderRight: '3px solid black',
       flex: '0 0 370px',
       height: '100%',
-      width: 370
+      width: 370,
+      overflow: 'auto'
     },
     organizer: {
+      flex: '1 0'
+    },
+    curator: {
       flex: '1 0'
     },
     sceneSelector: {
@@ -166,12 +186,13 @@ export default class TaggerApplication extends Component {
   };
 
   render () {
-    const { organizerKeyMap, tagKeyMap, styles } = this.constructor;
+    const { curatorKeyMap, organizerKeyMap, tagKeyMap, styles } = this.constructor;
     const {
       activeTab, organizerInsertSceneGroup, organizerSelectLeftScene, organizerSelectRightScene,
       organizerSelectBottomScene, organizerSelectTopScene,
       tagSelectLeftScene, tagSelectRightScene, selectCharacterByShortkey,
-      toggleVisibilityScene
+      curatorSelectLeftFrame, curatorSelectRightFrame, curatorSelectBottomFrame, curatorSelectTopFrame,
+      toggleVisibilityScene, curatorToggleKeyFrame
     } = this.props;
 
     const tagHandlers = {
@@ -201,6 +222,17 @@ export default class TaggerApplication extends Component {
       insertSceneGroup: organizerInsertSceneGroup
     };
 
+    const curatorHandlers = {
+      selectLeftFrame: curatorSelectLeftFrame,
+      selectRightFrame: curatorSelectRightFrame,
+      selectBottomFrame: curatorSelectBottomFrame,
+      selectTopFrame: curatorSelectTopFrame,
+      // When no scene was provided, the is key frame of the current scene will be toggled.
+      toggleKeyFrame: () => {
+        curatorToggleKeyFrame();
+      }
+    };
+
     return (
       <StyleRoot style={styles.container}>
         <CustomDragLayer />
@@ -211,7 +243,7 @@ export default class TaggerApplication extends Component {
             </HotKeys>}
           {activeTab === TAG &&
             <HotKeys handlers={filterKeyEventsInInputFields(tagHandlers)} keyMap={tagKeyMap} style={styles.body}>
-              <QuickiesBar style={styles.quickiesBar} />
+              <QuickiesBar style={styles.sidebar} />
               <div style={styles.middleBar}>
                 <div style={styles.middleBarInner}>
                   <div style={{ display: 'flex', height: '100%' }}>
@@ -222,6 +254,11 @@ export default class TaggerApplication extends Component {
                 </div>
               </div>
             </HotKeys>}
+            {activeTab === CURATE &&
+              <HotKeys handlers={filterKeyEventsInInputFields(curatorHandlers)} keyMap={curatorKeyMap} style={styles.body}>
+                <CuratorSidebar style={styles.sidebar} />
+                <Curator style={styles.curator} />
+              </HotKeys>}
           <Modals />
           <ContextMenus />
           <Toast />
