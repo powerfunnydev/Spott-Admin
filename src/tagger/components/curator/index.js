@@ -12,6 +12,7 @@ import PureRender from '../_helpers/pureRenderDecorator';
 import { filterKeyEventsInInputFields } from '../_helpers/utils';
 import selector from '../../selectors/curator';
 import * as curateActions from '../../actions/curator';
+import colors from '../colors';
 
 @connect(selector, (dispatch) => ({
   minimizeFrame: bindActionCreators(curateActions.minimizeFrame, dispatch),
@@ -28,13 +29,14 @@ import * as curateActions from '../../actions/curator';
 export default class Curator extends Component {
 
   static propTypes = {
+    currentCharacter: ImmutablePropTypes.map,
+    currentProduct: ImmutablePropTypes.map,
     currentScene: ImmutablePropTypes.map,
     currentSceneGroup: ImmutablePropTypes.map,
     enlargeFrame: PropTypes.bool.isRequired,
     hideNonKeyFrames: PropTypes.bool.isRequired,
     minimizeFrame: PropTypes.func.isRequired,
-    numAllScenes: PropTypes.number.isRequired,
-    numVisibleScenes: PropTypes.number.isRequired,
+    numKeyFrames: PropTypes.number.isRequired,
     scale: PropTypes.number.isRequired,
     scenes: ImmutablePropTypes.list.isRequired,
     selectFrame: PropTypes.func.isRequired,
@@ -81,11 +83,11 @@ export default class Curator extends Component {
     container: {
       backgroundColor: '#000',
       outline: 0,
-      position: 'relative',
-      paddingTop: '2em',
-      paddingBottom: '2em',
-      paddingLeft: '2.5em',
-      paddingRight: '2.5em'
+      position: 'relative'
+      // paddingTop: '2em',
+      // paddingBottom: '2em',
+      // paddingLeft: '2.5em',
+      // paddingRight: '2.5em'
     },
     scenes: {
       listContainer: {
@@ -94,13 +96,13 @@ export default class Curator extends Component {
         bottom: 0,
         left: 0,
         right: 0,
-        paddingLeft: '1.875em', // + 5px padding of the scene image
-        paddingRight: '1.875em', // + 5px padding of the scene image
+        paddingLeft: '2.5em', // + 5px padding of the scene image
+        paddingRight: '1.5em', // + 5px padding of the scene image
         // Add some margin to top and bottom to prevent the scrollbar reaching the
         // very top/bottom
         marginBottom: '2em',
         marginTop: '2em',
-        marginLeft: '-1.875em',
+        marginLeft: '-1em',
         overflow: 'scroll',
         paddingBottom: '2em'
       },
@@ -115,14 +117,35 @@ export default class Curator extends Component {
         paddingRight: 20,
         marginRight: -20
       }
+    },
+    info: {
+      base: {
+        marginLeft: '0.7em',
+        marginBottom: '1em'
+      },
+      title: {
+        base: {
+          color: '#fff',
+          fontSize: '1.25em',
+          fontWeight: 'normal',
+          paddingBottom: '0.25em'
+        },
+        emph: {
+          fontWeight: 600
+        }
+      },
+      subtitle: {
+        color: colors.warmGray,
+        fontSize: '0.75em'
+      }
     }
   };
 
   render () {
     const { keyMap, styles } = this.constructor;
     const {
-      currentScene, hideNonKeyFrames, enlargeFrame, minimizeFrame,
-      selectLeftFrame, selectRightFrame, scenes,
+      currentCharacter, currentProduct, currentScene, currentSceneGroup, hideNonKeyFrames,
+      enlargeFrame, minimizeFrame, numKeyFrames, selectLeftFrame, selectRightFrame, scenes,
       selectFrame, toggleFrameSize, toggleKeyFrame, toggleHideNonKeyFrames
     } = this.props;
 
@@ -151,6 +174,21 @@ export default class Curator extends Component {
           onToggleKeyFrame={toggleKeyFrame} />
         {/* Render the list of scenes of the current scene group. */}
         <div style={styles.scenes.listContainer}>
+          {currentCharacter &&
+            <div style={styles.info.base}>
+              <h1 style={styles.info.title.base}>{numKeyFrames} <span style={styles.info.title.emph}>{currentCharacter.get('name')}</span> {numKeyFrames === 1 ? 'frame' : 'frames'}</h1>
+              <h2 style={styles.info.subtitle}>Select the best frames for each character.</h2>
+            </div>}
+          {currentSceneGroup &&
+            <div style={styles.info.base}>
+              <h1 style={styles.info.title.base}>{numKeyFrames} <span style={styles.info.title.emph}>{currentSceneGroup.get('label')}</span> {numKeyFrames === 1 ? 'frame' : 'frames'}</h1>
+              <h2 style={styles.info.subtitle}>Select the single best frame for each scene.</h2>
+            </div>}
+          {currentProduct &&
+            <div style={styles.info.base}>
+              <h1 style={styles.info.title.base}>{numKeyFrames} <span style={styles.info.title.emph}>{currentProduct.get('shortName')}</span> {numKeyFrames === 1 ? 'frame' : 'frames'}</h1>
+              <h2 style={styles.info.subtitle}>Select the best frames for each product.</h2>
+            </div>}
           {scenes.map((frame, j) => (
             <Frame
               frame={frame}
@@ -168,9 +206,11 @@ export default class Curator extends Component {
 
         {/* Render bottom bar */}
         <BottomBar
+          currentCharacter={currentCharacter}
+          currentProduct={currentProduct}
+          currentSceneGroup={currentSceneGroup}
           hideNonKeyFrames={hideNonKeyFrames}
-          numFrames={100}
-          numKeyFrames={1}
+          numKeyFrames={numKeyFrames}
           scale={this.props.scale}
           onScaleChange={this.onScaleChange}
           onToggleHideNonKeyFrames={toggleHideNonKeyFrames} />

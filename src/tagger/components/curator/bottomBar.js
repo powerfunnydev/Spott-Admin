@@ -1,5 +1,6 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import Slider from '../_helpers/slider';
 import NonKeyFramesHider from './nonKeyFramesHider';
 import colors from '../colors';
@@ -10,8 +11,10 @@ const resizeIconImage = require('./images/resizeIcon.svg');
 export default class BottomBar extends Component {
 
   static propTypes = {
+    currentCharacter: ImmutablePropTypes.map,
+    currentProduct: ImmutablePropTypes.map,
+    currentSceneGroup: ImmutablePropTypes.map,
     hideNonKeyFrames: PropTypes.bool.isRequired,
-    numFrames: PropTypes.number.isRequired,
     numKeyFrames: PropTypes.number.isRequired,
     scale: PropTypes.number.isRequired,
     onScaleChange: PropTypes.func.isRequired,
@@ -62,7 +65,10 @@ export default class BottomBar extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { hideNonKeyFrames, numKeyFrames, numFrames, onToggleHideNonKeyFrames } = this.props;
+    const {
+      currentCharacter, currentProduct, currentSceneGroup, hideNonKeyFrames,
+      numKeyFrames, numFrames, onToggleHideNonKeyFrames
+    } = this.props;
 
     return (
       <div style={styles.container}>
@@ -76,7 +82,14 @@ export default class BottomBar extends Component {
         </div>
 
         {/* Info: 200/230 frames visible in 3 scenes {numKeyFrames}/{numFrames} are key frames */}
-        <div style={styles.info} />
+        <div style={styles.info}>
+          {currentCharacter &&
+            <span>{numKeyFrames} starred {numKeyFrames === 1 ? 'frame' : 'frames'} for {currentCharacter.get('name')}</span>}
+          {currentSceneGroup &&
+            <span>{numKeyFrames} starred {numKeyFrames === 1 ? 'frame' : 'frames'} for {currentSceneGroup.get('label')}</span>}
+          {currentProduct &&
+            <span>{numKeyFrames} starred {numKeyFrames === 1 ? 'frame' : 'frames'} for {currentProduct.get('shortName')}</span>}
+        </div>
         <div style={styles.buttonContainer}>
           {/* Hide/show all hidden frames. */}
           <NonKeyFramesHider

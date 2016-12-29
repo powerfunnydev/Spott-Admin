@@ -174,15 +174,10 @@ export const currentSceneSelector = createSelector(
   (sceneId, scenes) => scenes.find((s) => s.get('id') === sceneId)
 );
 
-const numAllScenesSelector = createSelector(
-   allScenesSelector,
-   (scenes) => scenes.size
+const numKeyFramesSelector = createSelector(
+   visibleScenesSelector,
+   (visibleScenes) => visibleScenes.filter((f) => f.get('isKeyFrame')).size
  );
-
-const numVisibleScenesSelector = createSelector(
-  allScenesSelector,
-  (scenes, hideHiddenFrames) => scenes.filter((s) => !s.get('hidden')).size
-);
 
 export const sidebarSelector = createStructuredSelector({
   characters: charactersSelector,
@@ -194,13 +189,14 @@ export const sidebarSelector = createStructuredSelector({
 });
 
 export default createStructuredSelector({
+  currentCharacter: currentCharacterSelector,
+  currentProduct: currentProductSelector,
   currentScene: currentSceneSelector,
   currentSceneGroup: currentSceneGroupSelector,
   enlargeFrame: enlargeFrameSelector,
   hideNonKeyFrames: hideNonKeyFramesSelector,
   hideSceneGroup: hideSceneGroupSelector,
-  numAllScenes: numAllScenesSelector,
-  numVisibleScenes: numVisibleScenesSelector,
+  numKeyFrames: numKeyFramesSelector,
   scale: scaleSelector,
   scenes: visibleScenesSelector
 });
