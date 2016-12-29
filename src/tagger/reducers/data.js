@@ -134,6 +134,7 @@ function stripSimilarProducts (similarProducts) {
   *    -> characterSearch { searchString: [ id ] }
   *    -> characterHasProductGroups { characterId: [ { id, name, products: [ { characterId, productId, relevance } ] } ] }
   *    -> mediumHasProductGroups { mediumId: [ { id, name, products: [ { characterId, productId, relevance } ] } ] }
+  *    -> productHasAppearances
   *    -> productHasSimilarProducts { productId: [ { id, matchPercentage, product, productId } ] }
   *    -> productSearch { searchString: [ id ] }
   *    -> sceneHasCharacters [{ id, appearanceId }]
@@ -150,7 +151,7 @@ export default (state = fromJS({
   },
   relations: {
     characterHasAppearances: {}, characterSearch: {}, characterHasProductGroups: {}, mediumHasProductGroups: {},
-    productHasSimilarProducts: {}, productSearch: {}, sceneHasCharacters: {},
+    productHasAppearances: {}, productHasSimilarProducts: {}, productSearch: {}, sceneHasCharacters: {},
     sceneHasProducts: {}, videoHasProducts: {}, videoHasGlobalProducts: {}, videoHasScenes: {}, videoHasSceneGroups: {}
   }
 }), action) => {
@@ -261,7 +262,7 @@ export default (state = fromJS({
       const { entities: { products: productEntities }, result: productsResult } = normalize(action.data, arrayOf(product));
       return state
         .mergeIn([ 'entities', 'products' ], productEntities)
-        .setIn([ 'relations', 'videoHasProducts', action.videoId ], List(productsResult));
+        .setIn([ 'relations', 'videoHasProducts', action.videoId ], Map({ _status: LOADED, data: fromJS(productsResult) }));
     }
     case actionTypes.VIDEO_PRODUCT_PERSIST_SUCCESS:
     case productActions.GLOBAL_PRODUCTS_FETCH_SUCCESS: {
@@ -424,6 +425,17 @@ export default (state = fromJS({
       return state
         .mergeIn([ 'entities', 'products' ], productEntities)
         .setIn([ 'relations', 'productSuggestions' ], fromJS(suggestions));
+    }
+
+    case productActions.PRODUCT_APPEARANCES_FETCH_SUCCESS: {
+      const data = action.data;
+      // Set the type of appearance to character.
+      for (const productAppearance of data) {
+        productAppearance.type = PRODUCT;
+      }
+      const { entities: { appearances: appearanceEntities }, result: appearancesResult } = normalize(data, arrayOf(appearance));
+      return state.mergeIn([ 'entities', 'appearances' ], appearanceEntities)
+        .setIn([ 'relations', 'productHasAppearances', action.productId ], Map({ type: LOADED, data: fromJS(appearancesResult) }));
     }
     default:
       return state;

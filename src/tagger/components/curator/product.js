@@ -57,16 +57,15 @@ export default class Product extends Component {
       backgroundSize: 'contain'
     },
     name: {
-      display: 'flex',
-      flex: '1 1',
-      fontSize: '14px',
+      fontSize: '0.75em',
       justifyContent: 'space-between',
       paddingLeft: 10,
       paddingRight: 10,
       // Prevent long item names to overflow by wrapping to the next line
       overflow: 'hidden',
       textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap'
+      whiteSpace: 'nowrap',
+      width: '100%'
     },
     badge: {
       base: {
@@ -100,7 +99,7 @@ export default class Product extends Component {
 
     return (
       <li style={[ styles.container.base, selected && styles.container.selected ]} onClick={this.onClick}>
-        <div style={[ styles.image, { backgroundImage: `url('${product.get('portraitImageUrl')}?width=95&height=95')` } ]} title={product.get('name')}>&nbsp;</div>
+        <div style={[ styles.image, { backgroundImage: `url('${product.get('imageUrl')}?width=95&height=95')` } ]} title={product.get('shortName')}>&nbsp;</div>
         <div style={styles.name}>{product.get('shortName')}</div>
         {product.get('countKeyAppearances') > 0
           ? <div style={[ styles.badge.base, styles.badge.star ]}><img src={starFilledImage} style={styles.starImage} />{product.get('countKeyAppearances')}</div>

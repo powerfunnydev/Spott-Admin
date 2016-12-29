@@ -4,6 +4,7 @@ import * as actions from '../actions/curator';
 /**
   * organizer
   * -> currentCharacterId
+  * -> currentProductId
   * -> currentSceneId
   * -> currentSceneGroupId
   * -> enlargeFrame
@@ -26,11 +27,18 @@ export default (state = Map({ enlargeFrame: false, hideNonKeyFrames: false, scal
     case actions.SELECT_SCENE_GROUP:
       return state
         .delete('currentCharacterId')
+        .delete('currentProductId')
         .set('currentSceneGroupId', action.sceneGroupId);
     case actions.SELECT_CHARACTER:
       return state
         .delete('currentSceneGroupId')
+        .delete('currentProductId')
         .set('currentCharacterId', action.characterId);
+    case actions.SELECT_PRODUCT:
+      return state
+        .delete('currentCharacterId')
+        .delete('currentSceneGroupId')
+        .set('currentProductId', action.productId);
     default:
       return state;
   }

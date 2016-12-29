@@ -75,8 +75,8 @@ export default class BottomBar extends Component {
           </div>
         </div>
 
-        {/* Info: 200/230 frames visible in 3 scenes */}
-        <div style={styles.info}>{numKeyFrames}/{numFrames} are key frames</div>
+        {/* Info: 200/230 frames visible in 3 scenes {numKeyFrames}/{numFrames} are key frames */}
+        <div style={styles.info} />
         <div style={styles.buttonContainer}>
           {/* Hide/show all hidden frames. */}
           <NonKeyFramesHider

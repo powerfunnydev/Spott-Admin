@@ -57,16 +57,15 @@ export default class Character extends Component {
       backgroundSize: 'contain'
     },
     name: {
-      display: 'flex',
-      flex: '1 1',
-      fontSize: '14px',
+      fontSize: '0.75em',
       justifyContent: 'space-between',
       paddingLeft: 10,
       paddingRight: 10,
       // Prevent long item names to overflow by wrapping to the next line
       overflow: 'hidden',
       textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap'
+      whiteSpace: 'nowrap',
+      width: '100%'
     },
     badge: {
       base: {

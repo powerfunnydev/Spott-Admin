@@ -9,11 +9,15 @@ import {
   sceneEntitiesSelector,
   videoHasScenesRelationsSelector,
   videoHasSceneGroupsRelationsSelector,
-  sceneGroupEntitiesSelector
+  sceneGroupEntitiesSelector,
+  videoHasProductsRelationsSelector,
+  productEntitiesSelector,
+  productHasAppearancesRelationsSelector
  } from './common';
 import { mediumCharactersSelector } from './quickiesBar/charactersTab';
 
 export const currentCharacterIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'currentCharacterId' ]);
+export const currentProductIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'currentProductId' ]);
 export const currentSceneIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'currentSceneId' ]);
 export const currentSceneGroupIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'currentSceneGroupId' ]);
 export const enlargeFrameSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'enlargeFrame' ]);
@@ -23,6 +27,8 @@ export const hideSceneGroupSelector = (state) => state.getIn([ 'tagger', 'tagger
 
 const _sceneGroupsSelector = createEntitiesByRelationSelector(videoHasSceneGroupsRelationsSelector, currentVideoIdSelector, sceneGroupEntitiesSelector);
 export const characterAppearancesSelector = createEntitiesByRelationSelector(characterHasAppearancesRelationsSelector, currentCharacterIdSelector, appearanceEntitiesSelector);
+export const productAppearancesSelector = createEntitiesByRelationSelector(productHasAppearancesRelationsSelector, currentProductIdSelector, appearanceEntitiesSelector);
+export const mediumProductsSelector = createEntitiesByRelationSelector(videoHasProductsRelationsSelector, currentVideoIdSelector, productEntitiesSelector);
 
 const charactersSelector = createSelector(
   mediumCharactersSelector,
@@ -40,10 +46,32 @@ const charactersSelector = createSelector(
   )
 );
 
+const productsSelector = createSelector(
+  mediumProductsSelector,
+  productHasAppearancesRelationsSelector,
+  appearanceEntitiesSelector,
+  (products, productHasAppearances, appearancesById) => {
+    return products.get('data').map((p) => {
+      const appearanceIds = productHasAppearances.getIn([ p.get('id'), 'data' ]) || List();
+      const countKeyAppearances = appearanceIds.reduce((i, id) => {
+        const a = appearancesById.get(id);
+        return a && a.get('keyAppearance') ? i + 1 : i;
+      }, 0);
+      return p.set('countKeyAppearances', countKeyAppearances);
+    });
+  }
+);
+
 export const currentCharacterSelector = createSelector(
   currentCharacterIdSelector,
   charactersSelector,
   (characterId, characters) => characters.find((c) => c.get('id') === characterId)
+);
+
+export const currentProductSelector = createSelector(
+  currentProductIdSelector,
+  productsSelector,
+  (productId, products) => products.find((p) => p.get('id') === productId)
 );
 
 export const allScenesSelector = createSelector(
@@ -103,10 +131,12 @@ export const currentSceneGroupSelector = createSelector(
 export const visibleScenesSelector = createSelector(
   currentSceneGroupSelector,
   currentCharacterIdSelector,
+  currentProductIdSelector,
   characterAppearancesSelector,
+  productAppearancesSelector,
   sceneEntitiesSelector,
   hideNonKeyFramesSelector,
-  (currentSceneGroup, currentCharacterId, characterAppearances, scenesById, hideNonKeyFrames) => {
+  (currentSceneGroup, currentCharacterId, currentProductId, characterAppearances, productAppearances, scenesById, hideNonKeyFrames) => {
     let result = List();
     if (currentSceneGroup) {
       result = currentSceneGroup
@@ -115,6 +145,16 @@ export const visibleScenesSelector = createSelector(
     }
     if (currentCharacterId) {
       result = characterAppearances
+        .get('data')
+        .map((a) => {
+          return scenesById.get(a.get('sceneId')).set('appearance', a);
+        })
+        .filter((f) => f)
+        .map((f) => f.set('isKeyFrame', f.getIn([ 'appearance', 'keyAppearance' ])));
+    }
+    if (currentProductId) {
+      console.warn('productAppearances', productAppearances && productAppearances.toJS());
+      result = productAppearances
         .get('data')
         .map((a) => {
           return scenesById.get(a.get('sceneId')).set('appearance', a);
@@ -147,7 +187,9 @@ const numVisibleScenesSelector = createSelector(
 export const sidebarSelector = createStructuredSelector({
   characters: charactersSelector,
   currentCharacter: currentCharacterSelector,
+  currentProduct: currentProductSelector,
   currentSceneGroup: currentSceneGroupSelector,
+  products: productsSelector,
   sceneGroups: sceneGroupsSelector
 });
 

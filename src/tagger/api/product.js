@@ -3,9 +3,9 @@ import { del, get, post, BadRequestError, NotFoundError, UnexpectedError } from 
 // TODO: Currently we take the first entry in localeData. Later on when localization
 // is implemented, we can change this.
 
-function transformProductAppearance ({ character, keyAppearance, markerHidden, markerStatus, product: { uuid: id }, relevance, uuid: appearanceId, point, region }) {
+function transformProductAppearance ({ character, keyAppearance, markerHidden, markerStatus, product: { uuid: id }, relevance, scene: { uuid: sceneId }, uuid: appearanceId, point, region }) {
   // Character is optional.
-  return { appearanceId, characterId: character && character.uuid, id, keyAppearance, markerHidden, markerStatus, point, region, relevance };
+  return { appearanceId, characterId: character && character.uuid, id, keyAppearance, markerHidden, markerStatus, point, region, relevance, sceneId };
 }
 
 function _transformVideoProducts (products) {

@@ -92,6 +92,7 @@ export const characterHasAppearancesRelationsSelector = (state) => state.getIn([
 export const characterSearchRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'characterSearch' ]);
 export const characterHasProductGroupsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'characterHasProductGroups' ]);
 export const mediumHasProductGroupsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'mediumHasProductGroups' ]);
+export const productHasAppearancesRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'productHasAppearances' ]);
 export const productHasSimilarProductsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'productHasSimilarProducts' ]);
 export const productSearchRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'productSearch' ]);
 export const productSuggestionsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'productSuggestions' ]);

@@ -44,14 +44,13 @@ export default class SceneGroup extends Component {
       }
     },
     name: {
-      display: 'flex',
-      flex: '1 1',
       fontSize: '0.75em',
       justifyContent: 'space-between',
       // Prevent long item names to overflow by wrapping to the next line
       overflow: 'hidden',
       textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap'
+      whiteSpace: 'nowrap',
+      width: '100%'
     },
     badge: {
       base: {

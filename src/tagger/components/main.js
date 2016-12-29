@@ -166,7 +166,8 @@ export default class TaggerApplication extends Component {
       borderRight: '3px solid black',
       flex: '0 0 370px',
       height: '100%',
-      width: 370
+      width: 370,
+      overflow: 'auto'
     },
     organizer: {
       flex: '1 0'

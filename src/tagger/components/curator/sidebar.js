@@ -7,12 +7,14 @@ import * as actions from '../../actions/curator';
 import { sidebarSelector } from '../../selectors/curator';
 import colors from '../colors';
 import Character from './character';
+import Product from './product';
 import SceneGroup from './sceneGroup';
 import Section from '../_helpers/section';
 
 @connect(sidebarSelector, (dispatch) => ({
-  loadCharacters: bindActionCreators(actions.loadCharacters, dispatch),
+  load: bindActionCreators(actions.load, dispatch),
   selectCharacter: bindActionCreators(actions.selectCharacter, dispatch),
+  selectProduct: bindActionCreators(actions.selectProduct, dispatch),
   selectSceneGroup: bindActionCreators(actions.selectSceneGroup, dispatch)
 }))
 @Radium
@@ -20,16 +22,19 @@ export default class Sidebar extends Component {
   static propTypes = {
     characters: ImmutablePropTypes.list.isRequired,
     currentCharacter: ImmutablePropTypes.map,
+    currentProduct: ImmutablePropTypes.map,
     currentSceneGroup: ImmutablePropTypes.map,
-    loadCharacters: PropTypes.func.isRequired,
+    load: PropTypes.func.isRequired,
+    products: ImmutablePropTypes.list.isRequired,
     sceneGroups: ImmutablePropTypes.list.isRequired,
     selectCharacter: PropTypes.func.isRequired,
+    selectProduct: PropTypes.func.isRequired,
     selectSceneGroup: PropTypes.func.isRequired,
     style: PropTypes.object
   };
 
   componentDidMount () {
-    this.props.loadCharacters();
+    this.props.load();
   }
 
   static styles = {
@@ -38,8 +43,7 @@ export default class Sidebar extends Component {
       // Remove default ul style
       listStyle: 'none',
       padding: 0,
-      margin: 0,
-      width: '100%'
+      margin: 0
     },
     activeSection: {
       boxShadow: 'none'
@@ -48,7 +52,10 @@ export default class Sidebar extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { characters, currentCharacter, currentSceneGroup, sceneGroups, selectCharacter, selectSceneGroup, style } = this.props;
+    const {
+      characters, currentCharacter, currentProduct, currentSceneGroup, products,
+      sceneGroups, selectCharacter, selectProduct, selectSceneGroup, style
+    } = this.props;
 
     return (
       <ul style={[ style, styles.container ]}>
@@ -72,7 +79,13 @@ export default class Sidebar extends Component {
           ))}
         </Section>
         <Section activeStyle={styles.activeSection} title='Products'>
-          Test
+          {products.map((product) => (
+            <Product
+              key={product.get('id')}
+              product={product}
+              selected={product === currentProduct}
+              onClick={selectProduct.bind(null, product.get('id'))} />
+          ))}
         </Section>
       </ul>
     );
