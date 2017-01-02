@@ -77,7 +77,7 @@ export default class Section extends Component {
       },
       open: {
         transition: 'max-height 0.25s ease-in',
-        maxHeight: '1000px'
+        maxHeight: '10000px'
       }
     }
   }

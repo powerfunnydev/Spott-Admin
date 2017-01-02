@@ -12,14 +12,16 @@ import * as sceneActions from '../actions/scene';
 import * as videoActions from '../actions/video';
 import * as organizerActions from '../actions/organizer';
 import * as curatorActions from '../actions/curator';
+import * as mvpActions from '../actions/mvp';
 import { mainSelector } from '../selectors/main';
-import { CURATE, ORGANIZE, TAG } from '../constants/mainTabTypes';
+import { CURATE, ORGANIZE, TAG, MVP } from '../constants/mainTabTypes';
 import { filterKeyEventsInInputFields } from './_helpers/utils';
 import ContextMenus from './contextMenus';
 import Curator from './curator';
 import CuratorSidebar from './curator/sidebar';
 import CustomDragLayer from './customDragLayer';
 import Modals from './modals';
+import Mvp from './mvp';
 import Organizer from './organizer';
 import QuickiesBar from './quickiesBar';
 import SceneEditor from './sceneEditor';
@@ -44,6 +46,12 @@ import Toast from './toast';
   curatorSelectTopFrame: bindActionCreators(curatorActions.selectTopFrame, dispatch),
   curatorToggleKeyFrame: bindActionCreators(curatorActions.toggleKeyFrame, dispatch),
 
+  mvpSelectLeftFrame: bindActionCreators(mvpActions.selectLeftFrame, dispatch),
+  mvpSelectRightFrame: bindActionCreators(mvpActions.selectRightFrame, dispatch),
+  mvpSelectBottomFrame: bindActionCreators(mvpActions.selectBottomFrame, dispatch),
+  mvpSelectTopFrame: bindActionCreators(mvpActions.selectTopFrame, dispatch),
+  mvpToggleKeyFrame: bindActionCreators(mvpActions.toggleKeyFrame, dispatch),
+
   selectCharacterByShortkey: bindActionCreators(quickiesActions.selectCharacterByShortkey, dispatch),
   selectVideo: bindActionCreators(videoActions.select, dispatch),
   tagSelectLeftScene: bindActionCreators(sceneActions.selectLeftScene, dispatch),
@@ -62,6 +70,11 @@ export default class TaggerApplication extends Component {
     curatorToggleKeyFrame: PropTypes.func.isRequired,
     fetchMedium: PropTypes.func.isRequired,
     loadQuickies: PropTypes.func.isRequired,
+    mvpSelectBottomFrame: PropTypes.func.isRequired,
+    mvpSelectLeftFrame: PropTypes.func.isRequired,
+    mvpSelectRightFrame: PropTypes.func.isRequired,
+    mvpSelectTopFrame: PropTypes.func.isRequired,
+    mvpToggleKeyFrame: PropTypes.func.isRequired,
     organizerInsertSceneGroup: PropTypes.func.isRequired,
     organizerSelectBottomScene: PropTypes.func.isRequired,
     organizerSelectLeftScene: PropTypes.func.isRequired,
@@ -110,6 +123,15 @@ export default class TaggerApplication extends Component {
   };
 
   static organizerKeyMap = {
+    insertSceneGroup: 's',
+    selectBottomScene: 'down',
+    selectLeftScene: 'left',
+    selectRightScene: 'right',
+    selectTopScene: 'up',
+    toggleVisibilityScene: 'x'
+  };
+
+  static mvpKeyMap = {
     insertSceneGroup: 's',
     selectBottomScene: 'down',
     selectLeftScene: 'left',
@@ -175,6 +197,9 @@ export default class TaggerApplication extends Component {
     curator: {
       flex: '1 0'
     },
+    mvp: {
+      flex: '1 0'
+    },
     sceneSelector: {
       flex: '1 0 40%'
     },
@@ -186,13 +211,14 @@ export default class TaggerApplication extends Component {
   };
 
   render () {
-    const { curatorKeyMap, organizerKeyMap, tagKeyMap, styles } = this.constructor;
+    const { curatorKeyMap, organizerKeyMap, tagKeyMap, mvpKeyMap, styles } = this.constructor;
     const {
       activeTab, organizerInsertSceneGroup, organizerSelectLeftScene, organizerSelectRightScene,
       organizerSelectBottomScene, organizerSelectTopScene,
       tagSelectLeftScene, tagSelectRightScene, selectCharacterByShortkey,
       curatorSelectLeftFrame, curatorSelectRightFrame, curatorSelectBottomFrame, curatorSelectTopFrame,
-      toggleVisibilityScene, curatorToggleKeyFrame
+      toggleVisibilityScene, curatorToggleKeyFrame, mvpSelectLeftFrame, mvpSelectRightFrame, mvpSelectBottomFrame,
+      mvpSelectTopFrame, mvpToggleKeyFrame
     } = this.props;
 
     const tagHandlers = {
@@ -233,6 +259,17 @@ export default class TaggerApplication extends Component {
       }
     };
 
+    const mvpHandlers = {
+      selectLeftFrame: mvpSelectLeftFrame,
+      selectRightFrame: mvpSelectRightFrame,
+      selectBottomFrame: mvpSelectBottomFrame,
+      selectTopFrame: mvpSelectTopFrame,
+      // When no scene was provided, the is key frame of the current scene will be toggled.
+      toggleKeyFrame: () => {
+        mvpToggleKeyFrame();
+      }
+    };
+
     return (
       <StyleRoot style={styles.container}>
         <CustomDragLayer />
@@ -258,6 +295,10 @@ export default class TaggerApplication extends Component {
               <HotKeys handlers={filterKeyEventsInInputFields(curatorHandlers)} keyMap={curatorKeyMap} style={styles.body}>
                 <CuratorSidebar style={styles.sidebar} />
                 <Curator style={styles.curator} />
+              </HotKeys>}
+            {activeTab === MVP &&
+              <HotKeys handlers={filterKeyEventsInInputFields(mvpHandlers)} keyMap={mvpKeyMap} style={styles.body}>
+                <Mvp style={styles.mvp} />
               </HotKeys>}
           <Modals />
           <ContextMenus />
