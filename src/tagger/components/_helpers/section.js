@@ -73,11 +73,11 @@ export default class Section extends Component {
       base: {
         maxHeight: 0,
         overflow: 'hidden',
-        transition: 'max-height 0.25s ease-out'
+        transition: 'max-height 0.5s ease-out'
       },
       open: {
-        transition: 'max-height 0.25s ease-in',
-        maxHeight: '1000px'
+        transition: 'max-height 0.5s ease-in',
+        maxHeight: '5000px'
       }
     }
   }
