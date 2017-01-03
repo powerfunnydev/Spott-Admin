@@ -251,7 +251,11 @@ export default class EditPerson extends Component {
                     required/>
                   <Field
                     component={SelectInput}
+                    filter={(option, filter) => {
+                      return option && filter ? genders.get(option.value).toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
+                    }}
                     getItemText={(gender) => genders.get(gender)}
+                    getOptions={(gender) => genders.keySeq().toArray()}
                     label='Gender'
                     name='gender'
                     options={genders.keySeq().toArray()}
