@@ -10,29 +10,26 @@ import BottomBar from './bottomBar';
 import LargeFrameModal from './largeFrameModal';
 import PureRender from '../_helpers/pureRenderDecorator';
 import { filterKeyEventsInInputFields } from '../_helpers/utils';
-import selector from '../../selectors/curator';
-import * as curateActions from '../../actions/curator';
+import selector from '../../selectors/mvp';
+import * as mvpActions from '../../actions/mvp';
 import colors from '../colors';
 
 @connect(selector, (dispatch) => ({
-  minimizeFrame: bindActionCreators(curateActions.minimizeFrame, dispatch),
-  selectLeftFrame: bindActionCreators(curateActions.selectLeftFrame, dispatch),
-  selectRightFrame: bindActionCreators(curateActions.selectRightFrame, dispatch),
-  selectFrame: bindActionCreators(curateActions.selectFrame, dispatch),
-  toggleHideNonKeyFrames: bindActionCreators(curateActions.toggleHideNonKeyFrames, dispatch),
-  toggleFrameSize: bindActionCreators(curateActions.toggleFrameSize, dispatch),
-  toggleKeyFrame: bindActionCreators(curateActions.toggleKeyFrame, dispatch),
-  updateScale: bindActionCreators(curateActions.updateScale, dispatch)
+  minimizeFrame: bindActionCreators(mvpActions.minimizeFrame, dispatch),
+  selectLeftFrame: bindActionCreators(mvpActions.selectLeftFrame, dispatch),
+  selectRightFrame: bindActionCreators(mvpActions.selectRightFrame, dispatch),
+  selectFrame: bindActionCreators(mvpActions.selectFrame, dispatch),
+  toggleHideNonKeyFrames: bindActionCreators(mvpActions.toggleHideNonKeyFrames, dispatch),
+  toggleFrameSize: bindActionCreators(mvpActions.toggleFrameSize, dispatch),
+  toggleKeyFrame: bindActionCreators(mvpActions.toggleKeyFrame, dispatch),
+  updateScale: bindActionCreators(mvpActions.updateScale, dispatch)
 }))
 @Radium
 @PureRender
-export default class Curator extends Component {
+export default class Mvp extends Component {
 
   static propTypes = {
-    currentCharacter: ImmutablePropTypes.map,
-    currentProduct: ImmutablePropTypes.map,
     currentScene: ImmutablePropTypes.map,
-    currentSceneGroup: ImmutablePropTypes.map,
     enlargeFrame: PropTypes.bool.isRequired,
     hideNonKeyFrames: PropTypes.bool.isRequired,
     minimizeFrame: PropTypes.func.isRequired,
@@ -144,7 +141,7 @@ export default class Curator extends Component {
   render () {
     const { keyMap, styles } = this.constructor;
     const {
-      currentCharacter, currentProduct, currentScene, currentSceneGroup, hideNonKeyFrames,
+      currentScene, hideNonKeyFrames,
       enlargeFrame, minimizeFrame, numKeyFrames, selectLeftFrame, selectRightFrame, scenes,
       selectFrame, toggleFrameSize, toggleKeyFrame, toggleHideNonKeyFrames
     } = this.props;
@@ -174,21 +171,10 @@ export default class Curator extends Component {
           onToggleKeyFrame={toggleKeyFrame} />
         {/* Render the list of scenes of the current scene group. */}
         <div style={styles.scenes.listContainer}>
-          {currentCharacter &&
-            <div style={styles.info.base}>
-              <h1 style={styles.info.title.base}>{numKeyFrames} <span style={styles.info.title.emph}>{currentCharacter.get('name')}</span> {numKeyFrames === 1 ? 'frame' : 'frames'}</h1>
-              <h2 style={styles.info.subtitle}>Select the best frames for each character.</h2>
-            </div>}
-          {currentSceneGroup &&
-            <div style={styles.info.base}>
-              <h1 style={styles.info.title.base}>{numKeyFrames} <span style={styles.info.title.emph}>{currentSceneGroup.get('label')}</span> {numKeyFrames === 1 ? 'frame' : 'frames'}</h1>
-              <h2 style={styles.info.subtitle}>Select the single best frame for each scene.</h2>
-            </div>}
-          {currentProduct &&
-            <div style={styles.info.base}>
-              <h1 style={styles.info.title.base}>{numKeyFrames} <span style={styles.info.title.emph}>{currentProduct.get('shortName')}</span> {numKeyFrames === 1 ? 'frame' : 'frames'}</h1>
-              <h2 style={styles.info.subtitle}>Select the best frames for each product.</h2>
-            </div>}
+          <div style={styles.info.base}>
+            <h1 style={styles.info.title.base}>{numKeyFrames} <span style={styles.info.title.emph}>Most Valuable Photo</span></h1>
+            <h2 style={styles.info.subtitle}>Select the single best frame that represents this Episode. This can be used as a cover image so users can identify the episode.</h2>
+          </div>
           {scenes.map((frame, j) => (
             <Frame
               frame={frame}
@@ -206,9 +192,6 @@ export default class Curator extends Component {
 
         {/* Render bottom bar */}
         <BottomBar
-          currentCharacter={currentCharacter}
-          currentProduct={currentProduct}
-          currentSceneGroup={currentSceneGroup}
           hideNonKeyFrames={hideNonKeyFrames}
           numKeyFrames={numKeyFrames}
           scale={this.props.scale}

@@ -67,7 +67,7 @@ export default class BottomBar extends Component {
     const { styles } = this.constructor;
     const {
       currentCharacter, currentProduct, currentSceneGroup, hideNonKeyFrames,
-      numKeyFrames, numFrames, onToggleHideNonKeyFrames
+      numKeyFrames, onToggleHideNonKeyFrames
     } = this.props;
 
     return (

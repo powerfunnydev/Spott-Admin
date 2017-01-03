@@ -132,12 +132,11 @@ export default class TaggerApplication extends Component {
   };
 
   static mvpKeyMap = {
-    insertSceneGroup: 's',
-    selectBottomScene: 'down',
-    selectLeftScene: 'left',
-    selectRightScene: 'right',
-    selectTopScene: 'up',
-    toggleVisibilityScene: 'x'
+    selectBottomFrame: 'down',
+    selectLeftFrame: 'left',
+    selectRightFrame: 'right',
+    selectTopFrame: 'up',
+    toggleKeyFrame: 'x'
   };
 
   static curatorKeyMap = {
@@ -275,11 +274,11 @@ export default class TaggerApplication extends Component {
         <CustomDragLayer />
           <Header style={styles.header} />
           {activeTab === ORGANIZE &&
-            <HotKeys handlers={filterKeyEventsInInputFields(organizerHandlers)} keyMap={organizerKeyMap} style={styles.body}>
+            <HotKeys handlers={filterKeyEventsInInputFields(organizerHandlers)} key={ORGANIZE} keyMap={organizerKeyMap} style={styles.body}>
               <Organizer style={styles.organizer} />
             </HotKeys>}
           {activeTab === TAG &&
-            <HotKeys handlers={filterKeyEventsInInputFields(tagHandlers)} keyMap={tagKeyMap} style={styles.body}>
+            <HotKeys handlers={filterKeyEventsInInputFields(tagHandlers)} key={TAG} keyMap={tagKeyMap} style={styles.body}>
               <QuickiesBar style={styles.sidebar} />
               <div style={styles.middleBar}>
                 <div style={styles.middleBarInner}>
@@ -292,12 +291,12 @@ export default class TaggerApplication extends Component {
               </div>
             </HotKeys>}
             {activeTab === CURATE &&
-              <HotKeys handlers={filterKeyEventsInInputFields(curatorHandlers)} keyMap={curatorKeyMap} style={styles.body}>
+              <HotKeys handlers={filterKeyEventsInInputFields(curatorHandlers)} key={CURATE} keyMap={curatorKeyMap} style={styles.body}>
                 <CuratorSidebar style={styles.sidebar} />
                 <Curator style={styles.curator} />
               </HotKeys>}
             {activeTab === MVP &&
-              <HotKeys handlers={filterKeyEventsInInputFields(mvpHandlers)} keyMap={mvpKeyMap} style={styles.body}>
+              <HotKeys handlers={mvpHandlers} key={MVP} keyMap={mvpKeyMap} style={styles.body}>
                 <Mvp style={styles.mvp} />
               </HotKeys>}
           <Modals />

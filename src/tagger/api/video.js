@@ -1,4 +1,4 @@
-import { get } from '../../api/request';
+import { get, post } from '../../api/request';
 
 // TODO: Currently we take the first entry in localeData. Later on when localization
 // is implemented, we can change this.
@@ -10,6 +10,12 @@ function _transformScenes (scenes) {
     result.push({ hidden, id, imageId, imageUrl, offsetInSeconds, similarScenes: similarScenes.map(({ uuid }) => uuid), sceneNumber: i + 1, status });
   }
   return result;
+}
+
+export async function postVideo (baseUrl, authenticationToken, locale, { keySceneId, videoId }) {
+  const { body: video } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}`);
+  video.keyScene = keySceneId && { uuid: keySceneId };
+  await post(authenticationToken, locale, `${baseUrl}/v004/video/videos`, video);
 }
 
 /**
@@ -35,9 +41,11 @@ function _transformScenes (scenes) {
  * @throws UnexpectedError
  */
 export async function getVideo (baseUrl, authenticationToken, locale, { videoId }) {
+  const { body: { keyScene } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}`);
   const { body: { data: scenes } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/scenes`);
   return {
     id: videoId,
+    keySceneId: keyScene && keyScene.uuid,
     // Array comprehension, destructure every scene, transform it to a scene
     // which only holds relevant information for the UI.
     scenes: _transformScenes(scenes)

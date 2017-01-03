@@ -1,5 +1,6 @@
 import { Map } from 'immutable';
 import * as actionTypes from '../constants/actionTypes';
+import * as videoActions from '../actions/video';
 
 /**
   * The app reducer is responsible for storing the id of the current selected
@@ -33,7 +34,7 @@ export default (state = Map({ currentTabName: 'frame', hideDifferentFrames: fals
       return state.set('globalProductSearchString', action.searchString);
     case actionTypes.MEDIUM_FETCH_START:
       return state.set('currentMediumId', action.mediumId);
-    case actionTypes.VIDEO_FETCH_START:
+    case videoActions.VIDEO_FETCH_START:
       return state.set('currentVideoId', action.videoId);
 
     case actionTypes.MODAL_OPEN_UPDATE_PRODUCT_MARKER:
@@ -50,7 +51,7 @@ export default (state = Map({ currentTabName: 'frame', hideDifferentFrames: fals
       // the characters or products of the current scene.
       return state.set('currentSceneId', state.get('previousSceneId'))
         .set('currentSceneImageId', state.get('previousSceneImageId'));
-    case actionTypes.VIDEO_SELECT_ERROR:
+    case videoActions.VIDEO_SELECT_ERROR:
       // TODO: handle major error.
       // Failed to bootstrap application, ask the user to refresh the page,
       // show a popup with more instructions

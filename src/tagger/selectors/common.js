@@ -109,11 +109,12 @@ export const brandEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger'
 export const characterEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'characters' ]);
 export const currentSceneSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'scenes', currentSceneIdSelector(state) ]);
 export const globalAppearanceEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'globalAppearances' ]);
+export const mediaEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'media' ]);
 export const productEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'products' ]);
 export const productGroupEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'productGroups' ]);
 export const sceneEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'scenes' ]);
 export const sceneGroupEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'sceneGroups' ]);
-export const mediaEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'media' ]);
+export const videoEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'videos' ]);
 
 // Map (not a List!) of booleans, which once are similar, which not? The keys are the id's of the scene.
 export const similarScenesOfSceneRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'similarFrames', 'similarScenesOfScene' ]);
@@ -121,25 +122,22 @@ export const similarScenesAppearanceSelector = (state) => state.getIn([ 'tagger'
 export const similarScenesAppearanceTypeSelector = (state) => state.getIn([ 'tagger', 'tagger', 'similarFrames', 'appearanceType' ]);
 
 export const currentMediumSelector = createEntityByIdSelector(mediaEntitiesSelector, currentMediumIdSelector);
+export const currentVideoSelector = createEntityByIdSelector(videoEntitiesSelector, currentVideoIdSelector);
 
-/**
- * Extracts the visible scenes of the current video from the state tree.
- */
-export const scenesSelector = createSelector(
+export const allScenesSelector = createSelector(
    currentVideoIdSelector,
    videoHasScenesRelationsSelector,
    sceneEntitiesSelector,
    (videoId, videoHasScenes, scenes) => {
-     const hideHiddenFrames = true; // TODO
-     // videoHasScenes and scenes are always present, but can be empty Immutable Map's.
      const sceneIds = videoHasScenes.get(videoId) || List();
-     return sceneIds.reduce((sceneList, sceneId) => {
-       const scene = scenes.get(sceneId);
-       // Skip scene when we want to hide the hidden frames.
-       if (!(hideHiddenFrames && scene.get('hidden'))) {
-         return sceneList.push(scene);
-       }
-       return sceneList;
-     }, List());
+     return sceneIds.map((sceneId) => scenes.get(sceneId));
    }
+ );
+
+ /**
+  * Extracts the visible scenes of the current video from the state tree.
+  */
+export const visibleScenesSelector = createSelector(
+   allScenesSelector,
+   (scenes) => scenes.filter((f) => !f.get('hidden'))
  );
