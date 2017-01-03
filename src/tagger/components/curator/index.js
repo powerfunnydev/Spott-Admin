@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { HotKeys } from 'react-hotkeys';
-import Frame from './frame';
+import Frame from '../_helpers/frame';
 import BottomBar from './bottomBar';
 import LargeFrameModal from './largeFrameModal';
 import PureRender from '../_helpers/pureRenderDecorator';
@@ -13,6 +13,9 @@ import { filterKeyEventsInInputFields } from '../_helpers/utils';
 import selector from '../../selectors/curator';
 import * as curateActions from '../../actions/curator';
 import colors from '../colors';
+
+const starEmptyImage = require('../_images/starEmpty.svg');
+const starFilledImage = require('../_images/starFilled.svg');
 
 @connect(selector, (dispatch) => ({
   minimizeFrame: bindActionCreators(curateActions.minimizeFrame, dispatch),
@@ -191,6 +194,8 @@ export default class Curator extends Component {
             </div>}
           {scenes.map((frame, j) => (
             <Frame
+              emptyImage={starEmptyImage}
+              filledImage={starFilledImage}
               frame={frame}
               isKeyFrame={frame.get('isKeyFrame')}
               isSelected={(currentScene && currentScene.get('id')) === frame.get('id')}

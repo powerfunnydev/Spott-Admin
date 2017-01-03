@@ -5,7 +5,6 @@ import {
   characterHasAppearancesRelationsSelector,
   createEntitiesByRelationSelector,
   currentVideoIdSelector,
-  characterEntitiesSelector,
   sceneEntitiesSelector,
   videoHasScenesRelationsSelector,
   videoHasSceneGroupsRelationsSelector,

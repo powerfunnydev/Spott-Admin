@@ -3,7 +3,7 @@ import Radium from 'radium';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import colors from '../colors';
 
-const starFilledImage = require('./images/starFilled.svg');
+const starFilledImage = require('../_images/starFilled.svg');
 
 @Radium
 export default class Character extends Component {

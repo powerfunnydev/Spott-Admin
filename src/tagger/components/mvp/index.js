@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { HotKeys } from 'react-hotkeys';
-import Frame from './frame';
+import Frame from '../_helpers/frame';
 import BottomBar from './bottomBar';
 import LargeFrameModal from './largeFrameModal';
 import PureRender from '../_helpers/pureRenderDecorator';
@@ -13,6 +13,9 @@ import { filterKeyEventsInInputFields } from '../_helpers/utils';
 import selector from '../../selectors/mvp';
 import * as mvpActions from '../../actions/mvp';
 import colors from '../colors';
+
+const flashEmptyImage = require('../_images/flashEmpty.svg');
+const flashFilledImage = require('../_images/flashFilled.svg');
 
 @connect(selector, (dispatch) => ({
   minimizeFrame: bindActionCreators(mvpActions.minimizeFrame, dispatch),
@@ -177,6 +180,8 @@ export default class Mvp extends Component {
           </div>
           {scenes.map((frame, j) => (
             <Frame
+              emptyImage={flashEmptyImage}
+              filledImage={flashFilledImage}
               frame={frame}
               isKeyFrame={frame.get('isKeyFrame')}
               isSelected={(currentScene && currentScene.get('id')) === frame.get('id')}

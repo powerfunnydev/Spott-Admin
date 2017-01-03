@@ -2,9 +2,11 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import colors from '../colors';
-import NonKeyFramesHider from './nonKeyFramesHider';
+import NonKeyFramesHider from '../_helpers/nonKeyFramesHider';
 
-const crossLarge = require('./images/crossLarge.svg');
+const crossLarge = require('../_images/crossLarge.svg');
+const starEmptyImage = require('../_images/starEmpty.svg');
+const starFilledImage = require('../_images/starFilled.svg');
 const arrow = require('../sceneEditor/images/arrow.svg');
 
 @Radium
@@ -117,6 +119,8 @@ export default class LargeFrameModal extends Component {
             </div>
             <div style={styles.framesHider}>
               <NonKeyFramesHider
+                emptyImage={starEmptyImage}
+                filledImage={starFilledImage}
                 isKeyFrame={frame.get('isKeyFrame')}
                 single
                 onToggleKeyFrame={onToggleKeyFrame}/>

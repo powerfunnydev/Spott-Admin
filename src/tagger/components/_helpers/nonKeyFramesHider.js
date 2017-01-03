@@ -3,13 +3,12 @@ import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import colors from '../colors';
 
-const starEmptyImage = require('./images/starEmpty.svg');
-const starFilledImage = require('./images/starFilled.svg');
-
 @Radium
 export default class NonKeyFramesHider extends Component {
 
   static propTypes = {
+    emptyImage: PropTypes.string.isRequired,
+    filledImage: PropTypes.string.isRequired,
     // Information visualized by this component
     isKeyFrame: PropTypes.bool.isRequired,
     // Hide one frame?
@@ -52,11 +51,11 @@ export default class NonKeyFramesHider extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { isKeyFrame, single, style } = this.props;
+    const { emptyImage, filledImage, isKeyFrame, single, style } = this.props;
 
     return (
       <button style={[ styles.button.base, style && style.base, isKeyFrame && styles.button.keyFrame, isKeyFrame && style && style.hidden ]} title={isKeyFrame ? (single ? 'Mark as non key frame' : 'Show non key frames') : (single ? 'Mark as key frame' : 'Hide non key frames')} onClick={this.onToggleKeyFrame}>
-        <img src={isKeyFrame ? starFilledImage : starEmptyImage} style={styles.image}/>
+        <img src={isKeyFrame ? filledImage : emptyImage} style={styles.image}/>
       </button>
     );
   }

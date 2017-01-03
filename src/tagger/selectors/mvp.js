@@ -1,5 +1,4 @@
 import { createSelector, createStructuredSelector } from 'reselect';
-import { List, Map } from 'immutable';
 import { currentVideoSelector, visibleScenesSelector as dataVisibleScenesSelector } from './common';
 
 export const currentSceneIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'mvp', 'currentSceneId' ]);
@@ -10,7 +9,9 @@ export const hideSceneGroupSelector = (state) => state.getIn([ 'tagger', 'tagger
 
 export const visibleScenesSelector = createSelector(
   currentVideoSelector,
+  // Select all non hidden frames.
   dataVisibleScenesSelector,
+  // Hide the non-key frames if filter in on.
   hideNonKeyFramesSelector,
   (video, scenes, hideNonKeyFrames) => (
     scenes

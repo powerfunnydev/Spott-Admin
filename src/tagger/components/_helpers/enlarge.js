@@ -1,8 +1,8 @@
-import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
+import Radium from 'radium';
 
 // Frame visibility images
-const zoomIn = require('./images/zoomIn.svg');
+const zoomIn = require('../_images/zoomIn.svg');
 
 @Radium
 export default class ZoomIn extends Component {

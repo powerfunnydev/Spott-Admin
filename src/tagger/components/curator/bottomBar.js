@@ -2,10 +2,12 @@ import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Slider from '../_helpers/slider';
-import NonKeyFramesHider from './nonKeyFramesHider';
+import NonKeyFramesHider from '../_helpers/nonKeyFramesHider';
 import colors from '../colors';
 
-const resizeIconImage = require('./images/resizeIcon.svg');
+const resizeIconImage = require('../_images/resizeIcon.svg');
+const starEmptyImage = require('../_images/starEmpty.svg');
+const starFilledImage = require('../_images/starFilled.svg');
 
 @Radium
 export default class BottomBar extends Component {
@@ -67,7 +69,7 @@ export default class BottomBar extends Component {
     const { styles } = this.constructor;
     const {
       currentCharacter, currentProduct, currentSceneGroup, hideNonKeyFrames,
-      numKeyFrames, numFrames, onToggleHideNonKeyFrames
+      numKeyFrames, onToggleHideNonKeyFrames
     } = this.props;
 
     return (
@@ -93,6 +95,8 @@ export default class BottomBar extends Component {
         <div style={styles.buttonContainer}>
           {/* Hide/show all hidden frames. */}
           <NonKeyFramesHider
+            emptyImage={starEmptyImage}
+            filledImage={starFilledImage}
             isKeyFrame={hideNonKeyFrames}
             style={styles.framesHider}
             onToggleKeyFrame={onToggleHideNonKeyFrames} />
