@@ -5,7 +5,6 @@ import {
   characterHasAppearancesRelationsSelector,
   createEntitiesByRelationSelector,
   currentVideoIdSelector,
-  characterEntitiesSelector,
   sceneEntitiesSelector,
   videoHasScenesRelationsSelector,
   videoHasSceneGroupsRelationsSelector,
@@ -153,7 +152,6 @@ export const visibleScenesSelector = createSelector(
         .map((f) => f.set('isKeyFrame', f.getIn([ 'appearance', 'keyAppearance' ])));
     }
     if (currentProductId) {
-      console.warn('productAppearances', productAppearances && productAppearances.toJS());
       result = productAppearances
         .get('data')
         .map((a) => {

@@ -1,6 +1,6 @@
 import { get, post } from '../../api/request';
 
-function _transformScene ({ hidden, image: { id: imageId, url: imageUrl }, offsetInSeconds, similarScenes, status, uuid: id }) {
+function _transformScene ({ hidden, image: { uuid: imageId, url: imageUrl }, offsetInSeconds, similarScenes, status, uuid: id }) {
   return { hidden, id, imageId, imageUrl, offsetInSeconds, similarScenes: similarScenes.map(({ uuid }) => uuid), status };
 }
 
@@ -44,27 +44,11 @@ export async function postScene (baseUrl, authenticationToken, locale, { sceneId
   return _transformScene(updatedScene);
 }
 
-/**
- * GET /video/scenes/:sceneId
- * Get the details of the scene, including the similar frames.
- * @param {string} authenticationToken The authentication token of the logged in user.
- * @param {Object} ids
- * @param {string} ids.sceneId
- * @param {string} ids.videoId
- * @return {object} The scene details.
- * @returnExample
- *   {
- *     hidden: true,
- *     id: 'scene-id',
- *     imageUrl: 'http://spott-cms-uat.appiness.mobi/apptvate/rest/v004/image/images/539766be-4ee4-4fee-83a7-99775471eb7c',
- *     status: 'DONE'
- *   }
- * @throws UnauthorizedError
- * @throws NotFoundError
- * @throws UnexpectedError
- */
-export async function getScene (baseUrl, authenticationToken, locale, { sceneId }) {
-  const { body: scene } = await get(authenticationToken, locale, `${baseUrl}/v004/video/scenes/${sceneId}`);
-  // Format updated scene.
-  return _transformScene(scene);
+export async function getScenes (baseUrl, authenticationToken, locale, { videoId }) {
+  const { body: { data: scenes } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/scenes`);
+  return scenes.map((s, i) => {
+    const scene = _transformScene(s);
+    scene.sceneNumber = i + 1;
+    return scene;
+  });
 }

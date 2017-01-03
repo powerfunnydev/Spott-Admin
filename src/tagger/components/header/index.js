@@ -4,10 +4,17 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Clock from './clock';
-import { CURATE, ORGANIZE, TAG } from '../../constants/mainTabTypes';
+import { CURATE, MVP, ORGANIZE, TAG } from '../../constants/mainTabTypes';
 import { currentMediumSelector } from '../../selectors/header';
 import { selectTab } from '../../actions/global';
 import colors from '../colors';
+
+const tabs = [
+  { text: 'Organize', type: ORGANIZE },
+  { text: 'Tag', type: TAG },
+  { text: 'Curate', type: CURATE },
+  { text: 'MVP', type: MVP }
+];
 
 @connect(currentMediumSelector, (dispatch) => ({
   selectTab: bindActionCreators(selectTab, dispatch)
@@ -105,23 +112,19 @@ class Header extends Component {
                <span>{currentMedium.get('title')}</span>}
             {/* Render error message if an error occurred. */}
             {currentMedium && currentMedium.get('_error') &&
-              <span style={styles.error}>{'Error retrieving data.'}</span>}
+              <span style={styles.error}>Error retrieving data.</span>}
           </div>
           <div style={{ width: 105 }}>
             <Clock style={styles.clock} />
           </div>
         </div>
-        {/* Tabs: Organize, Tag, Currate */}
+        {/* Tabs: Organize, Tag, Currate & MVP */}
         <div style={styles.tabContainer}>
-          <button style={[ styles.tab.base, activeTab === ORGANIZE && styles.tab.selected ]} onClick={this.onTabSelect.bind(this, ORGANIZE)}>
-            Organize
-          </button>
-          <button style={[ styles.tab.base, activeTab === TAG && styles.tab.selected ]} onClick={this.onTabSelect.bind(this, TAG)}>
-            Tag
-          </button>
-          <button style={[ styles.tab.base, activeTab === CURATE && styles.tab.selected ]} onClick={this.onTabSelect.bind(this, CURATE)}>
-            Curate
-          </button>
+          {tabs.map(({ text, type }) => (
+            <button key={type} style={[ styles.tab.base, activeTab === type && styles.tab.selected ]} onClick={this.onTabSelect.bind(this, type)}>
+              {text}
+            </button>
+          ))}
         </div>
       </div>
     );

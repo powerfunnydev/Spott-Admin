@@ -193,6 +193,7 @@ export default class Organizer extends Component {
             <SceneGroup
               hidden={hideSceneGroup.get(sceneGroup.get('id'))}
               key={sceneGroup.get('id')}
+              number={i + 1}
               sceneGroup={sceneGroup}
               // The first scene group can't be removed.
               onRemove={i === 0 ? null : removeSceneGroup.bind(null, sceneGroup.get('id'))}

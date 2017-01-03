@@ -1,21 +1,19 @@
 import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
-import ImmutablePropTypes from 'react-immutable-proptypes';
+import NonKeyFramesHider from '../_helpers/nonKeyFramesHider';
 import Slider from '../_helpers/slider';
-import NonKeyFramesHider from './nonKeyFramesHider';
 import colors from '../colors';
 
-const resizeIconImage = require('./images/resizeIcon.svg');
+const resizeIconImage = require('../_images/resizeIcon.svg');
 
 @Radium
 export default class BottomBar extends Component {
 
   static propTypes = {
-    currentCharacter: ImmutablePropTypes.map,
-    currentProduct: ImmutablePropTypes.map,
-    currentSceneGroup: ImmutablePropTypes.map,
+    emptyImage: PropTypes.string.isRequired,
+    filledImage: PropTypes.string.isRequired,
     hideNonKeyFrames: PropTypes.bool.isRequired,
-    numKeyFrames: PropTypes.number.isRequired,
+    info: PropTypes.node,
     scale: PropTypes.number.isRequired,
     onScaleChange: PropTypes.func.isRequired,
     onToggleHideNonKeyFrames: PropTypes.func.isRequired
@@ -65,10 +63,7 @@ export default class BottomBar extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const {
-      currentCharacter, currentProduct, currentSceneGroup, hideNonKeyFrames,
-      numKeyFrames, numFrames, onToggleHideNonKeyFrames
-    } = this.props;
+    const { emptyImage, filledImage, hideNonKeyFrames, info, onToggleHideNonKeyFrames } = this.props;
 
     return (
       <div style={styles.container}>
@@ -81,18 +76,15 @@ export default class BottomBar extends Component {
           </div>
         </div>
 
-        {/* Info: 200/230 frames visible in 3 scenes {numKeyFrames}/{numFrames} are key frames */}
         <div style={styles.info}>
-          {currentCharacter &&
-            <span>{numKeyFrames} starred {numKeyFrames === 1 ? 'frame' : 'frames'} for {currentCharacter.get('name')}</span>}
-          {currentSceneGroup &&
-            <span>{numKeyFrames} starred {numKeyFrames === 1 ? 'frame' : 'frames'} for {currentSceneGroup.get('label')}</span>}
-          {currentProduct &&
-            <span>{numKeyFrames} starred {numKeyFrames === 1 ? 'frame' : 'frames'} for {currentProduct.get('shortName')}</span>}
+          {info}
         </div>
+
         <div style={styles.buttonContainer}>
           {/* Hide/show all hidden frames. */}
           <NonKeyFramesHider
+            emptyImage={emptyImage}
+            filledImage={filledImage}
             isKeyFrame={hideNonKeyFrames}
             style={styles.framesHider}
             onToggleKeyFrame={onToggleHideNonKeyFrames} />

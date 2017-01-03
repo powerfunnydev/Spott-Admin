@@ -4,7 +4,7 @@ import React, { Component, PropTypes } from 'react';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import NonKeyFramesHider from './nonKeyFramesHider';
 import Enlarge from './enlarge';
-import PureRender from '../_helpers/pureRenderDecorator';
+import PureRender from './pureRenderDecorator';
 import colors from '../colors';
 
 @Radium
@@ -12,6 +12,8 @@ import colors from '../colors';
 export default class Frame extends Component {
 
   static propTypes = {
+    emptyImage: PropTypes.string.isRequired,
+    filledImage: PropTypes.string.isRequired,
     frame: ImmutablePropTypes.map.isRequired,
     isKeyFrame: PropTypes.bool.isRequired,
     isSelected: PropTypes.bool.isRequired,
@@ -113,7 +115,7 @@ export default class Frame extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      frame, isKeyFrame, isSelected, procentualHeightOfWidth, procentualWidth, size,
+      emptyImage, filledImage, frame, isKeyFrame, isSelected, procentualHeightOfWidth, procentualWidth, size,
       onClickFrame, onEnlargeFrameSize, onToggleKeyFrame
      } = this.props;
     const hovered = this.state.hovered;
@@ -137,6 +139,8 @@ export default class Frame extends Component {
                 onEnlarge={onEnlargeFrameSize.bind(null, frame)} />}
             {(hovered || isKeyFrame) &&
               <NonKeyFramesHider
+                emptyImage={emptyImage}
+                filledImage={filledImage}
                 isKeyFrame={isKeyFrame}
                 single
                 style={styles.framesHider}

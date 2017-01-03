@@ -3,8 +3,9 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import colors from '../colors';
-import Arrow from './images/arrow';
-import Cross from './images/cross';
+
+import Arrow from '../_images/arrow';
+import Cross from '../_images/cross';
 
 @Radium
 export default class SceneGroup extends Component {

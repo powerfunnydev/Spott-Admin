@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import { createSelector, createStructuredSelector } from 'reselect';
 import { List, Map } from 'immutable';
 import {
   appearanceEntitiesSelector,
@@ -9,7 +9,7 @@ import {
   sceneEntitiesSelector,
   sceneHasCharactersRelationsSelector,
   sceneHasProductsRelationsSelector,
-  scenesSelector,
+  visibleScenesSelector,
   selectedAppearanceSelector
  } from './common';
 import { CHARACTER, PRODUCT } from '../constants/appearanceTypes';
@@ -85,10 +85,11 @@ const appearancesSelector = createSelector(
   }
 );
 
-export default (state) => ({
-  appearances: appearancesSelector(state),
-  currentScene: currentSceneSelector(state),
-  hoveredAppearanceTuple: hoveredAppearanceTupleSelector(state),
-  selectedAppearance: selectedAppearanceSelector(state),
-  scenes: scenesSelector(state)
+export default (state) => createStructuredSelector({
+  appearances: appearancesSelector,
+  currentScene: currentSceneSelector,
+  hoveredAppearanceTuple: hoveredAppearanceTupleSelector,
+  selectedAppearance: selectedAppearanceSelector,
+  // Only the non-hidden frames are shown in the Tag tab.
+  scenes: visibleScenesSelector
 });

@@ -4,7 +4,7 @@ import Slider from '../_helpers/slider';
 import FramesHider from './framesHider';
 import colors from '../colors';
 
-const resizeIconImage = require('./images/resizeIcon.svg');
+const resizeIconImage = require('../_images/resizeIcon.svg');
 
 @Radium
 export default class BottomBar extends Component {
