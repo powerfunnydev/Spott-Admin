@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Root, Container } from '../../../_common/styles';
+import { Root, Container, colors } from '../../../_common/styles';
 import * as actions from './actions';
 import selector from './selector';
 import EntityDetails from '../../../_common/entityDetails';
@@ -11,6 +11,9 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { SideMenu } from '../../../app/sideMenu';
+import ProductList from './products/list';
+import { generalStyles } from '../../../_common/components/table/index';
+import { Tabs, Tab } from '../../../_common/components/formTabs';
 
 /* eslint-disable no-alert */
 
@@ -54,11 +57,15 @@ export default class ReadBrand extends Component {
   }
 
   static styles= {
-
+    table: {
+      backgroundColor: colors.lightGray4,
+      paddingTop: '20px'
+    }
   }
 
   render () {
-    const { params, children, currentBrand, location, deleteBrand } = this.props;
+    const { params, children, currentBrand, location, deleteBrand, location: { query: { tabIndex } } } = this.props;
+    const { styles } = this.constructor;
     const defaultLocale = currentBrand.get('defaultLocale');
     return (
       <SideMenu>
@@ -75,6 +82,15 @@ export default class ReadBrand extends Component {
                 onRemove={async () => { await deleteBrand(currentBrand.get('id')); this.redirect(); }}/>}
           </Container>
           <Line/>
+          <div style={[ generalStyles.fillPage, styles.table ]}>
+            <Container>
+              <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
+                <Tab title='Products'>
+                  <ProductList {...this.props}/>
+                </Tab>
+              </Tabs>
+            </Container>
+          </div>
           {children}
         </Root>
       </SideMenu>

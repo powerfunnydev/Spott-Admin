@@ -90,6 +90,7 @@ import BreadCrumbs from './pages/_common/components/breadCrumbs';
 
 import { load as loadTvGuide } from './pages/tvGuide/list/actions';
 import { load as loadMediumTvGuide } from './pages/content/_mediumTvGuide/actions';
+import { load as loadBrandProducts } from './pages/content/brands/read/products/list/actions';
 import { loadEpisodes } from './pages/content/series/read/episodes/actions';
 /**
  * The application routes
@@ -156,7 +157,12 @@ function getRoutes ({ dispatch, getState }) {
           <Route component={BrandsCreate} path ='create'/>
         </Route>
         <Route path='brands'>
-          <Route component={BrandsRead} path='read/:brandId'/>
+          <Route component={BrandsRead} path='read/:brandId'>
+            <Route
+              component={ProductsCreate}
+              load={(props) => { dispatch(loadBrandProducts(props.location.query, props.params.brandId)); }}
+              path='create/product'/>
+          </Route>
           <Route component={BrandsEdit} path='edit/:brandId'/>
         </Route>
         <Route component={BroadcastersList} path='broadcasters'>

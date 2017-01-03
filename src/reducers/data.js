@@ -132,8 +132,13 @@ export default (state = fromJS({
 
     case brandActions.BRAND_FETCH_START:
       return fetchStart(state, [ 'entities', 'brands', action.brandId ]);
-    case brandActions.BRAND_FETCH_SUCCESS:
-      return fetchSuccess(state, [ 'entities', 'brands', action.brandId ], action.data);
+    case brandActions.BRAND_FETCH_SUCCESS: {
+      // We will convert the full version of brands to a light version. This is needed when we
+      // want to create a product from the read page of a brand. Otherwise the brand field
+      // will be empty.
+      const newState = fetchSuccess(state, [ 'entities', 'listBrands', action.brandId ], { id: action.data.id, name: action.data.name[action.data.defaultLocale] }) || state;
+      return fetchSuccess(newState, [ 'entities', 'brands', action.brandId ], action.data);
+    }
     case brandActions.BRAND_FETCH_ERROR:
       return fetchError(state, [ 'entities', 'brands', action.brandId ], action.error);
 
@@ -143,6 +148,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'listBrands', 'filterHasBrands', serializeFilterHasBrands(action), action.data.data);
     case brandActions.BRANDS_FETCH_ERROR:
       return searchError(state, 'filterHasBrands', serializeFilterHasBrands(action), action.error);
+
+    case brandActions.PRODUCTS_FETCH_START:
+      return searchStart(state, 'filterHasProducts', serializeFilterHasProducts(action, 'brands'));
+    case brandActions.PRODUCTS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listProducts', 'filterHasProducts', serializeFilterHasProducts(action, 'brands'), action.data.data);
+    case brandActions.PRODUCTS_FETCH_ERROR:
+      return searchError(state, 'filterHasProducts', serializeFilterHasProducts(action, 'brands'), action.error);
 
     case brandActions.BRAND_SEARCH_START:
       return searchStart(state, 'searchStringHasBrands', action.searchString);

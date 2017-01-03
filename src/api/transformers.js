@@ -1,13 +1,14 @@
 import { ACTIVE, INACTIVE, ADMIN, CONTENT_MANAGER, CONTENT_PRODUCER, BROADCASTER } from '../constants/userRoles';
 
-export function transformListProduct ({ uuid, shortName, auditInfo, image: logo }) {
+export function transformListProduct ({ uuid, shortName, fullName, auditInfo, image: logo }) {
   return {
     createdOn: auditInfo && auditInfo.createdOn,
     id: uuid,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     logo: logo && { id: logo.uuid, url: logo.url },
-    shortName
+    shortName,
+    fullName
   };
 }
 

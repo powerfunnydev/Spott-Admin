@@ -40,7 +40,7 @@ export class Tile extends Component {
     image: {
       objectFit: 'scale-down',
       width: '184px',
-      height: '103px'
+      height: '101px'
     },
     dropdown: {
       position: 'absolute',
@@ -88,7 +88,7 @@ export class Tile extends Component {
       <div style={styles.wrapper}>
         {onEdit &&
           <div style={styles.width}>
-            <div style={[ styles.imageContainer, styles.image, onClick && styles.clickable ]} onClick={onClick}>
+            <div style={[ styles.imageContainer, onClick && styles.clickable ]} onClick={onClick}>
               {imageUrl && <img src={imageUrl} style={styles.image} />}
               {!imageUrl && <div style={styles.noImage}>No image</div>}
               { onCheckboxChange && <div style={styles.checkbox}>
