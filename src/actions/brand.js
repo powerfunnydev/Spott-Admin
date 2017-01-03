@@ -9,6 +9,10 @@ export const BRANDS_FETCH_START = 'BRAND/BRANDS_FETCH_START';
 export const BRANDS_FETCH_SUCCESS = 'BRAND/BRANDS_FETCH_SUCCESS';
 export const BRANDS_FETCH_ERROR = 'BRAND/BRANDS_FETCH_ERROR';
 
+export const PRODUCTS_FETCH_START = 'BRAND/PRODUCTS_FETCH_START';
+export const PRODUCTS_FETCH_SUCCESS = 'BRAND/PRODUCTS_FETCH_SUCCESS';
+export const PRODUCTS_FETCH_ERROR = 'BRAND/PRODUCTS_FETCH_ERROR';
+
 export const BRAND_FETCH_START = 'BRAND/BRAND_FETCH_START';
 export const BRAND_FETCH_SUCCESS = 'BRAND/BRAND_FETCH_SUCCESS';
 export const BRAND_FETCH_ERROR = 'BRAND/BRAND_FETCH_ERROR';
@@ -51,6 +55,7 @@ export const deleteBrands = makeApiActionCreator(api.deleteBrands, BRANDS_DELETE
 export const deleteBrand = makeApiActionCreator(api.deleteBrand, BRAND_DELETE_START, BRAND_DELETE_SUCCESS, BRAND_DELETE_ERROR);
 export const fetchBrands = makeApiActionCreator(api.fetchBrands, BRANDS_FETCH_START, BRANDS_FETCH_SUCCESS, BRANDS_FETCH_ERROR);
 export const fetchBrand = makeApiActionCreator(api.fetchBrand, BRAND_FETCH_START, BRAND_FETCH_SUCCESS, BRAND_FETCH_ERROR);
+export const fetchProducts = makeApiActionCreator(api.fetchProducts, PRODUCTS_FETCH_START, PRODUCTS_FETCH_SUCCESS, PRODUCTS_FETCH_ERROR);
 export const persistBrand = makeApiActionCreator(api.persistBrand, BRAND_PERSIST_START, BRAND_PERSIST_SUCCESS, BRAND_PERSIST_ERROR);
 export const searchBrands = makeApiActionCreator(api.searchBrands, BRAND_SEARCH_START, BRAND_SEARCH_SUCCESS, BRAND_SEARCH_ERROR);
 export const uploadLogoImage = makeApiActionCreator(api.uploadLogoImage, UPLOAD_LOGO_IMAGE_START, UPLOAD_LOGO_IMAGE_SUCCESS, UPLOAD_LOGO_IMAGE_ERROR);

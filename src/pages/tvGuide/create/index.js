@@ -147,7 +147,7 @@ export default class CreateTvGuideEntryModal extends Component {
       await submit(fullForm);
       const createAnother = form.get('createAnother');
       // Load the new list of items, using the location query of the previous page.
-      load(this.props);
+      load && load(this.props);
       if (createAnother) {
         if (episodeId) {
           const nextEpisode = await fetchNextEpisode(episodeId);

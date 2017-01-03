@@ -1,13 +1,28 @@
 import { ACTIVE, INACTIVE, ADMIN, CONTENT_MANAGER, CONTENT_PRODUCER, BROADCASTER } from '../constants/userRoles';
 
-export function transformListProduct ({ uuid, shortName, auditInfo, image: logo }) {
+export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover }) {
   return {
     createdOn: auditInfo && auditInfo.createdOn,
     id: uuid,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     logo: logo && { id: logo.uuid, url: logo.url },
-    shortName
+    profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
+    name
+  };
+}
+
+export function transformListProduct ({ uuid, publishStatus, brand, shortName, fullName, auditInfo, image: logo }) {
+  return {
+    createdOn: auditInfo && auditInfo.createdOn,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    logo: logo && { id: logo.uuid, url: logo.url },
+    publishStatus,
+    brand: brand && transformListBrand(brand),
+    shortName,
+    fullName
   };
 }
 
@@ -39,18 +54,6 @@ export function transformListTag ({ uuid, name, auditInfo, logo }) {
     id: uuid,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
-    name
-  };
-}
-
-export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover }) {
-  return {
-    createdOn: auditInfo && auditInfo.createdOn,
-    id: uuid,
-    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
-    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
-    logo: logo && { id: logo.uuid, url: logo.url },
-    profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
     name
   };
 }
