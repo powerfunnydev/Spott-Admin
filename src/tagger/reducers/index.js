@@ -6,6 +6,7 @@ import curator from './curator';
 import data from './data';
 import marker from './marker';
 import modal from './modal';
+import mvp from './mvp';
 import organizer from './organizer';
 import quickies from './quickies';
 import similarFrames from './similarFrames';
@@ -23,6 +24,7 @@ export default combineReducers({
     data,
     marker,
     modal,
+    mvp,
     organizer,
     quickies,
     similarFrames,

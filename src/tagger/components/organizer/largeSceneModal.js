@@ -3,7 +3,7 @@ import Radium from 'radium';
 import colors from '../colors';
 import FramesHider from './framesHider';
 
-const crossLarge = require('./images/crossLarge.svg');
+const crossLarge = require('../_images/crossLarge.svg');
 const arrow = require('../sceneEditor/images/arrow.svg');
 
 @Radium

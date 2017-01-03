@@ -7,6 +7,8 @@ import * as organizer from '../actions/organizer';
 import { ERROR, FETCHING, LOADED, UPDATING } from '../constants/statusTypes';
 import * as characterActions from '../actions/character';
 import * as productActions from '../actions/product';
+import * as videoActions from '../actions/video';
+import * as sceneActions from '../actions/scene';
 
 const appearance = new Schema('appearances', { idAttribute: 'appearanceId' });
 const character = new Schema('characters');
@@ -322,18 +324,18 @@ export default (state = fromJS({
     // Videos
     // ------
 
-    case actionTypes.VIDEO_FETCH_START:
-      return state.setIn([ 'entities', 'videos', action.id ], Map({ _status: FETCHING }));
-    case actionTypes.VIDEO_FETCH_SUCCESS:
-      const { entities: { scenes: sceneEntities }, result: { id, scenes: scenesResult } } = normalize(action.record, {
-        scenes: arrayOf(scene)
-      });
+    case sceneActions.SCENES_FETCH_SUCCESS: {
+      const { entities: { scenes: sceneEntities }, result: scenesResult } = normalize(action.data, arrayOf(scene));
       return state
-        .setIn([ 'entities', 'videos', id ], Map({ id }))
         .mergeIn([ 'entities', 'scenes' ], sceneEntities)
-        .setIn([ 'relations', 'videoHasScenes', id ], List(scenesResult));
-    case actionTypes.VIDEO_FETCH_ERROR:
-      return state.setIn([ 'entities', 'videos', action.id ], Map({ _error: action.error, _status: ERROR }));
+        .setIn([ 'relations', 'videoHasScenes', action.videoId ], List(scenesResult));
+    }
+    case videoActions.VIDEO_FETCH_START:
+      return state.setIn([ 'entities', 'videos', action.videoId ], Map({ _status: FETCHING }));
+    case videoActions.VIDEO_FETCH_SUCCESS:
+      return state.setIn([ 'entities', 'videos', action.videoId ], Map(action.data));
+    case videoActions.VIDEO_FETCH_ERROR:
+      return state.setIn([ 'entities', 'videos', action.videoId ], Map({ _error: action.error, _status: ERROR }));
 
     // Scenes
     // ------

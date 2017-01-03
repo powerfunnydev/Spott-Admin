@@ -10,32 +10,29 @@ import BottomBar from '../_helpers/bottomBar';
 import LargeFrameModal from '../_helpers/largeFrameModal';
 import PureRender from '../_helpers/pureRenderDecorator';
 import { filterKeyEventsInInputFields } from '../_helpers/utils';
-import selector from '../../selectors/curator';
-import * as curateActions from '../../actions/curator';
+import selector from '../../selectors/mvp';
+import * as mvpActions from '../../actions/mvp';
 import colors from '../colors';
 
-const starEmptyImage = require('../_images/starEmpty.svg');
-const starFilledImage = require('../_images/starFilled.svg');
+const flashEmptyImage = require('../_images/flashEmpty.svg');
+const flashFilledImage = require('../_images/flashFilled.svg');
 
 @connect(selector, (dispatch) => ({
-  minimizeFrame: bindActionCreators(curateActions.minimizeFrame, dispatch),
-  selectLeftFrame: bindActionCreators(curateActions.selectLeftFrame, dispatch),
-  selectRightFrame: bindActionCreators(curateActions.selectRightFrame, dispatch),
-  selectFrame: bindActionCreators(curateActions.selectFrame, dispatch),
-  toggleHideNonKeyFrames: bindActionCreators(curateActions.toggleHideNonKeyFrames, dispatch),
-  toggleFrameSize: bindActionCreators(curateActions.toggleFrameSize, dispatch),
-  toggleKeyFrame: bindActionCreators(curateActions.toggleKeyFrame, dispatch),
-  updateScale: bindActionCreators(curateActions.updateScale, dispatch)
+  minimizeFrame: bindActionCreators(mvpActions.minimizeFrame, dispatch),
+  selectLeftFrame: bindActionCreators(mvpActions.selectLeftFrame, dispatch),
+  selectRightFrame: bindActionCreators(mvpActions.selectRightFrame, dispatch),
+  selectFrame: bindActionCreators(mvpActions.selectFrame, dispatch),
+  toggleHideNonKeyFrames: bindActionCreators(mvpActions.toggleHideNonKeyFrames, dispatch),
+  toggleFrameSize: bindActionCreators(mvpActions.toggleFrameSize, dispatch),
+  toggleKeyFrame: bindActionCreators(mvpActions.toggleKeyFrame, dispatch),
+  updateScale: bindActionCreators(mvpActions.updateScale, dispatch)
 }))
 @Radium
 @PureRender
-export default class Curator extends Component {
+export default class Mvp extends Component {
 
   static propTypes = {
-    currentCharacter: ImmutablePropTypes.map,
-    currentProduct: ImmutablePropTypes.map,
     currentScene: ImmutablePropTypes.map,
-    currentSceneGroup: ImmutablePropTypes.map,
     enlargeFrame: PropTypes.bool.isRequired,
     hideNonKeyFrames: PropTypes.bool.isRequired,
     minimizeFrame: PropTypes.func.isRequired,
@@ -87,6 +84,10 @@ export default class Curator extends Component {
       backgroundColor: '#000',
       outline: 0,
       position: 'relative'
+      // paddingTop: '2em',
+      // paddingBottom: '2em',
+      // paddingLeft: '2.5em',
+      // paddingRight: '2.5em'
     },
     scenes: {
       listContainer: {
@@ -143,7 +144,7 @@ export default class Curator extends Component {
   render () {
     const { keyMap, styles } = this.constructor;
     const {
-      currentCharacter, currentProduct, currentScene, currentSceneGroup, hideNonKeyFrames,
+      currentScene, hideNonKeyFrames,
       enlargeFrame, minimizeFrame, numKeyFrames, selectLeftFrame, selectRightFrame, scenes,
       selectFrame, toggleFrameSize, toggleKeyFrame, toggleHideNonKeyFrames
     } = this.props;
@@ -160,22 +161,13 @@ export default class Curator extends Component {
       minimizeFrame
     };
 
-    let bottomBarInfo;
-    if (currentCharacter) {
-      bottomBarInfo = `${numKeyFrames} starred ${numKeyFrames === 1 ? 'frame' : 'frames'} for ${currentCharacter.get('name')}`;
-    } else if (currentSceneGroup) {
-      bottomBarInfo = `${numKeyFrames} starred ${numKeyFrames === 1 ? 'frame' : 'frames'} for ${currentSceneGroup.get('label')}`;
-    } else if (currentProduct) {
-      bottomBarInfo = `${numKeyFrames} starred ${numKeyFrames === 1 ? 'frame' : 'frames'} for ${currentProduct.get('shortName')}`;
-    }
-
     // Calculate the procentual width of each item
     return (
       // The HotKeys component does not use Radium, therefore we need to join the styles manually.
       <HotKeys handlers={filterKeyEventsInInputFields(handlers)} keyMap={keyMap} style={{ ...styles.container, ...this.props.style }}>
         <LargeFrameModal
-          emptyImage={starEmptyImage}
-          filledImage={starFilledImage}
+          emptyImage={flashEmptyImage}
+          filledImage={flashFilledImage}
           frame={currentScene}
           isOpen={enlargeFrame}
           onClose={minimizeFrame}
@@ -184,25 +176,14 @@ export default class Curator extends Component {
           onToggleKeyFrame={toggleKeyFrame} />
         {/* Render the list of scenes of the current scene group. */}
         <div style={styles.scenes.listContainer}>
-          {currentCharacter &&
-            <div style={styles.info.base}>
-              <h1 style={styles.info.title.base}>{numKeyFrames} <span style={styles.info.title.emph}>{currentCharacter.get('name')}</span> {numKeyFrames === 1 ? 'frame' : 'frames'}</h1>
-              <h2 style={styles.info.subtitle}>Select the best frames for each character.</h2>
-            </div>}
-          {currentSceneGroup &&
-            <div style={styles.info.base}>
-              <h1 style={styles.info.title.base}>{numKeyFrames} <span style={styles.info.title.emph}>{currentSceneGroup.get('label')}</span> {numKeyFrames === 1 ? 'frame' : 'frames'}</h1>
-              <h2 style={styles.info.subtitle}>Select the single best frame for each scene.</h2>
-            </div>}
-          {currentProduct &&
-            <div style={styles.info.base}>
-              <h1 style={styles.info.title.base}>{numKeyFrames} <span style={styles.info.title.emph}>{currentProduct.get('shortName')}</span> {numKeyFrames === 1 ? 'frame' : 'frames'}</h1>
-              <h2 style={styles.info.subtitle}>Select the best frames for each product.</h2>
-            </div>}
+          <div style={styles.info.base}>
+            <h1 style={styles.info.title.base}>{numKeyFrames} <span style={styles.info.title.emph}>Most Valuable Photo</span></h1>
+            <h2 style={styles.info.subtitle}>Select the single best frame that represents this Episode. This can be used as a cover image so users can identify the episode.</h2>
+          </div>
           {scenes.map((frame, j) => (
             <Frame
-              emptyImage={starEmptyImage}
-              filledImage={starFilledImage}
+              emptyImage={flashEmptyImage}
+              filledImage={flashFilledImage}
               frame={frame}
               isKeyFrame={frame.get('isKeyFrame')}
               isSelected={(currentScene && currentScene.get('id')) === frame.get('id')}
@@ -218,10 +199,10 @@ export default class Curator extends Component {
 
         {/* Render bottom bar */}
         <BottomBar
-          emptyImage={starEmptyImage}
-          filledImage={starFilledImage}
+          emptyImage={flashEmptyImage}
+          filledImage={flashFilledImage}
           hideNonKeyFrames={hideNonKeyFrames}
-          info={bottomBarInfo}
+          info={`${numKeyFrames}/1 MVP selected`}
           scale={this.props.scale}
           onScaleChange={this.onScaleChange}
           onToggleHideNonKeyFrames={toggleHideNonKeyFrames} />
