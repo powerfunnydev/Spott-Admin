@@ -7,6 +7,7 @@ import data from './data';
 import _mediumTvGuide from '../pages/content/_mediumTvGuide/reducer';
 import brandsEdit from '../pages/content/brands/edit/reducer';
 import brandsList from '../pages/content/brands/list/reducer';
+import brandsReadProducts from '../pages/content/brands/read/products/list/reducer';
 import broadcastChannelsCreate from '../pages/content/broadcastChannels/create/reducer';
 import broadcastChannelsList from '../pages/content/broadcastChannels/list/reducer';
 import broadcastersListBroadcasters from '../pages/content/broadcasters/list/reducer';
@@ -69,7 +70,10 @@ export default combineReducers({
     }),
     brands: combineReducers({
       edit: brandsEdit,
-      list: brandsList
+      list: brandsList,
+      read: combineReducers({
+        products: brandsReadProducts
+      })
     }),
     broadcasters: combineReducers({
       list: combineReducers({

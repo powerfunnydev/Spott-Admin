@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformBrand, transformListBrand } from './transformers';
+import { transformBrand, transformListBrand, transformListProduct } from './transformers';
 
 export async function fetchBrands (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/product/brands?page=${page}&pageSize=${pageSize}`;
@@ -11,6 +11,19 @@ export async function fetchBrands (baseUrl, authenticationToken, locale, { searc
   }
   const { body } = await get(authenticationToken, locale, url);
   body.data = body.data.map(transformListBrand);
+  return body;
+}
+
+export async function fetchProducts (baseUrl, authenticationToken, locale, { brandId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/product/brands/${brandId}/products?page=${page}&pageSize=${pageSize}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${searchString}`);
+  }
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  const { body } = await get(authenticationToken, locale, url);
+  body.data = body.data.map(transformListProduct);
   return body;
 }
 

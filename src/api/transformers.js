@@ -12,7 +12,7 @@ export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover 
   };
 }
 
-export function transformListProduct ({ uuid, brand, publishStatus, shortName, auditInfo, image: logo }) {
+export function transformListProduct ({ uuid, publishStatus, brand, shortName, fullName, auditInfo, image: logo }) {
   return {
     createdOn: auditInfo && auditInfo.createdOn,
     id: uuid,
@@ -21,7 +21,8 @@ export function transformListProduct ({ uuid, brand, publishStatus, shortName, a
     logo: logo && { id: logo.uuid, url: logo.url },
     publishStatus,
     brand: brand && transformListBrand(brand),
-    shortName
+    shortName,
+    fullName
   };
 }
 
