@@ -6,8 +6,8 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { HotKeys } from 'react-hotkeys';
 import Frame from '../_helpers/frame';
-import BottomBar from './bottomBar';
-import LargeFrameModal from './largeFrameModal';
+import BottomBar from '../_helpers/bottomBar';
+import LargeFrameModal from '../_helpers/largeFrameModal';
 import PureRender from '../_helpers/pureRenderDecorator';
 import { filterKeyEventsInInputFields } from '../_helpers/utils';
 import selector from '../../selectors/curator';
@@ -87,10 +87,6 @@ export default class Curator extends Component {
       backgroundColor: '#000',
       outline: 0,
       position: 'relative'
-      // paddingTop: '2em',
-      // paddingBottom: '2em',
-      // paddingLeft: '2.5em',
-      // paddingRight: '2.5em'
     },
     scenes: {
       listContainer: {
@@ -164,11 +160,22 @@ export default class Curator extends Component {
       minimizeFrame
     };
 
+    let bottomBarInfo;
+    if (currentCharacter) {
+      bottomBarInfo = `${numKeyFrames} starred ${numKeyFrames === 1 ? 'frame' : 'frames'} for ${currentCharacter.get('name')}`;
+    } else if (currentSceneGroup) {
+      bottomBarInfo = `${numKeyFrames} starred ${numKeyFrames === 1 ? 'frame' : 'frames'} for ${currentSceneGroup.get('label')}`;
+    } else if (currentProduct) {
+      bottomBarInfo = `${numKeyFrames} starred ${numKeyFrames === 1 ? 'frame' : 'frames'} for ${currentProduct.get('shortName')}`;
+    }
+
     // Calculate the procentual width of each item
     return (
       // The HotKeys component does not use Radium, therefore we need to join the styles manually.
       <HotKeys handlers={filterKeyEventsInInputFields(handlers)} keyMap={keyMap} style={{ ...styles.container, ...this.props.style }}>
         <LargeFrameModal
+          emptyImage={starEmptyImage}
+          filledImage={starFilledImage}
           frame={currentScene}
           isOpen={enlargeFrame}
           onClose={minimizeFrame}
@@ -211,11 +218,10 @@ export default class Curator extends Component {
 
         {/* Render bottom bar */}
         <BottomBar
-          currentCharacter={currentCharacter}
-          currentProduct={currentProduct}
-          currentSceneGroup={currentSceneGroup}
+          emptyImage={starEmptyImage}
+          filledImage={starFilledImage}
           hideNonKeyFrames={hideNonKeyFrames}
-          numKeyFrames={numKeyFrames}
+          info={bottomBarInfo}
           scale={this.props.scale}
           onScaleChange={this.onScaleChange}
           onToggleHideNonKeyFrames={toggleHideNonKeyFrames} />

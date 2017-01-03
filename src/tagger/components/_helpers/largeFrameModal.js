@@ -7,13 +7,12 @@ import NonKeyFramesHider from '../_helpers/nonKeyFramesHider';
 const crossLarge = require('../_images/crossLarge.svg');
 const arrow = require('../sceneEditor/images/arrow.svg');
 
-const flashEmptyImage = require('../_images/flashEmpty.svg');
-const flashFilledImage = require('../_images/flashFilled.svg');
-
 @Radium
 export default class LargeFrameModal extends Component {
 
   static propTypes = {
+    emptyImage: PropTypes.string.isRequired,
+    filledImage: PropTypes.string.isRequired,
     frame: ImmutablePropTypes.map,
     isOpen: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
@@ -97,7 +96,7 @@ export default class LargeFrameModal extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { frame, isOpen, onSelectLeftFrame, onSelectRightFrame, onToggleKeyFrame } = this.props;
+    const { emptyImage, filledImage, frame, isOpen, onSelectLeftFrame, onSelectRightFrame, onToggleKeyFrame } = this.props;
 
     if (isOpen && frame) {
       return (
@@ -120,8 +119,8 @@ export default class LargeFrameModal extends Component {
             </div>
             <div style={styles.framesHider}>
               <NonKeyFramesHider
-                emptyImage={flashEmptyImage}
-                filledImage={flashFilledImage}
+                emptyImage={emptyImage}
+                filledImage={filledImage}
                 isKeyFrame={frame.get('isKeyFrame')}
                 single
                 onToggleKeyFrame={onToggleKeyFrame}/>

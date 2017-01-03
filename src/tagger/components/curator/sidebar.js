@@ -6,9 +6,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import * as actions from '../../actions/curator';
 import { sidebarSelector } from '../../selectors/curator';
 import colors from '../colors';
-import Character from './character';
-import Product from './product';
-import SceneGroup from './sceneGroup';
+import ListItem from './listItem';
 import Section from '../_helpers/section';
 
 @connect(sidebarSelector, (dispatch) => ({
@@ -61,28 +59,33 @@ export default class Sidebar extends Component {
       <ul style={[ style, styles.container ]}>
         <Section activeStyle={styles.activeSection} title='Scenes'>
           {sceneGroups.map((sceneGroup) => (
-            <SceneGroup
+            <ListItem
+              count={sceneGroup.get('keySceneId') ? 1 : 0}
               key={sceneGroup.get('id')}
-              sceneGroup={sceneGroup}
               selected={sceneGroup === currentSceneGroup}
+              text={sceneGroup.get('label')}
               onClick={selectSceneGroup.bind(null, sceneGroup.get('id'))}/>
           ))}
         </Section>
         <Section activeStyle={styles.activeSection} title='Characters'>
           {characters.map((character) => (
-            <Character
-              character={character}
+            <ListItem
+              count={character.get('countKeyAppearances')}
+              imageUrl={`${character.get('portraitImageUrl')}?width=95&height=95`}
               key={character.get('id')}
               selected={character === currentCharacter}
+              text={character.get('name')}
               onClick={selectCharacter.bind(null, character.get('id'))} />
           ))}
         </Section>
         <Section activeStyle={styles.activeSection} title='Products'>
           {products.map((product) => (
-            <Product
+            <ListItem
+              count={product.get('countKeyAppearances')}
+              imageUrl={`${product.get('imageUrl')}?width=95&height=95`}
               key={product.get('id')}
-              product={product}
               selected={product === currentProduct}
+              text={product.get('shortName')}
               onClick={selectProduct.bind(null, product.get('id'))} />
           ))}
         </Section>

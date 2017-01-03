@@ -6,8 +6,8 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { HotKeys } from 'react-hotkeys';
 import Frame from '../_helpers/frame';
-import BottomBar from './bottomBar';
-import LargeFrameModal from './largeFrameModal';
+import BottomBar from '../_helpers/bottomBar';
+import LargeFrameModal from '../_helpers/largeFrameModal';
 import PureRender from '../_helpers/pureRenderDecorator';
 import { filterKeyEventsInInputFields } from '../_helpers/utils';
 import selector from '../../selectors/mvp';
@@ -166,6 +166,8 @@ export default class Mvp extends Component {
       // The HotKeys component does not use Radium, therefore we need to join the styles manually.
       <HotKeys handlers={filterKeyEventsInInputFields(handlers)} keyMap={keyMap} style={{ ...styles.container, ...this.props.style }}>
         <LargeFrameModal
+          emptyImage={flashEmptyImage}
+          filledImage={flashFilledImage}
           frame={currentScene}
           isOpen={enlargeFrame}
           onClose={minimizeFrame}
@@ -197,8 +199,10 @@ export default class Mvp extends Component {
 
         {/* Render bottom bar */}
         <BottomBar
+          emptyImage={flashEmptyImage}
+          filledImage={flashFilledImage}
           hideNonKeyFrames={hideNonKeyFrames}
-          numKeyFrames={numKeyFrames}
+          info={`${numKeyFrames}/1 MVP selected`}
           scale={this.props.scale}
           onScaleChange={this.onScaleChange}
           onToggleHideNonKeyFrames={toggleHideNonKeyFrames} />

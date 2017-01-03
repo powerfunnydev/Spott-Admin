@@ -3,7 +3,7 @@ import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import FramesHider from './framesHider';
-import Enlarge from './enlarge';
+import Enlarge from '../_helpers/enlarge';
 import PureRender from '../_helpers/pureRenderDecorator';
 import colors from '../colors';
 

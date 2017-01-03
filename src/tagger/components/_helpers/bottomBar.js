@@ -5,15 +5,15 @@ import Slider from '../_helpers/slider';
 import colors from '../colors';
 
 const resizeIconImage = require('../_images/resizeIcon.svg');
-const flashEmptyImage = require('../_images/flashEmpty.svg');
-const flashFilledImage = require('../_images/flashFilled.svg');
 
 @Radium
 export default class BottomBar extends Component {
 
   static propTypes = {
+    emptyImage: PropTypes.string.isRequired,
+    filledImage: PropTypes.string.isRequired,
     hideNonKeyFrames: PropTypes.bool.isRequired,
-    numKeyFrames: PropTypes.number.isRequired,
+    info: PropTypes.node,
     scale: PropTypes.number.isRequired,
     onScaleChange: PropTypes.func.isRequired,
     onToggleHideNonKeyFrames: PropTypes.func.isRequired
@@ -63,7 +63,7 @@ export default class BottomBar extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { hideNonKeyFrames, numKeyFrames, onToggleHideNonKeyFrames } = this.props;
+    const { emptyImage, filledImage, hideNonKeyFrames, info, onToggleHideNonKeyFrames } = this.props;
 
     return (
       <div style={styles.container}>
@@ -77,14 +77,14 @@ export default class BottomBar extends Component {
         </div>
 
         <div style={styles.info}>
-          {numKeyFrames}/1 MVP selected
+          {info}
         </div>
 
         <div style={styles.buttonContainer}>
           {/* Hide/show all hidden frames. */}
           <NonKeyFramesHider
-            emptyImage={flashEmptyImage}
-            filledImage={flashFilledImage}
+            emptyImage={emptyImage}
+            filledImage={filledImage}
             isKeyFrame={hideNonKeyFrames}
             style={styles.framesHider}
             onToggleKeyFrame={onToggleHideNonKeyFrames} />

@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import colors from '../colors';
-import Arrow from './images/arrow';
+import Arrow from '../_images/arrow';
 
 const arrowKeys = require('./images/arrowKeys.svg');
 const sKey = require('./images/sKey.svg');
