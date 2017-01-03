@@ -134,6 +134,8 @@ export default class Products extends Component {
                       {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                       <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
                       <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>NAME</CustomCel>
+                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>BRAND</CustomCel>
+                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>PUBLISH STATUS</CustomCel>
                       <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
                       <CustomCel sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
                       <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
@@ -146,6 +148,12 @@ export default class Products extends Component {
                             <CheckBoxCel checked={isSelected.get(product.get('id'))} onChange={selectCheckbox.bind(this, product.get('id'))}/>
                             <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/products/read/${product.get('id')}`); }}>
                               {product.get('shortName')}
+                            </CustomCel>
+                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/brands/read/${product.getIn([ 'brand', 'id' ])}`); }}>
+                              {product.getIn([ 'brand', 'name' ])}
+                            </CustomCel>
+                            <CustomCel style={{ flex: 2 }}>
+                              {product.get('publishStatus')}
                             </CustomCel>
                             <CustomCel style={{ flex: 2 }}>
                               {product.get('lastUpdatedBy')}
