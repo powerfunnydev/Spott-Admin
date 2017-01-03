@@ -7,8 +7,8 @@ import {
 } from '../constants/actionTypes';
 import { fetchCharactersOfScene, fetchCharacters } from './character';
 import { fetchProductsOfScene, fetchProducts } from './product';
-import { postScene } from '../api/scene';
-import { updateRecordStart, updateRecordSuccess, updateRecordError } from '../actions/_utils';
+import { getScenes, postScene } from '../api/scene';
+import { makeApiActionCreator, updateRecordStart, updateRecordSuccess, updateRecordError } from '../actions/_utils';
 import {
   currentSceneSelector,
   currentSceneIdSelector,
@@ -16,6 +16,12 @@ import {
 } from '../selectors/common';
 import { scenesSelector } from '../selectors/sceneSelector';
 import { apiBaseUrlSelector, authenticationTokenSelector, currentLocaleSelector } from '../../selectors/global';
+
+export const SCENES_FETCH_START = 'SCENE/SCENES_FETCH_START';
+export const SCENES_FETCH_SUCCESS = 'SCENE/SCENES_FETCH_SUCCESS';
+export const SCENES_FETCH_ERROR = 'SCENE/SCENES_FETCH_ERROR';
+
+export const fetchScenes = makeApiActionCreator(getScenes, SCENES_FETCH_START, SCENES_FETCH_SUCCESS, SCENES_FETCH_ERROR);
 
 // Helper functions
 // ----------------

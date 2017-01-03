@@ -1,6 +1,6 @@
 import * as videoApi from '../api/video';
 import { makeApiActionCreator } from '../actions/_utils';
-import { selectFirstScene } from './scene';
+import { fetchScenes, selectFirstScene } from './scene';
 import { selectFirstScene as organizerSelectFirstScene } from './organizer';
 import { selectFirstScene as mvpSelectFirstScene } from './mvp';
 import { fetchSceneGroups } from './sceneGroup';
@@ -33,8 +33,10 @@ export function select ({ videoId }) {
   return async (dispatch) => {
     try {
       dispatch({ type: VIDEO_SELECT_START, videoId });
-      // Get the video and its scenes.
+      // Get the video ...
       await dispatch(fetchVideo({ videoId }));
+      // and its scenes.
+      await dispatch(fetchScenes({ videoId }));
       // Fetch the scene groups of the video.
       await dispatch(fetchSceneGroups({ videoId }));
 
@@ -46,19 +48,6 @@ export function select ({ videoId }) {
       dispatch({ error, type: VIDEO_SELECT_ERROR });
     }
   };
-  // return {
-  //   types: [ , ,  ],
-  //   payload: [
-  //     // makeFetchRecordActionCreator returns a {function(id: string): Promise<Object, Error>},
-  //     // which triggers an action with type 'VIDEO_FETCH_START', then performs the API call for video retrieval.
-  //     // Upon finishing the request, an action with either type 'VIDEO_FETCH_SUCCESS' or 'VIDEO_FETCH_ERROR' is triggered.
-  //     // Fetch the first scene, which will also load the characters and products in that scene.
-  //     ,
-  //
-  //   ],
-  //   // Fetching the video (including it's scenes) and fetching the first scene of the video, should happen sequentially.
-  //   sequence: true
-  // };
 }
 
 export const persistVideo = makeApiActionCreator(videoApi.postVideo, VIDEO_PERSIST_START, VIDEO_PERSIST_SUCCESS, VIDEO_PERSIST_ERROR);
