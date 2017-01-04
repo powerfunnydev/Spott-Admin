@@ -148,6 +148,18 @@ export default class Products extends Component {
     },
     affiliatePaddingRight: {
       paddingRight: '4px'
+    },
+    logo: {
+      width: '22px',
+      height: '22px',
+      borderRadius: '2px'
+    },
+    logoContainer: {
+      paddingRight: '10px',
+      display: 'inline-flex'
+    },
+    logoPlaceholder: {
+      paddingRight: '32px'
     }
   }
 
@@ -194,10 +206,9 @@ export default class Products extends Component {
                     </Headers>
                     <Rows isLoading={products.get('_status') !== 'loaded'}>
                       {products.get('data').map((product, index) => {
-                        const offeringsArray = product.get('offerings').toArray();
+                        const offeringsArray = product.get('offerings') && product.get('offerings').toArray() || [];
                         const numberOfAffiliates = offeringsArray.reduce((total, offer, key) => offer.get('affiliateCode') ? total + 1 : total, 0);
                         const numberOfNonAffiliates = offeringsArray.length - numberOfAffiliates;
-                        console.log('number affi', numberOfAffiliates);
                         const offerings = offeringsArray.map((offering, i) => {
                           return (
                             <div key={`product${index}offering${i}`} style={[ styles.offeringContainer, ((i + 1) !== offeringsArray.length) && styles.offeringPaddingRight ]}>
@@ -219,7 +230,7 @@ export default class Products extends Component {
                             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                             <CheckBoxCel checked={isSelected.get(product.get('id'))} onChange={selectCheckbox.bind(this, product.get('id'))}/>
                             <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/products/read/${product.get('id')}`); }}>
-                              {product.get('shortName')}
+                              {product.get('logo') && <div style={styles.logoContainer}><img src={`${product.getIn([ 'logo', 'url' ])}?height=70&width=70`} style={styles.logo} /></div> || <div style={styles.logoPlaceholder}/>} {product.get('shortName')}
                             </CustomCel>
                             <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/brands/read/${product.getIn([ 'brand', 'id' ])}`); }}>
                               {product.getIn([ 'brand', 'name' ])}
