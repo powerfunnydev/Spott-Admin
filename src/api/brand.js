@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformBrand, transformListBrand, transformListProduct } from './transformers';
+import { transformProductOffering, transformBrand, transformListBrand, transformListProduct } from './transformers';
 
 export async function fetchBrands (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/product/brands?page=${page}&pageSize=${pageSize}`;
@@ -23,7 +23,14 @@ export async function fetchProducts (baseUrl, authenticationToken, locale, { bra
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }
   const { body } = await get(authenticationToken, locale, url);
-  body.data = body.data.map(transformListProduct);
+  const data = [];
+  for (const product of body.data) {
+    const prod = transformListProduct(product);
+    const result = await get(authenticationToken, locale, `${baseUrl}/v004/product/products/${prod.id}/offerings`);
+    prod.offerings = result.body.data.map(transformProductOffering);
+    data.push(prod);
+  }
+  body.data = data;
   return body;
 }
 
