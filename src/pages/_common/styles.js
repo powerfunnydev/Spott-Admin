@@ -342,3 +342,26 @@ export class EditTemplate extends Component {
   }
 
 }
+
+export const filterStyles = {
+  filterContent: {
+    // positioning of the content of the filter
+    top: '48px',
+    right: '-100px'
+  },
+  row: {
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  fullWidth: {
+    width: '100%'
+  },
+  title: {
+    ...makeTextStyle(fontWeights.medium, '12px'),
+    color: colors.darkGray3,
+    paddingRight: '26px',
+    minWidth: '120px',
+    display: 'flex',
+    alignItems: 'center'
+  }
+};
