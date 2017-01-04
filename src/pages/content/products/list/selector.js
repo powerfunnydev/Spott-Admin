@@ -1,4 +1,5 @@
 import { createStructuredSelector } from 'reselect';
+import { currenciesSelector } from '../../../../selectors/global';
 import { createEntitiesByRelationSelector, listProductsEntitiesSelector, filterHasProductsRelationsSelector } from '../../../../selectors/data';
 import { serializeFilterHasProducts } from '../../../../../src/reducers/utils';
 
@@ -15,6 +16,7 @@ export const productsSelector = createEntitiesByRelationSelector(
 );
 
 export default createStructuredSelector({
+  currencies: currenciesSelector,
   products: productsSelector,
   isSelected: isSelectedSelector,
   pageCount: pageCountSelector,

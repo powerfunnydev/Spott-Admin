@@ -10,7 +10,14 @@ export async function fetchProducts (baseUrl, authenticationToken, locale, { sea
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }
   const { body } = await get(authenticationToken, locale, url);
-  body.data = body.data.map(transformListProduct);
+  const data = [];
+  for (const product of body.data) {
+    const prod = transformListProduct(product);
+    const result = await get(authenticationToken, locale, `${baseUrl}/v004/product/products/${prod.id}/offerings`);
+    prod.offerings = result.body.data.map(transformProductOffering);
+    data.push(prod);
+  }
+  body.data = data;
   return body;
 }
 
