@@ -1,8 +1,10 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { connect } from 'react-redux';
-import ImmutablePropTypes from 'react-immutable-proptypes';
 import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import { initialize, Field } from 'redux-form/immutable';
+import ImmutablePropTypes from 'react-immutable-proptypes';
+import moment from 'moment';
 import * as actions from './actions';
 import selector from './selector';
 import { routerPushWithReturnTo } from '../../../../../actions/global';
@@ -11,29 +13,27 @@ import Dropdown, { styles as dropdownStyles } from '../../../../_common/componen
 import Line from '../../../../_common/components/line';
 import { slowdown } from '../../../../../utils';
 import { confirmation } from '../../../../_common/askConfirmation';
-import moment from 'moment';
 import SelectionDropdown from '../../../../_common/components/selectionDropdown';
 import { FilterContent } from '../../../../_common/components/filterDropdown';
-import { colors, makeTextStyle, fontWeights } from '../../../../_common/styles';
-import { reduxForm, Field } from 'redux-form/immutable';
+import { colors, filterStyles, makeTextStyle, fontWeights } from '../../../../_common/styles';
+
 import publishStatusTypes from '../../../../../constants/publishStatusTypes';
 
 const numberOfRows = 25;
 export const prefix = 'episodes';
 // Those are the names of the redux form fields of the filter component
 export const filterArray = [ 'publishStatus' ];
+
 @tableDecorator(prefix)
 @connect(selector, (dispatch) => ({
   deleteEpisode: bindActionCreators(actions.deleteEpisode, dispatch),
   deleteEpisodes: bindActionCreators(actions.deleteEpisodes, dispatch),
+  initializeForm: bindActionCreators(initialize, dispatch),
   loadEpisodes: bindActionCreators(actions.loadEpisodes, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
 }))
-@reduxForm({
-  form: 'episodesList'
-})
 @Radium
 export default class List extends Component {
 
@@ -43,8 +43,7 @@ export default class List extends Component {
     episodes: ImmutablePropTypes.map.isRequired,
     error: PropTypes.any,
     getFilterObjectFromQuery: PropTypes.func.isRequired,
-    handleSubmit: PropTypes.func.isRequired,
-    initialize: PropTypes.func.isRequired,
+    initializeForm: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     loadEpisodes: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -54,7 +53,7 @@ export default class List extends Component {
     numberSelected: PropTypes.number,
     pageCount: PropTypes.number,
     params: PropTypes.object.isRequired,
-    reset: PropTypes.func.isRequired,
+    // reset: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     selectAllCheckboxes: PropTypes.func.isRequired,
     selectCheckbox: PropTypes.func.isRequired,
@@ -73,17 +72,14 @@ export default class List extends Component {
     this.onCreateEpisode = :: this.onCreateEpisode;
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
     this.slowSearch = slowdown(props.loadEpisodes, 300);
-    this.onCancelFilter = ::this.onCancelFilter;
-    this.onClearAllFilters = ::this.onClearAllFilters;
-    this.onApplyFilter = ::this.onApplyFilter;
   }
 
   async componentWillMount () {
-    const { initialize, getFilterObjectFromQuery } = this.props;
+    const { getFilterObjectFromQuery, initializeForm } = this.props;
     if (this.props.params.seriesEntryId) {
       await this.props.loadEpisodes(this.props.location.query, this.props.params.seriesEntryId);
     }
-    initialize(getFilterObjectFromQuery(filterArray));
+    initializeForm('episodeList', getFilterObjectFromQuery(filterArray));
   }
 
   async componentWillReceiveProps (nextProps) {
@@ -111,25 +107,6 @@ export default class List extends Component {
     this.props.routerPushWithReturnTo('/content/series', true);
   }
 
-  onCancelFilter () {
-    dispatchEvent(new Event('collapseFilterDropdown'));
-    this.props.reset();
-  }
-
-  onClearAllFilters () {
-    this.props.initialize({ publishStatus: null });
-  }
-
-  onApplyFilter () {
-    const { handleSubmit, initialize, onChangeFilter } = this.props;
-    handleSubmit((form) => {
-      const formJS = form.toJS();
-      initialize(formJS);
-      onChangeFilter(formJS);
-    })();
-    dispatchEvent(new Event('collapseFilterDropdown'));
-  }
-
   onCreateEpisode (e) {
     e.preventDefault();
     const seriesEntryId = this.props.params.seriesEntryId;
@@ -149,35 +126,11 @@ export default class List extends Component {
     await this.props.loadEpisodes(this.props.location.query, this.props.params.seriesEntryId);
   }
 
-  static styles = {
-    filterContent: {
-      // positioning of the content of the filter
-      top: '48px',
-      right: '-100px'
-    },
-    row: {
-      display: 'flex',
-      flexDirection: 'row'
-    },
-    fullWidth: {
-      width: '100%'
-    },
-    title: {
-      ...makeTextStyle(fontWeights.medium, '12px'),
-      color: colors.darkGray3,
-      paddingRight: '26px',
-      minWidth: '120px',
-      display: 'flex',
-      alignItems: 'center'
-    }
-  }
-
   render () {
-    const { params, onChangeSearchString, onChangeDisplay, pageCount, selectAllCheckboxes, selectCheckbox, isSelected, totalResultCount, episodes,
+    const { params, onChangeFilter, onChangeSearchString, onChangeDisplay, pageCount, selectAllCheckboxes, selectCheckbox, isSelected, totalResultCount, episodes,
        location: { query: { episodesDisplay, episodesPage,
          episodesSearchString, episodesSortField, episodesSortDirection } } } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
-    const { styles } = this.constructor;
     return (
       <div style={generalStyles.border}>
         <div style={generalStyles.backgroundBar}>
@@ -185,22 +138,22 @@ export default class List extends Component {
             <UtilsBar
               display={episodesDisplay}
               filterContent={
-                  <FilterContent
-                    style={styles.filterContent}
-                    onApply={this.onApplyFilter}
-                    onCancel={this.onCancelFilter}
-                    onClearAllFilters={this.onClearAllFilters} >
-                    <div style={styles.row}>
-                      <div style={styles.title}>Publish Status</div>
-                      <Field
-                        component={SelectionDropdown}
-                        getItemText={(key) => publishStatusTypes[key]}
-                        name='publishStatus'
-                        options={Object.keys(publishStatusTypes)}
-                        placeholder='Publish Status'
-                        style={styles.fullWidth}/>
-                    </div>
-                  </FilterContent>
+                <FilterContent
+                  form='episodeList'
+                  initialValues={{ publishStatus: null }}
+                  style={filterStyles.filterContent}
+                  onApplyFilter={onChangeFilter}>
+                  <div style={filterStyles.row}>
+                    <div style={filterStyles.title}>Publish Status</div>
+                    <Field
+                      component={SelectionDropdown}
+                      getItemText={(key) => publishStatusTypes[key]}
+                      name='publishStatus'
+                      options={Object.keys(publishStatusTypes)}
+                      placeholder='Publish Status'
+                      style={filterStyles.fullWidth}/>
+                  </div>
+                </FilterContent>
               }
               isLoading={episodes.get('_status') !== 'loaded'}
               searchString={episodesSearchString}

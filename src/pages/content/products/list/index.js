@@ -1,29 +1,36 @@
 import React, { Component, PropTypes } from 'react';
+import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import moment from 'moment';
-import Radium from 'radium';
-import * as actions from './actions';
-import selector from './selector';
-import Dropdown, { styles as dropdownStyles } from '../../../_common/components/actionDropdown';
-import { Root, Container, colors } from '../../../_common/styles';
-import { DropdownCel, Tile, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
+import { initialize, Field } from 'redux-form/immutable';
+import { colors, filterStyles, Root, Container } from '../../../_common/styles';
+import { generalStyles, getInformationFromQuery, headerStyles, isQueryChanged, tableDecorator, DropdownCel, Tile, UtilsBar, TotalEntries, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
 import Line from '../../../_common/components/line';
+import { FilterContent } from '../../../_common/components/filterDropdown';
+import Dropdown, { styles as dropdownStyles } from '../../../_common/components/actionDropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { confirmation } from '../../../_common/askConfirmation';
 import { SideMenu } from '../../../app/sideMenu';
+import publishStatusTypes from '../../../../constants/publishStatusTypes';
+import SelectionDropdown from '../../../_common/components/selectionDropdown';
 import ToolTip from '../../../_common/components/toolTip';
 import QuestionSVG from '../../../_common/images/question';
 import DollarSVG from '../../../_common/images/dollar';
 import { slowdown } from '../../../../utils';
+import * as actions from './actions';
+import selector from './selector';
 
 const numberOfRows = 25;
+export const prefix = 'products';
+export const filterArray = [ 'publishStatus' ];
 
-@tableDecorator()
+@tableDecorator(prefix)
 @connect(selector, (dispatch) => ({
   deleteProduct: bindActionCreators(actions.deleteProduct, dispatch),
   deleteProducts: bindActionCreators(actions.deleteProducts, dispatch),
+  initializeForm: bindActionCreators(initialize, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
@@ -37,6 +44,8 @@ export default class Products extends Component {
     currencies: ImmutablePropTypes.map.isRequired,
     deleteProduct: PropTypes.func.isRequired,
     deleteProducts: PropTypes.func.isRequired,
+    getFilterObjectFromQuery: PropTypes.func.isRequired,
+    initializeForm: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -49,10 +58,11 @@ export default class Products extends Component {
     selectAllCheckboxes: PropTypes.func.isRequired,
     selectCheckbox: PropTypes.func.isRequired,
     totalResultCount: PropTypes.number.isRequired,
-    onChangeDisplay: PropTypes.func.isRequired,
-    onChangePage: PropTypes.func.isRequired,
-    onChangeSearchString: PropTypes.func.isRequired,
-    onSortField: PropTypes.func.isRequired
+    onChangeDisplay: PropTypes.func.isRequired, // See table decorator.
+    onChangeFilter: PropTypes.func.isRequired, // See table decorator.
+    onChangePage: PropTypes.func.isRequired, // See table decorator.
+    onChangeSearchString: PropTypes.func.isRequired, // See table decorator.
+    onSortField: PropTypes.func.isRequired // See table decorator.
   };
 
   constructor (props) {
@@ -63,14 +73,16 @@ export default class Products extends Component {
   }
 
   async componentWillMount () {
-    await this.props.load(this.props.location.query);
+    const { getFilterObjectFromQuery, initializeForm } = this.props;
+    await this.props.load(getInformationFromQuery(this.props.location.query, prefix, filterArray));
+    initializeForm('productList', getFilterObjectFromQuery(filterArray));
   }
 
-  async componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
-    if (isQueryChanged(query, nextQuery)) {
-      this.slowSearch(nextQuery);
+    if (isQueryChanged(query, nextQuery, prefix, filterArray)) {
+      this.slowSearch(getInformationFromQuery(nextQuery, prefix, filterArray));
     }
   }
 
@@ -78,7 +90,7 @@ export default class Products extends Component {
     const result = await confirmation();
     if (result) {
       await this.props.deleteProduct(productsId);
-      await this.props.load(this.props.location.query);
+      await this.props.load(getInformationFromQuery(this.props.location.query, prefix, filterArray));
     }
   }
 
@@ -100,7 +112,7 @@ export default class Products extends Component {
       }
     });
     await this.props.deleteProducts(productIds);
-    await this.props.load(this.props.location.query);
+    await this.props.load(getInformationFromQuery(this.props.location.query, prefix, filterArray));
   }
 
   static styles ={
@@ -164,20 +176,41 @@ export default class Products extends Component {
   }
 
   render () {
-    const { currencies, products, children, isSelected, location: { query, query: { display, page, searchString, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString } = this.props;
+    const {
+      currencies, products, children, isSelected, location: { query, query: { productsDisplay, productsPage, productsSearchString, productsSortField, productsSortDirection } },
+      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeFilter, onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     const { styles } = this.constructor;
+
+    console.warn('products', this.productsFilterKey, products.toJS());
     return (
       <SideMenu>
         <Root>
           <div style={generalStyles.backgroundBar}>
             <Container>
               <UtilsBar
-                display={display}
+                display={productsDisplay}
+                filterContent={
+                  <FilterContent
+                    form='productList'
+                    initialValues={{ publishStatus: null }}
+                    style={filterStyles.filterContent}
+                    onApplyFilter={onChangeFilter}>
+                    <div style={filterStyles.row}>
+                      <div style={filterStyles.title}>Publish Status</div>
+                      <Field
+                        component={SelectionDropdown}
+                        getItemText={(key) => publishStatusTypes[key]}
+                        name='publishStatus'
+                        options={Object.keys(publishStatusTypes)}
+                        placeholder='Publish Status'
+                        style={filterStyles.fullWidth}/>
+                    </div>
+                  </FilterContent>
+                }
                 isLoading={products.get('_status') !== 'loaded'}
                 numberSelected={numberSelected}
-                searchString={searchString}
+                searchString={productsSearchString}
                 textCreateButton='New Product'
                 onChangeDisplay={onChangeDisplay}
                 onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
@@ -192,16 +225,16 @@ export default class Products extends Component {
                 numberSelected={numberSelected}
                 totalResultCount={totalResultCount}
                 onDeleteSelected={this.onClickDeleteSelected}/>
-              {(display === undefined || display === 'list') &&
+              {(!productsDisplay || productsDisplay === 'list') &&
                 <div>
                   <Table>
                     <Headers>
                       {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                       <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'FULL_NAME')} sortDirection = {sortField === 'FULL_NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>FULL NAME</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>BRAND</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { width: 150 } ]}>OFFERINGS</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { width: 120 } ]}>PUBLISH STATUS</CustomCel>
+                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'FULL_NAME')} sortDirection={productsSortField === 'FULL_NAME' ? sortDirections[productsSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>Full name</CustomCel>
+                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Brand</CustomCel>
+                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { width: 150 } ]}>Offerings</CustomCel>
+                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { width: 120 } ]}>Publish status</CustomCel>
                       <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
                     </Headers>
                     <Rows isLoading={products.get('_status') !== 'loaded'}>
@@ -267,10 +300,10 @@ export default class Products extends Component {
                       })}
                     </Rows>
                   </Table>
-                  <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
+                  <Pagination currentPage={(productsPage && (parseInt(productsPage, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(productsPage, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(productsPage, 10), true); }}/>
                 </div>
               }
-              {display === 'grid' &&
+              {productsDisplay === 'grid' &&
                 <div>
                   <div style={generalStyles.row}>
                     {products.get('data').map((product, index) => (
@@ -282,9 +315,9 @@ export default class Products extends Component {
                         onDelete={async (e) => { e.preventDefault(); await this.deleteProduct(product.get('id')); }}
                         onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/products/edit/${product.get('id')}`); }}/>
                     ))}
-                    <Tile key={'createProduct'} onCreate={() => { this.props.routerPushWithReturnTo('/content/products/create'); }}/>
+                    <Tile key='createProduct' onCreate={() => { this.props.routerPushWithReturnTo('/content/products/create'); }}/>
                   </div>
-                  <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
+                  <Pagination currentPage={(productsPage && (parseInt(productsPage, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(productsPage, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(productsPage, 10), true); }}/>
                 </div>
               }
             </Container>

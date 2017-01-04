@@ -1,6 +1,8 @@
-import { fetchProducts as dataFetchProducts,
+import {
+  fetchProducts as dataFetchProducts,
   deleteProduct as dataDeleteProduct,
-  deleteProducts as dataDeleteProducts } from '../../../../actions/product';
+  deleteProducts as dataDeleteProducts
+} from '../../../../actions/product';
 
 // Action types
 // ////////////
@@ -19,6 +21,7 @@ export const SORT_COLUMN = 'PRODUCTS/SORT_COLUMN';
 export function load (query) {
   return async (dispatch, getState) => {
     try {
+      console.warn('QUERY', query);
       return await dispatch(dataFetchProducts(query));
     } catch (error) {
       dispatch({ error, type: PRODUCT_FETCH_ERROR });

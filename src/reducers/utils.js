@@ -7,7 +7,7 @@ import { FETCHING, UPDATING, ERROR, LOADED } from '../constants/statusTypes';
  * example: global users with searchString='abc' aren't the same as users of
  * a broadcaster with the same searchString.
  */
-export function serialize ({ searchString = '', page = 0, pageSize = 25, sortDirection, sortField }, uniqueKey) {
+export function serialize ({ searchString = '', page = 0, pageSize = 25, sortDirection, sortField }, uniqueKey = '') {
   let id = `uniqueKey=${uniqueKey}&page=${page}&pageSize=${pageSize}`;
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     id = id.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);

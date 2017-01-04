@@ -1,13 +1,16 @@
 import { del, get, post, postFormData } from './request';
 import { transformProduct, transformListProduct, transformProductOffering } from './transformers';
 
-export async function fetchProducts (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+export async function fetchProducts (baseUrl, authenticationToken, locale, { publishStatus, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/product/products?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url += `&searchString=${searchString}`;
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
-    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+    url += `&sortField=${sortField}&sortDirection=${sortDirection}`;
+  }
+  if (publishStatus) {
+    url += `&publishStatus=${publishStatus}`;
   }
   const { body } = await get(authenticationToken, locale, url);
   const data = [];

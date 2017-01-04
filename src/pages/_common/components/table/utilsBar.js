@@ -42,35 +42,35 @@ export default class UtilsBar extends Component {
     const { styles } = this.constructor;
     return (
       <div style={generalStyles.searchContainer}>
-        { onChangeSearchString && <SearchInput filterContent={filterContent} isLoading={isLoading} value={searchString} onChange={onChangeSearchString}/>}
+        {onChangeSearchString &&
+          <SearchInput filterContent={filterContent} isLoading={isLoading} value={searchString} onChange={onChangeSearchString}/>}
         <DisplayMode display={display} onChangeDisplay={onChangeDisplay}/>
         <div style={generalStyles.floatRight}>
           { /* if there is an topElement and menu, render dropdown */ }
-          { topElement && menu && <Dropdown
-            arrowStyle={dropdownStyles.bigArrowContainer}
-            color= 'blue'
-            customDropdown
-            elementShown={
-              <div key='topElementCreate' style={[
-                dropdownStyles.option,
-                styles.row,
-                dropdownStyles.bigOption,
-                dropdownStyles.borderLeft,
-                dropdownStyles.blue,
-                dropdownStyles.borderRightSeperator
-              ]}>
-                <div style={styles.paddingRight}>
-                  <PlusSVG color={colors.white}/>
+          {topElement && menu &&
+            <Dropdown
+              arrowStyle={dropdownStyles.bigArrowContainer}
+              color= 'blue'
+              customDropdown
+              elementShown={
+                <div key='topElementCreate' style={[
+                  dropdownStyles.option,
+                  styles.row,
+                  dropdownStyles.bigOption,
+                  dropdownStyles.borderLeft,
+                  dropdownStyles.blue,
+                  dropdownStyles.borderRightSeperator
+                ]}>
+                  <div style={styles.paddingRight}>
+                    <PlusSVG color={colors.white}/>
+                  </div>
+                  <div>{topElement}</div>
                 </div>
-                <div>
-                  {topElement}
-                </div>
-              </div>
-            }>
-            {menu}
-          </Dropdown> ||
-            /* else, render classic button */
-            textCreateButton && onClickNewEntry && <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text={textCreateButton} onClick={onClickNewEntry} />}
+              }>
+              {menu}
+            </Dropdown> ||
+              /* else, render classic button */
+              textCreateButton && onClickNewEntry && <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text={textCreateButton} onClick={onClickNewEntry} />}
         </div>
       </div>
     );
