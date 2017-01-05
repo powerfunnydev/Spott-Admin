@@ -346,6 +346,7 @@ export default (state = fromJS({
       return fetchStart(state, [ 'entities', 'media', action.episodeId ]);
     case episodeActions.EPISODE_FETCH_SUCCESS: {
       let newState = state;
+      newState = action.data.seriesEntry && fetchSuccess(state, [ 'entities', 'listMedia', action.data.seriesEntry.id ], action.data.seriesEntry) || newState;
       newState = action.data.broadcasters && mergeListOfEntities(newState, [ 'entities', 'broadcasters' ], action.data.broadcasters) || newState;
       newState = action.data.contentProducers && mergeListOfEntities(newState, [ 'entities', 'contentProducers' ], action.data.contentProducers) || newState;
       return fetchSuccess(newState, [ 'entities', 'media', action.episodeId ], action.data);
