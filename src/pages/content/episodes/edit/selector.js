@@ -1,22 +1,25 @@
 import { createStructuredSelector } from 'reselect';
 import { currentModalSelector } from '../../../../selectors/global';
 import {
-  listCharactersEntitiesSelector,
-  mediaEntitiesSelector,
+  broadcastersEntitiesSelector,
+  contentProducersEntitiesSelector,
+  createEntitiesByRelationSelector,
   createEntityByIdSelector,
-  listMediaEntitiesSelector,
   createEntityIdsByRelationSelector,
+  listBrandsEntitiesSelector,
+  listCharactersEntitiesSelector,
+  listMediaEntitiesSelector,
   listMediumCategoriesEntitiesSelector,
+  mediaEntitiesSelector,
+  mediumHasBrandsRelationsSelector,
+  mediumHasCharactersRelationsSelector,
+  searchStringHasBrandsRelationsSelector,
   searchStringHasBroadcastersRelationsSelector,
   searchStringHasCharactersRelationsSelector,
   searchStringHasContentProducersRelationsSelector,
-  searchStringHasSeriesEntriesRelationsSelector,
   searchStringHasMediumCategoriesRelationsSelector,
-  broadcastersEntitiesSelector,
-  contentProducersEntitiesSelector,
-  seriesEntryHasSeasonsRelationsSelector,
-  mediumHasCharactersRelationsSelector,
-  createEntitiesByRelationSelector
+  searchStringHasSeriesEntriesRelationsSelector,
+  seriesEntryHasSeasonsRelationsSelector
 } from '../../../../selectors/data';
 import { createFormValueSelector } from '../../../../utils';
 
@@ -37,6 +40,7 @@ const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 const currentEpisodeIdSelector = (state, props) => { return props.params.episodeId; };
 const currentEpisodeSelector = createEntityByIdSelector(mediaEntitiesSelector, currentEpisodeIdSelector);
 
+const currentBrandsSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentBrandSearchString' ]);
 const currentCharactersSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentCharacterSearchString' ]);
 const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentSeriesEntrySearchString' ]);
 const currentBroadcastersSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentBroadcastersSearchString' ]);
@@ -44,6 +48,7 @@ const currentContentProducersSearchStringSelector = (state) => state.getIn([ 'co
 const currentMediumCategoriesSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentMediumCategoriesSearchString' ]);
 const popUpMessageSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'popUpMessage' ]);
 
+const searchedBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentBrandsSearchStringSelector);
 const searchedCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCharactersSearchStringSelector);
 const searchedSeriesEntryIdsSelector = createEntityIdsByRelationSelector(searchStringHasSeriesEntriesRelationsSelector, currentSeriesEntriesSearchStringSelector);
 const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(seriesEntryHasSeasonsRelationsSelector, currentSeriesEntryIdSelector);
@@ -51,11 +56,13 @@ const searchedBroadcasterIdsSelector = createEntityIdsByRelationSelector(searchS
 const searchedContentProducerIdsSelector = createEntityIdsByRelationSelector(searchStringHasContentProducersRelationsSelector, currentContentProducersSearchStringSelector);
 const searchedMediumCategoryIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediumCategoriesRelationsSelector, currentMediumCategoriesSearchStringSelector);
 
+const episodeBrandsSelector = createEntitiesByRelationSelector(mediumHasBrandsRelationsSelector, currentEpisodeIdSelector, listBrandsEntitiesSelector);
 const episodeCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersRelationsSelector, currentEpisodeIdSelector, listCharactersEntitiesSelector);
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
   addLanguageHasTitle: addLanguageHasTitleSelector,
+  brandsById: listBrandsEntitiesSelector,
   broadcastersById: broadcastersEntitiesSelector,
   charactersById: listCharactersEntitiesSelector,
   contentProducersById: contentProducersEntitiesSelector,
@@ -64,6 +71,7 @@ export default createStructuredSelector({
   currentSeasonId: currentSeasonIdSelector,
   currentSeriesEntryId: currentSeriesEntryIdSelector,
   defaultLocale: currentDefaultLocaleSelector,
+  episodeBrands: episodeBrandsSelector,
   episodeCharacters: episodeCharactersSelector,
   errors: formErrorsSelector,
   formValues: valuesSelector,
@@ -71,6 +79,7 @@ export default createStructuredSelector({
   mediumCategoriesById: listMediumCategoriesEntitiesSelector,
   popUpMessage: popUpMessageSelector,
   searchedBroadcasterIds: searchedBroadcasterIdsSelector,
+  searchedBrandIds: searchedBrandIdsSelector,
   searchedCharacterIds: searchedCharacterIdsSelector,
   searchedContentProducerIds: searchedContentProducerIdsSelector,
   searchedMediumCategoryIds: searchedMediumCategoryIdsSelector,

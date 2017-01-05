@@ -91,6 +91,24 @@ export async function searchBrands (baseUrl, authenticationToken, locale, { sear
   return data.map(transformListBrand);
 }
 
+export async function searchMediumBrands (baseUrl, authenticationToken, locale, { mediumId, searchString = '', page = 0, pageSize = 100 }) {
+  let url = `${baseUrl}/v004/media/media/${mediumId}/brandDeals?page=${page}&pageSize=${pageSize}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${searchString}`);
+  }
+  const { body: { data } } = await get(authenticationToken, locale, url);
+  return data.map(transformListBrand);
+}
+
+export async function persistMediumBrand (baseUrl, authenticationToken, locale, { brandId, mediumId }) {
+  const { body } = await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/brandDeals/${brandId}`, {});
+  return transformBrand(body);
+}
+
+export async function deleteMediumBrand (baseUrl, authenticationToken, locale, { brandId, mediumId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/brandDeals/${brandId}`, {});
+}
+
 export async function uploadProfileImage (baseUrl, authenticationToken, locale, { brandId, image, locale: imageLocale, callback }) {
   const formData = new FormData();
   formData.append('file', image);

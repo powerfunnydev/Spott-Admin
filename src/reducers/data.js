@@ -100,6 +100,7 @@ export default (state = fromJS({
     searchStringHasUsers: {},
 
     characterHasFaceImages: {},
+    mediumHasBrands: {},
     mediumHasCharacters: {},
     mediumHasTvGuideEntries: {},
     personHasFaceImages: {},
@@ -162,6 +163,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'listBrands', 'searchStringHasBrands', action.searchString, action.data);
     case brandActions.BRAND_SEARCH_ERROR:
       return searchError(state, 'searchStringHasBrands', action.searchString, action.error);
+
+    case brandActions.MEDIUM_BRAND_SEARCH_START:
+      return searchStart(state, 'mediumHasBrands', action.mediumId);
+    case brandActions.MEDIUM_BRAND_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listBrands', 'mediumHasBrands', action.mediumId, action.data);
+    case brandActions.MEDIUM_BRAND_SEARCH_ERROR:
+      return searchError(state, 'mediumHasBrands', action.mediumId, action.error);
 
     // Broadcaster Channels
     // ////////////////////
