@@ -65,7 +65,7 @@ class VerticalSideMenu extends Component {
   }
 
   isMedia () {
-    return this.checkUrl([ '/content/series', '/content/seasons', '/content/episodes', '/content/movies', '/content/commercials' ]);
+    return this.checkUrl([ '/content/media', '/content/series', '/content/seasons', '/content/episodes', '/content/movies', '/content/commercials' ]);
   }
 
   isPeople () {
@@ -200,12 +200,15 @@ class VerticalSideMenu extends Component {
             <div style={styles.category}>
               <div style={styles.categoryTitle}>CONTENT</div>
             </div>
-            <Link key='media' style={mergeStyles([ styles.section, styles.sectionTitle, this.isMedia() && styles.sectionActive ])} to='/content/series'>
+            <Link key='media' style={mergeStyles([ styles.section, styles.sectionTitle, this.isMedia() && styles.sectionActive ])} to='/content/media'>
               MEDIA
             </Link>
               { // Show dropdown
                 this.isMedia() &&
                   <div key='mediaDropdown' style={styles.dropdownOpen}>
+                    <Link activeStyle={styles.subSectionActive} key='media' style={mergeStyles([ styles.section, styles.subSectionTitle, styles.subSection ])} to='/content/media'>
+                      All media
+                    </Link>
                     <Link activeStyle={styles.subSectionActive} key='series' style={mergeStyles([ styles.section, styles.subSectionTitle, styles.subSection ])} to='/content/series'>
                       Series
                     </Link>

@@ -36,7 +36,7 @@ export function fetchLastEpisode (seasonId) {
   return dataFetchLastEpisode({ seasonId });
 }
 
-export function submit ({ broadcasters, contentProducers, defaultLocale, ...restProps }) {
+export function submit ({ broadcasters, contentProducers, defaultLocale, hasTitle, title, ...restProps }) {
   return async (dispatch, getState) => {
     try {
       // contains defaultLocale (from previous), locales, number (from previous) , basedOnDefaultLocale, hasTitle
@@ -48,7 +48,8 @@ export function submit ({ broadcasters, contentProducers, defaultLocale, ...rest
         defaultLocale,
         locales: [ defaultLocale ],
         basedOnDefaultLocale: { [defaultLocale]: false },
-        hasTitle: { [defaultLocale]: false }
+        hasTitle: { [defaultLocale]: hasTitle },
+        title: { [defaultLocale]: title }
       };
       return await dispatch(persistEpisode(seriesEntry));
     } catch (error) {
