@@ -46,6 +46,7 @@ import MediaSinglePage from './pages/media/singlePage';
 import MediaHome from './pages/media/home';
 import MediaUpload from './pages/media/upload';
 import MediaWelcome from './pages/media/welcome';
+import MediaList from './pages/content/media/list';
 import MoviesCreate from './pages/content/movies/create';
 import MoviesEdit from './pages/content/movies/edit';
 import MoviesList from './pages/content/movies/list';
@@ -210,6 +211,12 @@ function getRoutes ({ dispatch, getState }) {
         </Route>
         <Route component={MoviesList} path='movies'>
           <Route component={MoviesCreate} path='create'/>
+        </Route>
+        <Route component={MediaList} path='media'>
+          <Route component={SeriesCreate} path='create/seriesEntry'/>
+          <Route component={SeasonCreate} path='create/season'/>
+          <Route component={EpisodeCreate} path='create/episode'/>
+          <Route component={CommercialsCreate} path='create/commercial'/>
         </Route>
         <Route path='movies'>
           <Route component={MoviesRead} path='read/:movieId'>

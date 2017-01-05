@@ -3,7 +3,7 @@ import {
   serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
   serializeFilterHasUsers, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
-  fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasProducts
+  fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts
 } from './utils';
 
 import * as availabilityActions from '../actions/availability';
@@ -73,6 +73,7 @@ export default (state = fromJS({
     filterHasCommercials: {},
     filterHasContentProducers: {},
     filterHasEpisodes: {},
+    filterHasMedia: {},
     filterHasMovies: {},
     filterHasPersons: {},
     filterHasShops: {},
@@ -374,6 +375,13 @@ export default (state = fromJS({
     case mediaActions.TV_GUIDE_ENTRIES_FETCH_ERROR:
       return searchError(state, 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.error);
 
+    case mediaActions.MEDIA_FETCH_START:
+      return searchStart(state, 'filterHasMedia', serializeFilterHasMedia(action));
+    case mediaActions.MEDIA_FETCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'filterHasMedia', serializeFilterHasMedia(action), action.data.data);
+    case mediaActions.MEDIA_FETCH_ERROR:
+      return searchError(state, 'filterHasMedia', serializeFilterHasMedia(action), action.error);
+
     // Medium categories
     // /////////////////
 
@@ -419,7 +427,7 @@ export default (state = fromJS({
       return fetchSuccess(state, [ 'entities', 'persons', action.personId ], action.data);
 
     case personActions.PERSONS_FETCH_START:
-      return searchStart(state, 'filterHasCharacters', serializeFilterHasPersons(action));
+      return searchStart(state, 'filterHasPersons', serializeFilterHasPersons(action));
     case personActions.PERSONS_FETCH_SUCCESS:
       return searchSuccess(state, 'listPersons', 'filterHasPersons', serializeFilterHasPersons(action), action.data.data);
     case personActions.PERSONS_FETCH_ERROR:
