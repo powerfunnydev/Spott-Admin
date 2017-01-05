@@ -269,7 +269,14 @@ export default class Products extends Component {
                             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                             <CheckBoxCel checked={isSelected.get(product.get('id'))} onChange={selectCheckbox.bind(this, product.get('id'))}/>
                             <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/products/read/${product.get('id')}`); }}>
-                              {product.get('logo') && <div style={styles.logoContainer}><img src={`${product.getIn([ 'logo', 'url' ])}?height=70&width=70`} style={styles.logo} /></div> || <div style={styles.logoPlaceholder}/>} {product.get('shortName')}
+                              {product.get('logo') && <div style={styles.logoContainer}>
+                                <ToolTip
+                                  overlay={<img src={`${product.getIn([ 'logo', 'url' ])}?height=150&width=150`}/>}
+                                  placement='top'
+                                  prefixCls='no-arrow'>
+                                  <img src={`${product.getIn([ 'logo', 'url' ])}?height=150&width=150`} style={styles.logo} />
+                                </ToolTip>
+                              </div> || <div style={styles.logoPlaceholder}/>} {product.get('shortName')}
                             </CustomCel>
                             <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/brands/read/${product.getIn([ 'brand', 'id' ])}`); }}>
                               {product.getIn([ 'brand', 'name' ])}
@@ -279,7 +286,7 @@ export default class Products extends Component {
                                 <div style={[ styles.row, styles.spacing ]}>
                                   <div style={styles.dollarSvg}><DollarSVG/></div>
                                   <div style={styles.affiliatePaddingRight}>{numberOfAffiliates}</div>
-                                  <div style={styles.dollarSvg}><DollarSVG color='#aab5b8'/></div>
+                                  <div style={styles.dollarSvg}><DollarSVG color={colors.lightGray3}/></div>
                                   <div>{numberOfNonAffiliates}</div>
                                 </div>
                                 <ToolTip
@@ -288,7 +295,7 @@ export default class Products extends Component {
                                     {offerings}
                                   </div>}
                                   placement='top'>
-                                  <div style={styles.questionSvg}><QuestionSVG color='#aab5b8' onHoverColor='#6d8791'/></div>
+                                  <div style={styles.questionSvg}><QuestionSVG color={colors.lightGray3} onHoverColor={colors.darkGray2}/></div>
                                 </ToolTip>
                               </div>
                             </CustomCel>

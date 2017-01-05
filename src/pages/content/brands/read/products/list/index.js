@@ -233,7 +233,14 @@ export default class Products extends Component {
                             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                             <CheckBoxCel checked={isSelected.get(product.get('id'))} onChange={selectCheckbox.bind(this, product.get('id'))}/>
                             <CustomCel style={{ flex: 1 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/products/read/${product.get('id')}`); }}>
-                              {product.get('logo') && <div style={styles.logoContainer}><img src={`${product.getIn([ 'logo', 'url' ])}?height=70&width=70`} style={styles.logo} /></div> || <div style={styles.logoPlaceholder}/>} {product.get('shortName')}
+                              {product.get('logo') && <div style={styles.logoContainer}>
+                                <ToolTip
+                                  overlay={<img src={`${product.getIn([ 'logo', 'url' ])}?height=150&width=150`}/>}
+                                  placement='top'
+                                  prefixCls='no-arrow'>
+                                  <img src={`${product.getIn([ 'logo', 'url' ])}?height=150&width=150`} style={styles.logo} />
+                                </ToolTip>
+                              </div> || <div style={styles.logoPlaceholder}/>} {product.get('shortName')}
                             </CustomCel>
                             <CustomCel style={{ width: 150 }}>
                               <div style={styles.row}>
