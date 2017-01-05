@@ -18,7 +18,7 @@ import { ADMIN, CONTENT_MANAGER } from '../constants/userRoles';
  * @throws UnexpectedError
  */
 export async function getConfiguration () {
-  const { body: { environment, urls } } = await get(null, null, '/config.json');
+  const { body: { environment, urls } } = await get(null, null, '/config/config.json');
   const { body: version } = await get(null, null, '/version.json');
   const { body: { version: apiVersion } } = await get(null, null, `${urls.api}/v003/system/info`);
   return {
