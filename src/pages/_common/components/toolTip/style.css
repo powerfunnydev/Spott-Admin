@@ -1,3 +1,4 @@
+.no-arrow,
 .rc-tooltip {
   position: absolute;
   z-index: 1070;
@@ -5,14 +6,20 @@
   visibility: visible;
   padding: 1px;
 }
+.no-arrow-hidden,
 .rc-tooltip-hidden {
   display: none;
 }
+.no-arrow-inner,
 .rc-tooltip-inner {
   background-color: #ffffff;
   border-radius: 2px;
   border: 1px solid #ced6da;
+  display: inline-flex;
 }
+
+.no-arrow-arrow,
+.no-arrow-arrow-inner,
 .rc-tooltip-arrow,
 .rc-tooltip-arrow-inner {
   position: absolute;
@@ -21,6 +28,7 @@
   border-color: transparent;
   border-style: solid;
 }
+
 .rc-tooltip-placement-top .rc-tooltip-arrow,
 .rc-tooltip-placement-topLeft .rc-tooltip-arrow,
 .rc-tooltip-placement-topRight .rc-tooltip-arrow {
@@ -29,6 +37,7 @@
   border-width: 6px 6px 0 6px;
   border-top-color: #ced6da;
 }
+
 .rc-tooltip-placement-top .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-topLeft .rc-tooltip-arrow-inner,
 .rc-tooltip-placement-topRight .rc-tooltip-arrow-inner {
@@ -123,6 +132,8 @@
 .rc-tooltip-placement-bottomRight .rc-tooltip-arrow {
   right: 15%;
 }
+.no-arrow.no-arrow-zoom-enter,
+.no-arrow.no-arrow-zoom-leave,
 .rc-tooltip.rc-tooltip-zoom-enter,
 .rc-tooltip.rc-tooltip-zoom-leave {
   display: block;

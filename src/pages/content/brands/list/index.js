@@ -14,6 +14,7 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
 import { SideMenu } from '../../../app/sideMenu';
+import ToolTip from '../../../_common/components/toolTip';
 
 const numberOfRows = 25;
 
@@ -161,7 +162,14 @@ export default class Brands extends Component {
                             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                             <CheckBoxCel checked={isSelected.get(brand.get('id'))} onChange={selectCheckbox.bind(this, brand.get('id'))}/>
                             <CustomCel style={{ flex: 2, alignItems: 'center' }} onClick={() => { this.props.routerPushWithReturnTo(`/content/brands/read/${brand.get('id')}`); }}>
-                              {brand.get('logo') && <div style={styles.logoContainer}><img src={`${brand.getIn([ 'logo', 'url' ])}?height=70&width=70`} style={styles.logo} /></div> || <div style={styles.logoPlaceholder}/>} {brand.get('name')}
+                              {brand.get('logo') && <div style={styles.logoContainer}>
+                              <ToolTip
+                                overlay={<img src={`${brand.getIn([ 'logo', 'url' ])}?height=150&width=150`}/>}
+                                placement='top'
+                                prefixCls='no-arrow'>
+                                <img src={`${brand.getIn([ 'logo', 'url' ])}?height=150&width=150`} style={styles.logo} />
+                              </ToolTip>
+                              </div> || <div style={styles.logoPlaceholder}/>} {brand.get('name')}
                             </CustomCel>
                             <CustomCel style={{ flex: 2 }}>
                                 {brand.get('lastUpdatedBy')}
