@@ -363,5 +363,8 @@ export const filterStyles = {
     minWidth: '120px',
     display: 'flex',
     alignItems: 'center'
+  },
+  notFirstRow: {
+    paddingTop: '10px'
   }
 };

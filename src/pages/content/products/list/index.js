@@ -15,6 +15,7 @@ import { confirmation } from '../../../_common/askConfirmation';
 import { SideMenu } from '../../../app/sideMenu';
 import publishStatusTypes from '../../../../constants/publishStatusTypes';
 import SelectionDropdown from '../../../_common/components/selectionDropdown';
+import Checkbox from '../../../_common/inputs/checkbox';
 import ToolTip from '../../../_common/components/toolTip';
 import QuestionSVG from '../../../_common/images/question';
 import DollarSVG from '../../../_common/images/dollar';
@@ -24,7 +25,7 @@ import selector from './selector';
 
 const numberOfRows = 25;
 export const prefix = 'products';
-export const filterArray = [ 'publishStatus' ];
+export const filterArray = [ 'publishStatus', 'used' ];
 
 @tableDecorator(prefix)
 @connect(selector, (dispatch) => ({
@@ -181,8 +182,6 @@ export default class Products extends Component {
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeFilter, onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     const { styles } = this.constructor;
-
-    console.warn('products', this.productsFilterKey, products.toJS());
     return (
       <SideMenu>
         <Root>
@@ -205,6 +204,13 @@ export default class Products extends Component {
                         options={Object.keys(publishStatusTypes)}
                         placeholder='Publish Status'
                         style={filterStyles.fullWidth}/>
+                    </div>
+                    <div style={[ filterStyles.row, filterStyles.notFirstRow ]}>
+                      <div style={filterStyles.title}>Used</div>
+                      <Field
+                        component={Checkbox}
+                        first
+                        name='used'/>
                     </div>
                   </FilterContent>
                 }

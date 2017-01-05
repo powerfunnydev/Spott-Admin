@@ -161,7 +161,7 @@ export default class Dropdown extends Component {
       justifyContent: 'center'
     },
     options: {
-      zIndex: 10,
+      zIndex: 50,
       position: 'absolute',
       left: 0,
       top: 30,

@@ -12,7 +12,7 @@ export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover 
   };
 }
 
-export function transformListProduct ({ uuid, publishStatus, brand, shortName, fullName, auditInfo, image: logo }) {
+export function transformListProduct ({ uuid, used, publishStatus, brand, shortName, fullName, auditInfo, image: logo }) {
   return {
     createdOn: auditInfo && auditInfo.createdOn,
     id: uuid,
