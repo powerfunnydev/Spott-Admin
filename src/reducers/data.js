@@ -102,6 +102,7 @@ export default (state = fromJS({
     characterHasFaceImages: {},
     mediumHasBrands: {},
     mediumHasCharacters: {},
+    mediumHasShops: {},
     mediumHasTvGuideEntries: {},
     personHasFaceImages: {},
     productHasProductOfferings: {},
@@ -536,6 +537,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'listShops', 'searchStringHasShops', action.searchString, action.data);
     case shopActions.SHOP_SEARCH_ERROR:
       return searchError(state, 'searchStringHasShops', action.searchString, action.error);
+
+    case shopActions.MEDIUM_SHOP_SEARCH_START:
+      return searchStart(state, 'mediumHasShops', action.mediumId);
+    case shopActions.MEDIUM_SHOP_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listShops', 'mediumHasShops', action.mediumId, action.data);
+    case shopActions.MEDIUM_SHOP_SEARCH_ERROR:
+      return searchError(state, 'mediumHasShops', action.mediumId, action.error);
 
     // Seasons
     // /////////////////

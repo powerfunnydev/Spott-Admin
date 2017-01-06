@@ -5,6 +5,7 @@ import { searchSeasons as dataSearchSeasons, searchSeriesEntries as dataSearchSe
 import { searchBroadcasters as dataSearchBroadcasters } from '../../../../actions/broadcaster';
 import { searchContentProducers as dataSearchContentProducers } from '../../../../actions/contentProducer';
 import { searchBrands as dataSearchBrands } from '../../../../actions/brand';
+import { searchShops as dataSearchShops } from '../../../../actions/shop';
 import { searchCharacters as dataSearchCharacters } from '../../../../actions/character';
 import { searchMediumCategories as dataSearchMediumCategories } from '../../../../actions/mediumCategory';
 
@@ -16,6 +17,9 @@ export const BRANDS_SEARCH_ERROR = 'EPISODE_EDIT/BRANDS_SEARCH_ERROR';
 
 export const CHARACTERS_SEARCH_START = 'EPISODE_EDIT/CHARACTERS_SEARCH_START';
 export const CHARACTERS_SEARCH_ERROR = 'EPISODE_EDIT/CHARACTERS_SEARCH_ERROR';
+
+export const SHOPS_SEARCH_START = 'EPISODE_EDIT/SHOPS_SEARCH_START';
+export const SHOPS_SEARCH_ERROR = 'EPISODE_EDIT/SHOPS_SEARCH_ERROR';
 
 export const MEDIUM_CHARACTERS_SEARCH_ERROR = 'EPISODE_EDIT/MEDIUM_CHARACTERS_SEARCH_ERROR';
 
@@ -114,6 +118,18 @@ export function searchBroadcasters (searchString) {
   };
 }
 
+/* Search on all brands. */
+export function searchBrands (searchString) {
+  return async (dispatch) => {
+    try {
+      await dispatch({ type: BRANDS_SEARCH_START, searchString });
+      return await dispatch(dataSearchBrands({ searchString }));
+    } catch (error) {
+      dispatch({ error, type: BRANDS_SEARCH_ERROR });
+    }
+  };
+}
+
 /* Search on all characters. */
 export function searchCharacters (searchString) {
   return async (dispatch) => {
@@ -126,14 +142,14 @@ export function searchCharacters (searchString) {
   };
 }
 
-/* Search on all brands. */
-export function searchBrands (searchString) {
+/* Search on all shops. */
+export function searchShops (searchString) {
   return async (dispatch) => {
     try {
-      await dispatch({ type: BRANDS_SEARCH_START, searchString });
-      return await dispatch(dataSearchBrands({ searchString }));
+      await dispatch({ type: SHOPS_SEARCH_START, searchString });
+      return await dispatch(dataSearchShops({ searchString }));
     } catch (error) {
-      dispatch({ error, type: BRANDS_SEARCH_ERROR });
+      dispatch({ error, type: SHOPS_SEARCH_ERROR });
     }
   };
 }

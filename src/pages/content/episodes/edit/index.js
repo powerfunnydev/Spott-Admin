@@ -24,6 +24,7 @@ import * as actions from './actions';
 import selector from './selector';
 import Brands from '../../_helpers/_brands/list';
 import Characters from '../../_helpers/_characters/list';
+import Shops from '../../_helpers/_shops/list';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import { fromJS } from 'immutable';
@@ -58,6 +59,7 @@ function validate (values, { t }) {
   searchMediumCategories: bindActionCreators(actions.searchMediumCategories, dispatch),
   searchSeasons: bindActionCreators(actions.searchSeasons, dispatch),
   searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch),
+  searchShops: bindActionCreators(actions.searchShops, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadPosterImage: bindActionCreators(actions.uploadPosterImage, dispatch),
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch)
@@ -93,6 +95,7 @@ export default class EditEpisode extends Component {
     dispatch: PropTypes.func.isRequired,
     episodeBrands: ImmutablePropTypes.map.isRequired,
     episodeCharacters: ImmutablePropTypes.map.isRequired,
+    episodeShops: ImmutablePropTypes.map.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
     formValues: ImmutablePropTypes.map,
@@ -113,6 +116,7 @@ export default class EditEpisode extends Component {
     searchMediumCategories: PropTypes.func.isRequired,
     searchSeasons: PropTypes.func.isRequired,
     searchSeriesEntries: PropTypes.func.isRequired,
+    searchShops: PropTypes.func.isRequired,
     searchedBrandIds: ImmutablePropTypes.map.isRequired,
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
     searchedCharacterIds: ImmutablePropTypes.map.isRequired,
@@ -120,8 +124,10 @@ export default class EditEpisode extends Component {
     searchedMediumCategoryIds: ImmutablePropTypes.map.isRequired,
     searchedSeasonIds: ImmutablePropTypes.map.isRequired,
     searchedSeriesEntryIds: ImmutablePropTypes.map.isRequired,
+    searchedShopIds: ImmutablePropTypes.map.isRequired,
     seasonsById: ImmutablePropTypes.map.isRequired,
     seriesEntriesById: ImmutablePropTypes.map.isRequired,
+    shopsById: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
@@ -272,12 +278,12 @@ export default class EditEpisode extends Component {
       charactersById, closeModal, contentProducersById, currentEpisode,
       currentModal, currentSeasonId, currentSeriesEntryId, defaultLocale,
       deletePosterImage, deleteProfileImage, episodeBrands, episodeCharacters,
-      errors, handleSubmit, hasTitle, location, location: { query: { tab } },
+      episodeShops, errors, handleSubmit, hasTitle, location, location: { query: { tab } },
       mediumCategoriesById, searchBrands, searchBroadcasters, searchCharacters,
-      searchContentProducers, searchedBrandIds, searchedBroadcasterIds,
+      searchContentProducers, searchShops, searchedBrandIds, searchedBroadcasterIds,
       searchedCharacterIds, searchedContentProducerIds, searchedMediumCategoryIds,
-      searchedSeasonIds, searchedSeriesEntryIds, searchMediumCategories,
-      searchSeasons, searchSeriesEntries, seasonsById, seriesEntriesById,
+      searchedSeasonIds, searchedSeriesEntryIds, searchedShopIds, searchMediumCategories,
+      searchSeasons, searchSeriesEntries, seasonsById, seriesEntriesById, shopsById,
       supportedLocales
     } = this.props;
 
@@ -458,15 +464,21 @@ export default class EditEpisode extends Component {
                    mediumCharacters={episodeCharacters}
                    mediumId={this.props.params.episodeId}
                    searchCharacters={searchCharacters}
-                   searchedCharacterIds={searchedCharacterIds} />
+                   searchedCharacterIds={searchedCharacterIds}/>
              </Tab>
              <Tab title='Helpers'>
-                <Brands
-                  brandsById={brandsById}
-                  mediumBrands={episodeBrands}
-                  mediumId={this.props.params.episodeId}
-                  searchBrands={searchBrands}
-                  searchedBrandIds={searchedBrandIds} />
+               {/* <Shops
+                 mediumId={this.props.params.episodeId}
+                 mediumShops={episodeShops}
+                 searchShops={searchShops}
+                 searchedShopIds={searchedShopIds}
+                 shopsById={shopsById}/> */}
+               <Brands
+                 brandsById={brandsById}
+                 mediumBrands={episodeBrands}
+                 mediumId={this.props.params.episodeId}
+                 searchBrands={searchBrands}
+                 searchedBrandIds={searchedBrandIds}/>
               </Tab>
               <Tab title='Interactive video'>
                 <Section>

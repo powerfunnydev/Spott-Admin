@@ -70,6 +70,27 @@ export async function searchShops (baseUrl, authenticationToken, locale, { searc
   return data.map(transformListShop);
 }
 
+// TODO: API IS NOT YET WRITTEN, UPDATE URL
+export async function searchMediumShops (baseUrl, authenticationToken, locale, { mediumId, searchString = '', page = 0, pageSize = 100 }) {
+  let url = `${baseUrl}/v004/media/media/${mediumId}/shops?page=${page}&pageSize=${pageSize}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${searchString}`);
+  }
+  const { body: { data } } = await get(authenticationToken, locale, url);
+  return data.map(transformListShop);
+}
+
+// TODO: API IS NOT YET WRITTEN, UPDATE URL
+export async function persistMediumShop (baseUrl, authenticationToken, locale, { mediumId, shopId }) {
+  const { body } = await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/shops/${shopId}`, {});
+  return transformShop(body);
+}
+
+// TODO: API IS NOT YET WRITTEN, UPDATE URL
+export async function deleteMediumShop (baseUrl, authenticationToken, locale, { mediumId, shopId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/shops/${shopId}`, {});
+}
+
 export async function uploadLogoImage (baseUrl, authenticationToken, locale, { shopId, image, locale: imageLocale, callback }) {
   const formData = new FormData();
   formData.append('file', image);

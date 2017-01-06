@@ -10,6 +10,8 @@ export default (state = Map({}), action) => {
       return state.set('currentBrandSearchString', action.searchString);
     case actions.CHARACTERS_SEARCH_START: // Autocompletion field of characters
       return state.set('currentCharacterSearchString', action.searchString);
+    case actions.SHOPS_SEARCH_START: // Autocompletion field of shops
+      return state.set('currentShopSearchString', action.searchString);
     case actions.CONTENT_PRODUCERS_SEARCH_START: // Autocompletion field of content producers
       return state.set('currentContentProducersSearchString', action.searchString);
     case actions.SERIES_ENTRIES_SEARCH_START:
