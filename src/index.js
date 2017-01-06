@@ -77,6 +77,7 @@ import SeriesList from './pages/content/series/list';
 import SeriesRead from './pages/content/series/read';
 import SeriesCreate from './pages/content/series/create';
 import SeriesEdit from './pages/content/series/edit';
+import SettingsCategoriesEdit from './pages/settings/categories/edit';
 import TvGuideCreateEntry from './pages/tvGuide/create';
 import TvGuideEditEntry from './pages/tvGuide/edit';
 import TvGuideList from './pages/tvGuide/list';
@@ -349,6 +350,9 @@ function getRoutes ({ dispatch, getState }) {
         </Route>
       </Route>
 
+      <Route path='settings'>
+        <Route component={SettingsCategoriesEdit} path='categories'/>
+      </Route>
       {/* Users */}
       <Route component={UsersList} path='users' onEnter={requireOneRole([ ADMIN ])}>
         <Route component={UsersCreate} path='create'/>

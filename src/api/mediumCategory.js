@@ -1,7 +1,7 @@
-import { get } from './request';
-import { transformListMediumCategory } from './transformers';
+import { get, post, del } from './request';
+import { transformListMediumCategory, transformMediumCategory } from './transformers';
 
-export async function fetchMediumCategories (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+export async function fetchMediumCategories (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 100, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/mediumCategories?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${searchString}`);
@@ -16,6 +16,32 @@ export async function fetchMediumCategories (baseUrl, authenticationToken, local
   return body;
 }
 
+export async function fetchMediumCategory (baseUrl, authenticationToken, locale, { mediumCategoryId }) {
+  const url = `${baseUrl}/v004/media/mediumCategories/${mediumCategoryId}`;
+  const { body } = await get(authenticationToken, locale, url);
+  return transformMediumCategory(body);
+}
+
+export async function persistMediumCategory (baseUrl, authenticationToken, locale, {
+  mediumCategoryId, defaultLocale, locales, name }) {
+  let mediumCategory = {};
+  if (mediumCategoryId) {
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/mediumCategories/${mediumCategoryId}`);
+    mediumCategory = body;
+  }
+  mediumCategory.defaultLocale = defaultLocale;
+  mediumCategory.localeData = [];
+  locales.forEach((locale) => {
+    const localeData = {};
+    localeData.name = name && name[locale];
+    localeData.locale = locale;
+    mediumCategory.localeData.push(localeData);
+  });
+  const url = `${baseUrl}/v004/media/mediumCategories`;
+  const result = await post(authenticationToken, locale, url, mediumCategory);
+  return transformMediumCategory(result.body);
+}
+
 // Used for autocompletion.
 export async function searchMediumCategories (baseUrl, authenticationToken, locale, { searchString = '' }) {
   let searchUrl = `${baseUrl}/v004/media/mediumCategories?pageSize=100`;
@@ -24,4 +50,8 @@ export async function searchMediumCategories (baseUrl, authenticationToken, loca
   }
   const { body: { data } } = await get(authenticationToken, locale, searchUrl);
   return data.map(transformListMediumCategory);
+}
+
+export async function deleteMediumCategory (baseUrl, authenticationToken, locale, { mediumCategoryId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/mediumCategories/${mediumCategoryId}`);
 }

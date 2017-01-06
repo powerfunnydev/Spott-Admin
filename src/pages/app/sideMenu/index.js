@@ -297,6 +297,17 @@ class VerticalSideMenu extends Component {
               </Link>
             </div>
           }
+          {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
+            <div>
+              <div style={styles.seperator}/>
+              <div style={styles.category}>
+                <div style={styles.categoryTitle}>SETTINGS</div>
+              </div>
+              <Link activeStyle={styles.sectionActive} key='categories' style={styles.section} to='/settings/categories'>
+                <div style={styles.sectionTitle}>CATEGORIES</div>
+              </Link>
+            </div>
+          }
           <div style={styles.seperator}/>
           {isAuthenticated
             ? <button key='logout' style={[ buttonStyles.base, buttonStyles.extraSmall, buttonStyles.pink, styles.noMarginLeft ]} onClick={this.onLogOutClick}>Logout</button>
