@@ -23,10 +23,10 @@ import Availabilities from '../../_availabilities/list';
 import RelatedVideo from '../../../content/_relatedVideo/read';
 import Brands from '../../_helpers/_brands/list';
 import Characters from '../../_helpers/_characters/list';
-import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 import * as actions from './actions';
 import selector from './selector';
 
@@ -265,7 +265,7 @@ export default class EditMovie extends Component {
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'Movies', url: '/content/movies' },
             { title: currentMovie.getIn([ 'title', defaultLocale ]), url: location } ]}/>
           {currentModal === MOVIE_CREATE_LANGUAGE &&

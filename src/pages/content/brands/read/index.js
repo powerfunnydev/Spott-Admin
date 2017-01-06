@@ -9,8 +9,8 @@ import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
-import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 import ProductList from './products/list';
 import { generalStyles } from '../../../_common/components/table/index';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
@@ -70,7 +70,7 @@ export default class ReadBrand extends Component {
     return (
       <SideMenu>
         <Root>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'Brands', url: '/content/brands' },
             { title: currentBrand.getIn([ 'name', defaultLocale ]), url: location } ]}/>
           <Container>

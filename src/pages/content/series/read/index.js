@@ -8,7 +8,6 @@ import selector from './selector';
 import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
-import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import Line from '../../../_common/components/line';
 import SeriesEntrySeasonsList from './seasons';
 import SeriesEntryEpisodesList from './episodes';
@@ -16,6 +15,7 @@ import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
 import TvGuideList from '../../_mediumTvGuide';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 
 /* eslint-disable no-alert */
 
@@ -86,7 +86,7 @@ export default class ReadSeriesEntry extends Component {
     return (
       <SideMenu>
         <Root>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'Series', url: '/content/series' },
             { title: currentSeriesEntry.getIn([ 'title', defaultLocale ]), url: location.pathname }
           ]}/>

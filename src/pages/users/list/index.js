@@ -11,6 +11,7 @@ import * as actions from './actions';
 import selector from './selector';
 import { slowdown } from '../../../utils';
 import { SideMenu } from '../../app/sideMenu';
+import Header from '../../app/multiFunctionalHeader';
 
 const numberOfRows = 25;
 
@@ -98,6 +99,7 @@ export default class Users extends Component {
     return (
       <SideMenu location={location}>
         <Root>
+          <Header hierarchy={[ { title: 'Users', url: '/users' } ]}/>
           <div style={generalStyles.backgroundBar}>
             <Container >
               <UtilsBar
