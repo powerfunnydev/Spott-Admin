@@ -22,12 +22,12 @@ function transformDetailedProduct (product) {
   const brand = { ...product.brand, ...product.brandInfo };
   // Images are optional, take the first image url.
   // brandName is optional.
-  const { image, shortName, uuid: id } = product;
+  const { image, uuid: id } = product;
   if (product.localeData) {
     const { localeData: [ { images, shortName } ] } = product;
     return { brandId: brand.uuid, brandName: brand.name, id, imageUrl: images && images.length > 0 ? images[0].url : null, shortName };
   }
-  return { brandId: brand.uuid, brandName: brand.name, id, imageUrl: image && image.url, shortName };
+  return { brandId: brand.uuid, brandName: brand.name, id, imageUrl: image && image.url, shortName: product.shortName };
 }
 
 function transformSuggestedProducts (suggestedProducts) {

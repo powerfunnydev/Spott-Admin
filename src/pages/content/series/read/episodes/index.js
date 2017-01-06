@@ -15,7 +15,7 @@ import { slowdown } from '../../../../../utils';
 import { confirmation } from '../../../../_common/askConfirmation';
 import SelectionDropdown from '../../../../_common/components/selectionDropdown';
 import { FilterContent } from '../../../../_common/components/filterDropdown';
-import { colors, filterStyles, makeTextStyle, fontWeights } from '../../../../_common/styles';
+import { filterStyles } from '../../../../_common/styles';
 
 import publishStatusTypes from '../../../../../constants/publishStatusTypes';
 

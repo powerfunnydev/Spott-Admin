@@ -1,5 +1,5 @@
 import { currentVideoIdSelector } from '../selectors/common';
-import { characterAppearancesSelector, currentCharacterIdSelector, currentProductIdSelector, currentSceneSelector, currentSceneIdSelector, scaleSelector, hideNonKeyFramesSelector, currentSceneGroupSelector, visibleScenesSelector } from '../selectors/curator';
+import { currentCharacterIdSelector, currentProductIdSelector, currentSceneSelector, currentSceneIdSelector, scaleSelector, hideNonKeyFramesSelector, currentSceneGroupSelector, visibleScenesSelector } from '../selectors/curator';
 import { fetchVideoCharacters as dataFetchVideoCharacters, fetchCharacterAppearances as dataFetchCharacterAppearances, persistCharacterAppearance as dataPersistCharacterAppearance } from './character';
 import { fetchVideoProducts as dataFetchVideoProducts, fetchProductAppearances as dataFetchProductAppearances, persistProductAppearance as dataPersistProductAppearance } from './product';
 import { fetchSceneGroups as dataFetchSceneGroups, persistSceneGroup as dataPersistSceneGroup } from './sceneGroup';

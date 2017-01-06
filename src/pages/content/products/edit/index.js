@@ -48,7 +48,6 @@ function validate (values, { t }) {
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchBrands: bindActionCreators(actions.searchBrands, dispatch),
   searchProductCategories: bindActionCreators(actions.searchProductCategories, dispatch),
-  searchTags: bindActionCreators(actions.searchTags, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadImage: bindActionCreators(actions.uploadImage, dispatch)
 }))
@@ -85,14 +84,11 @@ export default class EditProduct extends Component {
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBrands: PropTypes.func.isRequired,
     searchProductCategories: PropTypes.func.isRequired,
-    searchTags: PropTypes.func.isRequired,
     searchedBrandIds: ImmutablePropTypes.map.isRequired,
     searchedProductCategoryIds: ImmutablePropTypes.map.isRequired,
-    searchedTagIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
-    tagsById: ImmutablePropTypes.map.isRequired,
     uploadImage: PropTypes.func.isRequired,
     onBeforeChangeTab: PropTypes.func.isRequired,
     onChangeTab: PropTypes.func.isRequired
@@ -111,7 +107,6 @@ export default class EditProduct extends Component {
   async componentWillMount () {
     if (this.props.params.productId) {
       const editObj = await this.props.loadProduct(this.props.params.productId);
-      console.log('editObj', editObj);
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale,
@@ -230,7 +225,7 @@ export default class EditProduct extends Component {
     const styles = this.constructor.styles;
     const { _activeLocale, brandsById, productCategoriesById, errors, currentModal, closeModal, supportedLocales, defaultLocale,
       currentProduct, location, handleSubmit, searchBrands, searchProductCategories, searchedProductCategoryIds, searchedBrandIds, deleteImage,
-      tagsById, searchTags, searchedTagIds, location: { query: { tab } } } = this.props;
+      location: { query: { tab } } } = this.props;
     console.log('currentProduct', currentProduct && currentProduct.toJS());
     return (
       <SideMenu>
@@ -306,18 +301,6 @@ export default class EditProduct extends Component {
                     options={searchedProductCategoryIds.get('data').toJS()}
                     placeholder='Product categories'
                     required/>
-                  {/* <Field
-                    component={SelectInput}
-                    disabled={_activeLocale !== defaultLocale}
-                    getItemText={(id) => tagsById.getIn([ id, 'name' ])}
-                    getOptions={searchTags}
-                    isLoading={searchedTagIds.get('_status') === FETCHING}
-                    label='Tags'
-                    multiselect
-                    name='tags'
-                    options={searchedTagIds.get('data').toJS()}
-                    placeholder='Tag names'
-                    required/>*/}
                   <Field
                     component={TextInput}
                     label='Description'

@@ -73,7 +73,7 @@ export class Search extends Component {
           value={value}
           onChange={this.onChange}
           onOptionSelected={onOptionSelected} />
-        );
+      );
     }
     return (
       <Typeahead

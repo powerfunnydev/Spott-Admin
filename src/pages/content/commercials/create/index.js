@@ -88,11 +88,7 @@ export default class CreateEpisodentryModal extends Component {
     this.props.routerPushWithReturnTo('/content/commercials', true);
   }
 
-  static styles = {
-  };
-
   render () {
-    const styles = this.constructor.styles;
     const {
       brandsById, localeNames, searchedBrandIds, searchBrands, handleSubmit
     } = this.props;
