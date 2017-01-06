@@ -19,39 +19,12 @@ const configuration = {
     ]
   },
   module: {
-    rules: [ {
-      exclude: /node_modules/,
-      use: [ {
-        loader: 'strip-loader',
-        options: {
-          strip: [ 'console.log' ]
-        }
-      }, {
-        loader: 'babel-loader'
-      }, {
-        loader: 'eslint-loader',
-        options: {
-          failOnWarning: false,
-          failOnError: true
-        }
-      } ],
-      test: /\.js$/
-    }, {
-      use: [
-        'style-loader',
-        'css-loader'
-      ],
-      test: /\.css$|\.less$/
-    }, {
-      use: 'json-loader',
-      test: /\.json/
-    }, {
-      query: {
-        name: '[name]-[md5:hash].[ext]'
-      },
-      use: 'file-loader',
-      test: /\.gif$|\.jpg$|\.jpeg$|\.png|\.eot$|\.svg$|\.ttf$|\.woff$|\.woff2$|\.pdf$/
-    } ]
+    loaders: [
+      { exclude: /node_modules/, loader: 'strip-loader?strip[]=console.log!babel!eslint?failOnWarning=false&failOnError=false', test: /\.js$/ },
+      { loader: ExtractTextWebpackPlugin.extract('style', 'css'), test: /\.css$|\.less$/ },
+      { loader: 'json', test: /\.json/ },
+      { loader: 'file?name=[name]-[md5:hash].[ext]', test: /\.gif$|\.jpg$|\.jpeg$|\.png|\.eot$|\.svg$|\.ttf$|\.woff$|\.woff2$|\.pdf$/ }
+    ]
   },
   output: {
     chunkFilename: '[name]-[chunkhash].js',
@@ -73,13 +46,12 @@ const configuration = {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV)
       }
     }),
-    // Optimization: remove duplicates. Enabled by default.
-    // new webpack.optimize.DedupePlugin(),
+    // Optimization: remove duplicates
+    new webpack.optimize.DedupePlugin(),
     // Optimization: aggressive merging
     new webpack.optimize.AggressiveMergingPlugin(),
-    // Optimization: assign the module and chunk ids by occurrence count.
-    // Enabled by default.
-    // new webpack.optimize.OccurenceOrderPlugin(),
+    // Optimization: assign the module and chunk ids by occurrence count
+    new webpack.optimize.OccurenceOrderPlugin(),
     // Optimization: in production we minify
     new webpack.optimize.UglifyJsPlugin({
       compress: {
@@ -96,7 +68,8 @@ const configuration = {
       minify: {},
       template: './src/index.html'
     })
-  ]
+  ],
+  progress: true
 };
 
 module.exports = configuration;

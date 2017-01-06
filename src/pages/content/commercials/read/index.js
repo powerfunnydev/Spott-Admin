@@ -12,8 +12,6 @@ import Line from '../../../_common/components/line';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { SideMenu } from '../../../app/sideMenu';
 
-/* eslint-disable no-alert */
-
 @connect(selector, (dispatch) => ({
   deleteCommercial: bindActionCreators(listActions.deleteCommercial, dispatch),
   loadCommercial: bindActionCreators(actions.loadCommercial, dispatch),
@@ -67,7 +65,7 @@ export default class ReadCommercial extends Component {
   }
 
   render () {
-    const { params, children, currentCommercial, location, deleteCommercial } = this.props;
+    const { params, children, currentCommercial, deleteCommercial } = this.props;
     const defaultLocale = currentCommercial.get('defaultLocale');
 
     return (

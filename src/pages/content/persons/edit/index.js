@@ -8,7 +8,6 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
 import SelectInput from '../../../_common/inputs/selectInput';
 import DateInput from '../../../_common/inputs/dateInput';
-// import Line from '../../../_common/components/line';
 import { Root, FormSubtitle, colors, EditTemplate, FormDescription } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
@@ -309,8 +308,12 @@ export default class EditPerson extends Component {
                   multiple
                   noPreview
                   style={styles.imageDropzone}
-                  onChange={async ({ callback, file }) => { await this.props.uploadFaceImage({ personId: currentPerson.get('id'), image: file, callback }); fetchFaceImages({ personId: currentPerson.get('id') }); }}/>
-
+                  onChange={({ callback, file }) => {
+                    this.props.uploadFaceImage({ personId: currentPerson.get('id'), image: file, callback })
+                      .then(() => {
+                        fetchFaceImages({ personId: currentPerson.get('id') });
+                      });
+                  }}/>
                 <FormSubtitle>Uploads</FormSubtitle>
                 <div style={styles.faceImagesContainer}>
                   {faceImages.get('data').map((faceImage, index) =>

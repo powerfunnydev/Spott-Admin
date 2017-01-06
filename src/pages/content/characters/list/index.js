@@ -100,7 +100,7 @@ export default class Characters extends Component {
   }
 
   render () {
-    const { characters, children, isSelected, location, location: { query, query: { display, page, searchString, sortField, sortDirection } },
+    const { characters, children, isSelected, location: { query, query: { display, page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (

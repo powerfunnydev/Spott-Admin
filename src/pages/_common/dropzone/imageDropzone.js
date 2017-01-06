@@ -181,7 +181,7 @@ export default class ImageDropzone extends Component {
     return (
       <div style={{ position: 'relative' }}>
         {/* Render dropzone */}
-        <ReactDropzone accept={accept || 'image/*'} activeStyle={styles.activeDropzone} disableClick={onChange ? false : true} multiple={multiple} ref={(x) => { this.dropzone = x; }}
+        <ReactDropzone accept={accept || 'image/*'} activeStyle={styles.activeDropzone} disableClick={!onChange} multiple={multiple} ref={(x) => { this.dropzone = x; }}
           style={mergeStyles([ styles.dropzone, onChange && styles.pointer, { width: 200 * (aspectRatios[type] || 1) }, style ])} onDrop={this.onDrop} >
           <div>
             {downloadUrlOrPreview && <Dropdown style={styles.dropdownButton}>
