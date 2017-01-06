@@ -1,6 +1,8 @@
-import { fetchProducts as dataFetchProducts,
+import {
+  fetchProducts as dataFetchProducts,
   deleteProduct as dataDeleteProduct,
-  deleteProducts as dataDeleteProducts } from '../../../../actions/product';
+  deleteProducts as dataDeleteProducts
+} from '../../../../actions/product';
 
 // Action types
 // ////////////

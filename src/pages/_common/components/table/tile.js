@@ -95,9 +95,9 @@ export class Tile extends Component {
                 <Checkbox checked={checked} first onChange={onCheckboxChange}/>
               </div> }
               <Dropdown style={styles.dropdown}>
-                {onEdit && <div key='onEdit' style={dropdownStyles.floatOption} onClick={(e) => { e.stopPropagation(); onEdit(e); }}>Edit</div>}
+                {onEdit && <div key='onEdit' style={dropdownStyles.floatOption} onClick={(e) => { onEdit(e); }}>Edit</div>}
                 {onEdit && onDelete && <div style={dropdownStyles.line}/>}
-                {onDelete && <div key='onDelete' style={dropdownStyles.floatOption} onClick={(e) => { e.stopPropagation(); onDelete(e); }}>{deleteText || 'Remove'}</div>}
+                {onDelete && <div key='onDelete' style={dropdownStyles.floatOption} onClick={(e) => { onDelete(e); }}>{deleteText || 'Remove'}</div>}
               </Dropdown>
             </div>
             <div style={styles.title}>{text}</div>

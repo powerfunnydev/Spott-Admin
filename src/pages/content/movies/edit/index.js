@@ -4,6 +4,7 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
+import { fromJS } from 'immutable';
 import { FETCHING } from '../../../../constants/statusTypes';
 import { makeTextStyle, fontWeights, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import { routerPushWithReturnTo } from '../../../../actions/global';
@@ -20,14 +21,14 @@ import NumberInput from '../../../_common/inputs/numberInput';
 import LanguageBar from '../../../_common/components/languageBar';
 import Availabilities from '../../_availabilities/list';
 import RelatedVideo from '../../../content/_relatedVideo/read';
-import * as actions from './actions';
-import selector from './selector';
+import Brands from '../../_helpers/_brands/list';
 import Characters from '../../_helpers/_characters/list';
 import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
-import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
+import * as actions from './actions';
+import selector from './selector';
 
 const formName = 'movieEdit';
 
@@ -50,6 +51,7 @@ function validate (values, { t }) {
   loadMovie: bindActionCreators(actions.loadMovie, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
+  searchBrands: bindActionCreators(actions.searchBrands, dispatch),
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
   searchCharacters: bindActionCreators(actions.searchCharacters, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
@@ -68,6 +70,7 @@ export default class EditMovie extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
+    brandsById: ImmutablePropTypes.map.isRequired,
     broadcastersById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
     characters: ImmutablePropTypes.list,
@@ -91,15 +94,18 @@ export default class EditMovie extends Component {
     loadMovie: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     mediumCategoriesById: ImmutablePropTypes.map.isRequired,
+    movieBrands: ImmutablePropTypes.map.isRequired,
     movieCharacters: ImmutablePropTypes.map.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     popUpMessage: PropTypes.object,
     routerPushWithReturnTo: PropTypes.func.isRequired,
+    searchBrands: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
     searchCharacters: PropTypes.func.isRequired,
     searchContentProducers: PropTypes.func.isRequired,
     searchMediumCategories: PropTypes.func.isRequired,
+    searchedBrandIds: ImmutablePropTypes.map.isRequired,
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
     searchedCharacterIds: ImmutablePropTypes.map.isRequired,
     searchedContentProducerIds: ImmutablePropTypes.map.isRequired,
@@ -247,12 +253,14 @@ export default class EditMovie extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      _activeLocale, closeModal, currentModal, contentProducersById,
-      searchContentProducers, searchMediumCategories, searchedContentProducerIds, broadcastersById,
-      searchBroadcasters, searchedBroadcasterIds, location, currentMovie, mediumCategoriesById,
-      defaultLocale, handleSubmit, supportedLocales, errors, searchedMediumCategoryIds,
-      searchedCharacterIds, charactersById, searchCharacters, deleteProfileImage, movieCharacters,
-      deletePosterImage, location: { query: { tab } }
+      _activeLocale, brandsById, broadcastersById, charactersById,
+      closeModal, contentProducersById, currentModal, currentMovie,
+      defaultLocale, deletePosterImage, location: { query: { tab } },
+      deleteProfileImage, errors, handleSubmit, location, mediumCategoriesById,
+      movieBrands, movieCharacters, searchBrands, searchBroadcasters, searchCharacters,
+      searchContentProducers, searchedBrandIds, searchedBroadcasterIds, searchedCharacterIds,
+      searchedContentProducerIds, searchedMediumCategoryIds, searchMediumCategories,
+      supportedLocales
     } = this.props;
     return (
       <SideMenu>
@@ -389,7 +397,7 @@ export default class EditMovie extends Component {
                   </div>
                 </Section>
               </Tab>
-             <Tab title='Helpers'>
+             <Tab title='Cast'>
                 <Characters
                   charactersById={charactersById}
                   mediumCharacters={movieCharacters}
@@ -397,6 +405,14 @@ export default class EditMovie extends Component {
                   searchCharacters={searchCharacters}
                   searchedCharacterIds={searchedCharacterIds} />
               </Tab>
+              <Tab title='Helpers'>
+                 <Brands
+                   brandsById={brandsById}
+                   mediumBrands={movieBrands}
+                   mediumId={this.props.params.movieId}
+                   searchBrands={searchBrands}
+                   searchedBrandIds={searchedBrandIds} />
+               </Tab>
               <Tab title='Interactive video'>
                 <Section>
                   <FormSubtitle first>Interactive video</FormSubtitle>

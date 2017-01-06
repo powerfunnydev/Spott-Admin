@@ -6,7 +6,7 @@ export async function fetchProductOfferings (baseUrl, authenticationToken, local
   return data.map(transformProductOffering);
 }
 
-export async function persistProductOffering (baseUrl, authenticationToken, locale, { productId, productOfferingId, shopId,
+export async function persistProductOffering (baseUrl, authenticationToken, locale, { affiliateInfo, productId, productOfferingId, shopId,
   currency, amount, buyUrl, locale: offeringLocale }) {
   let productOffering = {};
   if (productOfferingId) {

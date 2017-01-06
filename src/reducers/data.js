@@ -3,7 +3,7 @@ import {
   serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
   serializeFilterHasUsers, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
-  fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasProducts
+  fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts
 } from './utils';
 
 import * as availabilityActions from '../actions/availability';
@@ -73,6 +73,7 @@ export default (state = fromJS({
     filterHasCommercials: {},
     filterHasContentProducers: {},
     filterHasEpisodes: {},
+    filterHasMedia: {},
     filterHasMovies: {},
     filterHasPersons: {},
     filterHasShops: {},
@@ -100,7 +101,9 @@ export default (state = fromJS({
     searchStringHasUsers: {},
 
     characterHasFaceImages: {},
+    mediumHasBrands: {},
     mediumHasCharacters: {},
+    mediumHasShops: {},
     mediumHasTvGuideEntries: {},
     personHasFaceImages: {},
     productHasProductOfferings: {},
@@ -162,6 +165,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'listBrands', 'searchStringHasBrands', action.searchString, action.data);
     case brandActions.BRAND_SEARCH_ERROR:
       return searchError(state, 'searchStringHasBrands', action.searchString, action.error);
+
+    case brandActions.MEDIUM_BRAND_SEARCH_START:
+      return searchStart(state, 'mediumHasBrands', action.mediumId);
+    case brandActions.MEDIUM_BRAND_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listBrands', 'mediumHasBrands', action.mediumId, action.data);
+    case brandActions.MEDIUM_BRAND_SEARCH_ERROR:
+      return searchError(state, 'mediumHasBrands', action.mediumId, action.error);
 
     // Broadcaster Channels
     // ////////////////////
@@ -345,6 +355,7 @@ export default (state = fromJS({
       return fetchStart(state, [ 'entities', 'media', action.episodeId ]);
     case episodeActions.EPISODE_FETCH_SUCCESS: {
       let newState = state;
+      newState = action.data.seriesEntry && fetchSuccess(state, [ 'entities', 'listMedia', action.data.seriesEntry.id ], action.data.seriesEntry) || newState;
       newState = action.data.broadcasters && mergeListOfEntities(newState, [ 'entities', 'broadcasters' ], action.data.broadcasters) || newState;
       newState = action.data.contentProducers && mergeListOfEntities(newState, [ 'entities', 'contentProducers' ], action.data.contentProducers) || newState;
       return fetchSuccess(newState, [ 'entities', 'media', action.episodeId ], action.data);
@@ -373,6 +384,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'tvGuideEntries', 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.data.data);
     case mediaActions.TV_GUIDE_ENTRIES_FETCH_ERROR:
       return searchError(state, 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.error);
+
+    case mediaActions.MEDIA_FETCH_START:
+      return searchStart(state, 'filterHasMedia', serializeFilterHasMedia(action));
+    case mediaActions.MEDIA_FETCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'filterHasMedia', serializeFilterHasMedia(action), action.data.data);
+    case mediaActions.MEDIA_FETCH_ERROR:
+      return searchError(state, 'filterHasMedia', serializeFilterHasMedia(action), action.error);
 
     // Medium categories
     // /////////////////
@@ -419,7 +437,7 @@ export default (state = fromJS({
       return fetchSuccess(state, [ 'entities', 'persons', action.personId ], action.data);
 
     case personActions.PERSONS_FETCH_START:
-      return searchStart(state, 'filterHasCharacters', serializeFilterHasPersons(action));
+      return searchStart(state, 'filterHasPersons', serializeFilterHasPersons(action));
     case personActions.PERSONS_FETCH_SUCCESS:
       return searchSuccess(state, 'listPersons', 'filterHasPersons', serializeFilterHasPersons(action), action.data.data);
     case personActions.PERSONS_FETCH_ERROR:
@@ -528,6 +546,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'listShops', 'searchStringHasShops', action.searchString, action.data);
     case shopActions.SHOP_SEARCH_ERROR:
       return searchError(state, 'searchStringHasShops', action.searchString, action.error);
+
+    case shopActions.MEDIUM_SHOP_SEARCH_START:
+      return searchStart(state, 'mediumHasShops', action.mediumId);
+    case shopActions.MEDIUM_SHOP_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listShops', 'mediumHasShops', action.mediumId, action.data);
+    case shopActions.MEDIUM_SHOP_SEARCH_ERROR:
+      return searchError(state, 'mediumHasShops', action.mediumId, action.error);
 
     // Seasons
     // /////////////////

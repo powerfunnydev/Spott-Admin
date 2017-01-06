@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformBrand, transformListBrand, transformListProduct } from './transformers';
+import { transformProductOffering, transformBrand, transformListBrand, transformListProduct } from './transformers';
 
 export async function fetchBrands (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/product/brands?page=${page}&pageSize=${pageSize}`;
@@ -23,7 +23,14 @@ export async function fetchProducts (baseUrl, authenticationToken, locale, { bra
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }
   const { body } = await get(authenticationToken, locale, url);
-  body.data = body.data.map(transformListProduct);
+  const data = [];
+  for (const product of body.data) {
+    const prod = transformListProduct(product);
+    const result = await get(authenticationToken, locale, `${baseUrl}/v004/product/products/${prod.id}/offerings`);
+    prod.offerings = result.body.data.map(transformProductOffering);
+    data.push(prod);
+  }
+  body.data = data;
   return body;
 }
 
@@ -82,6 +89,24 @@ export async function searchBrands (baseUrl, authenticationToken, locale, { sear
   }
   const { body: { data } } = await get(authenticationToken, locale, url);
   return data.map(transformListBrand);
+}
+
+export async function searchMediumBrands (baseUrl, authenticationToken, locale, { mediumId, searchString = '', page = 0, pageSize = 100 }) {
+  let url = `${baseUrl}/v004/media/media/${mediumId}/brandDeals?page=${page}&pageSize=${pageSize}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${searchString}`);
+  }
+  const { body: { data } } = await get(authenticationToken, locale, url);
+  return data.map(transformListBrand);
+}
+
+export async function persistMediumBrand (baseUrl, authenticationToken, locale, { brandId, mediumId }) {
+  const { body } = await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/brandDeals/${brandId}`, {});
+  return transformBrand(body);
+}
+
+export async function deleteMediumBrand (baseUrl, authenticationToken, locale, { brandId, mediumId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/brandDeals/${brandId}`, {});
 }
 
 export async function uploadProfileImage (baseUrl, authenticationToken, locale, { brandId, image, locale: imageLocale, callback }) {

@@ -39,6 +39,7 @@ export const filterHasCharactersRelationsSelector = (state) => state.getIn([ 'da
 export const filterHasCommercialsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasCommercials' ]);
 export const filterHasContentProducersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasContentProducers' ]);
 export const filterHasEpisodesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasEpisodes' ]);
+export const filterHasMediaRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasMedia' ]);
 export const filterHasMoviesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasMovies' ]);
 export const filterHasPersonsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasPersons' ]);
 export const filterHasShopsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasShops' ]);
@@ -67,7 +68,9 @@ export const searchStringHasTagsRelationsSelector = (state) => state.getIn([ 'da
 
 export const characterHasFaceImagesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'characterHasFaceImages' ]);
 export const mediumHasAvailabilitiesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasAvailabilities' ]);
+export const mediumHasBrandsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasBrands' ]);
 export const mediumHasCharactersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasCharacters' ]);
+export const mediumHasShopsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasShops' ]);
 export const mediumHasTvGuideEntriesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasTvGuideEntries' ]);
 export const personHasFaceImagesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'personHasFaceImages' ]);
 export const productHasProductOfferingsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'productHasProductOfferings' ]);

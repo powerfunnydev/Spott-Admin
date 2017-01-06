@@ -12,7 +12,7 @@ export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover 
   };
 }
 
-export function transformListProduct ({ uuid, publishStatus, brand, shortName, fullName, auditInfo, image: logo }) {
+export function transformListProduct ({ uuid, used, publishStatus, brand, shortName, fullName, auditInfo, image: logo }) {
   return {
     createdOn: auditInfo && auditInfo.createdOn,
     id: uuid,
@@ -175,11 +175,12 @@ export function transformListShop ({ uuid, name, publishStatus, auditInfo, logo,
   };
 }
 
-export function transformProductOffering ({ uuid, buyUrl, locale, price, product, shop }) {
+export function transformProductOffering ({ uuid, affiliateInfo, buyUrl, locale, price, product, shop }) {
   return {
     id: uuid,
     buyUrl,
     locale,
+    affiliateCode: affiliateInfo && affiliateInfo.code,
     price: price && { amount: price.amount, currency: price.currency },
     product: product && transformListProduct(product),
     shop: shop && transformListShop(shop)
