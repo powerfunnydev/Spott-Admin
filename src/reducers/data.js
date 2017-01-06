@@ -101,7 +101,9 @@ export default (state = fromJS({
     searchStringHasUsers: {},
 
     characterHasFaceImages: {},
+    mediumHasBrands: {},
     mediumHasCharacters: {},
+    mediumHasShops: {},
     mediumHasTvGuideEntries: {},
     personHasFaceImages: {},
     productHasProductOfferings: {},
@@ -163,6 +165,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'listBrands', 'searchStringHasBrands', action.searchString, action.data);
     case brandActions.BRAND_SEARCH_ERROR:
       return searchError(state, 'searchStringHasBrands', action.searchString, action.error);
+
+    case brandActions.MEDIUM_BRAND_SEARCH_START:
+      return searchStart(state, 'mediumHasBrands', action.mediumId);
+    case brandActions.MEDIUM_BRAND_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listBrands', 'mediumHasBrands', action.mediumId, action.data);
+    case brandActions.MEDIUM_BRAND_SEARCH_ERROR:
+      return searchError(state, 'mediumHasBrands', action.mediumId, action.error);
 
     // Broadcaster Channels
     // ////////////////////
@@ -537,6 +546,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'listShops', 'searchStringHasShops', action.searchString, action.data);
     case shopActions.SHOP_SEARCH_ERROR:
       return searchError(state, 'searchStringHasShops', action.searchString, action.error);
+
+    case shopActions.MEDIUM_SHOP_SEARCH_START:
+      return searchStart(state, 'mediumHasShops', action.mediumId);
+    case shopActions.MEDIUM_SHOP_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listShops', 'mediumHasShops', action.mediumId, action.data);
+    case shopActions.MEDIUM_SHOP_SEARCH_ERROR:
+      return searchError(state, 'mediumHasShops', action.mediumId, action.error);
 
     // Seasons
     // /////////////////

@@ -9,26 +9,26 @@ import { Table, CustomCel, Rows, Row } from '../../../../_common/components/tabl
 import { colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../../_common/styles';
 import Plus from '../../../../_common/images/plus';
 import RemoveButton from '../../../../_common/components/buttons/removeButton';
-import PersistCharacterModal from '../persist';
+import PersistBrandModal from '../persist';
 import * as actions from './actions';
 
 @connect(null, (dispatch) => ({
-  loadMediumCharacters: bindActionCreators(actions.searchMediumCharacters, dispatch),
-  persistMediumCharacter: bindActionCreators(actions.persistMediumCharacter, dispatch),
-  deleteMediumCharacter: bindActionCreators(actions.deleteMediumCharacter, dispatch)
+  loadMediumBrands: bindActionCreators(actions.searchMediumBrands, dispatch),
+  persistMediumBrand: bindActionCreators(actions.persistMediumBrand, dispatch),
+  deleteMediumBrand: bindActionCreators(actions.deleteMediumBrand, dispatch)
 }))
 @Radium
-export default class Characters extends Component {
+export default class Brands extends Component {
 
   static propTypes = {
-    charactersById: ImmutablePropTypes.map.isRequired,
-    deleteMediumCharacter: PropTypes.func.isRequired,
-    loadMediumCharacters: PropTypes.func.isRequired,
-    mediumCharacters: ImmutablePropTypes.map.isRequired,
+    brandsById: ImmutablePropTypes.map.isRequired,
+    deleteMediumBrand: PropTypes.func.isRequired,
+    loadMediumBrands: PropTypes.func.isRequired,
+    mediumBrands: ImmutablePropTypes.map.isRequired,
     mediumId: PropTypes.string.isRequired,
-    persistMediumCharacter: PropTypes.func.isRequired,
-    searchCharacters: PropTypes.func.isRequired,
-    searchedCharacterIds: ImmutablePropTypes.map.isRequired
+    persistMediumBrand: PropTypes.func.isRequired,
+    searchBrands: PropTypes.func.isRequired,
+    searchedBrandIds: ImmutablePropTypes.map.isRequired
   };
 
   constructor (props) {
@@ -42,8 +42,8 @@ export default class Characters extends Component {
   }
 
   componentWillMount () {
-    const { loadMediumCharacters, mediumId } = this.props;
-    loadMediumCharacters(mediumId);
+    const { loadMediumBrands, mediumId } = this.props;
+    loadMediumBrands(mediumId);
   }
 
   onClickNewEntry (e) {
@@ -51,17 +51,17 @@ export default class Characters extends Component {
     this.setState({ create: true });
   }
 
-  async onClickDeleteMediumCharacter (characterId) {
-    const { mediumId, loadMediumCharacters, deleteMediumCharacter } = this.props;
-    await deleteMediumCharacter({ characterId, mediumId });
-    await loadMediumCharacters(mediumId);
+  async onClickDeleteMediumBrand (brandId) {
+    const { mediumId, loadMediumBrands, deleteMediumBrand } = this.props;
+    await deleteMediumBrand({ brandId, mediumId });
+    await loadMediumBrands(mediumId);
   }
 
   async onSubmit (form) {
-    const { characterId } = form;
-    const { loadMediumCharacters, persistMediumCharacter, mediumId } = this.props;
-    await persistMediumCharacter({ characterId, mediumId });
-    await loadMediumCharacters(mediumId);
+    const { brandId } = form;
+    const { loadMediumBrands, persistMediumBrand, mediumId } = this.props;
+    await persistMediumBrand({ brandId, mediumId });
+    await loadMediumBrands(mediumId);
   }
 
   static styles = {
@@ -106,37 +106,37 @@ export default class Characters extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { mediumCharacters, searchCharacters, charactersById, searchedCharacterIds } = this.props;
+    const { mediumBrands, searchBrands, brandsById, searchedBrandIds } = this.props;
     return (
       <Section>
-        <FormSubtitle first>Cast list</FormSubtitle>
-        <FormDescription style={styles.description}>Which people or characters are starring in this content? This way we’ll do a better job detecting their faces automagically!</FormDescription>
+        <FormSubtitle first>Brand</FormSubtitle>
+        <FormDescription style={styles.description}>Which brands are starring in this content? This way we’ll do a better job detecting their faces automagically!</FormDescription>
         <Table style={styles.customTable}>
           <Rows style={styles.adaptedRows}>
-            {mediumCharacters.get('data').map((character, index) => {
+            {mediumBrands.get('data').map((brand, index) => {
               return (
                 <Row isFirst={index === 0} key={index} >
                   <CustomCel style={[ styles.adaptedCustomCel, styles.paddingLeft ]}>
-                    <img src={character.get('portraitImage') && `${character.getIn([ 'portraitImage', 'url' ])}?height=70&width=70`} style={styles.image}/>
+                    <img src={brand.get('logo') && `${brand.getIn([ 'logo', 'url' ])}?height=70&width=70`} style={styles.image}/>
                   </CustomCel>
-                  <CustomCel style={styles.adaptedCustomCel}>{character.get('name')}</CustomCel>
+                  <CustomCel style={styles.adaptedCustomCel}>{brand.get('name')}</CustomCel>
                   <CustomCel style={[ styles.adaptedCustomCel, styles.floatRight ]}>
-                    <RemoveButton cross onClick={this.onClickDeleteMediumCharacter.bind(this, character.get('id'))}/>
+                    <RemoveButton cross onClick={this.onClickDeleteMediumBrand.bind(this, brand.get('id'))}/>
                   </CustomCel>
                 </Row>
               );
             })}
-            <Row isFirst={mediumCharacters.get('data') && mediumCharacters.get('data').size === 0} >
+            <Row isFirst={mediumBrands.get('data') && mediumBrands.get('data').size === 0} >
               <CustomCel style={[ styles.add, styles.adaptedCustomCel ]} onClick={this.onClickNewEntry}>
-                <Plus color={colors.primaryBlue} />&nbsp;&nbsp;&nbsp;Add Character
+                <Plus color={colors.primaryBlue} />&nbsp;&nbsp;&nbsp;Add Brand
               </CustomCel>
             </Row>
           </Rows>
           {this.state.create &&
-            <PersistCharacterModal
-              charactersById={charactersById}
-              searchCharacters={searchCharacters}
-              searchedCharacterIds={searchedCharacterIds}
+            <PersistBrandModal
+              brandsById={brandsById}
+              searchBrands={searchBrands}
+              searchedBrandIds={searchedBrandIds}
               onClose={() => this.setState({ create: false })}
               onSubmit={this.onSubmit} />}
         </Table>

@@ -74,6 +74,7 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, {
   // we create a new episode. We need to create the episode first, so we have the
   // id of this episode. After that we can do the copy call.
   if (lastEpisodeId) {
+    await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${persistedEpisode.id}/brandDeals/actions/importFromOtherMedium/${lastEpisodeId}`);
     await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${persistedEpisode.id}/castMembers/actions/importFromOtherMedium/${lastEpisodeId}`);
   }
   return persistedEpisode;

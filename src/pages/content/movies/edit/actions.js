@@ -1,6 +1,9 @@
-import { persistMovie, fetchMovie as dataFetchMovie,
-      uploadProfileImage as dataUploadProfileImage,
-      uploadPosterImage as dataUploadPosterImage } from '../../../../actions/movie';
+import {
+  persistMovie, fetchMovie as dataFetchMovie,
+  uploadProfileImage as dataUploadProfileImage,
+  uploadPosterImage as dataUploadPosterImage
+} from '../../../../actions/movie';
+import { searchBrands as dataSearchBrands } from '../../../../actions/brand';
 import { searchBroadcasters as dataSearchBroadcasters } from '../../../../actions/broadcaster';
 import { searchContentProducers as dataSearchContentProducers } from '../../../../actions/contentProducer';
 import { searchCharacters as dataSearchCharacters } from '../../../../actions/character';
@@ -8,6 +11,9 @@ import { searchMediumCategories as dataSearchMediumCategories } from '../../../.
 
 export { deleteProfileImage, deletePosterImage } from '../../../../actions/media';
 export { openModal, closeModal } from '../../../../actions/global';
+
+export const BRANDS_SEARCH_START = 'MOVIES_EDIT/BRANDS_SEARCH_START';
+export const BRANDS_SEARCH_ERROR = 'MOVIES_EDIT/BRANDS_SEARCH_ERROR';
 
 export const CHARACTERS_SEARCH_START = 'MOVIES_EDIT/CHARACTERS_SEARCH_START';
 export const CHARACTERS_SEARCH_ERROR = 'MOVIES_EDIT/CHARACTERS_SEARCH_ERROR';
@@ -90,6 +96,18 @@ export function searchCharacters (searchString) {
       return await dispatch(dataSearchCharacters({ searchString }));
     } catch (error) {
       dispatch({ error, type: CHARACTERS_SEARCH_ERROR });
+    }
+  };
+}
+
+/* Search on all brands. */
+export function searchBrands (searchString) {
+  return async (dispatch, getState) => {
+    try {
+      await dispatch({ type: BRANDS_SEARCH_START, searchString });
+      return await dispatch(dataSearchBrands({ searchString }));
+    } catch (error) {
+      dispatch({ error, type: BRANDS_SEARCH_ERROR });
     }
   };
 }
