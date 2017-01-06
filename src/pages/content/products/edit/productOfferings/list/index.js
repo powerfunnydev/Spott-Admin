@@ -120,7 +120,6 @@ export default class ProductOfferings extends Component {
   render () {
     const styles = this.constructor.styles;
     const { productOfferings } = this.props;
-    console.log('productOfferings', productOfferings && productOfferings.toJS());
     return (
       <Section>
         <FormSubtitle first>Offerings for this product</FormSubtitle>
