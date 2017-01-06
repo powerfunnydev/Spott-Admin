@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>appiness.mobi</groupId>
 		<artifactId>appiness.root</artifactId>
-		<version>11-SNAPSHOT</version>
+		<version>11</version>
 	</parent>
 	<artifactId>apptvate.website</artifactId>
 	<packaging>pom</packaging>
@@ -33,8 +33,7 @@
 		<node-version>v5.0.0</node-version>
 		<npm-version>3.8.6</npm-version>
 
-		<appiness.docker.tomcat.version>00.00.01-SNAPSHOT</appiness.docker.tomcat.version>
-		<appiness.docker.nginx.version>00.00.01-SNAPSHOT</appiness.docker.nginx.version>
+		<appiness.docker.nginx.version>01.00.00</appiness.docker.nginx.version>
 	</properties>
 
 	<dependencyManagement>
