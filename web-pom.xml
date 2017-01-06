@@ -5,7 +5,7 @@
 		<groupId>appiness.mobi</groupId>
 		<artifactId>apptvate.website</artifactId>
 		<version>01.00.09-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
+		<relativePath>./pom.xml</relativePath>
 	</parent>
 	<artifactId>apptvate.website.web</artifactId>
 	<packaging>pom</packaging>
