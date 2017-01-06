@@ -58,6 +58,7 @@
 						<configuration>
 							<tasks>
 								<mkdir dir="${project.build.directory}/classes" />
+								<echo message="${project.version}" file="${project.build.directory}/classes/version" append="false" />
 								<delete file="${zip.file}" />
 								 <zip destfile="${zip.file}">
 									<zipfileset dir="${project.build.directory}/classes" excludes="**/*.sh"/>	 	

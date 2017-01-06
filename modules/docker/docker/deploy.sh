@@ -30,12 +30,15 @@ fi
 # constants
 USER_NAME=sysadmin
 LOGIN_HOST=$USER_NAME@$HOST
+VERSION=`cat ./version`
 
-echo "Copying installation files to $HOST using key file $DEPLOY_SSH_KEY_FILE"
+echo "Copying installation files for version $VERSION to $HOST using key file $DEPLOY_SSH_KEY_FILE"
 scp -i $DEPLOY_SSH_KEY_FILE -r install $LOGIN_HOST:/home/sysadmin
 ssh -i $DEPLOY_SSH_KEY_FILE $LOGIN_HOST 'chmod +x -R /home/sysadmin/install/*.sh'
 
-echo "Starting application"
-ssh -i $DEPLOY_SSH_KEY_FILE $LOGIN_HOST 'chmod +x -R /home/sysadmin/install/*.sh'
+echo "Starting application version $VERSION"
+ssh -i $DEPLOY_SSH_KEY_FILE $LOGIN_HOST '/home/sysadmin/install/start.sh'
+
+echo "Done"
 
 
