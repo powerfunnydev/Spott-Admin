@@ -59,7 +59,10 @@
 							<tasks>
 								<mkdir dir="${project.build.directory}/classes" />
 								<delete file="${zip.file}" />
-								<zip destfile="${zip.file}" basedir="${project.build.directory}/classes" />
+								 <zip destfile="${zip.file}">
+									<zipfileset dir="${project.build.directory}/classes" excludes="**/*.sh"/>	 	
+									<zipfileset dir="${project.build.directory}/classes" includes="**/*.sh" filemode="755"/>
+								 </zip>
 							</tasks>
 						</configuration>
 					</execution>

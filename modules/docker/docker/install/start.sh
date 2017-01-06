@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# Change to the script directory
+CWD=$(pwd)
+SCRIPT=$(readlink -f $0)
+SCRIPT_DIR=`dirname $SCRIPT`
+cd $SCRIPT_DIR
+
+# Start with sample
+if [ ! -f docker-compose.yml ]; then
+	cp docker-compose-sample.yml docker-compose.yml
+fi
+
+docker-compose down
+docker-compose up -d web
+
+cd $CWD

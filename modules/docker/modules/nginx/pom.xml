@@ -51,7 +51,7 @@
 				</includes>
 			</resource>
 			<resource>
-				<directory>${project.basedir}/../../../dist</directory>
+				<directory>${project.basedir}/../../../../dist</directory>
 				<targetPath>${project.build.directory}/classes/files/docroot</targetPath>
 				<includes>
 					<include>**/*</include>
