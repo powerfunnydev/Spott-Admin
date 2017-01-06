@@ -1,9 +1,10 @@
 import { fromJS } from 'immutable';
 import {
   serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
-  serializeFilterHasUsers, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
+  serializeFilterHasUsers, serializeFilterHasMediumCategories, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
-  fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts
+  fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
+  serializeFilterHasProductCategories
 } from './utils';
 
 import * as availabilityActions from '../actions/availability';
@@ -74,10 +75,12 @@ export default (state = fromJS({
     filterHasContentProducers: {},
     filterHasEpisodes: {},
     filterHasMedia: {},
+    filterHasMediumCategories: {},
     filterHasMovies: {},
     filterHasPersons: {},
     filterHasShops: {},
     filterHasProducts: {},
+    filterHasProductCategories: {},
     filterHasSeasons: {},
     filterHasSeriesEntries: {},
     filterHasTags: {},
@@ -395,6 +398,13 @@ export default (state = fromJS({
     // Medium categories
     // /////////////////
 
+    case mediumCategoryActions.MEDIUM_CATEGORIES_FETCH_START:
+      return searchStart(state, 'filterHasMediumCategories', serializeFilterHasMediumCategories(action));
+    case mediumCategoryActions.MEDIUM_CATEGORIES_FETCH_SUCCESS:
+      return searchSuccess(state, 'listMediumCategories', 'filterHasMediumCategories', serializeFilterHasMediumCategories(action), action.data.data);
+    case mediumCategoryActions.MEDIUM_CATEGORIES_FETCH_ERROR:
+      return searchError(state, 'filterHasMediumCategories', serializeFilterHasMediumCategories(action), action.error);
+
     case mediumCategoryActions.MEDIUM_CATEGORIES_SEARCH_START:
       return searchStart(state, 'searchStringHasMediumCategories', action.searchString);
     case mediumCategoryActions.MEDIUM_CATEGORIES_SEARCH_SUCCESS:
@@ -512,6 +522,13 @@ export default (state = fromJS({
 
     // Product categories
     // /////////////////
+
+    case productCategoryActions.PRODUCT_CATEGORIES_FETCH_START:
+      return searchStart(state, 'filterHasProductCategories', serializeFilterHasProductCategories(action));
+    case productCategoryActions.PRODUCT_CATEGORIES_FETCH_SUCCESS:
+      return searchSuccess(state, 'listProductCategories', 'filterHasProductCategories', serializeFilterHasProductCategories(action), action.data.data);
+    case productCategoryActions.PRODUCT_CATEGORIES_FETCH_ERROR:
+      return searchError(state, 'filterHasProductCategories', serializeFilterHasProductCategories(action), action.error);
 
     case productCategoryActions.PRODUCT_CATEGORIES_SEARCH_START:
       return searchStart(state, 'searchStringHasProductCategories', action.searchString);

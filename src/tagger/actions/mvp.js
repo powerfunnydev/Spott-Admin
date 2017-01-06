@@ -99,15 +99,16 @@ export function selectBottomFrame () {
 export function toggleHideNonKeyFrames () {
   return async (dispatch, getState) => {
     const state = getState();
+    const currentVideo = currentVideoSelector(state);
     const currentSceneId = currentSceneIdSelector(state);
     const hideNonKeyFrames = hideNonKeyFramesSelector(state);
 
     // When hiding the non key frames, and the current scene was not the key frame,
     // then deselect it.
     // We inverse hideNonKeyFrames, because it's not adjusted yet.
-    // if (!hideNonKeyFrames && currentSceneGroup && (currentSceneGroup.get('keySceneId') !== currentSceneId)) {
-    //   dispatch(selectFrame(null));
-    // }
+    if (!hideNonKeyFrames && currentVideo && (currentVideo.get('keySceneId') !== currentSceneId)) {
+      dispatch(selectFrame(null));
+    }
 
     dispatch({ type: TOGGLE_HIDE_NON_KEY_FRAMES });
   };

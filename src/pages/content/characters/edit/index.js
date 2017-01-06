@@ -316,8 +316,13 @@ export default class EditCharacter extends Component {
                   multiple
                   noPreview
                   style={styles.imageDropzone}
-                  onChange={async ({ callback, file }) => { await this.props.uploadFaceImage({ characterId: this.props.params.characterId, image: file, callback }); fetchFaceImages({ characterId: currentCharacter.get('id') }); }}/>
-
+                  onChange={({ callback, file }) => {
+                    // Gives lint error when using async function.
+                    this.props.uploadFaceImage({ characterId: this.props.params.characterId, image: file, callback })
+                      .then(() => {
+                        fetchFaceImages({ characterId: currentCharacter.get('id') });
+                      });
+                  }}/>
                 <FormSubtitle>Uploads</FormSubtitle>
                 <div style={styles.faceImagesContainer}>
                   {faceImages.get('data').map((faceImage, index) =>
