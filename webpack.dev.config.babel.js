@@ -55,6 +55,7 @@ const configuration = {
       ],
       test: /\.css$|\.less$/
     }, {
+      exclude: /dev/,
       use: 'json-loader',
       test: /\.json/
     }, {
@@ -84,7 +85,7 @@ const configuration = {
 
     new CopyWebpackPlugin([
       { from: './dev/version.json', to: 'version.json' },
-      { from: './dev/config.json', to: 'config.json' }
+      { from: './dev/config/config.json', to: 'config/config.json' }
     ]),
     // Protects against multiple React installs when npm linking
     new webpack.NormalModuleReplacementPlugin(/^react?$/, require.resolve('react')),
