@@ -1,0 +1,96 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>appiness.mobi</groupId>
+		<artifactId>apptvate.website</artifactId>
+		<version>01.00.09-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+	<artifactId>apptvate.website.docker</artifactId>
+	<packaging>pom</packaging>
+	<name>${project.artifactId}</name>
+
+	<modules>
+		<module>modules/nginx</module>
+	</modules>
+
+	<properties>
+		<zip.file>${project.build.directory}/${project.artifactId}-${project.version}.zip</zip.file>
+	</properties>
+
+	<build>
+
+		<resources>
+			<resource>
+				<directory>${project.basedir}/docker</directory>
+				<filtering>true</filtering>
+				<targetPath>${project.build.directory}/classes</targetPath>
+			</resource>
+		</resources>
+
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>resources</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>install.zip</id>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<mkdir dir="${project.build.directory}/classes" />
+								<echo message="${project.version}" file="${project.build.directory}/classes/version" append="false" />
+								<delete file="${zip.file}" />
+								 <zip destfile="${zip.file}">
+									<zipfileset dir="${project.build.directory}/classes" excludes="**/*.sh"/>	 	
+									<zipfileset dir="${project.build.directory}/classes" includes="**/*.sh" filemode="755"/>
+								 </zip>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>${zip.file}</file>
+									<type>zip</type>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+</project>
