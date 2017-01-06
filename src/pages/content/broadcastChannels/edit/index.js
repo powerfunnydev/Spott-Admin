@@ -92,8 +92,9 @@ export default class EditBroadcastChannel extends Component {
   }
 
   render () {
-    const { deleteLogo, currentBroadcastChannel, location, handleSubmit } = this.props;
     const { styles } = this.constructor;
+    const { deleteLogo, currentBroadcastChannel, handleSubmit } = this.props;
+
     return (
       <SideMenu>
         <Root style={styles.background}>

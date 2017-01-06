@@ -100,7 +100,7 @@ export default class ContentProducers extends Component {
   }
 
   render () {
-    const { contentProducers, children, isSelected, location, location: { query, query: { display, page, searchString, sortField, sortDirection } },
+    const { contentProducers, children, isSelected, location: { query, query: { display, page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (

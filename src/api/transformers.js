@@ -221,7 +221,23 @@ export function transformListMediumCategory ({ name, uuid: id }) {
   return { name, id };
 }
 
+export function transformMediumCategory ({ uuid: id, localeData }) {
+  const mediumCategory = {
+    locales: [],
+    id,
+    name: {}
+  };
+  if (localeData) {
+    for (const { name, locale } of localeData) {
+      mediumCategory.name[locale] = name;
+      mediumCategory.locales.push(locale);
+    }
+  }
+  return mediumCategory;
+}
+
 export const transformListProductCategory = transformListMediumCategory;
+export const transformProductCategory = transformMediumCategory;
 /**
  *  Light version of a medium. No locales includes.
  */

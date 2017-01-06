@@ -1,7 +1,7 @@
-import { get } from './request';
-import { transformListProductCategory } from './transformers';
+import { get, post, del } from './request';
+import { transformListProductCategory, transformProductCategory } from './transformers';
 
-export async function fetchProductCategories (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+export async function fetchProductCategories (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 100, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/product/categories?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${searchString}`);
@@ -16,6 +16,32 @@ export async function fetchProductCategories (baseUrl, authenticationToken, loca
   return body;
 }
 
+export async function fetchProductCategory (baseUrl, authenticationToken, locale, { productCategoryId }) {
+  const url = `${baseUrl}/v004/product/categories/${productCategoryId}`;
+  const { body } = await get(authenticationToken, locale, url);
+  return transformProductCategory(body);
+}
+
+export async function persistProductCategory (baseUrl, authenticationToken, locale, {
+  productCategoryId, defaultLocale, locales, name }) {
+  let productCategory = {};
+  if (productCategoryId) {
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/product/categories/${productCategoryId}`);
+    productCategory = body;
+  }
+  productCategory.defaultLocale = defaultLocale;
+  productCategory.localeData = [];
+  locales.forEach((locale) => {
+    const localeData = {};
+    localeData.name = name && name[locale];
+    localeData.locale = locale;
+    productCategory.localeData.push(localeData);
+  });
+  const url = `${baseUrl}/v004/product/categories`;
+  const result = await post(authenticationToken, locale, url, productCategory);
+  return transformProductCategory(result.body);
+}
+
 // Used for autocompletion.
 export async function searchProductCategories (baseUrl, authenticationToken, locale, { searchString = '' }) {
   let searchUrl = `${baseUrl}/v004/product/categories?pageSize=100`;
@@ -24,4 +50,8 @@ export async function searchProductCategories (baseUrl, authenticationToken, loc
   }
   const { body: { data } } = await get(authenticationToken, locale, searchUrl);
   return data.map(transformListProductCategory);
+}
+
+export async function deleteProductCategory (baseUrl, authenticationToken, locale, { productCategoryId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/product/categories/${productCategoryId}`);
 }

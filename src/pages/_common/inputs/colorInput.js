@@ -17,6 +17,7 @@ export default class ColorInput extends Component {
     input: PropTypes.object.isRequired,
     label: PropTypes.string,
     labelStyle: PropTypes.object,
+    required: PropTypes.bool,
     style: PropTypes.object
   };
 
