@@ -7,11 +7,11 @@ import * as actions from './actions';
 import selector from './selector';
 import EntityDetails from '../../_common/entityDetails';
 import { routerPushWithReturnTo } from '../../../actions/global';
-import BreadCrumbs from '../../_common/components/breadCrumbs';
 import Line from '../../_common/components/line';
 import { generalStyles } from '../../_common/components/table/index';
 import * as listActions from '../list/actions';
 import { SideMenu } from '../../app/sideMenu';
+import Header from '../../app/multiFunctionalHeader';
 
 /* eslint-disable no-alert */
 
@@ -81,7 +81,7 @@ export default class ReadUser extends Component {
     return (
       <SideMenu location={location}>
         <Root>
-          <BreadCrumbs
+          <Header
             hierarchy={[
               { title: 'Users', url: '/users' },
               { title: currentUser.get('userName'), url: location.pathname }

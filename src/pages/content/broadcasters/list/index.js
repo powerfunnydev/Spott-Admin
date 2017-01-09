@@ -12,6 +12,7 @@ import { confirmation } from '../../../_common/askConfirmation';
 import * as actions from './actions';
 import selector from './selector';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 const numberOfRows = 25;
 
 export const prefix = 'broadcasters';
@@ -101,6 +102,7 @@ export default class Broadcasters extends Component {
     return (
       <SideMenu>
         <Root>
+          <Header hierarchy={[ { title: 'Broadcasters', url: '/content/broadcasters' } ]}/>
           <div style={generalStyles.tableFillPage}>
             <div style={generalStyles.backgroundBar}>
               <Container >

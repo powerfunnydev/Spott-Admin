@@ -21,9 +21,9 @@ import { Tabs, Tab } from '../../_common/components/formTabs';
 import Checkbox from '../../_common/inputs/checkbox';
 import { INACTIVE, disabledReasons, userStatus as userStates } from '../../../constants/userRoles';
 import { FETCHING } from '../../../constants/statusTypes';
-import BreadCrumbs from '../../_common/components/breadCrumbs';
 import ensureEntityIsSaved from '../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../app/sideMenu';
+import Header from '../../app/multiFunctionalHeader';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -164,7 +164,7 @@ export default class EditUser extends Component {
     return (
       <SideMenu location={location}>
         <Root style={styles.background}>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'Users', url: '/users' },
             { title: `${currentUser.get('firstName')} ${currentUser.get('lastName')}`, url: location } ]}/>
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>

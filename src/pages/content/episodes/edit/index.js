@@ -25,11 +25,11 @@ import selector from './selector';
 import Brands from '../../_helpers/_brands/list';
 import Characters from '../../_helpers/_characters/list';
 // import Shops from '../../_helpers/_shops/list';
-import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -290,7 +290,7 @@ export default class EditEpisode extends Component {
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'Series', url: '/content/series' },
             { title: currentEpisode.getIn([ 'seriesEntry', 'title' ]), url: `/content/series/read/${this.props.params.seriesEntryId}` },
             { title: currentEpisode.getIn([ 'season', 'title' ]), url: `/content/series/read/${this.props.params.seriesEntryId}/seasons/read/${this.props.params.seasonId}` },

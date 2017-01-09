@@ -19,12 +19,12 @@ import SelectInput from '../../../_common/inputs/selectInput';
 import CheckboxInput from '../../../_common/inputs/checkbox';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
-import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import selector from './selector';
 import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -236,7 +236,7 @@ export default class EditSeason extends Component {
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'Series', url: '/content/series' },
             { title: currentSeason.getIn([ 'seriesEntry', 'title' ]), url: `/content/series/read/${this.props.params.seriesEntryId}` },
             { title: currentSeason.getIn([ 'title', defaultLocale ]), url: location } ]}/>

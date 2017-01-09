@@ -9,6 +9,7 @@ import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles
 import MediaFilterForm from './forms/mediaFilterForm';
 import * as actions from './actions';
 import { SideMenu } from '../app/sideMenu';
+import Header from '../app/multiFunctionalHeader';
 
 @connect(null, (dispatch) => ({
   loadActivities: bindActionCreators(actions.loadActivities, dispatch),
@@ -79,6 +80,7 @@ export default class Reporting extends Component {
     const { query: { media } } = location;
     return (
       <SideMenu location={location}>
+        <Header hierarchy={[ { title: 'Reporting', url: '/reporting/activity' } ]}/>
         <div style={styles.fullWidth}>
           <div style={styles.tabs}>
             <Container style={styles.wrapper}>

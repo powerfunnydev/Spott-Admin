@@ -14,6 +14,7 @@ import { confirmation } from '../../../_common/askConfirmation';
 import * as actions from './actions';
 import selector from './selector';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 
 const numberOfRows = 25;
 
@@ -101,6 +102,8 @@ export default class Commercials extends Component {
     return (
       <SideMenu>
         <Root>
+          <Header hierarchy={[
+            { title: 'Commercials', url: '/content/commercials' } ]}/>
           <div style={generalStyles.backgroundBar}>
             <Container>
               <UtilsBar

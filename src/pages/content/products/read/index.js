@@ -9,8 +9,8 @@ import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
-import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 
 /* eslint-disable no-alert */
 
@@ -73,11 +73,10 @@ export default class ReadProduct extends Component {
   render () {
     const { params, children, currentProduct, location, deleteProduct } = this.props;
     const defaultLocale = currentProduct.getIn([ 'defaultLocale' ]);
-    console.log('read', currentProduct && currentProduct.toJS());
     return (
       <SideMenu>
         <Root>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'Products', url: '/content/products' },
             { title: currentProduct.getIn([ 'shortName', defaultLocale ]), url: location } ]}/>
           <Container>

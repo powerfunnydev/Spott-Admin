@@ -14,9 +14,9 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Label from '../../../_common/inputs/_label';
 import selector from './selector';
-import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -100,7 +100,7 @@ export default class EditBroadcaster extends Component {
     return (
       <SideMenu>
         <Root style={styles.background}>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'Broadcasters', url: '/content/broadcasters' },
             { title: currentBroadcaster.get('name'), url: location } ]}/>
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>

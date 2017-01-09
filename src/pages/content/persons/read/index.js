@@ -9,8 +9,8 @@ import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
-import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 
 /* eslint-disable no-alert */
 
@@ -62,7 +62,7 @@ export default class ReadPerson extends Component {
     return (
       <SideMenu>
         <Root>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'People', url: '/content/persons' },
             { title: currentPerson.get('fullName'), url: location } ]}/>
           <Container>
