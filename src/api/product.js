@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformProduct, transformListProduct, transformProductOffering } from './transformers';
+import { transformSuggestedProduct, transformProduct, transformListProduct, transformProductOffering, transformSimilarProduct } from './transformers';
 
 export async function fetchProducts (baseUrl, authenticationToken, locale, { publishStatus, used, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/product/products?page=${page}&pageSize=${pageSize}`;
@@ -24,6 +24,25 @@ export async function fetchProducts (baseUrl, authenticationToken, locale, { pub
     data.push(prod);
   }
   body.data = data;
+  return body;
+}
+
+export async function fetchSuggestedProducts (baseUrl, authenticationToken, { imageId, maxResults = 25 }) {
+  const { body } = await get(authenticationToken, `${baseUrl}/v004/image/searches/products?imageUUid=${imageId}&maxResults=${maxResults}`);
+  body.data = body.data.map(transformSuggestedProduct);
+  return body;
+}
+
+export async function fetchSimilarProducts (baseUrl, authenticationToken, locale, { productId, publishStatus, used, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/product/products/${productId}/similarProducts?page=${page}&pageSize=${pageSize}`;
+  if (searchString) {
+    url += `&searchString=${searchString}`;
+  }
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url += `&sortField=${sortField}&sortDirection=${sortDirection}`;
+  }
+  const { body } = await get(authenticationToken, locale, url);
+  body.data = body.data.map(transformSimilarProduct);
   return body;
 }
 

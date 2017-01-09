@@ -57,6 +57,7 @@ export default (state = fromJS({
     products: {},
     productOfferings: {},
     tvGuideEntries: {},
+    similarProducts: {},
     shops: {},
     users: {},
     videos: {}
@@ -110,6 +111,7 @@ export default (state = fromJS({
     mediumHasTvGuideEntries: {},
     personHasFaceImages: {},
     productHasProductOfferings: {},
+    productHasSimilarProducts: {},
     seriesEntryHasSeasons: {},
     seriesEntryHasEpisodes: {},
     seasonHasEpisodes: {},
@@ -519,6 +521,13 @@ export default (state = fromJS({
     }
     case productActions.PRODUCT_OFFERINGS_FETCH_ERROR:
       return searchError(state, 'productHasProductOfferings', action.productId, action.error);
+
+    case productActions.SIMILAR_PRODUCTS_FETCH_START:
+      return searchStart(state, 'productHasSimilarProducts', action.productId);
+    case productActions.SIMILAR_PRODUCTS_FETCH_SUCCESS:
+      return searchSuccess(state, 'similarProducts', 'productHasSimilarProducts', action.productId, action.data.data);
+    case productActions.SIMILAR_PRODUCTS_FETCH_ERROR:
+      return searchError(state, 'productHasSimilarProducts', action.productId, action.error);
 
     // Product categories
     // /////////////////

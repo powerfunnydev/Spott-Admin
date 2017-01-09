@@ -26,6 +26,14 @@ export function transformListProduct ({ uuid, used, publishStatus, brand, shortN
   };
 }
 
+export function transformSimilarProduct ({ uuid, product1, product2 }) {
+  return {
+    id: uuid,
+    product1: transformListProduct(product1),
+    product2: transformListProduct(product2)
+  };
+}
+
 export function transformTag ({ uuid, publishStatus, defaultLocale, localeData, auditInfo }) {
   const tag = {
     basedOnDefaultLocale: {},
@@ -46,6 +54,14 @@ export function transformTag ({ uuid, publishStatus, defaultLocale, localeData, 
     }
   }
   return tag;
+}
+
+export function transformSuggestedProduct ({ uuid, accuracy, product }) {
+  return {
+    id: uuid,
+    accuracy,
+    product: transformListProduct(product)
+  };
 }
 
 export function transformListTag ({ uuid, name, auditInfo, logo }) {

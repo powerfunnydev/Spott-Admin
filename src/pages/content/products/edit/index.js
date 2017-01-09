@@ -24,6 +24,7 @@ import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 import { FETCHING } from '../../../../constants/statusTypes';
 import ProductOfferings from './productOfferings/list';
+import SimilarProducts from './similarProducts/list';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -352,6 +353,9 @@ export default class EditProduct extends Component {
             </Tab>
             <Tab title='Offerings'>
               <ProductOfferings productId={this.props.params.productId} />
+            </Tab>
+            <Tab title='Similar Products'>
+              <SimilarProducts productId={this.props.params.productId} />
             </Tab>
           </Tabs>
         </EditTemplate>
