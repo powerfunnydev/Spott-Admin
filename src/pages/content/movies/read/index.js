@@ -9,11 +9,11 @@ import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
-import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import TvGuideList from '../../_mediumTvGuide';
 import { generalStyles } from '../../../_common/components/table/index';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 
 /* eslint-disable no-alert */
 
@@ -70,7 +70,7 @@ export default class ReadMovie extends Component {
     return (
       <SideMenu>
         <Root>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'Movies', url: '/content/movies' },
             { title: currentMovie.getIn([ 'title', defaultLocale ]), url: location } ]}/>
           <Container>

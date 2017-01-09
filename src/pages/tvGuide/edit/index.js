@@ -18,6 +18,7 @@ import { routerPushWithReturnTo } from '../../../actions/global';
 import { Tabs, Tab } from '../../_common/components/formTabs';
 import ensureEntityIsSaved from '../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../app/sideMenu';
+import Header from '../../app/multiFunctionalHeader';
 
 function validate (values, { medium, t }) {
   const validationErrors = {};
@@ -75,7 +76,7 @@ export default class EditTvGuideEntry extends Component {
   static propTypes = {
     broadcastChannelsById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
-    // used for renderBreadCrumbs
+    // used for getHierarchy
     currentTvGuideEntry: ImmutablePropTypes.map.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
@@ -87,7 +88,7 @@ export default class EditTvGuideEntry extends Component {
     medium: ImmutablePropTypes.map.isRequired,
     params: PropTypes.object.isRequired,
     route: PropTypes.shape({
-      renderBreadCrumbs: PropTypes.func.isRequired
+      getHierarchy: PropTypes.func.isRequired
     }).isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcastChannels: PropTypes.func.isRequired,
@@ -186,12 +187,12 @@ export default class EditTvGuideEntry extends Component {
     const {
       location, broadcastChannelsById, handleSubmit, mediaById, searchBroadcastChannels,
       searchEpisodes, searchMedia, searchSeasons, searchedBroadcastChannelIds,
-      searchedEpisodeIds, searchedSeasonIds, searchedMediumIds, medium, t, route: { renderBreadCrumbs }
+      searchedEpisodeIds, searchedSeasonIds, searchedMediumIds, medium, t, route: { getHierarchy }
     } = this.props;
     return (
       <SideMenu location={location}>
         <Root style={styles.background}>
-          {renderBreadCrumbs(this.props)}
+          <Header hierarchy={getHierarchy(this.props)}/>
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
           <Tabs>
             <Tab title='Details'>

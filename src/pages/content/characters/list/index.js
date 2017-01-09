@@ -14,6 +14,7 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 
 const numberOfRows = 25;
 
@@ -106,6 +107,7 @@ export default class Characters extends Component {
     return (
       <SideMenu>
         <Root>
+          <Header hierarchy={[ { title: 'Characters', url: '/content/characters' } ]}/>
           <div style={generalStyles.backgroundBar}>
             <Container>
               <UtilsBar

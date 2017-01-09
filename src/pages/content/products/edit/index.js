@@ -17,11 +17,11 @@ import { BRAND_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import selector from './selector';
 import LanguageBar from '../../../_common/components/languageBar';
-import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import ImageDropzone from '../../../_common/dropzone/imageDropzone';
 import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 import { FETCHING } from '../../../../constants/statusTypes';
 import ProductOfferings from './productOfferings/list';
 
@@ -230,7 +230,7 @@ export default class EditProduct extends Component {
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'Products', url: '/content/products' },
             { title: currentProduct.getIn([ 'shortName', defaultLocale ]), url: location } ]}/>
           {currentModal === BRAND_CREATE_LANGUAGE &&

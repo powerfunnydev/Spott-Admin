@@ -15,6 +15,7 @@ import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
 import moment from 'moment';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 /* eslint-disable no-alert */
 
 const numberOfRows = 25;
@@ -109,6 +110,7 @@ export default class BroadcastChannelList extends Component {
     return (
       <SideMenu>
         <Root>
+        <Header hierarchy= {[ { title: 'Broadcast Channels', url: '/content/broadcast-channels' } ]}/>
         <div style={generalStyles.backgroundBar}>
           <Container>
             <UtilsBar
