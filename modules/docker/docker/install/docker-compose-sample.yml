@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+  web:
+    extends:
+      file: ./base/docker-compose-base.yml
+      service: web
+    volumes:
+      - ../data/:/var/lib/appiness/   
