@@ -17,12 +17,12 @@ import Label from '../../../_common/inputs/_label';
 import { SERIES_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import LanguageBar from '../../../_common/components/languageBar';
-import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import selector from './selector';
 import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -193,7 +193,7 @@ export default class EditSeries extends Component {
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'Series', url: '/content/series' },
             { title: currentSeriesEntry.getIn([ 'title', defaultLocale ]), url: location }
           ]}/>

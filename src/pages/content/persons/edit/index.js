@@ -19,13 +19,13 @@ import { PERSON_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import selector from './selector';
 import LanguageBar from '../../../_common/components/languageBar';
-import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import ImageDropzone from '../../../_common/dropzone/imageDropzone';
 import { ImageWithDropdown } from '../../../_common/components/imageWithDropdown';
 import { PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -219,7 +219,7 @@ export default class EditPerson extends Component {
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'People', url: '/content/persons' },
             { title: currentPerson.get('fullName'), url: location } ]}/>
           {currentModal === PERSON_CREATE_LANGUAGE &&

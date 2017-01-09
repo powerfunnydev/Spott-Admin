@@ -16,6 +16,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import selector from './selector';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -93,11 +94,14 @@ export default class EditBroadcastChannel extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { deleteLogo, currentBroadcastChannel, handleSubmit } = this.props;
+    const { deleteLogo, currentBroadcastChannel, handleSubmit, location } = this.props;
 
     return (
       <SideMenu>
         <Root style={styles.background}>
+          <Header hierarchy={[
+            { title: 'Broadcast Channels', url: '/content/broadcast-channels' },
+            { title: currentBroadcastChannel.getIn([ 'name' ]), url: location } ]}/>
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
             <Tabs>
               <TabList style={tabStyles.tabList}>

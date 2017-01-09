@@ -14,6 +14,7 @@ import Dropdown, { styles as dropdownStyles } from '../../_common/components/act
 import UtilsBar from '../../_common/components/table/utilsBar';
 import { confirmation } from '../../_common/askConfirmation';
 import { SideMenu } from '../../app/sideMenu';
+import Header from '../../app/multiFunctionalHeader';
 
 /* eslint-disable react/no-set-state*/
 
@@ -132,6 +133,7 @@ export default class TvGuideList extends Component {
     return (
       <SideMenu location={location}>
         <Root>
+          <Header hierarchy={[ { title: 'Tv-Guide', url: '/tv-guide' } ]}/>
           <div style={generalStyles.backgroundBar}>
             <Container>
               <UtilsBar

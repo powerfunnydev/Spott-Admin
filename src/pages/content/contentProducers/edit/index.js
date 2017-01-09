@@ -14,9 +14,9 @@ import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Label from '../../../_common/inputs/_label';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import selector from './selector';
-import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -101,7 +101,7 @@ export default class EditContentProducers extends Component {
     return (
       <SideMenu>
         <Root style={styles.background}>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'Content producers', url: '/content/content-producers' },
             { title: currentContentProducer.get('name'), url: location } ]}/>
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>

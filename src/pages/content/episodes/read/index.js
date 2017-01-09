@@ -10,10 +10,10 @@ import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
 import { generalStyles } from '../../../_common/components/table/index';
-import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import TvGuideList from '../../_mediumTvGuide';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 
 /* eslint-disable no-alert */
 
@@ -79,7 +79,7 @@ export default class ReadEpisode extends Component {
     return (
       <SideMenu>
         <Root>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'Series', url: '/content/series' },
             { title: currentEpisode.getIn([ 'seriesEntry', 'title' ]), url: `/content/series/read/${this.props.params.seriesEntryId}` },
             { title: currentEpisode.getIn([ 'season', 'title' ]), url: `/content/series/read/${this.props.params.seriesEntryId}/seasons/read/${params.seasonId}` },

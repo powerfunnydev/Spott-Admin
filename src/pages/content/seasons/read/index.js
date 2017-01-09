@@ -12,9 +12,9 @@ import Line from '../../../_common/components/line';
 import SeasonEpisodesList from './episodes';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { generalStyles } from '../../../_common/components/table/index';
-import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import TvGuideList from '../../_mediumTvGuide';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 
 @connect(selector, (dispatch) => ({
   deleteSeason: bindActionCreators(listActions.deleteSeason, dispatch),
@@ -83,7 +83,7 @@ export default class ReadSeason extends Component {
     return (
       <SideMenu>
         <Root>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'Series', url: '/content/series' },
             { title: currentSeason.getIn([ 'seriesEntry', 'title' ]), url: `/content/series/read/${this.props.params.seriesEntryId}` },
             { title: currentSeason.getIn([ 'title', defaultLocale ]), url: location } ]}/>

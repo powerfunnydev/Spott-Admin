@@ -13,6 +13,7 @@ import Dropdown, { styles as dropdownStyles } from '../../../_common/components/
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { confirmation } from '../../../_common/askConfirmation';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 import publishStatusTypes from '../../../../constants/publishStatusTypes';
 import SelectionDropdown from '../../../_common/components/selectionDropdown';
 import Checkbox from '../../../_common/inputs/checkbox';
@@ -185,6 +186,8 @@ export default class Products extends Component {
     return (
       <SideMenu>
         <Root>
+        <Header hierarchy={[
+          { title: 'Products', url: '/content/products' } ]}/>
           <div style={generalStyles.backgroundBar}>
             <Container>
               <UtilsBar

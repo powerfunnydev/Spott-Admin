@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { Link as ReactRouterLink, withRouter } from 'react-router';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import ApptvateLogoSVG from '../../_common/images/apptvateLogo';
-import { colors, makeTextStyle, fontWeights, buttonStyles } from '../../_common/styles';
+import { colors, makeTextStyle, fontWeights } from '../../_common/styles';
 import { menuSelector } from '../selectors';
 import * as globalActions from '../../../actions/global';
 import * as actions from '../../../actions/user';
@@ -138,7 +138,7 @@ class VerticalSideMenu extends Component {
     },
     logo: {
       width: '130px',
-      height: '54px'
+      height: '55px'
     },
     logoContainer: {
       display: 'inline-flex'
@@ -308,10 +308,6 @@ class VerticalSideMenu extends Component {
               </Link>
             </div>
           }
-          <div style={styles.seperator}/>
-          {isAuthenticated
-            ? <button key='logout' style={[ buttonStyles.base, buttonStyles.extraSmall, buttonStyles.pink, styles.noMarginLeft ]} onClick={this.onLogOutClick}>Logout</button>
-            : <button key='signIn' style={[ buttonStyles.base, buttonStyles.extraSmall, buttonStyles.pink, styles.noMarginLeft ]} onClick={this.onSignInClick}>Login</button>}
         </div>
         <div style={styles.content}>
           {this.props.children}

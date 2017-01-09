@@ -14,6 +14,7 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 import ToolTip from '../../../_common/components/toolTip';
 
 const numberOfRows = 25;
@@ -123,6 +124,7 @@ export default class Brands extends Component {
     return (
       <SideMenu>
         <Root>
+          <Header hierarchy= {[ { title: 'Brands', url: '/content/brands' } ]}/>
           <div style={generalStyles.backgroundBar}>
             <Container>
               <UtilsBar

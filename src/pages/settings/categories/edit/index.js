@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { Root, colors, EditTemplate } from '../../../_common/styles';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 import MediumCategories from './mediumCategories/list';
 import Section from '../../../_common/components/section';
 import ProductCategories from './productCategories/list';
@@ -41,6 +42,7 @@ export default class EditProduct extends Component {
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
+          <Header hierarchy={[ { title: 'Categories', url: '/settings/categories' } ]}/>
           <EditTemplate onCancel={this.redirect}>
             <Section>
               <MediumCategories />

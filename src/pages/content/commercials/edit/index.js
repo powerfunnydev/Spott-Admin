@@ -24,9 +24,9 @@ import RelatedVideo from '../../../content/_relatedVideo/read';
 import * as actions from './actions';
 import selector from './selector';
 import Characters from '../../_helpers/_characters/list';
-import BreadCrumbs from '../../../_common/components/breadCrumbs';
 import { PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import { SideMenu } from '../../../app/sideMenu';
+import Header from '../../../app/multiFunctionalHeader';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -236,7 +236,7 @@ export default class EditCommercial extends Component {
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
-          <BreadCrumbs hierarchy={[
+          <Header hierarchy={[
             { title: 'Commercials', url: '/content/commercials' },
             { title: currentCommercial.getIn([ 'title', defaultLocale ]), url: location } ]}/>
           {currentModal === COMMERCIAL_CREATE_LANGUAGE &&
