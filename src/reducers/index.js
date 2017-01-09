@@ -30,6 +30,7 @@ import moviesEdit from '../pages/content/movies/edit/reducer';
 import moviesList from '../pages/content/movies/list/reducer';
 import personsEdit from '../pages/content/persons/edit/reducer';
 import personsList from '../pages/content/persons/list/reducer';
+import productsCreate from '../pages/content/products/create/reducer';
 import productsList from '../pages/content/products/list/reducer';
 import productsEdit from '../pages/content/products/edit/reducer';
 import relatedVideoPersist from '../pages/content/_relatedVideo/persist/reducer';
@@ -122,6 +123,7 @@ export default combineReducers({
       list: shopsList
     }),
     products: combineReducers({
+      create: productsCreate,
       edit: productsEdit,
       list: productsList
     }),
