@@ -9,14 +9,17 @@ import {
   listBrandsEntitiesSelector,
   listCharactersEntitiesSelector,
   listMediumCategoriesEntitiesSelector,
+  listShopsEntitiesSelector,
   mediaEntitiesSelector,
   mediumHasBrandsRelationsSelector,
   mediumHasCharactersRelationsSelector,
+  mediumHasShopsRelationsSelector,
   searchStringHasBrandsRelationsSelector,
   searchStringHasBroadcastersRelationsSelector,
   searchStringHasCharactersRelationsSelector,
   searchStringHasContentProducersRelationsSelector,
-  searchStringHasMediumCategoriesRelationsSelector
+  searchStringHasMediumCategoriesRelationsSelector,
+  searchStringHasShopsRelationsSelector
 } from '../../../../selectors/data';
 import { createFormValueSelector } from '../../../../utils';
 
@@ -31,14 +34,12 @@ const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 const currentMovieIdSelector = (state, props) => { return props.params.movieId; };
 const currentMovieSelector = createEntityByIdSelector(mediaEntitiesSelector, currentMovieIdSelector);
 
-const movieBrandsSelector = createEntitiesByRelationSelector(mediumHasBrandsRelationsSelector, currentMovieIdSelector, listBrandsEntitiesSelector);
-const movieCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersRelationsSelector, currentMovieIdSelector, listCharactersEntitiesSelector);
-
 const currentBrandsSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentBrandsSearchString' ]);
-const currentCharactersSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentCharacterSearchString' ]);
 const currentBroadcastersSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentBroadcastersSearchString' ]);
+const currentCharactersSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentCharacterSearchString' ]);
 const currentContentProducersSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentContentProducersSearchString' ]);
 const currentMediumCategoriesSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentMediumCategoriesSearchString' ]);
+const currentShopSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentShopSearchString' ]);
 const popUpMessageSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'popUpMessage' ]);
 
 const searchedBroadcasterIdsSelector = createEntityIdsByRelationSelector(searchStringHasBroadcastersRelationsSelector, currentBroadcastersSearchStringSelector);
@@ -46,6 +47,11 @@ const searchedBrandIdsSelector = createEntityIdsByRelationSelector(searchStringH
 const searchedCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCharactersSearchStringSelector);
 const searchedContentProducerIdsSelector = createEntityIdsByRelationSelector(searchStringHasContentProducersRelationsSelector, currentContentProducersSearchStringSelector);
 const searchedMediumCategoryIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediumCategoriesRelationsSelector, currentMediumCategoriesSearchStringSelector);
+const searchedShopIdsSelector = createEntityIdsByRelationSelector(searchStringHasShopsRelationsSelector, currentShopSearchStringSelector);
+
+const movieBrandsSelector = createEntitiesByRelationSelector(mediumHasBrandsRelationsSelector, currentMovieIdSelector, listBrandsEntitiesSelector);
+const movieCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersRelationsSelector, currentMovieIdSelector, listCharactersEntitiesSelector);
+const movieShopsSelector = createEntitiesByRelationSelector(mediumHasShopsRelationsSelector, currentMovieIdSelector, listShopsEntitiesSelector);
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
@@ -59,6 +65,7 @@ export default createStructuredSelector({
   mediumCategoriesById: listMediumCategoriesEntitiesSelector,
   movieBrands: movieBrandsSelector,
   movieCharacters: movieCharactersSelector,
+  movieShops: movieShopsSelector,
   popUpMessage: popUpMessageSelector,
   errors: formErrorsSelector,
   searchedBrandIds: searchedBrandIdsSelector,
@@ -66,6 +73,8 @@ export default createStructuredSelector({
   searchedCharacterIds: searchedCharacterIdsSelector,
   searchedContentProducerIds: searchedContentProducerIdsSelector,
   searchedMediumCategoryIds: searchedMediumCategoryIdsSelector,
+  searchedShopIds: searchedShopIdsSelector,
+  shopsById: listShopsEntitiesSelector,
   supportedLocales: supportedLocalesSelector,
   formValues: valuesSelector
 });

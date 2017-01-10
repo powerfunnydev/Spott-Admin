@@ -51,16 +51,16 @@ export default class Shops extends Component {
     this.setState({ create: true });
   }
 
-  async onClickDeleteMediumShop (brandId) {
+  async onClickDeleteMediumShop (shopId) {
     const { mediumId, loadMediumShops, deleteMediumShop } = this.props;
-    await deleteMediumShop({ brandId, mediumId });
+    await deleteMediumShop({ mediumId, shopId });
     await loadMediumShops(mediumId);
   }
 
   async onSubmit (form) {
-    const { brandId } = form;
-    const { loadMediumShops, persistMediumShop, mediumId } = this.props;
-    await persistMediumShop({ brandId, mediumId });
+    const { shopId } = form;
+    const { loadMediumShops, mediumId, persistMediumShop } = this.props;
+    await persistMediumShop({ mediumId, shopId });
     await loadMediumShops(mediumId);
   }
 
@@ -113,15 +113,15 @@ export default class Shops extends Component {
         <FormDescription style={styles.description}>Which shops are starring in this content? This way we’ll do a better job suggesting the right products.</FormDescription>
         <Table style={styles.customTable}>
           <Rows style={styles.adaptedRows}>
-            {mediumShops.get('data').map((brand, index) => {
+            {mediumShops.get('data').map((shop, index) => {
               return (
                 <Row isFirst={index === 0} key={index} >
                   <CustomCel style={[ styles.adaptedCustomCel, styles.paddingLeft ]}>
-                    <img src={brand.get('logo') && `${brand.getIn([ 'logo', 'url' ])}?height=70&width=70`} style={styles.image}/>
+                    <img src={shop.get('logo') && `${shop.getIn([ 'logo', 'url' ])}?height=70&width=70`} style={styles.image}/>
                   </CustomCel>
-                  <CustomCel style={styles.adaptedCustomCel}>{brand.get('name')}</CustomCel>
+                  <CustomCel style={styles.adaptedCustomCel}>{shop.get('name')}</CustomCel>
                   <CustomCel style={[ styles.adaptedCustomCel, styles.floatRight ]}>
-                    <RemoveButton cross onClick={this.onClickDeleteMediumShop.bind(this, brand.get('id'))}/>
+                    <RemoveButton cross onClick={this.onClickDeleteMediumShop.bind(this, shop.get('id'))}/>
                   </CustomCel>
                 </Row>
               );
