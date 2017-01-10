@@ -109,7 +109,7 @@ export default class Brands extends Component {
     const { mediumBrands, searchBrands, brandsById, searchedBrandIds } = this.props;
     return (
       <Section>
-        <FormSubtitle first>Brand</FormSubtitle>
+        <FormSubtitle first>Brands</FormSubtitle>
         <FormDescription style={styles.description}>Which brands are starring in this content? This way we’ll do a better job detecting their faces automagically!</FormDescription>
         <Table style={styles.customTable}>
           <Rows style={styles.adaptedRows}>

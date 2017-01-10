@@ -17,7 +17,7 @@
   "scripts": {
     "test": "NODE_ENV=testing ./node_modules/karma/bin/karma start --auto-watch --no-single-run karma.conf.js",
     "build": "rm -rf ./dist/* && NODE_ENV=production ./node_modules/webpack/bin/webpack.js --progress --config webpack.prod.config.babel.js",
-    "dev": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --config webpack.dev.config.babel.js"
+    "dev": "NODE_ENV=development ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --config webpack.dev.config.babel.js"
   },
   "private": true,
   "license": "UNLICENSED",

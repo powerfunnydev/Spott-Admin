@@ -24,7 +24,7 @@ import * as actions from './actions';
 import selector from './selector';
 import Brands from '../../_helpers/_brands/list';
 import Characters from '../../_helpers/_characters/list';
-// import Shops from '../../_helpers/_shops/list';
+import Shops from '../../_helpers/_shops/list';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
@@ -278,12 +278,12 @@ export default class EditEpisode extends Component {
       charactersById, closeModal, contentProducersById, currentEpisode,
       currentModal, currentSeasonId, currentSeriesEntryId, defaultLocale,
       deletePosterImage, deleteProfileImage, episodeBrands, episodeCharacters,
-      /* episodeShops, */ errors, handleSubmit, hasTitle, location, location: { query: { tab } },
+      episodeShops, errors, handleSubmit, hasTitle, location, location: { query: { tab } },
       mediumCategoriesById, searchBrands, searchBroadcasters, searchCharacters,
-      searchContentProducers, /* searchShops, */ searchedBrandIds, searchedBroadcasterIds,
+      searchContentProducers, searchShops, searchedBrandIds, searchedBroadcasterIds,
       searchedCharacterIds, searchedContentProducerIds, searchedMediumCategoryIds,
-      searchedSeasonIds, searchedSeriesEntryIds, /* searchedShopIds, */ searchMediumCategories,
-      searchSeasons, searchSeriesEntries, seasonsById, seriesEntriesById, /* shopsById, */
+      searchedSeasonIds, searchedSeriesEntryIds, searchedShopIds, searchMediumCategories,
+      searchSeasons, searchSeriesEntries, seasonsById, seriesEntriesById, shopsById,
       supportedLocales
     } = this.props;
 
@@ -467,12 +467,12 @@ export default class EditEpisode extends Component {
                    searchedCharacterIds={searchedCharacterIds}/>
              </Tab>
              <Tab title='Helpers'>
-               {/* <Shops
+               <Shops
                  mediumId={this.props.params.episodeId}
                  mediumShops={episodeShops}
                  searchShops={searchShops}
                  searchedShopIds={searchedShopIds}
-                 shopsById={shopsById}/> */}
+                 shopsById={shopsById}/>
                <Brands
                  brandsById={brandsById}
                  mediumBrands={episodeBrands}

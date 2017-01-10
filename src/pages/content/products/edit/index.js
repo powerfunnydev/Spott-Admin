@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 import React, { Component, PropTypes } from 'react';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
