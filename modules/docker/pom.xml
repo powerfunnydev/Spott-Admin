@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>appiness.mobi</groupId>
 		<artifactId>apptvate.website</artifactId>
-		<version>01.00.09-SNAPSHOT</version>
+		<version>01.00.09</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>apptvate.website.docker</artifactId>
@@ -61,8 +60,8 @@
 								<echo message="${project.version}" file="${project.build.directory}/classes/version" append="false" />
 								<delete file="${zip.file}" />
 								 <zip destfile="${zip.file}">
-									<zipfileset dir="${project.build.directory}/classes" excludes="**/*.sh"/>	 	
-									<zipfileset dir="${project.build.directory}/classes" includes="**/*.sh" filemode="755"/>
+									<zipfileset dir="${project.build.directory}/classes" excludes="**/*.sh" />	 	
+									<zipfileset dir="${project.build.directory}/classes" includes="**/*.sh" filemode="755" />
 								 </zip>
 							</tasks>
 						</configuration>
