@@ -1,5 +1,4 @@
-import { createSelector, createStructuredSelector } from 'reselect';
-import { List } from 'immutable';
+import { createStructuredSelector } from 'reselect';
 import { currentModalSelector } from '../../../../selectors/global';
 import { createFormValueSelector } from '../../../../utils';
 import {
