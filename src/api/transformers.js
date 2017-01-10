@@ -134,7 +134,7 @@ export function transformProduct ({ uuid, brand, tags, categories, publishStatus
     defaultLocale,
     description: {},
     id: uuid,
-    secondaryImages: {},
+    images: {},
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     locales: [],
@@ -154,8 +154,7 @@ export function transformProduct ({ uuid, brand, tags, categories, publishStatus
       product.shortName[locale] = shortName;
       product.fullName[locale] = fullName;
       product.logo[locale] = images && images[0] && { id: images[0].uuid, url: images[0].url };
-      const secondaryImages = images && images.slice(1);
-      product.secondaryImages[locale] = secondaryImages && secondaryImages.map((image) => ({ id: image.uuid, url: image.url }));
+      product.images[locale] = images && images.map((image) => ({ id: image.uuid, url: image.url }));
       product.profileImage[locale] = profileCover && { id: profileCover.uuid, url: profileCover.url };
       product.locales.push(locale);
     }
