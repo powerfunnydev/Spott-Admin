@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>appiness.mobi</groupId>
 		<artifactId>apptvate.website</artifactId>
-		<version>01.00.10</version>
+		<version>01.00.11-SNAPSHOT</version>
 		<relativePath>./pom.xml</relativePath>
 	</parent>
 	<artifactId>apptvate.website.web</artifactId>
