@@ -6,9 +6,9 @@ import {
   PRODUCT_GROUP_DELETE_START, PRODUCT_GROUP_DELETE_SUCCESS, PRODUCT_GROUP_DELETE_ERROR,
   CHARACTER_SELECT, PRODUCT_SELECT, EDIT_PRODUCT_GROUP_SELECT, QUICKIES_SELECT_TAB, LOCAL_QUICKY_DELETE
 } from '../constants/actionTypes';
-import { fetchCharacter, fetchVideoCharacters } from './character';
+import { fetchCharacter, fetchMediumCharacters } from './character';
 import { fetchProduct } from './product';
-import { currentVideoIdSelector, appearanceEntitiesSelector, currentMediumSelector, productGroupEntitiesSelector } from '../selectors/common';
+import { appearanceEntitiesSelector, currentMediumSelector, productGroupEntitiesSelector } from '../selectors/common';
 import { charactersSelector } from '../selectors/quickiesBar/latestTab';
 import { currentRootMediumIdSelector } from '../selectors/quickiesBar/scenesTab';
 import * as quickiesApi from '../api/quickies';
@@ -172,17 +172,10 @@ export function loadCharacters () {
   return async (dispatch, getState) => {
     const state = getState();
     const medium = currentMediumSelector(state);
-    const videoId = currentVideoIdSelector(state);
+    // The cast of a medium (only objects with an id).
     const characters = medium.get('characters');
-
-    dispatch(fetchVideoCharacters({ videoId }));
-
-    // Medium should be fetched first.
-    // if (characters) {
-    //   for (const character of characters) {
-    //     result.push(await dispatch(fetchCharacter({ characterId: character.get('id') })));
-    //   }
-    // }
+    // Fetch the cast of a medium.
+    await dispatch(fetchMediumCharacters({ mediumId: medium.get('id') }));
     return characters;
   };
 }

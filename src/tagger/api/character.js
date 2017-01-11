@@ -51,6 +51,11 @@ export async function getVideoCharacters (baseUrl, authenticationToken, locale, 
   return characters.map(transformDetailedCharacter);
 }
 
+export async function getMediumCharacters (baseUrl, authenticationToken, locale, { mediumId, page = 0, pageSize = 100 }) {
+  const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/castMembers?page=${page}&pageSize=${pageSize}`);
+  return data.map(transformDetailedCharacter);
+}
+
 export async function getCharacterAppearances (baseUrl, authenticationToken, locale, { characterId, videoId }) {
   const { body: { data: characters } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/sceneCharacters?characterUuid=${characterId}`);
   return characters.map(transformCharacterAppearance);
