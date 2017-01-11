@@ -6,42 +6,53 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { bindActionCreators } from 'redux';
 import Section from '../../../../../_common/components/section';
 import { headerStyles, Table, Headers, CustomCel, Rows, Row } from '../../../../../_common/components/table/index';
-import { colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../../../_common/styles';
-import Plus from '../../../../../_common/images/plus';
-import EditButton from '../../../../../_common/components/buttons/editButton';
+import { buttonStyles, colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../../../_common/styles';
 import RemoveButton from '../../../../../_common/components/buttons/removeButton';
-import PersistSimilarProductModal from '../persist';
 import { routerPushWithReturnTo } from '../../../../../../actions/global';
 import selector from './selector';
 import * as actions from './actions';
+import Autosuggest from '../../../../../_common/inputs/autoSuggest';
+import { slowdown } from '../../../../../../utils';
+import { FETCHING } from '../../../../../../constants/statusTypes';
+import PlusSVG from '../../../../../_common/images/plus';
+import ToolTip from '../../../../../_common/components/toolTip';
+import QuestionSVG from '../../../../../_common/images/question';
+import DollarSVG from '../../../../../_common/images/dollar';
+import ImageCompareModal from '../imageCompare';
 
 @connect(selector, (dispatch) => ({
   deleteSimilarProduct: bindActionCreators(actions.deleteSimilarProduct, dispatch),
   loadSimilarProducts: bindActionCreators(actions.loadSimilarProducts, dispatch),
   persistSimilarProduct: bindActionCreators(actions.persistSimilarProduct, dispatch),
-  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
+  searchProducts: bindActionCreators(actions.searchProducts, dispatch)
 }))
 @Radium
 export default class SimilarProducts extends Component {
 
   static propTypes = {
+    _activeLocale: PropTypes.string,
+    currencies: ImmutablePropTypes.map.isRequired,
+    currentProduct: ImmutablePropTypes.map.isRequired,
+    defaultLocale: PropTypes.string,
     deleteSimilarProduct: PropTypes.func.isRequired,
     loadSimilarProducts: PropTypes.func.isRequired,
     persistSimilarProduct: PropTypes.func.isRequired,
     productId: PropTypes.string.isRequired,
+    productsById: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
+    searchProducts: PropTypes.func.isRequired,
+    searchedProductIds: ImmutablePropTypes.map.isRequired,
     similarProducts: ImmutablePropTypes.map.isRequired
   };
 
   constructor (props) {
     super(props);
-    this.getSimilarProduct = ::this.getSimilarProduct;
-    this.onClickCreateSimilarProduct = ::this.onClickCreateSimilarProduct;
-    this.onSubmit = ::this.onSubmit;
-    this.state = {
-      create: false,
-      edit: false
-    };
+    this.state = { openImageCompareModal: false };
+    this.closeImageCompareModal = ::this.closeImageCompareModal;
+    this.openImageCompareModal = ::this.openImageCompareModal;
+    this.onClickAddSimilarProduct = ::this.onClickAddSimilarProduct;
+    this.slowSearchProducts = slowdown(props.searchProducts, 300);
   }
 
   componentWillMount () {
@@ -49,64 +60,35 @@ export default class SimilarProducts extends Component {
     loadSimilarProducts({ productId });
   }
 
-  transformSimilarProduct ({ id, price, currency, shopId, url }) {
-    return {
-      id,
-      buyUrl: url,
-      shopId,
-      price: { amount: price, currency }
-    };
+  closeImageCompareModal () {
+    this.setState({ openImageCompareModal: false });
   }
 
-  getSimilarProduct (index) {
-    const { id, shop, price, locale, buyUrl } = this.props.similarProducts.getIn([ 'data', index ]).toJS();
-    return {
-      productOfferingId: id,
-      productId: this.props.productId,
-      shopId: shop.id,
-      currency: price.currency,
-      amount: price.amount,
-      buyUrl,
-      locale
-    };
+  openImageCompareModal () {
+    this.setState({ openImageCompareModal: true });
   }
 
-  onClickCreateSimilarProduct (e) {
-    e.preventDefault();
-    this.setState({ create: true });
-  }
-
-  async onClickDeleteSimilarProduct (productOfferingId) {
+  async onClickDeleteSimilarProduct (similarProductId) {
     const { deleteSimilarProduct, loadSimilarProducts, productId } = this.props;
-    await deleteSimilarProduct({ productOfferingId, productId });
+    await deleteSimilarProduct({ similarProductId });
     await loadSimilarProducts({ productId });
   }
 
-  async onSubmit (form) {
-    console.log('form', form);
-    const { loadSimilarProducts, persistSimilarProduct, productId } = this.props;
-    await persistSimilarProduct(form);
-    await loadSimilarProducts({ productId });
+  async onClickAddSimilarProduct (productId) {
+    const { loadSimilarProducts, persistSimilarProduct } = this.props;
+    const currentProductId = this.props.productId;
+    await persistSimilarProduct({ product1Id: currentProductId, product2Id: productId });
+    await loadSimilarProducts({ productId: currentProductId });
   }
 
   static styles = {
-    add: {
-      ...makeTextStyle(fontWeights.medium, '0.75em'),
-      color: colors.primaryBlue,
-      flex: 8,
-      justifyContent: 'center',
-      backgroundColor: 'rgba(244, 245, 245, 0.5)'
-    },
-    editButton: {
-      marginRight: '0.75em'
-    },
     description: {
       marginBottom: '1.25em'
     },
     adaptedCustomCel: {
       fontSize: '11px',
-      paddingTop: '5px',
-      paddingBottom: '5px',
+      paddingTop: '4px',
+      paddingBottom: '4px',
       minHeight: '30px'
     },
     adaptedRows: {
@@ -114,62 +96,289 @@ export default class SimilarProducts extends Component {
     },
     customTable: {
       border: `1px solid ${colors.lightGray2}`
+    },
+    offeringContainer: {
+      fontSize: '12px',
+      lineHeight: '20px',
+      display: 'flex',
+      alignItems: 'center'
+    },
+    offeringPaddingRight: {
+      paddingRight: '5px'
+    },
+    offeringShop: {
+      color: colors.veryDarkGray,
+      textDecoration: 'underline',
+      cursor: 'pointer',
+      paddingRight: '3px'
+    },
+    offeringPrice: {
+      color: colors.darkGray2
+    },
+    tooltipOverlay: {
+      padding: '11px',
+      backgroundColor: 'white',
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      maxWidth: '500px'
+    },
+    row: {
+      display: 'flex',
+      flexDirection: 'row'
+    },
+    questionSvg: {
+      display: 'inline-flex',
+      alignItems: 'center'
+    },
+    dollarSvg: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      paddingRight: '4px'
+    },
+    spacing: {
+      paddingRight: '7px'
+    },
+    affiliatePaddingRight: {
+      paddingRight: '4px'
+    },
+    logo: {
+      width: '22px',
+      height: '22px',
+      borderRadius: '2px',
+      objectFit: 'scale-down'
+    },
+    logoContainer: {
+      paddingRight: '10px',
+      display: 'inline-flex'
+    },
+    logoPlaceholder: {
+      paddingRight: '32px'
+    },
+    autoCompleteLogo: {
+      width: '30px',
+      height: '30px',
+      borderRadius: '2px',
+      objectFit: 'scale-down'
+    },
+    noBackground: {
+      backgroundColor: 'none'
+    },
+    bigLogoContainer: {
+      width: 122,
+      height: 122,
+      border: `1px solid ${colors.lightGray2}`,
+      backgroundColor: 'white',
+      borderRadius: '2px',
+      marginRight: '22px'
+    },
+    bigLogo: {
+      width: 120,
+      height: 120,
+      objectFit: 'scale-down'
+    },
+    productSelectionContainer: {
+      backgroundColor: colors.white,
+      height: 122,
+      border: `1px solid ${colors.lightGray2}`,
+      display: 'flex',
+      width: '100%'
+    },
+    firstPartContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRight: `1px solid ${colors.lightGray2}`
+    },
+    firstPart: {
+      width: '100%',
+      paddingRight: '50px',
+      paddingLeft: '50px'
+    },
+    paddingTopTable: {
+      paddingTop: '24px'
+    },
+    autoSuggestRenderContainer: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      width: '100%',
+      minHeight: 30
+    },
+    autoSuggestTitle: {
+      paddingLeft: '10px',
+      paddingRight: '10px',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden'
+    },
+    flex: {
+      display: 'flex'
+    },
+    autoSuggestButton: {
+      marginLeft: 'auto',
+      display: 'flex'
+    },
+    autoSuggestPlusContainer: {
+      paddingRight: '5px',
+      display: 'flex',
+      alignItems: 'center'
+    },
+    autoSuggestAdd: {
+      ...makeTextStyle(fontWeights.medium, '12px'),
+      paddingRight: '12px',
+      color: colors.primaryBlue
+    },
+    subTitle: {
+      color: colors.lightGray3,
+      fontSize: '12px',
+      paddingBottom: '16px'
+    },
+    secondPartContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100%',
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRight: `1px solid ${colors.lightGray2}`
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { similarProducts } = this.props;
-    console.log('similarProducts', similarProducts && similarProducts.toJS());
+    const { _activeLocale, defaultLocale, currencies, currentProduct, similarProducts, productsById, searchedProductIds } = this.props;
     return (
-      <Section>
-        <FormSubtitle first>Offerings for this product</FormSubtitle>
-        <FormDescription style={styles.description}>Offerings is a list that indicates where this product is for sale and for what price.</FormDescription>
-        <Table style={styles.customTable}>
-          <Headers>
-            {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-            <CustomCel style={[ headerStyles.header, headerStyles.firstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>
-              Product
-            </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { width: 100 } ]} />
-          </Headers>
-          <Rows style={styles.adaptedRows}>
-            {similarProducts.get('data').map((productOffering, index) => {
-              return (
-                <Row isFirst={index === 0} key={index} >
-                  <CustomCel
-                    style={[ styles.adaptedCustomCel, { flex: 2 } ]}
-                    onClick={() => { this.props.routerPushWithReturnTo(`/content/shops/read/${productOffering.getIn([ 'shop', 'id' ])}`); }}>
-                    {productOffering.getIn([ 'shop', 'name' ])}
-                  </CustomCel>
-                  <CustomCel style={[ styles.adaptedCustomCel, { width: 100 } ]}>
-                    <EditButton style={styles.editButton} onClick={() => this.setState({ edit: index })} />
-                    <RemoveButton onClick={this.onClickDeleteSimilarProduct.bind(this, productOffering.get('id'))} />
-                  </CustomCel>
-                </Row>
-              );
-            })}
-            <Row isFirst={similarProducts.get('data').size === 0} >
-              <CustomCel style={[ styles.add, styles.adaptedCustomCel ]} onClick={this.onClickCreateSimilarProduct}>
-                <Plus color={colors.primaryBlue} />&nbsp;&nbsp;&nbsp;Add Product
-              </CustomCel>
-            </Row>
-          </Rows>
-          {this.state.create &&
-            <PersistSimilarProductModal
-              initialValues={{
-                productId: this.props.productId
-              }}
-              onClose={() => this.setState({ create: false })}
-              onSubmit={this.onSubmit} />}
-          {typeof this.state.edit === 'number' &&
-            <PersistSimilarProductModal
-              edit
-              initialValues={this.getSimilarProduct(this.state.edit)}
-              onClose={() => this.setState({ edit: false })}
-              onSubmit={this.onSubmit} />}
-        </Table>
-      </Section>
+      <div>
+        <Section style={styles.noBackground}>
+          <FormSubtitle first>Add Similar Products</FormSubtitle>
+          <FormDescription style={styles.description}>This way we can provide users with alternatives with, for example, a different price range.</FormDescription>
+          <div style={styles.flex}>
+            <div style={styles.bigLogoContainer}>
+              <img
+                src={currentProduct.getIn([ 'logo', _activeLocale, 'url' ]) && `${currentProduct.getIn([ 'logo', _activeLocale, 'url' ])}?height=203&width=360` ||
+                        currentProduct.getIn([ 'logo', defaultLocale, 'url' ]) && `${currentProduct.getIn([ 'logo', defaultLocale, 'url' ])}?height=203&width=360`}
+                style={styles.bigLogo}/>
+            </div>
+            <div style={styles.productSelectionContainer}>
+              <div style={styles.firstPartContainer}>
+                <div style={styles.subTitle}>Add by product name</div>
+                <div style={styles.firstPart}>
+                  <Autosuggest
+                    getItemText={(id) => productsById.getIn([ id, 'shortName' ])}
+                    getOptions={this.slowSearchProducts}
+                    isLoading={searchedProductIds.get('_status') === FETCHING}
+                    name='productId'
+                    options={searchedProductIds.get('data').toJS()}
+                    placeholder='Product name'
+                    renderOption={(id) => {
+                      return (<div style={styles.autoSuggestRenderContainer}>
+                        <ToolTip
+                          overlay={<img src={`${productsById.getIn([ id, 'logo', 'url' ])}?height=150&width=150`}/>}
+                          placement='top'
+                          prefixCls='no-arrow'>
+                          <img src={`${productsById.getIn([ id, 'logo', 'url' ])}?height=150&width=150`} style={styles.autoCompleteLogo} />
+                        </ToolTip>
+                        <div style={styles.autoSuggestTitle}>{productsById.getIn([ id, 'shortName' ])}</div>
+                        <div style={styles.autoSuggestButton}>
+                          <div style={styles.autoSuggestPlusContainer}><PlusSVG color={colors.primaryBlue}/></div>
+                          <div style={styles.autoSuggestAdd}>Add</div></div>
+                      </div>);
+                    }}
+                    required
+                    onChange={this.onClickAddSimilarProduct}/>
+                  </div>
+                </div>
+                <div style={styles.secondPartContainer}>
+                  <div style={styles.subTitle}>Add by Image comparison</div>
+                  <button style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} onClick={this.openImageCompareModal}>Start comparing</button>
+                </div>
+              </div>
+            </div>
+        </Section>
+        <Section>
+          <FormSubtitle first>Already added</FormSubtitle>
+          <div style={styles.paddingTopTable}/>
+          <Table style={styles.customTable}>
+            <Headers>
+              {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+              <CustomCel style={[ headerStyles.header, headerStyles.firstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>Product</CustomCel>
+              <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>Brand</CustomCel>
+              <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { width: 150 } ]}>Offerings</CustomCel>
+              <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { width: 30 } ]} />
+            </Headers>
+            <Rows style={styles.adaptedRows}>
+              {similarProducts.get('data').map((similarProduct, index) => {
+                const offeringsArray = similarProduct.getIn([ 'product2', 'offerings' ]) && similarProduct.getIn([ 'product2', 'offerings' ]).toArray() || [];
+                const numberOfAffiliates = offeringsArray.reduce((total, offer, key) => offer.get('affiliateCode') ? total + 1 : total, 0);
+                const numberOfNonAffiliates = offeringsArray.length - numberOfAffiliates;
+                const offerings = offeringsArray.map((offering, i) => {
+                  return (
+                    <div key={`similarProduct${index}offering${i}`} style={[ styles.offeringContainer, ((i + 1) !== offeringsArray.length) && styles.offeringPaddingRight ]}>
+                      {offering.get('affiliateCode') && <div style={styles.dollarSvg}><DollarSVG/></div>}
+                      <span
+                        style={styles.offeringShop}
+                        onClick={() => { this.props.routerPushWithReturnTo(`/content/shops/read/${offering.getIn([ 'shop', 'id' ])}`); }}>
+                          {offering.getIn([ 'shop', 'name' ])}
+                      </span>
+                      <span style={styles.offeringPrice}>
+                        ({offering.getIn([ 'price', 'amount' ])}{currencies.getIn([ offering.getIn([ 'price', 'currency' ]), 'symbol' ])})
+                        {((i + 1) !== offeringsArray.length) && <span>,</span>}
+                      </span>
+                    </div>
+                  );
+                });
+                return (
+                  <Row isFirst={index === 0} key={index} >
+                    <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/products/read/${similarProduct.getIn([ 'product2', 'id' ])}`); }}>
+                      {similarProduct.getIn([ 'product2', 'logo' ]) && <div style={styles.logoContainer}>
+                        <ToolTip
+                          overlay={<img src={`${similarProduct.getIn([ 'product2', 'logo', 'url' ])}?height=150&width=150`}/>}
+                          placement='top'
+                          prefixCls='no-arrow'>
+                          <img src={`${similarProduct.getIn([ 'product2', 'logo', 'url' ])}?height=150&width=150`} style={styles.logo} />
+                        </ToolTip>
+                      </div> || <div style={styles.logoPlaceholder}/>} {similarProduct.getIn([ 'product2', 'shortName' ])}
+                    </CustomCel>
+                    <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/brands/read/${similarProduct.getIn([ 'product2', 'brand', 'id' ])}`); }}>
+                      {similarProduct.getIn([ 'product2', 'brand', 'name' ])}
+                    </CustomCel>
+                    <CustomCel style={[ styles.adaptedCustomCel, { width: 150 } ]}>
+                      <div style={styles.row}>
+                        <div style={[ styles.row, styles.spacing ]}>
+                          <div style={styles.dollarSvg}><DollarSVG/></div>
+                          <div style={styles.affiliatePaddingRight}>{numberOfAffiliates}</div>
+                          <div style={styles.dollarSvg}><DollarSVG color={colors.lightGray3}/></div>
+                          <div>{numberOfNonAffiliates}</div>
+                        </div>
+                        <ToolTip
+                          arrowContent={<div className='rc-tooltip-arrow-inner' />}
+                          overlay={<div style={styles.tooltipOverlay}>
+                            {offerings}
+                          </div>}
+                          placement='top'>
+                          <div style={styles.questionSvg}><QuestionSVG color={colors.lightGray3} onHoverColor={colors.darkGray2}/></div>
+                        </ToolTip>
+                      </div>
+                    </CustomCel>
+                    <CustomCel style={[ styles.adaptedCustomCel, { width: 30 } ]}>
+                      <RemoveButton onClick={this.onClickDeleteSimilarProduct.bind(this, similarProduct.get('id'))} />
+                    </CustomCel>
+                  </Row>
+                );
+              })}
+            </Rows>
+          </Table>
+          {this.state.openImageCompareModal &&
+            <ImageCompareModal
+              _activeLocale={_activeLocale}
+              currentProduct={currentProduct}
+              defaultLocale={defaultLocale}
+              onClose={this.closeImageCompareModal}/>}
+        </Section>
+      </div>
     );
   }
 

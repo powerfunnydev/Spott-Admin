@@ -42,7 +42,16 @@ export async function fetchSimilarProducts (baseUrl, authenticationToken, locale
     url += `&sortField=${sortField}&sortDirection=${sortDirection}`;
   }
   const { body } = await get(authenticationToken, locale, url);
-  body.data = body.data.map(transformSimilarProduct);
+  const data = [];
+  for (const sp of body.data) {
+    const similarProduct = transformSimilarProduct(sp);
+    const prod = similarProduct.product2;
+    const result = await get(authenticationToken, locale, `${baseUrl}/v004/product/products/${prod.id}/offerings`);
+    prod.offerings = result.body.data.map(transformProductOffering);
+    similarProduct.product2 = prod;
+    data.push(similarProduct);
+  }
+  body.data = data;
   return body;
 }
 

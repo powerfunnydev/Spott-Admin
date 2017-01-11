@@ -227,7 +227,6 @@ export default class EditProduct extends Component {
     const { _activeLocale, brandsById, productCategoriesById, errors, currentModal, closeModal, supportedLocales, defaultLocale,
       currentProduct, location, handleSubmit, searchBrands, searchProductCategories, searchedProductCategoryIds, searchedBrandIds, deleteImage,
       location: { query: { tab } } } = this.props;
-    console.log('currentProduct', currentProduct && currentProduct.toJS());
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
@@ -355,7 +354,11 @@ export default class EditProduct extends Component {
               <ProductOfferings productId={this.props.params.productId} />
             </Tab>
             <Tab title='Similar Products'>
-              <SimilarProducts productId={this.props.params.productId} />
+              <SimilarProducts
+                _activeLocale={_activeLocale}
+                currentProduct={currentProduct}
+                defaultLocale={defaultLocale}
+                productId={this.props.params.productId} />
             </Tab>
           </Tabs>
         </EditTemplate>

@@ -14,6 +14,5 @@ export async function persistSimilarProduct (baseUrl, authenticationToken, local
 }
 
 export async function deleteSimilarProduct (baseUrl, authenticationToken, locale, { similarProductId }) {
-  const { body } = await del(authenticationToken, locale, `${baseUrl}/v004/product/similarProducts/${similarProductId}`);
-  return transformSimilarProduct(body);
+  await del(authenticationToken, locale, `${baseUrl}/v004/product/similarProducts/${similarProductId}`);
 }
