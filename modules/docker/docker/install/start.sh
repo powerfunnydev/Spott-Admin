@@ -12,6 +12,7 @@ if [ ! -f docker-compose.yml ]; then
 fi
 
 docker-compose down
-docker-compose up -d web
+docker-compose pull
+docker-compose up -d --force-recreate web
 
 cd $CWD

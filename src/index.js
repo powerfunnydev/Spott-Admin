@@ -254,7 +254,7 @@ function getRoutes ({ dispatch, getState }) {
           <Route component={EpisodeCreate} path='create/episode'/>
         </Route>
         <Route component={ProductsList} path='products'>
-        <Route component={ProductsCreate} path ='create'/>
+          <Route component={ProductsCreate} path ='create'/>
         </Route>
         <Route path='products'>
           <Route component={ProductsRead} path='read/:productId'/>
