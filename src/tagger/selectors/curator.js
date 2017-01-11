@@ -2,10 +2,12 @@ import { createSelector, createStructuredSelector } from 'reselect';
 import { List, Map } from 'immutable';
 import {
   appearanceEntitiesSelector,
+  characterEntitiesSelector,
   characterHasAppearancesRelationsSelector,
   createEntitiesByRelationSelector,
   currentVideoIdSelector,
   sceneEntitiesSelector,
+  videoHasCharactersRelationsSelector,
   videoHasScenesRelationsSelector,
   videoHasSceneGroupsRelationsSelector,
   sceneGroupEntitiesSelector,
@@ -13,7 +15,6 @@ import {
   productEntitiesSelector,
   productHasAppearancesRelationsSelector
  } from './common';
-import { mediumCharactersSelector } from './quickiesBar/charactersTab';
 
 export const currentCharacterIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'currentCharacterId' ]);
 export const currentProductIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'curator', 'currentProductId' ]);
@@ -27,14 +28,15 @@ export const hideSceneGroupSelector = (state) => state.getIn([ 'tagger', 'tagger
 const _sceneGroupsSelector = createEntitiesByRelationSelector(videoHasSceneGroupsRelationsSelector, currentVideoIdSelector, sceneGroupEntitiesSelector);
 export const characterAppearancesSelector = createEntitiesByRelationSelector(characterHasAppearancesRelationsSelector, currentCharacterIdSelector, appearanceEntitiesSelector);
 export const productAppearancesSelector = createEntitiesByRelationSelector(productHasAppearancesRelationsSelector, currentProductIdSelector, appearanceEntitiesSelector);
-export const mediumProductsSelector = createEntitiesByRelationSelector(videoHasProductsRelationsSelector, currentVideoIdSelector, productEntitiesSelector);
+export const videoCharactersSelector = createEntitiesByRelationSelector(videoHasCharactersRelationsSelector, currentVideoIdSelector, characterEntitiesSelector);
+export const videoProductsSelector = createEntitiesByRelationSelector(videoHasProductsRelationsSelector, currentVideoIdSelector, productEntitiesSelector);
 
 const charactersSelector = createSelector(
-  mediumCharactersSelector,
+  videoCharactersSelector,
   characterHasAppearancesRelationsSelector,
   appearanceEntitiesSelector,
   (characters, charactersHasAppearances, appearancesById) => (
-    characters.map((c) => {
+    characters.get('data').map((c) => {
       const appearanceIds = charactersHasAppearances.getIn([ c.get('id'), 'data' ]) || List();
       const countKeyAppearances = appearanceIds.reduce((i, id) => {
         const a = appearancesById.get(id);
@@ -46,7 +48,7 @@ const charactersSelector = createSelector(
 );
 
 const productsSelector = createSelector(
-  mediumProductsSelector,
+  videoProductsSelector,
   productHasAppearancesRelationsSelector,
   appearanceEntitiesSelector,
   (products, productHasAppearances, appearancesById) => {

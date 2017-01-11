@@ -1,7 +1,7 @@
 import { searchMediumShops as dataSearchMediumShops } from '../../../../../actions/shop';
 
 export { persistMediumShop, deleteMediumShop } from '../../../../../actions/shop';
-export const MEDIUM_SHOPS_SEARCH_ERROR = 'HELPERS_BRANDS/MEDIUM_SHOPS_SEARCH_ERROR';
+export const MEDIUM_SHOPS_SEARCH_ERROR = 'HELPERS_SHOPS/MEDIUM_SHOPS_SEARCH_ERROR';
 
 /* search on all characters of a specific medium */
 export function searchMediumShops (mediumId) {
