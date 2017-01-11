@@ -4,6 +4,7 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
+import CheckboxInput from '../../../_common/inputs/checkbox';
 import TextInput from '../../../_common/inputs/textInput';
 import { Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
@@ -245,12 +246,16 @@ export default class EditShop extends Component {
                     name={`name.${_activeLocale}`}
                     placeholder='Shop name'
                     required/>
-                    <Field
-                      component={TextInput}
-                      label='Url'
-                      name={`url.${_activeLocale}`}
-                      placeholder='Url'
-                      required/>
+                  <Field
+                    component={TextInput}
+                    label='Url'
+                    name={`url.${_activeLocale}`}
+                    placeholder='Url'
+                    required/>
+                  <Field
+                    component={CheckboxInput}
+                    label='Enable universal basket'
+                    name='universalBasketEnabled' />
                 <FormSubtitle>Images</FormSubtitle>
                 <div style={[ styles.paddingTop, styles.row ]}>
                   <div>
