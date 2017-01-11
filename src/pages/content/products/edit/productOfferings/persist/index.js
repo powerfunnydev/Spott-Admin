@@ -15,15 +15,20 @@ import { FETCHING } from '../../../../../../constants/statusTypes';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { buyUrl, shopId, amount, currency, locale } = values.toJS();
-  if (!/^(ftp|http|https):\/\/[^ "]+$/.test(buyUrl)) {
-    validationErrors.buyUrl = 'No valid url.';
-  }
-  if (!buyUrl) { validationErrors.buyUrl = t('common.errors.required'); }
-  if (!shopId) { validationErrors.shopId = t('common.errors.required'); }
+  const { amount, buyUrl, currency, locale, productUrl, shopId } = values.toJS();
+
   if (!amount) { validationErrors.amount = t('common.errors.required'); }
   if (!currency) { validationErrors.currency = t('common.errors.required'); }
   if (!locale) { validationErrors.locale = t('common.errors.required'); }
+  if (!productUrl) { validationErrors.productUrl = t('common.errors.required'); }
+  if (!shopId) { validationErrors.shopId = t('common.errors.required'); }
+
+  if (buyUrl && !/^(ftp|http|https):\/\/[^ "]+$/.test(buyUrl)) {
+    validationErrors.buyUrl = 'No valid url.';
+  }
+  if (productUrl && !/^(ftp|http|https):\/\/[^ "]+$/.test(productUrl)) {
+    validationErrors.productUrl = 'No valid url.';
+  }
   // Done
   return validationErrors;
 }
@@ -111,9 +116,10 @@ export default class ProductOfferingModal extends Component {
         <Field
           component={NumberInput}
           label='Price'
+          min={0}
           name='amount'
           placeholder='Price'
-          required />
+          required/>
         <Field
           component={SelectInput}
           getItemText={(currencyId) => `${currencies.getIn([ currencyId, 'id' ])} - ${currencies.getIn([ currencyId, 'symbol' ])} (${currencies.getIn([ currencyId, 'description' ])})`}
@@ -121,7 +127,7 @@ export default class ProductOfferingModal extends Component {
           name='currency'
           options={currencies.keySeq().toArray()}
           placeholder='Currency'
-          required />
+          required/>
         <Field
           component={SelectInput}
           getItemText={(language) => (localeNames.get(language))}
@@ -129,13 +135,18 @@ export default class ProductOfferingModal extends Component {
           name='locale'
           options={localeNames.keySeq().toArray()}
           placeholder='Locale'
-          required />
+          required/>
         <Field
           component={TextInput}
-          label='Url'
-          name='buyUrl'
+          label='Product url'
+          name='productUrl'
           placeholder='http://'
-          required />
+          required/>
+        <Field
+          component={TextInput}
+          label='Affiliate url'
+          name='buyUrl'
+          placeholder='http://'/>
       </PersistModal>
     );
   }

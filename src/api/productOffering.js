@@ -6,14 +6,16 @@ export async function fetchProductOfferings (baseUrl, authenticationToken, local
   return data.map(transformProductOffering);
 }
 
-export async function persistProductOffering (baseUrl, authenticationToken, locale, { affiliateInfo, productId, productOfferingId, shopId,
-  currency, amount, buyUrl, locale: offeringLocale }) {
+export async function persistProductOffering (baseUrl, authenticationToken, locale, {
+  affiliateInfo, amount, buyUrl, currency, locale: offeringLocale, productId,
+  productOfferingId, productUrl, shopId }) {
   let productOffering = {};
   if (productOfferingId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/product/offerings/${productOfferingId}`);
     productOffering = body;
   }
   productOffering.buyUrl = buyUrl;
+  productOffering.productUrl = productUrl;
   productOffering.shop = { uuid: shopId };
   productOffering.price = { amount, currency };
   productOffering.locale = offeringLocale;
