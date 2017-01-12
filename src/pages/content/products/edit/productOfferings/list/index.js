@@ -142,11 +142,11 @@ export default class ProductOfferings extends Component {
             {productOfferings.get('data').map((productOffering, index) => {
               return (
                 <Row isFirst={index === 0} key={index} >
-                <CustomCel
-                  style={[ styles.adaptedCustomCel, { flex: 2 } ]}
-                  onClick={() => { this.props.routerPushWithReturnTo(`/content/shops/read/${productOffering.getIn([ 'shop', 'id' ])}`); }}>
-                  {productOffering.getIn([ 'shop', 'name' ])}
-                </CustomCel>
+                  <CustomCel
+                    style={[ styles.adaptedCustomCel, { flex: 2 } ]}
+                    onClick={() => { this.props.routerPushWithReturnTo(`/content/shops/read/${productOffering.getIn([ 'shop', 'id' ])}`); }}>
+                    {productOffering.getIn([ 'shop', 'name' ])}
+                  </CustomCel>
                   <CustomCel style={[ styles.adaptedCustomCel, { flex: 1 } ]}>
                     {productOffering.getIn([ 'price', 'amount' ])}
                   </CustomCel>
