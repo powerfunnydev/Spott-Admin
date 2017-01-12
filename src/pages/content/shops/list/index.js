@@ -153,9 +153,10 @@ export default class Shops extends Component {
                     <Headers>
                       {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                       <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>NAME</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
-                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
+                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {sortField === 'NAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>Name</CustomCel>
+                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Universal basket</CustomCel>
+                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Updated by</CustomCel>
+                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>Last updated on</CustomCel>
                       <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
                     </Headers>
                     <Rows isLoading={shops.get('_status') !== 'loaded'}>
@@ -174,6 +175,7 @@ export default class Shops extends Component {
                                 </ToolTip>
                               </div> || <div style={styles.logoPlaceholder}/>} {shop.get('name')}
                             </CustomCel>
+                            <CheckBoxCel checked={shop.get('universalBasketEnabled')} style={{ flex: 1 }}/>
                             <CustomCel style={{ flex: 2 }}>
                               {shop.get('lastUpdatedBy')}
                             </CustomCel>

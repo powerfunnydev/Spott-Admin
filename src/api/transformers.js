@@ -103,7 +103,7 @@ export function transformBrand ({ uuid, publishStatus, defaultLocale, localeData
   return brand;
 }
 
-export function transformShop ({ uuid, publishStatus, defaultLocale, localeData }) {
+export function transformShop ({ defaultLocale, localeData, publishStatus, universalBasketEnabled, uuid }) {
   const shop = {
     basedOnDefaultLocale: {},
     defaultLocale,
@@ -111,6 +111,7 @@ export function transformShop ({ uuid, publishStatus, defaultLocale, localeData 
     id: uuid,
     locales: [],
     logo: {},
+    universalBasketEnabled,
     url: {},
     publishStatus,
     name: {}
@@ -162,7 +163,8 @@ export function transformProduct ({ uuid, brand, tags, categories, publishStatus
   return product;
 }
 
-export function transformListShop ({ uuid, name, publishStatus, auditInfo, logo, profileCover }) {
+export function transformListShop ({ auditInfo, uuid, logo, name, profileCover,
+  publishStatus, universalBasketEnabled }) {
   return {
     createdOn: auditInfo && auditInfo.createdOn,
     id: uuid,
@@ -170,18 +172,20 @@ export function transformListShop ({ uuid, name, publishStatus, auditInfo, logo,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     logo: logo && { id: logo.uuid, url: logo.url },
     name,
-    publishStatus
+    publishStatus,
+    universalBasketEnabled
   };
 }
 
-export function transformProductOffering ({ uuid, affiliateInfo, buyUrl, locale, price, product, shop }) {
+export function transformProductOffering ({ uuid, affiliateInfo, buyUrl, locale, price, product, productUrl, shop }) {
   return {
-    id: uuid,
-    buyUrl,
-    locale,
     affiliateCode: affiliateInfo && affiliateInfo.code,
+    buyUrl,
+    id: uuid,
+    locale,
     price: price && { amount: price.amount, currency: price.currency },
     product: product && transformListProduct(product),
+    productUrl,
     shop: shop && transformListShop(shop)
   };
 }

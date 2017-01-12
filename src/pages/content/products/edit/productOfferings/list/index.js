@@ -49,25 +49,17 @@ export default class ProductOfferings extends Component {
     loadProductOfferings({ productId });
   }
 
-  transformProductOffering ({ id, price, currency, shopId, url }) {
-    return {
-      id,
-      buyUrl: url,
-      shopId,
-      price: { amount: price, currency }
-    };
-  }
-
   getProductOffering (index) {
-    const { id, shop, price, locale, buyUrl } = this.props.productOfferings.getIn([ 'data', index ]).toJS();
+    const { buyUrl, id, locale, price, productUrl, shop } = this.props.productOfferings.getIn([ 'data', index ]).toJS();
     return {
-      productOfferingId: id,
-      productId: this.props.productId,
-      shopId: shop.id,
-      currency: price.currency,
       amount: price.amount,
       buyUrl,
-      locale
+      currency: price.currency,
+      locale,
+      productId: this.props.productId,
+      productOfferingId: id,
+      productUrl,
+      shopId: shop.id
     };
   }
 
@@ -83,7 +75,6 @@ export default class ProductOfferings extends Component {
   }
 
   async onSubmit (form) {
-    console.log('form', form);
     const { loadProductOfferings, persistProductOffering, productId } = this.props;
     await persistProductOffering(form);
     await loadProductOfferings({ productId });
@@ -140,7 +131,10 @@ export default class ProductOfferings extends Component {
               Locale
             </CustomCel>
             <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 5 } ]}>
-              Url
+              Product url
+            </CustomCel>
+            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 5 } ]}>
+              Affiliate url
             </CustomCel>
             <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 1 } ]} />
           </Headers>
@@ -161,6 +155,11 @@ export default class ProductOfferings extends Component {
                   </CustomCel>
                   <CustomCel style={[ styles.adaptedCustomCel, { flex: 1 } ]}>
                     {productOffering.get('locale')}
+                  </CustomCel>
+                  <CustomCel
+                    style={[ styles.adaptedCustomCel, { flex: 5 } ]}
+                    onClick={() => { window.location = productOffering.get('productUrl'); }}>
+                    {productOffering.get('productUrl')}
                   </CustomCel>
                   <CustomCel
                     style={[ styles.adaptedCustomCel, { flex: 5 } ]}
