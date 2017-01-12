@@ -4,7 +4,6 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { bindActionCreators } from 'redux';
-import Section from '../../../../../_common/components/section';
 import { headerStyles, Table, Headers, CustomCel, Rows, Row } from '../../../../../_common/components/table/index';
 import { colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../../../_common/styles';
 import Plus from '../../../../../_common/images/plus';
@@ -30,7 +29,8 @@ export default class ProductOfferings extends Component {
     persistProductOffering: PropTypes.func.isRequired,
     productId: PropTypes.string.isRequired,
     productOfferings: ImmutablePropTypes.map.isRequired,
-    routerPushWithReturnTo: PropTypes.func.isRequired
+    routerPushWithReturnTo: PropTypes.func.isRequired,
+    style: PropTypes.object
   };
 
   constructor (props) {
@@ -110,9 +110,9 @@ export default class ProductOfferings extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { productOfferings } = this.props;
+    const { productOfferings, style } = this.props;
     return (
-      <Section>
+      <div style={style}>
         <FormSubtitle first>Offerings for this product</FormSubtitle>
         <FormDescription style={styles.description}>Offerings is a list that indicates where this product is for sale and for what price.</FormDescription>
         <Table style={styles.customTable}>
@@ -193,7 +193,7 @@ export default class ProductOfferings extends Component {
               onClose={() => this.setState({ edit: false })}
               onSubmit={this.onSubmit} />}
         </Table>
-      </Section>
+      </div>
     );
   }
 
