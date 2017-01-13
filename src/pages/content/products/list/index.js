@@ -26,7 +26,7 @@ import selector from './selector';
 
 const numberOfRows = 25;
 export const prefix = 'products';
-export const filterArray = [ 'publishStatus', 'used' ];
+export const filterArray = [ 'affiliate', 'publishStatus', 'used' ];
 
 @tableDecorator(prefix)
 @connect(selector, (dispatch) => ({
@@ -198,7 +198,7 @@ export default class Products extends Component {
                     initialValues={{ publishStatus: null }}
                     style={filterStyles.filterContent}
                     onApplyFilter={onChangeFilter}>
-                    <div style={filterStyles.row}>
+                    <div style={[ filterStyles.row, filterStyles.firstRow ]}>
                       <div style={filterStyles.title}>Publish Status</div>
                       <Field
                         component={SelectionDropdown}
@@ -208,12 +208,19 @@ export default class Products extends Component {
                         placeholder='Publish Status'
                         style={filterStyles.fullWidth}/>
                     </div>
-                    <div style={[ filterStyles.row, filterStyles.notFirstRow ]}>
+                    <div style={filterStyles.row}>
                       <div style={filterStyles.title}>Used</div>
                       <Field
                         component={Checkbox}
                         first
                         name='used'/>
+                    </div>
+                    <div style={filterStyles.row}>
+                      <div style={filterStyles.title}>Affiliate</div>
+                      <Field
+                        component={Checkbox}
+                        first
+                        name='affiliate'/>
                     </div>
                   </FilterContent>
                 }

@@ -351,7 +351,8 @@ export const filterStyles = {
   },
   row: {
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingTop: 10
   },
   fullWidth: {
     width: '100%'
@@ -364,7 +365,7 @@ export const filterStyles = {
     display: 'flex',
     alignItems: 'center'
   },
-  notFirstRow: {
-    paddingTop: '10px'
+  firstRow: {
+    paddingTop: 0
   }
 };
