@@ -12,9 +12,10 @@ export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover 
   };
 }
 
-export function transformListProduct ({ auditInfo, brand, fullName, image: logo,
+export function transformListProduct ({ affiliate, auditInfo, brand, fullName, image: logo,
   noLongerAvailable, publishStatus, shortName, used, uuid }) {
   return {
+    affiliate,
     brand: brand && transformListBrand(brand),
     createdOn: auditInfo && auditInfo.createdOn,
     fullName,
@@ -130,9 +131,10 @@ export function transformShop ({ defaultLocale, localeData, publishStatus, unive
   return shop;
 }
 
-export function transformProduct ({ auditInfo, brand, categories, defaultLocale,
+export function transformProduct ({ affiliate, auditInfo, brand, categories, defaultLocale,
   localeData, noLongerAvailable, publishStatus, tags, uuid }) {
   const product = {
+    affiliate,
     basedOnDefaultLocale: {},
     brand: brand && transformListBrand(brand),
     categories: categories && categories.map((category) => category.uuid),

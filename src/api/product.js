@@ -1,7 +1,9 @@
 import { del, get, post, postFormData } from './request';
 import { transformProduct, transformListProduct, transformProductOffering } from './transformers';
 
-export async function fetchProducts (baseUrl, authenticationToken, locale, { publishStatus, used, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+export async function fetchProducts (baseUrl, authenticationToken, locale, {
+  affiliate, publishStatus, used, searchString = '', page = 0, pageSize = 25, sortDirection, sortField
+}) {
   let url = `${baseUrl}/v004/product/products?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url += `&searchString=${searchString}`;
@@ -11,6 +13,9 @@ export async function fetchProducts (baseUrl, authenticationToken, locale, { pub
   }
   if (publishStatus) {
     url += `&publishStatus=${publishStatus}`;
+  }
+  if (affiliate) {
+    url += `&affiliate=${affiliate}`;
   }
   if (used) {
     url += `&used=${used}`;
