@@ -183,12 +183,14 @@ export function transformListShop ({ auditInfo, uuid, logo, name, profileCover,
   };
 }
 
-export function transformProductOffering ({ uuid, affiliateInfo, buyUrl, locale, price, product, productUrl, shop }) {
+export function transformProductOffering ({ uuid, affiliateInfo, buyUrl, locale,
+  noLongerAvailable, price, product, productUrl, shop }) {
   return {
     affiliateCode: affiliateInfo && affiliateInfo.code,
     buyUrl,
     id: uuid,
     locale,
+    noLongerAvailable,
     price: price && { amount: price.amount, currency: price.currency },
     product: product && transformListProduct(product),
     productUrl,

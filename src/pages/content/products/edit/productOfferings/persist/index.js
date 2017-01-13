@@ -4,11 +4,13 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import RadioInput from '../../../../../_common/inputs/radioInput';
 import TextInput from '../../../../../_common/inputs/textInput';
 import SelectInput from '../../../../../_common/inputs/selectInput';
 import NumberInput from '../../../../../_common/inputs/numberInput';
 import PersistModal from '../../../../../_common/components/persistModal';
 import localized from '../../../../../_common/decorators/localized';
+import { FormSubtitle } from '../../../../../_common/styles';
 import selector from './selector';
 import * as actions from './actions';
 import { FETCHING } from '../../../../../../constants/statusTypes';
@@ -147,6 +149,17 @@ export default class ProductOfferingModal extends Component {
           label='Affiliate url'
           name='buyUrl'
           placeholder='http://'/>
+        <FormSubtitle first style={{ paddingTop: '1.5em' }}>Offering availability</FormSubtitle>
+        <Field
+          component={RadioInput}
+          first
+          name='noLongerAvailable'
+          options={[
+            { label: 'Available', value: false },
+            { label: 'Unavailable', value: true }
+          ]}
+          required
+          style={{ display: 'flex' }}/>
       </PersistModal>
     );
   }
