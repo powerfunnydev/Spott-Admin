@@ -12,17 +12,19 @@ export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover 
   };
 }
 
-export function transformListProduct ({ uuid, used, publishStatus, brand, shortName, fullName, auditInfo, image: logo }) {
+export function transformListProduct ({ auditInfo, brand, fullName, image: logo,
+  noLongerAvailable, publishStatus, shortName, used, uuid }) {
   return {
+    brand: brand && transformListBrand(brand),
     createdOn: auditInfo && auditInfo.createdOn,
+    fullName,
     id: uuid,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     logo: logo && { id: logo.uuid, url: logo.url },
+    noLongerAvailable,
     publishStatus,
-    brand: brand && transformListBrand(brand),
-    shortName,
-    fullName
+    shortName
   };
 }
 
@@ -128,25 +130,27 @@ export function transformShop ({ defaultLocale, localeData, publishStatus, unive
   return shop;
 }
 
-export function transformProduct ({ uuid, brand, tags, categories, publishStatus, defaultLocale, localeData, auditInfo }) {
+export function transformProduct ({ auditInfo, brand, categories, defaultLocale,
+  localeData, noLongerAvailable, publishStatus, tags, uuid }) {
   const product = {
     basedOnDefaultLocale: {},
+    brand: brand && transformListBrand(brand),
+    categories: categories && categories.map((category) => category.uuid),
     createdOn: auditInfo && auditInfo.createdOn,
     defaultLocale,
     description: {},
+    fullName: {},
     id: uuid,
     images: {},
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     locales: [],
     logo: {},
-    publishStatus,
+    noLongerAvailable,
     profileImage: {},
+    publishStatus,
     shortName: {},
-    fullName: {},
-    brand: brand && transformListBrand(brand),
-    tags: tags && tags.map((tag) => tag.uuid),
-    categories: categories && categories.map((category) => category.uuid)
+    tags: tags && tags.map((tag) => tag.uuid)
   };
   if (localeData) {
     for (const { basedOnDefaultLocale, description, images, locale, shortName, fullName, profileCover } of localeData) {
