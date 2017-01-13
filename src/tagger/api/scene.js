@@ -45,8 +45,15 @@ export async function postScene (baseUrl, authenticationToken, locale, { sceneId
 }
 
 export async function getScenes (baseUrl, authenticationToken, locale, { videoId }) {
-  const { body: { data: scenes } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/scenes`);
-  return scenes.map((s, i) => {
+  const { body: { data: scenes, pageCount } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/scenes?page=0&pageSize=5000`);
+
+  let result = scenes;
+  for (let i = 1; i < pageCount; i++) {
+    const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/scenes?page=${i}&pageSize=5000`);
+    result = result.concat(data);
+  }
+
+  return result.map((s, i) => {
     const scene = _transformScene(s);
     scene.sceneNumber = i + 1;
     return scene;
