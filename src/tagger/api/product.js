@@ -177,11 +177,14 @@ export async function getProduct (baseUrl, authenticationToken, locale, { produc
  * @throws UnauthorizedError
  * @throws UnexpectedError
  */
-export async function getProducts (baseUrl, authenticationToken, locale, { brandName = '',
+export async function getProducts (baseUrl, authenticationToken, locale, { affiliate, brandName = '',
   productOfferingPriceFrom = '', productOfferingPriceTo = '', productOfferingShopName = '',
   searchString = '', pageSize = 30 }) {
   if (searchString.trim().length > 0) {
-    const searchUrl = `${baseUrl}/v004/search?productFilter.brandName=${brandName}&pageSize=${pageSize}&productFilter.productOfferingPriceFrom=${productOfferingPriceFrom}&productFilter.productOfferingPriceTo=${productOfferingPriceTo}&productFilter.productOfferingShopName=${productOfferingShopName}&searchString=${searchString}&type=PRODUCT`;
+    let searchUrl = `${baseUrl}/v004/search?productFilter.brandName=${brandName}&pageSize=${pageSize}&productFilter.productOfferingPriceFrom=${productOfferingPriceFrom}&productFilter.productOfferingPriceTo=${productOfferingPriceTo}&productFilter.productOfferingShopName=${productOfferingShopName}&searchString=${searchString}&type=PRODUCT`;
+    if (affiliate) {
+      searchUrl += '&affiliate=true';
+    }
     const { body: { data: products } } = await get(authenticationToken, locale, searchUrl);
     return products.map((p) => transformDetailedProduct(p.entity));
   }
