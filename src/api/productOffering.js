@@ -7,14 +7,15 @@ export async function fetchProductOfferings (baseUrl, authenticationToken, local
 }
 
 export async function persistProductOffering (baseUrl, authenticationToken, locale, {
-  affiliateInfo, amount, buyUrl, currency, locale: offeringLocale, productId,
-  productOfferingId, productUrl, shopId }) {
+  affiliateInfo, amount, buyUrl, currency, locale: offeringLocale, noLongerAvailable,
+  productId, productOfferingId, productUrl, shopId }) {
   let productOffering = {};
   if (productOfferingId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/product/offerings/${productOfferingId}`);
     productOffering = body;
   }
   productOffering.buyUrl = buyUrl;
+  productOffering.noLongerAvailable = noLongerAvailable;
   productOffering.productUrl = productUrl;
   productOffering.shop = { uuid: shopId };
   productOffering.price = { amount, currency };

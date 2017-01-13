@@ -4,7 +4,7 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { bindActionCreators } from 'redux';
-import { headerStyles, Table, Headers, CustomCel, Rows, Row } from '../../../../../_common/components/table/index';
+import { headerStyles, Table, Headers, CheckBoxCel, CustomCel, Rows, Row } from '../../../../../_common/components/table/index';
 import { colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../../../_common/styles';
 import Plus from '../../../../../_common/images/plus';
 import EditButton from '../../../../../_common/components/buttons/editButton';
@@ -50,12 +50,13 @@ export default class ProductOfferings extends Component {
   }
 
   getProductOffering (index) {
-    const { buyUrl, id, locale, price, productUrl, shop } = this.props.productOfferings.getIn([ 'data', index ]).toJS();
+    const { buyUrl, id, locale, noLongerAvailable, price, productUrl, shop } = this.props.productOfferings.getIn([ 'data', index ]).toJS();
     return {
       amount: price.amount,
       buyUrl,
       currency: price.currency,
       locale,
+      noLongerAvailable,
       productId: this.props.productId,
       productOfferingId: id,
       productUrl,
@@ -136,6 +137,9 @@ export default class ProductOfferings extends Component {
             <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 5 } ]}>
               Affiliate url
             </CustomCel>
+            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { width: 100 } ]}>
+              Available
+            </CustomCel>
             <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 1 } ]} />
           </Headers>
           <Rows style={styles.adaptedRows}>
@@ -166,6 +170,7 @@ export default class ProductOfferings extends Component {
                     onClick={() => { window.location = productOffering.get('buyUrl'); }}>
                     {productOffering.get('buyUrl')}
                   </CustomCel>
+                  <CheckBoxCel checked={!productOffering.get('noLongerAvailable')} style={[ styles.adaptedCustomCel, { flex: '0 0 100px' } ]} />
                   <CustomCel style={[ styles.adaptedCustomCel, { flex: 1 } ]}>
                     <EditButton style={styles.editButton} onClick={() => this.setState({ edit: index })} />
                     <RemoveButton onClick={this.onClickDeleteProductOffering.bind(this, productOffering.get('id'))} />

@@ -50,7 +50,7 @@ export default class RadioInput extends Component {
       display: 'inline-block',
       fontFamily: 'Rubik-Regular',
       fontSize: '13px',
-      marginRight: 15,
+      marginRight: 25,
       paddingLeft: 15
     }
   };
@@ -78,7 +78,8 @@ export default class RadioInput extends Component {
             labelStyle.push({ color: 'rgb(45, 48, 50)' });
           } else {
             radioButtonStyle.push({
-              backgroundColor: 'white'
+              backgroundColor: 'white',
+              border: `solid 1px ${colors.lightGray2}`
             });
             labelStyle.push({ color: colors.darkGray2 });
           }

@@ -247,10 +247,11 @@ export default class Products extends Component {
                     <Headers>
                       {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                       <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'FULL_NAME')} sortDirection={productsSortField === 'FULL_NAME' ? sortDirections[productsSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>Full name</CustomCel>
+                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'FULL_NAME')} sortDirection={productsSortField === 'FULL_NAME' ? sortDirections[productsSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 4 } ]}>Full name</CustomCel>
                       <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Brand</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { width: 150 } ]}>Offerings</CustomCel>
+                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { width: 120 } ]}>Offerings</CustomCel>
                       <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { width: 120 } ]}>Publish status</CustomCel>
+                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { width: 100 } ]}>Available</CustomCel>
                       <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
                     </Headers>
                     <Rows isLoading={products.get('_status') !== 'loaded'}>
@@ -278,7 +279,7 @@ export default class Products extends Component {
                           <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                             <CheckBoxCel checked={isSelected.get(product.get('id'))} onChange={selectCheckbox.bind(this, product.get('id'))}/>
-                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/products/read/${product.get('id')}`); }}>
+                            <CustomCel style={{ flex: 4 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/products/read/${product.get('id')}`); }}>
                               {product.get('logo') && <div style={styles.logoContainer}>
                                 <ToolTip
                                   overlay={<img src={`${product.getIn([ 'logo', 'url' ])}?height=150&width=150`}/>}
@@ -291,7 +292,7 @@ export default class Products extends Component {
                             <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/brands/read/${product.getIn([ 'brand', 'id' ])}`); }}>
                               {product.getIn([ 'brand', 'name' ])}
                             </CustomCel>
-                            <CustomCel style={{ width: 150 }}>
+                            <CustomCel style={{ width: 120 }}>
                               <div style={styles.row}>
                                 <div style={[ styles.row, styles.spacing ]}>
                                   <div style={styles.dollarSvg}><DollarSVG/></div>
@@ -312,6 +313,7 @@ export default class Products extends Component {
                             <CustomCel style={{ width: 120 }}>
                               {product.get('publishStatus')}
                             </CustomCel>
+                            <CheckBoxCel checked={!product.get('noLongerAvailable')} style={{ flex: '0 0 100px' }} />
                             <DropdownCel>
                               <Dropdown
                                 elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/products/edit/${product.get('id')}`); }}>Edit</div>}>
