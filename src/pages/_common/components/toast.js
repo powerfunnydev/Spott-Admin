@@ -4,14 +4,17 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
+import { Link } from 'react-router';
 import * as toastActions from '../../../actions/toast';
 import { routerPushWithReturnTo } from '../../../actions/global';
 import toastSelector from '../../../selectors/toast';
 import { colors, makeTextStyle, fontWeights } from '../styles';
 import CompletedSVG from '../images/completed';
 import PlusSVG from '../images/plus';
-import { BROADCAST_CHANNEL, BROADCASTER, CHARACTER, CONTENT_PRODUCER, EPISODE, MOVIE, PERSON, SEASON,
-    SERIES_ENTRY, USER, TV_GUIDE_ENTRY, COMMERCIAL, PRODUCT } from '../../../constants/entityTypes';
+import {
+  BROADCAST_CHANNEL, BROADCASTER, CHARACTER, COMMERCIAL, CONTENT_PRODUCER, EPISODE,
+  MOVIE, PERSON, PRODUCT, SEASON, SERIES_ENTRY, SHOP, TV_GUIDE_ENTRY, USER
+} from '../../../constants/entityTypes';
 
 @connect(null, (dispatch) => ({
   popToast: bindActionCreators(toastActions.pop, dispatch),
@@ -122,9 +125,7 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        Broadcast channel <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/broadcast-channels/edit/${broadcastChannel.id}`)}>
-          {broadcastChannel.name}
-        </span> has been succesfully persisted.
+        Broadcast channel <Link style={styles.clickable} to={`/content/broadcast-channels/read/${broadcastChannel.id}`}>{broadcastChannel.name}</Link> has been succesfully persisted.
       </span>
     );
   }
@@ -133,9 +134,7 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        Broadcaster <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/broadcasters/edit/${broadcaster.id}`)}>
-          {broadcaster.name}
-        </span> has been succesfully persisted.
+        Broadcaster <Link style={styles.clickable} to={`/content/broadcasters/read/${broadcaster.id}`}>{broadcaster.name}</Link> has been succesfully persisted.
       </span>
     );
   }
@@ -144,9 +143,7 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        Character <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/characters/read/${character.id}`)}>
-          {character.name[character.defaultLocale]}
-        </span> has been succesfully persisted.
+        Character <Link style={styles.clickable} to={`/content/characters/read/${character.id}`}>{character.name[character.defaultLocale]}</Link> has been succesfully persisted.
       </span>
     );
   }
@@ -155,9 +152,7 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        Commercial <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/commercials/read/${commercial.id}`)}>
-          {commercial.title[commercial.defaultLocale]}
-        </span> has been succesfully persisted.
+        Commercial <Link style={styles.clickable} to={`/content/commercials/read/${commercial.id}`}>{commercial.title[commercial.defaultLocale]}</Link> has been succesfully persisted.
       </span>
     );
   }
@@ -166,9 +161,7 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        Content producer <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/content-producers/edit/${contentProducer.id}`)}>
-          {contentProducer.name}
-        </span> has been succesfully persisted.
+        Content producer <Link style={styles.clickable} to={`/content/content-producers/read/${contentProducer.id}`}>{contentProducer.name}</Link> has been succesfully persisted.
       </span>
     );
   }
@@ -177,9 +170,7 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        Episode <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/series/read/${episode.seriesEntry.id}/seasons/read/${episode.season.id}/episodes/read/${episode.id}`)}>
-          {episode.title[episode.defaultLocale]}
-        </span> has been succesfully persisted.
+        Episode <Link style={styles.clickable} to={`/content/series/read/${episode.seriesEntry.id}/seasons/read/${episode.season.id}/episodes/read/${episode.id}`}>{episode.title[episode.defaultLocale]}</Link> has been succesfully persisted.
       </span>
     );
   }
@@ -188,9 +179,7 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        Movie <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/movies/read/${movie.id}`)}>
-          {movie.title[movie.defaultLocale]}
-        </span> has been succesfully persisted.
+        Movie <Link style={styles.clickable} to={`/content/movies/read/${movie.id}`}>{movie.title[movie.defaultLocale]}</Link> has been succesfully persisted.
       </span>
     );
   }
@@ -199,9 +188,7 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        Product <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/products/read/${product.id}`)}>
-          {product.fullName[product.defaultLocale]}
-        </span> has been succesfully persisted.
+        Product <Link style={styles.clickable} to={`/content/products/read/${product.id}`}>{product.fullName[product.defaultLocale]}</Link> has been succesfully persisted.
       </span>
     );
   }
@@ -210,9 +197,7 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        Person <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/persons/read/${person.id}`)}>
-          {person.fullName}
-        </span> has been succesfully persisted.
+        Person <Link style={styles.clickable} to={`/content/persons/read/${person.id}`}>{person.fullName}</Link> has been succesfully persisted.
       </span>
     );
   }
@@ -221,9 +206,7 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        Season <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/series/read/${season.seriesEntry.id}/seasons/read/${season.id}`)}>
-          {season.title[season.defaultLocale]}
-        </span> has been succesfully persisted.
+        Season <Link style={styles.clickable} to={`/content/series/read/${season.seriesEntry.id}/seasons/read/${season.id}`}>{season.title[season.defaultLocale]}</Link> has been succesfully persisted.
       </span>
     );
   }
@@ -232,9 +215,16 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        Series <span style={styles.clickable} onClick={this.redirect.bind(this, `/content/series/read/${seriesEntry.id}`)}>
-          {seriesEntry.title[seriesEntry.defaultLocale]}
-        </span> has been succesfully persisted.
+        Series <Link style={styles.clickable} to={`/content/series/read/${seriesEntry.id}`}>{seriesEntry.title[seriesEntry.defaultLocale]}</Link> has been succesfully persisted.
+      </span>
+    );
+  }
+
+  shopPersistSuccess (shop) {
+    const { styles } = this.constructor;
+    return (
+      <span>
+        Shop <Link style={styles.clickable} to={`/content/shops/read/${shop.id}`}>{shop.name[shop.defaultLocale]}</Link> has been succesfully persisted.
       </span>
     );
   }
@@ -243,9 +233,7 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        TV Guide Entry <span style={styles.clickable} onClick={this.redirect.bind(this, `/tv-guide/edit/${tvGuideEntry.id}`)}>
-          {tvGuideEntry.medium && tvGuideEntry.medium.title}
-        </span> has been succesfully persisted.
+        TV Guide Entry <Link style={styles.clickable} to={`/tv-guide/edit/${tvGuideEntry.id}`}>{tvGuideEntry.medium && tvGuideEntry.medium.title}</Link> has been succesfully persisted.
       </span>
     );
   }
@@ -254,9 +242,7 @@ export class SuccessMessage extends Component {
     const { styles } = this.constructor;
     return (
       <span>
-        User <span style={styles.clickable} onClick={this.redirect.bind(this, `/users/edit/${user.id}`)}>
-          {user.firstName} {user.lastName}
-        </span> has been succesfully persisted.
+        User <Link style={styles.clickable} to={`/users/edit/${user.id}`}>{user.firstName} {user.lastName}</Link> has been succesfully persisted.
       </span>
     );
   }
@@ -296,6 +282,8 @@ export class SuccessMessage extends Component {
       return this.seasonPersistSuccess(entity);
     } else if (entityType === SERIES_ENTRY) {
       return this.seriesEntryPersistSuccess(entity);
+    } else if (entityType === SHOP) {
+      return this.shopPersistSuccess(entity);
     } else if (entityType === TV_GUIDE_ENTRY) {
       return this.tvGuideEntryPersistSuccess(entity);
     } else if (entityType === USER) {

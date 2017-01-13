@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { fromJS } from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
+import RadioInput from '../../../_common/inputs/radioInput';
 import SelectInput from '../../../_common/inputs/selectInput';
 import { Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
@@ -365,7 +366,19 @@ export default class EditProduct extends Component {
               </Section>
             </Tab>
             <Tab title='Offerings'>
-              <ProductOfferings productId={this.props.params.productId} />
+              <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage}>
+                <FormSubtitle first>Are people able to buy this product?</FormSubtitle>
+                <Field
+                  component={RadioInput}
+                  name='noLongerAvailable'
+                  options={[
+                    { label: 'Yes', value: false },
+                    { label: 'No (Disable all offerings)', value: true }
+                  ]}
+                  required
+                  style={{ paddingTop: '0.5em' }}/>
+                <ProductOfferings productId={this.props.params.productId} style={{ marginTop: '1.875em' }}/>
+              </Section>
             </Tab>
           </Tabs>
         </EditTemplate>
