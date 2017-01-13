@@ -1,8 +1,10 @@
+/* eslint-disable no-return-assign */
 import React, { Component, PropTypes } from 'react';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { fromJS } from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
 import SelectInput from '../../../_common/inputs/selectInput';
@@ -18,13 +20,13 @@ import CreateLanguageModal from '../../_languageModal/create';
 import selector from './selector';
 import LanguageBar from '../../../_common/components/languageBar';
 import ImageDropzone from '../../../_common/dropzone/imageDropzone';
-import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 import { FETCHING } from '../../../../constants/statusTypes';
 import ProductOfferings from './productOfferings/list';
 import SimilarProducts from './similarProducts/list';
+import LargeImageModal from '../../../_common/largeImageModal';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -103,6 +105,8 @@ export default class EditProduct extends Component {
     this.openCreateLanguageModal = :: this.openCreateLanguageModal;
     this.languageAdded = :: this.languageAdded;
     this.removeLanguage = :: this.removeLanguage;
+    this.state = {};
+    this.onMinimize = ::this.onMinimize;
   }
 
   async componentWillMount () {
@@ -171,6 +175,14 @@ export default class EditProduct extends Component {
     dispatch(change('defaultLocale', _activeLocale));
   }
 
+  onEnlarge (index) {
+    this.largeImageModal.open(index);
+  }
+
+  onMinimize () {
+    this.largeImageModal.close();
+  }
+
   static styles = {
     selectInput: {
       paddingTop: 0,
@@ -190,35 +202,15 @@ export default class EditProduct extends Component {
       backgroundColor: colors.lightGray4,
       paddingBottom: '50px'
     },
-    paddingLeftUploadImage: {
-      paddingLeft: '24px'
-    },
     description: {
       marginBottom: '1.25em'
     },
     imageDropzone: {
-      width: '100%',
-      height: '100px'
-    },
-    faceImagesContainer: {
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      marginTop: '20px'
-    },
-    primaryPaddingRight: {
-      paddingRight: '26px'
-    },
-    secondaryPadding: {
-      paddingRight: '9px',
-      paddingBottom: '9px'
+      marginRight: '1.625em',
+      marginBottom: '1.625em'
     },
     flexWrap: {
       flexWrap: 'wrap'
-    },
-    secondaryImage: {
-      height: '116px',
-      width: '116px'
     }
   };
 
@@ -227,6 +219,10 @@ export default class EditProduct extends Component {
     const { _activeLocale, brandsById, productCategoriesById, errors, currentModal, closeModal, supportedLocales, defaultLocale,
       currentProduct, location, handleSubmit, searchBrands, searchProductCategories, searchedProductCategoryIds, searchedBrandIds, deleteImage,
       location: { query: { tab } } } = this.props;
+    const logo = currentProduct.getIn([ 'logo', _activeLocale ]) ||
+                      currentProduct.getIn([ 'logo', defaultLocale ]);
+    // Construct an array of product images.
+    const images = currentProduct.getIn([ 'images', _activeLocale ]) && currentProduct.getIn([ 'images', _activeLocale ]).toJS() || [];
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
@@ -241,13 +237,13 @@ export default class EditProduct extends Component {
               <Field
                 component={TextInput}
                 label='Product name'
-                name={'fullName'}
+                name='fullName'
                 placeholder='Product name'
                 required/>
               <Field
                 component={TextInput}
                 label='Short name'
-                name={'shortName'}
+                name='shortName'
                 placeholder='Short name product'
                 required/>
             </CreateLanguageModal>}
@@ -308,45 +304,51 @@ export default class EditProduct extends Component {
                     placeholder='Description'
                     type='multiline'/>
                 <FormSubtitle>Images</FormSubtitle>
-                <div style={[ styles.paddingTop, styles.row ]}>
-                  <div style={styles.primaryPaddingRight}>
-                    <Label text='Primary image' />
+
+                <Label style={styles.paddingTop} text='Product images' />
+                <LargeImageModal
+                  images={images.map((image) => image.url)}
+                  isOpen={typeof this.state.enlargeImageIndex === 'number'}
+                  ref={(c) => this.largeImageModal = c}
+                  title={currentProduct.getIn([ 'shortName', _activeLocale ])}
+                  onClose={this.onMinimize}/>
+                <div style={[ styles.row, styles.flexWrap ]}>
+                  <ImageDropzone
+                    accept='image/*'
+                    downloadUrl={logo && logo.get('url')}
+                    imageUrl={logo && logo.get('url') && `${logo.get('url')}?height=203&width=360`}
+                    showOnlyUploadedImage
+                    style={styles.imageDropzone}
+                    // We can only change the image if there is no image for the active locale.
+                    onChange={currentProduct.getIn([ 'logo', _activeLocale ]) ? null : ({ callback, file }) => {
+                      this.props.uploadImage({ locale: _activeLocale, productId: this.props.params.productId, image: file, callback });
+                    }}
+                    onClick={this.onEnlarge.bind(this, 0)}
+                    // We can only remove an image if there is one for the active locale.
+                    onDelete={currentProduct.getIn([ 'logo', _activeLocale ]) ? () => {
+                      deleteImage({ locale: _activeLocale, productId: currentProduct.get('id'), imageId: currentProduct.getIn([ 'logo', _activeLocale, 'id' ]) });
+                    } : null}/>
+                  {currentProduct.getIn([ 'images', _activeLocale ]) && currentProduct.getIn([ 'images', _activeLocale ]).rest().map((image, index) => (
                     <ImageDropzone
                       accept='image/*'
-                      downloadUrl={currentProduct.getIn([ 'logo', _activeLocale, 'url' ]) ||
-                                    currentProduct.getIn([ 'logo', defaultLocale, 'url' ])}
-                      imageUrl={currentProduct.getIn([ 'logo', _activeLocale, 'url' ]) && `${currentProduct.getIn([ 'logo', _activeLocale, 'url' ])}?height=203&width=360` ||
-                                currentProduct.getIn([ 'logo', defaultLocale, 'url' ]) && `${currentProduct.getIn([ 'logo', defaultLocale, 'url' ])}?height=203&width=360`}
+                      downloadUrl={image.get('url')}
+                      imageUrl={image.get('url') && `${image.get('url')}?height=203&width=360`}
+                      key={`image${index}`}
                       showOnlyUploadedImage
-                      onChange={currentProduct.getIn([ 'logo', _activeLocale, 'url' ]) ? null : ({ callback, file }) => { this.props.uploadImage({ locale: _activeLocale, productId: this.props.params.productId, image: file, callback }); }}
-                      onDelete={currentProduct.getIn([ 'logo', _activeLocale, 'url' ]) ? () => { deleteImage({ locale: _activeLocale, productId: currentProduct.get('id'), imageId: currentProduct.getIn([ 'logo', _activeLocale, 'id' ]) }); } : null}/>
-                  </div>
-                  {(currentProduct.getIn([ 'logo', _activeLocale, 'url' ]) || currentProduct.getIn([ 'logo', defaultLocale, 'url' ])) &&
-                    <div>
-                      <Label text='Secondary images' />
-                      <div style={[ styles.row, styles.flexWrap ]}>
-                        {currentProduct.getIn([ 'secondaryImages', _activeLocale ]) && currentProduct.getIn([ 'secondaryImages', _activeLocale ]).map((image, index) => {
-                          return (
-                            <div style={styles.secondaryPadding}>
-                              <ImageDropzone
-                                accept='image/*'
-                                downloadUrl={image.get('url')}
-                                imageUrl={`${image.get('url')}?height=203&width=360`}
-                                key={`image${index}`}
-                                showOnlyUploadedImage
-                                style={styles.secondaryImage}
-                                onDelete={image.get('id') ? () => { deleteImage({ locale: _activeLocale, productId: currentProduct.get('id'), imageId: image.get('id') }); } : null}/>
-                            </div>
-                          );
-                        })}
-                        <ImageDropzone
-                          accept='image/*'
-                          showNoImage
-                          style={styles.secondaryImage}
-                          onChange={({ callback, file }) => { this.props.uploadImage({ locale: _activeLocale, productId: this.props.params.productId, image: file, callback }); }}/>
-                      </div>
-                    </div>
-                  }
+                      style={styles.imageDropzone}
+                      onClick={this.onEnlarge.bind(this, index + 1)}
+                      onDelete={image.get('id') ? () => {
+                        deleteImage({ locale: _activeLocale, productId: currentProduct.get('id'), imageId: image.get('id') });
+                      } : null}/>
+                  ))}
+                  {/* Here you can add a new image, at the end of the list. */}
+                  <ImageDropzone
+                    accept='image/*'
+                    showNoImage
+                    style={styles.imageDropzone}
+                    onChange={({ callback, file }) => {
+                      this.props.uploadImage({ locale: _activeLocale, productId: this.props.params.productId, image: file, callback });
+                    }}/>
                 </div>
               </Section>
             </Tab>
@@ -355,9 +357,7 @@ export default class EditProduct extends Component {
             </Tab>
             <Tab title='Similar Products'>
               <SimilarProducts
-                _activeLocale={_activeLocale}
-                currentProduct={currentProduct}
-                defaultLocale={defaultLocale}
+                images={images}
                 productId={this.props.params.productId} />
             </Tab>
           </Tabs>

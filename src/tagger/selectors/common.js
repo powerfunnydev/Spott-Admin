@@ -98,6 +98,7 @@ export const productSearchRelationsSelector = (state) => state.getIn([ 'tagger',
 export const productSuggestionsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'productSuggestions' ]);
 export const sceneHasCharactersRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'sceneHasCharacters' ]);
 export const sceneHasProductsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'sceneHasProducts' ]);
+export const videoHasCharactersRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'videoHasCharacters' ]);
 export const videoHasProductsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'videoHasProducts' ]);
 export const videoHasGlobalProductsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'videoHasGlobalProducts' ]);
 export const videoHasScenesRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'videoHasScenes' ]);

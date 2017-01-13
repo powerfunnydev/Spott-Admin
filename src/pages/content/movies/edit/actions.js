@@ -8,6 +8,7 @@ import { searchBroadcasters as dataSearchBroadcasters } from '../../../../action
 import { searchContentProducers as dataSearchContentProducers } from '../../../../actions/contentProducer';
 import { searchCharacters as dataSearchCharacters } from '../../../../actions/character';
 import { searchMediumCategories as dataSearchMediumCategories } from '../../../../actions/mediumCategory';
+import { searchShops as dataSearchShops } from '../../../../actions/shop';
 
 export { deleteProfileImage, deletePosterImage } from '../../../../actions/media';
 export { openModal, closeModal } from '../../../../actions/global';
@@ -17,6 +18,9 @@ export const BRANDS_SEARCH_ERROR = 'MOVIES_EDIT/BRANDS_SEARCH_ERROR';
 
 export const CHARACTERS_SEARCH_START = 'MOVIES_EDIT/CHARACTERS_SEARCH_START';
 export const CHARACTERS_SEARCH_ERROR = 'MOVIES_EDIT/CHARACTERS_SEARCH_ERROR';
+
+export const SHOPS_SEARCH_START = 'MOVIES_EDIT/SHOPS_SEARCH_START';
+export const SHOPS_SEARCH_ERROR = 'MOVIES_EDIT/SHOPS_SEARCH_ERROR';
 
 export const MEDIUM_CHARACTERS_SEARCH_ERROR = 'MOVIES_EDIT/MEDIUM_CHARACTERS_SEARCH_ERROR';
 
@@ -108,6 +112,18 @@ export function searchBrands (searchString) {
       return await dispatch(dataSearchBrands({ searchString }));
     } catch (error) {
       dispatch({ error, type: BRANDS_SEARCH_ERROR });
+    }
+  };
+}
+
+/* Search on all shops. */
+export function searchShops (searchString) {
+  return async (dispatch) => {
+    try {
+      await dispatch({ type: SHOPS_SEARCH_START, searchString });
+      return await dispatch(dataSearchShops({ searchString }));
+    } catch (error) {
+      dispatch({ error, type: SHOPS_SEARCH_ERROR });
     }
   };
 }

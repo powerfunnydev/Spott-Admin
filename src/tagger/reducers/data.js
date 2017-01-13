@@ -141,6 +141,7 @@ function stripSimilarProducts (similarProducts) {
   *    -> productSearch { searchString: [ id ] }
   *    -> sceneHasCharacters [{ id, appearanceId }]
   *    -> sceneHasProducts [{ appearanceId, id, point: { x, y }, relevance }]
+  *    -> videoHasCharacters
   *    -> videoHasProducts
   *    -> videoHasGlobalProducts [{ appearanceId, id, relevance }]
   *    -> videoHasSceneGroups [sceneGroupId]
@@ -152,9 +153,10 @@ export default (state = fromJS({
     productGroups: {}, sceneGroups: {}, scenes: {}, media: {}, videos: {}
   },
   relations: {
-    characterHasAppearances: {}, characterSearch: {}, characterHasProductGroups: {}, mediumHasProductGroups: {},
-    productHasAppearances: {}, productHasSimilarProducts: {}, productSearch: {}, sceneHasCharacters: {},
-    sceneHasProducts: {}, videoHasProducts: {}, videoHasGlobalProducts: {}, videoHasScenes: {}, videoHasSceneGroups: {}
+    characterHasAppearances: {}, characterSearch: {}, characterHasProductGroups: {},
+    mediumHasProductGroups: {}, productHasAppearances: {}, productHasSimilarProducts: {},
+    productSearch: {}, sceneHasCharacters: {}, sceneHasProducts: {}, videoHasCharacters: {},
+    videoHasProducts: {}, videoHasGlobalProducts: {}, videoHasScenes: {}, videoHasSceneGroups: {}
   }
 }), action) => {
   switch (action.type) {
@@ -346,10 +348,16 @@ export default (state = fromJS({
       // We add a sceneNumber in the API layer.
       return state.mergeIn([ 'entities', 'scenes', action.sceneId ], Map(action.record));
 
-    case characterActions.VIDEO_CHARACTERS_FETCH_SUCCESS: {
+    case characterActions.MEDIUM_CHARACTERS_FETCH_SUCCESS: {
       const { entities: { characters: characterEntities } } = normalize(action.data, arrayOf(character));
       // Relations are stored in video.
       return state.mergeIn([ 'entities', 'characters' ], characterEntities);
+    }
+    case characterActions.VIDEO_CHARACTERS_FETCH_SUCCESS: {
+      const { entities: { characters: characterEntities }, result: charactersResult } = normalize(action.data, arrayOf(character));
+      return state
+        .mergeIn([ 'entities', 'characters' ], characterEntities)
+        .setIn([ 'relations', 'videoHasCharacters', action.videoId ], Map({ _status: LOADED, data: fromJS(charactersResult) }));
     }
 
     case actionTypes.CHARACTERS_OF_SCENE_FETCH_START:

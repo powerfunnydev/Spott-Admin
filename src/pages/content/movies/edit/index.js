@@ -23,6 +23,7 @@ import Availabilities from '../../_availabilities/list';
 import RelatedVideo from '../../../content/_relatedVideo/read';
 import Brands from '../../_helpers/_brands/list';
 import Characters from '../../_helpers/_characters/list';
+import Shops from '../../_helpers/_shops/list';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
@@ -56,6 +57,7 @@ function validate (values, { t }) {
   searchCharacters: bindActionCreators(actions.searchCharacters, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
   searchMediumCategories: bindActionCreators(actions.searchMediumCategories, dispatch),
+  searchShops: bindActionCreators(actions.searchShops, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadPosterImage: bindActionCreators(actions.uploadPosterImage, dispatch),
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch)
@@ -96,6 +98,7 @@ export default class EditMovie extends Component {
     mediumCategoriesById: ImmutablePropTypes.map.isRequired,
     movieBrands: ImmutablePropTypes.map.isRequired,
     movieCharacters: ImmutablePropTypes.map.isRequired,
+    movieShops: ImmutablePropTypes.map.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     popUpMessage: PropTypes.object,
@@ -105,11 +108,14 @@ export default class EditMovie extends Component {
     searchCharacters: PropTypes.func.isRequired,
     searchContentProducers: PropTypes.func.isRequired,
     searchMediumCategories: PropTypes.func.isRequired,
+    searchShops: PropTypes.func.isRequired,
     searchedBrandIds: ImmutablePropTypes.map.isRequired,
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
     searchedCharacterIds: ImmutablePropTypes.map.isRequired,
     searchedContentProducerIds: ImmutablePropTypes.map.isRequired,
     searchedMediumCategoryIds: ImmutablePropTypes.map.isRequired,
+    searchedShopIds: ImmutablePropTypes.map.isRequired,
+    shopsById: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
@@ -257,11 +263,13 @@ export default class EditMovie extends Component {
       closeModal, contentProducersById, currentModal, currentMovie,
       defaultLocale, deletePosterImage, location: { query: { tab } },
       deleteProfileImage, errors, handleSubmit, location, mediumCategoriesById,
-      movieBrands, movieCharacters, searchBrands, searchBroadcasters, searchCharacters,
-      searchContentProducers, searchedBrandIds, searchedBroadcasterIds, searchedCharacterIds,
+      movieBrands, movieCharacters, movieShops, shopsById, searchBrands,
+      searchBroadcasters, searchCharacters, searchContentProducers, searchShops,
+      searchedBrandIds, searchedBroadcasterIds, searchedCharacterIds,
       searchedContentProducerIds, searchedMediumCategoryIds, searchMediumCategories,
-      supportedLocales
+      searchedShopIds, supportedLocales
     } = this.props;
+
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
@@ -406,6 +414,12 @@ export default class EditMovie extends Component {
                   searchedCharacterIds={searchedCharacterIds} />
               </Tab>
               <Tab title='Helpers'>
+                <Shops
+                  mediumId={this.props.params.movieId}
+                  mediumShops={movieShops}
+                  searchShops={searchShops}
+                  searchedShopIds={searchedShopIds}
+                  shopsById={shopsById}/>
                  <Brands
                    brandsById={brandsById}
                    mediumBrands={movieBrands}

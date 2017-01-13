@@ -34,11 +34,14 @@ export default class ImageDropzone extends Component {
     style: PropTypes.object,
     type: PropTypes.string,
     onChange: PropTypes.func,
+    onClick: PropTypes.func,
     onDelete: PropTypes.func
   };
 
   constructor (props) {
     super(props);
+    this.onChange = ::this.onChange;
+    this.onClick = ::this.onClick;
     this.onDrop = ::this.onDrop;
     this.callback = ::this.callback;
     this.onDelete = :: this.onDelete;
@@ -90,6 +93,12 @@ export default class ImageDropzone extends Component {
     }
   }
 
+  onChange (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.dropzone.open();
+  }
+
   async onDelete (e) {
     // We want to delete the image. We need to set the state right.
     await this.props.onDelete();
@@ -101,6 +110,14 @@ export default class ImageDropzone extends Component {
       progress: 0,
       total: 0
     });
+  }
+
+  onClick (e) {
+    e.stopPropagation();
+    const { onClick } = this.props;
+    if (onClick) {
+      onClick();
+    }
   }
 
   static styles = {
@@ -181,21 +198,29 @@ export default class ImageDropzone extends Component {
     return (
       <div style={{ position: 'relative' }}>
         {/* Render dropzone */}
-        <ReactDropzone accept={accept || 'image/*'} activeStyle={styles.activeDropzone} disableClick={!onChange} multiple={multiple} ref={(x) => { this.dropzone = x; }}
-          style={mergeStyles([ styles.dropzone, onChange && styles.pointer, { width: 200 * (aspectRatios[type] || 1) }, style ])} onDrop={this.onDrop} >
-          <div>
-            {downloadUrlOrPreview && <Dropdown style={styles.dropdownButton}>
-              {downloadUrlOrPreview && <div key='downloadImage' style={dropdownStyles.floatOption} onClick={(e) => { downloadFile(downloadUrlOrPreview); }}>Download</div>}
-              {downloadUrlOrPreview && onDelete && <div style={dropdownStyles.line}/>}
-              {downloadUrlOrPreview && onDelete && <div key='deleteImage' style={dropdownStyles.floatOption} onClick={this.onDelete}>Delete</div>}
-            </Dropdown>}
-            { /* Uploading */
-              (this.state.progress && this.state.total && this.state.progress !== this.state.total &&
-                <ProgressBar
-                  progress={this.state.progress}
-                  style={styles.progressBar}
-                  total={this.state.total}/>) ||
-            /* Upload completed */
+        <ReactDropzone
+          accept={accept || 'image/*'} activeStyle={styles.activeDropzone}
+          disableClick={Boolean(!noPreview && imageUrlOrPreview)}
+          multiple={multiple}
+          ref={(x) => { this.dropzone = x; }}
+          style={mergeStyles([ styles.dropzone, onChange && styles.pointer, { width: 200 * (aspectRatios[type] || 1) }, style ])}
+          onDrop={this.onDrop} >
+          <div onClick={this.onClick}>
+            {downloadUrlOrPreview &&
+              <Dropdown style={styles.dropdownButton}>
+                {downloadUrlOrPreview && <div key='downloadImage' style={dropdownStyles.floatOption} onClick={(e) => { downloadFile(downloadUrlOrPreview); }}>Download</div>}
+                {downloadUrlOrPreview && onChange && <div style={dropdownStyles.line}/>}
+                {downloadUrlOrPreview && onChange && <div key='replaceImage' style={dropdownStyles.floatOption} onClick={this.onChange}>Replace</div>}
+                {downloadUrlOrPreview && onDelete && <div style={dropdownStyles.line}/>}
+                {downloadUrlOrPreview && onDelete && <div key='deleteImage' style={dropdownStyles.floatOption} onClick={this.onDelete}>Delete</div>}
+              </Dropdown>}
+            {// Uploading
+            (this.state.progress && this.state.total && this.state.progress !== this.state.total &&
+              <ProgressBar
+                progress={this.state.progress}
+                style={styles.progressBar}
+                total={this.state.total}/>) ||
+            // Upload completed
             (!showNoImage && this.state.progress && this.state.total && this.state.progress === this.state.total &&
                 <div>
                   {!this.state.showImage && <div style={styles.completed}>
@@ -209,13 +234,11 @@ export default class ImageDropzone extends Component {
                     showOnlyUploadedImage && imageUrlOrPreview && <img src={imageUrlOrPreview} style={styles.chosenImage}/> ||
                     <div style={styles.completed}>Oops, no image to show...</div>) }
                 </div>) ||
-            /* When there was already an image uploaded */
+            // When there was already an image uploaded
             ((!noPreview && imageUrlOrPreview) &&
-              <img src={imageUrlOrPreview} style={styles.chosenImage}/>
-            ) ||
-            /* Idle state, user has to chose a image */
-            (<img src={uploadIcon} style={styles.uploadImage}/>)
-            }
+              <img src={imageUrlOrPreview} style={styles.chosenImage}/>) ||
+            // Idle state, user has to chose a image.
+            <img src={uploadIcon} style={styles.uploadImage}/>}
           </div>
         </ReactDropzone>
       </div>

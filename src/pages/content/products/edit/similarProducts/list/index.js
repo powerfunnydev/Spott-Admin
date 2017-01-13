@@ -31,11 +31,9 @@ import ImageCompareModal from '../imageCompare';
 export default class SimilarProducts extends Component {
 
   static propTypes = {
-    _activeLocale: PropTypes.string,
     currencies: ImmutablePropTypes.map.isRequired,
-    currentProduct: ImmutablePropTypes.map.isRequired,
-    defaultLocale: PropTypes.string,
     deleteSimilarProduct: PropTypes.func.isRequired,
+    images: PropTypes.array,
     loadSimilarProducts: PropTypes.func.isRequired,
     persistSimilarProduct: PropTypes.func.isRequired,
     productId: PropTypes.string.isRequired,
@@ -249,7 +247,8 @@ export default class SimilarProducts extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { _activeLocale, defaultLocale, currencies, currentProduct, similarProducts, productsById, searchedProductIds } = this.props;
+    const { images, currencies, similarProducts, productsById, searchedProductIds } = this.props;
+    const logo = images && images[0];
     return (
       <div>
         <Section style={styles.noBackground}>
@@ -258,8 +257,7 @@ export default class SimilarProducts extends Component {
           <div style={styles.flex}>
             <div style={styles.bigLogoContainer}>
               <img
-                src={currentProduct.getIn([ 'logo', _activeLocale, 'url' ]) && `${currentProduct.getIn([ 'logo', _activeLocale, 'url' ])}?height=203&width=360` ||
-                        currentProduct.getIn([ 'logo', defaultLocale, 'url' ]) && `${currentProduct.getIn([ 'logo', defaultLocale, 'url' ])}?height=203&width=360`}
+                src={logo && logo.url && `${logo.url}?height=203&width=360`}
                 style={styles.bigLogo}/>
             </div>
             <div style={styles.productSelectionContainer}>
@@ -373,9 +371,9 @@ export default class SimilarProducts extends Component {
           </Table>
           {this.state.openImageCompareModal &&
             <ImageCompareModal
-              _activeLocale={_activeLocale}
-              currentProduct={currentProduct}
-              defaultLocale={defaultLocale}
+              images={images}
+              productId={this.props.productId}
+              onClickAddSimilarProduct={this.onClickAddSimilarProduct}
               onClose={this.closeImageCompareModal}/>}
         </Section>
       </div>

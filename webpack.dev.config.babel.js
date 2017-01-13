@@ -35,10 +35,22 @@ const configuration = {
     path: path.join(__dirname, 'dist'),
     publicPath: '/'
   },
+
   devServer: {
     contentBase: './dist',
     port: 3003,
-    hot: true
+    hot: true,
+    // The rest is terminal configurations
+    quiet: false,
+    noInfo: false,
+    stats: {
+      assets: false,
+      chunks: false,
+      children: false,
+      hash: false,
+      version: false,
+      colors: false
+    }
   },
   plugins: [
     new CopyWebpackPlugin([

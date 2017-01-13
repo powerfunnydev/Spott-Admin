@@ -70,9 +70,8 @@ export async function searchShops (baseUrl, authenticationToken, locale, { searc
   return data.map(transformListShop);
 }
 
-// TODO: API IS NOT YET WRITTEN, UPDATE URL
 export async function searchMediumShops (baseUrl, authenticationToken, locale, { mediumId, searchString = '', page = 0, pageSize = 100 }) {
-  let url = `${baseUrl}/v004/media/media/${mediumId}/shops?page=${page}&pageSize=${pageSize}`;
+  let url = `${baseUrl}/v004/media/media/${mediumId}/shopDeals?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${searchString}`);
   }
@@ -80,15 +79,13 @@ export async function searchMediumShops (baseUrl, authenticationToken, locale, {
   return data.map(transformListShop);
 }
 
-// TODO: API IS NOT YET WRITTEN, UPDATE URL
 export async function persistMediumShop (baseUrl, authenticationToken, locale, { mediumId, shopId }) {
-  const { body } = await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/shops/${shopId}`, {});
+  const { body } = await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/shopDeals/${shopId}`, {});
   return transformShop(body);
 }
 
-// TODO: API IS NOT YET WRITTEN, UPDATE URL
 export async function deleteMediumShop (baseUrl, authenticationToken, locale, { mediumId, shopId }) {
-  await del(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/shops/${shopId}`, {});
+  await del(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/shopDeals/${shopId}`, {});
 }
 
 export async function uploadLogoImage (baseUrl, authenticationToken, locale, { shopId, image, locale: imageLocale, callback }) {

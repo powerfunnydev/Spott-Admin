@@ -105,6 +105,7 @@ export default (state = fromJS({
     searchStringHasUsers: {},
 
     characterHasFaceImages: {},
+    imageHasSuggestedProducts: {},
     mediumHasBrands: {},
     mediumHasCharacters: {},
     mediumHasShops: {},
@@ -483,6 +484,13 @@ export default (state = fromJS({
       return fetchSuccess(state, [ 'entities', 'products', action.productId ], action.data);
     case productActions.DELETE_IMAGE_SUCCESS:
       return fetchSuccess(state, [ 'entities', 'products', action.productId ], action.data);
+
+    case productActions.SUGGESTED_PRODUCTS_FETCH_START:
+      return searchStart(state, 'imageHasSuggestedProducts', action.imageId);
+    case productActions.SUGGESTED_PRODUCTS_FETCH_SUCCESS:
+      return searchSuccess(state, 'products', 'imageHasSuggestedProducts', action.imageId, action.data);
+    case productActions.SUGGESTED_PRODUCTS_FETCH_ERROR:
+      return searchError(state, 'imageHasSuggestedProducts', action.imageId, action.error);
 
     case productActions.PRODUCT_FETCH_START:
       return fetchStart(state, [ 'entities', 'products', action.productId ]);

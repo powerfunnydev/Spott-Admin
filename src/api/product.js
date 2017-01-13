@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformSuggestedProduct, transformProduct, transformListProduct, transformProductOffering, transformSimilarProduct } from './transformers';
+import { transformProduct, transformListProduct, transformProductOffering, transformSimilarProduct } from './transformers';
 
 export async function fetchProducts (baseUrl, authenticationToken, locale, { publishStatus, used, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/product/products?page=${page}&pageSize=${pageSize}`;
@@ -27,10 +27,17 @@ export async function fetchProducts (baseUrl, authenticationToken, locale, { pub
   return body;
 }
 
-export async function fetchSuggestedProducts (baseUrl, authenticationToken, { imageId, maxResults = 25 }) {
-  const { body } = await get(authenticationToken, `${baseUrl}/v004/image/searches/products?imageUUid=${imageId}&maxResults=${maxResults}`);
-  body.data = body.data.map(transformSuggestedProduct);
-  return body;
+export async function fetchSuggestedProducts (baseUrl, authenticationToken, locale, { imageId, maxResults = 25 }) {
+  const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/image/searches/products?imageUUid=${imageId}&maxResults=${maxResults}`);
+  const data = [];
+  for (const suggestedProduct of body) {
+    const product = transformProduct(suggestedProduct.product);
+    const result = await get(authenticationToken, locale, `${baseUrl}/v004/product/products/${product.id}/offerings`);
+    product.offerings = result.body.data.map(transformProductOffering);
+    product.accuracy = suggestedProduct.accuracy;
+    data.push(product);
+  }
+  return data;
 }
 
 export async function fetchSimilarProducts (baseUrl, authenticationToken, locale, { productId, publishStatus, used, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
