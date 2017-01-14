@@ -5,7 +5,7 @@
 
 # Change to the script directory
 CWD=$(pwd)
-SCRIPT=$(readlink -f $0)
+SCRIPT=`basename "$0"`
 SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
 cd "$SCRIPT_DIR"
 
@@ -30,9 +30,9 @@ if [ -z "$DEPLOY_SSH_KEY_FILE" ]; then
 	exit 1
 fi
 
-# Check for version existance
+# Check for version existence
 if [ ! -f ./version ]; then
-    echo "ERROR: 'version' file not found. Are you sure this is a valid deploy?"
+    echo "ERROR: '$SCRIPT_DIR/version' file not found. Are you sure this is a valid deploy?"
     exit 1
 fi
 
