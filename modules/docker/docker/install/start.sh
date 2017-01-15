@@ -12,8 +12,8 @@ if [ ! -f docker-compose.yml ]; then
 fi
 
 # Set local environment
-if [ -f setEnv.sh ]; then
-    . ./setEnv.sh
+if [ -f setLocalEnv.sh ]; then
+    . ./setLocalEnv.sh
 fi
 
 docker-compose down
