@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformProduct, transformListProduct, transformProductOffering } from './transformers';
+import { transformProduct, transformListProduct, transformProductOffering, transformSimilarProduct } from './transformers';
 
 export async function fetchProducts (baseUrl, authenticationToken, locale, {
   affiliate, publishStatus, used, searchString = '', page = 0, pageSize = 25, sortDirection, sortField
@@ -27,6 +27,41 @@ export async function fetchProducts (baseUrl, authenticationToken, locale, {
     const result = await get(authenticationToken, locale, `${baseUrl}/v004/product/products/${prod.id}/offerings`);
     prod.offerings = result.body.data.map(transformProductOffering);
     data.push(prod);
+  }
+  body.data = data;
+  return body;
+}
+
+export async function fetchSuggestedProducts (baseUrl, authenticationToken, locale, { imageId, maxResults = 25 }) {
+  const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/image/searches/products?imageUUid=${imageId}&maxResults=${maxResults}`);
+  const data = [];
+  for (const suggestedProduct of body) {
+    const product = transformProduct(suggestedProduct.product);
+    const result = await get(authenticationToken, locale, `${baseUrl}/v004/product/products/${product.id}/offerings`);
+    product.offerings = result.body.data.map(transformProductOffering);
+    product.accuracy = suggestedProduct.accuracy;
+    data.push(product);
+  }
+  return data;
+}
+
+export async function fetchSimilarProducts (baseUrl, authenticationToken, locale, { productId, publishStatus, used, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/product/products/${productId}/similarProducts?page=${page}&pageSize=${pageSize}`;
+  if (searchString) {
+    url += `&searchString=${searchString}`;
+  }
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url += `&sortField=${sortField}&sortDirection=${sortDirection}`;
+  }
+  const { body } = await get(authenticationToken, locale, url);
+  const data = [];
+  for (const sp of body.data) {
+    const similarProduct = transformSimilarProduct(sp);
+    const prod = similarProduct.product2;
+    const result = await get(authenticationToken, locale, `${baseUrl}/v004/product/products/${prod.id}/offerings`);
+    prod.offerings = result.body.data.map(transformProductOffering);
+    similarProduct.product2 = prod;
+    data.push(similarProduct);
   }
   body.data = data;
   return body;
