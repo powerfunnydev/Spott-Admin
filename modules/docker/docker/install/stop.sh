@@ -25,6 +25,6 @@ if [ -z "$DEPLOY_ENV" ]; then
 fi
 
 # Stop
-docker-compose down
+docker-compose down -v
 
 cd $CWD
