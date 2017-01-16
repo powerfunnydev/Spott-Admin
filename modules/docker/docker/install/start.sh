@@ -35,8 +35,8 @@ docker build -t docker.appiness.mobi/apptvate-$DEPLOY_ENV-web-config:latest $SCR
 docker push docker.appiness.mobi/apptvate-$DEPLOY_ENV-web-config:latest
 
 # Restart
-docker-compose down
+docker-compose down -v
 docker-compose pull
-docker-compose up -d --force-recreate web
+docker-compose up -d --force-recreate
 
 cd $CWD
