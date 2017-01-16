@@ -4,6 +4,7 @@ import Radium from 'radium';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Link } from 'react-router';
 import Section from '../../../../_common/components/section';
 import { Table, CustomCel, Rows, Row } from '../../../../_common/components/table/index';
 import { colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../../_common/styles';
@@ -72,6 +73,10 @@ export default class Characters extends Component {
       justifyContent: 'center',
       backgroundColor: 'rgba(244, 245, 245, 0.5)'
     },
+    link: {
+      color: colors.darkGray2,
+      textDecoration: 'none'
+    },
     editButton: {
       marginRight: '0.75em'
     },
@@ -119,7 +124,9 @@ export default class Characters extends Component {
                   <CustomCel style={[ styles.adaptedCustomCel, styles.paddingLeft ]}>
                     <img src={character.get('portraitImage') && `${character.getIn([ 'portraitImage', 'url' ])}?height=70&width=70`} style={styles.image}/>
                   </CustomCel>
-                  <CustomCel style={styles.adaptedCustomCel}>{character.get('name')}</CustomCel>
+                  <CustomCel style={styles.adaptedCustomCel}>
+                    <Link style={styles.link} to={`/content/characters/read/${character.get('id')}`}>{character.get('name')}</Link>
+                  </CustomCel>
                   <CustomCel style={[ styles.adaptedCustomCel, styles.floatRight ]}>
                     <RemoveButton cross onClick={this.onClickDeleteMediumCharacter.bind(this, character.get('id'))}/>
                   </CustomCel>
