@@ -57,6 +57,7 @@ export default (state = fromJS({
     products: {},
     productOfferings: {},
     tvGuideEntries: {},
+    similarProducts: {},
     shops: {},
     users: {},
     videos: {}
@@ -104,12 +105,14 @@ export default (state = fromJS({
     searchStringHasUsers: {},
 
     characterHasFaceImages: {},
+    imageHasSuggestedProducts: {},
     mediumHasBrands: {},
     mediumHasCharacters: {},
     mediumHasShops: {},
     mediumHasTvGuideEntries: {},
     personHasFaceImages: {},
     productHasProductOfferings: {},
+    productHasSimilarProducts: {},
     seriesEntryHasSeasons: {},
     seriesEntryHasEpisodes: {},
     seasonHasEpisodes: {},
@@ -482,6 +485,13 @@ export default (state = fromJS({
     case productActions.DELETE_IMAGE_SUCCESS:
       return fetchSuccess(state, [ 'entities', 'products', action.productId ], action.data);
 
+    case productActions.SUGGESTED_PRODUCTS_FETCH_START:
+      return searchStart(state, 'imageHasSuggestedProducts', action.imageId);
+    case productActions.SUGGESTED_PRODUCTS_FETCH_SUCCESS:
+      return searchSuccess(state, 'products', 'imageHasSuggestedProducts', action.imageId, action.data);
+    case productActions.SUGGESTED_PRODUCTS_FETCH_ERROR:
+      return searchError(state, 'imageHasSuggestedProducts', action.imageId, action.error);
+
     case productActions.PRODUCT_FETCH_START:
       return fetchStart(state, [ 'entities', 'products', action.productId ]);
     case productActions.PRODUCT_FETCH_SUCCESS: {
@@ -519,6 +529,13 @@ export default (state = fromJS({
     }
     case productActions.PRODUCT_OFFERINGS_FETCH_ERROR:
       return searchError(state, 'productHasProductOfferings', action.productId, action.error);
+
+    case productActions.SIMILAR_PRODUCTS_FETCH_START:
+      return searchStart(state, 'productHasSimilarProducts', action.productId);
+    case productActions.SIMILAR_PRODUCTS_FETCH_SUCCESS:
+      return searchSuccess(state, 'similarProducts', 'productHasSimilarProducts', action.productId, action.data.data);
+    case productActions.SIMILAR_PRODUCTS_FETCH_ERROR:
+      return searchError(state, 'productHasSimilarProducts', action.productId, action.error);
 
     // Product categories
     // /////////////////

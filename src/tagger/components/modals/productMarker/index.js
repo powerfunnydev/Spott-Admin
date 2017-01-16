@@ -337,7 +337,7 @@ class ProductMarker extends Component {
         height: 30,
         padding: 4,
         marginLeft: 5,
-        width: '25%'
+        width: '50%'
       },
       first: {
         marginLeft: 0
@@ -373,13 +373,20 @@ class ProductMarker extends Component {
           <input
             {...search.brandName.input}
             placeholder='Brand'
-            style={[ styles.textInput.base, styles.textInput.first ]}
+            style={{ ...styles.textInput.base, ...styles.textInput.first }}
             type='text' />
+          <input
+            {...search.productOfferingShopName.input}
+            placeholder='Shop'
+            style={styles.textInput.base}
+            type='text' />
+        </div>
+        <div style={styles.filters}>
           <input
             {...search.productOfferingPriceFrom.input}
             min='0'
             placeholder='€ from'
-            style={styles.textInput.base}
+            style={{ ...styles.textInput.base, ...styles.textInput.first }}
             type='number' />
           <input
             {...search.productOfferingPriceTo.input}
@@ -387,18 +394,20 @@ class ProductMarker extends Component {
             placeholder='€ to'
             style={styles.textInput.base}
             type='number' />
-          <input
-            {...search.productOfferingShopName.input}
-            placeholder='Shop'
-            style={styles.textInput.base}
-            type='text' />
+          <div style={{ display: 'flex', alignItems: 'center', color: 'rgb(123, 129, 134)', fontSize: '0.875em', marginLeft: 5 }}>
+            <input
+              {...search.affiliate.input}
+              type='checkbox' />
+            &nbsp;&nbsp;Affiliate
+          </div>
         </div>
         <ProductSearch
           focus
           options={productSearchResult.get('data').toArray()}
           search={({ searchString }) => {
-            const { brandName, productOfferingPriceFrom, productOfferingPriceTo, productOfferingShopName } = search;
+            const { affiliate, brandName, productOfferingPriceFrom, productOfferingPriceTo, productOfferingShopName } = search;
             this.props.searchProducts({
+              affiliate: affiliate.input.value,
               brandName: brandName.input.value,
               productOfferingPriceFrom: productOfferingPriceFrom.input.value,
               productOfferingPriceTo: productOfferingPriceTo.input.value,
@@ -447,6 +456,7 @@ class ProductMarker extends Component {
                   fetchSimilarProducts={fetchSimilarProducts}
                   names={[
                     'productId',
+                    'search.affiliate',
                     'search.brandName',
                     'search.productOfferingPriceFrom',
                     'search.productOfferingPriceTo',

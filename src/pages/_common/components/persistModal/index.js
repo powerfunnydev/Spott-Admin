@@ -10,11 +10,6 @@ import { ErrorComponent, HintComponent, InfoComponent } from '../infoPopUps';
 
 const crossImage = require('./cross.svg');
 
-/**
- * Dialog style used for this modal.
- * Note: we don't use react-modal because it gave some blur issues when
- * we vertically allign transform: 'translateY(-50%)'
- */
 const dialogStyle = {
   overlay: {
     display: 'flex',
@@ -72,18 +67,20 @@ class RemoveBodyScrollbar extends Component {
 export default class PersistModal extends Component {
 
   static propTypes = {
+    cancelButtonText: PropTypes.string,
     children: PropTypes.node,
     clearPopUpMessage: PropTypes.func,
     createAnother: PropTypes.bool,
     error: PropTypes.any,
     isOpen: PropTypes.bool.isRequired,
+    noContentStyle: PropTypes.bool,
     popUpObject: PropTypes.object,
     style: PropTypes.object,
     submitButtonText: PropTypes.string,
     t: PropTypes.func.isRequired,
     title: PropTypes.string,
     onClose: PropTypes.func.isRequired,
-    onSubmit: PropTypes.func.isRequired
+    onSubmit: PropTypes.func
   };
 
   static styles = {
@@ -166,8 +163,8 @@ export default class PersistModal extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { createAnother, children, isOpen, style, title, onClose,
-      onSubmit, submitButtonText, popUpObject, clearPopUpMessage } = this.props;
+    const { cancelButtonText, createAnother, children, isOpen, style, title, onClose,
+      onSubmit, submitButtonText, popUpObject, clearPopUpMessage, noContentStyle } = this.props;
     return (
       <ReactModal
         isOpen={isOpen}
@@ -199,7 +196,7 @@ export default class PersistModal extends Component {
               {popUpObject && popUpObject.type === 'info' && popUpObject.message &&
                 <InfoComponent message={popUpObject.message} onClose={clearPopUpMessage}/>
               }
-              <div style={styles.content}>
+              <div style={[ !noContentStyle && styles.content ]}>
                 {children}
               </div>
               <div style={styles.footer}>
@@ -210,8 +207,8 @@ export default class PersistModal extends Component {
                       first
                       label='Create another'
                       name='createAnother'/>}
-                  <Button key='cancel' style={[ buttonStyles.white ]} text='Cancel' type='button' onClick={(e) => { e.preventDefault(); clearPopUpMessage && clearPopUpMessage(); onClose(); }} />
-                  <Button key='submit' style={[ buttonStyles.blue ]} text={submitButtonText || 'Create'} type='submit' />
+                  <Button key='cancel' style={[ buttonStyles.white ]} text={cancelButtonText || 'Cancel'} type='button' onClick={(e) => { e.preventDefault(); clearPopUpMessage && clearPopUpMessage(); onClose(); }} />
+                  { onSubmit && <Button key='submit' style={[ buttonStyles.blue ]} text={submitButtonText || 'Create'} type='submit' /> }
                 </div>
               </div>
             </form>

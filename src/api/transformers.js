@@ -29,6 +29,14 @@ export function transformListProduct ({ affiliate, auditInfo, brand, fullName, i
   };
 }
 
+export function transformSimilarProduct ({ uuid, product1, product2 }) {
+  return {
+    id: uuid,
+    product1: transformListProduct(product1),
+    product2: transformListProduct(product2)
+  };
+}
+
 export function transformTag ({ uuid, publishStatus, defaultLocale, localeData, auditInfo }) {
   const tag = {
     basedOnDefaultLocale: {},

@@ -26,6 +26,7 @@ import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 import { FETCHING } from '../../../../constants/statusTypes';
 import ProductOfferings from './productOfferings/list';
+import SimilarProducts from './similarProducts/list';
 import LargeImageModal from '../../../_common/largeImageModal';
 
 function validate (values, { t }) {
@@ -219,23 +220,10 @@ export default class EditProduct extends Component {
     const { _activeLocale, brandsById, productCategoriesById, errors, currentModal, closeModal, supportedLocales, defaultLocale,
       currentProduct, location, handleSubmit, searchBrands, searchProductCategories, searchedProductCategoryIds, searchedBrandIds, deleteImage,
       location: { query: { tab } } } = this.props;
-    console.log('currentProduct', currentProduct && currentProduct.toJS());
-
-    const logoUrl = currentProduct.getIn([ 'logo', _activeLocale, 'url' ]) ||
-                      currentProduct.getIn([ 'logo', defaultLocale, 'url' ]);
-
+    const logo = currentProduct.getIn([ 'logo', _activeLocale ]) ||
+                      currentProduct.getIn([ 'logo', defaultLocale ]);
     // Construct an array of product images.
-    const images = [];
-    if (logoUrl) {
-      images.push(logoUrl);
-      const imgs = currentProduct.getIn([ 'images', _activeLocale ]);
-      if (imgs) {
-        for (const img of imgs.rest()) {
-          images.push(img.get('url'));
-        }
-      }
-    }
-
+    const images = currentProduct.getIn([ 'images', _activeLocale ]) && currentProduct.getIn([ 'images', _activeLocale ]).toJS() || [];
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
@@ -320,7 +308,7 @@ export default class EditProduct extends Component {
 
                 <Label style={styles.paddingTop} text='Product images' />
                 <LargeImageModal
-                  images={images}
+                  images={images.map((image) => image.url)}
                   isOpen={typeof this.state.enlargeImageIndex === 'number'}
                   ref={(c) => this.largeImageModal = c}
                   title={currentProduct.getIn([ 'shortName', _activeLocale ])}
@@ -328,8 +316,8 @@ export default class EditProduct extends Component {
                 <div style={[ styles.row, styles.flexWrap ]}>
                   <ImageDropzone
                     accept='image/*'
-                    downloadUrl={logoUrl}
-                    imageUrl={logoUrl && `${logoUrl}?height=203&width=360`}
+                    downloadUrl={logo && logo.get('url')}
+                    imageUrl={logo && logo.get('url') && `${logo.get('url')}?height=203&width=360`}
                     showOnlyUploadedImage
                     style={styles.imageDropzone}
                     // We can only change the image if there is no image for the active locale.
@@ -379,6 +367,11 @@ export default class EditProduct extends Component {
                   style={{ paddingTop: '0.5em' }}/>
                 <ProductOfferings productId={this.props.params.productId} style={{ marginTop: '1.875em' }}/>
               </Section>
+            </Tab>
+            <Tab title='Similar Products'>
+              <SimilarProducts
+                images={images}
+                productId={this.props.params.productId} />
             </Tab>
           </Tabs>
         </EditTemplate>
