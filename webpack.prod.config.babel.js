@@ -32,10 +32,10 @@ const configuration = {
     path: path.join(__dirname, 'dist')
   },
   plugins: [
-    new CopyWebpackPlugin([
-      { from: './dev/version.json', to: 'version.json' },
-      { from: './dev/config/config.json', to: 'config/config.json' }
-    ]),
+    // new CopyWebpackPlugin([
+    //   { from: './dev/version.json', to: 'version.json' },
+    //   { from: './dev/config/config.json', to: 'config/config.json' }
+    // ]),
     // Protects against multiple React installs when npm linking
     new webpack.NormalModuleReplacementPlugin(/^react?$/, require.resolve('react')),
     // In production we write css to its own file
