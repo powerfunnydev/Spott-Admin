@@ -121,7 +121,8 @@ export default class ProductOfferingModal extends Component {
           min={0}
           name='amount'
           placeholder='Price'
-          required/>
+          required
+          step={0.01}/>
         <Field
           component={SelectInput}
           getItemText={(currencyId) => `${currencies.getIn([ currencyId, 'id' ])} - ${currencies.getIn([ currencyId, 'symbol' ])} (${currencies.getIn([ currencyId, 'description' ])})`}
