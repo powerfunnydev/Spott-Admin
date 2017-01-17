@@ -12,6 +12,7 @@ import * as brandActions from '../actions/brand';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcastersActions from '../actions/broadcaster';
 import * as charactersActions from '../actions/character';
+import * as collectionsActions from '../actions/collection';
 import * as commercialActions from '../actions/commercial';
 import * as contentProducersActions from '../actions/contentProducer';
 import * as episodeActions from '../actions/episode';
@@ -38,12 +39,14 @@ export default (state = fromJS({
     broadcastChannels: {},
     broadcasters: {},
     characters: {},
+    collections: {},
     contentProducers: {},
     events: {},
     faceImages: {}, // Characters and persons has faceImages
     genders: {},
     listBrands: {},
     listCharacters: {}, // listCharacters is the light version of characters, without locales
+    listCollections: {},
     listMedia: {}, // listMedia is the light version of media, without locales
     listMediumCategories: {},
     listProducts: {},
@@ -108,6 +111,7 @@ export default (state = fromJS({
     imageHasSuggestedProducts: {},
     mediumHasBrands: {},
     mediumHasCharacters: {},
+    mediumHasCollections: {},
     mediumHasShops: {},
     mediumHasTvGuideEntries: {},
     personHasFaceImages: {},
@@ -292,6 +296,23 @@ export default (state = fromJS({
     case charactersActions.MEDIUM_CHARACTER_SEARCH_ERROR:
       return searchError(state, 'mediumHasCharacters', action.mediumId, action.error);
 
+    // Collections
+    // ///////////
+
+    case collectionsActions.COLLECTION_FETCH_START:
+      return fetchStart(state, [ 'entities', 'collections', action.collectionId ]);
+    case collectionsActions.COLLECTION_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'collections', action.collectionId ], action.data);
+    case collectionsActions.COLLECTION_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'collections', action.collectionId ], action.error);
+
+    case collectionsActions.MEDIUM_COLLECTIONS_FETCH_START:
+      return searchStart(state, 'mediumHasCollections', action.mediumId);
+    case collectionsActions.MEDIUM_COLLECTIONS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listCollections', 'mediumHasCollections', action.mediumId, action.data.data);
+    case collectionsActions.MEDIUM_COLLECTIONS_FETCH_ERROR:
+      return searchError(state, 'mediumHasCollections', action.mediumId, action.error);
+
     // Commercials
     // ///////////
 
@@ -416,7 +437,7 @@ export default (state = fromJS({
       return searchError(state, 'searchStringHasMediumCategories', action.searchString, action.error);
 
     // Movies
-    // //////////////
+    // //////
 
     case moviesActions.UPLOAD_POSTER_IMAGE_SUCCESS:
       return fetchSuccess(state, [ 'entities', 'media', action.movieId ], action.data);

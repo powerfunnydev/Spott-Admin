@@ -679,3 +679,52 @@ export function transformCharacterFaceImage ({ image, uuid: id }) {
 }
 
 export const transformPersonFaceImage = transformCharacterFaceImage;
+
+export function transformListCollection ({
+  auditInfo, linkType, linkedBrand, linkedCharacter, localeData, medium,
+  recurring, sortOrder, title, uuid
+}) {
+  return {
+    brand: linkedBrand && transformListBrand(linkedBrand),
+    character: linkedCharacter && transformListCharacter(linkedCharacter),
+    createdOn: auditInfo && auditInfo.createdOn,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    linkType,
+    mediumId: medium && medium.uuid,
+    recurring,
+    sortOrder,
+    title
+  };
+}
+
+export function transformCollection ({
+  auditInfo, linkType, linkedBrand, linkedCharacter, defaultLocale,
+  localeData, locales, medium, recurring, sortOrder, uuid
+}) {
+  const collection = {
+    basedOnDefaultLocale: {},
+    brand: linkedBrand && transformListBrand(linkedBrand),
+    character: linkedCharacter && transformListCharacter(linkedCharacter),
+    createdOn: auditInfo && auditInfo.createdOn,
+    defaultLocale,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    linkType,
+    locales: [],
+    mediumId: medium && medium.uuid,
+    recurring,
+    sortOrder,
+    title: {}
+  };
+  if (localeData) {
+    for (const { basedOnDefaultLocale, locale, title } of localeData) {
+      collection.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      collection.title[locale] = title;
+      collection.locales.push(locale);
+    }
+  }
+  return collection;
+}

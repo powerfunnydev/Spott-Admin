@@ -8,12 +8,14 @@ import {
   createEntityIdsByRelationSelector,
   listBrandsEntitiesSelector,
   listCharactersEntitiesSelector,
+  listCollectionsEntitiesSelector,
   listMediaEntitiesSelector,
   listMediumCategoriesEntitiesSelector,
   listShopsEntitiesSelector,
   mediaEntitiesSelector,
   mediumHasBrandsRelationsSelector,
   mediumHasCharactersRelationsSelector,
+  mediumHasCollectionsRelationsSelector,
   mediumHasShopsRelationsSelector,
   searchStringHasBrandsRelationsSelector,
   searchStringHasBroadcastersRelationsSelector,
@@ -43,18 +45,26 @@ const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 const currentEpisodeIdSelector = (state, props) => { return props.params.episodeId; };
 const currentEpisodeSelector = createEntityByIdSelector(mediaEntitiesSelector, currentEpisodeIdSelector);
 
-const currentBrandSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentBrandSearchString' ]);
-const currentCharacterSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentCharacterSearchString' ]);
-const currentShopSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentShopSearchString' ]);
+const currentHelpersBrandSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentHelpersBrandSearchString' ]);
+const currentHelpersCharacterSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentHelpersCharacterSearchString' ]);
+const currentHelpersShopSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentHelpersShopSearchString' ]);
+
+const currentCollectionsBrandSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentCollectionsBrandSearchString' ]);
+const currentCollectionsCharacterSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentCollectionsCharacterSearchString' ]);
+
 const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentSeriesEntrySearchString' ]);
 const currentBroadcastersSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentBroadcastersSearchString' ]);
 const currentContentProducersSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentContentProducersSearchString' ]);
 const currentMediumCategoriesSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentMediumCategoriesSearchString' ]);
 const popUpMessageSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'popUpMessage' ]);
 
-const searchedBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentBrandSearchStringSelector);
-const searchedCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCharacterSearchStringSelector);
-const searchedShopIdsSelector = createEntityIdsByRelationSelector(searchStringHasShopsRelationsSelector, currentShopSearchStringSelector);
+const searchedHelpersBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentHelpersBrandSearchStringSelector);
+const searchedHelpersCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentHelpersCharacterSearchStringSelector);
+const searchedHelpersShopIdsSelector = createEntityIdsByRelationSelector(searchStringHasShopsRelationsSelector, currentHelpersShopSearchStringSelector);
+
+const searchedCollectionsBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentCollectionsBrandSearchStringSelector);
+const searchedCollectionsCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCollectionsCharacterSearchStringSelector);
+
 const searchedSeriesEntryIdsSelector = createEntityIdsByRelationSelector(searchStringHasSeriesEntriesRelationsSelector, currentSeriesEntriesSearchStringSelector);
 const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(seriesEntryHasSeasonsRelationsSelector, currentSeriesEntryIdSelector);
 const searchedBroadcasterIdsSelector = createEntityIdsByRelationSelector(searchStringHasBroadcastersRelationsSelector, currentBroadcastersSearchStringSelector);
@@ -63,6 +73,7 @@ const searchedMediumCategoryIdsSelector = createEntityIdsByRelationSelector(sear
 
 const episodeBrandsSelector = createEntitiesByRelationSelector(mediumHasBrandsRelationsSelector, currentEpisodeIdSelector, listBrandsEntitiesSelector);
 const episodeCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersRelationsSelector, currentEpisodeIdSelector, listCharactersEntitiesSelector);
+const episodeCollectionsSelector = createEntitiesByRelationSelector(mediumHasCollectionsRelationsSelector, currentEpisodeIdSelector, listCollectionsEntitiesSelector);
 const episodeShopsSelector = createEntitiesByRelationSelector(mediumHasShopsRelationsSelector, currentEpisodeIdSelector, listShopsEntitiesSelector);
 
 export default createStructuredSelector({
@@ -79,20 +90,23 @@ export default createStructuredSelector({
   defaultLocale: currentDefaultLocaleSelector,
   episodeBrands: episodeBrandsSelector,
   episodeCharacters: episodeCharactersSelector,
+  episodeCollections: episodeCollectionsSelector,
   episodeShops: episodeShopsSelector,
   errors: formErrorsSelector,
   formValues: valuesSelector,
   hasTitle: hasTitleSelector,
   mediumCategoriesById: listMediumCategoriesEntitiesSelector,
   popUpMessage: popUpMessageSelector,
-  searchedBrandIds: searchedBrandIdsSelector,
   searchedBroadcasterIds: searchedBroadcasterIdsSelector,
-  searchedCharacterIds: searchedCharacterIdsSelector,
   searchedContentProducerIds: searchedContentProducerIdsSelector,
+  searchedCollectionsBrandIds: searchedCollectionsBrandIdsSelector,
+  searchedCollectionsCharacterIds: searchedCollectionsCharacterIdsSelector,
+  searchedHelpersBrandIds: searchedHelpersBrandIdsSelector,
+  searchedHelpersCharacterIds: searchedHelpersCharacterIdsSelector,
+  searchedHelpersShopIds: searchedHelpersShopIdsSelector,
   searchedMediumCategoryIds: searchedMediumCategoryIdsSelector,
   searchedSeasonIds: searchedSeasonIdsSelector,
   searchedSeriesEntryIds: searchedSeriesEntryIdsSelector,
-  searchedShopIds: searchedShopIdsSelector,
   seasonsById: listMediaEntitiesSelector,
   seriesEntriesById: listMediaEntitiesSelector,
   shopsById: listShopsEntitiesSelector,

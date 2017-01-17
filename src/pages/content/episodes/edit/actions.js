@@ -6,22 +6,26 @@ import { searchBroadcasters as dataSearchBroadcasters } from '../../../../action
 import { searchContentProducers as dataSearchContentProducers } from '../../../../actions/contentProducer';
 import { searchBrands as dataSearchBrands } from '../../../../actions/brand';
 import { searchShops as dataSearchShops } from '../../../../actions/shop';
-import { searchCharacters as dataSearchCharacters } from '../../../../actions/character';
+import { searchCharacters as dataSearchCharacters, searchMediumCharacters as dataSearchMediumCharacters } from '../../../../actions/character';
 import { searchMediumCategories as dataSearchMediumCategories } from '../../../../actions/mediumCategory';
 
 export { deleteProfileImage, deletePosterImage } from '../../../../actions/media';
 export { openModal, closeModal } from '../../../../actions/global';
 
-export const BRANDS_SEARCH_START = 'EPISODE_EDIT/BRANDS_SEARCH_START';
-export const BRANDS_SEARCH_ERROR = 'EPISODE_EDIT/BRANDS_SEARCH_ERROR';
+export const HELPERS_BRANDS_SEARCH_START = 'EPISODE_EDIT/HELPERS_BRANDS_SEARCH_START';
+export const HELPERS_BRANDS_SEARCH_ERROR = 'EPISODE_EDIT/HELPERS_BRANDS_SEARCH_ERROR';
 
-export const CHARACTERS_SEARCH_START = 'EPISODE_EDIT/CHARACTERS_SEARCH_START';
-export const CHARACTERS_SEARCH_ERROR = 'EPISODE_EDIT/CHARACTERS_SEARCH_ERROR';
+export const HELPERS_CHARACTERS_SEARCH_START = 'EPISODE_EDIT/HELPERS_CHARACTERS_SEARCH_START';
+export const HELPERS_CHARACTERS_SEARCH_ERROR = 'EPISODE_EDIT/HELPERS_CHARACTERS_SEARCH_ERROR';
 
-export const SHOPS_SEARCH_START = 'EPISODE_EDIT/SHOPS_SEARCH_START';
-export const SHOPS_SEARCH_ERROR = 'EPISODE_EDIT/SHOPS_SEARCH_ERROR';
+export const HELPERS_SHOPS_SEARCH_START = 'EPISODE_EDIT/HELPERS_SHOPS_SEARCH_START';
+export const HELPERS_SHOPS_SEARCH_ERROR = 'EPISODE_EDIT/HELPERS_SHOPS_SEARCH_ERROR';
 
-export const MEDIUM_CHARACTERS_SEARCH_ERROR = 'EPISODE_EDIT/MEDIUM_CHARACTERS_SEARCH_ERROR';
+export const COLLECTIONS_BRANDS_SEARCH_START = 'EPISODE_EDIT/COLLECTIONS_BRANDS_SEARCH_START';
+export const COLLECTIONS_BRANDS_SEARCH_ERROR = 'EPISODE_EDIT/COLLECTIONS_BRANDS_SEARCH_ERROR';
+
+export const COLLECTIONS_CHARACTERS_SEARCH_START = 'EPISODE_EDIT/COLLECTIONS_CHARACTERS_SEARCH_START';
+export const COLLECTIONS_CHARACTERS_SEARCH_ERROR = 'EPISODE_EDIT/COLLECTIONS_CHARACTERS_SEARCH_ERROR';
 
 export const CONTENT_PRODUCERS_SEARCH_START = 'EPISODE_EDIT/CONTENT_PRODUCERS_SEARCH_START';
 export const CONTENT_PRODUCERS_SEARCH_ERROR = 'EPISODE_EDIT/CONTENT_PRODUCERS_SEARCH_ERROR';
@@ -118,38 +122,67 @@ export function searchBroadcasters (searchString) {
   };
 }
 
-/* Search on all brands. */
-export function searchBrands (searchString) {
+// Collections
+// ///////////
+
+/* Search on all brands. Can change in the future to medium brands. */
+export function searchCollectionsBrands (searchString) {
   return async (dispatch) => {
     try {
-      await dispatch({ type: BRANDS_SEARCH_START, searchString });
+      await dispatch({ type: COLLECTIONS_BRANDS_SEARCH_START, searchString });
       return await dispatch(dataSearchBrands({ searchString }));
     } catch (error) {
-      dispatch({ error, type: BRANDS_SEARCH_ERROR });
+      dispatch({ error, type: COLLECTIONS_BRANDS_SEARCH_ERROR });
     }
   };
 }
 
-/* Search on all characters. */
-export function searchCharacters (searchString) {
+/* Search on the cast of a medium. */
+export function searchCollectionsCharacters (mediumId, searchString) {
+  return async (dispatch, getState) => {
+    try {
+      await dispatch({ type: COLLECTIONS_CHARACTERS_SEARCH_START, searchString });
+      return await dispatch(dataSearchMediumCharacters({ mediumId, searchString }));
+    } catch (error) {
+      dispatch({ error, type: COLLECTIONS_CHARACTERS_SEARCH_ERROR });
+    }
+  };
+}
+
+// Helpers
+// ////////
+
+/* Search on all brands. */
+export function searchHelpersBrands (searchString) {
   return async (dispatch) => {
     try {
-      await dispatch({ type: CHARACTERS_SEARCH_START, searchString });
+      await dispatch({ type: HELPERS_BRANDS_SEARCH_START, searchString });
+      return await dispatch(dataSearchBrands({ searchString }));
+    } catch (error) {
+      dispatch({ error, type: HELPERS_BRANDS_SEARCH_ERROR });
+    }
+  };
+}
+
+export function searchHelpersCharacters (searchString) {
+  return async (dispatch) => {
+    try {
+      await dispatch({ type: HELPERS_CHARACTERS_SEARCH_START, searchString });
       return await dispatch(dataSearchCharacters({ searchString }));
     } catch (error) {
-      dispatch({ error, type: CHARACTERS_SEARCH_ERROR });
+      dispatch({ error, type: HELPERS_CHARACTERS_SEARCH_ERROR });
     }
   };
 }
 
 /* Search on all shops. */
-export function searchShops (searchString) {
+export function searchHelpersShops (searchString) {
   return async (dispatch) => {
     try {
-      await dispatch({ type: SHOPS_SEARCH_START, searchString });
+      await dispatch({ type: HELPERS_SHOPS_SEARCH_START, searchString });
       return await dispatch(dataSearchShops({ searchString }));
     } catch (error) {
-      dispatch({ error, type: SHOPS_SEARCH_ERROR });
+      dispatch({ error, type: HELPERS_SHOPS_SEARCH_ERROR });
     }
   };
 }
