@@ -18,6 +18,7 @@ export default class NumberInput extends Component {
     min: PropTypes.number,
     placeholder: PropTypes.string,
     required: PropTypes.bool,
+    step: PropTypes.number,
     style: PropTypes.object,
     onChange: PropTypes.func
   };
@@ -71,7 +72,7 @@ export default class NumberInput extends Component {
     const styles = this.constructor.styles;
     const {
       content, disabled, first, input, label, labelStyle,
-      max, meta, min, placeholder, required, style
+      max, meta, min, placeholder, required, step, style
     } = this.props;
     return (
       <div style={[ !first && styles.padTop, style ]}>
@@ -84,6 +85,7 @@ export default class NumberInput extends Component {
           min={min}
           placeholder={placeholder}
           required={required}
+          step={step}
           style={[
             styles.base,
             styles.text,
