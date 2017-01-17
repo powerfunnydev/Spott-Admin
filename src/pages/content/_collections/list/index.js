@@ -5,10 +5,10 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Section from '../../../_common/components/section';
-import { Table, CustomCel, Rows, Row } from '../../../_common/components/table/index';
-import { colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../_common/styles';
-import Plus from '../../../_common/images/plus';
+import { buttonStyles, colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../_common/styles';
+import PlusButton from '../../../_common/components/buttons/plusButton';
 import RemoveButton from '../../../_common/components/buttons/removeButton';
+import Collection from './collection';
 import PersistCollectionModal from '../persist';
 import * as actions from './actions';
 
@@ -57,14 +57,14 @@ export default class Collections extends Component {
   async onClickDeleteCollection (collectionId) {
     const { mediumId, loadCollections, deleteCollection } = this.props;
     await deleteCollection({ collectionId, mediumId });
-    await loadCollections(mediumId);
+    await loadCollections({ mediumId });
   }
 
   async onSubmit (form) {
     const { collectionId } = form;
     const { loadCollections, persistCollection, mediumId } = this.props;
-    await persistCollection({ collectionId, mediumId });
-    await loadCollections(mediumId);
+    await persistCollection({ ...form, collectionId, mediumId });
+    await loadCollections({ mediumId });
   }
 
   static styles = {
@@ -117,38 +117,36 @@ export default class Collections extends Component {
       <Section>
         <FormSubtitle first>Collections</FormSubtitle>
         <FormDescription style={styles.description}>These are shown on and episode landing page. It’s a way to explore the products of an episode without browsing through all the frames.</FormDescription>
-        <Table style={styles.customTable}>
-          <Rows style={styles.adaptedRows}>
-            {mediumCollections.get('data').map((collection, index) => {
-              return (
-                <Row isFirst={index === 0} key={index} >
-                  <CustomCel style={[ styles.adaptedCustomCel, styles.paddingLeft ]}>
-                    <img src={collection.get('logo') && `${collection.getIn([ 'logo', 'url' ])}?height=70&width=70`} style={styles.image}/>
-                  </CustomCel>
-                  <CustomCel style={styles.adaptedCustomCel}>{collection.get('name')}</CustomCel>
-                  <CustomCel style={[ styles.adaptedCustomCel, styles.floatRight ]}>
-                    <RemoveButton cross onClick={this.onClickDeleteCollection.bind(this, collection.get('id'))}/>
-                  </CustomCel>
-                </Row>
-              );
-            })}
-            <Row isFirst={mediumCollections.get('data') && mediumCollections.get('data').size === 0} >
-              <CustomCel style={[ styles.add, styles.adaptedCustomCel ]} onClick={this.onClickNewEntry}>
-                <Plus color={colors.primaryBlue} />&nbsp;&nbsp;&nbsp;Add Collection
-              </CustomCel>
-            </Row>
-          </Rows>
-          {this.state.create &&
-            <PersistCollectionModal
-              brandsById={brandsById}
-              charactersById={charactersById}
-              searchBrands={searchBrands}
-              searchCharacters={searchCharacters.bind(this, mediumId)}
-              searchedBrandIds={searchedBrandIds}
-              searchedCharacterIds={searchedCharacterIds}
-              onClose={() => this.setState({ create: false })}
-              onSubmit={this.onSubmit} />}
-        </Table>
+        <Section>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <div>
+              <FormSubtitle first>Active collections</FormSubtitle>
+              <FormDescription style={styles.description}>These collections will be shown to the user when landing on an episode page.</FormDescription>
+            </div>
+            <div>
+              <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='Create Collection' onClick={this.onClickNewEntry} />
+            </div>
+          </div>
+          {mediumCollections.get('data').map((collection, index) => {
+            return (
+              <Collection
+                collection={collection}
+                key={collection.get('id')}
+                onCollectionDelete={this.onClickDeleteCollection.bind(this, collection.get('id'))}
+                onCollectionEdit={this.onClickDeleteCollection.bind(this, collection.get('id'))}/>
+            );
+          })}
+        </Section>
+        {this.state.create &&
+          <PersistCollectionModal
+            brandsById={brandsById}
+            charactersById={charactersById}
+            searchBrands={searchBrands}
+            searchCharacters={searchCharacters.bind(this, mediumId)}
+            searchedBrandIds={searchedBrandIds}
+            searchedCharacterIds={searchedCharacterIds}
+            onClose={() => this.setState({ create: false })}
+            onSubmit={this.onSubmit} />}
       </Section>
     );
   }

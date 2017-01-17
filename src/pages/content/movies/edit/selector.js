@@ -1,4 +1,5 @@
-import { createStructuredSelector } from 'reselect';
+import { createSelector, createStructuredSelector } from 'reselect';
+import { serializeFilterHasCharacters } from '../../../../reducers/utils';
 import { currentModalSelector } from '../../../../selectors/global';
 import {
   broadcastersEntitiesSelector,
@@ -6,13 +7,13 @@ import {
   createEntitiesByRelationSelector,
   createEntityByIdSelector,
   createEntityIdsByRelationSelector,
+  filterHasCharactersRelationsSelector,
   listBrandsEntitiesSelector,
   listCharactersEntitiesSelector,
   listMediumCategoriesEntitiesSelector,
   listShopsEntitiesSelector,
   mediaEntitiesSelector,
   mediumHasBrandsRelationsSelector,
-  mediumHasCharactersRelationsSelector,
   mediumHasShopsRelationsSelector,
   searchStringHasBrandsRelationsSelector,
   searchStringHasBroadcastersRelationsSelector,
@@ -49,8 +50,13 @@ const searchedContentProducerIdsSelector = createEntityIdsByRelationSelector(sea
 const searchedMediumCategoryIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediumCategoriesRelationsSelector, currentMediumCategoriesSearchStringSelector);
 const searchedShopIdsSelector = createEntityIdsByRelationSelector(searchStringHasShopsRelationsSelector, currentShopSearchStringSelector);
 
+const helpersCharactersFilterKeySelector = createSelector(
+  currentMovieIdSelector,
+  (mediumId) => serializeFilterHasCharacters({}, mediumId)
+);
+
 const movieBrandsSelector = createEntitiesByRelationSelector(mediumHasBrandsRelationsSelector, currentMovieIdSelector, listBrandsEntitiesSelector);
-const movieCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersRelationsSelector, currentMovieIdSelector, listCharactersEntitiesSelector);
+const movieCharactersSelector = createEntitiesByRelationSelector(filterHasCharactersRelationsSelector, helpersCharactersFilterKeySelector, listCharactersEntitiesSelector);
 const movieShopsSelector = createEntitiesByRelationSelector(mediumHasShopsRelationsSelector, currentMovieIdSelector, listShopsEntitiesSelector);
 
 export default createStructuredSelector({

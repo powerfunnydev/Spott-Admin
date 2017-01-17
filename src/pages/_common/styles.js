@@ -192,12 +192,12 @@ export const buttonStyles = {
 const formSubtitleStyle = {
   ...makeTextStyle(fontWeights.medium, '0.75em'),
   color: colors.black,
-  marginTop: '30px',
+  paddingTop: 30,
   fontWeight: 500
 };
 
 export const FormSubtitle = Radium((props) => (
-  <h2 style={[ formSubtitleStyle, props.style, props.first && { marginTop: '0px' } ]}>
+  <h2 style={[ formSubtitleStyle, props.first && { paddingTop: 0 }, props.style ]}>
     {props.children}
   </h2>
 ));

@@ -23,16 +23,23 @@ export async function fetchCollection (baseUrl, authenticationToken, locale, { c
 // recurring: false,
 // sortOrder: 0,
 export async function persistCollection (baseUrl, authenticationToken, locale, {
-  basedOnDefaultLocale, brandId, characterId, collectionId, defaultLocale, linkType,
+  /* basedOnDefaultLocale, */ brandId, characterId, collectionId, defaultLocale, linkType,
   locales, mediumId, recurring, sortOrder, title
 }) {
+  console.warn('COLLECTION', brandId, characterId, collectionId, defaultLocale, linkType,
+  locales, mediumId, recurring, sortOrder, title);
+  console.warn('mediumId', mediumId);
   let collection = {};
   if (collectionId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/mediumItemCollections/${collectionId}`);
     collection = body;
   }
+
   collection.defaultLocale = defaultLocale;
+  collection.linkedBrand = brandId && { uuid: brandId };
+  collection.linkedCharacter = characterId && { uuid: characterId };
   collection.linkType = linkType;
+  collection.medium = { uuid: mediumId };
   collection.recurring = recurring;
   collection.sortOrder = sortOrder;
   // Update locale data.
@@ -40,7 +47,8 @@ export async function persistCollection (baseUrl, authenticationToken, locale, {
   locales.forEach((locale) => {
     const localeData = {};
     // basedOnDefaultLocale is always provided, no check needed
-    localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
+    localeData.basedOnDefaultLocale = false;
+    // basedOnDefaultLocale && basedOnDefaultLocale[locale];
     localeData.title = title && title[locale];
     localeData.locale = locale;
     collection.localeData.push(localeData);

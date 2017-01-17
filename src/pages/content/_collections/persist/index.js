@@ -3,7 +3,10 @@ import Radium from 'radium';
 import { reduxForm, Field } from 'redux-form/immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
+import { FormSubtitle } from '../../../_common/styles';
+import CheckboxInput from '../../../_common/inputs/checkbox';
 import SelectInput from '../../../_common/inputs/selectInput';
+import TextInput from '../../../_common/inputs/textInput';
 import RadioInput from '../../../_common/inputs/radioInput';
 import PersistModal from '../../../_common/components/persistModal';
 import localized from '../../../_common/decorators/localized';
@@ -37,11 +40,14 @@ export default class CollectionModal extends Component {
   static propTypes = {
     brandsById: ImmutablePropTypes.map.isRequired,
     charactersById: ImmutablePropTypes.map.isRequired,
+    collection: ImmutablePropTypes.map,
     currentLinkType: PropTypes.string,
     currentLocale: PropTypes.string.isRequired,
     edit: PropTypes.bool,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
+    // Redux-form function which sets the initial values of the form.
+    initialize: PropTypes.func.isRequired,
     localeNames: ImmutablePropTypes.map.isRequired,
     searchBrands: PropTypes.func.isRequired,
     searchCharacters: PropTypes.func.isRequired,
@@ -59,12 +65,27 @@ export default class CollectionModal extends Component {
     this.state = {};
   }
 
+  componentDidMount () {
+    const { collection, currentLocale, initialize, localeNames } = this.props;
+
+    if (collection) {
+      console.warn('EDIT', collection);
+    } else {
+      initialize({
+        defaultLocale: currentLocale,
+        linkType: 'REGULAR',
+        locales: localeNames.keySeq()
+      });
+    }
+  }
+
   clearPopUpMessage () {
     this.setState({});
   }
 
   async submit (form) {
     try {
+      console.warn('FORM', form.toJS());
       await this.props.onSubmit(form.toJS());
       this.onCloseClick();
     } catch (error) {
@@ -88,8 +109,8 @@ export default class CollectionModal extends Component {
   render () {
     // const { styles } = this.constructor;
     const {
-      brandsById, currentLinkType, edit, handleSubmit, localeNames, searchBrands,
-      searchCharacters, searchedBrandIds
+      brandsById, charactersById, currentLinkType, edit, handleSubmit, localeNames, searchBrands,
+      searchCharacters, searchedBrandIds, searchedCharacterIds
     } = this.props;
     return (
       <PersistModal
@@ -113,12 +134,18 @@ export default class CollectionModal extends Component {
           options={localeNames.keySeq().toArray()}
           placeholder='Default language'
           required/>
-        {localeNames.map(())}
-        <Field
-          component={TextInput}
-          label={'Title'}
+        {localeNames.keySeq().map((language) => (
+          <Field
+            component={TextInput}
+            key={language}
+            label={`Title (${language})`}
+            name={`title.${language}`}
+            placeholder={`Title (${language})`}/>
+        ))}
+        <FormSubtitle style={{ paddingTop: '1.5em' }}>Collection type</FormSubtitle>
         <Field
           component={RadioInput}
+          first
           label='Collection type'
           name='linkType'
           options={linkTypes}
@@ -128,7 +155,7 @@ export default class CollectionModal extends Component {
             component={SelectInput}
             getItemText={(brandId) => brandsById.getIn([ brandId, 'name' ])}
             getOptions={searchBrands}
-            label='Brand'
+            label='Link brand'
             name='brandId'
             options={searchedBrandIds.get('data').toArray()}
             placeholder='Brand'
@@ -136,13 +163,20 @@ export default class CollectionModal extends Component {
         {currentLinkType === 'CHARACTER' &&
            <Field
              component={SelectInput}
-             getItemText={(characterId) => brandsById.getIn([ characterId, 'name' ])}
+             getItemText={(characterId) => charactersById.getIn([ characterId, 'name' ])}
              getOptions={searchCharacters}
-             label='Character'
+             label='Link cast member'
              name='characterId'
-             options={searchedBrandIds.get('data').toArray()}
+             options={searchedCharacterIds.get('data').toArray()}
              placeholder='Character'
              required/>}
+        <FormSubtitle style={{ paddingTop: '1.5em' }}>Recurring collection?</FormSubtitle>
+        <Field
+          component={CheckboxInput}
+          first
+          label='This collection will be used in later episodes'
+          name='recurring'
+          style={{ paddingTop: '0.625em' }}/>
       </PersistModal>
     );
   }

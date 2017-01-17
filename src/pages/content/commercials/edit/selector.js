@@ -1,15 +1,16 @@
-import { createStructuredSelector } from 'reselect';
+import { createSelector, createStructuredSelector } from 'reselect';
 import { currentModalSelector } from '../../../../selectors/global';
+import { serializeFilterHasCharacters } from '../../../../reducers/utils';
 import {
   broadcastersEntitiesSelector,
   contentProducersEntitiesSelector,
   createEntitiesByRelationSelector,
   createEntityByIdSelector,
   createEntityIdsByRelationSelector,
+  filterHasCharactersRelationsSelector,
   listBrandsEntitiesSelector,
   listCharactersEntitiesSelector,
   mediaEntitiesSelector,
-  mediumHasCharactersRelationsSelector,
   searchStringHasBrandsRelationsSelector,
   searchStringHasBroadcastersRelationsSelector,
   searchStringHasCharactersRelationsSelector,
@@ -33,12 +34,17 @@ const currentBroadcastersSearchStringSelector = (state) => state.getIn([ 'conten
 const currentCharactersSearchStringSelector = (state) => state.getIn([ 'content', 'commercials', 'edit', 'currentCharacterSearchString' ]);
 const currentContentProducersSearchStringSelector = (state) => state.getIn([ 'content', 'commercials', 'edit', 'currentContentProducersSearchString' ]);
 
+const helpersCharactersFilterKeySelector = createSelector(
+  currentCommercialIdSelector,
+  (mediumId) => serializeFilterHasCharacters({}, mediumId)
+);
+
 const searchedBroadcasterIdsSelector = createEntityIdsByRelationSelector(searchStringHasBroadcastersRelationsSelector, currentBroadcastersSearchStringSelector);
 const searchedCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCharactersSearchStringSelector);
 const searchedContentProducerIdsSelector = createEntityIdsByRelationSelector(searchStringHasContentProducersRelationsSelector, currentContentProducersSearchStringSelector);
 const searchedBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentBrandsSearchStringSelector);
 
-const commercialCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersRelationsSelector, currentCommercialIdSelector, listCharactersEntitiesSelector);
+const commercialCharactersSelector = createEntitiesByRelationSelector(filterHasCharactersRelationsSelector, helpersCharactersFilterKeySelector, listCharactersEntitiesSelector);
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,

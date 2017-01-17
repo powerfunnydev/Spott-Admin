@@ -110,7 +110,6 @@ export default (state = fromJS({
     characterHasFaceImages: {},
     imageHasSuggestedProducts: {},
     mediumHasBrands: {},
-    mediumHasCharacters: {},
     mediumHasCollections: {},
     mediumHasShops: {},
     mediumHasTvGuideEntries: {},
@@ -290,11 +289,11 @@ export default (state = fromJS({
       return searchError(state, 'characterHasFaceImages', action.characterId, action.error);
 
     case charactersActions.MEDIUM_CHARACTER_SEARCH_START:
-      return searchStart(state, 'mediumHasCharacters', action.mediumId);
+      return searchStart(state, 'filterHasCharacters', serializeFilterHasCharacters(action, action.mediumId));
     case charactersActions.MEDIUM_CHARACTER_SEARCH_SUCCESS:
-      return searchSuccess(state, 'listCharacters', 'mediumHasCharacters', action.mediumId, action.data);
+      return searchSuccess(state, 'listCharacters', 'filterHasCharacters', serializeFilterHasCharacters(action, action.mediumId), action.data);
     case charactersActions.MEDIUM_CHARACTER_SEARCH_ERROR:
-      return searchError(state, 'mediumHasCharacters', action.mediumId, action.error);
+      return searchError(state, 'filterHasCharacters', serializeFilterHasCharacters(action, action.mediumId), action.error);
 
     // Collections
     // ///////////

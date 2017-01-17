@@ -75,7 +75,6 @@ export const characterHasFaceImagesRelationsSelector = (state) => state.getIn([ 
 export const imageHasSuggestedProductsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'imageHasSuggestedProducts' ]);
 export const mediumHasAvailabilitiesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasAvailabilities' ]);
 export const mediumHasBrandsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasBrands' ]);
-export const mediumHasCharactersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasCharacters' ]);
 export const mediumHasCollectionsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasCollections' ]);
 export const mediumHasShopsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasShops' ]);
 export const mediumHasTvGuideEntriesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasTvGuideEntries' ]);

@@ -1,4 +1,5 @@
-import { createStructuredSelector } from 'reselect';
+import { createSelector, createStructuredSelector } from 'reselect';
+import { serializeFilterHasCharacters } from '../../../../reducers/utils';
 import { currentModalSelector } from '../../../../selectors/global';
 import {
   broadcastersEntitiesSelector,
@@ -6,6 +7,7 @@ import {
   createEntitiesByRelationSelector,
   createEntityByIdSelector,
   createEntityIdsByRelationSelector,
+  filterHasCharactersRelationsSelector,
   listBrandsEntitiesSelector,
   listCharactersEntitiesSelector,
   listCollectionsEntitiesSelector,
@@ -14,7 +16,6 @@ import {
   listShopsEntitiesSelector,
   mediaEntitiesSelector,
   mediumHasBrandsRelationsSelector,
-  mediumHasCharactersRelationsSelector,
   mediumHasCollectionsRelationsSelector,
   mediumHasShopsRelationsSelector,
   searchStringHasBrandsRelationsSelector,
@@ -58,12 +59,18 @@ const currentContentProducersSearchStringSelector = (state) => state.getIn([ 'co
 const currentMediumCategoriesSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentMediumCategoriesSearchString' ]);
 const popUpMessageSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'popUpMessage' ]);
 
+const collectionsCharactersFilterKeySelector = createSelector(
+  currentCollectionsCharacterSearchStringSelector,
+  currentEpisodeIdSelector,
+  (searchString, mediumId) => serializeFilterHasCharacters({ searchString }, mediumId)
+);
+
 const searchedHelpersBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentHelpersBrandSearchStringSelector);
 const searchedHelpersCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentHelpersCharacterSearchStringSelector);
 const searchedHelpersShopIdsSelector = createEntityIdsByRelationSelector(searchStringHasShopsRelationsSelector, currentHelpersShopSearchStringSelector);
 
 const searchedCollectionsBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentCollectionsBrandSearchStringSelector);
-const searchedCollectionsCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCollectionsCharacterSearchStringSelector);
+const searchedCollectionsCharacterIdsSelector = createEntityIdsByRelationSelector(filterHasCharactersRelationsSelector, collectionsCharactersFilterKeySelector);
 
 const searchedSeriesEntryIdsSelector = createEntityIdsByRelationSelector(searchStringHasSeriesEntriesRelationsSelector, currentSeriesEntriesSearchStringSelector);
 const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(seriesEntryHasSeasonsRelationsSelector, currentSeriesEntryIdSelector);
@@ -71,8 +78,13 @@ const searchedBroadcasterIdsSelector = createEntityIdsByRelationSelector(searchS
 const searchedContentProducerIdsSelector = createEntityIdsByRelationSelector(searchStringHasContentProducersRelationsSelector, currentContentProducersSearchStringSelector);
 const searchedMediumCategoryIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediumCategoriesRelationsSelector, currentMediumCategoriesSearchStringSelector);
 
+const helpersCharactersFilterKeySelector = createSelector(
+  currentEpisodeIdSelector,
+  (mediumId) => serializeFilterHasCharacters({}, mediumId)
+);
+
 const episodeBrandsSelector = createEntitiesByRelationSelector(mediumHasBrandsRelationsSelector, currentEpisodeIdSelector, listBrandsEntitiesSelector);
-const episodeCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersRelationsSelector, currentEpisodeIdSelector, listCharactersEntitiesSelector);
+const episodeCharactersSelector = createEntitiesByRelationSelector(filterHasCharactersRelationsSelector, helpersCharactersFilterKeySelector, listCharactersEntitiesSelector);
 const episodeCollectionsSelector = createEntitiesByRelationSelector(mediumHasCollectionsRelationsSelector, currentEpisodeIdSelector, listCollectionsEntitiesSelector);
 const episodeShopsSelector = createEntitiesByRelationSelector(mediumHasShopsRelationsSelector, currentEpisodeIdSelector, listShopsEntitiesSelector);
 
