@@ -32,7 +32,7 @@
 		<node-version>v5.0.0</node-version>
 		<npm-version>3.8.6</npm-version>
 
-		<appiness.docker.nginx.version>01.00.00</appiness.docker.nginx.version>
+		<appiness.docker.nginx.version>01.00.01</appiness.docker.nginx.version>
 	</properties>
 
 	<dependencyManagement>
