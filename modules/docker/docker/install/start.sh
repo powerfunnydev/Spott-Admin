@@ -31,8 +31,8 @@ if [ ! -f "$SCRIPT_DIR/config/Dockerfile" ]; then
 fi
 
 # Create the configuration container
-docker build -t docker.appiness.mobi/apptvate-$DEPLOY_ENV-web-config:latest $SCRIPT_DIR/config
-docker push docker.appiness.mobi/apptvate-$DEPLOY_ENV-web-config:latest
+docker build -t docker.appiness.mobi/apptvate-$DEPLOY_ENV-web-config $SCRIPT_DIR/config
+docker push docker.appiness.mobi/apptvate-$DEPLOY_ENV-web-config
 
 # Restart
 docker-compose down -v
