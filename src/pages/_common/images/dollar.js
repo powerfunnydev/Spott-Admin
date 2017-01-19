@@ -4,7 +4,7 @@ import Radium from 'radium';
 /* eslint-disable */
 export function renderSVG (fill = '#aacc6b', style) {
   return (
-    <svg width='14px' height='14px' viewBox='0 0 14 14' version='1.1' xmlns='http://www.w3.org/2000/svg'>
+    <svg width='14px' height='14px' style={style} viewBox='0 0 14 14' version='1.1' xmlns='http://www.w3.org/2000/svg'>
         <g id='Page-1' stroke='none' strokeWidth='1' fill='none' fillRule='evenodd'>
             <g id='Guide---Icons' transform='translate(-487.000000, -384.000000)'>
                 <g id='Icons/Affiliate-Gray' transform='translate(485.000000, 382.000000)'>

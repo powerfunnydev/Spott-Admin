@@ -728,3 +728,12 @@ export function transformCollection ({
   }
   return collection;
 }
+
+export function transformListCollectionItem ({ product, productRelevance, sortOrder, uuid }) {
+  return {
+    id: uuid,
+    product: transformListProduct(product),
+    relevance: productRelevance,
+    sortOrder
+  };
+}

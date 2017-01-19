@@ -10,11 +10,15 @@ import PlusButton from '../../../_common/components/buttons/plusButton';
 import RemoveButton from '../../../_common/components/buttons/removeButton';
 import Collection from './collection';
 import PersistCollectionModal from '../persist';
+import PersistCollectionItemModal from './collectionItems/persist';
 import * as actions from './actions';
 
 @connect(null, (dispatch) => ({
-  loadCollections: bindActionCreators(actions.fetchMediumCollections, dispatch),
+  loadCollection: bindActionCreators(actions.loadCollection, dispatch),
+  loadCollections: bindActionCreators(actions.loadCollections, dispatch),
+  loadCollectionItems: bindActionCreators(actions.fetchCollectionItems, dispatch),
   persistCollection: bindActionCreators(actions.persistCollection, dispatch),
+  persistCollectionItem: bindActionCreators(actions.persistCollectionItem, dispatch),
   deleteCollection: bindActionCreators(actions.deleteCollection, dispatch)
 }))
 @Radium
@@ -24,23 +28,32 @@ export default class Collections extends Component {
     brandsById: ImmutablePropTypes.map.isRequired,
     charactersById: ImmutablePropTypes.map.isRequired,
     deleteCollection: PropTypes.func.isRequired,
+    loadCollection: PropTypes.func.isRequired,
+    loadCollectionItems: PropTypes.func.isRequired,
     loadCollections: PropTypes.func.isRequired,
     mediumCollections: ImmutablePropTypes.map.isRequired,
     mediumId: PropTypes.string.isRequired,
     persistCollection: PropTypes.func.isRequired,
+    persistCollectionItem: PropTypes.func.isRequired,
+    productsById: ImmutablePropTypes.map.isRequired,
     searchBrands: PropTypes.func.isRequired,
     searchCharacters: PropTypes.func.isRequired,
+    searchProducts: PropTypes.func.isRequired,
     searchedBrandIds: ImmutablePropTypes.map.isRequired,
-    searchedCharacterIds: ImmutablePropTypes.map.isRequired
+    searchedCharacterIds: ImmutablePropTypes.map.isRequired,
+    searchedProductIds: ImmutablePropTypes.map.isRequired
   };
 
   constructor (props) {
     super(props);
     this.onClickNewEntry = ::this.onClickNewEntry;
+    this.onCollectionItemCreate = ::this.onCollectionItemCreate;
     this.onSubmit = :: this.onSubmit;
     this.state = {
-      create: false,
-      edit: false
+      createCollection: false,
+      createCollectionItem: false,
+      editCollection: false,
+      editCollectionItem: false
     };
   }
 
@@ -49,15 +62,36 @@ export default class Collections extends Component {
     loadCollections({ mediumId });
   }
 
-  onClickNewEntry (e) {
-    e.preventDefault();
-    this.setState({ create: true });
+  onCollectionItemCreate (collectionId) {
+    this.setState({ createCollectionItem: { collectionId } });
   }
 
-  async onClickDeleteCollection (collectionId) {
+  onClickNewEntry (e) {
+    e.preventDefault();
+    this.setState({ createCollection: true });
+  }
+
+  async onCollectionDelete (collectionId) {
     const { mediumId, loadCollections, deleteCollection } = this.props;
     await deleteCollection({ collectionId, mediumId });
     await loadCollections({ mediumId });
+  }
+
+  async onCollectionEdit (collectionId) {
+    const { brand, character, defaultLocale, id, linkType, recurring, title } = await this.props.loadCollection({ collectionId });
+    const editCollection = {
+      brandId: brand && brand.id,
+      characterId: character && character.id,
+      collectionId: id,
+      defaultLocale,
+      linkType,
+      recurring,
+      title
+    };
+    console.warn('EDIT COLLECTION', editCollection);
+    this.setState({
+      editCollection
+    });
   }
 
   async onSubmit (form) {
@@ -65,6 +99,13 @@ export default class Collections extends Component {
     const { loadCollections, persistCollection, mediumId } = this.props;
     await persistCollection({ ...form, collectionId, mediumId });
     await loadCollections({ mediumId });
+  }
+
+  async onSubmitCollectionItem (collectionId, form) {
+    console.warn('collectionId', collectionId, form);
+    const { loadCollectionItems, persistCollectionItem } = this.props;
+    await persistCollectionItem({ ...form, collectionId });
+    await loadCollectionItems({ collectionId });
   }
 
   static styles = {
@@ -110,8 +151,8 @@ export default class Collections extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      brandsById, charactersById, mediumId, searchBrands, searchCharacters,
-      searchedBrandIds, mediumCollections, searchedCharacterIds
+      brandsById, charactersById, mediumId, productsById, searchBrands, searchCharacters,
+      searchProducts, searchedBrandIds, searchedProductIds, mediumCollections, searchedCharacterIds
     } = this.props;
     return (
       <Section>
@@ -132,21 +173,31 @@ export default class Collections extends Component {
               <Collection
                 collection={collection}
                 key={collection.get('id')}
-                onCollectionDelete={this.onClickDeleteCollection.bind(this, collection.get('id'))}
-                onCollectionEdit={this.onClickDeleteCollection.bind(this, collection.get('id'))}/>
+                onCollectionItemCreate={this.onCollectionItemCreate.bind(this, collection.get('id'))}
+                onCollectionDelete={this.onCollectionDelete.bind(this, collection.get('id'))}
+                onCollectionEdit={this.onCollectionEdit.bind(this, collection.get('id'))}/>
             );
           })}
         </Section>
-        {this.state.create &&
+        {(this.state.createCollection || this.state.editCollection) &&
           <PersistCollectionModal
             brandsById={brandsById}
             charactersById={charactersById}
+            collection={this.state.editCollection || undefined}
+            edit={Boolean(this.state.editCollection)}
             searchBrands={searchBrands}
             searchCharacters={searchCharacters.bind(this, mediumId)}
             searchedBrandIds={searchedBrandIds}
             searchedCharacterIds={searchedCharacterIds}
-            onClose={() => this.setState({ create: false })}
+            onClose={() => this.setState({ createCollection: false, editCollection: false })}
             onSubmit={this.onSubmit} />}
+        {this.state.createCollectionItem &&
+          <PersistCollectionItemModal
+            productsById={productsById}
+            searchProducts={searchProducts}
+            searchedProductIds={searchedProductIds}
+            onClose={() => this.setState({ createCollectionItem: false })}
+            onSubmit={this.onSubmitCollectionItem.bind(this, this.state.createCollectionItem.collectionId)} />}
       </Section>
     );
   }

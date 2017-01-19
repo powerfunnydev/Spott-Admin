@@ -1,22 +1,27 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { colors, fontWeights, makeTextStyle, mediaQueries } from '../../../_common/styles';
+import { Link } from 'react-router';
+import { colors, fontWeights, makeTextStyle } from '../../../_common/styles';
 import Spinner from '../../../_common/components/spinner';
+import CollectionItems from './collectionItems/list';
+import EditButton from '../../../_common/components/buttons/editButton';
+import RemoveButton from '../../../_common/components/buttons/removeButton';
 
 const hamburgerImage = require('../../../_common/images/hamburger.svg');
+const linkImage = require('../../../_common/images/link.svg');
 
 @Radium
 export default class Collection extends Component {
 
   static propTypes = {
-    children: PropTypes.node,
     collection: ImmutablePropTypes.map.isRequired,
     contentStyle: PropTypes.object,
     isLoading: PropTypes.bool,
     style: PropTypes.object,
     onCollectionDelete: PropTypes.func.isRequired,
-    onCollectionEdit: PropTypes.func.isRequired
+    onCollectionEdit: PropTypes.func.isRequired,
+    onCollectionItemCreate: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -33,15 +38,16 @@ export default class Collection extends Component {
       borderColor: colors.lightGray2
     },
     content: {
-      paddingTop: '2em',
-      paddingBottom: '2em',
-      paddingLeft: '1.5em',
-      paddingRight: '1.5em'
+      paddingTop: '1em',
+      paddingBottom: '0.5em',
+      paddingLeft: '1em',
+      paddingRight: '1em'
     },
     header: {
       backgroundColor: colors.lightGray4,
       display: 'flex',
       alignItems: 'center',
+      justifyContent: 'space-between',
       height: '2em',
       paddingLeft: '1em',
       paddingRight: '1em',
@@ -52,8 +58,12 @@ export default class Collection extends Component {
     title: {
       ...makeTextStyle(fontWeights.medium, '0.688em', '0.0455em'),
       color: '#6d8791',
-      marginRight: '0.5em',
+      marginRight: '0.625em',
       textTransform: 'uppercase'
+    },
+    headerContainer: {
+      alignItems: 'center',
+      display: 'flex'
     },
     wrapper: {
       width: '100%',
@@ -66,47 +76,90 @@ export default class Collection extends Component {
       objectFit: 'scale-down',
       marginRight: '0.625em'
     },
-    hamburger: {
-      marginRight: '0.5em'
+    marginRight: {
+      marginRight: '0.625em'
     },
-    linkName: {
+    linkContainer: {
       alignItems: 'center',
+      display: 'flex',
+      marginRight: '0.625em'
+    },
+    link: {
       ...makeTextStyle(fontWeights.regular, '0.031em'),
       color: colors.lightGray3,
-      display: 'flex',
       fontSize: '0.625em',
-      marginRight: '0.625em'
+      textDecoration: 'none'
+    },
+    badge: {
+      base: {
+        ...makeTextStyle(fontWeights.bold, '0.688em'),
+        textAlign: 'center',
+        height: '1.6em',
+        lineHeight: '1.6em',
+        paddingLeft: '0.6em',
+        paddingRight: '0.6em',
+        borderRadius: '0.125em'
+      },
+      count: {
+        backgroundColor: colors.lightGray2,
+        color: colors.darkGray3
+      },
+      none: {
+        backgroundColor: colors.red,
+        color: '#fff'
+      }
     }
   };
 
   renderTitle () {
     const styles = this.constructor.styles;
     const { collection } = this.props;
+    const count = collection.getIn([ 'collectionItems', 'data' ]).size;
+
     return [
-      <img key='hamburger' src={hamburgerImage} style={styles.hamburger} />,
+      <img key='hamburger' src={hamburgerImage} style={styles.marginRight} />,
       <h2 key='title' style={styles.title}>{collection.get('title')}</h2>,
       collection.get('brand') &&
-        <span key='brand' style={styles.linkName}>
+        <span key='brand' style={styles.linkContainer}>
+          <img key='link' src={linkImage} style={styles.marginRight} />
           {collection.getIn([ 'brand', 'logo' ]) &&
             <img src={`${collection.getIn([ 'brand', 'logo', 'url' ])}?height=70&width=70`} style={styles.roundImage} />}
-          {collection.getIn([ 'brand', 'name' ])}
+          <Link style={styles.link} to={`/content/brands/read/${collection.getIn([ 'brand', 'id' ])}`}>
+            {collection.getIn([ 'brand', 'name' ])}
+          </Link>
         </span>,
-      collection.get('character') && collection.getIn([ 'character', 'name' ])
-
+      collection.get('character') &&
+        <span key='character' style={styles.linkContainer}>
+          <img key='link' src={linkImage} style={styles.marginRight} />
+          {collection.getIn([ 'character', 'portraitImage' ]) &&
+            <img src={`${collection.getIn([ 'character', 'portraitImage', 'url' ])}?height=70&width=70`} style={styles.roundImage} />}
+          <Link style={styles.link} to={`/content/characters/read/${collection.getIn([ 'character', 'id' ])}`}>
+            {collection.getIn([ 'character', 'name' ])}
+          </Link>
+        </span>,
+      <div key='count' style={[ styles.badge.base, count > 0 ? styles.badge.count : styles.badge.none ]}>{count}</div>
     ];
   }
 
   render () {
     const styles = this.constructor.styles;
-    const { children, collection, contentStyle, isLoading, style } = this.props;
+    const { collection, contentStyle, isLoading, style, onCollectionItemCreate, onCollectionDelete, onCollectionEdit } = this.props;
     return (
       <div style={[ styles.wrapper, style ]}>
         <div style={styles.container}>
           <div style={styles.header}>
-            {this.renderTitle()}&nbsp;&nbsp;&nbsp;{isLoading && <Spinner size='small' />}
+            <div style={styles.headerContainer}>
+              {this.renderTitle()}&nbsp;&nbsp;&nbsp;{isLoading && <Spinner size='small' />}
+            </div>
+            <div style={styles.headerContainer}>
+              <EditButton style={styles.marginRight} onClick={onCollectionEdit} />
+              <RemoveButton cross onClick={onCollectionDelete}/>
+            </div>
           </div>
           <div style={[ styles.content, contentStyle ]}>
-            {children}
+            <CollectionItems
+              collectionItems={collection.get('collectionItems')}
+              onCollectionItemCreate={onCollectionItemCreate} />
           </div>
         </div>
       </div>

@@ -13,6 +13,7 @@ export const colors = {
   secondaryPink2: '#ED316B',
   red: '#da5454',
   lightRed: '#f0bbbb',
+  lightGold: '#ffd056',
   veryLightRed: '#fbeeee',
   lightGreen: '#aacc6b',
   darkYellow: '#cca644',

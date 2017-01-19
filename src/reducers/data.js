@@ -13,6 +13,7 @@ import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcastersActions from '../actions/broadcaster';
 import * as charactersActions from '../actions/character';
 import * as collectionsActions from '../actions/collection';
+import * as collectionItemsActions from '../actions/collectionItem';
 import * as commercialActions from '../actions/commercial';
 import * as contentProducersActions from '../actions/contentProducer';
 import * as episodeActions from '../actions/episode';
@@ -46,6 +47,7 @@ export default (state = fromJS({
     genders: {},
     listBrands: {},
     listCharacters: {}, // listCharacters is the light version of characters, without locales
+    listCollectionItems: {},
     listCollections: {},
     listMedia: {}, // listMedia is the light version of media, without locales
     listMediumCategories: {},
@@ -108,6 +110,7 @@ export default (state = fromJS({
     searchStringHasUsers: {},
 
     characterHasFaceImages: {},
+    collectionHasCollectionItems: {},
     imageHasSuggestedProducts: {},
     mediumHasBrands: {},
     mediumHasCollections: {},
@@ -311,6 +314,23 @@ export default (state = fromJS({
       return searchSuccess(state, 'listCollections', 'mediumHasCollections', action.mediumId, action.data.data);
     case collectionsActions.MEDIUM_COLLECTIONS_FETCH_ERROR:
       return searchError(state, 'mediumHasCollections', action.mediumId, action.error);
+
+    // Collection items
+    // ////////////////
+
+    case collectionItemsActions.COLLECTION_ITEM_FETCH_START:
+      return fetchStart(state, [ 'entities', 'collectionItems', action.collectionItemId ]);
+    case collectionItemsActions.COLLECTION_ITEM_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'collectionItems', action.collectionItemId ], action.data);
+    case collectionItemsActions.COLLECTION_ITEM_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'collectionItems', action.collectionItemId ], action.error);
+
+    case collectionItemsActions.COLLECTION_ITEMS_FETCH_START:
+      return searchStart(state, 'collectionHasCollectionItems', action.collectionId);
+    case collectionItemsActions.COLLECTION_ITEMS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listCollectionItems', 'collectionHasCollectionItems', action.collectionId, action.data.data);
+    case collectionItemsActions.COLLECTION_ITEMS_FETCH_ERROR:
+      return searchError(state, 'collectionHasCollectionItems', action.collectionId, action.error);
 
     // Commercials
     // ///////////

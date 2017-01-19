@@ -22,8 +22,14 @@ const linkTypes = [
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { brandId } = values.toJS();
-  if (!brandId) { validationErrors.brandId = t('common.errors.required'); }
+  const { brandId, characterId, defaultLocale, linkType, title } = values.toJS();
+  if (linkType === 'BRAND' && !brandId) { validationErrors.brandId = t('common.errors.required'); }
+  if (linkType === 'CHARACTER' && !characterId) { validationErrors.characterId = t('common.errors.required'); }
+  if (defaultLocale) {
+    if (!title[defaultLocale]) { validationErrors.title[defaultLocale] = t('common.errors.required'); }
+  } else {
+    validationErrors.defaultLocale = t('common.errors.required');
+  }
   // Done
   return validationErrors;
 }
@@ -40,7 +46,7 @@ export default class CollectionModal extends Component {
   static propTypes = {
     brandsById: ImmutablePropTypes.map.isRequired,
     charactersById: ImmutablePropTypes.map.isRequired,
-    collection: ImmutablePropTypes.map,
+    collection: PropTypes.object,
     currentLinkType: PropTypes.string,
     currentLocale: PropTypes.string.isRequired,
     edit: PropTypes.bool,
@@ -69,7 +75,10 @@ export default class CollectionModal extends Component {
     const { collection, currentLocale, initialize, localeNames } = this.props;
 
     if (collection) {
-      console.warn('EDIT', collection);
+      initialize({
+        ...collection,
+        locales: localeNames.keySeq()
+      });
     } else {
       initialize({
         defaultLocale: currentLocale,

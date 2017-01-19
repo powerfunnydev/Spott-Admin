@@ -1,8 +1,11 @@
 import { createSelector, createStructuredSelector } from 'reselect';
+import { List, Map } from 'immutable';
+import { LAZY } from '../../../../constants/statusTypes';
 import { serializeFilterHasCharacters } from '../../../../reducers/utils';
 import { currentModalSelector } from '../../../../selectors/global';
 import {
   broadcastersEntitiesSelector,
+  collectionHasCollectionItemsRelationsSelector,
   contentProducersEntitiesSelector,
   createEntitiesByRelationSelector,
   createEntityByIdSelector,
@@ -10,7 +13,9 @@ import {
   filterHasCharactersRelationsSelector,
   listBrandsEntitiesSelector,
   listCharactersEntitiesSelector,
+  listCollectionItemsEntitiesSelector,
   listCollectionsEntitiesSelector,
+  listProductsEntitiesSelector,
   listMediaEntitiesSelector,
   listMediumCategoriesEntitiesSelector,
   listShopsEntitiesSelector,
@@ -21,6 +26,7 @@ import {
   searchStringHasBrandsRelationsSelector,
   searchStringHasBroadcastersRelationsSelector,
   searchStringHasCharactersRelationsSelector,
+  searchStringHasProductsRelationsSelector,
   searchStringHasContentProducersRelationsSelector,
   searchStringHasMediumCategoriesRelationsSelector,
   searchStringHasSeriesEntriesRelationsSelector,
@@ -52,6 +58,7 @@ const currentHelpersShopSearchStringSelector = (state) => state.getIn([ 'content
 
 const currentCollectionsBrandSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentCollectionsBrandSearchString' ]);
 const currentCollectionsCharacterSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentCollectionsCharacterSearchString' ]);
+const currentCollectionsProductSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentCollectionsProductSearchString' ]);
 
 const currentSeriesEntriesSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentSeriesEntrySearchString' ]);
 const currentBroadcastersSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentBroadcastersSearchString' ]);
@@ -71,6 +78,7 @@ const searchedHelpersShopIdsSelector = createEntityIdsByRelationSelector(searchS
 
 const searchedCollectionsBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentCollectionsBrandSearchStringSelector);
 const searchedCollectionsCharacterIdsSelector = createEntityIdsByRelationSelector(filterHasCharactersRelationsSelector, collectionsCharactersFilterKeySelector);
+const searchedCollectionsProductIdsSelector = createEntityIdsByRelationSelector(searchStringHasProductsRelationsSelector, currentCollectionsProductSearchStringSelector);
 
 const searchedSeriesEntryIdsSelector = createEntityIdsByRelationSelector(searchStringHasSeriesEntriesRelationsSelector, currentSeriesEntriesSearchStringSelector);
 const searchedSeasonIdsSelector = createEntityIdsByRelationSelector(seriesEntryHasSeasonsRelationsSelector, currentSeriesEntryIdSelector);
@@ -88,6 +96,25 @@ const episodeCharactersSelector = createEntitiesByRelationSelector(filterHasChar
 const episodeCollectionsSelector = createEntitiesByRelationSelector(mediumHasCollectionsRelationsSelector, currentEpisodeIdSelector, listCollectionsEntitiesSelector);
 const episodeShopsSelector = createEntitiesByRelationSelector(mediumHasShopsRelationsSelector, currentEpisodeIdSelector, listShopsEntitiesSelector);
 
+const collectionsSelector = createSelector(
+  episodeCollectionsSelector,
+  collectionHasCollectionItemsRelationsSelector,
+  listCollectionItemsEntitiesSelector,
+  (collections, collectionHasCollectionItems, listCollectionItemsEntities) => {
+    return collections.set('data', collections.get('data').map((c) => {
+      // Get the entry in the relation, being a Map({ <relationEntryKey>: Map({ _status, _error, data }) })
+      let collectionItems = collectionHasCollectionItems.get(c.get('id'));
+      // If we did not found such an entry, no fetching has started yet.
+      if (!collectionItems) {
+        return c.set('collectionItems', Map({ _status: LAZY, data: List() }));
+      }
+      // Good, we have a relation. Map over its data (a list of id's, if already there) and substitute by the entities.
+      collectionItems = collectionItems.set('data', (collectionItems.get('data') || List()).map((id) => listCollectionItemsEntities.get(id)));
+      return c.set('collectionItems', collectionItems);
+    }));
+  }
+);
+
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
   addLanguageHasTitle: addLanguageHasTitleSelector,
@@ -102,17 +129,19 @@ export default createStructuredSelector({
   defaultLocale: currentDefaultLocaleSelector,
   episodeBrands: episodeBrandsSelector,
   episodeCharacters: episodeCharactersSelector,
-  episodeCollections: episodeCollectionsSelector,
+  episodeCollections: collectionsSelector,
   episodeShops: episodeShopsSelector,
   errors: formErrorsSelector,
   formValues: valuesSelector,
   hasTitle: hasTitleSelector,
   mediumCategoriesById: listMediumCategoriesEntitiesSelector,
   popUpMessage: popUpMessageSelector,
+  productsById: listProductsEntitiesSelector,
   searchedBroadcasterIds: searchedBroadcasterIdsSelector,
   searchedContentProducerIds: searchedContentProducerIdsSelector,
   searchedCollectionsBrandIds: searchedCollectionsBrandIdsSelector,
   searchedCollectionsCharacterIds: searchedCollectionsCharacterIdsSelector,
+  searchedCollectionsProductIds: searchedCollectionsProductIdsSelector,
   searchedHelpersBrandIds: searchedHelpersBrandIdsSelector,
   searchedHelpersCharacterIds: searchedHelpersCharacterIdsSelector,
   searchedHelpersShopIds: searchedHelpersShopIdsSelector,

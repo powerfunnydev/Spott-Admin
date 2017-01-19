@@ -19,9 +19,6 @@ export async function fetchCollection (baseUrl, authenticationToken, locale, { c
   return transformCollection(body);
 }
 
-// TODO:
-// recurring: false,
-// sortOrder: 0,
 export async function persistCollection (baseUrl, authenticationToken, locale, {
   /* basedOnDefaultLocale, */ brandId, characterId, collectionId, defaultLocale, linkType,
   locales, mediumId, recurring, sortOrder, title
@@ -36,8 +33,8 @@ export async function persistCollection (baseUrl, authenticationToken, locale, {
   }
 
   collection.defaultLocale = defaultLocale;
-  collection.linkedBrand = brandId && { uuid: brandId };
-  collection.linkedCharacter = characterId && { uuid: characterId };
+  collection.linkedBrand = linkType === 'BRAND' && brandId ? { uuid: brandId } : null;
+  collection.linkedCharacter = linkType === 'CHARACTER' && characterId ? { uuid: characterId } : null;
   collection.linkType = linkType;
   collection.medium = { uuid: mediumId };
   collection.recurring = recurring;

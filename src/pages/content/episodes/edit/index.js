@@ -56,6 +56,7 @@ function validate (values, { t }) {
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
   searchCollectionsBrands: bindActionCreators(actions.searchCollectionsBrands, dispatch),
   searchCollectionsCharacters: bindActionCreators(actions.searchCollectionsCharacters, dispatch),
+  searchCollectionsProducts: bindActionCreators(actions.searchCollectionsProducts, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
   searchHelpersBrands: bindActionCreators(actions.searchHelpersBrands, dispatch),
   searchHelpersCharacters: bindActionCreators(actions.searchHelpersCharacters, dispatch),
@@ -112,10 +113,12 @@ export default class EditEpisode extends Component {
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     popUpMessage: PropTypes.object,
+    productsById: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
     searchCollectionsBrands: PropTypes.func.isRequired,
     searchCollectionsCharacters: PropTypes.func.isRequired,
+    searchCollectionsProducts: PropTypes.func.isRequired,
     searchContentProducers: PropTypes.func.isRequired,
     searchHelpersBrands: PropTypes.func.isRequired,
     searchHelpersCharacters: PropTypes.func.isRequired,
@@ -126,6 +129,7 @@ export default class EditEpisode extends Component {
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
     searchedCollectionsBrandIds: ImmutablePropTypes.map.isRequired,
     searchedCollectionsCharacterIds: ImmutablePropTypes.map.isRequired,
+    searchedCollectionsProductIds: ImmutablePropTypes.map.isRequired,
     searchedContentProducerIds: ImmutablePropTypes.map.isRequired,
     searchedHelpersBrandIds: ImmutablePropTypes.map.isRequired,
     searchedHelpersCharacterIds: ImmutablePropTypes.map.isRequired,
@@ -287,10 +291,10 @@ export default class EditEpisode extends Component {
       currentModal, currentSeasonId, currentSeriesEntryId, defaultLocale,
       deletePosterImage, deleteProfileImage, episodeBrands, episodeCharacters,
       episodeCollections, episodeShops, errors, handleSubmit, hasTitle, location, location: { query: { tab } },
-      mediumCategoriesById, searchHelpersBrands, searchBroadcasters, searchCollectionsBrands,
-      searchCollectionsCharacters, searchContentProducers, searchHelpersCharacters,
+      mediumCategoriesById, productsById, searchHelpersBrands, searchBroadcasters, searchCollectionsBrands,
+      searchCollectionsCharacters, searchCollectionsProducts, searchContentProducers, searchHelpersCharacters,
       searchHelpersShops, searchedBroadcasterIds, searchedCollectionsBrandIds,
-      searchedCollectionsCharacterIds, searchedHelpersBrandIds, searchedHelpersCharacterIds,
+      searchedCollectionsCharacterIds, searchedCollectionsProductIds, searchedHelpersBrandIds, searchedHelpersCharacterIds,
       searchedHelpersShopIds, searchedContentProducerIds, searchedMediumCategoryIds,
       searchedSeasonIds, searchedSeriesEntryIds, searchMediumCategories,
       searchSeasons, searchSeriesEntries, seasonsById, seriesEntriesById, shopsById,
@@ -507,10 +511,13 @@ export default class EditEpisode extends Component {
                   charactersById={charactersById}
                   mediumCollections={episodeCollections}
                   mediumId={this.props.params.episodeId}
+                  productsById={productsById}
                   searchBrands={searchCollectionsBrands}
                   searchCharacters={searchCollectionsCharacters}
+                  searchProducts={searchCollectionsProducts}
                   searchedBrandIds={searchedCollectionsBrandIds}
-                  searchedCharacterIds={searchedCollectionsCharacterIds}/>
+                  searchedCharacterIds={searchedCollectionsCharacterIds}
+                  searchedProductIds={searchedCollectionsProductIds}/>
                </Tab>
               <Tab title='Availability'>
                 <Availabilities mediumId={this.props.params.episodeId} />

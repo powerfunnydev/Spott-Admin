@@ -1,10 +1,13 @@
-import { persistEpisode, fetchEpisode as dataFetchEpisode,
-      uploadProfileImage as dataUploadProfileImage,
-      uploadPosterImage as dataUploadPosterImage } from '../../../../actions/episode';
+import {
+  persistEpisode, fetchEpisode as dataFetchEpisode,
+  uploadProfileImage as dataUploadProfileImage,
+  uploadPosterImage as dataUploadPosterImage
+} from '../../../../actions/episode';
 import { searchSeasons as dataSearchSeasons, searchSeriesEntries as dataSearchSeriesEntries } from '../../../../actions/series';
 import { searchBroadcasters as dataSearchBroadcasters } from '../../../../actions/broadcaster';
 import { searchContentProducers as dataSearchContentProducers } from '../../../../actions/contentProducer';
 import { searchBrands as dataSearchBrands } from '../../../../actions/brand';
+import { searchProducts as dataSearchProducts } from '../../../../actions/product';
 import { searchShops as dataSearchShops } from '../../../../actions/shop';
 import { searchCharacters as dataSearchCharacters, searchMediumCharacters as dataSearchMediumCharacters } from '../../../../actions/character';
 import { searchMediumCategories as dataSearchMediumCategories } from '../../../../actions/mediumCategory';
@@ -26,6 +29,9 @@ export const COLLECTIONS_BRANDS_SEARCH_ERROR = 'EPISODE_EDIT/COLLECTIONS_BRANDS_
 
 export const COLLECTIONS_CHARACTERS_SEARCH_START = 'EPISODE_EDIT/COLLECTIONS_CHARACTERS_SEARCH_START';
 export const COLLECTIONS_CHARACTERS_SEARCH_ERROR = 'EPISODE_EDIT/COLLECTIONS_CHARACTERS_SEARCH_ERROR';
+
+export const COLLECTIONS_PRODUCTS_SEARCH_START = 'EPISODE_EDIT/COLLECTIONS_PRODUCTS_SEARCH_START';
+export const COLLECTIONS_PRODUCTS_SEARCH_ERROR = 'EPISODE_EDIT/COLLECTIONS_PRODUCTS_SEARCH_ERROR';
 
 export const CONTENT_PRODUCERS_SEARCH_START = 'EPISODE_EDIT/CONTENT_PRODUCERS_SEARCH_START';
 export const CONTENT_PRODUCERS_SEARCH_ERROR = 'EPISODE_EDIT/CONTENT_PRODUCERS_SEARCH_ERROR';
@@ -145,6 +151,18 @@ export function searchCollectionsCharacters (mediumId, searchString) {
       return await dispatch(dataSearchMediumCharacters({ mediumId, searchString }));
     } catch (error) {
       dispatch({ error, type: COLLECTIONS_CHARACTERS_SEARCH_ERROR });
+    }
+  };
+}
+
+/* Search on all products. */
+export function searchCollectionsProducts (searchString) {
+  return async (dispatch, getState) => {
+    try {
+      await dispatch({ type: COLLECTIONS_PRODUCTS_SEARCH_START, searchString });
+      return await dispatch(dataSearchProducts({ searchString }));
+    } catch (error) {
+      dispatch({ error, type: COLLECTIONS_PRODUCTS_SEARCH_ERROR });
     }
   };
 }

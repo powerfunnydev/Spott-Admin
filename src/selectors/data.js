@@ -16,6 +16,7 @@ export const gendersEntitiesSelector = (state) => state.getIn([ 'data', 'entitie
 export const listBrandsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listBrands' ]);
 export const listCharactersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listCharacters' ]);
 export const listCollectionsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listCollections' ]);
+export const listCollectionItemsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listCollectionItems' ]);
 export const listMediaEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listMedia' ]);
 export const listMediumCategoriesEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listMediumCategories' ]);
 export const listPersonsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listPersons' ]);
@@ -72,6 +73,7 @@ export const searchStringHasSeasonsRelationsSelector = (state) => state.getIn([ 
 export const searchStringHasTagsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'searchStringHasTags' ]);
 
 export const characterHasFaceImagesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'characterHasFaceImages' ]);
+export const collectionHasCollectionItemsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'collectionHasCollectionItems' ]);
 export const imageHasSuggestedProductsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'imageHasSuggestedProducts' ]);
 export const mediumHasAvailabilitiesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasAvailabilities' ]);
 export const mediumHasBrandsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasBrands' ]);
