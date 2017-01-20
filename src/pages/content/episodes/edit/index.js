@@ -301,8 +301,6 @@ export default class EditEpisode extends Component {
       supportedLocales
     } = this.props;
 
-    console.warn('searchedCollectionsCharacterIds', searchedCollectionsCharacterIds && searchedCollectionsCharacterIds.toJS());
-
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>

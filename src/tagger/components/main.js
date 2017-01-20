@@ -1,10 +1,8 @@
-import Radium, { StyleRoot } from 'radium';
+import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { HotKeys } from 'react-hotkeys';
-import HTML5Backend from 'react-dnd-html5-backend';
-import { DragDropContext } from 'react-dnd';
 import Header from './header';
 import * as mediumActions from '../actions/medium';
 import * as quickiesActions from '../actions/quickies';
@@ -29,7 +27,6 @@ import SceneSelector from './sceneSelector';
 import Sidebar from './sidebar';
 import Toast from './toast';
 
-@DragDropContext(HTML5Backend)
 @connect(mainSelector, (dispatch) => ({
   fetchMedium: bindActionCreators(mediumActions.fetch, dispatch),
   loadQuickies: bindActionCreators(quickiesActions.fetchProductGroups, dispatch),
@@ -270,7 +267,7 @@ export default class TaggerApplication extends Component {
     };
 
     return (
-      <StyleRoot style={styles.container}>
+      <div style={styles.container}>
         <CustomDragLayer />
           <Header style={styles.header} />
           {activeTab === ORGANIZE &&
@@ -302,7 +299,7 @@ export default class TaggerApplication extends Component {
           <Modals />
           <ContextMenus />
           <Toast />
-      </StyleRoot>
+      </div>
     );
   }
 

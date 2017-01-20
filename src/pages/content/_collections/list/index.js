@@ -16,10 +16,12 @@ import * as actions from './actions';
 @connect(null, (dispatch) => ({
   loadCollection: bindActionCreators(actions.loadCollection, dispatch),
   loadCollections: bindActionCreators(actions.loadCollections, dispatch),
+  loadCollectionItem: bindActionCreators(actions.loadCollectionItem, dispatch),
   loadCollectionItems: bindActionCreators(actions.fetchCollectionItems, dispatch),
   persistCollection: bindActionCreators(actions.persistCollection, dispatch),
   persistCollectionItem: bindActionCreators(actions.persistCollectionItem, dispatch),
-  deleteCollection: bindActionCreators(actions.deleteCollection, dispatch)
+  deleteCollection: bindActionCreators(actions.deleteCollection, dispatch),
+  deleteCollectionItem: bindActionCreators(actions.deleteCollectionItem, dispatch)
 }))
 @Radium
 export default class Collections extends Component {
@@ -28,7 +30,9 @@ export default class Collections extends Component {
     brandsById: ImmutablePropTypes.map.isRequired,
     charactersById: ImmutablePropTypes.map.isRequired,
     deleteCollection: PropTypes.func.isRequired,
+    deleteCollectionItem: PropTypes.func.isRequired,
     loadCollection: PropTypes.func.isRequired,
+    loadCollectionItem: PropTypes.func.isRequired,
     loadCollectionItems: PropTypes.func.isRequired,
     loadCollections: PropTypes.func.isRequired,
     mediumCollections: ImmutablePropTypes.map.isRequired,
@@ -47,8 +51,8 @@ export default class Collections extends Component {
   constructor (props) {
     super(props);
     this.onClickNewEntry = ::this.onClickNewEntry;
-    this.onCollectionItemCreate = ::this.onCollectionItemCreate;
-    this.onSubmit = :: this.onSubmit;
+    this.onSubmitCollection = :: this.onSubmitCollection;
+    this.onSubmitCollectionItem = ::this.onSubmitCollectionItem;
     this.state = {
       createCollection: false,
       createCollectionItem: false,
@@ -60,10 +64,6 @@ export default class Collections extends Component {
   componentDidMount () {
     const { loadCollections, mediumId } = this.props;
     loadCollections({ mediumId });
-  }
-
-  onCollectionItemCreate (collectionId) {
-    this.setState({ createCollectionItem: { collectionId } });
   }
 
   onClickNewEntry (e) {
@@ -88,24 +88,39 @@ export default class Collections extends Component {
       recurring,
       title
     };
-    console.warn('EDIT COLLECTION', editCollection);
     this.setState({
       editCollection
     });
   }
 
-  async onSubmit (form) {
+  onCollectionItemCreate (collectionId) {
+    this.setState({ createCollectionItem: { collectionId } });
+  }
+
+  async onCollectionItemDelete (collectionId, collectionItemId) {
+    const { deleteCollectionItem, loadCollectionItems } = this.props;
+    await deleteCollectionItem({ collectionItemId });
+    await loadCollectionItems({ collectionId });
+  }
+
+  async onCollectionItemEdit (collectionId, collectionItemId) {
+    const { product, relevance } = await this.props.loadCollectionItem({ collectionItemId });
+    const editCollectionItem = { collectionId, collectionItemId, productId: product && product.id, relevance };
+    this.setState({ editCollectionItem });
+  }
+
+  async onSubmitCollection (form) {
     const { collectionId } = form;
     const { loadCollections, persistCollection, mediumId } = this.props;
     await persistCollection({ ...form, collectionId, mediumId });
     await loadCollections({ mediumId });
   }
 
-  async onSubmitCollectionItem (collectionId, form) {
-    console.warn('collectionId', collectionId, form);
+  async onSubmitCollectionItem (form) {
     const { loadCollectionItems, persistCollectionItem } = this.props;
-    await persistCollectionItem({ ...form, collectionId });
-    await loadCollectionItems({ collectionId });
+    const collectionItem = { ...form };
+    await persistCollectionItem(collectionItem);
+    await loadCollectionItems({ collectionId: form.collectionId });
   }
 
   static styles = {
@@ -173,9 +188,11 @@ export default class Collections extends Component {
               <Collection
                 collection={collection}
                 key={collection.get('id')}
-                onCollectionItemCreate={this.onCollectionItemCreate.bind(this, collection.get('id'))}
                 onCollectionDelete={this.onCollectionDelete.bind(this, collection.get('id'))}
-                onCollectionEdit={this.onCollectionEdit.bind(this, collection.get('id'))}/>
+                onCollectionEdit={this.onCollectionEdit.bind(this, collection.get('id'))}
+                onCollectionItemCreate={this.onCollectionItemCreate.bind(this, collection.get('id'))}
+                onCollectionItemDelete={this.onCollectionItemDelete.bind(this, collection.get('id'))}
+                onCollectionItemEdit={this.onCollectionItemEdit.bind(this, collection.get('id'))}/>
             );
           })}
         </Section>
@@ -190,16 +207,17 @@ export default class Collections extends Component {
             searchedBrandIds={searchedBrandIds}
             searchedCharacterIds={searchedCharacterIds}
             onClose={() => this.setState({ createCollection: false, editCollection: false })}
-            onSubmit={this.onSubmit} />}
-        {this.state.createCollectionItem &&
+            onSubmit={this.onSubmitCollection} />}
+        {(this.state.createCollectionItem || this.state.editCollectionItem) &&
           <PersistCollectionItemModal
+            collectionItem={this.state.editCollectionItem || undefined}
+            edit={Boolean(this.state.editCollectionItem)}
             productsById={productsById}
             searchProducts={searchProducts}
             searchedProductIds={searchedProductIds}
-            onClose={() => this.setState({ createCollectionItem: false })}
-            onSubmit={this.onSubmitCollectionItem.bind(this, this.state.createCollectionItem.collectionId)} />}
+            onClose={() => this.setState({ createCollectionItem: false, editCollectionItem: false })}
+            onSubmit={this.onSubmitCollectionItem} />}
       </Section>
     );
   }
-
 }

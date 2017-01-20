@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { StyleRoot } from 'radium';
+import HTML5Backend from 'react-dnd-html5-backend';
+import { DragDropContext } from 'react-dnd';
 import { init, pageView } from './googleAnalytics';
 import Toast from '../_common/components/toast';
 
@@ -12,6 +14,7 @@ require('./global.css');
  * Wrapper component, containing the DOM tree of the entire application.
  */
 // TODO: integrate google analytics?
+@DragDropContext(HTML5Backend)
 export default class Application extends Component {
 
   static propTypes = {

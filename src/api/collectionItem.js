@@ -22,6 +22,7 @@ export async function fetchCollectionItem (baseUrl, authenticationToken, locale,
 export async function persistCollectionItem (baseUrl, authenticationToken, locale, {
   collectionId, collectionItemId, productId, relevance, sortOrder
 }) {
+  console.warn('ITEM', collectionId, collectionItemId, productId, relevance, sortOrder);
   let collectionItem = {};
   if (collectionItemId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/mediumItemCollectionEntries/${collectionItemId}`);

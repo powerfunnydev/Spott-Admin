@@ -1,3 +1,4 @@
+/* eslint-disable react/no-set-state */
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import ImmutablePropTypes from 'react-immutable-proptypes';
@@ -10,6 +11,8 @@ import RemoveButton from '../../../_common/components/buttons/removeButton';
 
 const hamburgerImage = require('../../../_common/images/hamburger.svg');
 const linkImage = require('../../../_common/images/link.svg');
+const minimizeImage = require('../../../_common/images/minimize.svg');
+const maximizeImage = require('../../../_common/images/maximize.svg');
 
 @Radium
 export default class Collection extends Component {
@@ -21,12 +24,27 @@ export default class Collection extends Component {
     style: PropTypes.object,
     onCollectionDelete: PropTypes.func.isRequired,
     onCollectionEdit: PropTypes.func.isRequired,
-    onCollectionItemCreate: PropTypes.func.isRequired
+    onCollectionItemCreate: PropTypes.func.isRequired,
+    onCollectionItemDelete: PropTypes.func.isRequired,
+    onCollectionItemEdit: PropTypes.func.isRequired
   };
 
   constructor (props) {
     super(props);
     this.renderTitle = ::this.renderTitle;
+    this.onMinimizeClick = ::this.onMinimizeClick;
+    this.onMaximizeClick = ::this.onMaximizeClick;
+    this.state = { open: false };
+  }
+
+  onMinimizeClick (e) {
+    e.preventDefault();
+    this.setState({ open: false });
+  }
+
+  onMaximizeClick (e) {
+    e.preventDefault();
+    this.setState({ open: true });
   }
 
   static styles = {
@@ -44,16 +62,21 @@ export default class Collection extends Component {
       paddingRight: '1em'
     },
     header: {
-      backgroundColor: colors.lightGray4,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      height: '2em',
-      paddingLeft: '1em',
-      paddingRight: '1em',
-      borderBottomWidth: 1,
-      borderBottomStyle: 'solid',
-      borderBottomColor: colors.lightGray2
+      base: {
+        backgroundColor: colors.lightGray4,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        height: '2em',
+        paddingLeft: '1em',
+        paddingRight: '1em',
+        borderBottomWidth: 1,
+        borderBottomStyle: 'solid',
+        borderBottomColor: 'transparent'
+      },
+      borderBottom: {
+        borderBottomColor: colors.lightGray2
+      }
     },
     title: {
       ...makeTextStyle(fontWeights.medium, '0.688em', '0.0455em'),
@@ -143,24 +166,37 @@ export default class Collection extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { collection, contentStyle, isLoading, style, onCollectionItemCreate, onCollectionDelete, onCollectionEdit } = this.props;
+    const {
+      collection, contentStyle, isLoading, style, onCollectionItemCreate,
+      onCollectionItemDelete, onCollectionItemEdit, onCollectionDelete, onCollectionEdit
+    } = this.props;
     return (
       <div style={[ styles.wrapper, style ]}>
         <div style={styles.container}>
-          <div style={styles.header}>
+          <div style={[ styles.header.base, this.state.open && styles.header.borderBottom ]}>
             <div style={styles.headerContainer}>
               {this.renderTitle()}&nbsp;&nbsp;&nbsp;{isLoading && <Spinner size='small' />}
             </div>
             <div style={styles.headerContainer}>
               <EditButton style={styles.marginRight} onClick={onCollectionEdit} />
-              <RemoveButton cross onClick={onCollectionDelete}/>
+              <RemoveButton cross style={styles.marginRight} onClick={onCollectionDelete}/>
+              {this.state.open
+                ? <button title='Minimize' onClick={this.onMinimizeClick}>
+                    <img src={minimizeImage} />
+                  </button>
+                : <button title='Maximize' onClick={this.onMaximizeClick}>
+                    <img src={maximizeImage} />
+                  </button>}
             </div>
           </div>
-          <div style={[ styles.content, contentStyle ]}>
-            <CollectionItems
-              collectionItems={collection.get('collectionItems')}
-              onCollectionItemCreate={onCollectionItemCreate} />
-          </div>
+          {this.state.open &&
+            <div style={[ styles.content, contentStyle ]}>
+              <CollectionItems
+                collectionItems={collection.get('collectionItems')}
+                onCollectionItemCreate={onCollectionItemCreate}
+                onCollectionItemDelete={onCollectionItemDelete}
+                onCollectionItemEdit={onCollectionItemEdit}/>
+            </div>}
         </div>
       </div>
     );

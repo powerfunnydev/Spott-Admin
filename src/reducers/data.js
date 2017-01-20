@@ -320,8 +320,10 @@ export default (state = fromJS({
 
     case collectionItemsActions.COLLECTION_ITEM_FETCH_START:
       return fetchStart(state, [ 'entities', 'collectionItems', action.collectionItemId ]);
-    case collectionItemsActions.COLLECTION_ITEM_FETCH_SUCCESS:
-      return fetchSuccess(state, [ 'entities', 'collectionItems', action.collectionItemId ], action.data);
+    case collectionItemsActions.COLLECTION_ITEM_FETCH_SUCCESS: {
+      const newState = action.data.product && fetchSuccess(state, [ 'entities', 'listProducts', action.data.product.id ], action.data.product) || state;
+      return fetchSuccess(newState, [ 'entities', 'collectionItems', action.collectionItemId ], action.data);
+    }
     case collectionItemsActions.COLLECTION_ITEM_FETCH_ERROR:
       return fetchError(state, [ 'entities', 'collectionItems', action.collectionItemId ], action.error);
 
