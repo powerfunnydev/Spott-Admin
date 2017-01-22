@@ -20,9 +20,8 @@ export async function fetchCollectionItem (baseUrl, authenticationToken, locale,
 }
 
 export async function persistCollectionItem (baseUrl, authenticationToken, locale, {
-  collectionId, collectionItemId, productId, relevance, sortOrder
+  collectionId, collectionItemId, productId, relevance
 }) {
-  console.warn('ITEM', collectionId, collectionItemId, productId, relevance, sortOrder);
   let collectionItem = {};
   if (collectionItemId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/mediumItemCollectionEntries/${collectionItemId}`);
@@ -31,7 +30,6 @@ export async function persistCollectionItem (baseUrl, authenticationToken, local
   collectionItem.collection = collectionId && { uuid: collectionId };
   collectionItem.product = { uuid: productId };
   collectionItem.productRelevance = relevance;
-  collectionItem.sortOrder = sortOrder;
   const url = `${baseUrl}/v004/media/mediumItemCollectionEntries`;
   const result = await post(authenticationToken, locale, url, collectionItem);
   return transformListCollectionItem(result.body);
@@ -39,4 +37,9 @@ export async function persistCollectionItem (baseUrl, authenticationToken, local
 
 export async function deleteCollectionItem (baseUrl, authenticationToken, locale, { collectionItemId }) {
   await del(authenticationToken, locale, `${baseUrl}/v004/media/mediumItemCollectionEntries/${collectionItemId}`);
+}
+
+export async function moveCollectionItem (baseUrl, authenticationToken, locale, { before = true, collectionItemId, targetCollectionItemId }) {
+  const url = `${baseUrl}/v004/media/mediumItemCollectionEntries/${collectionItemId}/actions/${before ? 'moveInFrontOf' : 'moveBehind'}?otherEntryUuid=${targetCollectionItemId}`;
+  await post(authenticationToken, locale, url, {});
 }

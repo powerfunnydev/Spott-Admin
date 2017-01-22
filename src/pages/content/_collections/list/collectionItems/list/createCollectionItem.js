@@ -25,7 +25,7 @@ export default class CreateCollectionItem extends Component {
     container: {
       ...makeTextStyle(fontWeights.regular, '0.75em'),
       alignItems: 'center',
-      border: `dotted 1px ${colors.lightGray2}`,
+      border: `dashed 1px ${colors.lightGray2}`,
       borderRadius: '0.125em',
       color: colors.lightGray3,
       cursor: 'pointer',

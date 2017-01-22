@@ -716,7 +716,6 @@ export function transformCollection ({
     locales: [],
     mediumId: medium && medium.uuid,
     recurring,
-    sortOrder,
     title: {}
   };
   if (localeData) {
@@ -729,11 +728,10 @@ export function transformCollection ({
   return collection;
 }
 
-export function transformListCollectionItem ({ product, productRelevance, sortOrder, uuid }) {
+export function transformListCollectionItem ({ product, productRelevance, uuid }) {
   return {
     id: uuid,
     product: transformListProduct(product),
-    relevance: productRelevance,
-    sortOrder
+    relevance: productRelevance
   };
 }

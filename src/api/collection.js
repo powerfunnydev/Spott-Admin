@@ -21,11 +21,8 @@ export async function fetchCollection (baseUrl, authenticationToken, locale, { c
 
 export async function persistCollection (baseUrl, authenticationToken, locale, {
   /* basedOnDefaultLocale, */ brandId, characterId, collectionId, defaultLocale, linkType,
-  locales, mediumId, recurring, sortOrder, title
+  locales, mediumId, recurring, title
 }) {
-  console.warn('COLLECTION', brandId, characterId, collectionId, defaultLocale, linkType,
-  locales, mediumId, recurring, sortOrder, title);
-  console.warn('mediumId', mediumId);
   let collection = {};
   if (collectionId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/mediumItemCollections/${collectionId}`);
@@ -38,7 +35,6 @@ export async function persistCollection (baseUrl, authenticationToken, locale, {
   collection.linkType = linkType;
   collection.medium = { uuid: mediumId };
   collection.recurring = recurring;
-  collection.sortOrder = sortOrder;
   // Update locale data.
   collection.localeData = [];
   locales.forEach((locale) => {

@@ -59,13 +59,6 @@ export default class CollectionItemModal extends Component {
   componentDidMount () {
     const { collectionItem, initialize } = this.props;
     initialize(collectionItem);
-    if (collectionItem) {
-      console.warn('EDIT', collectionItem);
-    } else {
-      initialize({
-        relevance: 'EXACT'
-      });
-    }
   }
 
   clearPopUpMessage () {
