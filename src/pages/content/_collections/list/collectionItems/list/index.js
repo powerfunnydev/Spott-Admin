@@ -1,3 +1,4 @@
+/* eslint-disable react/no-set-state */
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import ImmutablePropTypes from 'react-immutable-proptypes';
@@ -11,28 +12,28 @@ import Dropdown, { styles as dropdownStyles } from '../../../../../_common/compo
 import DollarSVG from '../../../../../_common/images/dollar';
 
 const collectionItemSource = {
+  // Here we construct an item, which contains the index of the item which is dragged
+  // + the source collection id + the source collection item.
   beginDrag (props) {
-    console.warn('collectionItemSource beginDrag', {
-      index: props.index,
-      collectionId: props.collectionId,
-      collectionItem: props.collectionItem
-    });
     return {
-      index: props.index,
-      collectionId: props.collectionId,
-      collectionItem: props.collectionItem
+      sourceIndex: props.index,
+      sourceCollectionId: props.collectionId,
+      sourceCollectionItemId: props.collectionItem.get('id')
     };
   },
 
   endDrag (props, monitor) {
-    const item = monitor.getItem();
+    const { sourceCollectionId, sourceCollectionItemId } = monitor.getItem();
     const dropResult = monitor.getDropResult();
 
-    console.warn('collectionItemSource endDrag', item);
-
     // Remove myself from my parent collection.
-    if (dropResult && dropResult.collectionId !== item.collectionId) {
-      props.removeCollectionItem(item.index);
+    if (dropResult && dropResult.targetCollectionId !== sourceCollectionId) {
+      // Persist, move item to other collection.
+      props.moveCollectionItemToOtherCollection({
+        sourceCollectionId,
+        sourceCollectionItemId,
+        targetCollectionId: dropResult.targetCollectionId
+      });
     }
   }
 };
@@ -40,9 +41,9 @@ const collectionItemSource = {
 const collectionItemTarget = {
   hover (props, monitor, component) {
     const item = monitor.getItem();
-    const dragIndex = item.index;
+    const dragIndex = item.sourceIndex;
     const { collectionItem: hoverCollectionItem, index: hoverIndex } = props;
-    const sourceCollectionId = monitor.getItem().collectionId;
+    const sourceCollectionId = monitor.getItem().sourceCollectionId;
 
 		// Don't replace items with themselves.
     if (dragIndex === hoverIndex) {
@@ -79,13 +80,14 @@ const collectionItemTarget = {
 
 		// Time to actually perform the action.
     if (props.collectionId === sourceCollectionId) {
+      // Locally, mutates state, not directly persisted to server!
       props.moveCollectionItem(dragIndex, hoverIndex);
 
 			// Note: we're mutating the monitor item here!
 			// Generally it's better to avoid mutations,
 			// but it's good here for the sake of performance
 			// to avoid expensive index searches.
-      item.index = hoverIndex;
+      item.sourceIndex = hoverIndex;
       item.targetCollectionItem = hoverCollectionItem;
     }
   }
@@ -191,7 +193,7 @@ class CollectionItem extends Component {
         <DollarSVG style={styles.affiliate}/>}
       {collectionItem.getIn([ 'product', 'logo' ]) &&
         <Link to={`/content/products/read/${collectionItem.getIn([ 'product', 'id' ])}`}><img src={`${collectionItem.getIn([ 'product', 'logo', 'url' ])}?height=150&width=150`} style={styles.image} /></Link>}
-      <span style={[ styles.relevance.base, styles.relevance[collectionItem.get('relevance')] ]}/>
+      <span style={[ styles.relevance.base, styles.relevance[collectionItem.get('relevance')] ]} />
     </div>);
 
     return connectDragSource(connectDropTarget(component));
@@ -204,7 +206,7 @@ export default class CollectionItems extends Component {
     collectionId: PropTypes.string.isRequired,
     collectionItems: ImmutablePropTypes.map.isRequired,
     moveCollectionItem: PropTypes.func.isRequired,
-    removeCollectionItem: PropTypes.func.isRequired,
+    moveCollectionItemToOtherCollection: PropTypes.func.isRequired,
     onCollectionItemCreate: PropTypes.func.isRequired,
     onCollectionItemDelete: PropTypes.func.isRequired,
     onCollectionItemEdit: PropTypes.func.isRequired
@@ -220,7 +222,7 @@ export default class CollectionItems extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      collectionId, collectionItems, moveCollectionItem, removeCollectionItem,
+      collectionId, collectionItems, moveCollectionItem, moveCollectionItemToOtherCollection,
       onCollectionItemCreate, onCollectionItemDelete, onCollectionItemEdit
     } = this.props;
     return (
@@ -232,7 +234,7 @@ export default class CollectionItems extends Component {
             index={i}
             key={item.get('id')}
             moveCollectionItem={moveCollectionItem}
-            removeCollectionItem={removeCollectionItem}
+            moveCollectionItemToOtherCollection={moveCollectionItemToOtherCollection}
             onCollectionItemDelete={onCollectionItemDelete.bind(this, item.get('id'))}
             onCollectionItemEdit={onCollectionItemEdit.bind(this, item.get('id'))}/>)
         )}

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-set-state */
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { reduxForm, Field } from 'redux-form/immutable';
@@ -18,15 +19,15 @@ const linkTypes = [
   { label: 'Brand', value: 'BRAND' }
 ];
 
-/* eslint-disable react/no-set-state */
-
 function validate (values, { t }) {
   const validationErrors = {};
   const { brandId, characterId, defaultLocale, linkType, title } = values.toJS();
   if (linkType === 'BRAND' && !brandId) { validationErrors.brandId = t('common.errors.required'); }
   if (linkType === 'CHARACTER' && !characterId) { validationErrors.characterId = t('common.errors.required'); }
   if (defaultLocale) {
-    if (!title[defaultLocale]) { validationErrors.title[defaultLocale] = t('common.errors.required'); }
+    if (title && !title[defaultLocale]) {
+      validationErrors.title = { [defaultLocale]: t('common.errors.required') };
+    }
   } else {
     validationErrors.defaultLocale = t('common.errors.required');
   }

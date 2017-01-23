@@ -4,7 +4,7 @@ import { fetchMediumCollections } from '../../../../actions/collection';
 import { fetchCollectionItems } from '../../../../actions/collectionItem';
 
 export { fetchCollection as loadCollection, deleteCollection, persistCollection } from '../../../../actions/collection';
-export { fetchCollectionItem as loadCollectionItem, fetchCollectionItems, deleteCollectionItem, persistCollectionItem, moveCollectionItem } from '../../../../actions/collectionItem';
+export { fetchCollectionItem as loadCollectionItem, fetchCollectionItems, deleteCollectionItem, persistCollectionItem, moveCollectionItem, moveCollectionItemToOtherCollection } from '../../../../actions/collectionItem';
 export const MEDIUM_BRANDS_SEARCH_ERROR = 'HELPERS_COLLECTIIONS/MEDIUM_BRANDS_SEARCH_ERROR';
 export const MEDIUM_CHARACTERS_SEARCH_ERROR = 'HELPERS_COLLECTIIONS/MEDIUM_CHARACTERS_SEARCH_ERROR';
 

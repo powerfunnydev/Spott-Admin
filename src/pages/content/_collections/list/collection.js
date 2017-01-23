@@ -18,21 +18,24 @@ const maximizeImage = require('../../../_common/images/maximize.svg');
 const cardTarget = {
   drop (props, monitor, component) {
     const collection = props.collection;
-    const collectionId = collection.get('id');
-    const sourceItem = monitor.getItem();
+    const targetCollectionId = collection.get('id');
+    const { before, sourceCollectionId, sourceCollectionItemId, targetCollectionItemId } = monitor.getItem();
 
-    console.warn('Drop in collection', sourceItem);
-
-    // If the collection is different, push it on the new collection.
-    if (collectionId !== sourceItem.collectionId) {
-      component.pushCollectionItem(sourceItem.collectionItem);
-    } else {
-      props.onCollectionItemMove(sourceItem);
+    // If we move an item in the same collection, just move it.
+    if (targetCollectionItemId && targetCollectionId === sourceCollectionId) {
+      // Persist the item move.
+      props.onCollectionItemMove({
+        before,
+        sourceCollectionId,
+        sourceCollectionItemId,
+        targetCollectionItemId
+      });
     }
+
     // Return the drop result, which will be used in the endDrag to
     // remove it from the source collection if the collection has changed.
     return {
-      collectionId
+      targetCollectionId
     };
   }
 };
@@ -56,14 +59,13 @@ export default class Collection extends Component {
     onCollectionItemCreate: PropTypes.func.isRequired,
     onCollectionItemDelete: PropTypes.func.isRequired,
     onCollectionItemEdit: PropTypes.func.isRequired,
-    onCollectionItemMove: PropTypes.func.isRequired
+    onCollectionItemMove: PropTypes.func.isRequired,
+    onCollectionItemMoveToOtherCollection: PropTypes.func.isRequired
   };
 
   constructor (props) {
     super(props);
     this.renderTitle = ::this.renderTitle;
-    this.pushCollectionItem = ::this.pushCollectionItem;
-    this.removeCollectionItem = ::this.removeCollectionItem;
     this.moveCollectionItem = ::this.moveCollectionItem;
     this.onMinimizeClick = ::this.onMinimizeClick;
     this.onMaximizeClick = ::this.onMaximizeClick;
@@ -82,22 +84,7 @@ export default class Collection extends Component {
     }
   }
 
-  pushCollectionItem (collectionItem) {
-    const newData = this.state.collectionItems.get('data').push(collectionItem);
-    this.setState({
-      ...this.state,
-      collectionItems: this.state.collectionItems.set('data', newData)
-    });
-  }
-
-  removeCollectionItem (index) {
-    const newData = this.state.collectionItems.get('data').remove(index);
-    this.setState({
-      ...this.state,
-      collectionItems: this.state.collectionItems.set('data', newData)
-    });
-  }
-
+  // Locally mutate the state, move a collection item in the same collection.
   moveCollectionItem (dragIndex, hoverIndex) {
     const { collectionItems } = this.state;
     const collectionItemsData = collectionItems.get('data');
@@ -248,7 +235,8 @@ export default class Collection extends Component {
     const styles = this.constructor.styles;
     const {
       collection, connectDropTarget, contentStyle, isLoading, style, onCollectionItemCreate,
-      onCollectionItemDelete, onCollectionItemEdit, onCollectionDelete, onCollectionEdit
+      onCollectionItemDelete, onCollectionItemEdit, onCollectionDelete, onCollectionEdit,
+      onCollectionItemMoveToOtherCollection
     } = this.props;
     return (
       connectDropTarget(
@@ -276,7 +264,7 @@ export default class Collection extends Component {
                   collectionId={collection.get('id')}
                   collectionItems={this.state.collectionItems}
                   moveCollectionItem={this.moveCollectionItem}
-                  removeCollectionItem={this.removeCollectionItem}
+                  moveCollectionItemToOtherCollection={onCollectionItemMoveToOtherCollection}
                   onCollectionItemCreate={onCollectionItemCreate}
                   onCollectionItemDelete={onCollectionItemDelete}
                   onCollectionItemEdit={onCollectionItemEdit}/>

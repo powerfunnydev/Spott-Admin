@@ -57,7 +57,7 @@ export default class RadioInput extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { first, input, label, options, required, style } = this.props;
+    const { first, input, options, style } = this.props;
 
     const inputValue = input.value || false;
 

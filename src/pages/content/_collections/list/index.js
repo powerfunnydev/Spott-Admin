@@ -1,4 +1,6 @@
 /* eslint-disable react/no-set-state */
+// False positive on the arguments of an async function.
+/* eslint-disable react/prop-types */
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import ImmutablePropTypes from 'react-immutable-proptypes';
@@ -7,7 +9,6 @@ import { bindActionCreators } from 'redux';
 import Section from '../../../_common/components/section';
 import { buttonStyles, colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../_common/styles';
 import PlusButton from '../../../_common/components/buttons/plusButton';
-import RemoveButton from '../../../_common/components/buttons/removeButton';
 import Collection from './collection';
 import PersistCollectionModal from '../persist';
 import PersistCollectionItemModal from './collectionItems/persist';
@@ -19,6 +20,7 @@ import * as actions from './actions';
   loadCollectionItem: bindActionCreators(actions.loadCollectionItem, dispatch),
   loadCollectionItems: bindActionCreators(actions.fetchCollectionItems, dispatch),
   moveCollectionItem: bindActionCreators(actions.moveCollectionItem, dispatch),
+  moveCollectionItemToOtherCollection: bindActionCreators(actions.moveCollectionItemToOtherCollection, dispatch),
   persistCollection: bindActionCreators(actions.persistCollection, dispatch),
   persistCollectionItem: bindActionCreators(actions.persistCollectionItem, dispatch),
   deleteCollection: bindActionCreators(actions.deleteCollection, dispatch),
@@ -39,6 +41,7 @@ export default class Collections extends Component {
     mediumCollections: ImmutablePropTypes.map.isRequired,
     mediumId: PropTypes.string.isRequired,
     moveCollectionItem: PropTypes.func.isRequired,
+    moveCollectionItemToOtherCollection: PropTypes.func.isRequired,
     persistCollection: PropTypes.func.isRequired,
     persistCollectionItem: PropTypes.func.isRequired,
     productsById: ImmutablePropTypes.map.isRequired,
@@ -54,6 +57,7 @@ export default class Collections extends Component {
     super(props);
     this.onClickNewEntry = ::this.onClickNewEntry;
     this.onCollectionItemMove = ::this.onCollectionItemMove;
+    this.onCollectionItemMoveToOtherCollection = ::this.onCollectionItemMoveToOtherCollection;
     this.onSubmitCollection = :: this.onSubmitCollection;
     this.onSubmitCollectionItem = ::this.onSubmitCollectionItem;
     this.state = {
@@ -125,17 +129,21 @@ export default class Collections extends Component {
     await loadCollectionItems({ collectionId: form.collectionId });
   }
 
-  async onCollectionItemMove ({ before, collectionId, collectionItem, targetCollectionItem }) {
+  async onCollectionItemMove ({ before, sourceCollectionId, sourceCollectionItemId, targetCollectionItemId }) {
     const { loadCollectionItems, moveCollectionItem } = this.props;
-    console.warn('onCollectionItemMove', before,
-      collectionItem.get('id'),
-      targetCollectionItem.get('id'));
     await moveCollectionItem({
       before,
-      collectionItemId: collectionItem.get('id'),
-      targetCollectionItemId: targetCollectionItem.get('id')
+      sourceCollectionItemId,
+      targetCollectionItemId
     });
-    await loadCollectionItems({ collectionId });
+    await loadCollectionItems({ collectionId: sourceCollectionId });
+  }
+
+  async onCollectionItemMoveToOtherCollection ({ sourceCollectionId, sourceCollectionItemId, targetCollectionId }) {
+    const { loadCollectionItems, moveCollectionItemToOtherCollection } = this.props;
+    await moveCollectionItemToOtherCollection({ collectionId: targetCollectionId, collectionItemId: sourceCollectionItemId });
+    await loadCollectionItems({ collectionId: sourceCollectionId });
+    await loadCollectionItems({ collectionId: targetCollectionId });
   }
 
   static styles = {
@@ -208,7 +216,8 @@ export default class Collections extends Component {
                 onCollectionItemCreate={this.onCollectionItemCreate.bind(this, collection.get('id'))}
                 onCollectionItemDelete={this.onCollectionItemDelete.bind(this, collection.get('id'))}
                 onCollectionItemEdit={this.onCollectionItemEdit.bind(this, collection.get('id'))}
-                onCollectionItemMove={this.onCollectionItemMove}/>
+                onCollectionItemMove={this.onCollectionItemMove}
+                onCollectionItemMoveToOtherCollection={this.onCollectionItemMoveToOtherCollection}/>
             );
           })}
         </Section>

@@ -39,7 +39,15 @@ export async function deleteCollectionItem (baseUrl, authenticationToken, locale
   await del(authenticationToken, locale, `${baseUrl}/v004/media/mediumItemCollectionEntries/${collectionItemId}`);
 }
 
-export async function moveCollectionItem (baseUrl, authenticationToken, locale, { before = true, collectionItemId, targetCollectionItemId }) {
-  const url = `${baseUrl}/v004/media/mediumItemCollectionEntries/${collectionItemId}/actions/${before ? 'moveInFrontOf' : 'moveBehind'}?otherEntryUuid=${targetCollectionItemId}`;
+export async function moveCollectionItem (baseUrl, authenticationToken, locale, { before = true, sourceCollectionItemId, targetCollectionItemId }) {
+  const url = `${baseUrl}/v004/media/mediumItemCollectionEntries/${sourceCollectionItemId}/actions/${before ? 'moveInFrontOf' : 'moveBehind'}?otherEntryUuid=${targetCollectionItemId}`;
   await post(authenticationToken, locale, url, {});
+}
+
+export async function moveCollectionItemToOtherCollection (baseUrl, authenticationToken, locale, { collectionItemId, collectionId }) {
+  const { body: collectionItem } = await get(authenticationToken, locale, `${baseUrl}/v004/media/mediumItemCollectionEntries/${collectionItemId}`);
+  collectionItem.collection = { uuid: collectionId };
+  const url = `${baseUrl}/v004/media/mediumItemCollectionEntries`;
+  const result = await post(authenticationToken, locale, url, collectionItem);
+  return transformListCollectionItem(result.body);
 }
