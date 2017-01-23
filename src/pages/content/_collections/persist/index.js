@@ -21,16 +21,21 @@ const linkTypes = [
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { brandId, characterId, defaultLocale, linkType, title } = values.toJS();
+  const { brandId, characterId, defaultLocale, linkType, locales, title } = values.toJS();
   if (linkType === 'BRAND' && !brandId) { validationErrors.brandId = t('common.errors.required'); }
   if (linkType === 'CHARACTER' && !characterId) { validationErrors.characterId = t('common.errors.required'); }
-  if (defaultLocale) {
-    if (title && !title[defaultLocale]) {
-      validationErrors.title = { [defaultLocale]: t('common.errors.required') };
+  if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
+
+  if (locales) {
+    // Check if title is provided for all locales.
+    for (const locale of locales) {
+      if (!title || !title[locale]) {
+        validationErrors.title = validationErrors.title || {};
+        validationErrors.title[locale] = t('common.errors.required');
+      }
     }
-  } else {
-    validationErrors.defaultLocale = t('common.errors.required');
   }
+
   // Done
   return validationErrors;
 }

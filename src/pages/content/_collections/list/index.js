@@ -193,14 +193,12 @@ export default class Collections extends Component {
       searchProducts, searchedBrandIds, searchedProductIds, mediumCollections, searchedCharacterIds
     } = this.props;
     return (
-      <Section>
-        <FormSubtitle first>Collections</FormSubtitle>
-        <FormDescription style={styles.description}>These are shown on and episode landing page. It’s a way to explore the products of an episode without browsing through all the frames.</FormDescription>
+      <div>
         <Section>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div>
-              <FormSubtitle first>Active collections</FormSubtitle>
-              <FormDescription style={styles.description}>These collections will be shown to the user when landing on an episode page.</FormDescription>
+              <FormSubtitle first>Collections</FormSubtitle>
+              <FormDescription style={styles.description}>These are shown on and episode landing page. It’s a way to explore the products of an episode without browsing through all the frames.</FormDescription>
             </div>
             <div>
               <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='Create Collection' onClick={this.onClickNewEntry} />
@@ -242,7 +240,7 @@ export default class Collections extends Component {
             searchedProductIds={searchedProductIds}
             onClose={() => this.setState({ createCollectionItem: false, editCollectionItem: false })}
             onSubmit={this.onSubmitCollectionItem} />}
-      </Section>
+      </div>
     );
   }
 }

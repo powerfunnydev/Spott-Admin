@@ -42,8 +42,7 @@ const cardTarget = {
 
 @DropTarget('COLLECTION_ITEM', cardTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
-  isOver: monitor.isOver(),
-  canDrop: monitor.canDrop()
+  isOver: monitor.isOver()
 }))
 @Radium
 export default class Collection extends Component {
@@ -53,6 +52,7 @@ export default class Collection extends Component {
     connectDropTarget: PropTypes.func.isRequired,
     contentStyle: PropTypes.object,
     isLoading: PropTypes.bool,
+    isOver: PropTypes.bool.isRequired,
     style: PropTypes.object,
     onCollectionDelete: PropTypes.func.isRequired,
     onCollectionEdit: PropTypes.func.isRequired,
@@ -114,17 +114,27 @@ export default class Collection extends Component {
 
   static styles = {
     container: {
-      backgroundColor: 'white',
-      borderRadius: 2,
-      borderWidth: 1,
-      borderStyle: 'solid',
-      borderColor: colors.lightGray2
+      base: {
+        backgroundColor: 'white',
+        borderRadius: 2,
+        borderWidth: 1,
+        borderStyle: 'solid',
+        borderColor: colors.lightGray2
+      },
+      isOver: {
+        borderStyle: 'dashed'
+      }
     },
     content: {
-      paddingTop: '1em',
-      paddingBottom: '0.5em',
-      paddingLeft: '1em',
-      paddingRight: '1em'
+      base: {
+        paddingTop: '1em',
+        paddingBottom: '0.5em',
+        paddingLeft: '1em',
+        paddingRight: '1em'
+      },
+      isOver: {
+        opacity: 0.5
+      }
     },
     header: {
       base: {
@@ -141,6 +151,9 @@ export default class Collection extends Component {
       },
       borderBottom: {
         borderBottomColor: colors.lightGray2
+      },
+      isOver: {
+        borderBottomStyle: 'dashed'
       }
     },
     title: {
@@ -204,8 +217,6 @@ export default class Collection extends Component {
     const { collection } = this.props;
     const count = collection.getIn([ 'collectionItems', 'data' ]).size;
 
-    // console.warn('STATE', this.state, this.state.collectionItems.toJS());
-
     return [
       <img key='hamburger' src={hamburgerImage} style={styles.marginRight} />,
       <h2 key='title' style={styles.title}>{collection.get('title')}</h2>,
@@ -233,16 +244,18 @@ export default class Collection extends Component {
 
   render () {
     const styles = this.constructor.styles;
+    const { open } = this.state;
     const {
-      collection, connectDropTarget, contentStyle, isLoading, style, onCollectionItemCreate,
+      collection, connectDropTarget, contentStyle, isLoading, isOver, style, onCollectionItemCreate,
       onCollectionItemDelete, onCollectionItemEdit, onCollectionDelete, onCollectionEdit,
       onCollectionItemMoveToOtherCollection
     } = this.props;
+
     return (
       connectDropTarget(
         <div style={[ styles.wrapper, style ]}>
-          <div style={styles.container}>
-            <div style={[ styles.header.base, this.state.open && styles.header.borderBottom ]}>
+          <div style={[ styles.container.base, isOver && styles.container.isOver ]}>
+            <div style={[ styles.header.base, open && styles.header.borderBottom, isOver && styles.header.isOver ]}>
               <div style={styles.headerContainer}>
                 {this.renderTitle()}&nbsp;&nbsp;&nbsp;{isLoading && <Spinner size='small' />}
               </div>
@@ -259,7 +272,7 @@ export default class Collection extends Component {
               </div>
             </div>
             {this.state.open &&
-              <div style={[ styles.content, contentStyle ]}>
+              <div style={[ styles.content.base, contentStyle, isOver && styles.content.isOver ]}>
                 <CollectionItems
                   collectionId={collection.get('id')}
                   collectionItems={this.state.collectionItems}
