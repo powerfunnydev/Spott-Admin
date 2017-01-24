@@ -516,7 +516,7 @@ export default class EditEpisode extends Component {
                   searchedBrandIds={searchedCollectionsBrandIds}
                   searchedCharacterIds={searchedCollectionsCharacterIds}
                   searchedProductIds={searchedCollectionsProductIds}/>
-               </Tab>
+              </Tab>
               <Tab title='Availability'>
                 <Availabilities mediumId={this.props.params.episodeId} />
               </Tab>

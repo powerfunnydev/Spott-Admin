@@ -303,8 +303,12 @@ export default (state = fromJS({
 
     case collectionsActions.COLLECTION_FETCH_START:
       return fetchStart(state, [ 'entities', 'collections', action.collectionId ]);
-    case collectionsActions.COLLECTION_FETCH_SUCCESS:
-      return fetchSuccess(state, [ 'entities', 'collections', action.collectionId ], action.data);
+    case collectionsActions.COLLECTION_FETCH_SUCCESS: {
+      const { brand, character } = action.data;
+      let newState = brand && fetchSuccess(state, [ 'entities', 'listBrands', brand.id ], brand) || state;
+      newState = character && fetchSuccess(newState, [ 'entities', 'listCharacters', character.id ], character) || newState;
+      return fetchSuccess(newState, [ 'entities', 'collections', action.collectionId ], action.data);
+    }
     case collectionsActions.COLLECTION_FETCH_ERROR:
       return fetchError(state, [ 'entities', 'collections', action.collectionId ], action.error);
 

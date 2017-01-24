@@ -5,16 +5,16 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
 import { DragSource, DropTarget } from 'react-dnd';
 import { findDOMNode } from 'react-dom';
-import { colors, fontWeights, makeTextStyle } from '../../../_common/styles';
-import Spinner from '../../../_common/components/spinner';
+import { colors, fontWeights, makeTextStyle } from '../../../../../pages/_common/styles';
+import Spinner from '../../../../../pages/_common/components/spinner';
 import CollectionItems from './collectionItems/list';
-import EditButton from '../../../_common/components/buttons/editButton';
-import RemoveButton from '../../../_common/components/buttons/removeButton';
+import EditButton from '../../../../../pages/_common/components/buttons/editButton';
+import RemoveButton from '../../../../../pages/_common/components/buttons/removeButton';
 
-const hamburgerImage = require('../../../_common/images/hamburger.svg');
-const linkImage = require('../../../_common/images/link.svg');
-const minimizeImage = require('../../../_common/images/minimize.svg');
-const maximizeImage = require('../../../_common/images/maximize.svg');
+const hamburgerImage = require('../../../../../pages/_common/images/hamburger.svg');
+const linkImage = require('../../../../../pages/_common/images/link.svg');
+const minimizeImage = require('../../../../../pages/_common/images/minimize.svg');
+const maximizeImage = require('../../../../../pages/_common/images/maximize.svg');
 
 const collectionTarget = {
   drop (props) {
