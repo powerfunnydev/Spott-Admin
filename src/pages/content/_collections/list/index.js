@@ -19,8 +19,9 @@ import * as actions from './actions';
   loadCollections: bindActionCreators(actions.loadCollections, dispatch),
   loadCollectionItem: bindActionCreators(actions.loadCollectionItem, dispatch),
   loadCollectionItems: bindActionCreators(actions.fetchCollectionItems, dispatch),
-  moveCollectionItem: bindActionCreators(actions.moveCollectionItem, dispatch),
-  moveCollectionItemToOtherCollection: bindActionCreators(actions.moveCollectionItemToOtherCollection, dispatch),
+  persistMoveCollection: bindActionCreators(actions.moveCollection, dispatch),
+  persistMoveCollectionItem: bindActionCreators(actions.moveCollectionItem, dispatch),
+  persistMoveCollectionItemToOtherCollection: bindActionCreators(actions.moveCollectionItemToOtherCollection, dispatch),
   persistCollection: bindActionCreators(actions.persistCollection, dispatch),
   persistCollectionItem: bindActionCreators(actions.persistCollectionItem, dispatch),
   deleteCollection: bindActionCreators(actions.deleteCollection, dispatch),
@@ -40,10 +41,11 @@ export default class Collections extends Component {
     loadCollections: PropTypes.func.isRequired,
     mediumCollections: ImmutablePropTypes.map.isRequired,
     mediumId: PropTypes.string.isRequired,
-    moveCollectionItem: PropTypes.func.isRequired,
-    moveCollectionItemToOtherCollection: PropTypes.func.isRequired,
     persistCollection: PropTypes.func.isRequired,
     persistCollectionItem: PropTypes.func.isRequired,
+    persistMoveCollection: PropTypes.func.isRequired,
+    persistMoveCollectionItem: PropTypes.func.isRequired,
+    persistMoveCollectionItemToOtherCollection: PropTypes.func.isRequired,
     productsById: ImmutablePropTypes.map.isRequired,
     searchBrands: PropTypes.func.isRequired,
     searchCharacters: PropTypes.func.isRequired,
@@ -55,12 +57,14 @@ export default class Collections extends Component {
 
   constructor (props) {
     super(props);
+    this.moveCollection = ::this.moveCollection;
     this.onClickNewEntry = ::this.onClickNewEntry;
     this.onCollectionItemMove = ::this.onCollectionItemMove;
     this.onCollectionItemMoveToOtherCollection = ::this.onCollectionItemMoveToOtherCollection;
     this.onSubmitCollection = :: this.onSubmitCollection;
     this.onSubmitCollectionItem = ::this.onSubmitCollectionItem;
     this.state = {
+      collections: props.mediumCollections,
       createCollection: false,
       createCollectionItem: false,
       editCollection: false,
@@ -73,9 +77,39 @@ export default class Collections extends Component {
     loadCollections({ mediumId });
   }
 
+  componentWillReceiveProps (newProps) {
+    if (this.props.mediumCollections !== newProps.mediumCollections && newProps.mediumCollections.get('_status') === 'loaded') {
+      this.setState({
+        ...this.state,
+        collections: newProps.mediumCollections
+      });
+    }
+  }
+
+  // Locally mutate the state, move a collection.
+  moveCollection (dragIndex, hoverIndex) {
+    const { collections } = this.state;
+    const collectionsData = collections.get('data');
+    const dragCollection = collectionsData.get(dragIndex);
+
+    console.warn('MOVE COLLECTION', dragIndex, hoverIndex);
+
+    const newData = collectionsData
+      .remove(dragIndex)
+      .splice(hoverIndex, 0, dragCollection);
+
+    this.setState({
+      ...this.state,
+      collections: collections.set('data', newData)
+    });
+  }
+
   onClickNewEntry (e) {
     e.preventDefault();
-    this.setState({ createCollection: true });
+    this.setState({
+      ...this.state,
+      createCollection: true
+    });
   }
 
   async onCollectionDelete (collectionId) {
@@ -96,12 +130,16 @@ export default class Collections extends Component {
       title
     };
     this.setState({
+      ...this.state,
       editCollection
     });
   }
 
   onCollectionItemCreate (collectionId) {
-    this.setState({ createCollectionItem: { collectionId, relevance: 'EXACT' } });
+    this.setState({
+      ...this.state,
+      createCollectionItem: { collectionId, relevance: 'EXACT' }
+    });
   }
 
   async onCollectionItemDelete (collectionId, collectionItemId) {
@@ -113,7 +151,10 @@ export default class Collections extends Component {
   async onCollectionItemEdit (collectionId, collectionItemId) {
     const { product, relevance } = await this.props.loadCollectionItem({ collectionItemId });
     const editCollectionItem = { collectionId, collectionItemId, productId: product && product.id, relevance };
-    this.setState({ editCollectionItem });
+    this.setState({
+      ...this.state,
+      editCollectionItem
+    });
   }
 
   async onSubmitCollection (form) {
@@ -130,8 +171,8 @@ export default class Collections extends Component {
   }
 
   async onCollectionItemMove ({ before, sourceCollectionId, sourceCollectionItemId, targetCollectionItemId }) {
-    const { loadCollectionItems, moveCollectionItem } = this.props;
-    await moveCollectionItem({
+    const { loadCollectionItems, persistMoveCollectionItem } = this.props;
+    await persistMoveCollectionItem({
       before,
       sourceCollectionItemId,
       targetCollectionItemId
@@ -140,8 +181,8 @@ export default class Collections extends Component {
   }
 
   async onCollectionItemMoveToOtherCollection ({ sourceCollectionId, sourceCollectionItemId, targetCollectionId }) {
-    const { loadCollectionItems, moveCollectionItemToOtherCollection } = this.props;
-    await moveCollectionItemToOtherCollection({ collectionId: targetCollectionId, collectionItemId: sourceCollectionItemId });
+    const { loadCollectionItems, persistMoveCollectionItemToOtherCollection } = this.props;
+    await persistMoveCollectionItemToOtherCollection({ collectionId: targetCollectionId, collectionItemId: sourceCollectionItemId });
     await loadCollectionItems({ collectionId: sourceCollectionId });
     await loadCollectionItems({ collectionId: targetCollectionId });
   }
@@ -189,8 +230,8 @@ export default class Collections extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      brandsById, charactersById, mediumId, productsById, searchBrands, searchCharacters,
-      searchProducts, searchedBrandIds, searchedProductIds, mediumCollections, searchedCharacterIds
+      brandsById, charactersById, mediumId, persistMoveCollection, productsById, searchBrands, searchCharacters,
+      searchProducts, searchedBrandIds, searchedProductIds, searchedCharacterIds
     } = this.props;
     return (
       <div>
@@ -204,18 +245,23 @@ export default class Collections extends Component {
               <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='Create Collection' onClick={this.onClickNewEntry} />
             </div>
           </div>
-          {mediumCollections.get('data').map((collection, index) => {
+          {this.state.collections.get('data').map((collection, index) => {
+            const collectionId = collection.get('id');
             return (
               <Collection
                 collection={collection}
+                collectionId={collectionId}
+                index={index}
                 key={collection.get('id')}
-                onCollectionDelete={this.onCollectionDelete.bind(this, collection.get('id'))}
-                onCollectionEdit={this.onCollectionEdit.bind(this, collection.get('id'))}
-                onCollectionItemCreate={this.onCollectionItemCreate.bind(this, collection.get('id'))}
-                onCollectionItemDelete={this.onCollectionItemDelete.bind(this, collection.get('id'))}
-                onCollectionItemEdit={this.onCollectionItemEdit.bind(this, collection.get('id'))}
-                onCollectionItemMove={this.onCollectionItemMove}
-                onCollectionItemMoveToOtherCollection={this.onCollectionItemMoveToOtherCollection}/>
+                moveCollection={this.moveCollection}
+                persistMoveCollection={persistMoveCollection}
+                persistMoveCollectionItem={this.onCollectionItemMove}
+                persistMoveCollectionItemToOtherCollection={this.onCollectionItemMoveToOtherCollection}
+                onCollectionDelete={this.onCollectionDelete.bind(this, collectionId)}
+                onCollectionEdit={this.onCollectionEdit.bind(this, collectionId)}
+                onCollectionItemCreate={this.onCollectionItemCreate.bind(this, collectionId)}
+                onCollectionItemDelete={this.onCollectionItemDelete.bind(this, collectionId)}
+                onCollectionItemEdit={this.onCollectionItemEdit.bind(this, collectionId)}/>
             );
           })}
         </Section>
@@ -229,7 +275,7 @@ export default class Collections extends Component {
             searchCharacters={searchCharacters.bind(this, mediumId)}
             searchedBrandIds={searchedBrandIds}
             searchedCharacterIds={searchedCharacterIds}
-            onClose={() => this.setState({ createCollection: false, editCollection: false })}
+            onClose={() => this.setState({ ...this.state, createCollection: false, editCollection: false })}
             onSubmit={this.onSubmitCollection} />}
         {(this.state.createCollectionItem || this.state.editCollectionItem) &&
           <PersistCollectionItemModal
@@ -238,7 +284,7 @@ export default class Collections extends Component {
             productsById={productsById}
             searchProducts={searchProducts}
             searchedProductIds={searchedProductIds}
-            onClose={() => this.setState({ createCollectionItem: false, editCollectionItem: false })}
+            onClose={() => this.setState({ ...this.state, createCollectionItem: false, editCollectionItem: false })}
             onSubmit={this.onSubmitCollectionItem} />}
       </div>
     );

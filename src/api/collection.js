@@ -54,3 +54,8 @@ export async function persistCollection (baseUrl, authenticationToken, locale, {
 export async function deleteCollection (baseUrl, authenticationToken, locale, { collectionId }) {
   await del(authenticationToken, locale, `${baseUrl}/v004/media/mediumItemCollections/${collectionId}`);
 }
+
+export async function moveCollection (baseUrl, authenticationToken, locale, { before = true, sourceCollectionId, targetCollectionId }) {
+  const url = `${baseUrl}/v004/media/mediumItemCollections/${sourceCollectionId}/actions/${before ? 'moveInFrontOf' : 'moveBehind'}?otherCollectionUuid=${targetCollectionId}`;
+  await post(authenticationToken, locale, url, {});
+}

@@ -3,7 +3,8 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
-import { DropTarget } from 'react-dnd';
+import { DragSource, DropTarget } from 'react-dnd';
+import { findDOMNode } from 'react-dom';
 import { colors, fontWeights, makeTextStyle } from '../../../_common/styles';
 import Spinner from '../../../_common/components/spinner';
 import CollectionItems from './collectionItems/list';
@@ -15,52 +16,135 @@ const linkImage = require('../../../_common/images/link.svg');
 const minimizeImage = require('../../../_common/images/minimize.svg');
 const maximizeImage = require('../../../_common/images/maximize.svg');
 
-const cardTarget = {
-  drop (props, monitor, component) {
-    const collection = props.collection;
-    const targetCollectionId = collection.get('id');
-    const { before, sourceCollectionId, sourceCollectionItemId, targetCollectionItemId } = monitor.getItem();
-
-    // If we move an item in the same collection, just move it.
-    if (targetCollectionItemId && targetCollectionId === sourceCollectionId) {
-      // Persist the item move.
-      props.onCollectionItemMove({
-        before,
-        sourceCollectionId,
-        sourceCollectionItemId,
-        targetCollectionItemId
-      });
-    }
-
+const collectionTarget = {
+  drop (props) {
     // Return the drop result, which will be used in the endDrag to
     // remove it from the source collection if the collection has changed.
     return {
-      targetCollectionId
+      targetCollectionId: props.collection.get('id')
     };
+  },
+  hover (props, monitor, component) {
+    const itemType = monitor.getItemType();
+
+    // If we hover a collection, update the state.
+    if (itemType === 'COLLECTION') {
+      const item = monitor.getItem();
+      const { sourceCollectionId, sourceIndex: dragIndex } = item;
+      const { collection: hoverCollection, index: hoverIndex } = props;
+
+      // Don't replace items with themselves.
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      // Determine rectangle on the screen.
+      const hoverBoundingRect = findDOMNode(component).getBoundingClientRect();
+
+      // Get verticale middle of the item.
+      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+
+      // Determine mouse position on the screen.
+      const clientOffset = monitor.getClientOffset();
+
+      // Get pixels to the top of the item.
+      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+
+      // Only perform the move when the mouse has crossed half of the items height.
+      // When dragging downwards, only move when the cursor is below 50%.
+      // When dragging upwards, only move when the cursor is above 50%.
+
+      // Dragging downwards
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        item.before = false;
+        return;
+      }
+
+      // Dragging upwards.
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        item.before = true;
+        return;
+      }
+
+      // Time to actually perform the action.
+      if (hoverCollection !== sourceCollectionId) {
+        // Locally, mutates state, not directly persisted to server!
+        console.warn('MOVE COLLECTION', dragIndex, hoverIndex);
+        props.moveCollection(dragIndex, hoverIndex);
+
+        // Note: we're mutating the monitor item here!
+        // Generally it's better to avoid mutations,
+        // but it's good here for the sake of performance
+        // to avoid expensive index searches.
+        item.sourceIndex = hoverIndex;
+        item.targetCollectionId = hoverCollection.get('id');
+      }
+    }
   }
 };
 
-@DropTarget('COLLECTION_ITEM', cardTarget, (connect, monitor) => ({
+const collectionSource = {
+  // Here we construct an item, which contains the index of the collection which is dragged
+  beginDrag (props) {
+    return {
+      sourceIndex: props.index,
+      sourceCollectionId: props.collectionId
+    };
+  },
+
+  endDrag (props, monitor) {
+    const { before, sourceCollectionId, targetCollectionId } = monitor.getItem();
+    const dropResult = monitor.getDropResult();
+
+    console.warn('END DROP', dropResult, sourceCollectionId);
+
+    if (dropResult && targetCollectionId !== sourceCollectionId) {
+      console.warn('DONE END DROP', {
+        before,
+        sourceCollectionId,
+        targetCollectionId
+      });
+      // Persist, move collection.
+      props.persistMoveCollection({
+        before,
+        sourceCollectionId,
+        targetCollectionId
+      });
+    }
+  }
+};
+
+@DropTarget([ 'COLLECTION', 'COLLECTION_ITEM' ], collectionTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
   isOver: monitor.isOver()
+}))
+@DragSource('COLLECTION', collectionSource, (connect, monitor) => ({
+  connectDragSource: connect.dragSource(),
+  isDragging: monitor.isDragging()
 }))
 @Radium
 export default class Collection extends Component {
 
   static propTypes = {
     collection: ImmutablePropTypes.map.isRequired,
+    collectionId: PropTypes.string.isRequired,
+    connectDragSource: PropTypes.func.isRequired,
     connectDropTarget: PropTypes.func.isRequired,
     contentStyle: PropTypes.object,
+    index: PropTypes.number.isRequired,
     isLoading: PropTypes.bool,
     isOver: PropTypes.bool.isRequired,
+    // Move in state.
+    moveCollection: PropTypes.func.isRequired,
+    persistMoveCollection: PropTypes.func.isRequired,
+    persistMoveCollectionItem: PropTypes.func.isRequired,
+    persistMoveCollectionItemToOtherCollection: PropTypes.func.isRequired,
     style: PropTypes.object,
     onCollectionDelete: PropTypes.func.isRequired,
     onCollectionEdit: PropTypes.func.isRequired,
     onCollectionItemCreate: PropTypes.func.isRequired,
     onCollectionItemDelete: PropTypes.func.isRequired,
-    onCollectionItemEdit: PropTypes.func.isRequired,
-    onCollectionItemMove: PropTypes.func.isRequired,
-    onCollectionItemMoveToOtherCollection: PropTypes.func.isRequired
+    onCollectionItemEdit: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -90,8 +174,7 @@ export default class Collection extends Component {
     const collectionItemsData = collectionItems.get('data');
     const dragCollectionItem = collectionItemsData.get(dragIndex);
 
-    console.warn('MOVE', dragIndex, hoverIndex);
-
+    // Remove and add (= move) collection item.
     const newData = collectionItemsData
       .remove(dragIndex)
       .splice(hoverIndex, 0, dragCollectionItem);
@@ -246,14 +329,14 @@ export default class Collection extends Component {
     const styles = this.constructor.styles;
     const { open } = this.state;
     const {
-      collection, connectDropTarget, contentStyle, isLoading, isOver, style, onCollectionItemCreate,
+      collection, connectDragSource, connectDropTarget, contentStyle, isDragging, isLoading, isOver, style, onCollectionItemCreate,
       onCollectionItemDelete, onCollectionItemEdit, onCollectionDelete, onCollectionEdit,
-      onCollectionItemMoveToOtherCollection
+      moveCollection, persistMoveCollection, persistMoveCollectionItem, persistMoveCollectionItemToOtherCollection
     } = this.props;
 
     return (
-      connectDropTarget(
-        <div style={[ styles.wrapper, style ]}>
+      connectDragSource(connectDropTarget(
+        <div style={[ styles.wrapper, style, isDragging && { opacity: 0.5 } ]}>
           <div style={[ styles.container.base, isOver && styles.container.isOver ]}>
             <div style={[ styles.header.base, open && styles.header.borderBottom, isOver && styles.header.isOver ]}>
               <div style={styles.headerContainer}>
@@ -276,8 +359,11 @@ export default class Collection extends Component {
                 <CollectionItems
                   collectionId={collection.get('id')}
                   collectionItems={this.state.collectionItems}
+                  moveCollection={moveCollection}
                   moveCollectionItem={this.moveCollectionItem}
-                  moveCollectionItemToOtherCollection={onCollectionItemMoveToOtherCollection}
+                  persistMoveCollection={persistMoveCollection}
+                  persistMoveCollectionItem={persistMoveCollectionItem}
+                  persistMoveCollectionItemToOtherCollection={persistMoveCollectionItemToOtherCollection}
                   onCollectionItemCreate={onCollectionItemCreate}
                   onCollectionItemDelete={onCollectionItemDelete}
                   onCollectionItemEdit={onCollectionItemEdit}/>
@@ -285,6 +371,6 @@ export default class Collection extends Component {
           </div>
         </div>
       )
-    );
+    ));
   }
 }

@@ -23,17 +23,30 @@ const collectionItemSource = {
   },
 
   endDrag (props, monitor) {
-    const { sourceCollectionId, sourceCollectionItemId } = monitor.getItem();
     const dropResult = monitor.getDropResult();
 
     // Remove myself from my parent collection.
-    if (dropResult && dropResult.targetCollectionId !== sourceCollectionId) {
-      // Persist, move item to other collection.
-      props.moveCollectionItemToOtherCollection({
-        sourceCollectionId,
-        sourceCollectionItemId,
-        targetCollectionId: dropResult.targetCollectionId
-      });
+    if (dropResult) {
+      const { targetCollectionId } = dropResult;
+      const { before, sourceCollectionId, sourceCollectionItemId, targetCollectionItemId } = monitor.getItem();
+
+      // If we move an item in the same collection, just move it.
+      if (sourceCollectionId === targetCollectionId) {
+        // Persist the item move.
+        props.persistMoveCollectionItem({
+          before,
+          sourceCollectionId,
+          sourceCollectionItemId,
+          targetCollectionItemId
+        });
+      } else {
+        // Persist, move item to other collection.
+        props.persistMoveCollectionItemToOtherCollection({
+          sourceCollectionId,
+          sourceCollectionItemId,
+          targetCollectionId: dropResult.targetCollectionId
+        });
+      }
     }
   }
 };
@@ -41,9 +54,8 @@ const collectionItemSource = {
 const collectionItemTarget = {
   hover (props, monitor, component) {
     const item = monitor.getItem();
-    const dragIndex = item.sourceIndex;
+    const { sourceCollectionId, sourceIndex: dragIndex } = item;
     const { collectionItem: hoverCollectionItem, index: hoverIndex } = props;
-    const sourceCollectionId = monitor.getItem().sourceCollectionId;
 
 		// Don't replace items with themselves.
     if (dragIndex === hoverIndex) {
@@ -88,7 +100,7 @@ const collectionItemTarget = {
 			// but it's good here for the sake of performance
 			// to avoid expensive index searches.
       item.sourceIndex = hoverIndex;
-      item.targetCollectionItem = hoverCollectionItem;
+      item.targetCollectionItemId = hoverCollectionItem.get('id');
     }
   }
 };
@@ -108,6 +120,9 @@ class CollectionItem extends Component {
     connectDragSource: PropTypes.func.isRequired,
     connectDropTarget: PropTypes.func.isRequired,
     isDragging: PropTypes.bool.isRequired,
+    moveCollectionItem: PropTypes.func.isRequired,
+    persistMoveCollectionItem: PropTypes.func.isRequired,
+    persistMoveCollectionItemToOtherCollection: PropTypes.func.isRequired,
     onCollectionItemDelete: PropTypes.func.isRequired,
     onCollectionItemEdit: PropTypes.func.isRequired
   }
@@ -175,26 +190,28 @@ class CollectionItem extends Component {
 
     const component = isDragging
       ? <div style={[ styles.container, styles.dragging ]} />
-      : (<div
-        style={styles.container}
-        title={collectionItem.getIn([ 'product', 'shortName' ])}
-        onMouseEnter={() => { this.setState({ hover: true }); }}
-        onMouseLeave={() => { this.setState({ hover: false }); }}>
-      {this.state.hover &&
-        <Dropdown style={styles.dropdown}>
-          {productImageUrl &&
-            <div key='downloadImage' style={dropdownStyles.floatOption} onClick={() => downloadFile(productImageUrl)}>Download</div>}
-          {productImageUrl && <div style={dropdownStyles.line}/>}
-          <div key='onEdit' style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); onCollectionItemEdit(); }}>Edit</div>
-          <div style={dropdownStyles.line}/>
-          <div key='onDelete' style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); onCollectionItemDelete(); }}>Remove</div>
-        </Dropdown>}
-      {collectionItem.getIn([ 'product', 'affiliate' ]) &&
-        <DollarSVG style={styles.affiliate}/>}
-      {collectionItem.getIn([ 'product', 'logo' ]) &&
-        <Link to={`/content/products/read/${collectionItem.getIn([ 'product', 'id' ])}`}><img src={`${collectionItem.getIn([ 'product', 'logo', 'url' ])}?height=150&width=150`} style={styles.image} /></Link>}
-      <span style={[ styles.relevance.base, styles.relevance[collectionItem.get('relevance')] ]} />
-    </div>);
+      : (
+        <div
+          style={styles.container}
+          title={collectionItem.getIn([ 'product', 'shortName' ])}
+          onMouseEnter={() => { this.setState({ hover: true }); }}
+          onMouseLeave={() => { this.setState({ hover: false }); }}>
+        {this.state.hover &&
+          <Dropdown style={styles.dropdown}>
+            {productImageUrl &&
+              <div key='downloadImage' style={dropdownStyles.floatOption} onClick={() => downloadFile(productImageUrl)}>Download</div>}
+            {productImageUrl && <div style={dropdownStyles.line}/>}
+            <div key='onEdit' style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); onCollectionItemEdit(); }}>Edit</div>
+            <div style={dropdownStyles.line}/>
+            <div key='onDelete' style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); onCollectionItemDelete(); }}>Remove</div>
+          </Dropdown>}
+        {collectionItem.getIn([ 'product', 'affiliate' ]) &&
+          <DollarSVG style={styles.affiliate}/>}
+        {collectionItem.getIn([ 'product', 'logo' ]) &&
+          <Link to={`/content/products/read/${collectionItem.getIn([ 'product', 'id' ])}`}><img src={`${collectionItem.getIn([ 'product', 'logo', 'url' ])}?height=150&width=150`} style={styles.image} /></Link>}
+        <span style={[ styles.relevance.base, styles.relevance[collectionItem.get('relevance')] ]} />
+      </div>
+    );
 
     return connectDragSource(connectDropTarget(component));
   }
@@ -206,7 +223,8 @@ export default class CollectionItems extends Component {
     collectionId: PropTypes.string.isRequired,
     collectionItems: ImmutablePropTypes.map.isRequired,
     moveCollectionItem: PropTypes.func.isRequired,
-    moveCollectionItemToOtherCollection: PropTypes.func.isRequired,
+    persistMoveCollectionItem: PropTypes.func.isRequired,
+    persistMoveCollectionItemToOtherCollection: PropTypes.func.isRequired,
     onCollectionItemCreate: PropTypes.func.isRequired,
     onCollectionItemDelete: PropTypes.func.isRequired,
     onCollectionItemEdit: PropTypes.func.isRequired
@@ -222,8 +240,8 @@ export default class CollectionItems extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      collectionId, collectionItems, moveCollectionItem, moveCollectionItemToOtherCollection,
-      onCollectionItemCreate, onCollectionItemDelete, onCollectionItemEdit
+      collectionId, collectionItems, moveCollectionItem, persistMoveCollectionItemToOtherCollection,
+      persistMoveCollectionItem, onCollectionItemCreate, onCollectionItemDelete, onCollectionItemEdit
     } = this.props;
     return (
       <div style={styles.container}>
@@ -234,7 +252,8 @@ export default class CollectionItems extends Component {
             index={i}
             key={item.get('id')}
             moveCollectionItem={moveCollectionItem}
-            moveCollectionItemToOtherCollection={moveCollectionItemToOtherCollection}
+            persistMoveCollectionItem={persistMoveCollectionItem}
+            persistMoveCollectionItemToOtherCollection={persistMoveCollectionItemToOtherCollection}
             onCollectionItemDelete={onCollectionItemDelete.bind(this, item.get('id'))}
             onCollectionItemEdit={onCollectionItemEdit.bind(this, item.get('id'))}/>)
         )}

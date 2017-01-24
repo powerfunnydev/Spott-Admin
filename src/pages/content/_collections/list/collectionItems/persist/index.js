@@ -67,7 +67,6 @@ export default class CollectionItemModal extends Component {
 
   async submit (form) {
     try {
-      console.warn('FORM', form.toJS());
       await this.props.onSubmit(form.toJS());
       this.onCloseClick();
     } catch (error) {
