@@ -10,6 +10,7 @@ import Spinner from '../../../../../pages/_common/components/spinner';
 import CollectionItems from './collectionItems/list';
 import EditButton from '../../../../../pages/_common/components/buttons/editButton';
 import RemoveButton from '../../../../../pages/_common/components/buttons/removeButton';
+import { COLLECTION_ITEM } from '../../../../constants/itemTypes';
 
 const hamburgerImage = require('../../../../../pages/_common/images/hamburger.svg');
 const linkImage = require('../../../../../pages/_common/images/link.svg');
@@ -107,7 +108,7 @@ const collectionSource = {
   }
 };
 
-@DropTarget([ 'COLLECTION', 'COLLECTION_ITEM' ], collectionTarget, (connect, monitor) => ({
+@DropTarget([ 'COLLECTION', COLLECTION_ITEM ], collectionTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
   isOver: monitor.isOver()
 }))
@@ -125,6 +126,7 @@ export default class Collection extends Component {
     connectDropTarget: PropTypes.func.isRequired,
     contentStyle: PropTypes.object,
     index: PropTypes.number.isRequired,
+    isDragging: PropTypes.bool.isRequired,
     isLoading: PropTypes.bool,
     isOver: PropTypes.bool.isRequired,
     // Move in state.
@@ -191,14 +193,17 @@ export default class Collection extends Component {
   static styles = {
     container: {
       base: {
-        backgroundColor: 'white',
+        backgroundColor: colors.black20,
         borderRadius: 2,
+        borderStyle: 'dashed',
         borderWidth: 1,
-        borderStyle: 'solid',
-        borderColor: colors.lightGray2
+        borderColor: 'transparent'
       },
       isOver: {
-        borderStyle: 'dashed'
+        borderColor: colors.lightGray2
+      },
+      open: {
+        backgroundColor: colors.black4
       }
     },
     content: {
@@ -214,29 +219,22 @@ export default class Collection extends Component {
     },
     header: {
       base: {
-        backgroundColor: colors.lightGray4,
+        backgroundColor: colors.black20,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         height: '2em',
         paddingLeft: '1em',
-        paddingRight: '1em',
-        borderBottomWidth: 1,
-        borderBottomStyle: 'solid',
-        borderBottomColor: 'transparent'
+        paddingRight: '1em'
       },
-      borderBottom: {
-        borderBottomColor: colors.lightGray2
-      },
-      isOver: {
-        borderBottomStyle: 'dashed'
+      open: {
+        backgroundColor: colors.black4
       }
     },
     title: {
       ...makeTextStyle(fontWeights.medium, '0.688em', '0.0455em'),
-      color: '#6d8791',
-      marginRight: '0.625em',
-      textTransform: 'uppercase'
+      color: colors.warmGray,
+      marginRight: '0.625em'
     },
     headerContainer: {
       alignItems: 'center',
@@ -244,7 +242,7 @@ export default class Collection extends Component {
     },
     wrapper: {
       width: '100%',
-      marginBottom: '0.75em'
+      marginTop: 2
     },
     roundImage: {
       borderRadius: '100%',
@@ -262,10 +260,7 @@ export default class Collection extends Component {
       marginRight: '0.625em'
     },
     link: {
-      ...makeTextStyle(fontWeights.regular, '0.031em'),
-      color: colors.lightGray3,
-      fontSize: '0.625em',
-      textDecoration: 'none'
+      display: 'flex'
     },
     badge: {
       base: {
@@ -278,8 +273,8 @@ export default class Collection extends Component {
         borderRadius: '0.125em'
       },
       count: {
-        backgroundColor: colors.lightGray2,
-        color: colors.darkGray3
+        backgroundColor: colors.black5,
+        color: colors.warmGray
       },
       none: {
         backgroundColor: colors.red,
@@ -300,19 +295,17 @@ export default class Collection extends Component {
         <span key='brand' style={styles.linkContainer}>
           <img key='link' src={linkImage} style={styles.marginRight} />
           {collection.getIn([ 'brand', 'logo' ]) &&
-            <img src={`${collection.getIn([ 'brand', 'logo', 'url' ])}?height=70&width=70`} style={styles.roundImage} />}
-          <Link style={styles.link} to={`/content/brands/read/${collection.getIn([ 'brand', 'id' ])}`}>
-            {collection.getIn([ 'brand', 'name' ])}
-          </Link>
+            <Link style={styles.link} to={`/content/brands/read/${collection.getIn([ 'brand', 'id' ])}`}>
+              <img src={`${collection.getIn([ 'brand', 'logo', 'url' ])}?height=70&width=70`} style={styles.roundImage} />
+            </Link>}
         </span>,
       collection.get('character') &&
         <span key='character' style={styles.linkContainer}>
           <img key='link' src={linkImage} style={styles.marginRight} />
           {collection.getIn([ 'character', 'portraitImage' ]) &&
-            <img src={`${collection.getIn([ 'character', 'portraitImage', 'url' ])}?height=70&width=70`} style={styles.roundImage} />}
-          <Link style={styles.link} to={`/content/characters/read/${collection.getIn([ 'character', 'id' ])}`}>
-            {collection.getIn([ 'character', 'name' ])}
-          </Link>
+            <Link style={styles.link} to={`/content/characters/read/${collection.getIn([ 'character', 'id' ])}`}>
+              <img src={`${collection.getIn([ 'character', 'portraitImage', 'url' ])}?height=70&width=70`} style={styles.roundImage} />
+            </Link>}
         </span>,
       <div key='count' style={[ styles.badge.base, count > 0 ? styles.badge.count : styles.badge.none ]}>{count}</div>
     ];
@@ -330,8 +323,8 @@ export default class Collection extends Component {
     return (
       connectDragSource(connectDropTarget(
         <div style={[ styles.wrapper, style, isDragging && { opacity: 0.5 } ]}>
-          <div style={[ styles.container.base, isOver && styles.container.isOver ]}>
-            <div style={[ styles.header.base, open && styles.header.borderBottom, isOver && styles.header.isOver ]}>
+          <div style={[ styles.container.base, open && styles.container.open, isOver && styles.container.isOver ]}>
+            <div style={[ styles.header.base, open && styles.header.open ]}>
               <div style={styles.headerContainer}>
                 {this.renderTitle()}&nbsp;&nbsp;&nbsp;{isLoading && <Spinner size='small' />}
               </div>

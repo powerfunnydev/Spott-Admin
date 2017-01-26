@@ -5,7 +5,7 @@ import {
   localeNamesSelector
 } from '../../../../../selectors/global';
 
-const linkTypeSelector = createFormValueSelector('collection', 'linkType');
+const linkTypeSelector = createFormValueSelector('taggerCollection', 'linkType');
 
 export default createStructuredSelector({
   currentLinkType: linkTypeSelector,

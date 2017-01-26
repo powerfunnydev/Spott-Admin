@@ -19,9 +19,6 @@ export default class CreateCollectionItem extends Component {
   }
 
   static styles = {
-    add: {
-      marginTop: '0.625em'
-    },
     container: {
       ...makeTextStyle(fontWeights.regular, '0.75em'),
       alignItems: 'center',
@@ -31,10 +28,10 @@ export default class CreateCollectionItem extends Component {
       cursor: 'pointer',
       display: 'flex',
       flexDirection: 'column',
-      height: 80,
+      height: 50,
       justifyContent: 'center',
       textAlign: 'center',
-      width: 80
+      width: 50
     }
   }
 
@@ -43,7 +40,6 @@ export default class CreateCollectionItem extends Component {
     return (
       <div style={styles.container} onClick={this.onClickAdd}>
         <Plus color={colors.lightGray3}/>
-        <span style={styles.add}>Add</span>
       </div>
     );
   }

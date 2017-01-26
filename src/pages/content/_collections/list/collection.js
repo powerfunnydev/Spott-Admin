@@ -11,9 +11,9 @@ import CollectionItems from './collectionItems/list';
 import EditButton from '../../../_common/components/buttons/editButton';
 import RemoveButton from '../../../_common/components/buttons/removeButton';
 
+const minimizeImage = require('../../../_common/images/minimize.svg');
 const hamburgerImage = require('../../../_common/images/hamburger.svg');
 const linkImage = require('../../../_common/images/link.svg');
-const minimizeImage = require('../../../_common/images/minimize.svg');
 const maximizeImage = require('../../../_common/images/maximize.svg');
 
 const collectionTarget = {

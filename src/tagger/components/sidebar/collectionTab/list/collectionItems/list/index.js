@@ -10,6 +10,7 @@ import { downloadFile } from '../../../../../../utils';
 import { colors } from '../../../../../../../pages/_common/styles';
 import Dropdown, { styles as dropdownStyles } from '../../../../../../../pages/_common/components/actionDropdown';
 import DollarSVG from '../../../../../../../pages/_common/images/dollar';
+import { COLLECTION_ITEM } from '../../../../../../constants/itemTypes';
 
 const collectionItemSource = {
   // Here we construct an item, which contains the index of the item which is dragged
@@ -18,6 +19,8 @@ const collectionItemSource = {
     return {
       sourceIndex: props.index,
       sourceCollectionId: props.collectionId,
+      // Used when dropping on a scene.
+      sourceCollectionItem: props.collectionItem,
       sourceCollectionItemId: props.collectionItem.get('id')
     };
   },
@@ -25,8 +28,9 @@ const collectionItemSource = {
   endDrag (props, monitor) {
     const dropResult = monitor.getDropResult();
 
+    // Ignore if we are dropping on a scene. There is no targetCollectionId then.
     // Remove myself from my parent collection.
-    if (dropResult) {
+    if (dropResult && dropResult.targetCollectionId) {
       const { targetCollectionId } = dropResult;
       const { before, sourceCollectionId, sourceCollectionItemId, targetCollectionItemId } = monitor.getItem();
 
@@ -105,10 +109,10 @@ const collectionItemTarget = {
   }
 };
 
-@DropTarget('COLLECTION_ITEM', collectionItemTarget, (connect) => ({
+@DropTarget(COLLECTION_ITEM, collectionItemTarget, (connect) => ({
   connectDropTarget: connect.dropTarget()
 }))
-@DragSource('COLLECTION_ITEM', collectionItemSource, (connect, monitor) => ({
+@DragSource(COLLECTION_ITEM, collectionItemSource, (connect, monitor) => ({
   connectDragSource: connect.dragSource(),
   isDragging: monitor.isDragging()
 }))
@@ -139,14 +143,16 @@ class CollectionItem extends Component {
       left: 8
     },
     container: {
-      height: 80,
-      width: 80,
+      backgroundColor: colors.white,
+      height: 50,
+      width: 50,
       marginRight: 8,
       marginBottom: 8,
       position: 'relative',
       borderRadius: 2
     },
     dragging: {
+      backgroundColor: 'transparent',
       border: `dashed 1px ${colors.lightGray2}`
     },
     dropdown: {
@@ -155,9 +161,9 @@ class CollectionItem extends Component {
       top: 8
     },
     image: {
-      height: 80,
+      height: 50,
       objectFit: 'scale-down',
-      width: 80
+      width: 50
     },
     relevance: {
       base: {
@@ -188,30 +194,32 @@ class CollectionItem extends Component {
     } = this.props;
     const productImageUrl = collectionItem.getIn([ 'product', 'logo', 'url' ]);
 
-    const component = isDragging
-      ? <div style={[ styles.container, styles.dragging ]} />
-      : (
-        <div
-          style={styles.container}
-          title={collectionItem.getIn([ 'product', 'shortName' ])}
-          onMouseEnter={() => { this.setState({ hover: true }); }}
-          onMouseLeave={() => { this.setState({ hover: false }); }}>
-        {this.state.hover &&
-          <Dropdown style={styles.dropdown}>
-            {productImageUrl &&
-              <div key='downloadImage' style={dropdownStyles.floatOption} onClick={() => downloadFile(productImageUrl)}>Download</div>}
-            {productImageUrl && <div style={dropdownStyles.line}/>}
-            <div key='onEdit' style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); onCollectionItemEdit(); }}>Edit</div>
-            <div style={dropdownStyles.line}/>
-            <div key='onDelete' style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); onCollectionItemDelete(); }}>Remove</div>
-          </Dropdown>}
-        {collectionItem.getIn([ 'product', 'affiliate' ]) &&
-          <DollarSVG style={styles.affiliate}/>}
-        {collectionItem.getIn([ 'product', 'logo' ]) &&
-          <Link to={`/content/products/read/${collectionItem.getIn([ 'product', 'id' ])}`}><img src={`${collectionItem.getIn([ 'product', 'logo', 'url' ])}?height=150&width=150`} style={styles.image} /></Link>}
-        <span style={[ styles.relevance.base, styles.relevance[collectionItem.get('relevance')] ]} />
-      </div>
-    );
+    const component =
+      (<div ref={(c) => this._wrapper = c}>
+        {isDragging
+          ? <div style={[ styles.container, styles.dragging ]} />
+          : (
+            <div
+              style={styles.container}
+              title={collectionItem.getIn([ 'product', 'shortName' ])}
+              onMouseEnter={() => { this.setState({ hover: true }); }}
+              onMouseLeave={() => { this.setState({ hover: false }); }}>
+            {this.state.hover &&
+              <Dropdown style={styles.dropdown}>
+                {productImageUrl &&
+                  <div key='downloadImage' style={dropdownStyles.floatOption} onClick={() => downloadFile(productImageUrl)}>Download</div>}
+                {productImageUrl && <div style={dropdownStyles.line}/>}
+                <div key='onEdit' style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); onCollectionItemEdit(); }}>Edit</div>
+                <div style={dropdownStyles.line}/>
+                <div key='onDelete' style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); onCollectionItemDelete(); }}>Remove</div>
+              </Dropdown>}
+            {collectionItem.getIn([ 'product', 'affiliate' ]) &&
+              <DollarSVG style={styles.affiliate}/>}
+            {collectionItem.getIn([ 'product', 'logo' ]) &&
+              <Link to={`/content/products/read/${collectionItem.getIn([ 'product', 'id' ])}`}><img src={`${collectionItem.getIn([ 'product', 'logo', 'url' ])}?height=150&width=150`} style={styles.image} /></Link>}
+            <span style={[ styles.relevance.base, styles.relevance[collectionItem.get('relevance')] ]} />
+          </div>)}
+        </div>);
 
     return connectDragSource(connectDropTarget(component));
   }

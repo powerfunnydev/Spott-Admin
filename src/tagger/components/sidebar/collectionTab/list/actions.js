@@ -1,31 +1,56 @@
-import { searchMediumBrands as dataSearchMediumBrands } from '../../../../../actions/brand';
 import { searchMediumCharacters as dataSearchMediumCharacters } from '../../../../../actions/character';
 import { fetchMediumCollections } from '../../../../../actions/collection';
 import { fetchCollectionItems } from '../../../../../actions/collectionItem';
+import { searchBrands as dataSearchBrands } from '../../../../../actions/brand';
+import { searchProducts as dataSearchProducts } from '../../../../actions/product';
 
 export { fetchCollection as loadCollection, deleteCollection, moveCollection, persistCollection } from '../../../../../actions/collection';
 export { fetchCollectionItem as loadCollectionItem, fetchCollectionItems, deleteCollectionItem, persistCollectionItem, moveCollectionItem, moveCollectionItemToOtherCollection } from '../../../../../actions/collectionItem';
-export const MEDIUM_BRANDS_SEARCH_ERROR = 'HELPERS_COLLECTIIONS/MEDIUM_BRANDS_SEARCH_ERROR';
-export const MEDIUM_CHARACTERS_SEARCH_ERROR = 'HELPERS_COLLECTIIONS/MEDIUM_CHARACTERS_SEARCH_ERROR';
 
-// Search on all brands of a specific medium.
-export function searchMediumBrands (mediumId) {
-  return async (dispatch, getState) => {
+export const COLLECTIONS_BRANDS_SEARCH_START = 'COLLECTIONS/COLLECTIONS_BRANDS_SEARCH_START';
+export const COLLECTIONS_BRANDS_SEARCH_ERROR = 'COLLECTIONS/COLLECTIONS_BRANDS_SEARCH_ERROR';
+
+export const COLLECTIONS_CHARACTERS_SEARCH_START = 'COLLECTIONS/COLLECTIONS_CHARACTERS_SEARCH_START';
+export const COLLECTIONS_CHARACTERS_SEARCH_ERROR = 'COLLECTIONS/COLLECTIONS_CHARACTERS_SEARCH_ERROR';
+
+export const COLLECTIONS_PRODUCTS_SEARCH_START = 'COLLECTIONS/COLLECTIONS_PRODUCTS_SEARCH_START';
+export const COLLECTIONS_PRODUCTS_SEARCH_ERROR = 'COLLECTIONS/COLLECTIONS_PRODUCTS_SEARCH_ERROR';
+
+// Collections
+// ///////////
+
+/* Search on all brands. Can change in the future to medium brands. */
+export function searchCollectionsBrands (searchString) {
+  return async (dispatch) => {
     try {
-      return await dispatch(dataSearchMediumBrands({ mediumId }));
+      await dispatch({ type: COLLECTIONS_BRANDS_SEARCH_START, searchString });
+      return await dispatch(dataSearchBrands({ searchString }));
     } catch (error) {
-      dispatch({ error, type: MEDIUM_BRANDS_SEARCH_ERROR });
+      dispatch({ error, type: COLLECTIONS_BRANDS_SEARCH_ERROR });
     }
   };
 }
 
-// Search on all characters (cast) of a specific medium.
-export function searchMediumCharacters (mediumId) {
+/* Search on the cast of a medium. */
+export function searchCollectionsCharacters (mediumId, searchString) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataSearchMediumCharacters({ mediumId }));
+      await dispatch({ type: COLLECTIONS_CHARACTERS_SEARCH_START, searchString });
+      return await dispatch(dataSearchMediumCharacters({ mediumId, searchString }));
     } catch (error) {
-      dispatch({ error, type: MEDIUM_CHARACTERS_SEARCH_ERROR });
+      dispatch({ error, type: COLLECTIONS_CHARACTERS_SEARCH_ERROR });
+    }
+  };
+}
+
+/* Search on all products. */
+export function searchCollectionsProducts (searchString) {
+  return async (dispatch, getState) => {
+    try {
+      await dispatch({ type: COLLECTIONS_PRODUCTS_SEARCH_START, searchString });
+      return await dispatch(dataSearchProducts({ searchString }));
+    } catch (error) {
+      dispatch({ error, type: COLLECTIONS_PRODUCTS_SEARCH_ERROR });
     }
   };
 }

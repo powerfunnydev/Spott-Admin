@@ -43,7 +43,7 @@ function validate (values, { t }) {
 @connect(selector)
 @localized
 @reduxForm({
-  form: 'collection',
+  form: 'taggerCollection',
   validate
 })
 @Radium

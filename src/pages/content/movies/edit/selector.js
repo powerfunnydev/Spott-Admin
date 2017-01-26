@@ -59,10 +59,7 @@ const currentCollectionsProductSearchStringSelector = (state) => state.getIn([ '
 const collectionsCharactersFilterKeySelector = createSelector(
   currentCollectionsCharacterSearchStringSelector,
   currentMovieIdSelector,
-  (searchString, mediumId) => {
-    console.warn('COLL SER', searchString, serializeFilterHasCharacters({ searchString }, mediumId));
-    return serializeFilterHasCharacters({ searchString }, mediumId);
-  }
+  (searchString, mediumId) => serializeFilterHasCharacters({ searchString }, mediumId)
 );
 
 const helpersCharactersFilterKeySelector = createSelector(

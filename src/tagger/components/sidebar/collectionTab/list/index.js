@@ -8,13 +8,14 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Section from '../../../../../pages/_common/components/section';
 import { buttonStyles, colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../../../pages/_common/styles';
-import PlusButton from '../../../../../pages/_common/components/buttons/plusButton';
+import tabStyle from '../../tabStyle';
 import Collection from './collection';
 import PersistCollectionModal from '../persist';
 import PersistCollectionItemModal from './collectionItems/persist';
 import * as actions from './actions';
+import selector from '../../../../selectors/collectionTab';
 
-@connect(null, (dispatch) => ({
+@connect(selector, (dispatch) => ({
   loadCollection: bindActionCreators(actions.loadCollection, dispatch),
   loadCollections: bindActionCreators(actions.loadCollections, dispatch),
   loadCollectionItem: bindActionCreators(actions.loadCollectionItem, dispatch),
@@ -25,7 +26,10 @@ import * as actions from './actions';
   persistCollection: bindActionCreators(actions.persistCollection, dispatch),
   persistCollectionItem: bindActionCreators(actions.persistCollectionItem, dispatch),
   deleteCollection: bindActionCreators(actions.deleteCollection, dispatch),
-  deleteCollectionItem: bindActionCreators(actions.deleteCollectionItem, dispatch)
+  deleteCollectionItem: bindActionCreators(actions.deleteCollectionItem, dispatch),
+  searchBrands: bindActionCreators(actions.searchCollectionsBrands, dispatch),
+  searchCharacters: bindActionCreators(actions.searchCollectionsCharacters, dispatch),
+  searchProducts: bindActionCreators(actions.searchCollectionsProducts, dispatch)
 }))
 @Radium
 export default class Collections extends Component {
@@ -198,9 +202,6 @@ export default class Collections extends Component {
     editButton: {
       marginRight: '0.75em'
     },
-    description: {
-      marginBottom: '1.25em'
-    },
     image: {
       width: '2em',
       height: '2em',
@@ -224,6 +225,32 @@ export default class Collections extends Component {
     },
     customTable: {
       border: `1px solid ${colors.lightGray2}`
+    },
+    section: {
+      backgroundColor: colors.black1,
+      border: `solid 2px ${colors.black1}`,
+      borderRadius: 2
+    },
+    sectionContent: {
+      paddingBottom: '1em',
+      paddingLeft: '1em',
+      paddingRight: '1em',
+      paddingTop: '1em'
+    },
+    description: {
+      color: colors.warmGray,
+      fontSize: '0.75em',
+      lineHeight: 1.25,
+      marginTop: 4
+    },
+    createCollectionButton: {
+      borderRadius: 2,
+      backgroundColor: colors.strongBlue,
+      color: '#fff',
+      fontSize: '0.75em',
+      width: '100%',
+      padding: 4,
+      marginTop: 16
     }
   };
 
@@ -233,17 +260,18 @@ export default class Collections extends Component {
       brandsById, charactersById, mediumId, persistMoveCollection, productsById, searchBrands, searchCharacters,
       searchProducts, searchedBrandIds, searchedProductIds, searchedCharacterIds
     } = this.props;
+    console.warn('this.state.collections', this.state.collections && this.state.collections.toJS());
     return (
       <div>
-        <Section>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div>
-              <FormSubtitle first>Collections</FormSubtitle>
-              <FormDescription style={styles.description}>These are shown on and episode landing page. It’s a way to explore the products of an episode without browsing through all the frames.</FormDescription>
+        <div style={styles.section}>
+          <div style={styles.sectionContent}>
+            <h3 style={[ tabStyle.title, { padding: 0 } ]}>Collections</h3>
+            <div style={styles.description}>
+              These collections will be shown to the user when landing on an episode page.
             </div>
-            <div>
-              <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='Create Collection' onClick={this.onClickNewEntry} />
-            </div>
+            <button style={styles.createCollectionButton} onClick={this.onClickNewEntry}>
+              Create collection
+            </button>
           </div>
           {this.state.collections.get('data').map((collection, index) => {
             const collectionId = collection.get('id');
@@ -253,6 +281,7 @@ export default class Collections extends Component {
                 collectionId={collectionId}
                 index={index}
                 key={collection.get('id')}
+                style={styles.collection}
                 moveCollection={this.moveCollection}
                 persistMoveCollection={persistMoveCollection}
                 persistMoveCollectionItem={this.onCollectionItemMove}
@@ -264,7 +293,8 @@ export default class Collections extends Component {
                 onCollectionItemEdit={this.onCollectionItemEdit.bind(this, collectionId)}/>
             );
           })}
-        </Section>
+        </div>
+
         {(this.state.createCollection || this.state.editCollection) &&
           <PersistCollectionModal
             brandsById={brandsById}
