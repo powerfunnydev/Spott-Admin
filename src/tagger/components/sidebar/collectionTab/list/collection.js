@@ -334,10 +334,10 @@ export default class Collection extends Component {
                 <RemoveButton cross style={styles.marginRight} onClick={onCollectionDelete}/>
                 {this.state.open
                   ? <button title='Minimize' onClick={this.onMinimizeClick}>
-                      <MinimizeSVG/>
+                      <MinimizeSVG color={colors.warmGray} hoverColor={colors.white}/>
                     </button>
                   : <button title='Maximize' onClick={this.onMaximizeClick}>
-                      <MaximizeSVG />
+                      <MaximizeSVG color={colors.warmGray} hoverColor={colors.white}/>
                     </button>}
               </div>
             </div>

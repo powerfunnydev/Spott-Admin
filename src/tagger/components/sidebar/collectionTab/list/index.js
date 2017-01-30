@@ -6,8 +6,7 @@ import Radium from 'radium';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Section from '../../../../../pages/_common/components/section';
-import { buttonStyles, colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../../../pages/_common/styles';
+import { colors, fontWeights, makeTextStyle } from '../../../../../pages/_common/styles';
 import tabStyle from '../../tabStyle';
 import Collection from './collection';
 import PersistCollectionModal from '../persist';
@@ -124,8 +123,9 @@ export default class Collections extends Component {
   }
 
   async onCollectionEdit (collectionId) {
-    const { brand, character, defaultLocale, id, linkType, recurring, title } = await this.props.loadCollection({ collectionId });
+    const { basedOnDefaultLocale, brand, character, defaultLocale, id, linkType, recurring, title } = await this.props.loadCollection({ collectionId });
     const editCollection = {
+      basedOnDefaultLocale,
       brandId: brand && brand.id,
       characterId: character && character.id,
       collectionId: id,
@@ -289,11 +289,11 @@ export default class Collections extends Component {
                 collectionId={collectionId}
                 index={index}
                 key={collection.get('id')}
-                style={styles.collection}
                 moveCollection={this.moveCollection}
                 persistMoveCollection={this.onCollectionMove}
                 persistMoveCollectionItem={this.onCollectionItemMove}
                 persistMoveCollectionItemToOtherCollection={this.onCollectionItemMoveToOtherCollection}
+                style={styles.collection}
                 onCollectionDelete={this.onCollectionDelete.bind(this, collectionId)}
                 onCollectionEdit={this.onCollectionEdit.bind(this, collectionId)}
                 onCollectionItemCreate={this.onCollectionItemCreate.bind(this, collectionId)}
