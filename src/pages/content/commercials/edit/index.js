@@ -24,6 +24,7 @@ import RelatedVideo from '../../../content/_relatedVideo/read';
 import * as actions from './actions';
 import selector from './selector';
 import Characters from '../../_helpers/_characters/list';
+import Collections from '../../_collections/list';
 import { PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
@@ -51,6 +52,9 @@ function validate (values, { t }) {
   searchBrands: bindActionCreators(actions.searchBrands, dispatch),
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
   searchCharacters: bindActionCreators(actions.searchCharacters, dispatch),
+  searchCollectionsBrands: bindActionCreators(actions.searchCollectionsBrands, dispatch),
+  searchCollectionsCharacters: bindActionCreators(actions.searchCollectionsCharacters, dispatch),
+  searchCollectionsProducts: bindActionCreators(actions.searchCollectionsProducts, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch)
@@ -71,6 +75,7 @@ export default class EditCommercial extends Component {
     children: PropTypes.node,
     closeModal: PropTypes.func.isRequired,
     commercialCharacters: ImmutablePropTypes.map.isRequired,
+    commercialCollections: ImmutablePropTypes.map.isRequired,
     contentProducersById: ImmutablePropTypes.map.isRequired,
     currentCommercial: ImmutablePropTypes.map.isRequired,
     currentModal: PropTypes.string,
@@ -86,14 +91,21 @@ export default class EditCommercial extends Component {
     location: PropTypes.object.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
+    productsById: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBrands: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
     searchCharacters: PropTypes.func.isRequired,
+    searchCollectionsBrands: PropTypes.func.isRequired,
+    searchCollectionsCharacters: PropTypes.func.isRequired,
+    searchCollectionsProducts: PropTypes.func.isRequired,
     searchContentProducers: PropTypes.func.isRequired,
     searchedBrandIds: ImmutablePropTypes.map.isRequired,
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
     searchedCharacterIds: ImmutablePropTypes.map.isRequired,
+    searchedCollectionsBrandIds: ImmutablePropTypes.map.isRequired,
+    searchedCollectionsCharacterIds: ImmutablePropTypes.map.isRequired,
+    searchedCollectionsProductIds: ImmutablePropTypes.map.isRequired,
     searchedContentProducerIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
@@ -225,12 +237,15 @@ export default class EditCommercial extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      _activeLocale, closeModal, currentModal, commercialCharacters, contentProducersById,
-      searchContentProducers, searchedContentProducerIds, broadcastersById,
-      searchBroadcasters, searchedBroadcasterIds, location, currentCommercial,
-      defaultLocale, handleSubmit, hasBanner, supportedLocales, errors,
-      searchedCharacterIds, charactersById, searchCharacters, deleteProfileImage,
-      searchBrands, brandsById, searchedBrandIds, location: { query: { tab } }
+      _activeLocale, brandsById, broadcastersById, charactersById, closeModal,
+      commercialCharacters, commercialCollections, contentProducersById,
+      currentCommercial, currentModal, defaultLocale, errors, handleSubmit, hasBanner,
+      productsById, searchCollectionsBrands, searchCollectionsCharacters, searchCollectionsProducts,
+      searchContentProducers, searchedContentProducerIds, searchBroadcasters,
+      searchedBroadcasterIds, searchedCharacterIds, searchedCollectionsBrandIds, searchedCollectionsCharacterIds,
+      searchedCollectionsProductIds, location, location: { query: { tab } }, supportedLocales,
+      searchCharacters, deleteProfileImage,
+      searchBrands, searchedBrandIds
     } = this.props;
 
     return (
@@ -382,6 +397,20 @@ export default class EditCommercial extends Component {
                     medium={currentCommercial}
                     name='videoId' />
                 </Section>
+              </Tab>
+              <Tab title='Collections'>
+                <Collections
+                  brandsById={brandsById}
+                  charactersById={charactersById}
+                  mediumCollections={commercialCollections}
+                  mediumId={this.props.params.commercialId}
+                  productsById={productsById}
+                  searchBrands={searchCollectionsBrands}
+                  searchCharacters={searchCollectionsCharacters}
+                  searchProducts={searchCollectionsProducts}
+                  searchedBrandIds={searchedCollectionsBrandIds}
+                  searchedCharacterIds={searchedCollectionsCharacterIds}
+                  searchedProductIds={searchedCollectionsProductIds}/>
               </Tab>
               <Tab title='Availability'>
                 <Availabilities mediumId={this.props.params.commercialId} />

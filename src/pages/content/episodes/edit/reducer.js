@@ -6,12 +6,18 @@ export default (state = Map({}), action) => {
   switch (action.type) {
     case actions.BROADCASTERS_SEARCH_START: // Autocompletion field of broadcasters
       return state.set('currentBroadcastersSearchString', action.searchString);
-    case actions.BRANDS_SEARCH_START: // Autocompletion field of brands
-      return state.set('currentBrandSearchString', action.searchString);
-    case actions.CHARACTERS_SEARCH_START: // Autocompletion field of characters
-      return state.set('currentCharacterSearchString', action.searchString);
-    case actions.SHOPS_SEARCH_START: // Autocompletion field of shops
-      return state.set('currentShopSearchString', action.searchString);
+    case actions.HELPERS_BRANDS_SEARCH_START: // Autocompletion field of brands
+      return state.set('currentHelpersBrandSearchString', action.searchString);
+    case actions.HELPERS_CHARACTERS_SEARCH_START: // Autocompletion field of characters
+      return state.set('currentHelpersCharacterSearchString', action.searchString);
+    case actions.HELPERS_SHOPS_SEARCH_START: // Autocompletion field of shops
+      return state.set('currentHelpersShopSearchString', action.searchString);
+    case actions.COLLECTIONS_BRANDS_SEARCH_START: // Autocompletion field of brands
+      return state.set('currentCollectionsBrandSearchString', action.searchString);
+    case actions.COLLECTIONS_CHARACTERS_SEARCH_START: // Autocompletion field of characters
+      return state.set('currentCollectionsCharacterSearchString', action.searchString);
+    case actions.COLLECTIONS_PRODUCTS_SEARCH_START: // Autocompletion field of products
+      return state.set('currentCollectionsProductSearchString', action.searchString);
     case actions.CONTENT_PRODUCERS_SEARCH_START: // Autocompletion field of content producers
       return state.set('currentContentProducersSearchString', action.searchString);
     case actions.SERIES_ENTRIES_SEARCH_START:

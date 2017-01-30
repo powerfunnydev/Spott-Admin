@@ -2,6 +2,7 @@ import { combineReducers } from 'redux-immutablejs';
 import { routerReducer as router } from 'react-router-redux';
 import globalReducer from './global';
 import app from './app';
+import collections from './collections';
 import curator from './curator';
 import data from './data';
 import marker from './marker';
@@ -20,6 +21,7 @@ export default combineReducers({
   router,
   tagger: combineReducers({
     app,
+    collections,
     curator,
     data,
     marker,

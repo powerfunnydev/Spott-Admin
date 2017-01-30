@@ -23,6 +23,7 @@ import Availabilities from '../../_availabilities/list';
 import RelatedVideo from '../../../content/_relatedVideo/read';
 import Brands from '../../_helpers/_brands/list';
 import Characters from '../../_helpers/_characters/list';
+import Collections from '../../_collections/list';
 import Shops from '../../_helpers/_shops/list';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
@@ -52,12 +53,15 @@ function validate (values, { t }) {
   loadMovie: bindActionCreators(actions.loadMovie, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
-  searchBrands: bindActionCreators(actions.searchBrands, dispatch),
+  searchHelpersBrands: bindActionCreators(actions.searchHelpersBrands, dispatch),
+  searchHelpersCharacters: bindActionCreators(actions.searchHelpersCharacters, dispatch),
+  searchHelpersShops: bindActionCreators(actions.searchHelpersShops, dispatch),
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
-  searchCharacters: bindActionCreators(actions.searchCharacters, dispatch),
+  searchCollectionsBrands: bindActionCreators(actions.searchCollectionsBrands, dispatch),
+  searchCollectionsCharacters: bindActionCreators(actions.searchCollectionsCharacters, dispatch),
+  searchCollectionsProducts: bindActionCreators(actions.searchCollectionsProducts, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
   searchMediumCategories: bindActionCreators(actions.searchMediumCategories, dispatch),
-  searchShops: bindActionCreators(actions.searchShops, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadPosterImage: bindActionCreators(actions.uploadPosterImage, dispatch),
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch)
@@ -98,23 +102,31 @@ export default class EditMovie extends Component {
     mediumCategoriesById: ImmutablePropTypes.map.isRequired,
     movieBrands: ImmutablePropTypes.map.isRequired,
     movieCharacters: ImmutablePropTypes.map.isRequired,
+    movieCollections: ImmutablePropTypes.map.isRequired,
     movieShops: ImmutablePropTypes.map.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     popUpMessage: PropTypes.object,
+    productsById: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
-    searchBrands: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
-    searchCharacters: PropTypes.func.isRequired,
+    searchCollectionsBrands: PropTypes.func.isRequired,
+    searchCollectionsCharacters: PropTypes.func.isRequired,
+    searchCollectionsProducts: PropTypes.func.isRequired,
     searchContentProducers: PropTypes.func.isRequired,
+    searchHelpersBrands: PropTypes.func.isRequired,
+    searchHelpersCharacters: PropTypes.func.isRequired,
+    searchHelpersShops: PropTypes.func.isRequired,
     searchMediumCategories: PropTypes.func.isRequired,
-    searchShops: PropTypes.func.isRequired,
-    searchedBrandIds: ImmutablePropTypes.map.isRequired,
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
-    searchedCharacterIds: ImmutablePropTypes.map.isRequired,
+    searchedCollectionsBrandIds: ImmutablePropTypes.map.isRequired,
+    searchedCollectionsCharacterIds: ImmutablePropTypes.map.isRequired,
+    searchedCollectionsProductIds: ImmutablePropTypes.map.isRequired,
     searchedContentProducerIds: ImmutablePropTypes.map.isRequired,
+    searchedHelpersBrandIds: ImmutablePropTypes.map.isRequired,
+    searchedHelpersCharacterIds: ImmutablePropTypes.map.isRequired,
+    searchedHelpersShopIds: ImmutablePropTypes.map.isRequired,
     searchedMediumCategoryIds: ImmutablePropTypes.map.isRequired,
-    searchedShopIds: ImmutablePropTypes.map.isRequired,
     shopsById: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
@@ -263,11 +275,13 @@ export default class EditMovie extends Component {
       closeModal, contentProducersById, currentModal, currentMovie,
       defaultLocale, deletePosterImage, location: { query: { tab } },
       deleteProfileImage, errors, handleSubmit, location, mediumCategoriesById,
-      movieBrands, movieCharacters, movieShops, shopsById, searchBrands,
-      searchBroadcasters, searchCharacters, searchContentProducers, searchShops,
-      searchedBrandIds, searchedBroadcasterIds, searchedCharacterIds,
+      movieBrands, movieCharacters, movieCollections, movieShops, productsById, shopsById, searchHelpersBrands,
+      searchCollectionsBrands, searchCollectionsCharacters, searchCollectionsProducts,
+      searchHelpersCharacters, searchHelpersShops, searchBroadcasters, searchContentProducers,
+      searchedHelpersBrandIds, searchedBroadcasterIds, searchedHelpersCharacterIds,
+      searchedCollectionsBrandIds, searchedCollectionsCharacterIds, searchedCollectionsProductIds,
       searchedContentProducerIds, searchedMediumCategoryIds, searchMediumCategories,
-      searchedShopIds, supportedLocales
+      searchedHelpersShopIds, supportedLocales
     } = this.props;
 
     return (
@@ -410,22 +424,22 @@ export default class EditMovie extends Component {
                   charactersById={charactersById}
                   mediumCharacters={movieCharacters}
                   mediumId={this.props.params.movieId}
-                  searchCharacters={searchCharacters}
-                  searchedCharacterIds={searchedCharacterIds} />
+                  searchCharacters={searchHelpersCharacters}
+                  searchedCharacterIds={searchedHelpersCharacterIds} />
               </Tab>
               <Tab title='Helpers'>
                 <Shops
                   mediumId={this.props.params.movieId}
                   mediumShops={movieShops}
-                  searchShops={searchShops}
-                  searchedShopIds={searchedShopIds}
+                  searchShops={searchHelpersShops}
+                  searchedShopIds={searchedHelpersShopIds}
                   shopsById={shopsById}/>
                  <Brands
                    brandsById={brandsById}
                    mediumBrands={movieBrands}
                    mediumId={this.props.params.movieId}
-                   searchBrands={searchBrands}
-                   searchedBrandIds={searchedBrandIds} />
+                   searchBrands={searchHelpersBrands}
+                   searchedBrandIds={searchedHelpersBrandIds} />
                </Tab>
               <Tab title='Interactive video'>
                 <Section>
@@ -435,6 +449,20 @@ export default class EditMovie extends Component {
                     medium={currentMovie}
                     name='videoId' />
                 </Section>
+              </Tab>
+              <Tab title='Collections'>
+                <Collections
+                  brandsById={brandsById}
+                  charactersById={charactersById}
+                  mediumCollections={movieCollections}
+                  mediumId={this.props.params.movieId}
+                  productsById={productsById}
+                  searchBrands={searchCollectionsBrands}
+                  searchCharacters={searchCollectionsCharacters}
+                  searchProducts={searchCollectionsProducts}
+                  searchedBrandIds={searchedCollectionsBrandIds}
+                  searchedCharacterIds={searchedCollectionsCharacterIds}
+                  searchedProductIds={searchedCollectionsProductIds}/>
               </Tab>
               <Tab title='Availability'>
                 <Availabilities mediumId={this.props.params.movieId} />

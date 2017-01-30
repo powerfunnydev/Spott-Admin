@@ -2,35 +2,47 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 
 export const colors = {
-  white: '#ffffff',
-  primaryBlue: '#09bbf0',
-  primaryBlue2: '#39D6FF',
+  black: '#121e22',
+  black1: '#1c1c1c',
+  black190: 'rgba(28,28,28,0.9)',
+  black20: '#202020',
+  black2: '#0d1b20',
+  black3: '#252525',
+  black4: '#2e2e2e',
+  black5: '#000000',
   blue: '#08a7d7',
   blue2: '#0795c0',
   blue3: '#9de4f9',
-  lightBlue: '#e6f8fd',
-  secondaryPink: '#D31751',
-  secondaryPink2: '#ED316B',
-  red: '#da5454',
-  lightRed: '#f0bbbb',
-  veryLightRed: '#fbeeee',
-  lightGreen: '#aacc6b',
-  darkYellow: '#cca644',
-  lightYellow: '#fffaee',
-  black: '#121e22',
-  black2: '#0d1b20',
   darkerGray: '#878D8F',
   darkGray: '#BABDC0',
   darkGray2: '#6d8791',
   darkGray3: '#536970',
-  veryDarkGray: '#17262b',
-  veryLightGray: '#eaeced',
-  lightGray: '#F1F3F4',
+  darkYellow: '#cca644',
+  errorColor: '#e17575',
+  lightBlue: '#e6f8fd',
+  lightGold: '#ffd056',
+  lightGray: '#f1f3f4',
   lightGray2: '#ced6da',
   lightGray3: '#aab5b8',
   lightGray4: '#f4f5f5',
   lightGray5: '#d8d8d8',
-  errorColor: '#e17575'
+  lightGreen: '#aacc6b',
+  lightRed: '#f0bbbb',
+  lightYellow: '#fffaee',
+  primaryBlue: '#09bbf0',
+  primaryBlue2: '#39d6ff',
+  red: '#da5454',
+  secondaryPink: '#d31751',
+  secondaryPink2: '#ed316b',
+  strongBlue: '#0073d3',
+  strongLimeGreen: '#00ca1d',
+  veryDarkGray: '#17262b',
+  veryLightGray: '#eaeced',
+  veryLightRed: '#fbeeee',
+  vividOrange: '#f8aa0f',
+  vividRed: '#ec410f',
+  warmGray: '#8d8d8d',
+  white: '#ffffff'
 };
 
 export const defaultSpacing = 15;
@@ -192,12 +204,12 @@ export const buttonStyles = {
 const formSubtitleStyle = {
   ...makeTextStyle(fontWeights.medium, '0.75em'),
   color: colors.black,
-  marginTop: '30px',
+  paddingTop: 30,
   fontWeight: 500
 };
 
 export const FormSubtitle = Radium((props) => (
-  <h2 style={[ formSubtitleStyle, props.style, props.first && { marginTop: '0px' } ]}>
+  <h2 style={[ formSubtitleStyle, props.first && { paddingTop: 0 }, props.style ]}>
     {props.children}
   </h2>
 ));

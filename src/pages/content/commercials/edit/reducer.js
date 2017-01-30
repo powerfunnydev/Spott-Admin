@@ -1,20 +1,23 @@
 import { Map } from 'immutable';
-import {
-  BRANDS_SEARCH_START, BROADCASTERS_SEARCH_START, CHARACTERS_SEARCH_START,
-  CONTENT_PRODUCERS_SEARCH_START, SHOW_CREATE_LANGUAGE_MODAL
-} from './actions';
+import * as actions from './actions';
 
 export default (state = Map({}), action) => {
   switch (action.type) {
-    case BROADCASTERS_SEARCH_START: // Autocompletion field of broadcasters
+    case actions.COLLECTIONS_BRANDS_SEARCH_START: // Autocompletion field of brands
+      return state.set('currentCollectionsBrandSearchString', action.searchString);
+    case actions.COLLECTIONS_CHARACTERS_SEARCH_START: // Autocompletion field of characters
+      return state.set('currentCollectionsCharacterSearchString', action.searchString);
+    case actions.COLLECTIONS_PRODUCTS_SEARCH_START: // Autocompletion field of products
+      return state.set('currentCollectionsProductSearchString', action.searchString);
+    case actions.BROADCASTERS_SEARCH_START: // Autocompletion field of broadcasters
       return state.set('currentBroadcastersSearchString', action.searchString);
-    case BRANDS_SEARCH_START: // Autocompletion field of characters
+    case actions.BRANDS_SEARCH_START: // Autocompletion field of characters
       return state.set('currentBrandsSearchString', action.searchString);
-    case CHARACTERS_SEARCH_START: // Autocompletion field of characters
+    case actions.CHARACTERS_SEARCH_START: // Autocompletion field of characters
       return state.set('currentCharacterSearchString', action.searchString);
-    case CONTENT_PRODUCERS_SEARCH_START: // Autocompletion field of content producers
+    case actions.CONTENT_PRODUCERS_SEARCH_START: // Autocompletion field of content producers
       return state.set('currentContentProducersSearchString', action.searchString);
-    case SHOW_CREATE_LANGUAGE_MODAL:
+    case actions.SHOW_CREATE_LANGUAGE_MODAL:
       return state.set('showCreateLanguageModal', true);
     // Uninteresting actions
     default:

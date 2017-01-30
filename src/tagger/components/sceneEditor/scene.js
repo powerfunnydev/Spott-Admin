@@ -1,11 +1,12 @@
 import React, { Component, PropTypes } from 'react';
 import { DropTarget } from 'react-dnd';
 import ImmutablePropTypes from 'react-immutable-proptypes';
+import { findDOMNode } from 'react-dom';
 import Appearance from './appearance';
 import MarkerImageTooltip from './markerImageTooltip';
 import SelectionArea from './selectionArea';
 import ProportionalDiv from '../_helpers/proportionalDiv';
-import { CHARACTER_QUICKY, MARKER, PRODUCT_QUICKY } from '../../constants/itemTypes';
+import { CHARACTER_QUICKY, COLLECTION_ITEM, MARKER, PRODUCT_QUICKY } from '../../constants/itemTypes';
 import { PRODUCT } from '../../constants/appearanceTypes';
 
 const ASPECT_RATIO = 0.5625;
@@ -46,11 +47,29 @@ const sceneTarget = {
         props.onDropProduct({ characterId, markerHidden, point, productId, relevance });
         break;
       }
+      case COLLECTION_ITEM: {
+        console.warn('COLLECTION_ITEM');
+        const { x, y } = monitor.getClientOffset();
+        const { height, left, top, width } = component._wrapper.getBoundingClientRect();
+        const { sourceCollectionItem } = monitor.getItem();
+        const point = {
+          x: Math.round((x - left) / width * 100),
+          y: Math.round((y - top) / height * 100)
+        };
+        props.onDropProduct({
+          characterId: sourceCollectionItem.getIn([ 'character', 'id' ]),
+          markerHidden: false,
+          point,
+          productId: sourceCollectionItem.getIn([ 'product', 'id' ]),
+          relevance: sourceCollectionItem.get('relevance')
+        });
+        break;
+      }
     }
   }
 };
 
-@DropTarget([ CHARACTER_QUICKY, MARKER, PRODUCT_QUICKY ], sceneTarget, (connect, monitor) => ({
+@DropTarget([ CHARACTER_QUICKY, COLLECTION_ITEM, MARKER, PRODUCT_QUICKY ], sceneTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget()
 }))
 export default class Scene extends Component {
