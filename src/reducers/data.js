@@ -12,6 +12,8 @@ import * as brandActions from '../actions/brand';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcastersActions from '../actions/broadcaster';
 import * as charactersActions from '../actions/character';
+import * as collectionsActions from '../actions/collection';
+import * as collectionItemsActions from '../actions/collectionItem';
 import * as commercialActions from '../actions/commercial';
 import * as contentProducersActions from '../actions/contentProducer';
 import * as episodeActions from '../actions/episode';
@@ -38,12 +40,15 @@ export default (state = fromJS({
     broadcastChannels: {},
     broadcasters: {},
     characters: {},
+    collections: {},
     contentProducers: {},
     events: {},
     faceImages: {}, // Characters and persons has faceImages
     genders: {},
     listBrands: {},
     listCharacters: {}, // listCharacters is the light version of characters, without locales
+    listCollectionItems: {},
+    listCollections: {},
     listMedia: {}, // listMedia is the light version of media, without locales
     listMediumCategories: {},
     listProducts: {},
@@ -105,9 +110,10 @@ export default (state = fromJS({
     searchStringHasUsers: {},
 
     characterHasFaceImages: {},
+    collectionHasCollectionItems: {},
     imageHasSuggestedProducts: {},
     mediumHasBrands: {},
-    mediumHasCharacters: {},
+    mediumHasCollections: {},
     mediumHasShops: {},
     mediumHasTvGuideEntries: {},
     personHasFaceImages: {},
@@ -286,11 +292,51 @@ export default (state = fromJS({
       return searchError(state, 'characterHasFaceImages', action.characterId, action.error);
 
     case charactersActions.MEDIUM_CHARACTER_SEARCH_START:
-      return searchStart(state, 'mediumHasCharacters', action.mediumId);
+      return searchStart(state, 'filterHasCharacters', serializeFilterHasCharacters(action, action.mediumId));
     case charactersActions.MEDIUM_CHARACTER_SEARCH_SUCCESS:
-      return searchSuccess(state, 'listCharacters', 'mediumHasCharacters', action.mediumId, action.data);
+      return searchSuccess(state, 'listCharacters', 'filterHasCharacters', serializeFilterHasCharacters(action, action.mediumId), action.data);
     case charactersActions.MEDIUM_CHARACTER_SEARCH_ERROR:
-      return searchError(state, 'mediumHasCharacters', action.mediumId, action.error);
+      return searchError(state, 'filterHasCharacters', serializeFilterHasCharacters(action, action.mediumId), action.error);
+
+    // Collections
+    // ///////////
+
+    case collectionsActions.COLLECTION_FETCH_START:
+      return fetchStart(state, [ 'entities', 'collections', action.collectionId ]);
+    case collectionsActions.COLLECTION_FETCH_SUCCESS: {
+      const { brand, character } = action.data;
+      let newState = brand && fetchSuccess(state, [ 'entities', 'listBrands', brand.id ], brand) || state;
+      newState = character && fetchSuccess(newState, [ 'entities', 'listCharacters', character.id ], character) || newState;
+      return fetchSuccess(newState, [ 'entities', 'collections', action.collectionId ], action.data);
+    }
+    case collectionsActions.COLLECTION_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'collections', action.collectionId ], action.error);
+
+    case collectionsActions.MEDIUM_COLLECTIONS_FETCH_START:
+      return searchStart(state, 'mediumHasCollections', action.mediumId);
+    case collectionsActions.MEDIUM_COLLECTIONS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listCollections', 'mediumHasCollections', action.mediumId, action.data.data);
+    case collectionsActions.MEDIUM_COLLECTIONS_FETCH_ERROR:
+      return searchError(state, 'mediumHasCollections', action.mediumId, action.error);
+
+    // Collection items
+    // ////////////////
+
+    case collectionItemsActions.COLLECTION_ITEM_FETCH_START:
+      return fetchStart(state, [ 'entities', 'collectionItems', action.collectionItemId ]);
+    case collectionItemsActions.COLLECTION_ITEM_FETCH_SUCCESS: {
+      const newState = action.data.product && fetchSuccess(state, [ 'entities', 'listProducts', action.data.product.id ], action.data.product) || state;
+      return fetchSuccess(newState, [ 'entities', 'collectionItems', action.collectionItemId ], action.data);
+    }
+    case collectionItemsActions.COLLECTION_ITEM_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'collectionItems', action.collectionItemId ], action.error);
+
+    case collectionItemsActions.COLLECTION_ITEMS_FETCH_START:
+      return searchStart(state, 'collectionHasCollectionItems', action.collectionId);
+    case collectionItemsActions.COLLECTION_ITEMS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listCollectionItems', 'collectionHasCollectionItems', action.collectionId, action.data.data);
+    case collectionItemsActions.COLLECTION_ITEMS_FETCH_ERROR:
+      return searchError(state, 'collectionHasCollectionItems', action.collectionId, action.error);
 
     // Commercials
     // ///////////
@@ -416,7 +462,7 @@ export default (state = fromJS({
       return searchError(state, 'searchStringHasMediumCategories', action.searchString, action.error);
 
     // Movies
-    // //////////////
+    // //////
 
     case moviesActions.UPLOAD_POSTER_IMAGE_SUCCESS:
       return fetchSuccess(state, [ 'entities', 'media', action.movieId ], action.data);

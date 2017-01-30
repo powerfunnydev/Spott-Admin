@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import sidebarSelector from '../../selectors/sidebar';
 import { setCurrentTabName } from '../../actions/sidebar';
 import { Tab, Tabs, TabPanel } from '../_helpers/tabs';
+import CollectionTab from './collectionTab';
 import FrameTab from './frameTab';
 import GlobalTab from './globalTab';
 import colors from '../colors';
@@ -74,6 +75,11 @@ class Sidebar extends Component {
             tabName='global'
             text='Global'
             onSelect={this.onTabSelect} />
+          <Tab
+            selected={currentTabName === 'collection'}
+            tabName='collection'
+            text='Collections'
+            onSelect={this.onTabSelect} />
           {/* Todo: more serious tabs that actually do something
           <Tab
             selected={currentTabName === 'history'}
@@ -97,7 +103,12 @@ class Sidebar extends Component {
                   <GlobalTab style={styles.tab} />
                 </TabPanel>
               );
-            // case 'history': return (<TabPanel tabName='history'><HistoryTab /></TabPanel>);
+            case 'collection':
+              return (
+                <TabPanel style={styles.tabPage} tabName='collection'>
+                  <CollectionTab style={styles.tab} />
+                </TabPanel>
+              );
           }
         })()}
 

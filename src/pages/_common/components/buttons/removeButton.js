@@ -8,7 +8,9 @@ const removeIcon = require('../../../../assets/images/garbage.svg');
 @Radium
 export default class RemoveButton extends Component {
   static propTypes = {
+    color: PropTypes.string,
     cross: PropTypes.bool,
+    hoverColor: PropTypes.string,
     noCofirmation: PropTypes.bool,
     style: PropTypes.object,
     onClick: PropTypes.func.isRequired

@@ -306,7 +306,7 @@ export default class Products extends Component {
                                     {offerings}
                                   </div>}
                                   placement='top'>
-                                  <div style={styles.questionSvg}><QuestionSVG color={colors.lightGray3} onHoverColor={colors.darkGray2}/></div>
+                                  <div style={styles.questionSvg}><QuestionSVG color={colors.lightGray3} hoverColor={colors.darkGray2}/></div>
                                 </ToolTip>
                               </div>
                             </CustomCel>

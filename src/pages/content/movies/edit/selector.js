@@ -1,22 +1,31 @@
-import { createStructuredSelector } from 'reselect';
+import { createSelector, createStructuredSelector } from 'reselect';
+import { List, Map } from 'immutable';
+import { LAZY } from '../../../../constants/statusTypes';
+import { serializeFilterHasCharacters } from '../../../../reducers/utils';
 import { currentModalSelector } from '../../../../selectors/global';
 import {
   broadcastersEntitiesSelector,
+  collectionHasCollectionItemsRelationsSelector,
   contentProducersEntitiesSelector,
   createEntitiesByRelationSelector,
   createEntityByIdSelector,
   createEntityIdsByRelationSelector,
+  filterHasCharactersRelationsSelector,
   listBrandsEntitiesSelector,
   listCharactersEntitiesSelector,
+  listCollectionItemsEntitiesSelector,
+  listCollectionsEntitiesSelector,
   listMediumCategoriesEntitiesSelector,
+  listProductsEntitiesSelector,
   listShopsEntitiesSelector,
   mediaEntitiesSelector,
   mediumHasBrandsRelationsSelector,
-  mediumHasCharactersRelationsSelector,
+  mediumHasCollectionsRelationsSelector,
   mediumHasShopsRelationsSelector,
   searchStringHasBrandsRelationsSelector,
   searchStringHasBroadcastersRelationsSelector,
   searchStringHasCharactersRelationsSelector,
+  searchStringHasProductsRelationsSelector,
   searchStringHasContentProducersRelationsSelector,
   searchStringHasMediumCategoriesRelationsSelector,
   searchStringHasShopsRelationsSelector
@@ -34,24 +43,65 @@ const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 const currentMovieIdSelector = (state, props) => { return props.params.movieId; };
 const currentMovieSelector = createEntityByIdSelector(mediaEntitiesSelector, currentMovieIdSelector);
 
-const currentBrandsSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentBrandsSearchString' ]);
 const currentBroadcastersSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentBroadcastersSearchString' ]);
-const currentCharactersSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentCharacterSearchString' ]);
 const currentContentProducersSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentContentProducersSearchString' ]);
 const currentMediumCategoriesSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentMediumCategoriesSearchString' ]);
-const currentShopSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentShopSearchString' ]);
 const popUpMessageSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'popUpMessage' ]);
 
+const currentHelpersBrandsSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentHelpersBrandsSearchString' ]);
+const currentHelpersCharactersSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentHelpersCharacterSearchString' ]);
+const currentHelpersShopSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentHelpersShopSearchString' ]);
+
+const currentCollectionsBrandSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentCollectionsBrandSearchString' ]);
+const currentCollectionsCharacterSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentCollectionsCharacterSearchString' ]);
+const currentCollectionsProductSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentCollectionsProductSearchString' ]);
+
+const collectionsCharactersFilterKeySelector = createSelector(
+  currentCollectionsCharacterSearchStringSelector,
+  currentMovieIdSelector,
+  (searchString, mediumId) => serializeFilterHasCharacters({ searchString }, mediumId)
+);
+
+const helpersCharactersFilterKeySelector = createSelector(
+  currentMovieIdSelector,
+  (mediumId) => serializeFilterHasCharacters({}, mediumId)
+);
+
 const searchedBroadcasterIdsSelector = createEntityIdsByRelationSelector(searchStringHasBroadcastersRelationsSelector, currentBroadcastersSearchStringSelector);
-const searchedBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentBrandsSearchStringSelector);
-const searchedCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCharactersSearchStringSelector);
 const searchedContentProducerIdsSelector = createEntityIdsByRelationSelector(searchStringHasContentProducersRelationsSelector, currentContentProducersSearchStringSelector);
 const searchedMediumCategoryIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediumCategoriesRelationsSelector, currentMediumCategoriesSearchStringSelector);
-const searchedShopIdsSelector = createEntityIdsByRelationSelector(searchStringHasShopsRelationsSelector, currentShopSearchStringSelector);
+
+const searchedHelpersBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentHelpersBrandsSearchStringSelector);
+const searchedHelpersCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentHelpersCharactersSearchStringSelector);
+const searchedHelpersShopIdsSelector = createEntityIdsByRelationSelector(searchStringHasShopsRelationsSelector, currentHelpersShopSearchStringSelector);
+
+const searchedCollectionsBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentCollectionsBrandSearchStringSelector);
+const searchedCollectionsCharacterIdsSelector = createEntityIdsByRelationSelector(filterHasCharactersRelationsSelector, collectionsCharactersFilterKeySelector);
+const searchedCollectionsProductIdsSelector = createEntityIdsByRelationSelector(searchStringHasProductsRelationsSelector, currentCollectionsProductSearchStringSelector);
 
 const movieBrandsSelector = createEntitiesByRelationSelector(mediumHasBrandsRelationsSelector, currentMovieIdSelector, listBrandsEntitiesSelector);
-const movieCharactersSelector = createEntitiesByRelationSelector(mediumHasCharactersRelationsSelector, currentMovieIdSelector, listCharactersEntitiesSelector);
+const movieCharactersSelector = createEntitiesByRelationSelector(filterHasCharactersRelationsSelector, helpersCharactersFilterKeySelector, listCharactersEntitiesSelector);
+const movieCollectionsSelector = createEntitiesByRelationSelector(mediumHasCollectionsRelationsSelector, currentMovieIdSelector, listCollectionsEntitiesSelector);
 const movieShopsSelector = createEntitiesByRelationSelector(mediumHasShopsRelationsSelector, currentMovieIdSelector, listShopsEntitiesSelector);
+
+const collectionsSelector = createSelector(
+  movieCollectionsSelector,
+  collectionHasCollectionItemsRelationsSelector,
+  listCollectionItemsEntitiesSelector,
+  (collections, collectionHasCollectionItems, listCollectionItemsEntities) => {
+    return collections.set('data', collections.get('data').map((c) => {
+      // Get the entry in the relation, being a Map({ <relationEntryKey>: Map({ _status, _error, data }) })
+      let collectionItems = collectionHasCollectionItems.get(c.get('id'));
+      // If we did not found such an entry, no fetching has started yet.
+      if (!collectionItems) {
+        return c.set('collectionItems', Map({ _status: LAZY, data: List() }));
+      }
+      // Good, we have a relation. Map over its data (a list of id's, if already there) and substitute by the entities.
+      collectionItems = collectionItems.set('data', (collectionItems.get('data') || List()).map((id) => listCollectionItemsEntities.get(id)));
+      return c.set('collectionItems', collectionItems);
+    }));
+  }
+);
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
@@ -59,22 +109,27 @@ export default createStructuredSelector({
   broadcastersById: broadcastersEntitiesSelector,
   charactersById: listCharactersEntitiesSelector,
   contentProducersById: contentProducersEntitiesSelector,
-  currentMovie: currentMovieSelector,
   currentModal: currentModalSelector,
+  currentMovie: currentMovieSelector,
   defaultLocale: currentDefaultLocaleSelector,
+  errors: formErrorsSelector,
+  formValues: valuesSelector,
   mediumCategoriesById: listMediumCategoriesEntitiesSelector,
   movieBrands: movieBrandsSelector,
   movieCharacters: movieCharactersSelector,
+  movieCollections: collectionsSelector,
   movieShops: movieShopsSelector,
   popUpMessage: popUpMessageSelector,
-  errors: formErrorsSelector,
-  searchedBrandIds: searchedBrandIdsSelector,
+  productsById: listProductsEntitiesSelector,
+  searchedHelpersBrandIds: searchedHelpersBrandIdsSelector,
   searchedBroadcasterIds: searchedBroadcasterIdsSelector,
-  searchedCharacterIds: searchedCharacterIdsSelector,
+  searchedCollectionsBrandIds: searchedCollectionsBrandIdsSelector,
+  searchedCollectionsCharacterIds: searchedCollectionsCharacterIdsSelector,
+  searchedCollectionsProductIds: searchedCollectionsProductIdsSelector,
+  searchedHelpersCharacterIds: searchedHelpersCharacterIdsSelector,
   searchedContentProducerIds: searchedContentProducerIdsSelector,
   searchedMediumCategoryIds: searchedMediumCategoryIdsSelector,
-  searchedShopIds: searchedShopIdsSelector,
+  searchedHelpersShopIds: searchedHelpersShopIdsSelector,
   shopsById: listShopsEntitiesSelector,
-  supportedLocales: supportedLocalesSelector,
-  formValues: valuesSelector
+  supportedLocales: supportedLocalesSelector
 });

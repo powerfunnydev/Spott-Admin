@@ -1,10 +1,8 @@
-import Radium, { StyleRoot } from 'radium';
+import Radium from 'radium';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { HotKeys } from 'react-hotkeys';
-import HTML5Backend from 'react-dnd-html5-backend';
-import { DragDropContext } from 'react-dnd';
 import Header from './header';
 import * as mediumActions from '../actions/medium';
 import * as quickiesActions from '../actions/quickies';
@@ -29,7 +27,6 @@ import SceneSelector from './sceneSelector';
 import Sidebar from './sidebar';
 import Toast from './toast';
 
-@DragDropContext(HTML5Backend)
 @connect(mainSelector, (dispatch) => ({
   fetchMedium: bindActionCreators(mediumActions.fetch, dispatch),
   loadQuickies: bindActionCreators(quickiesActions.fetchProductGroups, dispatch),
@@ -176,19 +173,23 @@ export default class TaggerApplication extends Component {
     middleBar: {
       flex: '1 1',
       height: '100%',
-      width: '100%'
-    },
-    middleBarInner: {
-      height: '100%',
+      width: '100%',
       display: 'flex',
       flexDirection: 'column'
     },
     sidebar: {
-      borderRight: '3px solid black',
-      flex: '0 0 370px',
-      height: '100%',
-      width: 370,
-      overflow: 'auto'
+      base: {
+        flex: '0 0 370px',
+        height: '100%',
+        width: 370,
+        overflow: 'auto'
+      },
+      left: {
+        borderRight: '3px solid black'
+      },
+      right: {
+        borderLeft: '3px solid black'
+      }
     },
     organizer: {
       flex: '1 0'
@@ -270,7 +271,7 @@ export default class TaggerApplication extends Component {
     };
 
     return (
-      <StyleRoot style={styles.container}>
+      <div style={styles.container}>
         <CustomDragLayer />
           <Header style={styles.header} />
           {activeTab === ORGANIZE &&
@@ -279,20 +280,16 @@ export default class TaggerApplication extends Component {
             </HotKeys>}
           {activeTab === TAG &&
             <HotKeys handlers={filterKeyEventsInInputFields(tagHandlers)} key={TAG} keyMap={tagKeyMap} style={styles.body}>
-              <QuickiesBar style={styles.sidebar} />
+              <QuickiesBar style={[ styles.sidebar.base, styles.sidebar.left ]} />
               <div style={styles.middleBar}>
-                <div style={styles.middleBarInner}>
-                  <div style={{ display: 'flex', height: '100%' }}>
-                    <SceneEditor style={styles.sceneEditor} />
-                    <Sidebar style={styles.sidebar} />
-                  </div>
-                  <SceneSelector style={styles.sceneSelector} />
-                </div>
+                <SceneEditor style={styles.sceneEditor} />
+                <SceneSelector style={styles.sceneSelector} />
               </div>
+              <Sidebar style={[ styles.sidebar.base, styles.sidebar.right ]} />
             </HotKeys>}
             {activeTab === CURATE &&
               <HotKeys handlers={filterKeyEventsInInputFields(curatorHandlers)} key={CURATE} keyMap={curatorKeyMap} style={styles.body}>
-                <CuratorSidebar style={styles.sidebar} />
+                <CuratorSidebar style={[ styles.sidebar.base, styles.sidebar.left ]} />
                 <Curator style={styles.curator} />
               </HotKeys>}
             {activeTab === MVP &&
@@ -302,7 +299,7 @@ export default class TaggerApplication extends Component {
           <Modals />
           <ContextMenus />
           <Toast />
-      </StyleRoot>
+      </div>
     );
   }
 
