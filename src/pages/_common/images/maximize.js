@@ -3,7 +3,7 @@ import Radium from 'radium';
 import Hover from './hover';
 
 @Radium
-export default class MinimizeSVG extends Component {
+export default class MaximizeSVG extends Component {
 
   static propTypes = {
     color: PropTypes.string,
@@ -19,6 +19,8 @@ export default class MinimizeSVG extends Component {
           <rect height='14' rx='1' stroke={fill} strokeWidth='2'
             transform='translate(2 2)' width='14'/>
           <rect fill={fill} height='2' rx='.5' width='6' x='6' y='8'/>
+          <rect fill={fill} height='2' rx='.5' transform='rotate(90 9 9)'
+            width='6' x='6' y='8'/>
         </g>
       </svg>
     );

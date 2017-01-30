@@ -701,7 +701,7 @@ export function transformListCollection ({
 
 export function transformCollection ({
   auditInfo, linkType, linkedBrand, linkedCharacter, defaultLocale,
-  localeData, locales, medium, recurring, sortOrder, uuid
+  localeData, medium, recurring, sortOrder, uuid
 }) {
   const collection = {
     basedOnDefaultLocale: {},

@@ -20,7 +20,7 @@ export async function fetchCollection (baseUrl, authenticationToken, locale, { c
 }
 
 export async function persistCollection (baseUrl, authenticationToken, locale, {
-  /* basedOnDefaultLocale, */ brandId, characterId, collectionId, defaultLocale, linkType,
+  basedOnDefaultLocale, brandId, characterId, collectionId, defaultLocale, linkType,
   locales, mediumId, recurring, title
 }) {
   let collection = {};
@@ -28,6 +28,8 @@ export async function persistCollection (baseUrl, authenticationToken, locale, {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/mediumItemCollections/${collectionId}`);
     collection = body;
   }
+
+  console.warn('post', basedOnDefaultLocale);
 
   collection.defaultLocale = defaultLocale;
   collection.linkedBrand = linkType === 'BRAND' && brandId ? { uuid: brandId } : null;
@@ -40,8 +42,7 @@ export async function persistCollection (baseUrl, authenticationToken, locale, {
   locales.forEach((locale) => {
     const localeData = {};
     // basedOnDefaultLocale is always provided, no check needed
-    localeData.basedOnDefaultLocale = false;
-    // basedOnDefaultLocale && basedOnDefaultLocale[locale];
+    localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
     localeData.title = title && title[locale];
     localeData.locale = locale;
     collection.localeData.push(localeData);

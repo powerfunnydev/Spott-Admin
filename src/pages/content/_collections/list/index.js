@@ -61,6 +61,7 @@ export default class Collections extends Component {
     this.onClickNewEntry = ::this.onClickNewEntry;
     this.onCollectionItemMove = ::this.onCollectionItemMove;
     this.onCollectionItemMoveToOtherCollection = ::this.onCollectionItemMoveToOtherCollection;
+    this.onCollectionMove = ::this.onCollectionMove;
     this.onSubmitCollection = :: this.onSubmitCollection;
     this.onSubmitCollectionItem = ::this.onSubmitCollectionItem;
     this.state = {
@@ -119,8 +120,9 @@ export default class Collections extends Component {
   }
 
   async onCollectionEdit (collectionId) {
-    const { brand, character, defaultLocale, id, linkType, recurring, title } = await this.props.loadCollection({ collectionId });
+    const { basedOnDefaultLocale, brand, character, defaultLocale, id, linkType, recurring, title } = await this.props.loadCollection({ collectionId });
     const editCollection = {
+      basedOnDefaultLocale,
       brandId: brand && brand.id,
       characterId: character && character.id,
       collectionId: id,
@@ -187,6 +189,12 @@ export default class Collections extends Component {
     await loadCollectionItems({ collectionId: targetCollectionId });
   }
 
+  async onCollectionMove ({ before, sourceCollectionId, targetCollectionId }) {
+    const { loadCollections, mediumId, persistMoveCollection } = this.props;
+    await persistMoveCollection({ before, sourceCollectionId, targetCollectionId });
+    await loadCollections({ mediumId });
+  }
+
   static styles = {
     add: {
       ...makeTextStyle(fontWeights.medium, '0.75em'),
@@ -230,7 +238,7 @@ export default class Collections extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      brandsById, charactersById, mediumId, persistMoveCollection, productsById, searchBrands, searchCharacters,
+      brandsById, charactersById, mediumId, productsById, searchBrands, searchCharacters,
       searchProducts, searchedBrandIds, searchedProductIds, searchedCharacterIds
     } = this.props;
     return (
@@ -254,7 +262,7 @@ export default class Collections extends Component {
                 index={index}
                 key={collection.get('id')}
                 moveCollection={this.moveCollection}
-                persistMoveCollection={persistMoveCollection}
+                persistMoveCollection={this.onCollectionMove}
                 persistMoveCollectionItem={this.onCollectionItemMove}
                 persistMoveCollectionItemToOtherCollection={this.onCollectionItemMoveToOtherCollection}
                 onCollectionDelete={this.onCollectionDelete.bind(this, collectionId)}

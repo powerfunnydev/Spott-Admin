@@ -18,9 +18,9 @@ import {
   searchStringHasProductsRelationsSelector
 } from '../../selectors/data';
 
-const currentCollectionsBrandSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentCollectionsBrandSearchString' ]);
-const currentCollectionsCharacterSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentCollectionsCharacterSearchString' ]);
-const currentCollectionsProductSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentCollectionsProductSearchString' ]);
+const currentCollectionsBrandSearchStringSelector = (state) => state.getIn([ 'tagger', 'tagger', 'collections', 'currentCollectionsBrandSearchString' ]);
+const currentCollectionsCharacterSearchStringSelector = (state) => state.getIn([ 'tagger', 'tagger', 'collections', 'currentCollectionsCharacterSearchString' ]);
+const currentCollectionsProductSearchStringSelector = (state) => state.getIn([ 'tagger', 'tagger', 'collections', 'currentCollectionsProductSearchString' ]);
 
 const collectionsCharactersFilterKeySelector = createSelector(
   currentCollectionsCharacterSearchStringSelector,
@@ -54,6 +54,7 @@ const collectionsSelector = createSelector(
 );
 
 export default createStructuredSelector({
+  test: currentCollectionsProductSearchStringSelector,
   brandsById: listBrandsEntitiesSelector,
   charactersById: listCharactersEntitiesSelector,
   mediumId: currentMediumIdSelector,

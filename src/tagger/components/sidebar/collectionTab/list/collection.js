@@ -12,10 +12,11 @@ import EditButton from '../../../../../pages/_common/components/buttons/editButt
 import RemoveButton from '../../../../../pages/_common/components/buttons/removeButton';
 import { COLLECTION_ITEM } from '../../../../constants/itemTypes';
 
+import MaximizeSVG from '../../../../../pages/_common/images/maximize';
+import MinimizeSVG from '../../../../../pages/_common/images/minimize';
+
 const hamburgerImage = require('../../../../../pages/_common/images/hamburger.svg');
 const linkImage = require('../../../../../pages/_common/images/link.svg');
-const minimizeImage = require('../../../../../pages/_common/images/minimize.svg');
-const maximizeImage = require('../../../../../pages/_common/images/maximize.svg');
 
 const collectionTarget = {
   drop (props) {
@@ -97,7 +98,7 @@ const collectionSource = {
     const { before, sourceCollectionId, targetCollectionId } = monitor.getItem();
     const dropResult = monitor.getDropResult();
 
-    if (dropResult && targetCollectionId !== sourceCollectionId) {
+    if (dropResult && targetCollectionId && targetCollectionId !== sourceCollectionId) {
       // Persist, move collection.
       props.persistMoveCollection({
         before,
@@ -333,10 +334,10 @@ export default class Collection extends Component {
                 <RemoveButton cross style={styles.marginRight} onClick={onCollectionDelete}/>
                 {this.state.open
                   ? <button title='Minimize' onClick={this.onMinimizeClick}>
-                      <img src={minimizeImage} />
+                      <MinimizeSVG/>
                     </button>
                   : <button title='Maximize' onClick={this.onMaximizeClick}>
-                      <img src={maximizeImage} />
+                      <MaximizeSVG />
                     </button>}
               </div>
             </div>

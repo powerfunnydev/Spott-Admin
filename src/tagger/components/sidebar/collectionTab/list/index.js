@@ -65,6 +65,7 @@ export default class Collections extends Component {
     this.onClickNewEntry = ::this.onClickNewEntry;
     this.onCollectionItemMove = ::this.onCollectionItemMove;
     this.onCollectionItemMoveToOtherCollection = ::this.onCollectionItemMoveToOtherCollection;
+    this.onCollectionMove = ::this.onCollectionMove;
     this.onSubmitCollection = :: this.onSubmitCollection;
     this.onSubmitCollectionItem = ::this.onSubmitCollectionItem;
     this.state = {
@@ -184,6 +185,12 @@ export default class Collections extends Component {
     await loadCollectionItems({ collectionId: sourceCollectionId });
   }
 
+  async onCollectionMove ({ before, sourceCollectionId, targetCollectionId }) {
+    const { loadCollections, mediumId, persistMoveCollection } = this.props;
+    await persistMoveCollection({ before, sourceCollectionId, targetCollectionId });
+    await loadCollections({ mediumId });
+  }
+
   async onCollectionItemMoveToOtherCollection ({ sourceCollectionId, sourceCollectionItemId, targetCollectionId }) {
     const { loadCollectionItems, persistMoveCollectionItemToOtherCollection } = this.props;
     await persistMoveCollectionItemToOtherCollection({ collectionId: targetCollectionId, collectionItemId: sourceCollectionItemId });
@@ -267,10 +274,11 @@ export default class Collections extends Component {
           <div style={styles.sectionContent}>
             <h3 style={[ tabStyle.title, { padding: 0 } ]}>Collections</h3>
             <div style={styles.description}>
+
               These collections will be shown to the user when landing on an episode page.
             </div>
             <button style={styles.createCollectionButton} onClick={this.onClickNewEntry}>
-              Create collection
+              {this.props.test}Create collection
             </button>
           </div>
           {this.state.collections.get('data').map((collection, index) => {
@@ -283,7 +291,7 @@ export default class Collections extends Component {
                 key={collection.get('id')}
                 style={styles.collection}
                 moveCollection={this.moveCollection}
-                persistMoveCollection={persistMoveCollection}
+                persistMoveCollection={this.onCollectionMove}
                 persistMoveCollectionItem={this.onCollectionItemMove}
                 persistMoveCollectionItemToOtherCollection={this.onCollectionItemMoveToOtherCollection}
                 onCollectionDelete={this.onCollectionDelete.bind(this, collectionId)}

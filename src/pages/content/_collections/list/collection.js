@@ -11,10 +11,11 @@ import CollectionItems from './collectionItems/list';
 import EditButton from '../../../_common/components/buttons/editButton';
 import RemoveButton from '../../../_common/components/buttons/removeButton';
 
-const minimizeImage = require('../../../_common/images/minimize.svg');
+import MaximizeSVG from '../../../_common/images/maximize';
+import MinimizeSVG from '../../../_common/images/minimize';
+
 const hamburgerImage = require('../../../_common/images/hamburger.svg');
 const linkImage = require('../../../_common/images/link.svg');
-const maximizeImage = require('../../../_common/images/maximize.svg');
 
 const collectionTarget = {
   drop (props) {
@@ -340,10 +341,10 @@ export default class Collection extends Component {
                 <RemoveButton cross style={styles.marginRight} onClick={onCollectionDelete}/>
                 {this.state.open
                   ? <button title='Minimize' onClick={this.onMinimizeClick}>
-                      <img src={minimizeImage} />
+                      <MinimizeSVG color={colors.lightGray3} hoverColor={colors.darkGray2}/>
                     </button>
                   : <button title='Maximize' onClick={this.onMaximizeClick}>
-                      <img src={maximizeImage} />
+                      <MaximizeSVG color={colors.lightGray3} hoverColor={colors.darkGray2}/>
                     </button>}
               </div>
             </div>

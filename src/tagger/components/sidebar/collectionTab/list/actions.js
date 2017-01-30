@@ -2,7 +2,7 @@ import { searchMediumCharacters as dataSearchMediumCharacters } from '../../../.
 import { fetchMediumCollections } from '../../../../../actions/collection';
 import { fetchCollectionItems } from '../../../../../actions/collectionItem';
 import { searchBrands as dataSearchBrands } from '../../../../../actions/brand';
-import { searchProducts as dataSearchProducts } from '../../../../actions/product';
+import { searchProducts as dataSearchProducts } from '../../../../../actions/product';
 
 export { fetchCollection as loadCollection, deleteCollection, moveCollection, persistCollection } from '../../../../../actions/collection';
 export { fetchCollectionItem as loadCollectionItem, fetchCollectionItems, deleteCollectionItem, persistCollectionItem, moveCollectionItem, moveCollectionItemToOtherCollection } from '../../../../../actions/collectionItem';
