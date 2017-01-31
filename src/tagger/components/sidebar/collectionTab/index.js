@@ -12,6 +12,7 @@ import PureRender from '../../_helpers/pureRenderDecorator';
 import tabStyle from '../tabStyle';
 import colors from '../../colors';
 import Collections from './list';
+import UnassignedProducts from './list/unassignedProducts';
 
 @connect(frameTabSelector, (dispatch) => ({
 }))
@@ -38,6 +39,7 @@ export default class CollectionTab extends Component {
     const styles = this.constructor.styles;
     return (
       <div style={[ styles.container, style ]}>
+        <UnassignedProducts />
         <Collections />
       </div>
     );

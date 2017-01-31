@@ -116,6 +116,7 @@ export default (state = fromJS({
     mediumHasCollections: {},
     mediumHasShops: {},
     mediumHasTvGuideEntries: {},
+    mediumHasUnassignedProducts: {},
     personHasFaceImages: {},
     productHasProductOfferings: {},
     productHasSimilarProducts: {},
@@ -553,6 +554,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'listProducts', 'filterHasProducts', serializeFilterHasProducts(action), action.data.data);
     case productActions.PRODUCTS_FETCH_ERROR:
       return searchError(state, 'filterHasProducts', serializeFilterHasProducts(action), action.error);
+
+    case productActions.UNASSIGNED_PRODUCTS_FETCH_START:
+      return searchStart(state, 'mediumHasUnassignedProducts', action.mediumId);
+    case productActions.UNASSIGNED_PRODUCTS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listProducts', 'mediumHasUnassignedProducts', action.mediumId, action.data);
+    case productActions.UNASSIGNED_PRODUCTS_FETCH_ERROR:
+      return searchError(state, 'mediumHasUnassignedProducts', action.mediumId, action.error);
 
     case productActions.PRODUCT_SEARCH_START:
       return searchStart(state, 'searchStringHasProducts', action.searchString);
