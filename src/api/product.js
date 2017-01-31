@@ -139,6 +139,12 @@ export async function searchProducts (baseUrl, authenticationToken, locale, { se
   return data.map(transformListProduct);
 }
 
+export async function fetchUnassignedProducts (baseUrl, authenticationToken, locale, { mediumId, page = 0, pageSize = 1000 }) {
+  const url = `${baseUrl}/v004/media/media/${mediumId}/products?inCollection=false&page=${page}&pageSize=${pageSize}`;
+  const { body: { data } } = await get(authenticationToken, locale, url);
+  return data.map(transformListProduct);
+}
+
 export async function uploadImage (baseUrl, authenticationToken, locale, { productId, locale: imageLocale, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);

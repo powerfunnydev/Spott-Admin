@@ -16,9 +16,11 @@ import {
   SIMILAR_PRODUCTS_FETCH_START, SIMILAR_PRODUCTS_FETCH_SUCCESS, SIMILAR_PRODUCTS_FETCH_ERROR
 } from '../constants/actionTypes';
 import * as productApi from '../api/product';
+import { fetchUnassignedProducts } from '../../actions/product';
 import { makeFetchRecordsActionCreator, makeApiActionCreator } from '../actions/_utils';
 import {
   appearanceEntitiesSelector,
+  currentMediumIdSelector,
   currentSceneIdSelector,
   currentSceneImageIdSelector,
   currentVideoIdSelector,
@@ -113,8 +115,10 @@ export function deleteProductOfScene (productAppearanceId) {
     const state = getState();
     const sceneId = currentSceneIdSelector(state);
     const videoId = currentVideoIdSelector(state);
+    const mediumId = currentMediumIdSelector(state);
 
-    dispatch(_deleteProductOfScene({ productAppearanceId, sceneId, videoId }));
+    await dispatch(_deleteProductOfScene({ productAppearanceId, sceneId, videoId }));
+    await dispatch(fetchUnassignedProducts({ mediumId }));
   };
 }
 
@@ -139,11 +143,14 @@ export function createProductMarker ({ characterId, markerHidden, point, product
   return async (dispatch, getState) => {
     const state = getState();
     const videoId = currentVideoIdSelector(state);
+    const mediumId = currentMediumIdSelector(state);
 
     // Returns the new products on the scene.
     await dispatch(_createProductMarker({ characterId, markerHidden, point, productId, relevance, sceneId, videoId }));
     // Fetch all products that are on the scene (get image, etc.).
-    dispatch(fetchProducts());
+    await dispatch(fetchProducts());
+
+    await dispatch(fetchUnassignedProducts({ mediumId }));
     // Reset the form.
     dispatch(destroy('createProductMarker'));
   };
@@ -206,10 +213,13 @@ export function updateProductMarker ({ appearanceId, characterId, markerHidden, 
     const state = getState();
     const sceneId = currentSceneIdSelector(state);
     const videoId = currentVideoIdSelector(state);
+    const mediumId = currentMediumIdSelector(state);
 
     await dispatch(_updateProductMarker({ appearanceId, characterId, markerHidden, point, productId, relevance, sceneId, videoId }));
     // Fetch all products that are on the scene (get image, etc.).
-    dispatch(fetchProducts());
+    await dispatch(fetchProducts());
+
+    await dispatch(fetchUnassignedProducts({ mediumId }));
     // Reset the form.
     dispatch(destroy('updateProductMarker'));
   };

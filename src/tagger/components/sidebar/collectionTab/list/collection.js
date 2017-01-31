@@ -10,7 +10,7 @@ import Spinner from '../../../../../pages/_common/components/spinner';
 import CollectionItems from './collectionItems/list';
 import EditButton from '../../../../../pages/_common/components/buttons/editButton';
 import RemoveButton from '../../../../../pages/_common/components/buttons/removeButton';
-import { COLLECTION_ITEM } from '../../../../constants/itemTypes';
+import { COLLECTION, COLLECTION_ITEM, UNASSIGNED_PRODUCT } from '../../../../constants/itemTypes';
 
 import MaximizeSVG from '../../../../../pages/_common/images/maximize';
 import MinimizeSVG from '../../../../../pages/_common/images/minimize';
@@ -30,7 +30,7 @@ const collectionTarget = {
     const itemType = monitor.getItemType();
 
     // If we hover a collection, update the state.
-    if (itemType === 'COLLECTION') {
+    if (itemType === COLLECTION) {
       const item = monitor.getItem();
       const { sourceCollectionId, sourceIndex: dragIndex } = item;
       const { collection: hoverCollection, index: hoverIndex } = props;
@@ -109,11 +109,11 @@ const collectionSource = {
   }
 };
 
-@DropTarget([ 'COLLECTION', COLLECTION_ITEM ], collectionTarget, (connect, monitor) => ({
+@DropTarget([ COLLECTION, COLLECTION_ITEM, UNASSIGNED_PRODUCT ], collectionTarget, (connect, monitor) => ({
   connectDropTarget: connect.dropTarget(),
   isOver: monitor.isOver()
 }))
-@DragSource('COLLECTION', collectionSource, (connect, monitor) => ({
+@DragSource(COLLECTION, collectionSource, (connect, monitor) => ({
   connectDragSource: connect.dragSource(),
   isDragging: monitor.isDragging()
 }))

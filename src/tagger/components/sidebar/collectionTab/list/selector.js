@@ -1,8 +1,8 @@
 import { createSelector, createStructuredSelector } from 'reselect';
 import { List, Map } from 'immutable';
-import { LAZY } from '../../constants/statusTypes';
-import { serializeFilterHasCharacters } from '../../reducers/utils';
-import { currentMediumIdSelector } from './common';
+import { LAZY } from '../../../../constants/statusTypes';
+import { serializeFilterHasCharacters } from '../../../../../reducers/utils';
+import { currentMediumIdSelector } from '../../../../selectors/common';
 import {
   collectionHasCollectionItemsRelationsSelector,
   createEntitiesByRelationSelector,
@@ -16,7 +16,7 @@ import {
   mediumHasCollectionsRelationsSelector,
   searchStringHasBrandsRelationsSelector,
   searchStringHasProductsRelationsSelector
-} from '../../selectors/data';
+} from '../../../../../selectors/data';
 
 const currentCollectionsBrandSearchStringSelector = (state) => state.getIn([ 'tagger', 'tagger', 'collections', 'currentCollectionsBrandSearchString' ]);
 const currentCollectionsCharacterSearchStringSelector = (state) => state.getIn([ 'tagger', 'tagger', 'collections', 'currentCollectionsCharacterSearchString' ]);
@@ -54,7 +54,6 @@ const collectionsSelector = createSelector(
 );
 
 export default createStructuredSelector({
-  test: currentCollectionsProductSearchStringSelector,
   brandsById: listBrandsEntitiesSelector,
   charactersById: listCharactersEntitiesSelector,
   mediumId: currentMediumIdSelector,

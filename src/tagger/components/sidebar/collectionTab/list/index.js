@@ -12,7 +12,7 @@ import Collection from './collection';
 import PersistCollectionModal from '../persist';
 import PersistCollectionItemModal from './collectionItems/persist';
 import * as actions from './actions';
-import selector from '../../../../selectors/collectionTab';
+import selector from './selector';
 
 @connect(selector, (dispatch) => ({
   loadCollection: bindActionCreators(actions.loadCollection, dispatch),
