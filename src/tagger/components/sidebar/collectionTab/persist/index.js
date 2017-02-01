@@ -65,6 +65,7 @@ export default class CollectionModal extends Component {
     // Redux-form function which sets the initial values of the form.
     initialize: PropTypes.func.isRequired,
     localeNames: ImmutablePropTypes.map.isRequired,
+    recurring: PropTypes.bool,
     searchBrands: PropTypes.func.isRequired,
     searchCharacters: PropTypes.func.isRequired,
     searchedBrandIds: ImmutablePropTypes.map.isRequired,
@@ -87,7 +88,9 @@ export default class CollectionModal extends Component {
     const { collection, currentLocale, initialize, localeNames } = this.props;
 
     if (collection) {
+      console.warn('COLL', collection);
       for (const [ locale ] of localeNames) {
+        console.warn('locale', locale);
         if (typeof collection.basedOnDefaultLocale[locale] === 'undefined') {
           collection.basedOnDefaultLocale[locale] = true;
         }
@@ -155,7 +158,8 @@ export default class CollectionModal extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      basedOnDefaultLocale, brandsById, charactersById, countTitles, currentLinkType, defaultLocale, edit, handleSubmit, localeNames, searchBrands,
+      basedOnDefaultLocale, brandsById, charactersById, countTitles, currentLinkType,
+      defaultLocale, edit, handleSubmit, localeNames, recurring, searchBrands,
       searchCharacters, searchedBrandIds, searchedCharacterIds, title, totalTitles
     } = this.props;
     return (
@@ -231,6 +235,13 @@ export default class CollectionModal extends Component {
             first
             label='This collection will be used in later episodes'
             name='recurring'
+            style={{ paddingTop: '0.625em' }}/>
+          <Field
+            component={CheckboxInput}
+            disabled={!recurring}
+            first
+            label='Copy products in collection too'
+            name='recurringEntries'
             style={{ paddingTop: '0.625em' }}/>
         </PersistModal>
         <PersistModal

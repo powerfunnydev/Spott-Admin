@@ -9,6 +9,7 @@ const basedOnDefaultLocaleSelector = createFormValueSelector('taggerCollection',
 const linkTypeSelector = createFormValueSelector('taggerCollection', 'linkType');
 const _defaultLocaleSelector = createFormValueSelector('taggerCollection', 'defaultLocale');
 const _titleSelector = createFormValueSelector('taggerCollection', 'title');
+const recurringSelector = createFormValueSelector('taggerCollection', 'recurring');
 const defaultLocaleSelector = createSelector(_defaultLocaleSelector, (locale) => locale || 'en');
 const defaultLocaleTitleSelector = createSelector(
   defaultLocaleSelector,
@@ -33,6 +34,7 @@ export default createStructuredSelector({
   currentLocale: currentLocaleSelector,
   defaultLocale: defaultLocaleSelector,
   localeNames: localeNamesSelector,
+  recurring: recurringSelector,
   title: defaultLocaleTitleSelector,
   totalTitles: totalTitlesSelector
 });

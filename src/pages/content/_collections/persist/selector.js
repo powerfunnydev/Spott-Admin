@@ -9,6 +9,7 @@ const basedOnDefaultLocaleSelector = createFormValueSelector('collection', 'base
 const linkTypeSelector = createFormValueSelector('collection', 'linkType');
 const _defaultLocaleSelector = createFormValueSelector('collection', 'defaultLocale');
 const _titleSelector = createFormValueSelector('collection', 'title');
+const recurringSelector = createFormValueSelector('collection', 'recurring');
 const defaultLocaleSelector = createSelector(_defaultLocaleSelector, (locale) => locale || 'en');
 const defaultLocaleTitleSelector = createSelector(
   defaultLocaleSelector,
@@ -33,6 +34,7 @@ export default createStructuredSelector({
   currentLocale: currentLocaleSelector,
   defaultLocale: defaultLocaleSelector,
   localeNames: localeNamesSelector,
+  recurring: recurringSelector,
   title: defaultLocaleTitleSelector,
   totalTitles: totalTitlesSelector
 });

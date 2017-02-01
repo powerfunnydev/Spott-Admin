@@ -682,7 +682,7 @@ export const transformPersonFaceImage = transformCharacterFaceImage;
 
 export function transformListCollection ({
   auditInfo, linkType, linkedBrand, linkedCharacter, localeData, medium,
-  recurring, sortOrder, title, uuid
+  recurring, recurringEntries, sortOrder, title, uuid
 }) {
   return {
     brand: linkedBrand && transformListBrand(linkedBrand),
@@ -694,6 +694,7 @@ export function transformListCollection ({
     linkType,
     mediumId: medium && medium.uuid,
     recurring,
+    recurringEntries,
     sortOrder,
     title
   };
@@ -701,7 +702,7 @@ export function transformListCollection ({
 
 export function transformCollection ({
   auditInfo, linkType, linkedBrand, linkedCharacter, defaultLocale,
-  localeData, medium, recurring, sortOrder, uuid
+  localeData, medium, recurring, recurringEntries, sortOrder, uuid
 }) {
   const collection = {
     basedOnDefaultLocale: {},
@@ -716,6 +717,7 @@ export function transformCollection ({
     locales: [],
     mediumId: medium && medium.uuid,
     recurring,
+    recurringEntries,
     title: {}
   };
   if (localeData) {

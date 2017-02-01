@@ -120,7 +120,7 @@ export default class Collections extends Component {
   }
 
   async onCollectionEdit (collectionId) {
-    const { basedOnDefaultLocale, brand, character, defaultLocale, id, linkType, recurring, title } = await this.props.loadCollection({ collectionId });
+    const { basedOnDefaultLocale, brand, character, defaultLocale, id, linkType, recurring, recurringEntries, title } = await this.props.loadCollection({ collectionId });
     const editCollection = {
       basedOnDefaultLocale,
       brandId: brand && brand.id,
@@ -129,6 +129,7 @@ export default class Collections extends Component {
       defaultLocale,
       linkType,
       recurring,
+      recurringEntries,
       title
     };
     this.setState({
