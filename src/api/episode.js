@@ -70,13 +70,14 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, {
   const url = `${baseUrl}/v004/media/serieEpisodes`;
   const result = await post(authenticationToken, locale, url, episode);
   const persistedEpisode = transformEpisode004(result.body);
-  // Copy all brands, characters, shops of the last episode of a season. This only happens when
-  // we create a new episode. We need to create the episode first, so we have the
-  // id of this episode. After that we can do the copy call.
+  // Copy all brands, characters, shops, collections of the last episode of a season.
+  // This only happens when we create a new episode. We need to create the episode
+  // first, so we have the id of this episode. After that we can do the copy call.
   if (lastEpisodeId) {
     await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${persistedEpisode.id}/brandDeals/actions/importFromOtherMedium/${lastEpisodeId}`);
     await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${persistedEpisode.id}/castMembers/actions/importFromOtherMedium/${lastEpisodeId}`);
     await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${persistedEpisode.id}/shopDeals/actions/importFromOtherMedium/${lastEpisodeId}`);
+    await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${persistedEpisode.id}/itemCollections/actions/copy/${lastEpisodeId}`);
   }
   return persistedEpisode;
 }
