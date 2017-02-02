@@ -6,6 +6,7 @@ import { searchProducts as dataSearchProducts } from '../../../../../actions/pro
 
 export { fetchCollection as loadCollection, deleteCollection, moveCollection, persistCollection } from '../../../../../actions/collection';
 export { fetchCollectionItem as loadCollectionItem, fetchCollectionItems, deleteCollectionItem, persistCollectionItem, moveCollectionItem, moveCollectionItemToOtherCollection } from '../../../../../actions/collectionItem';
+export { fetchUnassignedProducts as loadUnassignedProducts } from '../../../../../actions/product';
 
 export const COLLECTIONS_BRANDS_SEARCH_START = 'COLLECTIONS/COLLECTIONS_BRANDS_SEARCH_START';
 export const COLLECTIONS_BRANDS_SEARCH_ERROR = 'COLLECTIONS/COLLECTIONS_BRANDS_SEARCH_ERROR';

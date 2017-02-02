@@ -95,3 +95,11 @@ export async function uploadPosterImage (baseUrl, authenticationToken, locale, {
   const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${movieId}/posterImage`, formData, callback);
   return transformMovie(result.body);
 }
+
+export async function uploadRoundLogo (baseUrl, authenticationToken, locale, { locale: imageLocale, movieId, image, callback }) {
+  const formData = new FormData();
+  formData.append('file', image);
+  formData.append('locale', imageLocale);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${movieId}/roundLogo`, formData, callback);
+  return transformMovie(result.body);
+}

@@ -1,8 +1,4 @@
-import {
-  persistMovie, fetchMovie as dataFetchMovie,
-  uploadProfileImage as dataUploadProfileImage,
-  uploadPosterImage as dataUploadPosterImage
-} from '../../../../actions/movie';
+import { persistMovie, fetchMovie as dataFetchMovie } from '../../../../actions/movie';
 import { searchBrands as dataSearchBrands } from '../../../../actions/brand';
 import { searchBroadcasters as dataSearchBroadcasters } from '../../../../actions/broadcaster';
 import { searchContentProducers as dataSearchContentProducers } from '../../../../actions/contentProducer';
@@ -11,7 +7,8 @@ import { searchMediumCategories as dataSearchMediumCategories } from '../../../.
 import { searchShops as dataSearchShops } from '../../../../actions/shop';
 import { searchProducts as dataSearchProducts } from '../../../../actions/product';
 
-export { deleteProfileImage, deletePosterImage } from '../../../../actions/media';
+export { uploadProfileImage, uploadPosterImage, uploadRoundLogo } from '../../../../actions/movie';
+export { deleteProfileImage, deletePosterImage, deleteRoundLogo } from '../../../../actions/media';
 export { openModal, closeModal } from '../../../../actions/global';
 
 export const HELPERS_BRANDS_SEARCH_START = 'MOVIE_EDIT/HELPERS_BRANDS_SEARCH_START';
@@ -52,8 +49,6 @@ export const REMOVE_CREATE_LANGUAGE_MODAL = 'MOVIE_EDIT/REMOVE_CREATE_LANGUAGE_M
 export const CLOSE_POP_UP_MESSAGE = 'MOVIE_EDIT/CLOSE_POP_UP_MESSAGE';
 
 export const submit = persistMovie;
-export const uploadProfileImage = dataUploadProfileImage;
-export const uploadPosterImage = dataUploadPosterImage;
 
 export function closePopUpMessage () {
   return { type: CLOSE_POP_UP_MESSAGE };

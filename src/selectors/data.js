@@ -80,6 +80,7 @@ export const mediumHasBrandsRelationsSelector = (state) => state.getIn([ 'data',
 export const mediumHasCollectionsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasCollections' ]);
 export const mediumHasShopsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasShops' ]);
 export const mediumHasTvGuideEntriesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasTvGuideEntries' ]);
+export const mediumHasUnassignedProductsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'mediumHasUnassignedProducts' ]);
 export const personHasFaceImagesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'personHasFaceImages' ]);
 export const productHasProductOfferingsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'productHasProductOfferings' ]);
 export const productHasSimilarProductsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'productHasSimilarProducts' ]);

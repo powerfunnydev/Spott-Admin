@@ -21,7 +21,7 @@ export async function fetchCollection (baseUrl, authenticationToken, locale, { c
 
 export async function persistCollection (baseUrl, authenticationToken, locale, {
   basedOnDefaultLocale, brandId, characterId, collectionId, defaultLocale, linkType,
-  locales, mediumId, recurring, title
+  locales, mediumId, recurring, recurringEntries, title
 }) {
   let collection = {};
   if (collectionId) {
@@ -37,6 +37,7 @@ export async function persistCollection (baseUrl, authenticationToken, locale, {
   collection.linkType = linkType;
   collection.medium = { uuid: mediumId };
   collection.recurring = recurring;
+  collection.recurringEntries = recurring && recurringEntries;
   // Update locale data.
   collection.localeData = [];
   locales.forEach((locale) => {

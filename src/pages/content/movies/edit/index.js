@@ -25,7 +25,7 @@ import Brands from '../../_helpers/_brands/list';
 import Characters from '../../_helpers/_characters/list';
 import Collections from '../../_collections/list';
 import Shops from '../../_helpers/_shops/list';
-import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
+import { POSTER_IMAGE, PROFILE_IMAGE, ROUND_LOGO } from '../../../../constants/imageTypes';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
@@ -50,6 +50,7 @@ function validate (values, { t }) {
   closeModal: bindActionCreators(actions.closeModal, dispatch),
   deletePosterImage: bindActionCreators(actions.deletePosterImage, dispatch),
   deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
+  deleteRoundLogo: bindActionCreators(actions.deleteRoundLogo, dispatch),
   loadMovie: bindActionCreators(actions.loadMovie, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
@@ -64,7 +65,8 @@ function validate (values, { t }) {
   searchMediumCategories: bindActionCreators(actions.searchMediumCategories, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadPosterImage: bindActionCreators(actions.uploadPosterImage, dispatch),
-  uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch)
+  uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch),
+  uploadRoundLogo: bindActionCreators(actions.uploadRoundLogo, dispatch)
 }))
 @reduxForm({
   form: formName,
@@ -90,6 +92,7 @@ export default class EditMovie extends Component {
     defaultLocale: PropTypes.string,
     deletePosterImage: PropTypes.func.isRequired,
     deleteProfileImage: PropTypes.func.isRequired,
+    deleteRoundLogo: PropTypes.func.isRequired,
     dirty: PropTypes.bool.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
@@ -133,6 +136,7 @@ export default class EditMovie extends Component {
     t: PropTypes.func.isRequired,
     uploadPosterImage: PropTypes.func.isRequired,
     uploadProfileImage: PropTypes.func.isRequired,
+    uploadRoundLogo: PropTypes.func.isRequired,
     onBeforeChangeTab: PropTypes.func.isRequired,
     onChangeTab: PropTypes.func.isRequired
   };
@@ -235,7 +239,9 @@ export default class EditMovie extends Component {
     },
     row: {
       display: 'flex',
-      flexDirection: 'row'
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginBottom: -20
     },
     backgroundRoot: {
       backgroundColor: colors.lightGray4,
@@ -257,8 +263,9 @@ export default class EditMovie extends Component {
     removeLanguageButtonPadding: {
       paddingLeft: '10px'
     },
-    paddingLeftUploadImage: {
-      paddingLeft: '24px'
+    paddingUploadImage: {
+      paddingBottom: 20,
+      paddingRight: 24
     },
     customTitle: {
       paddingBottom: '0.438em'
@@ -274,7 +281,7 @@ export default class EditMovie extends Component {
       _activeLocale, brandsById, broadcastersById, charactersById,
       closeModal, contentProducersById, currentModal, currentMovie,
       defaultLocale, deletePosterImage, location: { query: { tab } },
-      deleteProfileImage, errors, handleSubmit, location, mediumCategoriesById,
+      deleteProfileImage, deleteRoundLogo, errors, handleSubmit, location, mediumCategoriesById,
       movieBrands, movieCharacters, movieCollections, movieShops, productsById, shopsById, searchHelpersBrands,
       searchCollectionsBrands, searchCollectionsCharacters, searchCollectionsProducts,
       searchHelpersCharacters, searchHelpersShops, searchBroadcasters, searchContentProducers,
@@ -386,7 +393,7 @@ export default class EditMovie extends Component {
                     placeholder='Broadcaster companies'/>
                   <FormSubtitle>Images</FormSubtitle>
                   <div style={[ styles.paddingTop, styles.row ]}>
-                    <div>
+                    <div style={styles.paddingUploadImage}>
                       <Label text='Poster image' />
                       <Dropzone
                         accept='image/*'
@@ -402,7 +409,7 @@ export default class EditMovie extends Component {
                         onChange={({ callback, file }) => { this.props.uploadPosterImage({ locale: _activeLocale, movieId: this.props.params.movieId, image: file, callback }); }}
                         onDelete={currentMovie.getIn([ 'posterImage', _activeLocale, 'url' ]) ? () => { deletePosterImage({ locale: _activeLocale, mediumId: currentMovie.get('id') }); } : null}/>
                     </div>
-                    <div style={styles.paddingLeftUploadImage}>
+                    <div style={styles.paddingUploadImage}>
                       <Label text='Profile image' />
                       <Dropzone
                         downloadUrl={currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ]) ||
@@ -415,6 +422,20 @@ export default class EditMovie extends Component {
                         type={PROFILE_IMAGE}
                         onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, movieId: this.props.params.movieId, image: file, callback }); }}
                         onDelete={currentMovie.getIn([ 'profileImage', _activeLocale, 'url' ]) ? () => { deleteProfileImage({ locale: _activeLocale, mediumId: currentMovie.get('id') }); } : null}/>
+                    </div>
+                    <div style={styles.paddingUploadImage}>
+                      <Label text='Circle graphic' />
+                      <Dropzone
+                        downloadUrl={currentMovie.getIn([ 'roundLogo', _activeLocale, 'url' ]) ||
+                          currentMovie.getIn([ 'roundLogo', defaultLocale, 'url' ])}
+                        imageUrl={currentMovie.getIn([ 'roundLogo', _activeLocale ]) &&
+                          `${currentMovie.getIn([ 'roundLogo', _activeLocale, 'url' ])}?height=203&width=203` ||
+                          currentMovie.getIn([ 'roundLogo', defaultLocale ]) &&
+                          `${currentMovie.getIn([ 'roundLogo', defaultLocale, 'url' ])}?height=203&width=203`}
+                        showOnlyUploadedImage
+                        type={ROUND_LOGO}
+                        onChange={({ callback, file }) => { this.props.uploadRoundLogo({ locale: _activeLocale, movieId: this.props.params.movieId, image: file, callback }); }}
+                        onDelete={currentMovie.getIn([ 'roundLogo', _activeLocale, 'url' ]) ? () => { deleteRoundLogo({ locale: _activeLocale, mediumId: currentMovie.get('id') }); } : null}/>
                     </div>
                   </div>
                 </Section>

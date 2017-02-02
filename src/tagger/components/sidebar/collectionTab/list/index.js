@@ -12,7 +12,7 @@ import Collection from './collection';
 import PersistCollectionModal from '../persist';
 import PersistCollectionItemModal from './collectionItems/persist';
 import * as actions from './actions';
-import selector from '../../../../selectors/collectionTab';
+import selector from './selector';
 
 @connect(selector, (dispatch) => ({
   loadCollection: bindActionCreators(actions.loadCollection, dispatch),
@@ -123,7 +123,7 @@ export default class Collections extends Component {
   }
 
   async onCollectionEdit (collectionId) {
-    const { basedOnDefaultLocale, brand, character, defaultLocale, id, linkType, recurring, title } = await this.props.loadCollection({ collectionId });
+    const { basedOnDefaultLocale, brand, character, defaultLocale, id, linkType, recurring, recurringEntries, title } = await this.props.loadCollection({ collectionId });
     const editCollection = {
       basedOnDefaultLocale,
       brandId: brand && brand.id,
@@ -132,6 +132,7 @@ export default class Collections extends Component {
       defaultLocale,
       linkType,
       recurring,
+      recurringEntries,
       title
     };
     this.setState({
@@ -264,17 +265,15 @@ export default class Collections extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      brandsById, charactersById, mediumId, persistMoveCollection, productsById, searchBrands, searchCharacters,
+      brandsById, charactersById, mediumId, productsById, searchBrands, searchCharacters,
       searchProducts, searchedBrandIds, searchedProductIds, searchedCharacterIds
     } = this.props;
-    console.warn('this.state.collections', this.state.collections && this.state.collections.toJS());
     return (
       <div>
         <div style={styles.section}>
           <div style={styles.sectionContent}>
             <h3 style={[ tabStyle.title, { padding: 0 } ]}>Collections</h3>
             <div style={styles.description}>
-
               These collections will be shown to the user when landing on an episode page.
             </div>
             <button style={styles.createCollectionButton} onClick={this.onClickNewEntry}>

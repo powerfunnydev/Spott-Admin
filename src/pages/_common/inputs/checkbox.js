@@ -14,6 +14,7 @@ export default class Checkbox extends Component {
   static propTypes = {
     checked: PropTypes.bool,
     color: PropTypes.string,
+    disabled: PropTypes.bool,
     first: PropTypes.bool,
     // Input is optional, only used with redux-form.
     input: PropTypes.object,
@@ -82,12 +83,15 @@ export default class Checkbox extends Component {
       ':hover': {
         backgroundColor: colors.blue3
       }
+    },
+    disabled: {
+      opacity: 0.5
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { checked, color, first, input, label, style } = this.props;
+    const { checked, color, disabled, first, input, label, style } = this.props;
 
     // return (
     //   <div style={[ styles.container, !first && styles.padTop, style ]}>
@@ -103,12 +107,13 @@ export default class Checkbox extends Component {
             color === 'blue' && styles.blueCheckbox,
             (checked || input && input.value) && styles.checked,
             // overwrite styles.checked
-            color === 'blue' && (checked || input && input.value) && styles.blueChecked
+            color === 'blue' && (checked || input && input.value) && styles.blueChecked,
+            disabled && styles.disabled
           ]}
-          onClick={this.onChange}>
+          onClick={disabled ? undefined : this.onChange}>
           {(checked || input && input.value) && <CheckedSVG color={color === 'blue' && colors.primaryBlue || colors.white}/>}
         </span>
-        {label && <div style={styles.label}>{label}</div>}
+        {label && <div style={[ styles.label, disabled && styles.disabled ]}>{label}</div>}
       </div>
     );
   }

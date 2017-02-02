@@ -13,7 +13,7 @@ export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover 
 }
 
 export function transformListProduct ({ affiliate, auditInfo, brand, fullName, image: logo,
-  noLongerAvailable, publishStatus, shortName, used, uuid }) {
+  noLongerAvailable, publishStatus, relevance, shortName, used, uuid }) {
   return {
     affiliate,
     brand: brand && transformListBrand(brand),
@@ -25,6 +25,7 @@ export function transformListProduct ({ affiliate, auditInfo, brand, fullName, i
     logo: logo && { id: logo.uuid, url: logo.url },
     noLongerAvailable,
     publishStatus,
+    relevance,
     shortName
   };
 }
@@ -260,7 +261,7 @@ export const transformProductCategory = transformMediumCategory;
 /**
  *  Light version of a medium. No locales includes.
  */
-export function transformListMedium ({ number, publishStatus, auditInfo, title, type, posterImage, profileImage, uuid: id, season, serie }) {
+export function transformListMedium ({ number, publishStatus, auditInfo, title, type, posterImage, profileImage, roundLogo, uuid: id, season, serie }) {
   return {
     id,
     title,
@@ -271,6 +272,7 @@ export function transformListMedium ({ number, publishStatus, auditInfo, title, 
     serie: serie && transformListMedium(serie),
     posterImage: posterImage && { id: posterImage.uuid, url: posterImage. url },
     profileImage: profileImage && { id: profileImage.uuid, url: profileImage. url },
+    roundLogo: roundLogo && { id: roundLogo.uuid, url: roundLogo. url },
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
   };
@@ -389,6 +391,7 @@ export function transformMedium ({ availabilities, brand, broadcasters, characte
     locales: [],
     posterImage: {},
     profileImage: {},
+    roundLogo: {},
     defaultLocale,
     externalReference,
     externalReferenceSource,
@@ -403,7 +406,7 @@ export function transformMedium ({ availabilities, brand, broadcasters, characte
   };
   if (localeData) {
     for (const { hasTitle, basedOnDefaultLocale, description, locale,
-      posterImage, profileCover, endYear, startYear, title, subTitle } of localeData) {
+      posterImage, profileCover, roundLogo, endYear, startYear, title, subTitle } of localeData) {
       medium.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
       medium.description[locale] = description;
       medium.startYear[locale] = startYear;
@@ -411,9 +414,10 @@ export function transformMedium ({ availabilities, brand, broadcasters, characte
       medium.hasTitle[locale] = hasTitle;
       medium.title[locale] = title;
       medium.subTitle[locale] = subTitle;
-      medium.locales.push(locale);
       medium.profileImage[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
       medium.posterImage[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
+      medium.roundLogo[locale] = roundLogo ? { id: roundLogo.uuid, url: roundLogo.url } : null;
+      medium.locales.push(locale);
     }
   }
   return medium;
@@ -682,7 +686,7 @@ export const transformPersonFaceImage = transformCharacterFaceImage;
 
 export function transformListCollection ({
   auditInfo, linkType, linkedBrand, linkedCharacter, localeData, medium,
-  recurring, sortOrder, title, uuid
+  recurring, recurringEntries, sortOrder, title, uuid
 }) {
   return {
     brand: linkedBrand && transformListBrand(linkedBrand),
@@ -694,6 +698,7 @@ export function transformListCollection ({
     linkType,
     mediumId: medium && medium.uuid,
     recurring,
+    recurringEntries,
     sortOrder,
     title
   };
@@ -701,7 +706,7 @@ export function transformListCollection ({
 
 export function transformCollection ({
   auditInfo, linkType, linkedBrand, linkedCharacter, defaultLocale,
-  localeData, medium, recurring, sortOrder, uuid
+  localeData, medium, recurring, recurringEntries, sortOrder, uuid
 }) {
   const collection = {
     basedOnDefaultLocale: {},
@@ -716,6 +721,7 @@ export function transformCollection ({
     locales: [],
     mediumId: medium && medium.uuid,
     recurring,
+    recurringEntries,
     title: {}
   };
   if (localeData) {

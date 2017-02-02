@@ -116,6 +116,7 @@ export default (state = fromJS({
     mediumHasCollections: {},
     mediumHasShops: {},
     mediumHasTvGuideEntries: {},
+    mediumHasUnassignedProducts: {},
     personHasFaceImages: {},
     productHasProductOfferings: {},
     productHasSimilarProducts: {},
@@ -343,6 +344,8 @@ export default (state = fromJS({
 
     case commercialActions.UPLOAD_PROFILE_IMAGE_SUCCESS:
       return fetchSuccess(state, [ 'entities', 'media', action.commercialId ], action.data);
+    case commercialActions.UPLOAD_ROUND_LOGO_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.commercialId ], action.data);
 
     case commercialActions.COMMERCIAL_FETCH_START:
       return fetchStart(state, [ 'entities', 'media', action.commercialId ]);
@@ -468,6 +471,8 @@ export default (state = fromJS({
       return fetchSuccess(state, [ 'entities', 'media', action.movieId ], action.data);
     case moviesActions.UPLOAD_PROFILE_IMAGE_SUCCESS:
       return fetchSuccess(state, [ 'entities', 'media', action.movieId ], action.data);
+    case moviesActions.UPLOAD_ROUND_LOGO_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.movieId ], action.data);
 
     case moviesActions.MOVIE_FETCH_START:
       return fetchStart(state, [ 'entities', 'media', action.movieId ]);
@@ -553,6 +558,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'listProducts', 'filterHasProducts', serializeFilterHasProducts(action), action.data.data);
     case productActions.PRODUCTS_FETCH_ERROR:
       return searchError(state, 'filterHasProducts', serializeFilterHasProducts(action), action.error);
+
+    case productActions.UNASSIGNED_PRODUCTS_FETCH_START:
+      return searchStart(state, 'mediumHasUnassignedProducts', action.mediumId);
+    case productActions.UNASSIGNED_PRODUCTS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listProducts', 'mediumHasUnassignedProducts', action.mediumId, action.data);
+    case productActions.UNASSIGNED_PRODUCTS_FETCH_ERROR:
+      return searchError(state, 'mediumHasUnassignedProducts', action.mediumId, action.error);
 
     case productActions.PRODUCT_SEARCH_START:
       return searchStart(state, 'searchStringHasProducts', action.searchString);
@@ -669,6 +681,8 @@ export default (state = fromJS({
     case seriesActions.UPLOAD_POSTER_IMAGE_SUCCESS:
       return fetchSuccess(state, [ 'entities', 'media', action.seriesEntryId ], action.data);
     case seriesActions.UPLOAD_PROFILE_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.seriesEntryId ], action.data);
+    case seriesActions.UPLOAD_ROUND_LOGO_SUCCESS:
       return fetchSuccess(state, [ 'entities', 'media', action.seriesEntryId ], action.data);
 
     case seriesActions.SERIES_ENTRY_FETCH_START:

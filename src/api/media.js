@@ -259,6 +259,15 @@ export async function deleteProfileImage (baseUrl, authenticationToken, locale, 
   return transformMedium(result.body);
 }
 
+export async function deleteRoundLogo (baseUrl, authenticationToken, locale, { locale: mediumLocale, mediumId }) {
+  let url = `${baseUrl}/v004/media/media/${mediumId}/roundLogo`;
+  if (mediumLocale) {
+    url = `${url }?locale=${mediumLocale}`;
+  }
+  const result = await del(authenticationToken, locale, url, { locale: mediumLocale });
+  return transformMedium(result.body);
+}
+
 export async function fetchTvGuideEntries (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField, mediumId }) {
   let url = `${baseUrl}/v004/media/media/${mediumId}/tvGuideEntries?page=${page}&pageSize=${pageSize}&mediumUuid=${mediumId}`;
   if (searchString) {
