@@ -13,7 +13,7 @@ export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover 
 }
 
 export function transformListProduct ({ affiliate, auditInfo, brand, fullName, image: logo,
-  noLongerAvailable, publishStatus, shortName, used, uuid }) {
+  noLongerAvailable, publishStatus, relevance, shortName, used, uuid }) {
   return {
     affiliate,
     brand: brand && transformListBrand(brand),
@@ -25,6 +25,7 @@ export function transformListProduct ({ affiliate, auditInfo, brand, fullName, i
     logo: logo && { id: logo.uuid, url: logo.url },
     noLongerAvailable,
     publishStatus,
+    relevance,
     shortName
   };
 }

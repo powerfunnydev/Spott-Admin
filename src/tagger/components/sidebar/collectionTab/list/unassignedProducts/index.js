@@ -7,7 +7,7 @@ import Radium from 'radium';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { colors, fontWeights, makeTextStyle } from '../../../../../../pages/_common/styles';
+import { colors } from '../../../../../../pages/_common/styles';
 import tabStyle from '../../../tabStyle';
 import * as actions from '../actions';
 import selector from './selector';
@@ -38,9 +38,9 @@ export default class UnassignedProducts extends Component {
     loadUnassignedProducts({ mediumId });
   }
 
-  async onAddProductToCollection ({ collectionId, productId }) {
+  async onAddProductToCollection ({ collectionId, productId, relevance }) {
     const { loadCollectionItems, loadUnassignedProducts, mediumId, persistCollectionItem } = this.props;
-    await persistCollectionItem({ collectionId, productId });
+    await persistCollectionItem({ collectionId, productId, relevance });
     await loadCollectionItems({ collectionId });
     await loadUnassignedProducts({ mediumId });
   }
@@ -100,10 +100,7 @@ export default class UnassignedProducts extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const {
-      unassignedProducts
-    } = this.props;
-    console.warn('this.state.collections', this.state.collections && this.state.collections.toJS());
+    const { unassignedProducts } = this.props;
     return (
       <div style={styles.section}>
         <div style={styles.sectionContent}>

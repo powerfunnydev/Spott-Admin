@@ -268,14 +268,12 @@ export default class Collections extends Component {
       brandsById, charactersById, mediumId, productsById, searchBrands, searchCharacters,
       searchProducts, searchedBrandIds, searchedProductIds, searchedCharacterIds
     } = this.props;
-    console.warn('this.state.collections', this.state.collections && this.state.collections.toJS());
     return (
       <div>
         <div style={styles.section}>
           <div style={styles.sectionContent}>
             <h3 style={[ tabStyle.title, { padding: 0 } ]}>Collections</h3>
             <div style={styles.description}>
-
               These collections will be shown to the user when landing on an episode page.
             </div>
             <button style={styles.createCollectionButton} onClick={this.onClickNewEntry}>

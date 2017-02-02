@@ -18,18 +18,23 @@ const productSource = {
   // Here we construct an item, which contains id of the unassigned product.
   beginDrag (props) {
     return {
-      sourceProductId: props.product.get('id')
+      sourceProductId: props.product.get('id'),
+      sourceProductRelevance: props.product.get('relevance')
     };
   },
 
   endDrag (props, monitor) {
-    const { sourceProductId } = monitor.getItem();
+    const { sourceProductId, sourceProductRelevance } = monitor.getItem();
     const dropResult = monitor.getDropResult();
 
     if (dropResult && dropResult.targetCollectionId) {
       console.warn('sourceProductId', sourceProductId, ' collectionId', dropResult.targetCollectionId);
       // Persist, move collection.
-      props.onAddProductToCollection({ collectionId: dropResult.targetCollectionId, productId: sourceProductId });
+      props.onAddProductToCollection({
+        collectionId: dropResult.targetCollectionId,
+        productId: sourceProductId,
+        relevance: sourceProductRelevance
+      });
       // props.persistMoveCollection({
       //   before,
       //   sourceCollectionId,
@@ -90,6 +95,25 @@ export default class Product extends Component {
       height: 50,
       objectFit: 'scale-down',
       width: 50
+    },
+    relevance: {
+      base: {
+        height: 6,
+        width: 6,
+        borderRadius: '100%',
+        position: 'absolute',
+        bottom: 8,
+        left: 8
+      },
+      EXACT: {
+        backgroundColor: colors.lightGreen
+      },
+      MEDIUM: {
+        backgroundColor: colors.lightGold
+      },
+      LOW: {
+        backgroundColor: colors.red
+      }
     }
   }
 
@@ -124,6 +148,7 @@ export default class Product extends Component {
               <DollarSVG style={styles.affiliate}/>}
             {productImageUrl &&
               <Link to={`/content/products/read/${product.get('id')}`}><img src={`${productImageUrl}?height=150&width=150`} style={styles.image} /></Link>}
+            <span style={[ styles.relevance.base, styles.relevance[product.get('relevance')] ]} />
           </div>)}
         </div>);
 
