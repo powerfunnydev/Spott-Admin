@@ -137,3 +137,11 @@ export async function uploadPosterImage (baseUrl, authenticationToken, locale, {
   const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${seriesEntryId}/posterImage`, formData, callback);
   return transformSeriesEntry004(result.body);
 }
+
+export async function uploadRoundLogo (baseUrl, authenticationToken, locale, { locale: imageLocale, seriesEntryId, image, callback }) {
+  const formData = new FormData();
+  formData.append('file', image);
+  formData.append('locale', imageLocale);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${seriesEntryId}/roundLogo`, formData, callback);
+  return transformSeriesEntry004(result.body);
+}
