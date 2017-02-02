@@ -1,14 +1,12 @@
-import {
-  persistCommercial, fetchCommercial as dataFetchCommercial,
-  uploadProfileImage as dataUploadProfileImage
-} from '../../../../actions/commercial';
+import { persistCommercial, fetchCommercial as dataFetchCommercial } from '../../../../actions/commercial';
 import { searchBroadcasters as dataSearchBroadcasters } from '../../../../actions/broadcaster';
 import { searchContentProducers as dataSearchContentProducers } from '../../../../actions/contentProducer';
 import { searchBrands as dataSearchBrands } from '../../../../actions/brand';
 import { searchCharacters as dataSearchCharacters, searchMediumCharacters as dataSearchMediumCharacters } from '../../../../actions/character';
 import { searchProducts as dataSearchProducts } from '../../../../actions/product';
 
-export { deleteProfileImage, deletePosterImage } from '../../../../actions/media';
+export { uploadProfileImage, uploadRoundLogo } from '../../../../actions/commercial';
+export { deleteProfileImage, deletePosterImage, deleteRoundLogo } from '../../../../actions/media';
 
 export { openModal, closeModal } from '../../../../actions/global';
 
@@ -40,7 +38,6 @@ export const CHARACTERS_SEARCH_START = 'EPISODE_EDIT/CHARACTERS_SEARCH_START';
 export const CHARACTERS_SEARCH_ERROR = 'EPISODE_EDIT/CHARACTERS_SEARCH_ERROR';
 
 export const submit = persistCommercial;
-export const uploadProfileImage = dataUploadProfileImage;
 
 export function loadCommercial (commercialId) {
   return async (dispatch, getState) => {

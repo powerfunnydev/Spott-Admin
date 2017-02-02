@@ -25,7 +25,7 @@ import * as actions from './actions';
 import selector from './selector';
 import Characters from '../../_helpers/_characters/list';
 import Collections from '../../_collections/list';
-import { PROFILE_IMAGE } from '../../../../constants/imageTypes';
+import { PROFILE_IMAGE, ROUND_LOGO } from '../../../../constants/imageTypes';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 
@@ -46,6 +46,7 @@ function validate (values, { t }) {
 @connect(selector, (dispatch) => ({
   closeModal: bindActionCreators(actions.closeModal, dispatch),
   deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
+  deleteRoundLogo: bindActionCreators(actions.deleteRoundLogo, dispatch),
   loadCommercial: bindActionCreators(actions.loadCommercial, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
@@ -57,7 +58,8 @@ function validate (values, { t }) {
   searchCollectionsProducts: bindActionCreators(actions.searchCollectionsProducts, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
-  uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch)
+  uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch),
+  uploadRoundLogo: bindActionCreators(actions.uploadRoundLogo, dispatch)
 }))
 @reduxForm({
   form: 'commercialEdit',
@@ -81,6 +83,7 @@ export default class EditCommercial extends Component {
     currentModal: PropTypes.string,
     defaultLocale: PropTypes.string,
     deleteProfileImage: PropTypes.func.isRequired,
+    deleteRoundLogo: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
@@ -110,7 +113,8 @@ export default class EditCommercial extends Component {
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
-    uploadProfileImage: PropTypes.func.isRequired
+    uploadProfileImage: PropTypes.func.isRequired,
+    uploadRoundLogo: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -210,7 +214,9 @@ export default class EditCommercial extends Component {
     },
     row: {
       display: 'flex',
-      flexDirection: 'row'
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginBottom: -20
     },
     backgroundRoot: {
       backgroundColor: colors.lightGray4,
@@ -231,6 +237,10 @@ export default class EditCommercial extends Component {
     },
     removeLanguageButtonPadding: {
       paddingLeft: '10px'
+    },
+    paddingUploadImage: {
+      paddingBottom: 20,
+      paddingRight: 24
     }
   };
 
@@ -239,7 +249,7 @@ export default class EditCommercial extends Component {
     const {
       _activeLocale, brandsById, broadcastersById, charactersById, closeModal,
       commercialCharacters, commercialCollections, contentProducersById,
-      currentCommercial, currentModal, defaultLocale, errors, handleSubmit, hasBanner,
+      currentCommercial, currentModal, defaultLocale, deleteRoundLogo, errors, handleSubmit, hasBanner,
       productsById, searchCollectionsBrands, searchCollectionsCharacters, searchCollectionsProducts,
       searchContentProducers, searchedContentProducerIds, searchBroadcasters,
       searchedBroadcasterIds, searchedCharacterIds, searchedCollectionsBrandIds, searchedCollectionsCharacterIds,
@@ -321,7 +331,7 @@ export default class EditCommercial extends Component {
                     placeholder='Broadcaster companies'/>
                   <FormSubtitle>Images</FormSubtitle>
                   <div style={[ styles.paddingTop, styles.row ]}>
-                    <div>
+                    <div style={styles.paddingUploadImage}>
                       <Label text='Profile image' />
                       <Dropzone
                         accept='image/*'
@@ -332,6 +342,20 @@ export default class EditCommercial extends Component {
                         type={PROFILE_IMAGE}
                         onChange={({ callback, file }) => { this.props.uploadProfileImage({ commercialId: this.props.params.commercialId, image: file, callback }); }}
                         onDelete={() => { deleteProfileImage({ mediumId: currentCommercial.get('id') }); }}/>
+                    </div>
+                    <div style={styles.paddingUploadImage}>
+                      <Label text='Circle graphic' />
+                      <Dropzone
+                        downloadUrl={currentCommercial.getIn([ 'roundLogo', _activeLocale, 'url' ]) ||
+                          currentCommercial.getIn([ 'roundLogo', defaultLocale, 'url' ])}
+                        imageUrl={currentCommercial.getIn([ 'roundLogo', _activeLocale ]) &&
+                          `${currentCommercial.getIn([ 'roundLogo', _activeLocale, 'url' ])}?height=203&width=203` ||
+                          currentCommercial.getIn([ 'roundLogo', defaultLocale ]) &&
+                          `${currentCommercial.getIn([ 'roundLogo', defaultLocale, 'url' ])}?height=203&width=203`}
+                        showOnlyUploadedImage
+                        type={ROUND_LOGO}
+                        onChange={({ callback, file }) => { this.props.uploadRoundLogo({ locale: _activeLocale, commercialId: this.props.params.commercialId, image: file, callback }); }}
+                        onDelete={currentCommercial.getIn([ 'roundLogo', _activeLocale, 'url' ]) ? () => { deleteRoundLogo({ locale: _activeLocale, mediumId: currentCommercial.get('id') }); } : null}/>
                     </div>
                   </div>
                 </Section>

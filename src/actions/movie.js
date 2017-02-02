@@ -33,6 +33,10 @@ export const UPLOAD_PROFILE_IMAGE_START = 'MOVIE/UPLOAD_PROFILE_IMAGE_START';
 export const UPLOAD_PROFILE_IMAGE_SUCCESS = 'MOVIE/UPLOAD_PROFILE_IMAGE_SUCCESS';
 export const UPLOAD_PROFILE_IMAGE_ERROR = 'MOVIE/UPLOAD_PROFILE_IMAGE_ERROR';
 
+export const UPLOAD_ROUND_LOGO_START = 'MOVIE/UPLOAD_ROUND_LOGO_START';
+export const UPLOAD_ROUND_LOGO_SUCCESS = 'MOVIE/UPLOAD_ROUND_LOGO_SUCCESS';
+export const UPLOAD_ROUND_LOGO_ERROR = 'MOVIE/UPLOAD_ROUND_LOGO_ERROR';
+
 export const fetchMovies = makeApiActionCreator(api.fetchMovies, MOVIES_FETCH_START, MOVIES_FETCH_SUCCESS, MOVIES_FETCH_ERROR);
 export const fetchMovie = makeApiActionCreator(api.fetchMovie, MOVIE_FETCH_START, MOVIE_FETCH_SUCCESS, MOVIE_FETCH_ERROR);
 export const persistMovie = makeApiActionCreator(api.persistMovie, MOVIE_PERSIST_START, MOVIE_PERSIST_SUCCESS, MOVIE_PERSIST_ERROR);
@@ -41,3 +45,4 @@ export const deleteMovie = makeApiActionCreator(api.deleteMovie, MOVIE_DELETE_ST
 export const searchMovies = makeApiActionCreator(api.searchMovies, MOVIES_SEARCH_START, MOVIES_SEARCH_SUCCESS, MOVIES_SEARCH_ERROR);
 export const uploadPosterImage = makeApiActionCreator(api.uploadPosterImage, UPLOAD_POSTER_IMAGE_START, UPLOAD_POSTER_IMAGE_SUCCESS, UPLOAD_POSTER_IMAGE_ERROR);
 export const uploadProfileImage = makeApiActionCreator(api.uploadProfileImage, UPLOAD_PROFILE_IMAGE_START, UPLOAD_PROFILE_IMAGE_SUCCESS, UPLOAD_PROFILE_IMAGE_ERROR);
+export const uploadRoundLogo = makeApiActionCreator(api.uploadRoundLogo, UPLOAD_ROUND_LOGO_START, UPLOAD_ROUND_LOGO_SUCCESS, UPLOAD_ROUND_LOGO_ERROR);

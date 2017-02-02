@@ -17,7 +17,7 @@ import Label from '../../../_common/inputs/_label';
 import { SERIES_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import LanguageBar from '../../../_common/components/languageBar';
-import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
+import { POSTER_IMAGE, PROFILE_IMAGE, ROUND_LOGO } from '../../../../constants/imageTypes';
 import selector from './selector';
 import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
@@ -41,8 +41,10 @@ function validate (values, { t }) {
   closeModal: bindActionCreators(actions.closeModal, dispatch),
   deletePosterImage: bindActionCreators(actions.deletePosterImage, dispatch),
   deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
+  deleteRoundLogo: bindActionCreators(actions.deleteRoundLogo, dispatch),
   uploadPosterImage: bindActionCreators(actions.uploadPosterImage, dispatch),
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch),
+  uploadRoundLogo: bindActionCreators(actions.uploadRoundLogo, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
@@ -64,6 +66,7 @@ export default class EditSeries extends Component {
     defaultLocale: PropTypes.string,
     deletePosterImage: PropTypes.func.isRequired,
     deleteProfileImage: PropTypes.func.isRequired,
+    deleteRoundLogo: PropTypes.func.isRequired,
     dirty: PropTypes.bool.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
@@ -82,6 +85,7 @@ export default class EditSeries extends Component {
     t: PropTypes.func.isRequired,
     uploadPosterImage: PropTypes.func.isRequired,
     uploadProfileImage: PropTypes.func.isRequired,
+    uploadRoundLogo: PropTypes.func.isRequired,
     onBeforeChangeTab: PropTypes.func.isRequired,
     onChangeTab: PropTypes.func.isRequired
   };
@@ -164,7 +168,7 @@ export default class EditSeries extends Component {
   static styles = {
     selectInput: {
       paddingTop: 0,
-      width: '180px'
+      width: 180
     },
     background: {
       backgroundColor: colors.lightGray4
@@ -174,21 +178,27 @@ export default class EditSeries extends Component {
     },
     row: {
       display: 'flex',
-      flexDirection: 'row'
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginBottom: -20
     },
     backgroundRoot: {
       backgroundColor: colors.lightGray4,
-      paddingBottom: '50px'
+      paddingBottom: 50
     },
-    paddingLeftUploadImage: {
-      paddingLeft: '24px'
+    paddingUploadImage: {
+      paddingBottom: 20,
+      paddingRight: 24
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { _activeLocale, errors, closeModal, currentModal, supportedLocales, defaultLocale,
-      currentSeriesEntry, location, handleSubmit, deletePosterImage, deleteProfileImage, location: { query: { tab } } } = this.props;
+    const {
+      _activeLocale, closeModal, currentModal, currentSeriesEntry, defaultLocale,
+      deletePosterImage, deleteProfileImage, deleteRoundLogo, errors, handleSubmit,
+      location, location: { query: { tab } }, supportedLocales
+    } = this.props;
 
     return (
       <SideMenu>
@@ -239,7 +249,7 @@ export default class EditSeries extends Component {
                     type='multiline'/>
                 <FormSubtitle>Images</FormSubtitle>
                 <div style={[ styles.paddingTop, styles.row ]}>
-                  <div>
+                  <div style={styles.paddingUploadImage}>
                     <Label text='Poster image' />
                     <Dropzone
                       accept='image/*'
@@ -254,7 +264,7 @@ export default class EditSeries extends Component {
                       onChange={({ callback, file }) => { this.props.uploadPosterImage({ locale: _activeLocale, seriesEntryId: this.props.params.seriesEntryId, image: file, callback }); }}
                       onDelete={currentSeriesEntry.getIn([ 'posterImage', _activeLocale, 'url' ]) ? () => { deletePosterImage({ locale: _activeLocale, mediumId: currentSeriesEntry.get('id') }); } : null}/>
                   </div>
-                  <div style={styles.paddingLeftUploadImage}>
+                  <div style={styles.paddingUploadImage}>
                     <Label text='Profile image' />
                     <Dropzone
                       accept='image/*'
@@ -268,6 +278,20 @@ export default class EditSeries extends Component {
                       type={PROFILE_IMAGE}
                       onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, seriesEntryId: this.props.params.seriesEntryId, image: file, callback }); }}
                       onDelete={currentSeriesEntry.getIn([ 'profileImage', _activeLocale, 'url' ]) ? () => { deleteProfileImage({ locale: _activeLocale, mediumId: currentSeriesEntry.get('id') }); } : null}/>
+                  </div>
+                  <div style={styles.paddingUploadImage}>
+                    <Label text='Circle graphic' />
+                    <Dropzone
+                      downloadUrl={currentSeriesEntry.getIn([ 'roundLogo', _activeLocale, 'url' ]) ||
+                        currentSeriesEntry.getIn([ 'roundLogo', defaultLocale, 'url' ])}
+                      imageUrl={currentSeriesEntry.getIn([ 'roundLogo', _activeLocale ]) &&
+                        `${currentSeriesEntry.getIn([ 'roundLogo', _activeLocale, 'url' ])}?height=203&width=203` ||
+                        currentSeriesEntry.getIn([ 'roundLogo', defaultLocale ]) &&
+                        `${currentSeriesEntry.getIn([ 'roundLogo', defaultLocale, 'url' ])}?height=203&width=203`}
+                      showOnlyUploadedImage
+                      type={ROUND_LOGO}
+                      onChange={({ callback, file }) => { this.props.uploadRoundLogo({ locale: _activeLocale, seriesEntryId: this.props.params.seriesEntryId, image: file, callback }); }}
+                      onDelete={currentSeriesEntry.getIn([ 'roundLogo', _activeLocale, 'url' ]) ? () => { deleteRoundLogo({ locale: _activeLocale, mediumId: currentSeriesEntry.get('id') }); } : null}/>
                   </div>
                 </div>
               </Section>

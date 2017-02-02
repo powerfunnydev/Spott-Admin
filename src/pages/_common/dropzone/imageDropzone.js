@@ -7,7 +7,7 @@ import { colors, makeTextStyle, fontWeights } from '../styles';
 import ProgressBar from '../components/progressBar';
 import Dropdown, { styles as dropdownStyles } from '../components/actionDropdown';
 import { downloadFile } from '../../../utils';
-import { aspectRatios } from '../../../constants/imageTypes';
+import { aspectRatios, ROUND_LOGO } from '../../../constants/imageTypes';
 
 const uploadIcon = require('../../../assets/images/upload.svg');
 const completedIcon = require('../../../assets/images/completed.svg');
@@ -173,6 +173,9 @@ export default class ImageDropzone extends Component {
       right: 0,
       margin: 'auto'
     },
+    roundImageClip: {
+      clipPath: 'circle(50% at 50% 50%)'
+    },
     progressBar: {
       width: '100%'
     },
@@ -231,12 +234,12 @@ export default class ImageDropzone extends Component {
                     !noPreview && this.state.showImage && this.state.file && this.state.file.type.startsWith('image') &&
                     (!showOnlyUploadedImage && <img src={this.state.file.preview} style={styles.chosenImage}/> ||
                     // If we don't want to display the local image, we wait for the url of the server.
-                    showOnlyUploadedImage && imageUrlOrPreview && <img src={imageUrlOrPreview} style={styles.chosenImage}/> ||
+                    showOnlyUploadedImage && imageUrlOrPreview && <img src={imageUrlOrPreview} style={[ styles.chosenImage, type === ROUND_LOGO && styles.roundImageClip ]}/> ||
                     <div style={styles.completed}>Oops, no image to show...</div>) }
                 </div>) ||
             // When there was already an image uploaded
             ((!noPreview && imageUrlOrPreview) &&
-              <img src={imageUrlOrPreview} style={styles.chosenImage}/>) ||
+              <img src={imageUrlOrPreview} style={[ styles.chosenImage, type === ROUND_LOGO && styles.roundImageClip ]}/>) ||
             // Idle state, user has to chose a image.
             <img src={uploadIcon} style={styles.uploadImage}/>}
           </div>

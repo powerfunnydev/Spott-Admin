@@ -45,6 +45,10 @@ export const UPLOAD_PROFILE_IMAGE_START = 'SERIES/UPLOAD_PROFILE_IMAGE_START';
 export const UPLOAD_PROFILE_IMAGE_SUCCESS = 'SERIES/UPLOAD_PROFILE_IMAGE_SUCCESS';
 export const UPLOAD_PROFILE_IMAGE_ERROR = 'SERIES/UPLOAD_PROFILE_IMAGE_ERROR';
 
+export const UPLOAD_ROUND_LOGO_START = 'SERIES/UPLOAD_ROUND_LOGO_START';
+export const UPLOAD_ROUND_LOGO_SUCCESS = 'SERIES/UPLOAD_ROUND_LOGO_SUCCESS';
+export const UPLOAD_ROUND_LOGO_ERROR = 'SERIES/UPLOAD_ROUND_LOGO_ERROR';
+
 export const fetchSeriesEntryEpisodes = makeApiActionCreator(api.fetchSeriesEntryEpisodes, SERIES_ENTRY_EPISODES_FETCH_START, SERIES_ENTRY_EPISODES_FETCH_SUCCESS, SERIES_ENTRY_EPISODES_FETCH_ERROR);
 export const fetchSeriesEntrySeasons = makeApiActionCreator(api.fetchSeriesEntrySeasons, SERIES_ENTRY_SEASONS_FETCH_START, SERIES_ENTRY_SEASONS_FETCH_SUCCESS, SERIES_ENTRY_SEASONS_FETCH_ERROR);
 export const fetchSeriesEntries = makeApiActionCreator(api.fetchSeriesEntries, SERIES_ENTRIES_FETCH_START, SERIES_ENTRIES_FETCH_SUCCESS, SERIES_ENTRIES_FETCH_ERROR);
@@ -56,3 +60,4 @@ export const searchSeriesEntries = makeApiActionCreator(api.searchSeriesEntries,
 export const searchSeasons = makeApiActionCreator(api.searchSeasons, SEASONS_SEARCH_START, SEASONS_SEARCH_SUCCESS, SEASONS_SEARCH_ERROR);
 export const uploadPosterImage = makeApiActionCreator(api.uploadPosterImage, UPLOAD_POSTER_IMAGE_START, UPLOAD_POSTER_IMAGE_SUCCESS, UPLOAD_POSTER_IMAGE_ERROR);
 export const uploadProfileImage = makeApiActionCreator(api.uploadProfileImage, UPLOAD_PROFILE_IMAGE_START, UPLOAD_PROFILE_IMAGE_SUCCESS, UPLOAD_PROFILE_IMAGE_ERROR);
+export const uploadRoundLogo = makeApiActionCreator(api.uploadRoundLogo, UPLOAD_ROUND_LOGO_START, UPLOAD_ROUND_LOGO_SUCCESS, UPLOAD_ROUND_LOGO_ERROR);

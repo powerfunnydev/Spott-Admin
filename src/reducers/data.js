@@ -344,6 +344,8 @@ export default (state = fromJS({
 
     case commercialActions.UPLOAD_PROFILE_IMAGE_SUCCESS:
       return fetchSuccess(state, [ 'entities', 'media', action.commercialId ], action.data);
+    case commercialActions.UPLOAD_ROUND_LOGO_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.commercialId ], action.data);
 
     case commercialActions.COMMERCIAL_FETCH_START:
       return fetchStart(state, [ 'entities', 'media', action.commercialId ]);
@@ -468,6 +470,8 @@ export default (state = fromJS({
     case moviesActions.UPLOAD_POSTER_IMAGE_SUCCESS:
       return fetchSuccess(state, [ 'entities', 'media', action.movieId ], action.data);
     case moviesActions.UPLOAD_PROFILE_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.movieId ], action.data);
+    case moviesActions.UPLOAD_ROUND_LOGO_SUCCESS:
       return fetchSuccess(state, [ 'entities', 'media', action.movieId ], action.data);
 
     case moviesActions.MOVIE_FETCH_START:
@@ -677,6 +681,8 @@ export default (state = fromJS({
     case seriesActions.UPLOAD_POSTER_IMAGE_SUCCESS:
       return fetchSuccess(state, [ 'entities', 'media', action.seriesEntryId ], action.data);
     case seriesActions.UPLOAD_PROFILE_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'media', action.seriesEntryId ], action.data);
+    case seriesActions.UPLOAD_ROUND_LOGO_SUCCESS:
       return fetchSuccess(state, [ 'entities', 'media', action.seriesEntryId ], action.data);
 
     case seriesActions.SERIES_ENTRY_FETCH_START:
