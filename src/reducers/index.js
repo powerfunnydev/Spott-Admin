@@ -33,6 +33,7 @@ import personsList from '../pages/content/persons/list/reducer';
 import productsCreate from '../pages/content/products/create/reducer';
 import productsList from '../pages/content/products/list/reducer';
 import productsEdit from '../pages/content/products/edit/reducer';
+import pushNotificationsList from '../pages/content/pushNotifications/list/reducer';
 import relatedVideoPersist from '../pages/content/_relatedVideo/persist/reducer';
 import reporting from '../pages/reporting/reducer';
 import seasonsCreate from '../pages/content/seasons/create/reducer';
@@ -117,6 +118,9 @@ export default combineReducers({
     persons: combineReducers({
       edit: personsEdit,
       list: personsList
+    }),
+    pushNotifications: combineReducers({
+      list: pushNotificationsList
     }),
     shops: combineReducers({
       edit: shopsEdit,

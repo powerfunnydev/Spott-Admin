@@ -278,6 +278,27 @@ export function transformListMedium ({ number, publishStatus, auditInfo, title, 
   };
 }
 
+/**
+ *  Light version of a push notification. No locales includes.
+ */
+export function transformPushNotification ({ uuid: id, type, publishStatus, pushWindowStart, pushWindowSizeInMinutes, pushedOn, action, payload, auditInfo }) {
+  return {
+    id,
+    type,
+    publishStatus,
+    pushWindowStart,
+    pushWindowSizeInMinutes,
+    pushedOn,
+    actionType: action && action.type,
+    payloadType: payload && payload.type,
+    payloadData: payload && payload.data,
+    createdBy: auditInfo && auditInfo.createdBy,
+    createdOn: auditInfo && auditInfo.createdOn,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
+  };
+}
+
 export function transformAvailability ({ country, endTimeStamp, startTimeStamp, uuid: id, videoStatus }) {
   return {
     availabilityFrom: startTimeStamp && new Date(startTimeStamp),

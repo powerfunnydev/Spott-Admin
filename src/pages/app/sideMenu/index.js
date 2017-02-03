@@ -72,6 +72,10 @@ class VerticalSideMenu extends Component {
     return this.checkUrl([ '/content/persons', '/content/characters' ]);
   }
 
+  isPushNotifications () {
+    return this.checkUrl([ '/content/push-notifications' ]);
+  }
+
   onSignInClick (e) {
     e.preventDefault();
     this.props.routerPushWithReturnTo('/login');
@@ -270,6 +274,13 @@ class VerticalSideMenu extends Component {
                         Shops
                       </Link>
                   </div>}
+            </div>
+          }
+          {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
+            <div>
+              <Link activeStyle={styles.sectionActive} key='push-notifications' onlyActiveOnIndex style={styles.section} to='/content/push-notifications'>
+                <div style={styles.sectionTitle}>PUSH NOTIFICATIONS</div>
+              </Link>
             </div>
           }
           {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&

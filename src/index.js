@@ -61,6 +61,7 @@ import ProductsCreate from './pages/content/products/create';
 import ProductsEdit from './pages/content/products/edit';
 import ProductsList from './pages/content/products/list';
 import ProductsRead from './pages/content/products/read';
+import PushNotificationsList from './pages/content/pushNotifications/list';
 import ResetPassword from './pages/resetPassword';
 import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
@@ -260,6 +261,7 @@ function getRoutes ({ dispatch, getState }) {
           <Route component={ProductsRead} path='read/:productId'/>
           <Route component={ProductsEdit} path='edit/:productId'/>
         </Route>
+        <Route component={PushNotificationsList} path='push-notifications' />
         <Route component={ShopsList} path='shops'>
           <Route component={ShopsCreate} path ='create'/>
         </Route>
