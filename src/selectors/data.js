@@ -22,6 +22,7 @@ export const listMediumCategoriesEntitiesSelector = (state) => state.getIn([ 'da
 export const listPersonsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listPersons' ]);
 export const listProductsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listProducts' ]);
 export const listProductCategoriesEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listProductCategories' ]);
+export const listPushNotificationsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'pushNotifications' ]);
 export const listShopsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listShops' ]);
 export const listTagsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'listTags' ]);
 export const mediaEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'media' ]);
@@ -47,6 +48,7 @@ export const filterHasMediaRelationsSelector = (state) => state.getIn([ 'data', 
 export const filterHasMediumCategoriesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasMediumCategories' ]);
 export const filterHasMoviesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasMovies' ]);
 export const filterHasPersonsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasPersons' ]);
+export const filterHasPushNotificationsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasPushNotifications' ]);
 export const filterHasShopsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasShops' ]);
 export const filterHasProductsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasProducts' ]);
 export const filterHasProductCategoriesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasProductCategories' ]);
