@@ -1,14 +1,17 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { Field } from 'redux-form/immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import moment from 'moment';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
-import { Root, Container } from '../../../_common/styles';
-import { DropdownCel, Tile, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
+import SelectionDropdown from '../../../_common/components/selectionDropdown';
+import { Root, Container, filterStyles } from '../../../_common/styles';
+import { DropdownCel, Tile, UtilsBar, getInformationFromQuery, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
 import Line from '../../../_common/components/line';
+import pushNotificationTypes from '../../../../constants/pushNotificationTypes';
 import Dropdown, { styles as dropdownStyles } from '../../../_common/components/actionDropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { slowdown } from '../../../../utils';
@@ -16,10 +19,13 @@ import { confirmation } from '../../../_common/askConfirmation';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 import { MOVIE, EPISODE, COMMERCIAL, SERIE, SEASON } from '../../../../constants/mediumTypes'; // change-required
+import { FilterContent } from '../../../_common/components/filterDropdown';
 
 const numberOfRows = 25;
+export const prefix = 'pushNotifications';
+export const filterArray = [ 'affiliate', 'type', 'used' ];
 
-@tableDecorator()
+@tableDecorator(prefix)
 @connect(selector, (dispatch) => ({
   deletePushNotification: bindActionCreators(actions.deletePushNotification, dispatch),
   load: bindActionCreators(actions.load, dispatch),
@@ -46,6 +52,7 @@ export default class PushNotifications extends Component {
     selectCheckbox: PropTypes.func.isRequired,
     totalResultCount: PropTypes.number.isRequired,
     onChangeDisplay: PropTypes.func.isRequired,
+    onChangeFilter: PropTypes.func.isRequired,
     onChangePage: PropTypes.func.isRequired,
     onChangeSearchString: PropTypes.func.isRequired,
     onSortField: PropTypes.func.isRequired
@@ -63,7 +70,7 @@ export default class PushNotifications extends Component {
 
   async componentWillReceiveProps (nextProps) {
     // routeUrl is the url that corresponds with this route.
-    const routeUrl = '/content/media';
+    const routeUrl = '/content/push-notifications';
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
     const nextPathname = nextProps.location.pathname;
@@ -71,8 +78,11 @@ export default class PushNotifications extends Component {
     // If we opened a modal, like a create modal and we have created a entity, we come back
     // to the previous page. If this page is the same as routeUrl, we do a load.
     // If the query changed (e.g. searchString changed), we do also a load.
-    if ((pathname !== routeUrl && nextPathname === routeUrl) || isQueryChanged(query, nextQuery)) {
-      this.slowSearch(nextQuery);
+
+    if ((pathname !== routeUrl && nextPathname === routeUrl) || isQueryChanged(query, nextQuery, prefix, filterArray)) {
+      // this.slowSearch(nextQuery);
+      console.log('getInformationFromQuery(nextQuery, prefix, filterArray)', getInformationFromQuery(nextQuery, prefix, filterArray));
+      this.slowSearch(getInformationFromQuery(nextQuery, prefix, filterArray));
     }
   }
 
@@ -135,8 +145,9 @@ export default class PushNotifications extends Component {
   }
 
   render () {
-    const { pushNotifications, children, isSelected, location: { query, query: { display, page, searchString, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString } = this.props;
+    const { pushNotifications, children, isSelected, location: { query, query: { display, pushNotificationsPage, searchString, sortField, sortDirection } },
+      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString, onChangeFilter } = this.props;
+    const page = pushNotificationsPage;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
       <SideMenu>
@@ -147,6 +158,24 @@ export default class PushNotifications extends Component {
             <Container>
               <UtilsBar
                 display={display}
+                filterContent={
+                  <FilterContent
+                    form='pushNotificationList'
+                    initialValues={{ type: null }}
+                    style={filterStyles.filterContent}
+                    onApplyFilter={onChangeFilter}>
+                    <div style={[ filterStyles.row, filterStyles.firstRow ]}>
+                      <div style={filterStyles.title}>Type</div>
+                      <Field
+                        component={SelectionDropdown}
+                        getItemText={(key) => pushNotificationTypes[key]}
+                        name='type'
+                        options={Object.keys(pushNotificationTypes)}
+                        placeholder='Type'
+                        style={filterStyles.fullWidth}/>
+                    </div>
+                  </FilterContent>
+                }
                 isLoading={pushNotifications.get('_status') !== 'loaded'}
                 numberSelected={numberSelected}
                 searchString={searchString}

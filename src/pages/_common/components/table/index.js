@@ -137,6 +137,7 @@ export const isQueryChanged = (query, nextQuery, prefix, filterArray) => {
   const prefixSortField = concatCamelCase('sortField', prefix);
   if (filterArray) {
     // filterArray contains all the filters that can trigger a rerender.
+    console.log('filterArray', filterArray);
     for (const filter of filterArray) {
       const prefixFilter = concatCamelCase(filter.concat('Filter'), prefix);
       if (query[prefixFilter] !== nextQuery[prefixFilter]) { return true; }

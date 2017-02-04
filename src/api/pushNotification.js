@@ -3,13 +3,16 @@
 import { del, get } from './request';
 import { transformPushNotification } from './transformers';
 
-export async function fetchPushNotifications (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+export async function fetchPushNotifications (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField, type = '' }) {
   let url = `${baseUrl}/v004/push/messages?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${searchString}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  if (type) {
+    url = url.concat(`&type=${type}`);
   }
   const { body } = await get(authenticationToken, locale, url);
   // There is also usable data in body (not only in data field).
