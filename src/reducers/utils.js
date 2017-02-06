@@ -26,6 +26,7 @@ export const serializeFilterHasMediumCategories = serialize;
 export const serializeFilterHasMovies = serialize;
 export const serializeFilterHasPersons = serialize;
 export const serializeFilterHasProductCategories = serialize;
+export const serializeFilterHasPushNotifications = serialize;
 export const serializeFilterHasSeasons = serialize;
 export const serializeFilterHasSeriesEntries = serialize;
 export const serializeFilterHasUsers = serialize;
