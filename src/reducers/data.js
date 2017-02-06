@@ -350,8 +350,14 @@ export default (state = fromJS({
     case commercialActions.COMMERCIAL_FETCH_START:
       return fetchStart(state, [ 'entities', 'media', action.commercialId ]);
     case commercialActions.COMMERCIAL_FETCH_SUCCESS: {
-      let newState = action.data.brand && fetchSuccess(state, [ 'entities', 'listBrands', action.data.brand.id ], action.data.brand) || state;
-      newState = action.data.contentProducers && mergeListOfEntities(newState, [ 'entities', 'contentProducers' ], action.data.contentProducers) || newState;
+      const { brand, bannerActor, bannerBrand, bannerCharacter, bannerMedium, contentProducers } = action.data;
+      console.warn('ACTION', action.data);
+      let newState = brand && fetchSuccess(state, [ 'entities', 'listBrands', brand.id ], brand) || state;
+      newState = contentProducers && mergeListOfEntities(newState, [ 'entities', 'contentProducers' ], contentProducers) || newState;
+      newState = bannerActor && fetchSuccess(state, [ 'entities', 'listPersons', bannerActor.id ], bannerActor) || newState;
+      newState = bannerBrand && fetchSuccess(newState, [ 'entities', 'listBrands', bannerBrand.id ], bannerBrand) || newState;
+      newState = bannerCharacter && fetchSuccess(newState, [ 'entities', 'listCharacters', bannerCharacter.id ], bannerCharacter) || newState;
+      newState = bannerMedium && fetchSuccess(newState, [ 'entities', 'listMedia', bannerMedium.id ], bannerMedium) || newState;
       return fetchSuccess(newState, [ 'entities', 'media', action.commercialId ], action.data);
     }
     case commercialActions.COMMERCIAL_FETCH_ERROR:

@@ -1,13 +1,20 @@
 import { ACTIVE, INACTIVE, ADMIN, CONTENT_MANAGER, CONTENT_PRODUCER, BROADCASTER } from '../constants/userRoles';
 
+export function transformImage (image) {
+  if (image) {
+    const { dimension, url, uuid: id } = image;
+    return { id, dimension, url };
+  }
+}
+
 export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover }) {
   return {
     createdOn: auditInfo && auditInfo.createdOn,
     id: uuid,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
-    logo: logo && { id: logo.uuid, url: logo.url },
-    profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
+    logo: transformImage(logo),
+    profileImage: transformImage(profileCover),
     name
   };
 }
@@ -22,7 +29,7 @@ export function transformListProduct ({ affiliate, auditInfo, brand, fullName, i
     id: uuid,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
-    logo: logo && { id: logo.uuid, url: logo.url },
+    logo: transformImage(logo),
     noLongerAvailable,
     publishStatus,
     relevance,
@@ -80,7 +87,7 @@ export function transformContentProducer ({ uuid, name, auditInfo, logo }) {
     id: uuid,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
-    logo: logo && { id: logo.uuid, url: logo.url },
+    logo: transformImage(logo),
     name
   };
 }
@@ -106,8 +113,8 @@ export function transformBrand ({ uuid, publishStatus, defaultLocale, localeData
       brand.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
       brand.description[locale] = description;
       brand.name[locale] = name;
-      brand.logo[locale] = logo && { id: logo.uuid, url: logo.url };
-      brand.profileImage[locale] = profileCover && { id: profileCover.uuid, url: profileCover.url };
+      brand.logo[locale] = transformImage(logo);
+      brand.profileImage[locale] = transformImage(profileCover);
       brand.tagLine[locale] = tagLine;
       brand.locales.push(locale);
     }
@@ -133,7 +140,7 @@ export function transformShop ({ defaultLocale, localeData, publishStatus, unive
       shop.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
       shop.name[locale] = name;
       shop.url[locale] = url;
-      shop.logo[locale] = logo && { id: logo.uuid, url: logo.url };
+      shop.logo[locale] = transformImage(logo);
       shop.locales.push(locale);
     }
   }
@@ -169,9 +176,9 @@ export function transformProduct ({ affiliate, auditInfo, brand, categories, def
       product.description[locale] = description;
       product.shortName[locale] = shortName;
       product.fullName[locale] = fullName;
-      product.logo[locale] = images && images[0] && { id: images[0].uuid, url: images[0].url };
-      product.images[locale] = images && images.map((image) => ({ id: image.uuid, url: image.url }));
-      product.profileImage[locale] = profileCover && { id: profileCover.uuid, url: profileCover.url };
+      product.logo[locale] = images && transformImage(images[0]);
+      product.images[locale] = images && images.map(transformImage);
+      product.profileImage[locale] = transformImage(profileCover);
       product.locales.push(locale);
     }
   }
@@ -185,7 +192,7 @@ export function transformListShop ({ auditInfo, uuid, logo, name, profileCover,
     id: uuid,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
-    logo: logo && { id: logo.uuid, url: logo.url },
+    logo: transformImage(logo),
     name,
     publishStatus,
     universalBasketEnabled
@@ -214,7 +221,7 @@ export function transformBrandSubscription ({
   return {
     brand: {
       name,
-      logo: logo && { id: logo.uuid, url: logo.url },
+      logo: transformImage(logo),
       id: brandId
     },
     count
@@ -229,7 +236,7 @@ export function transformCharacterSubscription ({
   return {
     character: {
       name,
-      portraitImage: portraitImage && { id: portraitImage.uuid, url: portraitImage.url },
+      portraitImage: transformImage(portraitImage),
       id: characterId
     },
     count,
@@ -270,9 +277,9 @@ export function transformListMedium ({ number, publishStatus, auditInfo, title, 
     publishStatus,
     season: season && transformListMedium(season),
     serie: serie && transformListMedium(serie),
-    posterImage: posterImage && { id: posterImage.uuid, url: posterImage. url },
-    profileImage: profileImage && { id: profileImage.uuid, url: profileImage. url },
-    roundLogo: roundLogo && { id: roundLogo.uuid, url: roundLogo. url },
+    posterImage: transformImage(posterImage),
+    profileImage: transformImage(profileImage),
+    roundLogo: transformImage(roundLogo),
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
   };
@@ -317,8 +324,8 @@ export function transformPerson ({
     gender,
     locales: [],
     placeOfBirth,
-    profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
-    portraitImage: portraitImage && { id: portraitImage.uuid, url: portraitImage.url },
+    profileImage: transformImage(profileCover),
+    portraitImage: transformImage(portraitImage),
     defaultLocale,
     externalReference,
     externalReferenceSource,
@@ -346,8 +353,8 @@ export function transformCharacter ({
     description: {},
     name: {},
     locales: [],
-    profileImage: profileCover && { id: profileCover.uuid, url: profileCover.url },
-    portraitImage: portraitImage && { id: portraitImage.uuid, url: portraitImage.url },
+    profileImage: transformImage(profileCover),
+    portraitImage: transformImage(portraitImage),
     defaultLocale,
     externalReference,
     externalReferenceSource,
@@ -414,9 +421,9 @@ export function transformMedium ({ availabilities, brand, broadcasters, characte
       medium.hasTitle[locale] = hasTitle;
       medium.title[locale] = title;
       medium.subTitle[locale] = subTitle;
-      medium.profileImage[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
-      medium.posterImage[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
-      medium.roundLogo[locale] = roundLogo ? { id: roundLogo.uuid, url: roundLogo.url } : null;
+      medium.profileImage[locale] = transformImage(profileCover);
+      medium.posterImage[locale] = transformImage(posterImage);
+      medium.roundLogo[locale] = transformImage(roundLogo);
       medium.locales.push(locale);
     }
   }
@@ -430,7 +437,7 @@ export function transformMediumInfo ({
 }) {
   return {
     medium: {
-      posterImage: posterImage && { id: posterImage.uuid, url: posterImage.url },
+      posterImage: transformImage(posterImage),
       title,
       id: mediumId
     },
@@ -445,7 +452,7 @@ export function transformProductView ({
   return {
     product: {
       id: productId,
-      image: image && { id: image.uuid, url: image.url },
+      image: transformImage(image),
       shortName
     },
     count
@@ -520,9 +527,9 @@ export function transformSeason ({ availabilities, characters, defaultLocale,
     season.hasTitle[locale] = hasTitle;
     season.startYear[locale] = startYear;
     season.title[locale] = title;
-    season.keyVisual[locale] = profileCover ? { id: profileCover.uuid, url: profileCover.url } : null;
+    season.keyVisual[locale] = transformImage(profileCover);
+    season.poster[locale] = transformImage(posterImage);
     season.locales.push(locale);
-    season.poster[locale] = posterImage ? { id: posterImage.uuid, url: posterImage.url } : null;
   }
   return season;
 }
@@ -535,25 +542,40 @@ export const transformMovie = transformMedium;
 
 export function transformCommercial (data) {
   const commercial = transformMedium(data);
-  commercial.hasBanner = {};
+  commercial.hasBanner = data.hasBanner;
   commercial.bannerBarColor = {};
+  commercial.bannerExternalLink = {};
+  commercial.bannerImage = {};
   commercial.bannerLogo = {};
   commercial.bannerText = {};
   commercial.bannerTextColor = {};
   commercial.bannerUrl = {};
 
-  const { localeData } = data;
-  for (const { banner, locale } of localeData) {
+  const { bannerLinkType, bannerActor, bannerBrand, bannerCharacter, bannerMedium, localeData } = data;
+
+  commercial.bannerActor = bannerActor && transformListPerson(bannerActor);
+  commercial.bannerBrand = bannerBrand && transformListBrand(bannerBrand);
+  commercial.bannerCharacter = bannerCharacter && transformListCharacter(bannerCharacter);
+  commercial.bannerMedium = bannerMedium && transformListMedium(bannerMedium);
+
+  if (bannerLinkType === 'EXTERNAL') {
+    commercial.bannerSystemLinkType = 'EXTERNAL';
+  } else {
+    commercial.bannerSystemLinkType = 'INTERNAL';
+    commercial.bannerInternalLinkType = bannerLinkType;
+  }
+
+  for (const { banner, bannerExternalLink, bannerImage, locale } of localeData) {
+    commercial.bannerImage[locale] = transformImage(bannerImage);
+    commercial.bannerExternalLink[locale] = bannerExternalLink;
     if (banner) {
       const { barColor, logo, text, textColor, url } = banner;
-      commercial.hasBanner[locale] = true;
       commercial.bannerBarColor[locale] = barColor;
       commercial.bannerLogo[locale] = logo ? { id: logo.uuid, url: logo.url } : null;
       commercial.bannerText[locale] = text;
       commercial.bannerTextColor[locale] = textColor;
       commercial.bannerUrl[locale] = url;
     } else {
-      commercial.hasBanner[locale] = false;
       commercial.bannerBarColor[locale] = '#000000';
       commercial.bannerTextColor[locale] = '#000000';
     }
@@ -574,7 +596,7 @@ export function transformBroadcastChannel ({ name, auditInfo, uuid: id, logo, br
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     broadcaster: broadcaster && { id: broadcaster.uuid },
     id,
-    logo: logo && { id: logo.uuid, url: logo.url },
+    logo: transformImage(logo),
     name
   };
 }
@@ -626,8 +648,8 @@ export function transformUser ({ profileImage, avatar, languages, dateOfBirth, d
     ...obj,
     broadcasters,
     contentProducers,
-    avatar: avatar && { id: avatar.uuid, url: avatar.url },
-    profileImage: profileImage && { id: profileImage.uuid, url: profileImage.url },
+    avatar: transformImage(avatar),
+    profileImage: transformImage(profileImage),
     userStatus: disabled && INACTIVE || ACTIVE,
     languages,
     disabledReason,
@@ -654,7 +676,7 @@ function transformScene ({ hidden, image, offsetInSeconds, status, uuid: id }) {
   return {
     hidden,
     id,
-    image: image && { id: image.uuid, url: image.url },
+    image: transformImage(image),
     offsetInSeconds
   };
 }
@@ -668,21 +690,14 @@ export function transformVideo ({ audioFingerprints, description,
     externalReference,
     externalReferenceSource,
     id,
-    medium: { profileImage: profileImage && { id: profileImage.uuid, url: profileImage.url } },
+    medium: {
+      profileImage: transformImage(profileImage)
+    },
     scenes: scenes && scenes.map(transformScene),
     totalDurationInSeconds,
     videoFilename
   };
 }
-
-export function transformCharacterFaceImage ({ image, uuid: id }) {
-  return {
-    id,
-    image: { url: image && image.url }
-  };
-}
-
-export const transformPersonFaceImage = transformCharacterFaceImage;
 
 export function transformListCollection ({
   auditInfo, linkType, linkedBrand, linkedCharacter, localeData, medium,

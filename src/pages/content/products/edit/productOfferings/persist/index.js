@@ -159,8 +159,8 @@ export default class ProductOfferingModal extends Component {
             { label: 'Available', value: false },
             { label: 'Unavailable', value: true }
           ]}
-          required
-          style={{ display: 'flex' }}/>
+          optionsStyle={{ display: 'flex' }}
+          required/>
       </PersistModal>
     );
   }

@@ -26,6 +26,7 @@ export default class ImageDropzone extends Component {
   static propTypes = {
     accept: PropTypes.string, // Accepts only the given formats.
     downloadUrl: PropTypes.string, // Url to download the image. this is different from the imageUrl, cause the downloadUrl contains a image with higher resolution.
+    height: PropTypes.number,
     imageUrl: PropTypes.string, // Url retrieved from server
     multiple: PropTypes.bool, // Possability to upload multiple images
     noPreview: PropTypes.bool, // Never displays an image
@@ -127,7 +128,6 @@ export default class ImageDropzone extends Component {
       justifyContent: 'center',
       position: 'relative',
       width: '100%',
-      height: '200px',
       alignItems: 'center',
       border: `1px dashed ${colors.lightGray2}`,
       borderRadius: '2px',
@@ -192,7 +192,7 @@ export default class ImageDropzone extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { accept, type, imageUrl, downloadUrl, onDelete, style, onChange, noPreview, multiple, showOnlyUploadedImage, showNoImage } = this.props;
+    const { accept, height = 200, type, imageUrl, downloadUrl, onDelete, style, onChange, noPreview, multiple, showOnlyUploadedImage, showNoImage } = this.props;
     // If we have delete an image, we don't want to display the imageUrl or downloadUrl,
     // cause it doesn't exist anymore.
     // If we didn't delete an image, but there is an image, show that image.
@@ -206,7 +206,7 @@ export default class ImageDropzone extends Component {
           disableClick={Boolean(!noPreview && imageUrlOrPreview)}
           multiple={multiple}
           ref={(x) => { this.dropzone = x; }}
-          style={mergeStyles([ styles.dropzone, onChange && styles.pointer, { width: 200 * (aspectRatios[type] || 1) }, style ])}
+          style={mergeStyles([ styles.dropzone, onChange && styles.pointer, { height, width: height * (aspectRatios[type] || 1) }, style ])}
           onDrop={this.onDrop} >
           <div onClick={this.onClick}>
             {downloadUrlOrPreview &&

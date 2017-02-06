@@ -4,11 +4,25 @@ import { searchContentProducers as dataSearchContentProducers } from '../../../.
 import { searchBrands as dataSearchBrands } from '../../../../actions/brand';
 import { searchCharacters as dataSearchCharacters, searchMediumCharacters as dataSearchMediumCharacters } from '../../../../actions/character';
 import { searchProducts as dataSearchProducts } from '../../../../actions/product';
+import { searchMedia as dataSearchMedia } from '../../../../actions/media';
+import { searchPersons as dataSearchPersons } from '../../../../actions/person';
 
-export { uploadProfileImage, uploadRoundLogo } from '../../../../actions/commercial';
-export { deleteProfileImage, deletePosterImage, deleteRoundLogo } from '../../../../actions/media';
+export { deleteBannerImage, uploadBannerImage, uploadProfileImage, uploadRoundLogo } from '../../../../actions/commercial';
+export { deleteProfileImage, deleteRoundLogo } from '../../../../actions/media';
 
 export { openModal, closeModal } from '../../../../actions/global';
+
+export const BANNER_LINK_MEDIA_SEARCH_START = 'COMMERCIAL_EDIT/BANNER_LINK_MEDIA_SEARCH_START';
+export const BANNER_LINK_MEDIA_SEARCH_ERROR = 'COMMERCIAL_EDIT/BANNER_LINK_MEDIA_SEARCH_ERROR';
+
+export const BANNER_LINK_BRANDS_SEARCH_START = 'COMMERCIAL_EDIT/BANNER_LINK_BRANDS_SEARCH_START';
+export const BANNER_LINK_BRANDS_SEARCH_ERROR = 'COMMERCIAL_EDIT/BANNER_LINK_BRANDS_SEARCH_ERROR';
+
+export const BANNER_LINK_CHARACTERS_SEARCH_START = 'COMMERCIAL_EDIT/BANNER_LINK_CHARACTERS_SEARCH_START';
+export const BANNER_LINK_CHARACTERS_SEARCH_ERROR = 'COMMERCIAL_EDIT/BANNER_LINK_CHARACTERS_SEARCH_ERROR';
+
+export const BANNER_LINK_PERSONS_SEARCH_START = 'COMMERCIAL_EDIT/BANNER_LINK_PERSONS_SEARCH_START';
+export const BANNER_LINK_PERSONS_SEARCH_ERROR = 'COMMERCIAL_EDIT/BANNER_LINK_PERSONS_SEARCH_ERROR';
 
 export const COLLECTIONS_BRANDS_SEARCH_START = 'COMMERCIAL_EDIT/COLLECTIONS_BRANDS_SEARCH_START';
 export const COLLECTIONS_BRANDS_SEARCH_ERROR = 'COMMERCIAL_EDIT/COLLECTIONS_BRANDS_SEARCH_ERROR';
@@ -45,6 +59,50 @@ export function loadCommercial (commercialId) {
       return await dispatch(dataFetchCommercial({ commercialId }));
     } catch (error) {
       dispatch({ error, type: COMMERCIAL_FETCH_ERROR });
+    }
+  };
+}
+
+export function searchBannerLinkMedia (searchString) {
+  return async (dispatch, getState) => {
+    try {
+      dispatch({ searchString, type: BANNER_LINK_MEDIA_SEARCH_START });
+      return await dispatch(dataSearchMedia({ searchString }));
+    } catch (error) {
+      dispatch({ error, searchString, type: BANNER_LINK_MEDIA_SEARCH_ERROR });
+    }
+  };
+}
+
+export function searchBannerLinkBrands (searchString) {
+  return async (dispatch, getState) => {
+    try {
+      await dispatch({ type: BANNER_LINK_BRANDS_SEARCH_START, searchString });
+      return await dispatch(dataSearchBrands({ searchString }));
+    } catch (error) {
+      dispatch({ error, type: BANNER_LINK_BRANDS_SEARCH_ERROR });
+    }
+  };
+}
+
+export function searchBannerLinkCharacters (searchString) {
+  return async (dispatch, getState) => {
+    try {
+      await dispatch({ type: BANNER_LINK_CHARACTERS_SEARCH_START, searchString });
+      return await dispatch(dataSearchCharacters({ searchString }));
+    } catch (error) {
+      dispatch({ error, type: BANNER_LINK_CHARACTERS_SEARCH_ERROR });
+    }
+  };
+}
+
+export function searchBannerLinkPersons (searchString) {
+  return async (dispatch, getState) => {
+    try {
+      await dispatch({ type: BANNER_LINK_PERSONS_SEARCH_START, searchString });
+      return await dispatch(dataSearchPersons({ searchString }));
+    } catch (error) {
+      dispatch({ error, type: BANNER_LINK_PERSONS_SEARCH_ERROR });
     }
   };
 }

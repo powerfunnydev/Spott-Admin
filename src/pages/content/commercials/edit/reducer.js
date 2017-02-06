@@ -3,6 +3,14 @@ import * as actions from './actions';
 
 export default (state = Map({}), action) => {
   switch (action.type) {
+    case actions.BANNER_LINK_BRANDS_SEARCH_START: // Autocompletion field of brand selection
+      return state.set('currentBannerLinkBrandsSearchString', action.searchString);
+    case actions.BANNER_LINK_CHARACTERS_SEARCH_START: // Autocompletion field of character selection
+      return state.set('currentBannerLinkCharactersSearchString', action.searchString);
+    case actions.BANNER_LINK_MEDIA_SEARCH_START: // Autocompletion field of medium selection
+      return state.set('currentBannerLinkMediaSearchString', action.searchString);
+    case actions.BANNER_LINK_PERSONS_SEARCH_START: // Autocompletion field of actor selection
+      return state.set('currentBannerLinkPersonsSearchString', action.searchString);
     case actions.COLLECTIONS_BRANDS_SEARCH_START: // Autocompletion field of brands
       return state.set('currentCollectionsBrandSearchString', action.searchString);
     case actions.COLLECTIONS_CHARACTERS_SEARCH_START: // Autocompletion field of characters
