@@ -9,10 +9,10 @@ import * as actions from './actions';
 import selector from './selector';
 import SelectionDropdown from '../../../_common/components/selectionDropdown';
 import { Root, Container, filterStyles } from '../../../_common/styles';
-import { DropdownCel, Tile, UtilsBar, getInformationFromQuery, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
+import { Tile, UtilsBar, getInformationFromQuery, isQueryChanged, tableDecorator, generalStyles, TotalEntries, Pagination } from '../../../_common/components/table/index';
+import ListView from '../../../_common/components/listView/index';
 import Line from '../../../_common/components/line';
 import pushNotificationTypes from '../../../../constants/pushNotificationTypes';
-import Dropdown, { styles as dropdownStyles } from '../../../_common/components/actionDropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
@@ -21,7 +21,6 @@ import Header from '../../../app/multiFunctionalHeader';
 import { MOVIE, EPISODE, COMMERCIAL, SERIE, SEASON } from '../../../../constants/mediumTypes'; // change-required
 import { FilterContent } from '../../../_common/components/filterDropdown';
 
-const numberOfRows = 25;
 export const prefix = 'pushNotifications';
 export const filterArray = [ 'affiliate', 'type', 'used' ];
 
@@ -146,7 +145,16 @@ export default class PushNotifications extends Component {
 
   render () {
     const { pushNotifications, children, isSelected, location: { query, query: { display, pushNotificationsPage, searchString, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString, onChangeFilter } = this.props;
+      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString, onChangeFilter,
+      deletePushNotification } = this.props;
+    const columns = [
+      { type: 'checkBox' },
+      { type: 'custom', sort: true, title: 'TYPE', clickable: true, getUrl: this.determineReadUrl, name: 'type' },
+      { type: 'custom', title: 'DATA', name: 'payloadData' },
+      { type: 'custom', title: 'UPDATED BY', name: 'lastUpdatedBy' },
+      { type: 'custom', title: 'LAST UPDATED ON', name: 'lastUpdatedOn' },
+      { type: 'dropdown' }
+    ];
     const page = pushNotificationsPage;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     return (
@@ -195,43 +203,19 @@ export default class PushNotifications extends Component {
                 onDeleteSelected={this.onClickDeleteSelected}/>
               {(display === undefined || display === 'list') &&
                 <div>
-                  <Table>
-                    <Headers>
-                      {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                      <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'TYPE')} sortDirection = {sortField === 'TYPE' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>TYPE</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>DATA</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
-                      <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
-                    </Headers>
-                    <Rows isLoading={pushNotifications.get('_status') !== 'loaded'}>
-                      {pushNotifications.get('data').map((item, index) => {
-                        return (
-                          <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
-                            {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                            <CheckBoxCel checked={isSelected.get(item.get('id'))} onChange={selectCheckbox.bind(this, item.get('id'))}/>
-                            <CustomCel style={{ flex: 2 }} onClick={() => { const readUrl = this.determineReadUrl(item); readUrl && this.props.routerPushWithReturnTo(readUrl); }}>
-                              {item.get('type')}
-                            </CustomCel>
-                            <CustomCel style={{ flex: 2 }}>
-                              {item.get('payloadData')}
-                            </CustomCel>
-                            <CustomCel style={{ flex: 2 }}>
-                              {item.get('lastUpdatedBy')}
-                            </CustomCel>
-                            <CustomCel getValue={this.getLastUpdatedOn} objectToRender={item} style={{ flex: 2 }}/>
-                            <DropdownCel>
-                              <Dropdown
-                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { const editUrl = this.determineEditUrl(item); editUrl && this.props.routerPushWithReturnTo(editUrl); }}>Edit</div>}>
-                                <div key={1} style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); this.deleteMedium(item.get('id'), item.get('type')); }}>Remove</div>
-                              </Dropdown>
-                            </DropdownCel>
-                          </Row>
-                        );
-                      })}
-                    </Rows>
-                  </Table>
+                  <ListView
+                    columns={columns}
+                    data={pushNotifications}
+                    deleteItem={deletePushNotification}
+                    getEditUrl={this.determineEditUrl}
+                    isSelected={isSelected}
+                    load={() => this.prop.load(this.props.location.query)}
+                    routerPushWithReturnTo={routerPushWithReturnTo}
+                    selectAllCheckboxes={selectAllCheckboxes}
+                    sortDirection={sortDirection}
+                    sortField={sortField}
+                    onCheckboxChange={(id) => selectCheckbox.bind(this, id)}
+                    onSortField={(name) => this.props.onSortField.bind(this, name)} />
                   <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
                 </div>
               }
