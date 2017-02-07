@@ -12,11 +12,11 @@ class ListView extends Component {
     return moment(date).format('YYYY-MM-DD HH:mm');
   }
 
-  async deleteItem (id, type) {
+  async deleteItem (id, type, props) {
     const result = await confirmation();
     if (result) {
-      await this.props.deleteItem(id, type);
-      await this.props.load();
+      await props.deleteItem(id, type);
+      await props.load();
     }
   }
 
@@ -81,7 +81,7 @@ class ListView extends Component {
                           <DropdownCel>
                             <Dropdown
                               elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { getEditUrl(item) && routerPushWithReturnTo(getEditUrl(item)); }}>Edit</div>}>
-                              <div key={1} style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); deleteItem(item.get('id'), item.get('type')); }}>Remove</div>
+                              <div key={1} style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); deleteItem(item.get('id'), item.get('type'), this.props); }}>Remove</div>
                             </Dropdown>
                           </DropdownCel>
                         );

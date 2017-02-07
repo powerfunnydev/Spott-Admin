@@ -198,7 +198,7 @@ export default class PushNotifications extends Component {
                     deleteItem={deletePushNotification}
                     getEditUrl={this.determineEditUrl}
                     isSelected={isSelected}
-                    load={() => this.prop.load(this.props.location.query)}
+                    load={() => this.props.load(this.props.location.query)}
                     routerPushWithReturnTo={this.props.routerPushWithReturnTo}
                     selectAllCheckboxes={selectAllCheckboxes}
                     sortDirection={sortDirection}

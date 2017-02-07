@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import { fromJS } from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
-import { Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
+import { Root, FormSubtitle, colors, EditTemplate, FormDescription } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
@@ -231,7 +231,7 @@ export default class EditPushNotification extends Component {
                     onSetDefaultLocale={this.onSetDefaultLocale}/>
                 </Section>
                 <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage}>
-                  <FormSubtitle first>General</FormSubtitle>
+                  <FormSubtitle first>Data</FormSubtitle>
                   <Field
                     component={TextInput}
                     label='Message'
@@ -240,8 +240,15 @@ export default class EditPushNotification extends Component {
                     required/>
                 </Section>
               </Tab>
-              <Tab title='Destination' />
-              <Tab title='Schedule' />
+              <Tab title='Destination'>
+              <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage}>
+                <FormSubtitle first>Action</FormSubtitle>
+                <FormDescription>When user interact with this notification, where should it take them?</FormDescription>
+              </Section>
+              </Tab>
+              <Tab title='Schedule'>
+                
+              </Tab>
               <Tab title='Audience' />
             </Tabs>
         </EditTemplate>
