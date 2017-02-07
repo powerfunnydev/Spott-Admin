@@ -29,7 +29,7 @@ export async function fetchPushNotification (baseUrl, authenticationToken, local
 }
 
 export async function deletePushNotification (baseUrl, authenticationToken, locale, { pushNotificationId }) {
-  await del(authenticationToken, locale, `${baseUrl}/v004/media/actors/${pushNotificationId}`);
+  await del(authenticationToken, locale, `${baseUrl}/v004/push/messages/${pushNotificationId}`);
 }
 
 export async function deletePushNotifications (baseUrl, authenticationToken, locale, { pushNotificationsIds }) {
