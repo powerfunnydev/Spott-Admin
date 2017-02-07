@@ -756,3 +756,7 @@ export function transformListCollectionItem ({ product, productRelevance, uuid }
     relevance: productRelevance
   };
 }
+
+export function transformScheduleEntry (data) {
+  return data;
+}

@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformListCommercial, transformCommercial } from './transformers';
+import { transformListCommercial, transformCommercial, transformScheduleEntry } from './transformers';
 
 export async function fetchCommercials (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/commercials?page=${page}&pageSize=${pageSize}`;
@@ -137,4 +137,10 @@ export async function uploadRoundLogo (baseUrl, authenticationToken, locale, { c
   formData.append('file', image);
   const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${commercialId}/roundLogo`, formData, callback);
   return transformCommercial(result.body);
+}
+
+export async function fetchScheduleEntries (baseUrl, authenticationToken, locale, { commercialId }) {
+  const url = `${baseUrl}/v004/media//${commercialId}/scheduleEntries`;
+  const { body } = await get(authenticationToken, locale, url);
+  return body.data.map(transformScheduleEntry);
 }
