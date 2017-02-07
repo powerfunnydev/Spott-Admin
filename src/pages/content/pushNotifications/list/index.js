@@ -108,19 +108,8 @@ export default class PushNotifications extends Component {
     }
   }
 
-  determineEditUrl (medium) {
-    switch (medium.get('type')) {
-      case COMMERCIAL:
-        return `/content/commercials/edit/${medium.get('id')}`;
-      case EPISODE:
-        return `/content/series/read/${medium.getIn([ 'serie', 'id' ])}/seasons/read/${medium.getIn([ 'season', 'id' ])}/episodes/edit/${medium.get('id')}`;
-      case MOVIE:
-        return `/content/movies/edit/${medium.get('id')}`;
-      case SEASON:
-        return `/content/series/read/${medium.getIn([ 'serie', 'id' ])}/seasons/edit/${medium.get('id')}`;
-      case SERIE:
-        return `/content/series/edit/${medium.get('id')}`;
-    }
+  determineEditUrl (pushNotification) {
+    return `/content/push-notifications/edit/${pushNotification.get('id')}`;
   }
 
   getLastUpdatedOn (medium) {
@@ -210,7 +199,7 @@ export default class PushNotifications extends Component {
                     getEditUrl={this.determineEditUrl}
                     isSelected={isSelected}
                     load={() => this.prop.load(this.props.location.query)}
-                    routerPushWithReturnTo={routerPushWithReturnTo}
+                    routerPushWithReturnTo={this.props.routerPushWithReturnTo}
                     selectAllCheckboxes={selectAllCheckboxes}
                     sortDirection={sortDirection}
                     sortField={sortField}
