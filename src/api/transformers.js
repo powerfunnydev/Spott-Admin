@@ -282,8 +282,8 @@ export function transformListMedium ({ number, publishStatus, auditInfo, title, 
 /**
  *  Light version of a push notification. No locales includes.
  */
-export function transformPushNotification ({ uuid: id, type, publishStatus, pushWindowStart, pushWindowSizeInMinutes, pushedOn, action, payload, auditInfo }) {
-  return {
+export function transformPushNotification ({ uuid: id, type, publishStatus, pushWindowStart, pushWindowSizeInMinutes, pushedOn, localeData, defaultLocale, action, payload, auditInfo }) {
+  const pushNotification = {
     id,
     type,
     publishStatus,
@@ -291,13 +291,25 @@ export function transformPushNotification ({ uuid: id, type, publishStatus, push
     pushWindowSizeInMinutes,
     pushedOn,
     actionType: action && action.type,
-    payloadType: payload && payload.type,
-    payloadData: payload && payload.data,
+    basedOnDefaultLocale: {},
+    defaultLocale,
+    locales: [],
+    payloadType: payload && payload.type || {},
+    payloadData: payload && payload.data || {},
     createdBy: auditInfo && auditInfo.createdBy,
     createdOn: auditInfo && auditInfo.createdOn,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
   };
+  if (localeData) {
+    for (const { basedOnDefaultLocale, payload: { data, type }, locale } of localeData) {
+      pushNotification.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      pushNotification.payloadData[locale] = data;
+      pushNotification.payloadType[locale] = type;
+      pushNotification.locales.push(locale);
+    }
+  }
+  return pushNotification;
 }
 
 export function transformAvailability ({ country, endTimeStamp, startTimeStamp, uuid: id, videoStatus }) {

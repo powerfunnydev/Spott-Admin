@@ -30,6 +30,7 @@ export const mediumCategoriesEntitiesSelector = (state) => state.getIn([ 'data',
 export const personsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'persons' ]);
 export const productsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'products' ]);
 export const productOfferingsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'productOfferings' ]);
+export const pushNotificationEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'pushNotifications' ]);
 export const similarProductsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'similarProducts' ]);
 export const shopsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'shops' ]);
 export const tagsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'tags' ]);

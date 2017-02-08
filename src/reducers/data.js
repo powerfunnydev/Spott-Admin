@@ -625,7 +625,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'pushNotifications', 'filterHasPushNotifications', serializeFilterHasPushNotifications(action), action.data.data);
     case pushNotificationActions.PUSH_NOTIFICATIONS_FETCH_ERROR:
       return searchError(state, 'filterHasPushNotifications', serializeFilterHasPushNotifications(action), action.error);
-
+    case pushNotificationActions.PUSH_NOTIFICATION_FETCH_START:
+      return fetchStart(state, [ 'entities', 'pushNotifications', action.pushNotificationId ]);
+    case pushNotificationActions.PUSH_NOTIFICATION_FETCH_SUCCESS: {
+      return fetchSuccess(state, [ 'entities', 'pushNotifications', action.pushNotificationId ], action.data);
+    }
+    case pushNotificationActions.PUSH_NOTIFICATION_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'pushNotifications', action.pushNotificationId ], action.error);
     // Shops
     // /////////////////
 
