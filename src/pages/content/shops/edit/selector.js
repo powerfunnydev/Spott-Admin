@@ -1,5 +1,5 @@
 import { createStructuredSelector } from 'reselect';
-import { currentModalSelector } from '../../../../selectors/global';
+import { currentModalSelector, countriesSelector } from '../../../../selectors/global';
 import { createFormValueSelector } from '../../../../utils';
 import {
   shopsEntitiesSelector,
@@ -27,5 +27,6 @@ export default createStructuredSelector({
   errors: formErrorsSelector,
   formValues: valuesSelector,
   popUpMessage: popUpMessageSelector,
-  supportedLocales: supportedLocalesSelector
+  supportedLocales: supportedLocalesSelector,
+  countries: countriesSelector
 });

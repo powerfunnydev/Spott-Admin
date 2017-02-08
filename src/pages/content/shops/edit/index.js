@@ -6,7 +6,9 @@ import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import CheckboxInput from '../../../_common/inputs/checkbox';
 import TextInput from '../../../_common/inputs/textInput';
-import { Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
+import SelectInput from '../../../_common/inputs/selectInput';
+import { Root, FormSubtitle, colors, EditTemplate, FormDescription } from '../../../_common/styles';
+import { Table, Headers, CustomCel, Rows, Row, headerStyles } from '../../../_common/components/table/index';
 import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
@@ -59,6 +61,7 @@ export default class EditShop extends Component {
     change: PropTypes.func.isRequired,
     closeModal: PropTypes.func.isRequired,
     closePopUpMessage: PropTypes.func.isRequired,
+    countries: PropTypes.array.isRequired,
     currentModal: PropTypes.string,
     currentShop: ImmutablePropTypes.map.isRequired,
     defaultLocale: PropTypes.string,
@@ -91,12 +94,17 @@ export default class EditShop extends Component {
     this.openCreateLanguageModal = :: this.openCreateLanguageModal;
     this.languageAdded = :: this.languageAdded;
     this.removeLanguage = :: this.removeLanguage;
+    this.state = {
+      countries: []
+    };
   }
 
   async componentWillMount () {
     if (this.props.params.shopId) {
       const editObj = await this.props.loadShop(this.props.params.shopId);
-      console.log('editObj', editObj);
+      this.setState({
+        countries: editObj.countries
+      });
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale
@@ -198,9 +206,8 @@ export default class EditShop extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { _activeLocale, errors, currentModal, closeModal, supportedLocales, defaultLocale,
-      currentShop, location, handleSubmit, deleteLogoImage, location: { query: { tab } } } = this.props;
-
+    const { _activeLocale, errors, currentModal, closeModal, supportedLocales, defaultLocale, formValues,
+      currentShop, countries, location, handleSubmit, deleteLogoImage, location: { query: { tab } } } = this.props;
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
@@ -256,28 +263,83 @@ export default class EditShop extends Component {
                     component={CheckboxInput}
                     label='Enable universal basket'
                     name='universalBasketEnabled' />
-                <FormSubtitle>Images</FormSubtitle>
-                <div style={[ styles.paddingTop, styles.row ]}>
-                  <div>
-                    <Label text='Logo image' />
-                    <ImageDropzone
-                      accept='image/*'
-                      downloadUrl={currentShop.getIn([ 'logo', _activeLocale, 'url' ]) ||
-                                    currentShop.getIn([ 'logo', defaultLocale, 'url' ])}
-                      imageUrl={currentShop.getIn([ 'logo', _activeLocale, 'url' ]) && `${currentShop.getIn([ 'logo', _activeLocale, 'url' ])}?height=203&width=360` ||
-                                currentShop.getIn([ 'logo', defaultLocale, 'url' ]) && `${currentShop.getIn([ 'logo', defaultLocale, 'url' ])}?height=203&width=360`}
-                      showOnlyUploadedImage
-                      onChange={({ callback, file }) => { this.props.uploadLogoImage({ locale: _activeLocale, shopId: this.props.params.shopId, image: file, callback }); }}
-                      onDelete={currentShop.getIn([ 'logo', _activeLocale, 'url' ]) ? () => { deleteLogoImage({ locale: _activeLocale, shopId: currentShop.get('id') }); } : null}/>
+                    <FormSubtitle>Images</FormSubtitle>
+                  <div style={[ styles.paddingTop, styles.row ]}>
+                    <div>
+                      <Label text='Logo image' />
+                      <ImageDropzone
+                        accept='image/*'
+                        downloadUrl={currentShop.getIn([ 'logo', _activeLocale, 'url' ]) ||
+                                      currentShop.getIn([ 'logo', defaultLocale, 'url' ])}
+                        imageUrl={currentShop.getIn([ 'logo', _activeLocale, 'url' ]) && `${currentShop.getIn([ 'logo', _activeLocale, 'url' ])}?height=203&width=360` ||
+                                  currentShop.getIn([ 'logo', defaultLocale, 'url' ]) && `${currentShop.getIn([ 'logo', defaultLocale, 'url' ])}?height=203&width=360`}
+                        showOnlyUploadedImage
+                        onChange={({ callback, file }) => { this.props.uploadLogoImage({ locale: _activeLocale, shopId: this.props.params.shopId, image: file, callback }); }}
+                        onDelete={currentShop.getIn([ 'logo', _activeLocale, 'url' ]) ? () => { deleteLogoImage({ locale: _activeLocale, shopId: currentShop.get('id') }); } : null}/>
+                    </div>
                   </div>
-                </div>
-              </Section>
-            </Tab>
-          </Tabs>
-        </EditTemplate>
-      </Root>
-    </SideMenu>
+                </Section>
+              </Tab>
+              <Tab title='Availability'>
+                <Section>
+                  <FormSubtitle first>Availability</FormSubtitle>
+                  <FormDescription>Which countries are supported and/or are in the shipping list of this shop?</FormDescription>
+                  <br/>
+                  <Table>
+                    <Headers>
+                      {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 3 } ]}>Name</CustomCel>
+                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Remove</CustomCel>
+                    </Headers>
+                    <Rows>
+                      {formValues && formValues.toJS().countries.map((country, index) => {
+                        return (
+                          <Row index={index} key={index} >
+                            {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                            <CustomCel style={{ flex: 3 }}>
+                              {countries.getIn([ country.uuid, 'name' ])}
+                            </CustomCel>
+                            <CustomCel style={{ flex: 1, cursor: 'pointer', textAlign: 'center', display: 'block' }}>
+                              <div
+                                key={1}
+                                onClick={async (e) => {
+                                  e.preventDefault();
+                                  const formValuesP = formValues.toJS();
+                                  formValuesP.countries.splice(index, 1);
+                                  this.submit(fromJS(formValuesP));
+                                }}>X</div>
+                            </CustomCel>
+                          </Row>
+                        );
+                      })}
+                      <Row key={-1} >
+                        {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                        <CustomCel style={{ flex: 3 }}>
+                          <Field
+                            component={SelectInput}
+                            first
+                            getItemText={(countryId) => countries.getIn([ countryId, 'name' ])}
+                            options={countries.keySeq().toArray().filter((countryId) =>
+                              formValues && formValues.toJS().countries.findIndex((country) => country.uuid === countryId) < 0
+                            )}
+                            placeholder='Country'
+                            style={{ width: 300 }}
+                            onChange={(id) => {
+                              const formValuesP = formValues.toJS();
+                              formValuesP.countries.push({ uuid: id, links: [] });
+                              this.submit(fromJS(formValuesP));
+                            }}/>
+                        </CustomCel>
+                        <CustomCel style={{ flex: 1 }} />
+                      </Row>
+                    </Rows>
+                  </Table>
+                </Section>
+              </Tab>
+            </Tabs>
+          </EditTemplate>
+        </Root>
+      </SideMenu>
     );
   }
-
 }
