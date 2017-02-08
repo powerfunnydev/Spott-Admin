@@ -61,7 +61,7 @@ export default class EditShop extends Component {
     change: PropTypes.func.isRequired,
     closeModal: PropTypes.func.isRequired,
     closePopUpMessage: PropTypes.func.isRequired,
-    countries: PropTypes.array.isRequired,
+    countries: PropTypes.object.isRequired,
     currentModal: PropTypes.string,
     currentShop: ImmutablePropTypes.map.isRequired,
     defaultLocale: PropTypes.string,
@@ -94,17 +94,11 @@ export default class EditShop extends Component {
     this.openCreateLanguageModal = :: this.openCreateLanguageModal;
     this.languageAdded = :: this.languageAdded;
     this.removeLanguage = :: this.removeLanguage;
-    this.state = {
-      countries: []
-    };
   }
 
   async componentWillMount () {
     if (this.props.params.shopId) {
       const editObj = await this.props.loadShop(this.props.params.shopId);
-      this.setState({
-        countries: editObj.countries
-      });
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale
@@ -319,6 +313,7 @@ export default class EditShop extends Component {
                             component={SelectInput}
                             first
                             getItemText={(countryId) => countries.getIn([ countryId, 'name' ])}
+                            name='country'
                             options={countries.keySeq().toArray().filter((countryId) =>
                               formValues && formValues.toJS().countries.findIndex((country) => country.uuid === countryId) < 0
                             )}
