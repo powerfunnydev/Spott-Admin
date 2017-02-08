@@ -115,9 +115,10 @@ export function transformBrand ({ uuid, publishStatus, defaultLocale, localeData
   return brand;
 }
 
-export function transformShop ({ defaultLocale, localeData, publishStatus, universalBasketEnabled, uuid }) {
+export function transformShop ({ defaultLocale, localeData, publishStatus, universalBasketEnabled, uuid, countries }) {
   const shop = {
     basedOnDefaultLocale: {},
+    countries,
     defaultLocale,
     description: {},
     id: uuid,
