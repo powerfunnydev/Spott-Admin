@@ -33,6 +33,7 @@ import personsList from '../pages/content/persons/list/reducer';
 import productsCreate from '../pages/content/products/create/reducer';
 import productsList from '../pages/content/products/list/reducer';
 import productsEdit from '../pages/content/products/edit/reducer';
+import pushNotificationsCreate from '../pages/content/pushNotifications/create/reducer';
 import pushNotificationsList from '../pages/content/pushNotifications/list/reducer';
 import pushNotificationsEdit from '../pages/content/pushNotifications/edit/reducer';
 import relatedVideoPersist from '../pages/content/_relatedVideo/persist/reducer';
@@ -121,6 +122,7 @@ export default combineReducers({
       list: personsList
     }),
     pushNotifications: combineReducers({
+      create: pushNotificationsCreate,
       edit: pushNotificationsEdit,
       list: pushNotificationsList
     }),

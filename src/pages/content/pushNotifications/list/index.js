@@ -59,6 +59,7 @@ export default class PushNotifications extends Component {
 
   constructor (props) {
     super(props);
+    this.onCreatePushNotification = ::this.onCreatePushNotification;
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
     this.slowSearch = slowdown(props.load, 300);
   }
@@ -80,7 +81,7 @@ export default class PushNotifications extends Component {
 
     if ((pathname !== routeUrl && nextPathname === routeUrl) || isQueryChanged(query, nextQuery, prefix, filterArray)) {
       // this.slowSearch(nextQuery);
-      console.log('getInformationFromQuery(nextQuery, prefix, filterArray)', getInformationFromQuery(nextQuery, prefix, filterArray));
+      // console.log('getInformationFromQuery(nextQuery, prefix, filterArray)', getInformationFromQuery(nextQuery, prefix, filterArray));
       this.slowSearch(getInformationFromQuery(nextQuery, prefix, filterArray));
     }
   }
@@ -117,8 +118,9 @@ export default class PushNotifications extends Component {
     return moment(date).format('YYYY-MM-DD HH:mm');
   }
 
-  onCreatePushNotification () {
-    console.log('Not Implemented Yet!');
+  onCreatePushNotification (e) {
+    e.preventDefault();
+    this.props.routerPushWithReturnTo('/content/push-notifications/create');
   }
 
   async onClickDeleteSelected (type) {

@@ -14,7 +14,7 @@ const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultL
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
 const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 
-const currentPushNotificationIdSelector = (state, props) => { console.log('currentPushNotificationIdSelector', props.params.pushNotificationId); return props.params.pushNotificationId; };
+const currentPushNotificationIdSelector = (state, props) => { return props.params.pushNotificationId; };
 const currentPushNotificationSelector = createEntityByIdSelector(pushNotificationEntitiesSelector, currentPushNotificationIdSelector);
 
 const popUpMessageSelector = (state) => state.getIn([ 'content', 'push-notifications', 'edit', 'popUpMessage' ]);

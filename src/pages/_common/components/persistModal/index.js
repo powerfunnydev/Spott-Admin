@@ -205,7 +205,7 @@ export default class PersistModal extends Component {
                     <Field
                       component={Checkbox}
                       first
-                      label='Create another'
+                      label='Add another'
                       name='createAnother'/>}
                   <Button key='cancel' style={[ buttonStyles.white ]} text={cancelButtonText || 'Cancel'} type='button' onClick={(e) => { e.preventDefault(); clearPopUpMessage && clearPopUpMessage(); onClose(); }} />
                   { onSubmit && <Button key='submit' style={[ buttonStyles.blue ]} text={submitButtonText || 'Create'} type='submit' /> }

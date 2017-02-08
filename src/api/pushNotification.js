@@ -1,5 +1,3 @@
-// import { del, get, post, postFormData } from './request';
-// import { transformListMovie, transformMovie } from './transformers';
 import { del, get, post } from './request';
 import { transformPushNotification } from './transformers';
 
@@ -39,12 +37,14 @@ export async function deletePushNotifications (baseUrl, authenticationToken, loc
 }
 
 export async function persistPushNotification (baseUrl, authenticationToken, locale, {
-  defaultLocale, pushNotificationId, payloadData, payloadType, locales, basedOnDefaultLocale }) {
+  defaultLocale, pushNotificationId, payloadData, payloadType, locales, basedOnDefaultLocale, actionType, type, publishStatus }) {
   let pushNotification = {};
   if (pushNotificationId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/push/messages/${pushNotificationId}`);
     pushNotification = body;
   }
+
+  pushNotification.action = { type: actionType };
   pushNotification.defaultLocale = defaultLocale;
   // Update locale data.
   pushNotification.localeData = []; // Ensure we have locale data
@@ -60,6 +60,9 @@ export async function persistPushNotification (baseUrl, authenticationToken, loc
     localeData.payload.data = payloadData && payloadData[locale];
     localeData.payload.type = payloadType && payloadType[locale];
   });
+  pushNotification.publishStatus = publishStatus;
+  pushNotification.type = type;
+
   const url = `${baseUrl}/v004/push/messages`;
   const result = await post(authenticationToken, locale, url, pushNotification);
   return transformPushNotification(result.body);
