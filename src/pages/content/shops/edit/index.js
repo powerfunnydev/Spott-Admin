@@ -7,8 +7,8 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import CheckboxInput from '../../../_common/inputs/checkbox';
 import TextInput from '../../../_common/inputs/textInput';
 import SelectInput from '../../../_common/inputs/selectInput';
-import { Root, FormSubtitle, colors, EditTemplate, FormDescription } from '../../../_common/styles';
-import { Table, Headers, CustomCel, Rows, Row, headerStyles } from '../../../_common/components/table/index';
+import { Root, FormSubtitle, colors, EditTemplate, FormDescription, buttonStyles } from '../../../_common/styles';
+import { Table, CustomCel, Rows, Row } from '../../../_common/components/table/index';
 import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
@@ -94,6 +94,9 @@ export default class EditShop extends Component {
     this.openCreateLanguageModal = :: this.openCreateLanguageModal;
     this.languageAdded = :: this.languageAdded;
     this.removeLanguage = :: this.removeLanguage;
+    this.state = {
+      selectedCountryId: null
+    };
   }
 
   async componentWillMount () {
@@ -108,6 +111,15 @@ export default class EditShop extends Component {
 
   redirect () {
     this.props.routerPushWithReturnTo('/content/shops', true);
+  }
+
+  async addCountry () {
+    const { formValues } = this.props;
+    const { selectedCountryId } = this.state;
+    const formValuesP = formValues.toJS();
+    formValuesP.countries.push({ uuid: selectedCountryId, links: [] });
+    await this.submit(fromJS(formValuesP));
+    this.setState({ selectedCountryId: null });
   }
 
   languageAdded (form) {
@@ -195,6 +207,20 @@ export default class EditShop extends Component {
       flexDirection: 'row',
       flexWrap: 'wrap',
       marginTop: '20px'
+    },
+    controlWrapper: {
+      display: 'block',
+      flex: 4,
+      backgroundColor: 'rgba(244, 245, 245, 0.5)'
+    },
+    countryInput: {
+      position: 'absolute',
+      right: 170,
+      left: 10
+    },
+    actionsWrapper: {
+      position: 'absolute',
+      right: 10
     }
   };
 
@@ -280,11 +306,6 @@ export default class EditShop extends Component {
                   <FormDescription>Which countries are supported and/or are in the shipping list of this shop?</FormDescription>
                   <br/>
                   <Table>
-                    <Headers>
-                      {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 3 } ]}>Name</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Remove</CustomCel>
-                    </Headers>
                     <Rows>
                       {formValues && formValues.toJS().countries.map((country, index) => {
                         return (
@@ -293,9 +314,10 @@ export default class EditShop extends Component {
                             <CustomCel style={{ flex: 3 }}>
                               {countries.getIn([ country.uuid, 'name' ])}
                             </CustomCel>
-                            <CustomCel style={{ flex: 1, cursor: 'pointer', textAlign: 'center', display: 'block' }}>
+                            <CustomCel style={{ flex: 1, textAlign: 'right', display: 'block' }}>
                               <div
                                 key={1}
+                                style={{ cursor: 'pointer' }}
                                 onClick={async (e) => {
                                   e.preventDefault();
                                   const formValuesP = formValues.toJS();
@@ -306,24 +328,41 @@ export default class EditShop extends Component {
                           </Row>
                         );
                       })}
+                      {(!formValues || !formValues.toJS().countries.length) &&
+                        <Row>
+                          <CustomCel style={{ flex: 4 }}>
+                            No country is added.
+                          </CustomCel>
+                        </Row>
+                      }
                       <Row key={-1} >
                         {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                        <CustomCel style={{ flex: 3 }}>
+                        <CustomCel style={styles.controlWrapper} >
                           <Field
                             component={SelectInput}
                             first
                             getItemText={(countryId) => countries.getIn([ countryId, 'name' ])}
+                            input={{
+                              value: this.state.selectedCountryId
+                            }}
                             name='country'
                             options={countries.keySeq().toArray().filter((countryId) =>
                               formValues && formValues.toJS().countries.findIndex((country) => country.uuid === countryId) < 0
                             )}
                             placeholder='Country'
-                            style={{ width: 300 }}
-                            onChange={(id) => {
-                              const formValuesP = formValues.toJS();
-                              formValuesP.countries.push({ uuid: id, links: [] });
-                              this.submit(fromJS(formValuesP));
-                            }}/>
+                            style={styles.countryInput}
+                            onChange={(id) => this.setState({ selectedCountryId: id })} />
+                          <div style={styles.actionsWrapper}>
+                            <button
+                              key='cancel'
+                              style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white ]}
+                              onClick={() => this.setState({ selectedCountryId: null })}>Cancel</button>
+                            <button
+                              disabled={!this.state.selectedCountryId}
+                              key='add'
+                              style={[ buttonStyles.base, buttonStyles.small, this.state.selectedCountryId ? buttonStyles.blue : buttonStyles.gray ]}
+                              onClick={() => this.addCountry()}>Add</button>
+                          </div>
                         </CustomCel>
                         <CustomCel style={{ flex: 1 }} />
                       </Row>
