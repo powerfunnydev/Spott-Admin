@@ -361,7 +361,6 @@ export default class EditShop extends Component {
                               onClick={() => this.addCountry()}>Add</button>
                           </div>
                         </CustomCel>
-                        <CustomCel style={{ flex: 1 }} />
                       </Row>
                     </Rows>
                   </Table>
