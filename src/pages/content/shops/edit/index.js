@@ -24,6 +24,7 @@ import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
+import RemoveButton from '../../../_common/components/buttons/removeButton';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -315,15 +316,11 @@ export default class EditShop extends Component {
                               {countries.getIn([ country.uuid, 'name' ])}
                             </CustomCel>
                             <CustomCel style={{ flex: 1, textAlign: 'right', display: 'block' }}>
-                              <div
-                                key={1}
-                                style={{ cursor: 'pointer' }}
-                                onClick={async (e) => {
-                                  e.preventDefault();
-                                  const formValuesP = formValues.toJS();
-                                  formValuesP.countries.splice(index, 1);
-                                  this.submit(fromJS(formValuesP));
-                                }}>X</div>
+                              <RemoveButton cross onClick={async () => {
+                                const formValuesP = formValues.toJS();
+                                formValuesP.countries.splice(index, 1);
+                                this.submit(fromJS(formValuesP));
+                              }}/>
                             </CustomCel>
                           </Row>
                         );
