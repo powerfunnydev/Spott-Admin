@@ -3,12 +3,12 @@
 	<parent>
 		<groupId>appiness.mobi</groupId>
 		<artifactId>appiness.root</artifactId>
-		<version>11</version>
+		<version>12</version>
 	</parent>
 	<artifactId>apptvate.website</artifactId>
 	<packaging>pom</packaging>
 	<name>${project.artifactId}</name>
-	<version>01.00.10-SNAPSHOT</version>
+	<version>01.00.12-SNAPSHOT</version>
 	<scm>
 		<connection>scm:git:https://bitbucket.org/appiness/apptvate.website</connection>
 		<tag>HEAD</tag>
@@ -32,7 +32,7 @@
 		<node-version>v5.0.0</node-version>
 		<npm-version>3.8.6</npm-version>
 
-		<appiness.docker.nginx.version>01.00.00</appiness.docker.nginx.version>
+		<appiness.docker.nginx.version>01.00.01</appiness.docker.nginx.version>
 	</properties>
 
 	<dependencyManagement>

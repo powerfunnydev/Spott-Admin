@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>appiness.mobi</groupId>
 		<artifactId>apptvate.website</artifactId>
-		<version>01.00.10-SNAPSHOT</version>
+		<version>01.00.12-SNAPSHOT</version>
 		<relativePath>./pom.xml</relativePath>
 	</parent>
 	<artifactId>apptvate.website.web</artifactId>
@@ -90,6 +90,16 @@
 						<configuration>
 							<target>
 
+								<!-- Website version -->
+								<tstamp>
+									<format property="build.time" pattern="yyyy-MM-dd'T'HH:mm:ssZ" />
+								</tstamp>
+								<echo message="{${line.separator}" file="${basedir}/dist/version.json" append="false" />
+								<echo message=" &quot;version&quot;:&quot;${project.version}&quot;,${line.separator}" file="${basedir}/dist/version.json" append="true" />
+								<echo message=" &quot;build&quot;:&quot;${buildNumber}&quot;,${line.separator}" file="${basedir}/dist/version.json" append="true" />
+								<echo message=" &quot;timestamp&quot;:&quot;${build.time}&quot;${line.separator}" file="${basedir}/dist/version.json" append="true" />
+								<echo message="}${line.separator}" file="${basedir}/dist/version.json" append="true" />
+
 								<!-- Website code -->
 								<delete dir="${stage.dir}" />
 								<mkdir dir="${stage.website.dir}" />
@@ -98,16 +108,6 @@
 										<include name="**/**" />
 									</fileset>
 								</copy>
-
-								<!-- Website version -->
-								<tstamp>
-									<format property="build.time" pattern="yyyy-MM-dd'T'HH:mm:ssZ" />
-								</tstamp>
-								<echo message="{${line.separator}" file="${stage.website.dir}/version.json" append="false" />
-								<echo message=" &quot;version&quot;:&quot;${project.version}&quot;,${line.separator}" file="${stage.website.dir}/version.json" append="true" />
-								<echo message=" &quot;build&quot;:&quot;${buildNumber}&quot;,${line.separator}" file="${stage.website.dir}/version.json" append="true" />
-								<echo message=" &quot;timestamp&quot;:&quot;${build.time}&quot;${line.separator}" file="${stage.website.dir}/version.json" append="true" />
-								<echo message="}${line.separator}" file="${stage.website.dir}/version.json" append="true" />
 
 								<!-- Dummy node app -->
 								<copy todir="${stage.dir}">

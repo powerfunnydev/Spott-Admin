@@ -4,7 +4,7 @@ import {
   serializeFilterHasUsers, serializeFilterHasMediumCategories, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
-  serializeFilterHasProductCategories
+  serializeFilterHasProductCategories, serializeFilterHasPushNotifications
 } from './utils';
 
 import * as availabilityActions from '../actions/availability';
@@ -23,6 +23,8 @@ import * as moviesActions from '../actions/movie';
 import * as personActions from '../actions/person';
 import * as productCategoryActions from '../actions/productCategory';
 import * as productActions from '../actions/product';
+import * as pushNotificationActions from '../actions/pushNotification';
+import * as pushNotificationDestinationActions from '../actions/pushNotificationDestination';
 import * as reportingActions from '../actions/reporting';
 import * as shopActions from '../actions/shop';
 import * as seasonActions from '../actions/season';
@@ -53,6 +55,8 @@ export default (state = fromJS({
     listMediumCategories: {},
     listProducts: {},
     listProductCategories: {},
+    listPushNotifications: {},
+    listPushNotificationDestinations: {},
     listShops: {},
     listTags: {},
     listPersons: {}, // listCharacters is the light version of characters, without locales
@@ -61,6 +65,7 @@ export default (state = fromJS({
     persons: {},
     products: {},
     productOfferings: {},
+    pushNotifications: {},
     tvGuideEntries: {},
     similarProducts: {},
     shops: {},
@@ -87,6 +92,7 @@ export default (state = fromJS({
     filterHasShops: {},
     filterHasProducts: {},
     filterHasProductCategories: {},
+    filterHasPushNotifications: {},
     filterHasSeasons: {},
     filterHasSeriesEntries: {},
     filterHasTags: {},
@@ -104,6 +110,7 @@ export default (state = fromJS({
     searchStringHasPersons: {},
     searchStringHasProducts: {},
     searchStringHasProductCategories: {},
+    searchStringHasPushNotificationDestinations: {},
     searchStringHasShops: {},
     searchStringHasSeriesEntries: {},
     searchStringHasTags: {},
@@ -617,6 +624,30 @@ export default (state = fromJS({
       return searchSuccess(state, 'listProductCategories', 'searchStringHasProductCategories', action.searchString, action.data);
     case productCategoryActions.PRODUCT_CATEGORIES_SEARCH_ERROR:
       return searchError(state, 'searchStringHasProductCategories', action.searchString, action.error);
+
+    // Push notifications
+    // /////////////////
+
+    case pushNotificationActions.PUSH_NOTIFICATIONS_FETCH_START:
+      return searchStart(state, 'filterHasPushNotifications', serializeFilterHasPushNotifications(action));
+    case pushNotificationActions.PUSH_NOTIFICATIONS_FETCH_SUCCESS:
+      return searchSuccess(state, 'pushNotifications', 'filterHasPushNotifications', serializeFilterHasPushNotifications(action), action.data.data);
+    case pushNotificationActions.PUSH_NOTIFICATIONS_FETCH_ERROR:
+      return searchError(state, 'filterHasPushNotifications', serializeFilterHasPushNotifications(action), action.error);
+    case pushNotificationActions.PUSH_NOTIFICATION_FETCH_START:
+      return fetchStart(state, [ 'entities', 'pushNotifications', action.pushNotificationId ]);
+    case pushNotificationActions.PUSH_NOTIFICATION_FETCH_SUCCESS: {
+      return fetchSuccess(state, [ 'entities', 'pushNotifications', action.pushNotificationId ], action.data);
+    }
+    case pushNotificationActions.PUSH_NOTIFICATION_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'pushNotifications', action.pushNotificationId ], action.error);
+
+    case pushNotificationDestinationActions.PUSH_NOTIFICATION_DESTINATIONS_SEARCH_START:
+      return searchStart(state, 'searchStringHasPushNotificationDestinations', action.searchString);
+    case pushNotificationDestinationActions.PUSH_NOTIFICATION_DESTINATIONS_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listPushNotificationDestinations', 'searchStringHasPushNotificationDestinations', action.searchString, action.data);
+    case pushNotificationDestinationActions.PUSH_NOTIFICATION_DESTINATIONS_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasPushNotificationDestinations', action.searchString, action.error);
 
     // Shops
     // /////////////////

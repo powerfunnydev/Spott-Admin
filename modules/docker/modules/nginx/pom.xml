@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>appiness.mobi</groupId>
 		<artifactId>apptvate.website.docker</artifactId>
-		<version>01.00.10-SNAPSHOT</version>
+		<version>01.00.12-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>apptvate.website.docker.nginx</artifactId>
@@ -55,6 +55,9 @@
 				<includes>
 					<include>**/*</include>
 				</includes>
+				<excludes>
+					<exclude>config/**</exclude>
+				</excludes>
 			</resource>
 		</resources>
 		<plugins>
@@ -80,6 +83,7 @@
 					<serverId>appiness</serverId>
 					<registryUrl>${appiness.docker.registry.url}</registryUrl>
 					<forceTags>true</forceTags>
+					<noCache>true</noCache>
 					<imageTags>
 						<imageTag>${project.version}</imageTag>
 						<imageTag>latest</imageTag>

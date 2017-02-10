@@ -1,4 +1,5 @@
 import { ACTIVE, INACTIVE, ADMIN, CONTENT_MANAGER, CONTENT_PRODUCER, BROADCASTER } from '../constants/userRoles';
+import moment from 'moment';
 
 export function transformImage (image) {
   if (image) {
@@ -122,9 +123,10 @@ export function transformBrand ({ uuid, publishStatus, defaultLocale, localeData
   return brand;
 }
 
-export function transformShop ({ defaultLocale, localeData, publishStatus, universalBasketEnabled, uuid }) {
+export function transformShop ({ defaultLocale, localeData, publishStatus, universalBasketEnabled, uuid, countries }) {
   const shop = {
     basedOnDefaultLocale: {},
+    countries,
     defaultLocale,
     description: {},
     id: uuid,
@@ -248,6 +250,10 @@ export function transformListMediumCategory ({ name, uuid: id }) {
   return { name, id };
 }
 
+export function transformListPushNotificationDestination ({ description: name, type: id }) {
+  return { name, id };
+}
+
 export function transformMediumCategory ({ uuid: id, localeData }) {
   const mediumCategory = {
     locales: [],
@@ -283,6 +289,58 @@ export function transformListMedium ({ number, publishStatus, auditInfo, title, 
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
   };
+}
+
+/**
+ *  Light version of a push notification. No locales includes.
+ */
+export function transformPushNotification ({ uuid: id, type, applications, pushOn, publishStatus, pushWindowStart, pushWindowSizeInMinutes, pushedOn, localeData, defaultLocale, action, payload, audienceFilter, auditInfo }) {
+  const pushNotification = {
+    id,
+    type,
+    pushOn,
+    publishStatus,
+    pushWindowStart,
+    retryDuration: pushWindowSizeInMinutes,
+    pushedOn,
+    actionType: action && action.type,
+    basedOnDefaultLocale: {},
+    defaultLocale,
+    locales: [],
+    payloadType: payload && payload.type || {},
+    payloadData: payload && payload.data || {},
+    createdBy: auditInfo && auditInfo.createdBy,
+    createdOn: auditInfo && auditInfo.createdOn,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    registeredUser: audienceFilter && audienceFilter.registeredUser,
+    unRegisteredUser: audienceFilter && audienceFilter.unRegisteredUser
+  };
+  if (localeData) {
+    for (const { basedOnDefaultLocale, payload: { data, type }, locale } of localeData) {
+      pushNotification.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      pushNotification.payloadData[locale] = data;
+      pushNotification.payloadType[locale] = type;
+      pushNotification.locales.push(locale);
+    }
+  }
+  pushNotification.applications = [ 'IOS', 'ANDROID' ].map((deviceType) => {
+    let application = (applications || []).filter((app) => app.deviceType === deviceType)[0];
+    if (application) {
+      application.deviceSelected = true;
+    } else {
+      application = { deviceType, deviceSelected: false };
+    }
+    return application;
+  });
+
+  // const sendDate = new Date(pushOn);
+  const sendDate = new Date(pushWindowStart);
+
+  pushNotification.sendDate = moment(sendDate).startOf('day');
+  pushNotification.sendTime = moment(sendDate);
+  // pushNotification.sendTime = dateItems[1];
+  return pushNotification;
 }
 
 export function transformAvailability ({ country, endTimeStamp, startTimeStamp, uuid: id, videoStatus }) {

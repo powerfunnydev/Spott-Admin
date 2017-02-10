@@ -2,7 +2,12 @@
 # 
 # Deploys the application to a requested host
 #
+
+# Change to the script directory
+CWD=$(pwd)
 SCRIPT=`basename "$0"`
+SCRIPT_DIR="$( cd "$( dirname "$0" )" && pwd )"
+cd "$SCRIPT_DIR"
 
 # We need the host
 HOST=$1
@@ -25,6 +30,12 @@ if [ -z "$DEPLOY_SSH_KEY_FILE" ]; then
 	exit 1
 fi
 
+# Check for version existence
+if [ ! -f ./version ]; then
+    echo "ERROR: '$SCRIPT_DIR/version' file not found. Are you sure this is a valid deploy?"
+    exit 1
+fi
+
 # constants
 USER_NAME=sysadmin
 LOGIN_HOST=$USER_NAME@$HOST
@@ -38,5 +49,5 @@ echo "*** Starting application version $VERSION"
 ssh -i $DEPLOY_SSH_KEY_FILE $LOGIN_HOST '/home/sysadmin/install/start.sh'
 
 echo "*** Done"
-
+cd "$CWD"
 

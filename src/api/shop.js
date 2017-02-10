@@ -23,7 +23,7 @@ export async function fetchShop (baseUrl, authenticationToken, locale, { shopId 
 
 export async function persistShop (baseUrl, authenticationToken, locale, {
   basedOnDefaultLocale, defaultLocale, locales, name, shopId, publishStatus,
-  universalBasketEnabled, url: shopUrl }) {
+  universalBasketEnabled, url: shopUrl, countries }) {
   let shop = {};
   if (shopId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/product/shops/${shopId}`);
@@ -33,7 +33,7 @@ export async function persistShop (baseUrl, authenticationToken, locale, {
   shop.defaultLocale = defaultLocale;
   shop.publishStatus = publishStatus;
   shop.universalBasketEnabled = universalBasketEnabled;
-
+  shop.countries = countries;
   // Update locale data.
   shop.localeData = shop.localeData || []; // Ensure we have locale data
   locales.forEach((locale) => {

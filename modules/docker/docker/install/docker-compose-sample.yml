@@ -1,9 +1,17 @@
 version: '2'
 
 services:
+  config:
+    image: docker.appiness.mobi/apptvate-${DEPLOY_ENV}-web-config
+    volumes:
+      - configData:/var/lib/appiness
   web:
+    depends_on:
+      - config
     extends:
       file: ./base/docker-compose-base.yml
       service: web
-    volumes:
-      - ../data/:/var/lib/appiness/   
+    volumes_from:
+      - config
+volumes:
+  configData:
