@@ -21,7 +21,7 @@ const currentPushNotificationIdSelector = (state, props) => { return props.param
 const currentPushNotificationSelector = createEntityByIdSelector(pushNotificationEntitiesSelector, currentPushNotificationIdSelector);
 const currentPushNotificationDestinationsSearchStringSelector = (state) => state.getIn([ 'content', 'pushNotifications', 'edit', 'currentPushNotificationDestinationsSearchString' ]);
 
-const popUpMessageSelector = (state) => state.getIn([ 'content', 'push-notifications', 'edit', 'popUpMessage' ]);
+const popUpMessageSelector = (state) => state.getIn([ 'content', 'pushNotifications', 'edit', 'popUpMessage' ]);
 const searchedPushNotificationDestinationByIdsSelector = createEntityIdsByRelationSelector(
   searchStringHasPushNotificationDestinationsRelationsSelector, currentPushNotificationDestinationsSearchStringSelector);
 

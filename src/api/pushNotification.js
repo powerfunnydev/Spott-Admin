@@ -36,8 +36,8 @@ export async function deletePushNotifications (baseUrl, authenticationToken, loc
   }
 }
 
-export async function persistPushNotification (baseUrl, authenticationToken, locale, {
-  defaultLocale, pushNotificationId, payloadData, payloadType, locales, basedOnDefaultLocale, actionType, type, publishStatus }) {
+export async function persistPushNotification (baseUrl, authenticationToken, locale, { applications, registeredUser, unRegisteredUser,
+  defaultLocale, pushNotificationId, payloadData, payloadType, locales, basedOnDefaultLocale, actionType, type, publishStatus, sendDate, sendTime, retryDuration }) {
   let pushNotification = {};
   if (pushNotificationId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/push/messages/${pushNotificationId}`);
@@ -60,8 +60,21 @@ export async function persistPushNotification (baseUrl, authenticationToken, loc
     localeData.payload.data = payloadData && payloadData[locale];
     localeData.payload.type = payloadType && payloadType[locale];
   });
+  pushNotification.pushWindowSizeInMinutes = retryDuration;
+
+  const notificationSend = sendDate.hours(sendTime.hours()).minutes(sendTime.minutes());
+  pushNotification.pushWindowStart = notificationSend.format();
+  // pushNotification.pushOn = notificationSend.format();
+
   pushNotification.publishStatus = publishStatus;
   pushNotification.type = type;
+
+  pushNotification.audienceFilter = pushNotification.audienceFilter || {};
+  pushNotification.audienceFilter.registeredUser = registeredUser;
+  pushNotification.audienceFilter.unRegisteredUser = unRegisteredUser;
+
+  pushNotification.applications = (applications || []).filter((application) => application.deviceSelected);
+  pushNotification.applications.forEach((application) => { application.deviceSelected = undefined; application.application = application.application || { uuid: 1 }; return true; });
 
   const url = `${baseUrl}/v004/push/messages`;
   const result = await post(authenticationToken, locale, url, pushNotification);

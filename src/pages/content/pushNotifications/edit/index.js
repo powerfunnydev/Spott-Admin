@@ -7,6 +7,9 @@ import { bindActionCreators } from 'redux';
 import { fromJS } from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
+import DateInput from '../../../_common/inputs/dateInput';
+import TimeInput from '../../../_common/inputs/timeInput';
+import CheckboxInput from '../../../_common/inputs/checkbox';
 import SelectInput from '../../../_common/inputs/selectInput';
 import { Root, FormSubtitle, colors, EditTemplate, FormDescription } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
@@ -136,6 +139,18 @@ export default class EditPushNotification extends Component {
     }
   }
 
+  searchRetryDurations () {
+    return [ 10, 15, 20 ];
+  }
+
+  searchVersions () {
+    const versions = [];
+    for (let i = 100; i < 427; i++) {
+      versions.push(i.toString().split('').join('.'));
+    }
+    return versions;
+  }
+
   openCreateLanguageModal () {
     if (this.props.onBeforeChangeTab()) {
       this.props.openModal(PUSH_NOTIFICATION_CREATE_LANGUAGE);
@@ -177,6 +192,10 @@ export default class EditPushNotification extends Component {
     background: {
       backgroundColor: colors.lightGray4
     },
+    dividedFields: {
+      display: 'flex',
+      flexDirection: 'row'
+    },
     paddingTop: {
       paddingTop: '1.25em'
     },
@@ -195,8 +214,27 @@ export default class EditPushNotification extends Component {
       marginRight: '1.625em',
       marginBottom: '1.625em'
     },
+    dateInput: {
+      flex: 1,
+      paddingRight: '0.313em'
+    },
+    timeInput: {
+      alignSelf: 'flex-end',
+      flex: 1,
+      paddingLeft: '0.313em'
+    },
     flexWrap: {
       flexWrap: 'wrap'
+    },
+    checkboxInput: {
+      marginLeft: '0.313em'
+    },
+    versionsWrapper: {
+      marginLeft: '1.0em'
+    },
+    versionInput: {
+      marginLeft: '0.313em',
+      width: 150
     }
   };
 
@@ -204,6 +242,9 @@ export default class EditPushNotification extends Component {
     const styles = this.constructor.styles;
     const { _activeLocale, errors, currentModal, closeModal, supportedLocales, defaultLocale, pushNotificationDestinationsById, searchedPushNotificationDestinationByIds,
       searchPushNotificationDestinations, location, handleSubmit, currentPushNotification, location: { query: { tab } } } = this.props;
+    const { searchVersions, searchRetryDurations } = this;
+    const formValues = (this.props.formValues && this.props.formValues.toJS()) || { applications: [] };
+
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
@@ -254,7 +295,7 @@ export default class EditPushNotification extends Component {
                     getItemText={(id) => pushNotificationDestinationsById.getIn([ id, 'name' ])}
                     getOptions={searchPushNotificationDestinations}
                     isLoading={searchedPushNotificationDestinationByIds.get('_status') === FETCHING}
-                    label='Push Notification Destinations'
+                    label='Destination'
                     name='actionType'
                     options={searchedPushNotificationDestinationByIds.get('data').toJS()}
                     placeholder='Destination'
@@ -262,9 +303,100 @@ export default class EditPushNotification extends Component {
                 </Section>
               </Tab>
               <Tab title='Schedule'>
-
+                <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage}>
+                  <FormSubtitle first>Send date</FormSubtitle>
+                  <FormDescription>When should this push notifications be sent?</FormDescription>
+                  <Field
+                    component={SelectInput}
+                    disabled
+                    getItemText={(id) => pushNotificationDestinationsById.getIn([ id, 'name' ])}
+                    getOptions={searchPushNotificationDestinations}
+                    isLoading={searchedPushNotificationDestinationByIds.get('_status') === FETCHING}
+                    label='Timezone'
+                    name='timezone'
+                    options={searchedPushNotificationDestinationByIds.get('data').toJS()}
+                    placeholder='Timezone' />
+                  <div style={styles.dividedFields}>
+                    <Field
+                      component={DateInput}
+                      label='Date & Time'
+                      name='sendDate'
+                      placeholder='DD/MM/YYYY'
+                      required
+                      style={styles.dateInput}/>
+                    <Field
+                      component={TimeInput}
+                      name='sendTime'
+                      required
+                      style={styles.timeInput}/>
+                  </div>
+                  <br/>
+                  <FormSubtitle first>Expiration</FormSubtitle>
+                  <FormDescription>Should the system be unable to send out the notifications due to connection problems. How long may we retry?</FormDescription>
+                  <Field
+                    component={SelectInput}
+                    getItemText={(value) => `${value} minutes`}
+                    label='Retry Duration'
+                    name='retryDuration'
+                    options={searchRetryDurations()}
+                    placeholder='Retry Duration'
+                    required/>
+                </Section>
               </Tab>
-              <Tab title='Audience' />
+              <Tab title='Audience'>
+                <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage}>
+                  <FormSubtitle first>User Types</FormSubtitle>
+                  <div style={styles.dividedFields}>
+                    <Field
+                      component={CheckboxInput}
+                      label='Registered'
+                      name='registeredUser'
+                      style={styles.checkboxInput} />
+                    <Field
+                      component={CheckboxInput}
+                      label='Unregistered'
+                      name='unRegisteredUser'
+                      style={styles.checkboxInput} />
+                  </div>
+                  <br/>
+                  <FormSubtitle>Applications</FormSubtitle>
+                  {
+                    formValues && formValues.applications.map((application, index) =>
+                      <div key={index}>
+                        <Field
+                          component={CheckboxInput}
+                          label={application.deviceType}
+                          name={`applications[${index}].deviceSelected`}
+                          style={styles.checkboxInput} />
+                        {
+                          application.deviceSelected && (
+                            <div style={[ styles.dividedFields, styles.versionsWrapper ]}>
+                              <Field
+                                component={SelectInput}
+                                getItemText={(value) => value}
+                                label='Minimum Version'
+                                name={`applications[${index}].minimumAppVersion`}
+                                options={searchVersions()}
+                                placeholder='0.0.0'
+                                required
+                                style={styles.versionInput} />
+                              <Field
+                                component={SelectInput}
+                                getItemText={(value) => value}
+                                getOptions={searchVersions}
+                                label='Maximum Version'
+                                name={`applications[${index}].maximumAppVersion`}
+                                options={searchVersions()}
+                                placeholder='0.0.0'
+                                required
+                                style={styles.versionInput} />
+                            </div>)
+                        }
+                      </div>
+                    )
+                  }
+                </Section>
+              </Tab>
             </Tabs>
         </EditTemplate>
       </Root>
