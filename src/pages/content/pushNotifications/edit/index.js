@@ -9,6 +9,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
 import DateInput from '../../../_common/inputs/dateInput';
 import TimeInput from '../../../_common/inputs/timeInput';
+import CheckboxInput from '../../../_common/inputs/checkbox';
 import SelectInput from '../../../_common/inputs/selectInput';
 import { Root, FormSubtitle, colors, EditTemplate, FormDescription } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
@@ -42,7 +43,6 @@ function validate (values, { t }) {
   loadPushNotification: bindActionCreators(actions.loadPushNotification, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   searchPushNotificationDestinations: bindActionCreators(actions.searchPushNotificationDestinations, dispatch),
-  searchRetryDurations: bindActionCreators(actions.searchRetryDurations, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   submit: bindActionCreators(actions.submit, dispatch)
 }))
@@ -78,7 +78,6 @@ export default class EditPushNotification extends Component {
     pushNotificationDestinationsById: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchPushNotificationDestinations: PropTypes.func.isRequired,
-    searchRetryDurations: PropTypes.func.isRequired,
     searchedPushNotificationDestinationByIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
@@ -138,6 +137,18 @@ export default class EditPushNotification extends Component {
       dispatch(change('locales', newSupportedLocales));
       dispatch(change('_activeLocale', defaultLocale));
     }
+  }
+
+  searchRetryDurations () {
+    return [ 10, 15, 20 ];
+  }
+
+  searchVersions () {
+    const versions = [];
+    for (let i = 100; i < 427; i++) {
+      versions.push(i.toString().split('').join('.'));
+    }
+    return versions;
   }
 
   openCreateLanguageModal () {
@@ -214,13 +225,26 @@ export default class EditPushNotification extends Component {
     },
     flexWrap: {
       flexWrap: 'wrap'
+    },
+    checkboxInput: {
+      marginLeft: '0.313em'
+    },
+    versionsWrapper: {
+      marginLeft: '1.0em'
+    },
+    versionInput: {
+      marginLeft: '0.313em',
+      width: 150
     }
   };
 
   render () {
     const styles = this.constructor.styles;
     const { _activeLocale, errors, currentModal, closeModal, supportedLocales, defaultLocale, pushNotificationDestinationsById, searchedPushNotificationDestinationByIds,
-      searchPushNotificationDestinations, searchRetryDurations, location, handleSubmit, currentPushNotification, location: { query: { tab } } } = this.props;
+      searchPushNotificationDestinations, location, handleSubmit, currentPushNotification, location: { query: { tab } } } = this.props;
+    const { searchVersions, searchRetryDurations } = this;
+    const formValues = (this.props.formValues && this.props.formValues.toJS()) || { applications: [] };
+
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
@@ -312,15 +336,67 @@ export default class EditPushNotification extends Component {
                   <Field
                     component={SelectInput}
                     getItemText={(value) => `${value} minutes`}
-                    getOptions={searchRetryDurations}
                     label='Retry Duration'
                     name='retryDuration'
-                    options={[ 10, 15, 20 ]}
+                    options={searchRetryDurations()}
                     placeholder='Retry Duration'
                     required/>
                 </Section>
               </Tab>
-              <Tab title='Audience' />
+              <Tab title='Audience'>
+                <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage}>
+                  <FormSubtitle first>User Types</FormSubtitle>
+                  <div style={styles.dividedFields}>
+                    <Field
+                      component={CheckboxInput}
+                      label='Registered'
+                      name='registeredUser'
+                      style={styles.checkboxInput} />
+                    <Field
+                      component={CheckboxInput}
+                      label='Unregistered'
+                      name='unRegisteredUser'
+                      style={styles.checkboxInput} />
+                  </div>
+                  <br/>
+                  <FormSubtitle>Applications</FormSubtitle>
+                  {
+                    formValues && formValues.applications.map((application, index) =>
+                      <div key={index}>
+                        <Field
+                          component={CheckboxInput}
+                          label={application.deviceType}
+                          name={`applications[${index}].deviceSelected`}
+                          style={styles.checkboxInput} />
+                        {
+                          application.deviceSelected && (
+                            <div style={[ styles.dividedFields, styles.versionsWrapper ]}>
+                              <Field
+                                component={SelectInput}
+                                getItemText={(value) => value}
+                                label='Minimum Version'
+                                name={`applications[${index}].minimumAppVersion`}
+                                options={searchVersions()}
+                                placeholder='0.0.0'
+                                required
+                                style={styles.versionInput} />
+                              <Field
+                                component={SelectInput}
+                                getItemText={(value) => value}
+                                getOptions={searchVersions}
+                                label='Maximum Version'
+                                name={`applications[${index}].maximumAppVersion`}
+                                options={searchVersions()}
+                                placeholder='0.0.0'
+                                required
+                                style={styles.versionInput} />
+                            </div>)
+                        }
+                      </div>
+                    )
+                  }
+                </Section>
+              </Tab>
             </Tabs>
         </EditTemplate>
       </Root>
