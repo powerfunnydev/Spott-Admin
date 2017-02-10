@@ -7,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { fromJS } from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
+import SelectInput from '../../../_common/inputs/selectInput';
 import { Root, FormSubtitle, colors, EditTemplate, FormDescription } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
@@ -18,6 +19,7 @@ import CreateLanguageModal from '../../_languageModal/create';
 import selector from './selector';
 import LanguageBar from '../../../_common/components/languageBar';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
+import { FETCHING } from '../../../../constants/statusTypes';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 
@@ -37,6 +39,7 @@ function validate (values, { t }) {
   closePopUpMessage: bindActionCreators(actions.closePopUpMessage, dispatch),
   loadPushNotification: bindActionCreators(actions.loadPushNotification, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
+  searchPushNotificationDestinations: bindActionCreators(actions.searchPushNotificationDestinations, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   submit: bindActionCreators(actions.submit, dispatch)
 }))
@@ -69,8 +72,10 @@ export default class EditPushNotification extends Component {
     params: PropTypes.object.isRequired,
     payloadData: PropTypes.object.isRequired,
     popUpMessage: PropTypes.object,
-    productCategoriesById: ImmutablePropTypes.map.isRequired,
+    pushNotificationDestinationsById: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
+    searchPushNotificationDestinations: PropTypes.func.isRequired,
+    searchedPushNotificationDestinationByIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
@@ -197,8 +202,8 @@ export default class EditPushNotification extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { _activeLocale, errors, currentModal, closeModal, supportedLocales, defaultLocale,
-      location, handleSubmit, currentPushNotification, location: { query: { tab } } } = this.props;
+    const { _activeLocale, errors, currentModal, closeModal, supportedLocales, defaultLocale, pushNotificationDestinationsById, searchedPushNotificationDestinationByIds,
+      searchPushNotificationDestinations, location, handleSubmit, currentPushNotification, location: { query: { tab } } } = this.props;
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
@@ -241,13 +246,23 @@ export default class EditPushNotification extends Component {
                 </Section>
               </Tab>
               <Tab title='Destination'>
-              <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage}>
-                <FormSubtitle first>Action</FormSubtitle>
-                <FormDescription>When user interact with this notification, where should it take them?</FormDescription>
-              </Section>
+                <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage}>
+                  <FormSubtitle first>Action</FormSubtitle>
+                  <FormDescription>When user interact with this notification, where should it take them?</FormDescription>
+                  <Field
+                    component={SelectInput}
+                    getItemText={(id) => pushNotificationDestinationsById.getIn([ id, 'name' ])}
+                    getOptions={searchPushNotificationDestinations}
+                    isLoading={searchedPushNotificationDestinationByIds.get('_status') === FETCHING}
+                    label='Push Notification Destinations'
+                    name='actionType'
+                    options={searchedPushNotificationDestinationByIds.get('data').toJS()}
+                    placeholder='Destination'
+                    required/>
+                </Section>
               </Tab>
               <Tab title='Schedule'>
-                
+
               </Tab>
               <Tab title='Audience' />
             </Tabs>
