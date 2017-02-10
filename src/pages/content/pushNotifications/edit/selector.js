@@ -3,6 +3,9 @@ import { currentModalSelector } from '../../../../selectors/global';
 import { createFormValueSelector } from '../../../../utils';
 import {
   pushNotificationEntitiesSelector,
+  listPushNotificationDestinationsEntitiesSelector,
+  searchStringHasPushNotificationDestinationsRelationsSelector,
+  createEntityIdsByRelationSelector,
   createEntityByIdSelector
 } from '../../../../selectors/data';
 
@@ -16,8 +19,11 @@ const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 
 const currentPushNotificationIdSelector = (state, props) => { return props.params.pushNotificationId; };
 const currentPushNotificationSelector = createEntityByIdSelector(pushNotificationEntitiesSelector, currentPushNotificationIdSelector);
+const currentPushNotificationDestinationsSearchStringSelector = (state) => state.getIn([ 'content', 'pushNotifications', 'edit', 'currentPushNotificationDestinationsSearchString' ]);
 
 const popUpMessageSelector = (state) => state.getIn([ 'content', 'push-notifications', 'edit', 'popUpMessage' ]);
+const searchedPushNotificationDestinationByIdsSelector = createEntityIdsByRelationSelector(
+  searchStringHasPushNotificationDestinationsRelationsSelector, currentPushNotificationDestinationsSearchStringSelector);
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
@@ -27,5 +33,7 @@ export default createStructuredSelector({
   errors: formErrorsSelector,
   formValues: valuesSelector,
   popUpMessage: popUpMessageSelector,
+  pushNotificationDestinationsById: listPushNotificationDestinationsEntitiesSelector,
+  searchedPushNotificationDestinationByIds: searchedPushNotificationDestinationByIdsSelector,
   supportedLocales: supportedLocalesSelector
 });

@@ -242,6 +242,10 @@ export function transformListMediumCategory ({ name, uuid: id }) {
   return { name, id };
 }
 
+export function transformListPushNotificationDestination ({ description: name, type: id }) {
+  return { name, id };
+}
+
 export function transformMediumCategory ({ uuid: id, localeData }) {
   const mediumCategory = {
     locales: [],

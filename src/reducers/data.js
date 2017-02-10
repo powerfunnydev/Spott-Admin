@@ -24,6 +24,7 @@ import * as personActions from '../actions/person';
 import * as productCategoryActions from '../actions/productCategory';
 import * as productActions from '../actions/product';
 import * as pushNotificationActions from '../actions/pushNotification';
+import * as pushNotificationDestinationActions from '../actions/pushNotificationDestination';
 import * as reportingActions from '../actions/reporting';
 import * as shopActions from '../actions/shop';
 import * as seasonActions from '../actions/season';
@@ -55,6 +56,7 @@ export default (state = fromJS({
     listProducts: {},
     listProductCategories: {},
     listPushNotifications: {},
+    listPushNotificationDestinations: {},
     listShops: {},
     listTags: {},
     listPersons: {}, // listCharacters is the light version of characters, without locales
@@ -108,6 +110,7 @@ export default (state = fromJS({
     searchStringHasPersons: {},
     searchStringHasProducts: {},
     searchStringHasProductCategories: {},
+    searchStringHasPushNotificationDestinations: {},
     searchStringHasShops: {},
     searchStringHasSeriesEntries: {},
     searchStringHasTags: {},
@@ -632,6 +635,14 @@ export default (state = fromJS({
     }
     case pushNotificationActions.PUSH_NOTIFICATION_FETCH_ERROR:
       return fetchError(state, [ 'entities', 'pushNotifications', action.pushNotificationId ], action.error);
+
+    case pushNotificationDestinationActions.PUSH_NOTIFICATION_DESTINATIONS_SEARCH_START:
+      return searchStart(state, 'searchStringHasPushNotificationDestinations', action.searchString);
+    case pushNotificationDestinationActions.PUSH_NOTIFICATION_DESTINATIONS_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listPushNotificationDestinations', 'searchStringHasPushNotificationDestinations', action.searchString, action.data);
+    case pushNotificationDestinationActions.PUSH_NOTIFICATION_DESTINATIONS_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasPushNotificationDestinations', action.searchString, action.error);
+
     // Shops
     // /////////////////
 

@@ -1,0 +1,12 @@
+import * as api from '../api/pushNotificationDestination';
+import { makeApiActionCreator } from './utils';
+
+export const PUSH_NOTIFICATION_DESTINATIONS_SEARCH_START = 'PUSH_NOTIFICATION_DESTINATIONS/PUSH_NOTIFICATION_DESTINATIONS_SEARCH_START';
+export const PUSH_NOTIFICATION_DESTINATIONS_SEARCH_SUCCESS = 'PUSH_NOTIFICATION_DESTINATIONS/PUSH_NOTIFICATION_DESTINATIONS_SEARCH_SUCCESS';
+export const PUSH_NOTIFICATION_DESTINATIONS_SEARCH_ERROR = 'PUSH_NOTIFICATION_DESTINATIONS/PUSH_NOTIFICATION_DESTINATIONS_SEARCH_ERROR';
+
+// export const fetchPushNotificationDestinations = makeApiActionCreator(api.fetchPushNotificationDestinations, PRODUCT_CATEGORIES_FETCH_START, PRODUCT_CATEGORIES_FETCH_SUCCESS, PRODUCT_CATEGORIES_FETCH_ERROR);
+// export const fetchPushNotificationDestination = makeApiActionCreator(api.fetchPushNotificationDestination, PRODUCT_CATEGORY_FETCH_START, PRODUCT_CATEGORY_FETCH_SUCCESS, PRODUCT_CATEGORY_FETCH_ERROR);
+export const searchPushNotificationDestinations = makeApiActionCreator(api.searchPushNotificationDestinations, PUSH_NOTIFICATION_DESTINATIONS_SEARCH_START, PUSH_NOTIFICATION_DESTINATIONS_SEARCH_SUCCESS, PUSH_NOTIFICATION_DESTINATIONS_SEARCH_ERROR);
+// export const persistpushNotificationDestination = makeApiActionCreator(api.persistpushNotificationDestination, PRODUCT_CATEGORY_PERSIST_START, PRODUCT_CATEGORY_PERSIST_SUCCESS, PRODUCT_CATEGORY_PERSIST_ERROR);
+// export const deletePushNotificationDestination = makeApiActionCreator(api.deletePushNotificationDestination, PRODUCT_CATEGORY_DELETE_START, PRODUCT_CATEGORY_DELETE_SUCCESS, PRODUCT_CATEGORY_DELETE_ERROR);
