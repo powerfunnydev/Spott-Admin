@@ -7,6 +7,8 @@ import { bindActionCreators } from 'redux';
 import { fromJS } from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
+import DateInput from '../../../_common/inputs/dateInput';
+import TimeInput from '../../../_common/inputs/timeInput';
 import SelectInput from '../../../_common/inputs/selectInput';
 import { Root, FormSubtitle, colors, EditTemplate, FormDescription } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
@@ -40,6 +42,7 @@ function validate (values, { t }) {
   loadPushNotification: bindActionCreators(actions.loadPushNotification, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   searchPushNotificationDestinations: bindActionCreators(actions.searchPushNotificationDestinations, dispatch),
+  searchRetryDurations: bindActionCreators(actions.searchRetryDurations, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   submit: bindActionCreators(actions.submit, dispatch)
 }))
@@ -75,6 +78,7 @@ export default class EditPushNotification extends Component {
     pushNotificationDestinationsById: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchPushNotificationDestinations: PropTypes.func.isRequired,
+    searchRetryDurations: PropTypes.func.isRequired,
     searchedPushNotificationDestinationByIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
@@ -177,6 +181,10 @@ export default class EditPushNotification extends Component {
     background: {
       backgroundColor: colors.lightGray4
     },
+    dividedFields: {
+      display: 'flex',
+      flexDirection: 'row'
+    },
     paddingTop: {
       paddingTop: '1.25em'
     },
@@ -195,6 +203,15 @@ export default class EditPushNotification extends Component {
       marginRight: '1.625em',
       marginBottom: '1.625em'
     },
+    dateInput: {
+      flex: 1,
+      paddingRight: '0.313em'
+    },
+    timeInput: {
+      alignSelf: 'flex-end',
+      flex: 1,
+      paddingLeft: '0.313em'
+    },
     flexWrap: {
       flexWrap: 'wrap'
     }
@@ -203,7 +220,7 @@ export default class EditPushNotification extends Component {
   render () {
     const styles = this.constructor.styles;
     const { _activeLocale, errors, currentModal, closeModal, supportedLocales, defaultLocale, pushNotificationDestinationsById, searchedPushNotificationDestinationByIds,
-      searchPushNotificationDestinations, location, handleSubmit, currentPushNotification, location: { query: { tab } } } = this.props;
+      searchPushNotificationDestinations, searchRetryDurations, location, handleSubmit, currentPushNotification, location: { query: { tab } } } = this.props;
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
@@ -254,7 +271,7 @@ export default class EditPushNotification extends Component {
                     getItemText={(id) => pushNotificationDestinationsById.getIn([ id, 'name' ])}
                     getOptions={searchPushNotificationDestinations}
                     isLoading={searchedPushNotificationDestinationByIds.get('_status') === FETCHING}
-                    label='Push Notification Destinations'
+                    label='Destination'
                     name='actionType'
                     options={searchedPushNotificationDestinationByIds.get('data').toJS()}
                     placeholder='Destination'
@@ -262,7 +279,46 @@ export default class EditPushNotification extends Component {
                 </Section>
               </Tab>
               <Tab title='Schedule'>
-
+                <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage}>
+                  <FormSubtitle first>Send date</FormSubtitle>
+                  <FormDescription>When should this push notifications be sent?</FormDescription>
+                  <Field
+                    component={SelectInput}
+                    disabled
+                    getItemText={(id) => pushNotificationDestinationsById.getIn([ id, 'name' ])}
+                    getOptions={searchPushNotificationDestinations}
+                    isLoading={searchedPushNotificationDestinationByIds.get('_status') === FETCHING}
+                    label='Timezone'
+                    name='timezone'
+                    options={searchedPushNotificationDestinationByIds.get('data').toJS()}
+                    placeholder='Timezone' />
+                  <div style={styles.dividedFields}>
+                    <Field
+                      component={DateInput}
+                      label='Date & Time'
+                      name='sendDate'
+                      placeholder='DD/MM/YYYY'
+                      required
+                      style={styles.dateInput}/>
+                    <Field
+                      component={TimeInput}
+                      name='sendTime'
+                      required
+                      style={styles.timeInput}/>
+                  </div>
+                  <br/>
+                  <FormSubtitle first>Expiration</FormSubtitle>
+                  <FormDescription>Should the system be unable to send out the notifications due to connection problems. How long may we retry?</FormDescription>
+                  <Field
+                    component={SelectInput}
+                    getItemText={(value) => `${value} minutes`}
+                    getOptions={searchRetryDurations}
+                    label='Retry Duration'
+                    name='retryDuration'
+                    options={[ 10, 15, 20 ]}
+                    placeholder='Retry Duration'
+                    required/>
+                </Section>
               </Tab>
               <Tab title='Audience' />
             </Tabs>

@@ -1,4 +1,5 @@
 import { ACTIVE, INACTIVE, ADMIN, CONTENT_MANAGER, CONTENT_PRODUCER, BROADCASTER } from '../constants/userRoles';
+import moment from 'moment';
 
 export function transformListBrand ({ uuid, name, auditInfo, logo, profileCover }) {
   return {
@@ -286,13 +287,14 @@ export function transformListMedium ({ number, publishStatus, auditInfo, title, 
 /**
  *  Light version of a push notification. No locales includes.
  */
-export function transformPushNotification ({ uuid: id, type, publishStatus, pushWindowStart, pushWindowSizeInMinutes, pushedOn, localeData, defaultLocale, action, payload, auditInfo }) {
+export function transformPushNotification ({ uuid: id, type, pushOn, publishStatus, pushWindowStart, pushWindowSizeInMinutes, pushedOn, localeData, defaultLocale, action, payload, auditInfo }) {
   const pushNotification = {
     id,
     type,
+    pushOn,
     publishStatus,
     pushWindowStart,
-    pushWindowSizeInMinutes,
+    retryDuration: pushWindowSizeInMinutes,
     pushedOn,
     actionType: action && action.type,
     basedOnDefaultLocale: {},
@@ -313,6 +315,12 @@ export function transformPushNotification ({ uuid: id, type, publishStatus, push
       pushNotification.locales.push(locale);
     }
   }
+  // const sendDate = new Date(pushOn);
+  const sendDate = new Date(pushWindowStart);
+
+  pushNotification.sendDate = moment(sendDate).startOf('day');
+  pushNotification.sendTime = moment(sendDate);
+  // pushNotification.sendTime = dateItems[1];
   return pushNotification;
 }
 

@@ -37,7 +37,7 @@ export async function deletePushNotifications (baseUrl, authenticationToken, loc
 }
 
 export async function persistPushNotification (baseUrl, authenticationToken, locale, {
-  defaultLocale, pushNotificationId, payloadData, payloadType, locales, basedOnDefaultLocale, actionType, type, publishStatus }) {
+  defaultLocale, pushNotificationId, payloadData, payloadType, locales, basedOnDefaultLocale, actionType, type, publishStatus, sendDate, sendTime, retryDuration }) {
   let pushNotification = {};
   if (pushNotificationId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/push/messages/${pushNotificationId}`);
@@ -60,6 +60,12 @@ export async function persistPushNotification (baseUrl, authenticationToken, loc
     localeData.payload.data = payloadData && payloadData[locale];
     localeData.payload.type = payloadType && payloadType[locale];
   });
+  pushNotification.pushWindowSizeInMinutes = retryDuration;
+
+  const notificationSend = sendDate.hours(sendTime.hours()).minutes(sendTime.minutes());
+  pushNotification.pushWindowStart = notificationSend.format();
+  // pushNotification.pushOn = notificationSend.format();
+
   pushNotification.publishStatus = publishStatus;
   pushNotification.type = type;
 

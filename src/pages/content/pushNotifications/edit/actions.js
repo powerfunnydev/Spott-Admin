@@ -37,3 +37,9 @@ export function searchPushNotificationDestinations () {
     }
   };
 }
+
+export function searchRetryDurations () {
+  return async (dispatch, getState) => {
+    return [ 10, 15, 20 ];
+  };
+}
