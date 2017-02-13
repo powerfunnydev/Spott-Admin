@@ -114,9 +114,9 @@ ListView.propTypes = {
   load: PropTypes.func.isRequired,
   routerPushWithReturnTo: PropTypes.func.isRequired,
   selectAllCheckboxes: PropTypes.func.isRequired,
-  sortDirection: PropTypes.string.isRequired,
-  sortField: PropTypes.string.isRequired,
-  onCheckboxChange: PropTypes.string.isRequired,
+  sortDirection: PropTypes.string,
+  sortField: PropTypes.string,
+  onCheckboxChange: PropTypes.func.isRequired,
   onSortField: PropTypes.func.isRequired
 };
 
