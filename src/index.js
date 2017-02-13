@@ -64,6 +64,7 @@ import ProductsRead from './pages/content/products/read';
 import PushNotificationsCreate from './pages/content/pushNotifications/create';
 import PushNotificationsList from './pages/content/pushNotifications/list';
 import PushNotificationsEdit from './pages/content/pushNotifications/edit';
+import PushNotificationsRead from './pages/content/pushNotifications/read';
 import ResetPassword from './pages/resetPassword';
 import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
@@ -267,7 +268,8 @@ function getRoutes ({ dispatch, getState }) {
           <Route component={PushNotificationsCreate} path='create'/>
         </Route>
         <Route path='push-notifications'>
-          <Route component={PushNotificationsEdit} path='edit/:pushNotificationId' />
+          <Route component={PushNotificationsRead} path='read/:pushNotificationId'/>
+          <Route component={PushNotificationsEdit} path='edit/:pushNotificationId'/>
         </Route>
         <Route component={ShopsList} path='shops'>
           <Route component={ShopsCreate} path ='create'/>

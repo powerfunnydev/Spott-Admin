@@ -18,7 +18,7 @@ import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
-import { MOVIE, EPISODE, COMMERCIAL, SERIE, SEASON } from '../../../../constants/mediumTypes'; // change-required
+import { SERIE } from '../../../../constants/mediumTypes'; // change-required
 import { FilterContent } from '../../../_common/components/filterDropdown';
 
 export const prefix = 'pushNotifications';
@@ -94,19 +94,8 @@ export default class PushNotifications extends Component {
     }
   }
 
-  determineReadUrl (medium) {
-    switch (medium.get('type')) {
-      case COMMERCIAL:
-        return `/content/commercials/read/${medium.get('id')}`;
-      case EPISODE:
-        return `/content/series/read/${medium.getIn([ 'serie', 'id' ])}/seasons/read/${medium.getIn([ 'season', 'id' ])}/episodes/read/${medium.get('id')}`;
-      case MOVIE:
-        return `/content/movies/read/${medium.get('id')}`;
-      case SEASON:
-        return `/content/series/read/${medium.getIn([ 'serie', 'id' ])}/seasons/read/${medium.get('id')}`;
-      case SERIE:
-        return `/content/series/read/${medium.get('id')}`;
-    }
+  determineReadUrl (pushNotification) {
+    return `/content/push-notifications/read/${pushNotification.get('id')}`;
   }
 
   determineEditUrl (pushNotification) {
@@ -136,8 +125,7 @@ export default class PushNotifications extends Component {
 
   render () {
     const { pushNotifications, children, isSelected, location: { query, query: { display, pushNotificationsPage, searchString, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString, onChangeFilter,
-      deletePushNotification } = this.props;
+      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString, onChangeFilter, deletePushNotification } = this.props;
     const columns = [
       { type: 'checkBox' },
       { type: 'custom', sort: true, title: 'TYPE', clickable: true, getUrl: this.determineReadUrl, name: 'type' },
