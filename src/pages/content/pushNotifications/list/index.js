@@ -124,11 +124,11 @@ export default class PushNotifications extends Component {
   }
 
   render () {
-    const { pushNotifications, children, isSelected, location: { query, query: { display, pushNotificationsPage, searchString, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString, onChangeFilter, deletePushNotification } = this.props;
+    const { pushNotifications, children, isSelected, location: { /* query,*/ query: { display, pushNotificationsPage, searchString, sortField, sortDirection } },
+      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, /* onChangeDisplay, onChangeSearchString,*/ onChangeFilter, deletePushNotification } = this.props;
     const columns = [
       { type: 'checkBox' },
-      { type: 'custom', sort: true, title: 'TYPE', /* clickable: true,*/ getUrl: this.determineReadUrl, name: 'type' },
+      { type: 'custom', sort: true, title: 'TYPE', clickable: true, getUrl: this.determineReadUrl, name: 'type' },
       { type: 'custom', title: 'DATA', name: 'payloadData' },
       { type: 'custom', title: 'UPDATED BY', name: 'lastUpdatedBy' },
       { type: 'custom', title: 'LAST UPDATED ON', name: 'lastUpdatedOn', dataType: 'date' },
