@@ -167,8 +167,8 @@ export default class PushNotifications extends Component {
                 numberSelected={numberSelected}
                 searchString={searchString}
                 textCreateButton='New Push Notification'
-                onChangeDisplay={onChangeDisplay}
-                onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }}
+                onChangeDisplay={null/* onChangeDisplay*/}
+                onChangeSearchString={null /* (value) => { onChangeSearchString(value); this.slowSearch({ ...query, searchString: value }); }*/}
                 onClickNewEntry={this.onCreatePushNotification}/>
             </Container>
           </div>
