@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { del, get, post } from './request';
 import { transformPushNotification } from './transformers';
 
@@ -61,8 +62,7 @@ export async function persistPushNotification (baseUrl, authenticationToken, loc
     localeData.payload.type = payloadType && payloadType[locale];
   });
   pushNotification.pushWindowSizeInMinutes = retryDuration;
-
-  const notificationSend = sendDate.hours(sendTime.hours()).minutes(sendTime.minutes());
+  const notificationSend = sendDate && sendTime ? sendDate.hours(sendTime.hours()).minutes(sendTime.minutes()) : moment();
   pushNotification.pushWindowStart = notificationSend.format();
   // pushNotification.pushOn = notificationSend.format();
 

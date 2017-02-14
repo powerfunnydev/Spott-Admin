@@ -328,7 +328,7 @@ export function transformPushNotification ({ uuid: id, type, applications, pushO
   });
 
   // const sendDate = new Date(pushOn);
-  const sendDate = new Date(pushWindowStart);
+  const sendDate = pushWindowStart ? new Date(pushWindowStart) : new Date();
 
   pushNotification.sendDate = moment(sendDate).startOf('day');
   pushNotification.sendTime = moment(sendDate);
