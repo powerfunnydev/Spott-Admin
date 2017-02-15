@@ -10,12 +10,12 @@ import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
-import TvGuideList from '../../_mediumTvGuide';
 import { generalStyles } from '../../../_common/components/table/index';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 import Statistics from '../../../_common/statistics';
+import Section from '../../../_common/components/section';
 import moment from 'moment';
 /* eslint-disable no-alert */
 
@@ -95,10 +95,10 @@ export default class ReadPushNotification extends Component {
     const { params, children, currentPushNotification, location, location: { query: { tabIndex } }, deletePushNotification } = this.props;
     const defaultLocale = currentPushNotification.get('defaultLocale');
     const blocks = [
-      { content: '2586', title: 'Approximate Reach', color: '#536970' },
-      { content: '2306', title: 'Delivered', color: '#aacc6b' },
-      { content: '280', title: 'Failed', color: '#da5454' },
-      { content: '38%', title: 'Interaction rate', color: '#536970' }
+      { content: '-', title: 'Approximate Reach', color: '#536970' },
+      { content: '-', title: 'Delivered', color: '#aacc6b' },
+      { content: '-', title: 'Failed', color: '#da5454' },
+      { content: '-', title: 'Interaction rate', color: '#536970' }
     ];
     return (
       <SideMenu>
@@ -113,7 +113,7 @@ export default class ReadPushNotification extends Component {
                 imageUrl={currentPushNotification.getIn([ 'profileImage', defaultLocale, 'url' ]) && `${currentPushNotification.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
                 subtitle={currentPushNotification.getIn([ 'payloadData', defaultLocale ])}
                 title='Push Notification'
-                titleBadge={<button style={[ styles.background ]} ><div style={[ styles.oval ]}>●</div><div style={[ styles.status ]}>PUBLISHED</div></button>}
+                titleBadge={<button style={[ styles.background ]} ><div style={[ styles.oval ]}>●</div><div style={[ styles.status ]}>{currentPushNotification.get('publishStatus')}</div></button>}
                 onEdit={() => { this.props.routerPushWithReturnTo(`/content/push-notifications/edit/${params.pushNotificationId}`); }}
                 onRemove={async () => { await deletePushNotification(currentPushNotification.getIn([ 'id' ])); this.redirect(); }}/>}
           </Container>
@@ -124,7 +124,7 @@ export default class ReadPushNotification extends Component {
             <Container>
               <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
                 <Tab title='Push Notification'>
-                  <TvGuideList {...this.props} mediumId={this.props.params.pushNotificationId}/>
+                  <Section/>
                 </Tab>
               </Tabs>
             </Container>
