@@ -9,6 +9,7 @@ import * as episodeActions from '../actions/episode';
 import * as movieActions from '../actions/movie';
 import * as personActions from '../actions/person';
 import * as productActions from '../actions/product';
+import * as pushNotificationActions from '../actions/pushNotification';
 import * as seasonActions from '../actions/season';
 import * as seriesActions from '../actions/series';
 import * as shopActions from '../actions/shop';
@@ -84,6 +85,11 @@ export default (state = List(), action) => {
     case productActions.PRODUCT_PERSIST_ERROR:
       return pushError(state, action.error, entityTypes.PRODUCT);
 
+    case pushNotificationActions.PUSH_NOTIFICATION_DELETE_ERROR:
+    case pushNotificationActions.PUSH_NOTIFICATIONS_DELETE_ERROR:
+    case pushNotificationActions.PUSH_NOTIFICATION_PERSIST_ERROR:
+      return pushError(state, action.error, entityTypes.PUSH_NOTIFICATION);
+
     case seasonActions.SEASON_DELETE_ERROR:
     case seasonActions.SEASONS_DELETE_ERROR:
     case seasonActions.SEASON_PERSIST_ERROR:
@@ -139,6 +145,9 @@ export default (state = List(), action) => {
 
     case productActions.PRODUCT_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.PRODUCT);
+
+    case pushNotificationActions.PUSH_NOTIFICATION_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, entityTypes.PUSH_NOTIFICATION);
 
     case seasonActions.SEASON_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.SEASON);
