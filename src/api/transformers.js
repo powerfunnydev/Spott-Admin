@@ -312,7 +312,7 @@ export function transformPushNotification ({ uuid: id, type, applications, pushO
   if (localeData) {
     for (const { basedOnDefaultLocale, payload: { data, type }, locale } of localeData) {
       pushNotification.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
-      pushNotification.payloadData[locale] = data;
+      pushNotification.payloadData[locale] = data || '-';
       pushNotification.payloadType[locale] = type;
       pushNotification.locales.push(locale);
     }

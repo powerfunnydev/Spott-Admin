@@ -7,6 +7,7 @@ export const EPISODE = 'episode';
 export const MOVIE = 'movie';
 export const PERSON = 'person';
 export const PRODUCT = 'product';
+export const PUSH_NOTIFICATION = 'pushNotification';
 export const SEASON = 'season';
 export const SERIES_ENTRY = 'seriesEntry';
 export const SHOP = 'shop';

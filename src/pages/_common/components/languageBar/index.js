@@ -78,7 +78,7 @@ export default class LanguageBar extends Component {
             return defaultLocale === language ? `${locale} (Base)` : locale;
           }}
           name='_activeLocale'
-          options={supportedLocales && supportedLocales.toArray() || []}
+          options={supportedLocales && supportedLocales.toArray().filter((supportedLocale) => (localeNames || []).keySeq().toArray().indexOf(supportedLocale) !== -1) || []}
           placeholder='Language'/>
         {_activeLocale !== defaultLocale &&
           <Button
