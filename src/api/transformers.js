@@ -815,6 +815,14 @@ export function transformListCollectionItem ({ product, productRelevance, uuid }
   };
 }
 
-export function transformScheduleEntry (data) {
-  return data;
+export function transformScheduleEntry ({ broadcaster, channels, commercial, end, media, start, uuid }) {
+  return {
+    broadcaster: broadcaster && transformBroadcaster(broadcaster),
+    broadcastChannels: channels.map(transformBroadcastChannel),
+    commercialId: commercial && commercial.uuid,
+    end,
+    id: uuid,
+    media: media.map(transformListMedium),
+    start
+  };
 }

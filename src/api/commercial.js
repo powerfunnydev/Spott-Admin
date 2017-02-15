@@ -140,7 +140,7 @@ export async function uploadRoundLogo (baseUrl, authenticationToken, locale, { c
 }
 
 export async function fetchScheduleEntries (baseUrl, authenticationToken, locale, { commercialId }) {
-  const url = `${baseUrl}/v004/media//${commercialId}/scheduleEntries`;
+  const url = `${baseUrl}/v004/media/commercials/${commercialId}/scheduleEntries`;
   const { body } = await get(authenticationToken, locale, url);
   return body.data.map(transformScheduleEntry);
 }

@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformUser, transformBroadcaster, transformBroadcastChannel } from './transformers';
+import { transformListMedium, transformUser, transformBroadcaster, transformBroadcastChannel } from './transformers';
 
 export async function fetchBroadcasterUsers (baseUrl, authenticationToken, locale, { broadcasterId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/broadcasters/${broadcasterId}/users?page=${page}&pageSize=${pageSize}`;
@@ -109,4 +109,24 @@ export async function uploadBroadcasterImage (baseUrl, authenticationToken, loca
 export async function deleteLogo (baseUrl, authenticationToken, locale, { broadcasterId }) {
   const url = `${baseUrl}/v004/media/broadcasters/${broadcasterId}/logo`;
   return await del(authenticationToken, locale, url);
+}
+
+export async function searchBroadcasterMedia (baseUrl, authenticationToken, locale, { broadcasterId, searchString }) {
+  let searchUrl = `${baseUrl}/v004/media/broadcasters/${broadcasterId}/media?page=0&pageSize=25`;
+  if (searchString) {
+    searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
+  }
+  const { body } = await get(authenticationToken, locale, searchUrl);
+  body.data = body.data.map(transformListMedium);
+  return body;
+}
+
+export async function searchBroadcasterChannels (baseUrl, authenticationToken, locale, { broadcasterId, searchString }) {
+  let searchUrl = `${baseUrl}/v004/media/broadcasters/${broadcasterId}/channels?page=0&pageSize=25`;
+  if (searchString) {
+    searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
+  }
+  const { body } = await get(authenticationToken, locale, searchUrl);
+  body.data = body.data.map(transformBroadcastChannel);
+  return body;
 }

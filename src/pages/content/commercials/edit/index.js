@@ -22,13 +22,14 @@ import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
 import Availabilities from '../../_availabilities/list';
 import RelatedVideo from '../../../content/_relatedVideo/read';
-import * as actions from './actions';
-import selector from './selector';
 import Characters from '../../_helpers/_characters/list';
 import Collections from '../../_collections/list';
 import { BANNER_IMAGE, PROFILE_IMAGE, ROUND_LOGO } from '../../../../constants/imageTypes';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
+import Schedule from './schedule/list';
+import * as actions from './actions';
+import selector from './selector';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -588,6 +589,9 @@ export default class EditCommercial extends Component {
                   searchedBrandIds={searchedCollectionsBrandIds}
                   searchedCharacterIds={searchedCollectionsCharacterIds}
                   searchedProductIds={searchedCollectionsProductIds}/>
+              </Tab>
+              <Tab title='Schedule'>
+                <Schedule commercialId={this.props.params.commercialId}/>
               </Tab>
               <Tab title='Availability'>
                 <Availabilities mediumId={this.props.params.commercialId} />

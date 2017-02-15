@@ -8,80 +8,18 @@ export async function fetchScheduleEntry (baseUrl, authenticationToken, locale, 
 }
 
 export async function persistScheduleEntry (baseUrl, authenticationToken, locale, {
-  bannerActorId, bannerBarColor, bannerBrandId, bannerCharacterId, bannerExternalLink,
-  bannerInternalLinkType, bannerMediumId, bannerSystemLinkType, bannerText, bannerTextColor, bannerUrl,
-  basedOnDefaultLocale, brandId, broadcasters, commercialId, contentProducers, defaultLocale,
-  description, hasBanner, locales, publishStatus, title
+  broadcasterId, broadcastChannelIds, commercialId, end, id, start, mediumIds
 }) {
-  let commercial = {};
-  if (commercialId) {
-    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/commercials/${commercialId}`);
-    commercial = body;
-  }
-
-  commercial.brand = brandId && { uuid: brandId };
-  commercial.broadcasters = broadcasters && broadcasters.map((bc) => ({ uuid: bc }));
-  commercial.contentProducers = contentProducers && contentProducers.map((cp) => ({ uuid: cp }));
-  commercial.defaultLocale = defaultLocale;
-  commercial.hasBanner = hasBanner;
-  commercial.publishStatus = publishStatus;
-
-  commercial.bannerActor = null;
-  commercial.bannerBrand = null;
-  commercial.bannerCharacter = null;
-  commercial.bannerMedium = null;
-
-  if (hasBanner) {
-    if (bannerSystemLinkType === 'INTERNAL') {
-      commercial.bannerLinkType = bannerInternalLinkType;
-
-      switch (bannerInternalLinkType) {
-        case 'ACTOR':
-          commercial.bannerActor = { uuid: bannerActorId };
-          break;
-        case 'BRAND':
-          commercial.bannerBrand = { uuid: bannerBrandId };
-          break;
-        case 'CHARACTER':
-          commercial.bannerCharacter = { uuid: bannerCharacterId };
-          break;
-        case 'MEDIUM':
-          commercial.bannerMedium = { uuid: bannerMediumId };
-          break;
-      }
-    } else {
-      commercial.bannerLinkType = 'EXTERNAL';
-    }
-  }
-
-  // Update locale data.
-  commercial.localeData = commercial.localeData || []; // Ensure we have locale data
-  locales.forEach((locale) => {
-    // Get localeData, create if necessary in O(n^2)
-    let localeData = commercial.localeData.find((ld) => ld.locale === locale);
-    if (!localeData) {
-      localeData = { locale };
-      commercial.localeData.push(localeData);
-    }
-
-    if (bannerSystemLinkType === 'EXTERNAL') {
-      commercial.bannerExternalLink = hasBanner ? bannerExternalLink[locale] : null;
-    }
-
-    localeData.banner = hasBanner ? {
-      barColor: bannerBarColor[locale],
-      text: bannerText[locale],
-      textColor: bannerTextColor[locale],
-      url: bannerUrl[locale]
-    } : null;
-    // basedOnDefaultLocale is always provided, no check needed
-    localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
-    localeData.description = description && description[locale];
-    localeData.title = title && title[locale];
+  const { body } = await post(authenticationToken, locale, `${baseUrl}/v004/media/commercialScheduleEntries`, {
+    broadcaster: broadcasterId && { uuid: broadcasterId },
+    channels: broadcastChannelIds && broadcastChannelIds.map((uuid) => ({ uuid })),
+    commercial: commercialId && { uuid: commercialId },
+    end,
+    media: mediumIds && mediumIds.map((uuid) => ({ uuid })),
+    start,
+    uuid: id
   });
-  const url = `${baseUrl}/v004/media/commercials`;
-  const result = await post(authenticationToken, locale, url, commercial);
-  return transformScheduleEntry(result.body);
+  return transformScheduleEntry(body);
 }
 
 export async function deleteScheduleEntry (baseUrl, authenticationToken, locale, { scheduleEntryId }) {

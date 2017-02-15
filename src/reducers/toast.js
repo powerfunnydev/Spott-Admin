@@ -15,6 +15,7 @@ import * as shopActions from '../actions/shop';
 import * as toastActions from '../actions/toast';
 import * as tvGuideActions from '../actions/tvGuide';
 import * as userActions from '../actions/user';
+import * as scheduleEntryActions from '../actions/scheduleEntry';
 
 function pushError (state, error, entityType) {
   return state.push(Map({ type: 'error', error, entityType }));
@@ -104,6 +105,10 @@ export default (state = List(), action) => {
     case tvGuideActions.TV_GUIDE_ENTRY_PERSIST_ERROR:
       return pushError(state, action.error, entityTypes.TV_GUIDE_ENTRY);
 
+    case scheduleEntryActions.SCHEDULE_ENTRY_DELETE_ERROR:
+    case scheduleEntryActions.SCHEDULE_ENTRY_PERSIST_ERROR:
+      return pushError(state, action.error, entityTypes.SCHEDULE_ENTRY);
+
     case userActions.USERS_DELETE_ERROR:
     case userActions.USER_DELETE_ERROR:
     case userActions.USER_PERSIST_ERROR:
@@ -151,6 +156,11 @@ export default (state = List(), action) => {
 
     case tvGuideActions.TV_GUIDE_ENTRY_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.TV_GUIDE_ENTRY);
+
+    case scheduleEntryActions.SCHEDULE_ENTRY_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, entityTypes.SCHEDULE_ENTRY);
+    // SCHEDULE_ENTRY_DELETE_ERROR
+    // SCHEDULE_ENTRIES_DELETE_ERROR
 
     case toastActions.TOAST_POP:
       return pop(state);

@@ -4,7 +4,7 @@ import {
   serializeFilterHasUsers, serializeFilterHasMediumCategories, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
-  serializeFilterHasProductCategories, serializeFilterHasPushNotifications
+  serializeFilterHasProductCategories, serializeFilterHasPushNotifications, serializeBroadcasterFilterHasMedia
 } from './utils';
 
 import * as availabilityActions from '../actions/availability';
@@ -26,6 +26,7 @@ import * as productActions from '../actions/product';
 import * as pushNotificationActions from '../actions/pushNotification';
 import * as pushNotificationDestinationActions from '../actions/pushNotificationDestination';
 import * as reportingActions from '../actions/reporting';
+import * as scheduleEntryActions from '../actions/scheduleEntry';
 import * as shopActions from '../actions/shop';
 import * as seasonActions from '../actions/season';
 import * as seriesActions from '../actions/series';
@@ -68,6 +69,7 @@ export default (state = fromJS({
     pushNotifications: {},
     tvGuideEntries: {},
     similarProducts: {},
+    scheduleEntries: {},
     shops: {},
     users: {},
     videos: {}
@@ -118,6 +120,7 @@ export default (state = fromJS({
 
     characterHasFaceImages: {},
     collectionHasCollectionItems: {},
+    commercialHasScheduleEntries: {},
     imageHasSuggestedProducts: {},
     mediumHasBrands: {},
     mediumHasCollections: {},
@@ -213,6 +216,13 @@ export default (state = fromJS({
     case broadcastChannelActions.BROADCAST_CHANNELS_FETCH_ERROR:
       return searchError(state, 'filterHasBroadcastChannels', serializeFilterHasBroadcastChannels(action), action.error);
 
+    case broadcastersActions.BROADCASTER_CHANNELS_SEARCH_START:
+      return searchStart(state, 'filterHasBroadcastChannels', serializeFilterHasBroadcastChannels(action));
+    case broadcastersActions.BROADCASTER_CHANNELS_SEARCH_SUCCESS:
+      return searchSuccess(state, 'broadcastChannels', 'filterHasBroadcastChannels', serializeFilterHasBroadcastChannels(action), action.data.data);
+    case broadcastersActions.BROADCASTER_CHANNELS_SEARCH_ERROR:
+      return searchError(state, 'filterHasBroadcastChannels', serializeFilterHasBroadcastChannels(action), action.error);
+
     case broadcastChannelActions.BROADCAST_CHANNEL_SEARCH_START:
       return searchStart(state, 'searchStringHasBroadcastChannels', action.searchString);
     case broadcastChannelActions.BROADCAST_CHANNEL_SEARCH_SUCCESS:
@@ -260,6 +270,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'broadcasters', 'searchStringHasBroadcasters', action.searchString, action.data);
     case broadcastersActions.BROADCASTER_SEARCH_ERROR:
       return searchError(state, 'searchStringHasBroadcasters', action.searchString, action.error);
+
+    case broadcastersActions.BROADCASTER_MEDIA_SEARCH_START:
+      return searchStart(state, 'filterHasMedia', serializeBroadcasterFilterHasMedia(action));
+    case broadcastersActions.BROADCASTER_MEDIA_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'filterHasMedia', serializeBroadcasterFilterHasMedia(action), action.data.data);
+    case broadcastersActions.BROADCASTER_MEDIA_SEARCH_ERROR:
+      return searchError(state, 'filterHasMedia', serializeBroadcasterFilterHasMedia(action), action.error);
 
     // Characters
     // //////////
@@ -358,7 +375,6 @@ export default (state = fromJS({
       return fetchStart(state, [ 'entities', 'media', action.commercialId ]);
     case commercialActions.COMMERCIAL_FETCH_SUCCESS: {
       const { brand, bannerActor, bannerBrand, bannerCharacter, bannerMedium, contentProducers } = action.data;
-      console.warn('ACTION', action.data);
       let newState = brand && fetchSuccess(state, [ 'entities', 'listBrands', brand.id ], brand) || state;
       newState = contentProducers && mergeListOfEntities(newState, [ 'entities', 'contentProducers' ], contentProducers) || newState;
       newState = bannerActor && fetchSuccess(state, [ 'entities', 'listPersons', bannerActor.id ], bannerActor) || newState;
@@ -376,6 +392,21 @@ export default (state = fromJS({
       return searchSuccess(state, 'listMedia', 'filterHasCommercials', serializeFilterHasCommercials(action), action.data.data);
     case commercialActions.COMMERCIALS_FETCH_ERROR:
       return searchError(state, 'filterHasCommercials', serializeFilterHasCommercials(action), action.error);
+
+    case commercialActions.COMMERCIAL_SCHEDULE_ENTRIES_FETCH_START:
+      return searchStart(state, 'commercialHasScheduleEntries', action.mediumId);
+    case commercialActions.COMMERCIAL_SCHEDULE_ENTRIES_FETCH_SUCCESS:
+      return searchSuccess(state, 'scheduleEntries', 'commercialHasScheduleEntries', action.commercialId, action.data);
+    case commercialActions.COMMERCIAL_SCHEDULE_ENTRIES_FETCH_ERROR:
+      return searchError(state, 'commercialHasScheduleEntries', action.mediumId, action.error);
+
+    case scheduleEntryActions.SCHEDULE_ENTRY_FETCH_SUCCESS: {
+      const { broadcaster, broadcastChannels, media } = action.data;
+      let newState = broadcaster && fetchSuccess(state, [ 'entities', 'broadcaster', broadcaster.id ], broadcaster) || state;
+      newState = broadcastChannels && mergeListOfEntities(newState, [ 'entities', 'broadcastChannels' ], broadcastChannels) || newState;
+      newState = media && mergeListOfEntities(newState, [ 'entities', 'listMedia' ], media) || newState;
+      return fetchSuccess(newState, [ 'entities', 'scheduleEntries', action.scheduleEntryId ], action.data);
+    }
 
     // Content producers
     // /////////////////
