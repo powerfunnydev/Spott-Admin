@@ -13,3 +13,4 @@ export const SERIES_ENTRY = 'seriesEntry';
 export const SHOP = 'shop';
 export const TV_GUIDE_ENTRY = 'tvGuideEntry';
 export const USER = 'user';
+export const SCHEDULE_ENTRY = 'scheduleEntry';

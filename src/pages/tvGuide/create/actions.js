@@ -3,8 +3,9 @@ import { searchBroadcastChannels as dataSearchBroadcastChannels } from '../../..
 import { persistTvGuideEntry } from '../../../actions/tvGuide';
 import { searchSeasons as dataSearchSeasons } from '../../../actions/series';
 import { searchEpisodes as dataSearchEpisodes } from '../../../actions/season';
-import { currentSeasonIdSelector, currentMediumIdSelector } from './selector';
 import { fetchNextEpisode as dataFetchNextEpisode } from '../../../actions/episode';
+import { createSearchAction } from '../../../utils';
+import { currentSeasonIdSelector, currentMediumIdSelector } from './selector';
 
 export const BROADCAST_CHANNELS_SEARCH_START = 'TV_GUIDE_CREATE/BROADCAST_CHANNELS_SEARCH_START';
 export const BROADCAST_CHANNELS_SEARCH_ERROR = 'TV_GUIDE_CREATE/BROADCAST_CHANNELS_SEARCH_ERROR';
@@ -35,21 +36,6 @@ export function fetchNextEpisode (episodeId) {
 
 export function clearPopUpMessage () {
   return { type: CLEAR_POP_UP_MESSAGE };
-}
-
-function createSearchAction (dataAction, startActionType, errorActionType, selector) {
-  return (searchString = '') => {
-    return async (dispatch, getState) => {
-      const lowerCaseSearchString = searchString.toLowerCase();
-      const payload = selector ? selector(getState()) : {};
-      try {
-        dispatch({ searchString: lowerCaseSearchString, type: startActionType, ...payload });
-        return await dispatch(dataAction({ searchString, ...payload }));
-      } catch (error) {
-        dispatch({ error, searchString: lowerCaseSearchString, type: errorActionType, ...payload });
-      }
-    };
-  };
 }
 
 export const searchBroadcastChannels = createSearchAction(dataSearchBroadcastChannels, BROADCAST_CHANNELS_SEARCH_START, BROADCAST_CHANNELS_SEARCH_ERROR, (state) => ({ seasonId: currentSeasonIdSelector(state) }));

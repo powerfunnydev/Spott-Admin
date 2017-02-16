@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformCharacterFaceImage, transformCharacter, transformListCharacter } from './transformers';
+import { transformImage, transformCharacter, transformListCharacter } from './transformers';
 
 export async function fetchCharacters (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/characters?page=${page}&pageSize=${pageSize}`;
@@ -24,7 +24,7 @@ export async function fetchCharacter (baseUrl, authenticationToken, locale, { ch
 export async function fetchFaceImages (baseUrl, authenticationToken, locale, { characterId, sortDirection = 'DESC', sortField = 'ADDED_ON' }) {
   const url = `${baseUrl}/v004/media/characters/${characterId}/faceImages?sortDirection=${sortDirection}&sortField=${sortField}`;
   const { body } = await get(authenticationToken, locale, url);
-  body.data = body.data.map(transformCharacterFaceImage);
+  body.data = body.data.map(transformImage);
   return body;
 }
 

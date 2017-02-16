@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformPerson, transformListPerson, transformPersonFaceImage } from './transformers';
+import { transformPerson, transformListPerson, transformImage } from './transformers';
 
 // IMPORTANT
 // Actors will be Persons in the future, so we will call this entity already Person,
@@ -28,7 +28,7 @@ export async function fetchPerson (baseUrl, authenticationToken, locale, { perso
 export async function fetchFaceImages (baseUrl, authenticationToken, locale, { personId, sortDirection = 'DESC', sortField = 'ADDED_ON' }) {
   const url = `${baseUrl}/v004/media/actors/${personId}/faceImages?sortDirection=${sortDirection}&sortField=${sortField}`;
   const { body } = await get(authenticationToken, locale, url);
-  body.data = body.data.map(transformPersonFaceImage);
+  body.data = body.data.map(transformImage);
   return body;
 }
 

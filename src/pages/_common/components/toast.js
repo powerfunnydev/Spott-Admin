@@ -13,7 +13,8 @@ import CompletedSVG from '../images/completed';
 import PlusSVG from '../images/plus';
 import {
   BROADCAST_CHANNEL, BROADCASTER, CHARACTER, COMMERCIAL, CONTENT_PRODUCER, EPISODE,
-  MOVIE, PERSON, PRODUCT, PUSH_NOTIFICATION, SEASON, SERIES_ENTRY, SHOP, TV_GUIDE_ENTRY, USER
+  MOVIE, PERSON, PRODUCT, PUSH_NOTIFICATION, SEASON, SERIES_ENTRY, SHOP, TV_GUIDE_ENTRY, USER,
+  SCHEDULE_ENTRY
 } from '../../../constants/entityTypes';
 
 @connect(null, (dispatch) => ({
@@ -252,6 +253,14 @@ export class SuccessMessage extends Component {
     );
   }
 
+  scheduleEntryPersistSuccess () {
+    return (
+      <span>
+        Schedule Entry has been succesfully persisted.
+      </span>
+    );
+  }
+
   userPersistSuccess (user) {
     const { styles } = this.constructor;
     return (
@@ -304,6 +313,8 @@ export class SuccessMessage extends Component {
       return this.tvGuideEntryPersistSuccess(entity);
     } else if (entityType === USER) {
       return this.userPersistSuccess(entity);
+    } else if (entityType === SCHEDULE_ENTRY) {
+      return this.scheduleEntryPersistSuccess(entity);
     }
     return <span>Toast message of this entity isn't supported yet.</span>;
   }

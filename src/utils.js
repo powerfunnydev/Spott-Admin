@@ -91,3 +91,19 @@ export function downloadFile (url) {
 }
 
 /* eslint-enable */
+
+// Creates an action creator which takes a searchString
+export function createSearchAction (dataAction, startActionType, errorActionType, selector) {
+  return (searchString = '') => {
+    return async (dispatch, getState) => {
+      const lowerCaseSearchString = searchString.toLowerCase();
+      const payload = selector ? selector(getState()) : {};
+      try {
+        dispatch({ searchString: lowerCaseSearchString, type: startActionType, ...payload });
+        return await dispatch(dataAction({ searchString, ...payload }));
+      } catch (error) {
+        dispatch({ error, searchString: lowerCaseSearchString, type: errorActionType, ...payload });
+      }
+    };
+  };
+}

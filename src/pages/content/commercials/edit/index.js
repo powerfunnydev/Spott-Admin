@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { FETCHING } from '../../../../constants/statusTypes';
-import { makeTextStyle, fontWeights, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
+import { colors, fontWeights, makeTextStyle, EditTemplate, FormDescription, FormSubtitle, Root } from '../../../_common/styles';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { COMMERCIAL_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
@@ -14,6 +14,7 @@ import Dropzone from '../../../_common/dropzone/imageDropzone';
 import Label from '../../../_common/inputs/_label';
 import localized from '../../../_common/decorators/localized';
 import CheckboxInput from '../../../_common/inputs/checkbox';
+import RadioInput from '../../../_common/inputs/radioInput';
 import Section from '../../../_common/components/section';
 import ColorInput from '../../../_common/inputs/colorInput';
 import SelectInput from '../../../_common/inputs/selectInput';
@@ -21,13 +22,14 @@ import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
 import Availabilities from '../../_availabilities/list';
 import RelatedVideo from '../../../content/_relatedVideo/read';
-import * as actions from './actions';
-import selector from './selector';
 import Characters from '../../_helpers/_characters/list';
 import Collections from '../../_collections/list';
-import { PROFILE_IMAGE, ROUND_LOGO } from '../../../../constants/imageTypes';
+import { BANNER_IMAGE, PROFILE_IMAGE, ROUND_LOGO } from '../../../../constants/imageTypes';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
+import Schedule from './schedule/list';
+import * as actions from './actions';
+import selector from './selector';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -45,11 +47,16 @@ function validate (values, { t }) {
 @localized
 @connect(selector, (dispatch) => ({
   closeModal: bindActionCreators(actions.closeModal, dispatch),
+  deleteBannerImage: bindActionCreators(actions.deleteBannerImage, dispatch),
   deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
   deleteRoundLogo: bindActionCreators(actions.deleteRoundLogo, dispatch),
   loadCommercial: bindActionCreators(actions.loadCommercial, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
+  searchBannerLinkBrands: bindActionCreators(actions.searchBannerLinkBrands, dispatch),
+  searchBannerLinkCharacters: bindActionCreators(actions.searchBannerLinkCharacters, dispatch),
+  searchBannerLinkMedia: bindActionCreators(actions.searchBannerLinkMedia, dispatch),
+  searchBannerLinkPersons: bindActionCreators(actions.searchBannerLinkPersons, dispatch),
   searchBrands: bindActionCreators(actions.searchBrands, dispatch),
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
   searchCharacters: bindActionCreators(actions.searchCharacters, dispatch),
@@ -58,6 +65,7 @@ function validate (values, { t }) {
   searchCollectionsProducts: bindActionCreators(actions.searchCollectionsProducts, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
+  uploadBannerImage: bindActionCreators(actions.uploadBannerImage, dispatch),
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch),
   uploadRoundLogo: bindActionCreators(actions.uploadRoundLogo, dispatch)
 }))
@@ -70,6 +78,8 @@ export default class EditCommercial extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
+    bannerInternalLinkType: PropTypes.string,
+    bannerSystemLinkType: PropTypes.string,
     brandsById: ImmutablePropTypes.map.isRequired,
     broadcastersById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
@@ -82,20 +92,27 @@ export default class EditCommercial extends Component {
     currentCommercial: ImmutablePropTypes.map.isRequired,
     currentModal: PropTypes.string,
     defaultLocale: PropTypes.string,
+    deleteBannerImage: PropTypes.func.isRequired,
     deleteProfileImage: PropTypes.func.isRequired,
     deleteRoundLogo: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
     handleSubmit: PropTypes.func.isRequired,
-    hasBanner: ImmutablePropTypes.map,
+    hasBanner: PropTypes.bool,
     initialize: PropTypes.func.isRequired,
     loadCommercial: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    mediaById: ImmutablePropTypes.map.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
+    personsById: ImmutablePropTypes.map.isRequired,
     productsById: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
+    searchBannerLinkBrands: PropTypes.func.isRequired,
+    searchBannerLinkCharacters: PropTypes.func.isRequired,
+    searchBannerLinkMedia: PropTypes.func.isRequired,
+    searchBannerLinkPersons: PropTypes.func.isRequired,
     searchBrands: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
     searchCharacters: PropTypes.func.isRequired,
@@ -103,6 +120,10 @@ export default class EditCommercial extends Component {
     searchCollectionsCharacters: PropTypes.func.isRequired,
     searchCollectionsProducts: PropTypes.func.isRequired,
     searchContentProducers: PropTypes.func.isRequired,
+    searchedBannerLinkBrandIds: ImmutablePropTypes.map.isRequired,
+    searchedBannerLinkCharacterIds: ImmutablePropTypes.map.isRequired,
+    searchedBannerLinkMediumIds: ImmutablePropTypes.map.isRequired,
+    searchedBannerLinkPersonIds: ImmutablePropTypes.map.isRequired,
     searchedBrandIds: ImmutablePropTypes.map.isRequired,
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
     searchedCharacterIds: ImmutablePropTypes.map.isRequired,
@@ -113,6 +134,7 @@ export default class EditCommercial extends Component {
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
+    uploadBannerImage: PropTypes.func.isRequired,
     uploadProfileImage: PropTypes.func.isRequired,
     uploadRoundLogo: PropTypes.func.isRequired
   };
@@ -134,10 +156,27 @@ export default class EditCommercial extends Component {
       const editObj = await this.props.loadCommercial(commercialId);
       this.props.initialize({
         ...editObj,
-        contentProducers: editObj.contentProducers && editObj.contentProducers.map((bc) => bc.id),
-        broadcasters: editObj.broadcasters && editObj.broadcasters.map((bc) => bc.id),
+        _activeLocale: editObj.defaultLocale,
+        bannerSystemLinkType: editObj.bannerSystemLinkType || 'EXTERNAL',
+        bannerInternalLinkType: editObj.bannerInternalLinkType || 'MEDIUM',
         brandId: editObj.brand && editObj.brand.id,
-        _activeLocale: editObj.defaultLocale
+        bannerActorId: editObj.bannerActor && editObj.bannerActor.id,
+        bannerBrandId: editObj.bannerBrand && editObj.bannerBrand.id,
+        bannerCharacterId: editObj.bannerCharacter && editObj.bannerCharacter.id,
+        bannerMediumId: editObj.bannerMedium && editObj.bannerMedium.id,
+        broadcasters: editObj.broadcasters && editObj.broadcasters.map((bc) => bc.id),
+        contentProducers: editObj.contentProducers && editObj.contentProducers.map((bc) => bc.id)
+      });
+      console.warn('initi', {
+        ...editObj,
+        _activeLocale: editObj.defaultLocale,
+        bannerSystemLinkType: editObj.bannerSystemLinkType || 'EXTERNAL',
+        bannerInternalLinkType: editObj.bannerInternalLinkType || 'MEDIUM',
+        brandId: editObj.brand && editObj.brand.id,
+        bannerActorId: editObj.bannerActor && editObj.bannerActor.id,
+        bannerBrandId: editObj.bannerBrand && editObj.bannerBrand.id,
+        bannerCharacterId: editObj.bannerCharacter && editObj.bannerCharacter.id,
+        bannerMediumId: editObj.bannerMedium && editObj.bannerMedium.id
       });
     }
   }
@@ -241,22 +280,40 @@ export default class EditCommercial extends Component {
     paddingUploadImage: {
       paddingBottom: 20,
       paddingRight: 24
+    },
+    label: {
+      paddingTop: 20
+    },
+    subSection: {
+      borderRadius: 2,
+      border: `solid 1px ${colors.lightGray2}`,
+      marginTop: 18,
+      paddingTop: 17,
+      paddingBottom: 20,
+      paddingRight: 20,
+      paddingLeft: 20
     }
   };
 
   render () {
     const styles = this.constructor.styles;
     const {
-      _activeLocale, brandsById, broadcastersById, charactersById, closeModal,
-      commercialCharacters, commercialCollections, contentProducersById,
-      currentCommercial, currentModal, defaultLocale, deleteRoundLogo, errors, handleSubmit, hasBanner,
-      productsById, searchCollectionsBrands, searchCollectionsCharacters, searchCollectionsProducts,
-      searchContentProducers, searchedContentProducerIds, searchBroadcasters,
-      searchedBroadcasterIds, searchedCharacterIds, searchedCollectionsBrandIds, searchedCollectionsCharacterIds,
-      searchedCollectionsProductIds, location, location: { query: { tab } }, supportedLocales,
+      _activeLocale, bannerInternalLinkType, bannerSystemLinkType, brandsById,
+      broadcastersById, charactersById, closeModal, commercialCharacters,
+      commercialCollections, contentProducersById, currentCommercial, currentModal,
+      defaultLocale, deleteBannerImage, deleteRoundLogo, errors, handleSubmit, hasBanner,
+      mediaById, personsById, productsById, searchCollectionsBrands, searchCollectionsCharacters, searchCollectionsProducts,
+      searchBannerLinkBrands, searchBannerLinkCharacters, searchBannerLinkMedia, searchContentProducers,
+      searchedBannerLinkBrandIds, searchedBannerLinkCharacterIds, searchedBannerLinkMediumIds, searchBannerLinkPersons,
+      searchedContentProducerIds, searchBroadcasters,
+      searchedBroadcasterIds, searchedCharacterIds, searchedCollectionsBrandIds,
+      searchedCollectionsCharacterIds, searchedCollectionsProductIds, searchedBannerLinkPersonIds, location,
+      location: { query: { tab } }, supportedLocales,
       searchCharacters, deleteProfileImage,
       searchBrands, searchedBrandIds
     } = this.props;
+
+    const bannerImage = currentCommercial.getIn([ 'bannerImage', _activeLocale ]);
 
     return (
       <SideMenu>
@@ -332,7 +389,7 @@ export default class EditCommercial extends Component {
                   <FormSubtitle>Images</FormSubtitle>
                   <div style={[ styles.paddingTop, styles.row ]}>
                     <div style={styles.paddingUploadImage}>
-                      <Label text='Profile image' />
+                      <Label text='Background image' />
                       <Dropzone
                         accept='image/*'
                         downloadUrl={currentCommercial.getIn([ 'profileImage', _activeLocale ]) &&
@@ -372,37 +429,134 @@ export default class EditCommercial extends Component {
                     onSetDefaultLocale={this.onSetDefaultLocale}/>
                 </Section>
                 <Section>
-                  <FormSubtitle first>Banner</FormSubtitle>
+                  <FormSubtitle first>General</FormSubtitle>
+                  <FormDescription>A Banner is necesarry if you need this commercial to show up in other content according to their schedule.</FormDescription>
                   <Field
                     component={CheckboxInput}
-                    label='Has banner'
-                    name={`hasBanner.${_activeLocale}`} />
+                    label='Activate banner'
+                    name='hasBanner' />
                   <Field
                     component={TextInput}
-                    disabled={hasBanner && !hasBanner.get(_activeLocale)}
+                    disabled={!hasBanner}
                     label='Text'
                     name={`bannerText.${_activeLocale}`}
                     placeholder='Text'
                     required />
                   <Field
                     component={TextInput}
-                    disabled={hasBanner && !hasBanner.get(_activeLocale)}
+                    disabled={!hasBanner}
+                    first
                     label='Url'
                     name={`bannerUrl.${_activeLocale}`}
                     placeholder='Url'
                     required />
                   <Field
                     component={ColorInput}
-                    disabled={hasBanner && !hasBanner.get(_activeLocale)}
+                    disabled={!hasBanner}
                     label='Text color'
                     name={`bannerTextColor.${_activeLocale}`}
                     required />
                   <Field
                     component={ColorInput}
-                    disabled={hasBanner && !hasBanner.get(_activeLocale)}
+                    disabled={!hasBanner}
                     label='Bar color'
                     name={`bannerBarColor.${_activeLocale}`}
                     required />
+                  <FormSubtitle>Banner Image</FormSubtitle>
+                  <Label style={styles.label} text={bannerImage ? `${bannerImage.getIn([ 'dimension', 'width' ])} x ${bannerImage.getIn([ 'dimension', 'height' ])} (640 x 200 Recommended)` : '640 x 200 Recommended'} />
+                  <Dropzone
+                    accept='image/*'
+                    disabled={!hasBanner}
+                    downloadUrl={bannerImage && bannerImage.get('url')}
+                    height={100}
+                    imageUrl={bannerImage && `${bannerImage.get('url')}?height=200&width=640`}
+                    type={BANNER_IMAGE}
+                    onChange={({ callback, file }) => { this.props.uploadBannerImage({ commercialId: this.props.params.commercialId, image: file, callback }); }}
+                    onDelete={() => { deleteBannerImage({ commercialId: currentCommercial.get('id'), locale: _activeLocale }); }}/>
+                  <FormSubtitle>Banner Link</FormSubtitle>
+                  <Field
+                    component={RadioInput}
+                    disabled={!hasBanner}
+                    label='Redirect url'
+                    labelStyle={{ paddingBottom: 0 }}
+                    name='bannerSystemLinkType'
+                    options={[
+                      { label: 'External', value: 'EXTERNAL' },
+                      { label: 'Internal', value: 'INTERNAL' }
+                    ]}
+                    optionsStyle={{ display: 'flex' }}
+                    required/>
+                  {bannerSystemLinkType === 'EXTERNAL' &&
+                    <div style={styles.subSection}>
+                      <Field
+                        component={TextInput}
+                        disabled={!hasBanner}
+                        first
+                        label='Link'
+                        name={`bannerExternalLink.${_activeLocale}`}
+                        placeholder='Link'
+                        required />
+                    </div>}
+                  {bannerSystemLinkType === 'INTERNAL' &&
+                    <div style={styles.subSection}>
+                      <Field
+                        component={RadioInput}
+                        disabled={!hasBanner}
+                        first
+                        name='bannerInternalLinkType'
+                        options={[
+                          { label: 'Medium', value: 'MEDIUM' },
+                          { label: 'Brand', value: 'BRAND' },
+                          { label: 'Actor', value: 'ACTOR' },
+                          { label: 'Character', value: 'CHARACTER' }
+                        ]}
+                        optionsStyle={{ display: 'flex', marginBottom: '0.625em', marginTop: '-0.625em' }}
+                        required/>
+                      {bannerInternalLinkType === 'MEDIUM' &&
+                        <Field
+                          component={SelectInput}
+                          disabled={!hasBanner}
+                          first
+                          getItemText={(id) => mediaById.getIn([ id, 'title' ])}
+                          getOptions={searchBannerLinkMedia}
+                          isLoading={searchedBannerLinkMediumIds.get('_status') === FETCHING}
+                          name='bannerMediumId'
+                          options={searchedBannerLinkMediumIds.get('data').toJS()}
+                          placeholder='Series/Movie/Commercial'/>}
+                      {bannerInternalLinkType === 'BRAND' &&
+                        <Field
+                          component={SelectInput}
+                          disabled={!hasBanner}
+                          first
+                          getItemText={(id) => brandsById.getIn([ id, 'name' ])}
+                          getOptions={searchBannerLinkBrands}
+                          isLoading={searchedBannerLinkBrandIds.get('_status') === FETCHING}
+                          name='bannerBrandId'
+                          options={searchedBannerLinkBrandIds.get('data').toJS()}
+                          placeholder='Brand'/>}
+                    {bannerInternalLinkType === 'ACTOR' &&
+                      <Field
+                        component={SelectInput}
+                        disabled={!hasBanner}
+                        first
+                        getItemText={(id) => personsById.getIn([ id, 'fullName' ])}
+                        getOptions={searchBannerLinkPersons}
+                        isLoading={searchedBannerLinkPersonIds.get('_status') === FETCHING}
+                        name='bannerActorId'
+                        options={searchedBannerLinkPersonIds.get('data').toJS()}
+                        placeholder='Actor'/>}
+                    {bannerInternalLinkType === 'CHARACTER' &&
+                      <Field
+                        component={SelectInput}
+                        disabled={!hasBanner}
+                        first
+                        getItemText={(id) => charactersById.getIn([ id, 'name' ])}
+                        getOptions={searchBannerLinkCharacters}
+                        isLoading={searchedBannerLinkCharacterIds.get('_status') === FETCHING}
+                        name='bannerCharacterId'
+                        options={searchedBannerLinkCharacterIds.get('data').toJS()}
+                        placeholder='Character'/>}
+                    </div>}
                 </Section>
               </Tab>
              <Tab title='Helpers'>
@@ -435,6 +589,9 @@ export default class EditCommercial extends Component {
                   searchedBrandIds={searchedCollectionsBrandIds}
                   searchedCharacterIds={searchedCollectionsCharacterIds}
                   searchedProductIds={searchedCollectionsProductIds}/>
+              </Tab>
+              <Tab title='Schedule'>
+                <Schedule commercialId={this.props.params.commercialId}/>
               </Tab>
               <Tab title='Availability'>
                 <Availabilities mediumId={this.props.params.commercialId} />

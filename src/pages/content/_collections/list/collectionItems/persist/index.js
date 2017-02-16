@@ -117,7 +117,7 @@ export default class CollectionItemModal extends Component {
           first
           name='relevance'
           options={relevanceTypes}
-          style={{ display: 'flex' }}/>
+          optionsStyle={{ display: 'flex' }}/>
       </PersistModal>
     );
   }
