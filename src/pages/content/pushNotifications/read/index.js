@@ -11,11 +11,9 @@ import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
 import { generalStyles } from '../../../_common/components/table/index';
-import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 import Statistics from '../../../_common/statistics';
-import Section from '../../../_common/components/section';
 import moment from 'moment';
 /* eslint-disable no-alert */
 
@@ -92,7 +90,7 @@ export default class ReadPushNotification extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { params, children, currentPushNotification, location, location: { query: { tabIndex } }, deletePushNotification } = this.props;
+    const { params, currentPushNotification, location, /* location: { query: { tabIndex } },*/ deletePushNotification } = this.props;
     const defaultLocale = currentPushNotification.get('defaultLocale');
     const blocks = [
       { content: '-', title: 'Approximate Reach', color: '#536970' },
@@ -121,16 +119,8 @@ export default class ReadPushNotification extends Component {
           <Statistics blocks={blocks}/>
           <Line/>
           <div style={[ generalStyles.fillPage, styles.table ]}>
-            <Container>
-              <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
-                <Tab title='Push Notification'>
-                  <Section/>
-                </Tab>
-              </Tabs>
-            </Container>
+            <Container/>
           </div>
-          <Line/>
-          {children}
         </Root>
       </SideMenu>
     );
