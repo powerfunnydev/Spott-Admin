@@ -19,6 +19,7 @@ import charactersList from '../pages/content/characters/list/reducer';
 import commercialsCreate from '../pages/content/commercials/create/reducer';
 import commercialsEdit from '../pages/content/commercials/edit/reducer';
 import commercialsList from '../pages/content/commercials/list/reducer';
+import commercialsScheduleEdit from '../pages/content/commercials/edit/schedule/persist/reducer';
 import contentProducersList from '../pages/content/contentProducers/list/reducer';
 import contentProducersReadUsers from '../pages/content/contentProducers/read/users/list/reducer';
 import episodesCreate from '../pages/content/episodes/create/reducer';
@@ -33,7 +34,9 @@ import personsList from '../pages/content/persons/list/reducer';
 import productsCreate from '../pages/content/products/create/reducer';
 import productsList from '../pages/content/products/list/reducer';
 import productsEdit from '../pages/content/products/edit/reducer';
+import pushNotificationsCreate from '../pages/content/pushNotifications/create/reducer';
 import pushNotificationsList from '../pages/content/pushNotifications/list/reducer';
+import pushNotificationsEdit from '../pages/content/pushNotifications/edit/reducer';
 import relatedVideoPersist from '../pages/content/_relatedVideo/persist/reducer';
 import reporting from '../pages/reporting/reducer';
 import seasonsCreate from '../pages/content/seasons/create/reducer';
@@ -95,7 +98,8 @@ export default combineReducers({
     commercials: combineReducers({
       create: commercialsCreate,
       edit: commercialsEdit,
-      list: commercialsList
+      list: commercialsList,
+      schedule: commercialsScheduleEdit
     }),
     contentProducers: combineReducers({
       list: contentProducersList,
@@ -120,6 +124,8 @@ export default combineReducers({
       list: personsList
     }),
     pushNotifications: combineReducers({
+      create: pushNotificationsCreate,
+      edit: pushNotificationsEdit,
       list: pushNotificationsList
     }),
     shops: combineReducers({

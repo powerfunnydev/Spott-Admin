@@ -208,7 +208,7 @@ export default class CollectionModal extends Component {
             label='Collection type'
             name='linkType'
             options={linkTypes}
-            style={{ display: 'flex' }}/>
+            optionsStyle={{ display: 'flex' }}/>
           {currentLinkType === 'BRAND' &&
             <Field
               component={SelectInput}

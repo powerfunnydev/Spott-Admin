@@ -6,7 +6,9 @@ import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import CheckboxInput from '../../../_common/inputs/checkbox';
 import TextInput from '../../../_common/inputs/textInput';
-import { Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
+import SelectInput from '../../../_common/inputs/selectInput';
+import { Root, FormSubtitle, colors, EditTemplate, FormDescription, buttonStyles } from '../../../_common/styles';
+import { Table, CustomCel, Rows, Row } from '../../../_common/components/table/index';
 import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
@@ -22,6 +24,7 @@ import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
+import RemoveButton from '../../../_common/components/buttons/removeButton';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -59,6 +62,7 @@ export default class EditShop extends Component {
     change: PropTypes.func.isRequired,
     closeModal: PropTypes.func.isRequired,
     closePopUpMessage: PropTypes.func.isRequired,
+    countries: PropTypes.object.isRequired,
     currentModal: PropTypes.string,
     currentShop: ImmutablePropTypes.map.isRequired,
     defaultLocale: PropTypes.string,
@@ -91,12 +95,14 @@ export default class EditShop extends Component {
     this.openCreateLanguageModal = :: this.openCreateLanguageModal;
     this.languageAdded = :: this.languageAdded;
     this.removeLanguage = :: this.removeLanguage;
+    this.state = {
+      selectedCountryId: null
+    };
   }
 
   async componentWillMount () {
     if (this.props.params.shopId) {
       const editObj = await this.props.loadShop(this.props.params.shopId);
-      console.log('editObj', editObj);
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale
@@ -106,6 +112,15 @@ export default class EditShop extends Component {
 
   redirect () {
     this.props.routerPushWithReturnTo('/content/shops', true);
+  }
+
+  async addCountry () {
+    const { formValues } = this.props;
+    const { selectedCountryId } = this.state;
+    const formValuesP = formValues.toJS();
+    formValuesP.countries.push({ uuid: selectedCountryId, links: [] });
+    await this.submit(fromJS(formValuesP));
+    this.setState({ selectedCountryId: null });
   }
 
   languageAdded (form) {
@@ -193,14 +208,27 @@ export default class EditShop extends Component {
       flexDirection: 'row',
       flexWrap: 'wrap',
       marginTop: '20px'
+    },
+    controlWrapper: {
+      display: 'block',
+      flex: 4,
+      backgroundColor: 'rgba(244, 245, 245, 0.5)'
+    },
+    countryInput: {
+      position: 'absolute',
+      right: 170,
+      left: 10
+    },
+    actionsWrapper: {
+      position: 'absolute',
+      right: 10
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { _activeLocale, errors, currentModal, closeModal, supportedLocales, defaultLocale,
-      currentShop, location, handleSubmit, deleteLogoImage, location: { query: { tab } } } = this.props;
-
+    const { _activeLocale, errors, currentModal, closeModal, supportedLocales, defaultLocale, formValues,
+      currentShop, countries, location, handleSubmit, deleteLogoImage, location: { query: { tab } } } = this.props;
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
@@ -256,28 +284,92 @@ export default class EditShop extends Component {
                     component={CheckboxInput}
                     label='Enable universal basket'
                     name='universalBasketEnabled' />
-                <FormSubtitle>Images</FormSubtitle>
-                <div style={[ styles.paddingTop, styles.row ]}>
-                  <div>
-                    <Label text='Logo image' />
-                    <ImageDropzone
-                      accept='image/*'
-                      downloadUrl={currentShop.getIn([ 'logo', _activeLocale, 'url' ]) ||
-                                    currentShop.getIn([ 'logo', defaultLocale, 'url' ])}
-                      imageUrl={currentShop.getIn([ 'logo', _activeLocale, 'url' ]) && `${currentShop.getIn([ 'logo', _activeLocale, 'url' ])}?height=203&width=360` ||
-                                currentShop.getIn([ 'logo', defaultLocale, 'url' ]) && `${currentShop.getIn([ 'logo', defaultLocale, 'url' ])}?height=203&width=360`}
-                      showOnlyUploadedImage
-                      onChange={({ callback, file }) => { this.props.uploadLogoImage({ locale: _activeLocale, shopId: this.props.params.shopId, image: file, callback }); }}
-                      onDelete={currentShop.getIn([ 'logo', _activeLocale, 'url' ]) ? () => { deleteLogoImage({ locale: _activeLocale, shopId: currentShop.get('id') }); } : null}/>
+                    <FormSubtitle>Images</FormSubtitle>
+                  <div style={[ styles.paddingTop, styles.row ]}>
+                    <div>
+                      <Label text='Logo image' />
+                      <ImageDropzone
+                        accept='image/*'
+                        downloadUrl={currentShop.getIn([ 'logo', _activeLocale, 'url' ]) ||
+                                      currentShop.getIn([ 'logo', defaultLocale, 'url' ])}
+                        imageUrl={currentShop.getIn([ 'logo', _activeLocale, 'url' ]) && `${currentShop.getIn([ 'logo', _activeLocale, 'url' ])}?height=203&width=360` ||
+                                  currentShop.getIn([ 'logo', defaultLocale, 'url' ]) && `${currentShop.getIn([ 'logo', defaultLocale, 'url' ])}?height=203&width=360`}
+                        showOnlyUploadedImage
+                        onChange={({ callback, file }) => { this.props.uploadLogoImage({ locale: _activeLocale, shopId: this.props.params.shopId, image: file, callback }); }}
+                        onDelete={currentShop.getIn([ 'logo', _activeLocale, 'url' ]) ? () => { deleteLogoImage({ locale: _activeLocale, shopId: currentShop.get('id') }); } : null}/>
+                    </div>
                   </div>
-                </div>
-              </Section>
-            </Tab>
-          </Tabs>
-        </EditTemplate>
-      </Root>
-    </SideMenu>
+                </Section>
+              </Tab>
+              <Tab title='Availability'>
+                <Section>
+                  <FormSubtitle first>Availability</FormSubtitle>
+                  <FormDescription>Which countries are supported and/or are in the shipping list of this shop?</FormDescription>
+                  <br/>
+                  <Table>
+                    <Rows>
+                      {formValues && formValues.toJS().countries.map((country, index) => {
+                        return (
+                          <Row index={index} key={index} >
+                            {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                            <CustomCel style={{ flex: 3 }}>
+                              {countries.getIn([ country.uuid, 'name' ])}
+                            </CustomCel>
+                            <CustomCel style={{ flex: 1, textAlign: 'right', display: 'block' }}>
+                              <RemoveButton cross onClick={async () => {
+                                const formValuesP = formValues.toJS();
+                                formValuesP.countries.splice(index, 1);
+                                this.submit(fromJS(formValuesP));
+                              }}/>
+                            </CustomCel>
+                          </Row>
+                        );
+                      })}
+                      {(!formValues || !formValues.toJS().countries.length) &&
+                        <Row>
+                          <CustomCel style={{ flex: 4 }}>
+                            No country is added.
+                          </CustomCel>
+                        </Row>
+                      }
+                      <Row key={-1} >
+                        {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
+                        <CustomCel style={styles.controlWrapper} >
+                          <Field
+                            component={SelectInput}
+                            first
+                            getItemText={(countryId) => countries.getIn([ countryId, 'name' ])}
+                            input={{
+                              value: this.state.selectedCountryId
+                            }}
+                            name='country'
+                            options={countries.keySeq().toArray().filter((countryId) =>
+                              formValues && formValues.toJS().countries.findIndex((country) => country.uuid === countryId) < 0
+                            )}
+                            placeholder='Country'
+                            style={styles.countryInput}
+                            onChange={(id) => this.setState({ selectedCountryId: id })} />
+                          <div style={styles.actionsWrapper}>
+                            <button
+                              key='cancel'
+                              style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white ]}
+                              onClick={() => this.setState({ selectedCountryId: null })}>Cancel</button>
+                            <button
+                              disabled={!this.state.selectedCountryId}
+                              key='add'
+                              style={[ buttonStyles.base, buttonStyles.small, this.state.selectedCountryId ? buttonStyles.blue : buttonStyles.gray ]}
+                              onClick={() => this.addCountry()}>Add</button>
+                          </div>
+                        </CustomCel>
+                      </Row>
+                    </Rows>
+                  </Table>
+                </Section>
+              </Tab>
+            </Tabs>
+          </EditTemplate>
+        </Root>
+      </SideMenu>
     );
   }
-
 }
