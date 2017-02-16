@@ -3,11 +3,10 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import moment from 'moment';
 import { Root, Container } from '../../../_common/styles';
-import { DropdownCel, Tile, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
+import { Tile, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, Pagination } from '../../../_common/components/table/index';
 import Line from '../../../_common/components/line';
-import Dropdown, { styles as dropdownStyles } from '../../../_common/components/actionDropdown';
+import ListView from '../../../_common/components/listView/index';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
@@ -15,8 +14,6 @@ import * as actions from './actions';
 import selector from './selector';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
-
-const numberOfRows = 25;
 
 @tableDecorator()
 @connect(selector, (dispatch) => ({
@@ -79,6 +76,14 @@ export default class Commercials extends Component {
     }
   }
 
+  determineReadUrl (commercial) {
+    return `/content/commercials/read/${commercial.get('id')}`;
+  }
+
+  determineEditUrl (commercial) {
+    return `/content/commercials/edit/${commercial.get('id')}`;
+  }
+
   onClickNewEntry (e) {
     e.preventDefault();
     this.props.routerPushWithReturnTo('/content/commercials/create');
@@ -96,9 +101,16 @@ export default class Commercials extends Component {
   }
 
   render () {
-    const { commercials, children, isSelected, location: { query, query: { display, page, searchString, sortField, sortDirection } },
+    const { commercials, children, deleteCommercial, isSelected, location: { query, query: { display, page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
+    const columns = [
+      { type: 'checkBox' },
+      { type: 'custom', sort: true, title: 'TITLE', clickable: true, getUrl: this.determineReadUrl, name: 'title' },
+      { type: 'custom', title: 'UPDATED BY', name: 'lastUpdatedBy' },
+      { type: 'custom', title: 'LAST UPDATED ON', name: 'lastUpdatedOn', dataType: 'date' },
+      { type: 'dropdown' }
+    ];
     return (
       <SideMenu>
         <Root>
@@ -126,35 +138,19 @@ export default class Commercials extends Component {
                 onDeleteSelected={this.onClickDeleteSelected}/>
               {(!display || display === 'list') &&
                 <div>
-                  <Table>
-                    <Headers>
-                      {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                      <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'TITLE')} sortDirection = {sortField === 'TITLE' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>TITLE</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
-                      <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
-                    </Headers>
-                    <Rows isLoading={commercials.get('_status') !== 'loaded'}>
-                      {commercials.get('data').map((commercial, index) => {
-                        return (
-                          <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
-                            {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                            <CheckBoxCel checked={isSelected.get(commercial.get('id'))} onChange={selectCheckbox.bind(this, commercial.get('id'))}/>
-                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/commercials/read/${commercial.get('id')}`); }}>{commercial.get('title')}</CustomCel>
-                            <CustomCel style={{ flex: 2 }}>{commercial.get('lastUpdatedBy')}</CustomCel>
-                            <CustomCel objectToRender={commercial} style={{ flex: 2 }}>{moment(new Date(commercial.get('lastUpdatedOn'))).format('YYYY-MM-DD HH:mm')}</CustomCel>
-                            <DropdownCel>
-                              <Dropdown
-                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/commercials/edit/${commercial.get('id')}`); }}>Edit</div>}>
-                                <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteCommercial(commercial.get('id')); }}>Remove</div>
-                              </Dropdown>
-                            </DropdownCel>
-                          </Row>
-                        );
-                      })}
-                    </Rows>
-                  </Table>
+                  <ListView
+                    columns={columns}
+                    data={commercials}
+                    deleteItem={deleteCommercial}
+                    getEditUrl={this.determineEditUrl}
+                    isSelected={isSelected}
+                    load={() => this.props.load(this.props.location.query)}
+                    routerPushWithReturnTo={this.props.routerPushWithReturnTo}
+                    selectAllCheckboxes={selectAllCheckboxes}
+                    sortDirection={sortDirection}
+                    sortField={sortField}
+                    onCheckboxChange={(id) => selectCheckbox.bind(this, id)}
+                    onSortField={(name) => this.props.onSortField.bind(this, name)} />
                   <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
                 </div>
               }
