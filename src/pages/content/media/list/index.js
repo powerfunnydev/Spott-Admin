@@ -7,17 +7,16 @@ import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
 import { Root, Container } from '../../../_common/styles';
-import { DropdownCel, Tile, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
+import { Tile, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, Pagination } from '../../../_common/components/table/index';
 import Line from '../../../_common/components/line';
-import Dropdown, { styles as dropdownStyles } from '../../../_common/components/actionDropdown';
+import ListView from '../../../_common/components/listView/index';
+import { styles as dropdownStyles } from '../../../_common/components/actionDropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 import { mediumTypes, MOVIE, EPISODE, COMMERCIAL, SERIE, SEASON } from '../../../../constants/mediumTypes';
-
-const numberOfRows = 25;
 
 @tableDecorator()
 @connect(selector, (dispatch) => ({
@@ -149,9 +148,17 @@ export default class Media extends Component {
   }
 
   render () {
-    const { media, children, isSelected, location: { query, query: { display, page, searchString, sortField, sortDirection } },
+    const { media, children, deleteMedium, isSelected, location: { query, query: { display, page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
+    const columns = [
+      { type: 'checkBox' },
+      { type: 'custom', sort: true, title: 'TITLE', clickable: true, getUrl: this.determineReadUrl, name: 'title', colspan: 2 },
+      { type: 'custom', title: 'MEDIA TYPE', name: 'type', colspan: 1, convert: (text) => mediumTypes[text] },
+      { type: 'custom', title: 'UPDATED BY', name: 'lastUpdatedBy', colspan: 2 },
+      { type: 'custom', title: 'LAST UPDATED ON', name: 'lastUpdatedOn', dataType: 'date', colspan: 2 },
+      { type: 'dropdown' }
+    ];
     return (
       <SideMenu>
         <Root>
@@ -192,43 +199,19 @@ export default class Media extends Component {
                 onDeleteSelected={this.onClickDeleteSelected}/>
               {(display === undefined || display === 'list') &&
                 <div>
-                  <Table>
-                    <Headers>
-                      {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                      <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'TITLE')} sortDirection = {sortField === 'TITLE' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>TITLE</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>MEDIA TYPE</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
-                      <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
-                    </Headers>
-                    <Rows isLoading={media.get('_status') !== 'loaded'}>
-                      {media.get('data').map((medium, index) => {
-                        return (
-                          <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
-                            {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                            <CheckBoxCel checked={isSelected.get(medium.get('id'))} onChange={selectCheckbox.bind(this, medium.get('id'))}/>
-                            <CustomCel style={{ flex: 2 }} onClick={() => { const readUrl = this.determineReadUrl(medium); readUrl && this.props.routerPushWithReturnTo(readUrl); }}>
-                              {medium.get('title')}
-                            </CustomCel>
-                            <CustomCel style={{ flex: 2 }}>
-                              {mediumTypes[medium.get('type')]}
-                            </CustomCel>
-                            <CustomCel style={{ flex: 2 }}>
-                              {medium.get('lastUpdatedBy')}
-                            </CustomCel>
-                            <CustomCel getValue={this.getLastUpdatedOn} objectToRender={medium} style={{ flex: 2 }}/>
-                            <DropdownCel>
-                              <Dropdown
-                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { const editUrl = this.determineEditUrl(medium); editUrl && this.props.routerPushWithReturnTo(editUrl); }}>Edit</div>}>
-                                <div key={1} style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); this.deleteMedium(medium.get('id'), medium.get('type')); }}>Remove</div>
-                              </Dropdown>
-                            </DropdownCel>
-                          </Row>
-                        );
-                      })}
-                    </Rows>
-                  </Table>
+                  <ListView
+                    columns={columns}
+                    data={media}
+                    deleteItem={deleteMedium}
+                    getEditUrl={this.determineEditUrl}
+                    isSelected={isSelected}
+                    load={() => this.props.load(this.props.location.query)}
+                    routerPushWithReturnTo={this.props.routerPushWithReturnTo}
+                    selectAllCheckboxes={selectAllCheckboxes}
+                    sortDirection={sortDirection}
+                    sortField={sortField}
+                    onCheckboxChange={(id) => selectCheckbox.bind(this, id)}
+                    onSortField={(name) => this.props.onSortField.bind(this, name)} />
                   <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
                 </div>
               }
