@@ -103,7 +103,6 @@ export default class EditSeries extends Component {
   async componentWillMount () {
     if (this.props.params.seriesEntryId) {
       const editObj = await this.props.loadSeriesEntry(this.props.params.seriesEntryId);
-      console.log('editObj', editObj);
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale
