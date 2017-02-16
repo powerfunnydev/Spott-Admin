@@ -4,6 +4,7 @@ import moment from 'moment';
 import { DropdownCel, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row } from '../table/index';
 import Dropdown, { styles as dropdownStyles } from '../actionDropdown';
 import { confirmation } from '../../askConfirmation';
+
 const numberOfRows = 25;
 class ListView extends Component {
 
@@ -39,11 +40,11 @@ class ListView extends Component {
                       <CustomCel
                         key={index} sortColumn={onSortField(column.title)}
                         sortDirection = {sortField === column.title ? sortDirections[sortDirection] : NONE}
-                        style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>
+                        style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: column.colspan || 1 } ]}>
                         {column.title}
                       </CustomCel>) : (
                       <CustomCel
-                        key={index} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>
+                        key={index} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: column.colspan || 1 } ]}>
                         {column.title}
                       </CustomCel>)
                   );
@@ -52,7 +53,7 @@ class ListView extends Component {
                 default:
                   return (
                     <CustomCel
-                      key={index} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>
+                      key={index} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: column.colspan || 1 } ]}>
                       {column.title}
                     </CustomCel>
                   );
@@ -72,11 +73,11 @@ class ListView extends Component {
                         return <CheckBoxCel checked={isSelected.get(item.get('id'))} key={subindex} onChange={onCheckboxChange(item.get('id'))}/>;
                       case 'custom':
                         return (
-                          <CustomCel key={subindex} objectToRender={item} style={{ flex: 2 }} onClick={column.clickable
+                          <CustomCel key={subindex} objectToRender={item} style={{ flex: column.colspan || 1 }} onClick={column.clickable
                             ? () => { column.getUrl(item) && routerPushWithReturnTo(column.getUrl(item)); }
                             : null
                             }>
-                            {column.dataType === 'date' ? this.getFormatedDate(item.get(column.name)) : item.get(column.name)}
+                            {column.dataType === 'date' ? this.getFormatedDate(item.get(column.name)) : (column.convert || ((text) => text))(item.get(column.name))}
                           </CustomCel>
                         );
                       case 'dropdown':
@@ -90,7 +91,7 @@ class ListView extends Component {
                         );
                       default:
                         return (
-                          <CustomCel key={subindex} objectToRender={item} style={{ flex: 2 }} onClick={() => { column.clickable && column.getUrl(item) && routerPushWithReturnTo(column.getUrl(item)); }}>
+                          <CustomCel key={subindex} objectToRender={item} style={{ flex: column.colspan || 1 }} onClick={() => { column.clickable && column.getUrl(item) && routerPushWithReturnTo(column.getUrl(item)); }}>
                             {column.dataType === 'date' ? this.getFormatedDate(item.get(column.name)) : item.get(column.name)}
                           </CustomCel>
                         );
