@@ -38,8 +38,8 @@ class ListView extends Component {
                   return (
                     column.sort ? (
                       <CustomCel
-                        key={index} sortColumn={onSortField(column.title)}
-                        sortDirection = {sortField === column.title ? sortDirections[sortDirection] : NONE}
+                        key={index} sortColumn={onSortField(column.sortField)}
+                        sortDirection = {sortField === column.sortField ? sortDirections[sortDirection] : NONE}
                         style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: column.colspan || 1 } ]}>
                         {column.title}
                       </CustomCel>) : (

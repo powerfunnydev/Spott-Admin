@@ -125,7 +125,7 @@ export default class SeriesEntries extends Component {
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     const columns = [
       { type: 'checkBox' },
-      { type: 'custom', sort: true, title: 'TITLE', clickable: true, getUrl: this.determineReadUrl, name: 'title' },
+      { type: 'custom', sort: true, sortField: 'TITLE', title: 'TITLE', clickable: true, getUrl: this.determineReadUrl, name: 'title' },
       { type: 'custom', title: 'UPDATED BY', name: 'lastUpdatedBy' },
       { type: 'custom', title: 'LAST UPDATED ON', name: 'lastUpdatedOn', dataType: 'date' },
       { type: 'dropdown' }
