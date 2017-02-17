@@ -6,10 +6,10 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import moment from 'moment';
 import { initialize, Field } from 'redux-form/immutable';
 import { colors, filterStyles, Root, Container } from '../../../_common/styles';
-import { generalStyles, getInformationFromQuery, headerStyles, isQueryChanged, tableDecorator, DropdownCel, Tile, UtilsBar, TotalEntries, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
+import { CheckBoxCel, generalStyles, getInformationFromQuery, isQueryChanged, tableDecorator, Tile, UtilsBar, TotalEntries, Pagination } from '../../../_common/components/table/index';
 import Line from '../../../_common/components/line';
+import ListView from '../../../_common/components/listView/index';
 import { FilterContent } from '../../../_common/components/filterDropdown';
-import Dropdown, { styles as dropdownStyles } from '../../../_common/components/actionDropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { confirmation } from '../../../_common/askConfirmation';
 import { SideMenu } from '../../../app/sideMenu';
@@ -24,7 +24,6 @@ import { slowdown } from '../../../../utils';
 import * as actions from './actions';
 import selector from './selector';
 
-const numberOfRows = 25;
 export const prefix = 'products';
 export const filterArray = [ 'affiliate', 'publishStatus', 'used' ];
 
@@ -96,11 +95,140 @@ export default class Products extends Component {
     }
   }
 
+  determineReadUrl (product) {
+    return `/content/products/read/${product.get('id')}`;
+  }
+
+  determineEditUrl (product) {
+    return `/content/products/edit/${product.get('id')}`;
+  }
+
   getLastUpdatedOn (product) {
     const date = new Date(product.get('lastUpdatedOn'));
     return moment(date).format('YYYY-MM-DD HH:mm');
   }
 
+  getAvailable (product) {
+    return <CheckBoxCel checked={!product.get('noLongerAvailable')}/>;
+  }
+
+  getNameItem (product) {
+    const styles = {
+      logo: {
+        width: '22px',
+        height: '22px',
+        borderRadius: '2px'
+      },
+      logoContainer: {
+        paddingRight: '10px',
+        display: 'inline-flex'
+      },
+      logoPlaceholder: {
+        paddingRight: '32px'
+      }
+    };
+    return (
+      <div style={{ alignItems: 'center', display: 'inline-flex' }}>
+        {product.get('logo') && <div style={styles.logoContainer}>
+          <ToolTip
+            overlay={<img src={`${product.getIn([ 'logo', 'url' ])}?height=150&width=150`}/>}
+            placement='top'
+            prefixCls='no-arrow'>
+            <img src={`${product.getIn([ 'logo', 'url' ])}?height=150&width=150`} style={styles.logo} />
+          </ToolTip>
+        </div> || <div style={styles.logoPlaceholder}/>} {product.get('shortName')}
+      </div>
+    );
+  }
+
+  getofferings (product) {
+    const styles = {
+      offeringContainer: {
+        fontSize: '12px',
+        lineHeight: '20px',
+        display: 'flex',
+        alignItems: 'center'
+      },
+      offeringPaddingRight: {
+        paddingRight: '5px'
+      },
+      offeringShop: {
+        color: colors.veryDarkGray,
+        textDecoration: 'underline',
+        cursor: 'pointer',
+        paddingRight: '3px'
+      },
+      offeringPrice: {
+        color: colors.darkGray2
+      },
+      tooltipOverlay: {
+        padding: '11px',
+        backgroundColor: 'white',
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        maxWidth: '500px'
+      },
+      row: {
+        display: 'flex',
+        flexDirection: 'row'
+      },
+      questionSvg: {
+        display: 'inline-flex',
+        alignItems: 'center'
+      },
+      dollarSvg: {
+        display: 'inline-flex',
+        alignItems: 'center',
+        paddingRight: '4px'
+      },
+      spacing: {
+        paddingRight: '7px'
+      },
+      affiliatePaddingRight: {
+        paddingRight: '4px'
+      }
+    };
+
+    const { currencies } = this.props;
+    const offeringsArray = product.get('offerings') && product.get('offerings').toArray() || [];
+    const numberOfAffiliates = offeringsArray.reduce((total, offer, key) => offer.get('affiliateCode') ? total + 1 : total, 0);
+    const numberOfNonAffiliates = offeringsArray.length - numberOfAffiliates;
+    const offerings = offeringsArray.map((offering, i) => {
+      return (
+        <div key={`product_offering${i}`} style={[ styles.offeringContainer, ((i + 1) !== offeringsArray.length) && styles.offeringPaddingRight ]}>
+          {offering.get('affiliateCode') && <div style={styles.dollarSvg}><DollarSVG/></div>}
+          <span
+            style={styles.offeringShop}
+            onClick={() => { this.props.routerPushWithReturnTo(`/content/shops/read/${offering.getIn([ 'shop', 'id' ])}`); }}>
+              {offering.getIn([ 'shop', 'name' ])}
+          </span>
+          <span style={styles.offeringPrice}>
+            ({offering.getIn([ 'price', 'amount' ])}{currencies.getIn([ offering.getIn([ 'price', 'currency' ]), 'symbol' ])})
+            {((i + 1) !== offeringsArray.length) && <span>,</span>}
+          </span>
+        </div>
+      );
+    });
+    return (
+      <div style={styles.row}>
+        <div style={[ styles.row, styles.spacing ]}>
+          <div style={styles.dollarSvg}><DollarSVG/></div>
+          <div style={styles.affiliatePaddingRight}>{numberOfAffiliates}</div>
+          <div style={styles.dollarSvg}><DollarSVG color={colors.lightGray3}/></div>
+          <div>{numberOfNonAffiliates}</div>
+        </div>
+        <ToolTip
+          arrowContent={<div className='rc-tooltip-arrow-inner' />}
+          overlay={<div style={styles.tooltipOverlay}>
+            {offerings}
+          </div>}
+          placement='top'>
+          <div style={styles.questionSvg}><QuestionSVG color={colors.lightGray3} hoverColor={colors.darkGray2}/></div>
+        </ToolTip>
+      </div>
+    );
+  }
   onCreateProduct (e) {
     e.preventDefault();
     this.props.routerPushWithReturnTo('/content/products/create');
@@ -118,71 +246,23 @@ export default class Products extends Component {
   }
 
   static styles ={
-    offeringContainer: {
-      fontSize: '12px',
-      lineHeight: '20px',
-      display: 'flex',
-      alignItems: 'center'
-    },
-    offeringPaddingRight: {
-      paddingRight: '5px'
-    },
-    offeringShop: {
-      color: colors.veryDarkGray,
-      textDecoration: 'underline',
-      cursor: 'pointer',
-      paddingRight: '3px'
-    },
-    offeringPrice: {
-      color: colors.darkGray2
-    },
-    tooltipOverlay: {
-      padding: '11px',
-      backgroundColor: 'white',
-      display: 'flex',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      maxWidth: '500px'
-    },
-    row: {
-      display: 'flex',
-      flexDirection: 'row'
-    },
-    questionSvg: {
-      display: 'inline-flex',
-      alignItems: 'center'
-    },
-    dollarSvg: {
-      display: 'inline-flex',
-      alignItems: 'center',
-      paddingRight: '4px'
-    },
-    spacing: {
-      paddingRight: '7px'
-    },
-    affiliatePaddingRight: {
-      paddingRight: '4px'
-    },
-    logo: {
-      width: '22px',
-      height: '22px',
-      borderRadius: '2px'
-    },
-    logoContainer: {
-      paddingRight: '10px',
-      display: 'inline-flex'
-    },
-    logoPlaceholder: {
-      paddingRight: '32px'
-    }
+
   }
 
   render () {
     const {
-      currencies, products, children, isSelected, location: { query, query: { productsDisplay, productsPage, productsSearchString, productsSortField, productsSortDirection } },
+      products, children, deleteProduct, isSelected, location: { query, query: { productsDisplay, productsPage, productsSearchString, productsSortField, productsSortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeFilter, onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
-    const { styles } = this.constructor;
+    const columns = [
+      { type: 'checkBox' },
+      { type: 'custom', sort: true, sortField: 'FULL_NAME', title: 'FULL NAME', clickable: true, getUrl: this.determineReadUrl, convert: this.getNameItem, colspan: 2 },
+      { type: 'custom', title: 'BRAND', name: 'brand', convert: (text) => text.get('name') },
+      { type: 'custom', title: 'OFFERINGS', convert: (product) => this.getofferings(product) },
+      { type: 'custom', title: 'PUBLISH STATUS', name: 'publishStatus' },
+      { type: 'custom', title: 'AVAILABLE', convert: this.getAvailable },
+      { type: 'dropdown' }
+    ];
     return (
       <SideMenu>
         <Root>
@@ -243,88 +323,19 @@ export default class Products extends Component {
                 onDeleteSelected={this.onClickDeleteSelected}/>
               {(!productsDisplay || productsDisplay === 'list') &&
                 <div>
-                  <Table>
-                    <Headers>
-                      {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                      <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'FULL_NAME')} sortDirection={productsSortField === 'FULL_NAME' ? sortDirections[productsSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 4 } ]}>Full name</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Brand</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { width: 120 } ]}>Offerings</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { width: 120 } ]}>Publish status</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { width: 100 } ]}>Available</CustomCel>
-                      <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
-                    </Headers>
-                    <Rows isLoading={products.get('_status') !== 'loaded'}>
-                      {products.get('data').map((product, index) => {
-                        const offeringsArray = product.get('offerings') && product.get('offerings').toArray() || [];
-                        const numberOfAffiliates = offeringsArray.reduce((total, offer, key) => offer.get('affiliateCode') ? total + 1 : total, 0);
-                        const numberOfNonAffiliates = offeringsArray.length - numberOfAffiliates;
-                        const offerings = offeringsArray.map((offering, i) => {
-                          return (
-                            <div key={`product${index}offering${i}`} style={[ styles.offeringContainer, ((i + 1) !== offeringsArray.length) && styles.offeringPaddingRight ]}>
-                              {offering.get('affiliateCode') && <div style={styles.dollarSvg}><DollarSVG/></div>}
-                              <span
-                                style={styles.offeringShop}
-                                onClick={() => { this.props.routerPushWithReturnTo(`/content/shops/read/${offering.getIn([ 'shop', 'id' ])}`); }}>
-                                  {offering.getIn([ 'shop', 'name' ])}
-                              </span>
-                              <span style={styles.offeringPrice}>
-                                ({offering.getIn([ 'price', 'amount' ])}{currencies.getIn([ offering.getIn([ 'price', 'currency' ]), 'symbol' ])})
-                                {((i + 1) !== offeringsArray.length) && <span>,</span>}
-                              </span>
-                            </div>
-                          );
-                        });
-                        return (
-                          <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
-                            {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                            <CheckBoxCel checked={isSelected.get(product.get('id'))} onChange={selectCheckbox.bind(this, product.get('id'))}/>
-                            <CustomCel style={{ flex: 4 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/products/read/${product.get('id')}`); }}>
-                              {product.get('logo') && <div style={styles.logoContainer}>
-                                <ToolTip
-                                  overlay={<img src={`${product.getIn([ 'logo', 'url' ])}?height=150&width=150`}/>}
-                                  placement='top'
-                                  prefixCls='no-arrow'>
-                                  <img src={`${product.getIn([ 'logo', 'url' ])}?height=150&width=150`} style={styles.logo} />
-                                </ToolTip>
-                              </div> || <div style={styles.logoPlaceholder}/>} {product.get('shortName')}
-                            </CustomCel>
-                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/brands/read/${product.getIn([ 'brand', 'id' ])}`); }}>
-                              {product.getIn([ 'brand', 'name' ])}
-                            </CustomCel>
-                            <CustomCel style={{ width: 120 }}>
-                              <div style={styles.row}>
-                                <div style={[ styles.row, styles.spacing ]}>
-                                  <div style={styles.dollarSvg}><DollarSVG/></div>
-                                  <div style={styles.affiliatePaddingRight}>{numberOfAffiliates}</div>
-                                  <div style={styles.dollarSvg}><DollarSVG color={colors.lightGray3}/></div>
-                                  <div>{numberOfNonAffiliates}</div>
-                                </div>
-                                <ToolTip
-                                  arrowContent={<div className='rc-tooltip-arrow-inner' />}
-                                  overlay={<div style={styles.tooltipOverlay}>
-                                    {offerings}
-                                  </div>}
-                                  placement='top'>
-                                  <div style={styles.questionSvg}><QuestionSVG color={colors.lightGray3} hoverColor={colors.darkGray2}/></div>
-                                </ToolTip>
-                              </div>
-                            </CustomCel>
-                            <CustomCel style={{ width: 120 }}>
-                              {product.get('publishStatus')}
-                            </CustomCel>
-                            <CheckBoxCel checked={!product.get('noLongerAvailable')} style={{ flex: '0 0 100px' }} />
-                            <DropdownCel>
-                              <Dropdown
-                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/products/edit/${product.get('id')}`); }}>Edit</div>}>
-                                <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteProduct(product.get('id')); }}>Remove</div>
-                              </Dropdown>
-                            </DropdownCel>
-                          </Row>
-                        );
-                      })}
-                    </Rows>
-                  </Table>
+                  <ListView
+                    columns={columns}
+                    data={products}
+                    deleteItem={deleteProduct}
+                    getEditUrl={this.determineEditUrl}
+                    isSelected={isSelected}
+                    load={() => this.props.load(this.props.location.query)}
+                    routerPushWithReturnTo={this.props.routerPushWithReturnTo}
+                    selectAllCheckboxes={selectAllCheckboxes}
+                    sortDirection={productsSortDirection}
+                    sortField={productsSortField}
+                    onCheckboxChange={(id) => selectCheckbox.bind(this, id)}
+                    onSortField={(name) => this.props.onSortField.bind(this, name)} />
                   <Pagination currentPage={(productsPage && (parseInt(productsPage, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(productsPage, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(productsPage, 10), true); }}/>
                 </div>
               }
