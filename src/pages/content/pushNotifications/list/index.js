@@ -128,7 +128,7 @@ export default class PushNotifications extends Component {
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, /* onChangeDisplay, onChangeSearchString,*/ onChangeFilter, deletePushNotification } = this.props;
     const columns = [
       { type: 'checkBox' },
-      { type: 'custom', sort: true, title: 'TYPE', clickable: true, getUrl: this.determineReadUrl, name: 'type' },
+      { type: 'custom', title: 'TYPE', clickable: true, getUrl: this.determineReadUrl, name: 'type' },
       { type: 'custom', title: 'DATA', name: 'payloadData' },
       { type: 'custom', title: 'UPDATED BY', name: 'lastUpdatedBy' },
       { type: 'custom', title: 'LAST UPDATED ON', name: 'lastUpdatedOn', dataType: 'date' },

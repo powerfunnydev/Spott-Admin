@@ -153,7 +153,7 @@ export default class Media extends Component {
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     const columns = [
       { type: 'checkBox' },
-      { type: 'custom', sort: true, title: 'TITLE', clickable: true, getUrl: this.determineReadUrl, name: 'title', colspan: 2 },
+      { type: 'custom', sort: true, sortField: 'TITLE', title: 'TITLE', clickable: true, getUrl: this.determineReadUrl, name: 'title', colspan: 2 },
       { type: 'custom', title: 'MEDIA TYPE', name: 'type', colspan: 1, convert: (text) => mediumTypes[text] },
       { type: 'custom', title: 'UPDATED BY', name: 'lastUpdatedBy', colspan: 2 },
       { type: 'custom', title: 'LAST UPDATED ON', name: 'lastUpdatedOn', dataType: 'date', colspan: 2 },
