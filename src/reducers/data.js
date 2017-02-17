@@ -4,9 +4,10 @@ import {
   serializeFilterHasUsers, serializeFilterHasMediumCategories, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
-  serializeFilterHasProductCategories, serializeFilterHasPushNotifications, serializeBroadcasterFilterHasMedia
+  serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasLanguages, serializeFilterHasPushNotifications, serializeBroadcasterFilterHasMedia
 } from './utils';
 
+import * as audienceActions from '../actions/audience';
 import * as availabilityActions from '../actions/availability';
 import * as brandActions from '../actions/brand';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
@@ -16,7 +17,9 @@ import * as collectionsActions from '../actions/collection';
 import * as collectionItemsActions from '../actions/collectionItem';
 import * as commercialActions from '../actions/commercial';
 import * as contentProducersActions from '../actions/contentProducer';
+import * as countryActions from '../actions/country';
 import * as episodeActions from '../actions/episode';
+import * as languageActions from '../actions/language';
 import * as mediaActions from '../actions/media';
 import * as mediumCategoryActions from '../actions/mediumCategory';
 import * as moviesActions from '../actions/movie';
@@ -38,6 +41,7 @@ import * as videoActions from '../actions/video';
 export default (state = fromJS({
   entities: {
     ages: {},
+    audiences: {},
     availabilities: {},
     brands: {},
     broadcastChannels: {},
@@ -45,9 +49,11 @@ export default (state = fromJS({
     characters: {},
     collections: {},
     contentProducers: {},
+    countries: {},
     events: {},
     faceImages: {}, // Characters and persons has faceImages
     genders: {},
+    languages: {},
     listBrands: {},
     listCharacters: {}, // listCharacters is the light version of characters, without locales
     listCollectionItems: {},
@@ -86,7 +92,9 @@ export default (state = fromJS({
     filterHasCharacters: {},
     filterHasCommercials: {},
     filterHasContentProducers: {},
+    filterHasCountries: {},
     filterHasEpisodes: {},
+    filterHasLanguages: {},
     filterHasMedia: {},
     filterHasMediumCategories: {},
     filterHasMovies: {},
@@ -122,6 +130,8 @@ export default (state = fromJS({
     collectionHasCollectionItems: {},
     commercialHasScheduleEntries: {},
     imageHasSuggestedProducts: {},
+    mediumHasAudiences: {},
+    mediumHasAvailabilities: {},
     mediumHasBrands: {},
     mediumHasCollections: {},
     mediumHasShops: {},
@@ -130,10 +140,9 @@ export default (state = fromJS({
     personHasFaceImages: {},
     productHasProductOfferings: {},
     productHasSimilarProducts: {},
-    seriesEntryHasSeasons: {},
-    seriesEntryHasEpisodes: {},
     seasonHasEpisodes: {},
-    mediumHasAvailabilities: {}
+    seriesEntryHasEpisodes: {},
+    seriesEntryHasSeasons: {}
   }
 }), action) => {
   switch (action.type) {
@@ -147,6 +156,33 @@ export default (state = fromJS({
       return searchSuccess(state, 'availabilities', 'mediumHasAvailabilities', action.mediumId, action.data);
     case availabilityActions.AVAILABILITIES_FETCH_ERROR:
       return searchError(state, 'mediumHasAvailabilities', action.mediumId, action.error);
+
+    // Audiences
+    // /////////
+
+    case audienceActions.AUDIENCES_FETCH_START:
+      return searchStart(state, 'mediumHasAudiences', action.mediumId);
+    case audienceActions.AUDIENCES_FETCH_SUCCESS:
+      return searchSuccess(state, 'audiences', 'mediumHasAudiences', action.mediumId, action.data.data);
+    case audienceActions.AUDIENCES_FETCH_ERROR:
+      return searchError(state, 'mediumHasAudiences', action.mediumId, action.error);
+
+    case audienceActions.AUDIENCE_FETCH_START:
+      return fetchStart(state, [ 'entities', 'audiences', action.audienceId ]);
+    case audienceActions.AUDIENCE_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'audiences', action.audienceId ], action.data);
+    case audienceActions.AUDIENCE_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'audiences', action.audienceId ], action.error);
+
+    // Countries
+    // /////////
+
+    case countryActions.COUNTRIES_FETCH_START:
+      return searchStart(state, 'filterHasCountries', serializeFilterHasCountries(action));
+    case countryActions.COUNTRIES_FETCH_SUCCESS:
+      return searchSuccess(state, 'countries', 'filterHasCountries', serializeFilterHasCountries(action), action.data.data);
+    case countryActions.COUNTRIES_FETCH_ERROR:
+      return searchError(state, 'filterHasCountries', serializeFilterHasCountries(action), action.error);
 
     // Brands
     // /////////////////
@@ -461,6 +497,16 @@ export default (state = fromJS({
     }
     case episodeActions.EPISODE_FETCH_ERROR:
       return fetchError(state, [ 'entities', 'media', action.episodeId ], action.error);
+
+    // Languages
+    // /////////
+
+    case languageActions.LANGUAGES_FETCH_START:
+      return searchStart(state, 'filterHasLanguages', serializeFilterHasLanguages(action));
+    case languageActions.LANGUAGES_FETCH_SUCCESS:
+      return searchSuccess(state, 'languages', 'filterHasLanguages', serializeFilterHasLanguages(action), action.data.data);
+    case languageActions.LANGUAGES_FETCH_ERROR:
+      return searchError(state, 'filterHasLanguages', serializeFilterHasLanguages(action), action.error);
 
     // Media
     // /////

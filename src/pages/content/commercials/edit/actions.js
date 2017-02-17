@@ -6,6 +6,9 @@ import { searchCharacters as dataSearchCharacters, searchMediumCharacters as dat
 import { searchProducts as dataSearchProducts } from '../../../../actions/product';
 import { searchMedia as dataSearchMedia } from '../../../../actions/media';
 import { searchPersons as dataSearchPersons } from '../../../../actions/person';
+import { fetchCountries } from '../../../../actions/country';
+import { fetchLanguages } from '../../../../actions/language';
+import { createSearchAction } from '../../../../utils';
 
 export { deleteBannerImage, uploadBannerImage, uploadProfileImage, uploadRoundLogo } from '../../../../actions/commercial';
 export { deleteProfileImage, deleteRoundLogo } from '../../../../actions/media';
@@ -51,6 +54,12 @@ export const REMOVE_CREATE_LANGUAGE_MODAL = 'COMMERCIAL_EDIT/REMOVE_CREATE_LANGU
 export const CHARACTERS_SEARCH_START = 'COMMERCIAL_EDIT/CHARACTERS_SEARCH_START';
 export const CHARACTERS_SEARCH_ERROR = 'COMMERCIAL_EDIT/CHARACTERS_SEARCH_ERROR';
 
+export const COUNTRIES_SEARCH_START = 'AUDIENCE_EDIT/COUNTRIES_SEARCH_START';
+export const COUNTRIES_SEARCH_ERROR = 'AUDIENCE_EDIT/COUNTRIES_SEARCH_ERROR';
+
+export const LANGUAGES_SEARCH_START = 'AUDIENCE_EDIT/LANGUAGES_SEARCH_START';
+export const LANGUAGES_SEARCH_ERROR = 'AUDIENCE_EDIT/LANGUAGES_SEARCH_ERROR';
+
 export const submit = persistCommercial;
 
 export function loadCommercial (commercialId) {
@@ -63,129 +72,31 @@ export function loadCommercial (commercialId) {
   };
 }
 
-export function searchBannerLinkMedia (searchString) {
-  return async (dispatch, getState) => {
-    try {
-      dispatch({ searchString, type: BANNER_LINK_MEDIA_SEARCH_START });
-      return await dispatch(dataSearchMedia({ searchString }));
-    } catch (error) {
-      dispatch({ error, searchString, type: BANNER_LINK_MEDIA_SEARCH_ERROR });
-    }
-  };
-}
+export const searchBannerLinkMedia = createSearchAction(dataSearchMedia, BANNER_LINK_MEDIA_SEARCH_START, BANNER_LINK_MEDIA_SEARCH_ERROR);
+export const searchBannerLinkBrands = createSearchAction(dataSearchBrands, BANNER_LINK_BRANDS_SEARCH_START, BANNER_LINK_BRANDS_SEARCH_ERROR);
+export const searchBannerLinkCharacters = createSearchAction(dataSearchCharacters, BANNER_LINK_CHARACTERS_SEARCH_START, BANNER_LINK_CHARACTERS_SEARCH_ERROR);
+export const searchBannerLinkPersons = createSearchAction(dataSearchPersons, BANNER_LINK_PERSONS_SEARCH_START, BANNER_LINK_PERSONS_SEARCH_ERROR);
+export const searchBrands = createSearchAction(dataSearchBrands, BRANDS_SEARCH_START, BRANDS_SEARCH_ERROR);
+export const searchContentProducers = createSearchAction(dataSearchContentProducers, CONTENT_PRODUCERS_SEARCH_START, CONTENT_PRODUCERS_SEARCH_ERROR);
+export const searchBroadcasters = createSearchAction(dataSearchBroadcasters, BROADCASTERS_SEARCH_START, BROADCASTERS_SEARCH_ERROR);
 
-export function searchBannerLinkBrands (searchString) {
-  return async (dispatch, getState) => {
-    try {
-      await dispatch({ type: BANNER_LINK_BRANDS_SEARCH_START, searchString });
-      return await dispatch(dataSearchBrands({ searchString }));
-    } catch (error) {
-      dispatch({ error, type: BANNER_LINK_BRANDS_SEARCH_ERROR });
-    }
-  };
-}
-
-export function searchBannerLinkCharacters (searchString) {
-  return async (dispatch, getState) => {
-    try {
-      await dispatch({ type: BANNER_LINK_CHARACTERS_SEARCH_START, searchString });
-      return await dispatch(dataSearchCharacters({ searchString }));
-    } catch (error) {
-      dispatch({ error, type: BANNER_LINK_CHARACTERS_SEARCH_ERROR });
-    }
-  };
-}
-
-export function searchBannerLinkPersons (searchString) {
-  return async (dispatch, getState) => {
-    try {
-      await dispatch({ type: BANNER_LINK_PERSONS_SEARCH_START, searchString });
-      return await dispatch(dataSearchPersons({ searchString }));
-    } catch (error) {
-      dispatch({ error, type: BANNER_LINK_PERSONS_SEARCH_ERROR });
-    }
-  };
-}
-
-export function searchBrands (searchString) {
-  return async (dispatch, getState) => {
-    try {
-      await dispatch({ type: BRANDS_SEARCH_START, searchString });
-      return await dispatch(dataSearchBrands({ searchString }));
-    } catch (error) {
-      dispatch({ error, type: BRANDS_SEARCH_ERROR });
-    }
-  };
-}
-
-export function searchContentProducers (searchString) {
-  return async (dispatch, getState) => {
-    try {
-      await dispatch({ type: CONTENT_PRODUCERS_SEARCH_START, searchString });
-      return await dispatch(dataSearchContentProducers({ searchString }));
-    } catch (error) {
-      dispatch({ error, type: CONTENT_PRODUCERS_SEARCH_ERROR });
-    }
-  };
-}
-export function searchBroadcasters (searchString) {
-  return async (dispatch, getState) => {
-    try {
-      await dispatch({ type: BROADCASTERS_SEARCH_START, searchString });
-      return await dispatch(dataSearchBroadcasters({ searchString }));
-    } catch (error) {
-      dispatch({ error, type: BROADCASTERS_SEARCH_ERROR });
-    }
-  };
-}
-
-/* Search on all characters. */
-export function searchCharacters (searchString) {
-  return async (dispatch, getState) => {
-    try {
-      await dispatch({ type: CHARACTERS_SEARCH_START, searchString });
-      return await dispatch(dataSearchCharacters({ searchString }));
-    } catch (error) {
-      dispatch({ error, type: CHARACTERS_SEARCH_ERROR });
-    }
-  };
-}
+// Search on all characters.
+export const searchCharacters = createSearchAction(dataSearchCharacters, CHARACTERS_SEARCH_START, CHARACTERS_SEARCH_ERROR);
 
 // Collections
 // ///////////
 
-/* Search on all brands. Can change in the future to medium brands. */
-export function searchCollectionsBrands (searchString) {
-  return async (dispatch) => {
-    try {
-      await dispatch({ type: COLLECTIONS_BRANDS_SEARCH_START, searchString });
-      return await dispatch(dataSearchBrands({ searchString }));
-    } catch (error) {
-      dispatch({ error, type: COLLECTIONS_BRANDS_SEARCH_ERROR });
-    }
-  };
-}
+// Search on all brands. Can change in the future to medium brands.
+export const searchCollectionsBrands = createSearchAction(dataSearchBrands, COLLECTIONS_BRANDS_SEARCH_START, COLLECTIONS_BRANDS_SEARCH_ERROR);
 
-/* Search on the cast of a medium. */
-export function searchCollectionsCharacters (mediumId, searchString) {
-  return async (dispatch, getState) => {
-    try {
-      await dispatch({ type: COLLECTIONS_CHARACTERS_SEARCH_START, searchString });
-      return await dispatch(dataSearchMediumCharacters({ mediumId, searchString }));
-    } catch (error) {
-      dispatch({ error, type: COLLECTIONS_CHARACTERS_SEARCH_ERROR });
-    }
-  };
-}
+// Search on the cast of a medium.
+export const searchCollectionsCharacters = createSearchAction(dataSearchMediumCharacters, COLLECTIONS_CHARACTERS_SEARCH_START, COLLECTIONS_CHARACTERS_SEARCH_ERROR);
 
-/* Search on all products. */
-export function searchCollectionsProducts (searchString) {
-  return async (dispatch, getState) => {
-    try {
-      await dispatch({ type: COLLECTIONS_PRODUCTS_SEARCH_START, searchString });
-      return await dispatch(dataSearchProducts({ searchString }));
-    } catch (error) {
-      dispatch({ error, type: COLLECTIONS_PRODUCTS_SEARCH_ERROR });
-    }
-  };
-}
+// Search on all products.
+export const searchCollectionsProducts = createSearchAction(dataSearchProducts, COLLECTIONS_PRODUCTS_SEARCH_START, COLLECTIONS_PRODUCTS_SEARCH_ERROR);
+
+// Audience
+// ////////
+
+export const searchCountries = createSearchAction(fetchCountries, COUNTRIES_SEARCH_START, COUNTRIES_SEARCH_ERROR);
+export const searchLanguages = createSearchAction(fetchLanguages, LANGUAGES_SEARCH_START, LANGUAGES_SEARCH_ERROR);

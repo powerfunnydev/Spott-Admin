@@ -826,3 +826,20 @@ export function transformScheduleEntry ({ broadcaster, channels, commercial, end
     start
   };
 }
+
+export function transformCountry ({ name, uuid: id }) {
+  return { id, name };
+}
+
+export function transformLanguage ({ name, uuid: id }) {
+  return { id, name };
+}
+
+export function transformAudience ({ countries, languages, name, uuid }) {
+  return {
+    countries: countries && countries.map(transformCountry),
+    id: uuid,
+    languages: languages && languages.map(transformLanguage),
+    name
+  };
+}

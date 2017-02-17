@@ -25,9 +25,3 @@ export async function persistScheduleEntry (baseUrl, authenticationToken, locale
 export async function deleteScheduleEntry (baseUrl, authenticationToken, locale, { scheduleEntryId }) {
   await del(authenticationToken, locale, `${baseUrl}/v004/media/commercialScheduleEntries/${scheduleEntryId}`);
 }
-
-export async function deleteScheduleEntries (baseUrl, authenticationToken, locale, { scheduleEntryIds }) {
-  for (const scheduleEntryId of scheduleEntryIds) {
-    await deleteScheduleEntry(baseUrl, authenticationToken, locale, { scheduleEntryId });
-  }
-}
