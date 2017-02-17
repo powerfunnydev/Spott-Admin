@@ -77,7 +77,7 @@ class ListView extends Component {
                             ? () => { column.getUrl(item) && routerPushWithReturnTo(column.getUrl(item)); }
                             : null
                             }>
-                            {column.dataType === 'date' ? this.getFormatedDate(item.get(column.name)) : (column.convert || ((text) => text))(item.get(column.name))}
+                            {column.dataType === 'date' ? this.getFormatedDate(item.get(column.name)) : (column.convert || ((text) => text))(column.name ? item.get(column.name) : item)}
                           </CustomCel>
                         );
                       case 'dropdown':
