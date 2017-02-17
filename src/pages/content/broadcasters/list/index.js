@@ -4,16 +4,15 @@ import { bindActionCreators } from 'redux';
 import Radium from 'radium';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Container, Root } from '../../../_common/styles';
-import { DropdownCel, UtilsBar, isQueryChanged, Tile, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../../_common/components/table/index';
+import { UtilsBar, isQueryChanged, Tile, tableDecorator, generalStyles, TotalEntries, Pagination } from '../../../_common/components/table/index';
 import Line from '../../../_common/components/line';
-import Dropdown, { styles as dropdownStyles } from '../../../_common/components/actionDropdown';
+import ListView from '../../../_common/components/listView/index';
 import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
 import * as actions from './actions';
 import selector from './selector';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
-const numberOfRows = 25;
 
 export const prefix = 'broadcasters';
 
@@ -77,6 +76,14 @@ export default class Broadcasters extends Component {
     }
   }
 
+  determineReadUrl (broadcaster) {
+    return `/content/broadcasters/read/${broadcaster.get('id')}`;
+  }
+
+  determineEditUrl (broadcaster) {
+    return `/content/broadcasters/edit/${broadcaster.get('id')}`;
+  }
+
   onClickNewEntry (e) {
     e.preventDefault();
     this.props.routerPushWithReturnTo('/content/broadcasters/create');
@@ -94,11 +101,16 @@ export default class Broadcasters extends Component {
   }
 
   render () {
-    const { broadcasters, children, isSelected, location: { query, query: { broadcastersDisplay, broadcastersPage,
+    const { broadcasters, children, deleteBroadcaster, isSelected, location: { query, query: { broadcastersDisplay, broadcastersPage,
       broadcastersSearchString, broadcastersSortField, broadcastersSortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount,
     onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
+    const columns = [
+      { type: 'checkBox' },
+      { type: 'custom', sort: true, sortField: 'NAME', title: 'NAME', clickable: true, getUrl: this.determineReadUrl, name: 'name' },
+      { type: 'dropdown' }
+    ];
     return (
       <SideMenu>
         <Root>
@@ -127,31 +139,19 @@ export default class Broadcasters extends Component {
                   onDeleteSelected={this.onClickDeleteSelected}/>
                 {(broadcastersDisplay === undefined || broadcastersDisplay === 'list') &&
                   <div>
-                    <Table>
-                      <Headers>
-                        {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                        <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                        <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {broadcastersSortField === 'NAME' ? sortDirections[broadcastersSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 5 } ]}>NAME</CustomCel>
-                        <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
-                      </Headers>
-                      <Rows isLoading={broadcasters.get('_status') !== 'loaded'}>
-                        {broadcasters.get('data').map((broadcaster, index) => {
-                          return (
-                            <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
-                              {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                              <CheckBoxCel checked={isSelected.get(broadcaster.get('id'))} onChange={selectCheckbox.bind(this, broadcaster.get('id'))}/>
-                              <CustomCel style={{ flex: 5 }} onClick={() => { this.props.routerPushWithReturnTo(`/content/broadcasters/read/${broadcaster.get('id')}`); }}>{broadcaster.get('name')}</CustomCel>
-                              <DropdownCel>
-                                <Dropdown
-                                  elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/broadcasters/edit/${broadcaster.get('id')}`); }}>Edit</div>}>
-                                  <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteBroadcaster(broadcaster.get('id')); }}>Remove</div>
-                                </Dropdown>
-                              </DropdownCel>
-                            </Row>
-                          );
-                        })}
-                      </Rows>
-                    </Table>
+                    <ListView
+                      columns={columns}
+                      data={broadcasters}
+                      deleteItem={deleteBroadcaster}
+                      getEditUrl={this.determineEditUrl}
+                      isSelected={isSelected}
+                      load={() => this.props.load(this.props.location.query)}
+                      routerPushWithReturnTo={this.props.routerPushWithReturnTo}
+                      selectAllCheckboxes={selectAllCheckboxes}
+                      sortDirection={broadcastersSortDirection}
+                      sortField={broadcastersSortField}
+                      onCheckboxChange={(id) => selectCheckbox.bind(this, id)}
+                      onSortField={(name) => this.props.onSortField.bind(this, name)} />
                     <Pagination currentPage={(broadcastersPage && (parseInt(broadcastersPage, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(broadcastersPage, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(broadcastersPage, 10), true); }}/>
                   </div>
                 }
