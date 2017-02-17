@@ -15,8 +15,6 @@ export default (state = Map({}), action) => {
       return state.set('currentProductCategoriesSearchString', action.searchString);
     case SHOPS_SEARCH_START:
       return state.set('currentShopsSearchString', action.searchString);
-    case PRODUCT_PERSIST_SUCCESS:
-      return state.set('popUpMessage', { type: 'hint', message: 'The product is successful saved!' });
     case CLOSE_POP_UP_MESSAGE:
       return state.set('popUpMessage', null);
     // Uninteresting actions
