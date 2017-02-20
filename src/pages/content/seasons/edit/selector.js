@@ -1,14 +1,17 @@
-import { createStructuredSelector } from 'reselect';
+import { createSelector, createStructuredSelector } from 'reselect';
 import {
   currentModalSelector
 } from '../../../../selectors/global';
 import {
-  mediaEntitiesSelector,
   createEntityByIdSelector,
-  listMediaEntitiesSelector,
   createEntityIdsByRelationSelector,
+  filterHasCountriesRelationsSelector,
+  filterHasLanguagesRelationsSelector,
+  listMediaEntitiesSelector,
+  mediaEntitiesSelector,
   searchStringHasSeriesEntriesRelationsSelector
 } from '../../../../selectors/data';
+import { serializeFilterHasCountries, serializeFilterHasLanguages } from '../../../../reducers/utils';
 import { createFormValueSelector } from '../../../../utils';
 
 const formName = 'seasonEdit';
@@ -31,6 +34,24 @@ const searchedSeriesEntryIdsSelector = createEntityIdsByRelationSelector(searchS
 
 const popUpMessageSelector = (state) => state.getIn([ 'content', 'seasons', 'edit', 'popUpMessage' ]);
 
+// Audience
+const currentAudienceCountriesSearchStringSelector = (state) => state.getIn([ 'content', 'seasons', 'edit', 'currentAudienceCountriesSearchString' ]);
+const currentAudienceLanguagesSearchStringSelector = (state) => state.getIn([ 'content', 'seasons', 'edit', 'currentAudienceLanguagesSearchString' ]);
+
+// Audience
+
+export const audienceCountriesFilterKeySelector = createSelector(
+  currentAudienceCountriesSearchStringSelector,
+  (searchString) => serializeFilterHasCountries({ searchString })
+);
+export const audienceLanguagesFilterKeySelector = createSelector(
+  currentAudienceLanguagesSearchStringSelector,
+  (searchString) => serializeFilterHasLanguages({ searchString })
+);
+
+const searchedAudienceCountryIdsSelector = createEntityIdsByRelationSelector(filterHasCountriesRelationsSelector, audienceCountriesFilterKeySelector);
+const searchedAudienceLanguageIdsSelector = createEntityIdsByRelationSelector(filterHasLanguagesRelationsSelector, audienceLanguagesFilterKeySelector);
+
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
   addLanguageHasTitle: addLanguageHasTitleSelector,
@@ -42,6 +63,8 @@ export default createStructuredSelector({
   formValues: valuesSelector,
   hasTitle: hasTitleSelector,
   popUpMessage: popUpMessageSelector,
+  searchedAudienceCountryIds: searchedAudienceCountryIdsSelector,
+  searchedAudienceLanguageIds: searchedAudienceLanguageIdsSelector,
   searchedSeriesEntryIds: searchedSeriesEntryIdsSelector,
   seriesEntriesById: listMediaEntitiesSelector,
   supportedLocales: supportedLocalesSelector

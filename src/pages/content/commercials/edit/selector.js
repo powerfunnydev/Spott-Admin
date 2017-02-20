@@ -144,6 +144,8 @@ export default createStructuredSelector({
   mediaById: listMediaEntitiesSelector,
   personsById: listPersonsEntitiesSelector,
   productsById: listProductsEntitiesSelector,
+  searchedAudienceCountryIds: searchedAudienceCountryIdsSelector,
+  searchedAudienceLanguageIds: searchedAudienceLanguageIdsSelector,
   searchedBannerLinkBrandIds: searchedBannerLinkBrandIdsSelector,
   searchedBannerLinkCharacterIds: searchedBannerLinkCharacterIdsSelector,
   searchedBannerLinkMediumIds: searchedBannerLinkMediumIdsSelector,
@@ -155,7 +157,5 @@ export default createStructuredSelector({
   searchedCollectionsCharacterIds: searchedCollectionsCharacterIdsSelector,
   searchedCollectionsProductIds: searchedCollectionsProductIdsSelector,
   searchedContentProducerIds: searchedContentProducerIdsSelector,
-  searchedAudienceCountryIds: searchedAudienceCountryIdsSelector,
-  searchedAudienceLanguageIds: searchedAudienceLanguageIdsSelector,
   supportedLocales: supportedLocalesSelector
 });

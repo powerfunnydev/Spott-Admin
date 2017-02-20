@@ -6,6 +6,9 @@ import { searchCharacters as dataSearchCharacters, searchMediumCharacters as dat
 import { searchMediumCategories as dataSearchMediumCategories } from '../../../../actions/mediumCategory';
 import { searchShops as dataSearchShops } from '../../../../actions/shop';
 import { searchProducts as dataSearchProducts } from '../../../../actions/product';
+import { fetchCountries } from '../../../../actions/country';
+import { fetchLanguages } from '../../../../actions/language';
+import { createSearchAction } from '../../../../utils';
 
 export { uploadProfileImage, uploadPosterImage, uploadRoundLogo } from '../../../../actions/movie';
 export { deleteProfileImage, deletePosterImage, deleteRoundLogo } from '../../../../actions/media';
@@ -47,6 +50,12 @@ export const SHOW_CREATE_LANGUAGE_MODAL = 'MOVIE_EDIT/SHOW_CREATE_LANGUAGE_MODAL
 export const REMOVE_CREATE_LANGUAGE_MODAL = 'MOVIE_EDIT/REMOVE_CREATE_LANGUAGE_MODAL';
 
 export const CLOSE_POP_UP_MESSAGE = 'MOVIE_EDIT/CLOSE_POP_UP_MESSAGE';
+
+export const AUDIENCE_COUNTRIES_SEARCH_START = 'MOVIE_EDIT/AUDIENCE_COUNTRIES_SEARCH_START';
+export const AUDIENCE_COUNTRIES_SEARCH_ERROR = 'MOVIE_EDIT/AUDIENCE_COUNTRIES_SEARCH_ERROR';
+
+export const AUDIENCE_LANGUAGES_SEARCH_START = 'MOVIE_EDIT/AUDIENCE_LANGUAGES_SEARCH_START';
+export const AUDIENCE_LANGUAGES_SEARCH_ERROR = 'MOVIE_EDIT/AUDIENCE_LANGUAGES_SEARCH_ERROR';
 
 export const submit = persistMovie;
 
@@ -174,3 +183,9 @@ export function searchHelpersShops (searchString) {
     }
   };
 }
+
+// Audience
+// ////////
+
+export const searchAudienceCountries = createSearchAction(fetchCountries, AUDIENCE_COUNTRIES_SEARCH_START, AUDIENCE_COUNTRIES_SEARCH_ERROR);
+export const searchAudienceLanguages = createSearchAction(fetchLanguages, AUDIENCE_LANGUAGES_SEARCH_START, AUDIENCE_LANGUAGES_SEARCH_ERROR);
