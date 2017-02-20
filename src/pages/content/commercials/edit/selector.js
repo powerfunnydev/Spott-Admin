@@ -61,8 +61,8 @@ const currentBannerLinkMediaSearchStringSelector = (state) => state.getIn([ 'con
 const currentBannerLinkPersonsSearchStringSelector = (state) => state.getIn([ 'content', 'commercials', 'edit', 'currentBannerLinkPersonsSearchString' ]);
 
 // Audience
-const currentCountriesSearchStringSelector = (state) => state.getIn([ 'content', 'commercials', 'edit', 'currentCountriesSearchString' ]);
-const currentLanguagesSearchStringSelector = (state) => state.getIn([ 'content', 'commercials', 'edit', 'currentLanguagesSearchString' ]);
+const currentAudienceCountriesSearchStringSelector = (state) => state.getIn([ 'content', 'commercials', 'edit', 'currentAudienceCountriesSearchString' ]);
+const currentAudienceLanguagesSearchStringSelector = (state) => state.getIn([ 'content', 'commercials', 'edit', 'currentAudienceLanguagesSearchString' ]);
 
 const collectionsCharactersFilterKeySelector = createSelector(
   currentCollectionsCharacterSearchStringSelector,
@@ -114,17 +114,17 @@ const collectionsSelector = createSelector(
 
 // Audience
 
-export const countriesFilterKeySelector = createSelector(
-  currentCountriesSearchStringSelector,
+export const audienceCountriesFilterKeySelector = createSelector(
+  currentAudienceCountriesSearchStringSelector,
   (searchString) => serializeFilterHasCountries({ searchString })
 );
-export const languagesFilterKeySelector = createSelector(
-  currentLanguagesSearchStringSelector,
+export const audienceLanguagesFilterKeySelector = createSelector(
+  currentAudienceLanguagesSearchStringSelector,
   (searchString) => serializeFilterHasLanguages({ searchString })
 );
 
-const searchedCountryIdsSelector = createEntityIdsByRelationSelector(filterHasCountriesRelationsSelector, countriesFilterKeySelector);
-const searchedLanguageIdsSelector = createEntityIdsByRelationSelector(filterHasLanguagesRelationsSelector, languagesFilterKeySelector);
+const searchedAudienceCountryIdsSelector = createEntityIdsByRelationSelector(filterHasCountriesRelationsSelector, audienceCountriesFilterKeySelector);
+const searchedAudienceLanguageIdsSelector = createEntityIdsByRelationSelector(filterHasLanguagesRelationsSelector, audienceLanguagesFilterKeySelector);
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
@@ -155,7 +155,7 @@ export default createStructuredSelector({
   searchedCollectionsCharacterIds: searchedCollectionsCharacterIdsSelector,
   searchedCollectionsProductIds: searchedCollectionsProductIdsSelector,
   searchedContentProducerIds: searchedContentProducerIdsSelector,
-  searchedCountryIds: searchedCountryIdsSelector,
-  searchedLanguageIds: searchedLanguageIdsSelector,
+  searchedAudienceCountryIds: searchedAudienceCountryIdsSelector,
+  searchedAudienceLanguageIds: searchedAudienceLanguageIdsSelector,
   supportedLocales: supportedLocalesSelector
 });

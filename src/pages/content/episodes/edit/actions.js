@@ -11,6 +11,9 @@ import { searchProducts as dataSearchProducts } from '../../../../actions/produc
 import { searchShops as dataSearchShops } from '../../../../actions/shop';
 import { searchCharacters as dataSearchCharacters, searchMediumCharacters as dataSearchMediumCharacters } from '../../../../actions/character';
 import { searchMediumCategories as dataSearchMediumCategories } from '../../../../actions/mediumCategory';
+import { fetchCountries } from '../../../../actions/country';
+import { fetchLanguages } from '../../../../actions/language';
+import { createSearchAction } from '../../../../utils';
 
 export { deleteProfileImage, deletePosterImage } from '../../../../actions/media';
 export { openModal, closeModal } from '../../../../actions/global';
@@ -55,6 +58,12 @@ export const SHOW_CREATE_LANGUAGE_MODAL = 'EPISODES_EDIT/SHOW_CREATE_LANGUAGE_MO
 export const REMOVE_CREATE_LANGUAGE_MODAL = 'EPISODES_EDIT/REMOVE_CREATE_LANGUAGE_MODAL';
 
 export const CLOSE_POP_UP_MESSAGE = 'EPISODES_EDIT/CLOSE_POP_UP_MESSAGE';
+
+export const AUDIENCE_COUNTRIES_SEARCH_START = 'COMMERCIAL_EDIT/AUDIENCE_COUNTRIES_SEARCH_START';
+export const AUDIENCE_COUNTRIES_SEARCH_ERROR = 'COMMERCIAL_EDIT/AUDIENCE_COUNTRIES_SEARCH_ERROR';
+
+export const AUDIENCE_LANGUAGES_SEARCH_START = 'COMMERCIAL_EDIT/AUDIENCE_LANGUAGES_SEARCH_START';
+export const AUDIENCE_LANGUAGES_SEARCH_ERROR = 'COMMERCIAL_EDIT/AUDIENCE_LANGUAGES_SEARCH_ERROR';
 
 export const submit = persistEpisode;
 export const uploadProfileImage = dataUploadProfileImage;
@@ -204,3 +213,9 @@ export function searchHelpersShops (searchString) {
     }
   };
 }
+
+// Audience
+// ////////
+
+export const searchAudienceCountries = createSearchAction(fetchCountries, AUDIENCE_COUNTRIES_SEARCH_START, AUDIENCE_COUNTRIES_SEARCH_ERROR);
+export const searchAudienceLanguages = createSearchAction(fetchLanguages, AUDIENCE_LANGUAGES_SEARCH_START, AUDIENCE_LANGUAGES_SEARCH_ERROR);

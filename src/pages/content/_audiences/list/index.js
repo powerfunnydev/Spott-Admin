@@ -52,19 +52,14 @@ export default class Audiences extends Component {
     loadAudiences({ mediumId });
   }
 
-  transformAudience ({ ...rest }) {
-    return {
-      ...rest
-    };
-  }
-
   getAudience (index) {
-    const { countries, id, languages, mediumId } = this.props.audiences.getIn([ 'data', index ]).toJS();
-    console.warn('data', this.props.audiences.getIn([ 'data', index ]).toJS());
+    const mediumId = this.props.mediumId;
+    const { countries, id, languages, name } = this.props.audiences.getIn([ 'data', index ]).toJS();
     return {
       countryIds: countries && countries.map((c) => c.id),
       id,
       languageIds: languages && languages.map((l) => l.id),
+      name,
       mediumId
     };
   }
@@ -76,14 +71,13 @@ export default class Audiences extends Component {
 
   async onClickDeleteAudience (audienceId) {
     const { deleteAudience, loadAudiences, mediumId } = this.props;
-    await deleteAudience({ audienceId });
+    await deleteAudience({ audienceId, mediumId });
     await loadAudiences({ mediumId });
   }
 
   async onSubmit (form) {
     const { loadAudiences, mediumId, persistAudience } = this.props;
-    const availability = this.transformAudience(form);
-    await persistAudience(availability);
+    await persistAudience(form);
     await loadAudiences({ mediumId });
   }
 

@@ -61,12 +61,12 @@ function validate (values, { t }) {
   searchBrands: bindActionCreators(actions.searchBrands, dispatch),
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
   searchCharacters: bindActionCreators(actions.searchCharacters, dispatch),
-  searchCountries: bindActionCreators(actions.searchCountries, dispatch),
+  searchAudienceCountries: bindActionCreators(actions.searchAudienceCountries, dispatch),
+  searchAudienceLanguages: bindActionCreators(actions.searchAudienceLanguages, dispatch),
   searchCollectionsBrands: bindActionCreators(actions.searchCollectionsBrands, dispatch),
   searchCollectionsCharacters: bindActionCreators(actions.searchCollectionsCharacters, dispatch),
   searchCollectionsProducts: bindActionCreators(actions.searchCollectionsProducts, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
-  searchLanguages: bindActionCreators(actions.searchLanguages, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadBannerImage: bindActionCreators(actions.uploadBannerImage, dispatch),
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch),
@@ -112,6 +112,8 @@ export default class EditCommercial extends Component {
     personsById: ImmutablePropTypes.map.isRequired,
     productsById: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
+    searchAudienceCountries: PropTypes.func.isRequired,
+    searchAudienceLanguages: PropTypes.func.isRequired,
     searchBannerLinkBrands: PropTypes.func.isRequired,
     searchBannerLinkCharacters: PropTypes.func.isRequired,
     searchBannerLinkMedia: PropTypes.func.isRequired,
@@ -123,8 +125,8 @@ export default class EditCommercial extends Component {
     searchCollectionsCharacters: PropTypes.func.isRequired,
     searchCollectionsProducts: PropTypes.func.isRequired,
     searchContentProducers: PropTypes.func.isRequired,
-    searchCountries: PropTypes.func.isRequired,
-    searchLanguages: PropTypes.func.isRequired,
+    searchedAudienceCountryIds: ImmutablePropTypes.map.isRequired,
+    searchedAudienceLanguageIds: ImmutablePropTypes.map.isRequired,
     searchedBannerLinkBrandIds: ImmutablePropTypes.map.isRequired,
     searchedBannerLinkCharacterIds: ImmutablePropTypes.map.isRequired,
     searchedBannerLinkMediumIds: ImmutablePropTypes.map.isRequired,
@@ -136,8 +138,6 @@ export default class EditCommercial extends Component {
     searchedCollectionsCharacterIds: ImmutablePropTypes.map.isRequired,
     searchedCollectionsProductIds: ImmutablePropTypes.map.isRequired,
     searchedContentProducerIds: ImmutablePropTypes.map.isRequired,
-    searchedCountryIds: ImmutablePropTypes.map.isRequired,
-    searchedLanguageIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
@@ -300,13 +300,13 @@ export default class EditCommercial extends Component {
       defaultLocale, deleteBannerImage, deleteRoundLogo, errors, handleSubmit, hasBanner,
       mediaById, personsById, productsById, searchCollectionsBrands, searchCollectionsCharacters, searchCollectionsProducts,
       searchBannerLinkBrands, searchBannerLinkCharacters, searchBannerLinkMedia, searchBrands,
-      searchCharacters, searchCountries, searchContentProducers,
+      searchCharacters, searchAudienceCountries, searchContentProducers,
       searchedBannerLinkBrandIds, searchedBannerLinkCharacterIds, searchedBannerLinkMediumIds, searchBannerLinkPersons,
-      searchedContentProducerIds, searchBroadcasters, searchLanguages,
+      searchedContentProducerIds, searchBroadcasters, searchAudienceLanguages,
       searchedBroadcasterIds, searchedCharacterIds, searchedCollectionsBrandIds,
       searchedCollectionsCharacterIds, searchedCollectionsProductIds, searchedBannerLinkPersonIds, location,
       location: { query: { tab } }, supportedLocales,
-      deleteProfileImage, searchedBrandIds, searchedCountryIds, searchedLanguageIds
+      deleteProfileImage, searchedBrandIds, searchedAudienceCountryIds, searchedAudienceLanguageIds
     } = this.props;
 
     const bannerImage = currentCommercial.getIn([ 'bannerImage', _activeLocale ]);
@@ -595,10 +595,10 @@ export default class EditCommercial extends Component {
               <Tab title='Audience'>
                 <Audiences
                   mediumId={this.props.params.commercialId}
-                  searchCountries={searchCountries}
-                  searchLanguages={searchLanguages}
-                  searchedCountryIds={searchedCountryIds}
-                  searchedLanguageIds={searchedLanguageIds}/>
+                  searchCountries={searchAudienceCountries}
+                  searchLanguages={searchAudienceLanguages}
+                  searchedCountryIds={searchedAudienceCountryIds}
+                  searchedLanguageIds={searchedAudienceLanguageIds}/>
               </Tab>
             </Tabs>
           </EditTemplate>
