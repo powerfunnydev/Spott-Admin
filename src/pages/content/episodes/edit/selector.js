@@ -51,7 +51,7 @@ const currentSeriesEntryIdSelector = createFormValueSelector(formName, 'seriesEn
 const hasTitleSelector = createFormValueSelector(formName, 'hasTitle');
 const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 
-const currentEpisodeIdSelector = (state, props) => { return props.params.episodeId; };
+export const currentEpisodeIdSelector = (state, props) => { return props.params.episodeId; };
 const currentEpisodeSelector = createEntityByIdSelector(mediaEntitiesSelector, currentEpisodeIdSelector);
 
 const currentHelpersBrandSearchStringSelector = (state) => state.getIn([ 'content', 'episodes', 'edit', 'currentHelpersBrandSearchString' ]);

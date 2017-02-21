@@ -44,16 +44,7 @@ export function loadSeason (seasonId) {
   };
 }
 
-export function searchSeriesEntries (searchString) {
-  return async (dispatch, getState) => {
-    try {
-      await dispatch({ type: SERIES_ENTRIES_SEARCH_START, searchString });
-      return await dispatch(dataSearchSeriesEntries({ searchString }));
-    } catch (error) {
-      dispatch({ error, type: SERIES_ENTRIES_SEARCH_ERROR });
-    }
-  };
-}
+export const searchSeriesEntries = createSearchAction(dataSearchSeriesEntries, SERIES_ENTRIES_SEARCH_START, SERIES_ENTRIES_SEARCH_ERROR);
 
 // Audience
 // ////////
