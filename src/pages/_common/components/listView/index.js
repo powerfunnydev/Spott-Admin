@@ -4,6 +4,7 @@ import moment from 'moment';
 import { DropdownCel, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row } from '../table/index';
 import Dropdown, { styles as dropdownStyles } from '../actionDropdown';
 import { confirmation } from '../../askConfirmation';
+
 const numberOfRows = 25;
 class ListView extends Component {
 
@@ -32,27 +33,27 @@ class ListView extends Component {
             columns.map((column, index) => {
               switch (column.type) {
                 case 'checkBox':
-                  return <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>;
+                  return <CheckBoxCel checked={isSelected.get('ALL')} key={index} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>;
                 case 'custom':
                   return (
                     column.sort ? (
                       <CustomCel
-                        sortColumn={onSortField(column.title)}
-                        sortDirection = {sortField === column.title ? sortDirections[sortDirection] : NONE}
-                        style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>
+                        key={index} sortColumn={onSortField(column.sortField)}
+                        sortDirection = {sortField === column.sortField ? sortDirections[sortDirection] : NONE}
+                        style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: column.colspan || 1 } ]}>
                         {column.title}
                       </CustomCel>) : (
                       <CustomCel
-                        style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>
+                        key={index} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: column.colspan || 1 } ]}>
                         {column.title}
                       </CustomCel>)
                   );
                 case 'dropdown':
-                  return <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>;
+                  return <DropdownCel key={index} style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>;
                 default:
                   return (
                     <CustomCel
-                      style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>
+                      key={index} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: column.colspan || 1 } ]}>
                       {column.title}
                     </CustomCel>
                   );
@@ -66,19 +67,22 @@ class ListView extends Component {
               <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
                 {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
                 {
-                  columns.map((column) => {
+                  columns.map((column, subindex) => {
                     switch (column.type) {
                       case 'checkBox':
-                        return <CheckBoxCel checked={isSelected.get(item.get('id'))} onChange={onCheckboxChange(item.get('id'))}/>;
+                        return <CheckBoxCel checked={isSelected.get(item.get('id'))} key={subindex} onChange={onCheckboxChange(item.get('id'))}/>;
                       case 'custom':
                         return (
-                          <CustomCel objectToRender={item} style={{ flex: 2 }} onClick={() => { column.clickable && column.getUrl(item) && routerPushWithReturnTo(column.getUrl(item)); }}>
-                            {column.dataType === 'date' ? this.getFormatedDate(item.get(column.name)) : item.get(column.name)}
+                          <CustomCel key={subindex} objectToRender={item} style={{ flex: column.colspan || 1 }} onClick={column.clickable
+                            ? () => { column.getUrl(item) && routerPushWithReturnTo(column.getUrl(item)); }
+                            : null
+                            }>
+                            {column.dataType === 'date' ? this.getFormatedDate(item.get(column.name)) : (column.convert || ((text) => text))(column.name ? item.get(column.name) : item)}
                           </CustomCel>
                         );
                       case 'dropdown':
                         return (
-                          <DropdownCel>
+                          <DropdownCel key={subindex} >
                             <Dropdown
                               elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { getEditUrl(item) && routerPushWithReturnTo(getEditUrl(item)); }}>Edit</div>}>
                               <div key={1} style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); deleteItem(item.get('id'), item.get('type'), this.props); }}>Remove</div>
@@ -87,7 +91,7 @@ class ListView extends Component {
                         );
                       default:
                         return (
-                          <CustomCel objectToRender={item} style={{ flex: 2 }} onClick={() => { column.clickable && column.getUrl(item) && routerPushWithReturnTo(column.getUrl(item)); }}>
+                          <CustomCel key={subindex} objectToRender={item} style={{ flex: column.colspan || 1 }} onClick={() => { column.clickable && column.getUrl(item) && routerPushWithReturnTo(column.getUrl(item)); }}>
                             {column.dataType === 'date' ? this.getFormatedDate(item.get(column.name)) : item.get(column.name)}
                           </CustomCel>
                         );
@@ -111,9 +115,9 @@ ListView.propTypes = {
   load: PropTypes.func.isRequired,
   routerPushWithReturnTo: PropTypes.func.isRequired,
   selectAllCheckboxes: PropTypes.func.isRequired,
-  sortDirection: PropTypes.string.isRequired,
-  sortField: PropTypes.string.isRequired,
-  onCheckboxChange: PropTypes.string.isRequired,
+  sortDirection: PropTypes.string,
+  sortField: PropTypes.string,
+  onCheckboxChange: PropTypes.func.isRequired,
   onSortField: PropTypes.func.isRequired
 };
 

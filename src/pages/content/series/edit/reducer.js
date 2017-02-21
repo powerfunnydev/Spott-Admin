@@ -1,6 +1,6 @@
 import { Map } from 'immutable';
-import * as actions from './actions';
 import { SERIES_ENTRY_PERSIST_SUCCESS } from '../../../../actions/series';
+import * as actions from './actions';
 
 export default (state = Map({}), action) => {
   switch (action.type) {

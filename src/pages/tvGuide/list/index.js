@@ -5,20 +5,18 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { routerPushWithReturnTo } from '../../../actions/global';
 import moment from 'moment';
 import { Root, Container } from '../../_common/styles';
-import { DropdownCel, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table/index';
+import { isQueryChanged, tableDecorator, generalStyles, TotalEntries, Pagination } from '../../_common/components/table/index';
 import Line from '../../_common/components/line';
+import ListView from '../../_common/components/listView/index';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
-import Dropdown, { styles as dropdownStyles } from '../../_common/components/actionDropdown';
 import UtilsBar from '../../_common/components/table/utilsBar';
 import { confirmation } from '../../_common/askConfirmation';
 import { SideMenu } from '../../app/sideMenu';
 import Header from '../../app/multiFunctionalHeader';
 
 /* eslint-disable react/no-set-state*/
-
-const numberOfRows = 25;
 
 @tableDecorator()
 @connect(selector, (dispatch) => ({
@@ -110,6 +108,14 @@ export default class TvGuideList extends Component {
     }
   }
 
+  determineReadUrl (tvGuide) {
+    return `/tvGuide/read/${tvGuide.get('id')}`;
+  }
+
+  determineEditUrl (tvGuide) {
+    return `/tv-guide/edit/${tvGuide.get('id')}`;
+  }
+
   onClickNewEntry (e) {
     e.preventDefault();
     this.props.routerPushWithReturnTo('tv-guide/create');
@@ -127,9 +133,19 @@ export default class TvGuideList extends Component {
   }
 
   render () {
-    const { children, isSelected, location, location: { query: { page, sortField, sortDirection } },
+    const { children, isSelected, deleteTvGuideEntry, location, location: { query: { page, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, tvGuideEntries } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
+    const columns = [
+      { type: 'checkBox' },
+      { type: 'custom', title: 'CHANNEL', name: 'channel', convert: (text) => text.get('name') },
+      { type: 'custom', title: 'TITLE', colspan: 2, convert: this.getMediumTitle },
+      { type: 'custom', sort: true, sortField: 'START', title: 'START', getUrl: this.determineReadUrl, convert: this.getStartDate },
+      { type: 'custom', title: 'END', convert: this.getEndDate },
+      { type: 'custom', title: 'UPDATED BY', name: 'lastUpdatedBy', colspan: 0.8 },
+      { type: 'custom', sort: true, sortField: 'LAST_MODIFIED', title: 'LAST UPDATED ON', convert: this.getLastUpdatedOn },
+      { type: 'dropdown' }
+    ];
     return (
       <SideMenu location={location}>
         <Root>
@@ -149,51 +165,19 @@ export default class TvGuideList extends Component {
                 numberSelected={numberSelected}
                 totalResultCount={totalResultCount}
                 onDeleteSelected={this.onClickDeleteSelected}/>
-              <Table>
-                <Headers>
-                  {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                  <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                  <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Channel</CustomCel>
-                  <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Title</CustomCel>
-                  <CustomCel
-                    sortColumn={this.props.onSortField.bind(this, 'START')}
-                    sortDirection={sortField === 'START' ? sortDirections[sortDirection] : NONE}
-                    style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>
-                    Start
-                  </CustomCel>
-                  <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>End</CustomCel>
-                  <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 0.8 } ]}>Updated by</CustomCel>
-                  <CustomCel
-                    sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')}
-                    sortDirection={sortField === 'LAST_MODIFIED' ? sortDirections[sortDirection] : NONE}
-                    style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>
-                    Last updated on
-                  </CustomCel>
-                  <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
-                </Headers>
-                <Rows isLoading={tvGuideEntries.get('_status') !== 'loaded'}>
-                  {tvGuideEntries.get('data').map((tvGuideEntry, index) => {
-                    return (
-                      <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
-                        {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                        <CheckBoxCel checked={isSelected.get(tvGuideEntry.get('id'))} onChange={selectCheckbox.bind(this, tvGuideEntry.get('id'))}/>
-                        <CustomCel getValue={this.getChannelName} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
-                        <CustomCel getValue={this.getMediumTitle} objectToRender={tvGuideEntry} style={{ flex: 2 }}/>
-                        <CustomCel getValue={this.getStartDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
-                        <CustomCel getValue={this.getEndDate} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
-                        <CustomCel getValue={this.getUpdatedBy} objectToRender={tvGuideEntry} style={{ flex: 0.8 }}/>
-                        <CustomCel getValue={this.getLastUpdatedOn} objectToRender={tvGuideEntry} style={{ flex: 1 }}/>
-                        <DropdownCel>
-                          <Dropdown
-                            elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { this.props.routerPushWithReturnTo(`/tv-guide/edit/${tvGuideEntry.get('id')}`); }}>Edit</div>}>
-                            <div key={1} style={dropdownStyles.floatOption} onClick={async (e) => { e.preventDefault(); await this.deleteTvGuideEntry(tvGuideEntry.get('id')); }}>Remove</div>
-                          </Dropdown>
-                        </DropdownCel>
-                      </Row>
-                    );
-                  })}
-                </Rows>
-              </Table>
+              <ListView
+                columns={columns}
+                data={tvGuideEntries}
+                deleteItem={deleteTvGuideEntry}
+                getEditUrl={this.determineEditUrl}
+                isSelected={isSelected}
+                load={() => this.props.load(this.props.location.query)}
+                routerPushWithReturnTo={this.props.routerPushWithReturnTo}
+                selectAllCheckboxes={selectAllCheckboxes}
+                sortDirection={sortDirection}
+                sortField={sortField}
+                onCheckboxChange={(id) => selectCheckbox.bind(this, id)}
+                onSortField={(name) => this.props.onSortField.bind(this, name)} />
               <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
             </Container>
           </div>

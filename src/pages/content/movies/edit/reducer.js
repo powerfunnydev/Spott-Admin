@@ -1,5 +1,4 @@
 import { Map } from 'immutable';
-import { MOVIE_PERSIST_SUCCESS } from '../../../../actions/movie';
 import * as actions from './actions';
 
 export default (state = Map({}), action) => {
@@ -28,8 +27,6 @@ export default (state = Map({}), action) => {
       return state.set('currentMediumCategoriesSearchString', action.searchString);
     case actions.SHOW_CREATE_LANGUAGE_MODAL:
       return state.set('showCreateLanguageModal', true);
-    case MOVIE_PERSIST_SUCCESS:
-      return state.set('popUpMessage', { type: 'hint', message: 'The movie is successful saved!' });
     case actions.CLOSE_POP_UP_MESSAGE:
       return state.set('popUpMessage', null);
     // Uninteresting actions

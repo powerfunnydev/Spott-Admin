@@ -44,7 +44,7 @@ export default class UtilsBar extends Component {
       <div style={generalStyles.searchContainer}>
         {onChangeSearchString &&
           <SearchInput filterContent={filterContent} isLoading={isLoading} value={searchString} onChange={onChangeSearchString}/>}
-        <DisplayMode display={display} onChangeDisplay={onChangeDisplay}/>
+        {onChangeDisplay && <DisplayMode display={display} onChangeDisplay={onChangeDisplay}/>}
         <div style={generalStyles.floatRight}>
           { /* if there is an topElement and menu, render dropdown */ }
           {topElement && menu &&

@@ -4,16 +4,14 @@ import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Radium from 'radium';
 import { Root, Container } from '../../_common/styles';
-import { Tile, DropdownCel, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row, Pagination } from '../../_common/components/table/index';
+import { Tile, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, Pagination } from '../../_common/components/table/index';
 import Line from '../../_common/components/line';
-import Dropdown, { styles as dropdownStyles } from '../../_common/components/actionDropdown';
+import ListView from '../../_common/components/listView/index';
 import * as actions from './actions';
 import selector from './selector';
 import { slowdown } from '../../../utils';
 import { SideMenu } from '../../app/sideMenu';
 import Header from '../../app/multiFunctionalHeader';
-
-const numberOfRows = 25;
 
 @tableDecorator()
 @connect(selector, (dispatch) => ({
@@ -67,6 +65,14 @@ export default class Users extends Component {
     }
   }
 
+  determineReadUrl (user) {
+    return `/users/read/${user.get('id')}`;
+  }
+
+  determineEditUrl (user) {
+    return `/users/edit/${user.get('id')}`;
+  }
+
   async onDeleteUser (userId) {
     await this.props.deleteUser(userId);
     await this.props.load(this.props.location.query);
@@ -93,9 +99,17 @@ export default class Users extends Component {
   }
 
   render () {
-    const { users, children, isSelected, location, location: { query, query: { display, page, searchString, sortField, sortDirection } },
+    const { users, children, deleteUser, isSelected, location, location: { query, query: { display, page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeSearchString, onChangeDisplay } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
+    const columns = [
+      { type: 'checkBox' },
+      { type: 'custom', sort: true, sortField: 'USERNAME', title: 'USERNAME', clickable: true, getUrl: this.determineReadUrl, name: 'userName', colspan: 2 },
+      { type: 'custom', title: 'EMAIL', name: 'email', colspan: 2 },
+      { type: 'custom', title: 'FIRST NAME', name: 'firstName', colspan: 1 },
+      { type: 'custom', title: 'LAST NAME', name: 'lastName', colspan: 1 },
+      { type: 'dropdown' }
+    ];
     return (
       <SideMenu location={location}>
         <Root>
@@ -122,37 +136,20 @@ export default class Users extends Component {
                 onDeleteSelected={this.onClickDeleteSelected}/>
               {(!display || display === 'list') &&
                 <div>
-                  <Table>
-                    <Headers>
-                      {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                      <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'USERNAME')} sortDirection = {sortField === 'USERNAME' ? sortDirections[sortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>Username</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Email</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>First Name</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Last Name</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: '0 0 110px' } ]}/>
-                    </Headers>
-                    <Rows isLoading={users.get('_status') !== 'loaded'}>
-                      {users.get('data').map((user, index) => {
-                        return (
-                          <Row index={index} isFirst={index % numberOfRows === 0} key={index} >
-                            {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                            <CheckBoxCel checked={isSelected.get(user.get('id'))} onChange={selectCheckbox.bind(this, user.get('id'))}/>
-                            <CustomCel style={{ flex: 2 }} onClick={() => { this.props.routerPushWithReturnTo(`/users/read/${user.get('id')}`); }}>{user.get('userName')}</CustomCel>
-                            <CustomCel style={{ flex: 2 }}>{user.get('email')}</CustomCel>
-                            <CustomCel style={{ flex: 1 }}>{user.get('firstName')}</CustomCel>
-                            <CustomCel style={{ flex: 1 }}>{user.get('lastName')}</CustomCel>
-                            <DropdownCel>
-                              <Dropdown
-                                elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={this.onEditEntry.bind(this, user.get('id'))}>Edit</div>}>
-                                <div key={1} style={dropdownStyles.floatOption} onClick={this.onDeleteUser.bind(this, user.get('id'))}>Remove</div>
-                              </Dropdown>
-                            </DropdownCel>
-                          </Row>
-                        );
-                      })}
-                    </Rows>
-                  </Table>
+                  <ListView
+                    columns={columns}
+                    data={users}
+                    deleteItem={deleteUser}
+                    getEditUrl={this.determineEditUrl}
+                    isSelected={isSelected}
+                    load={() => this.props.load(this.props.location.query)}
+                    routerPushWithReturnTo={this.props.routerPushWithReturnTo}
+                    selectAllCheckboxes={selectAllCheckboxes}
+                    sortDirection={sortDirection}
+                    sortField={sortField}
+                    onCheckboxChange={(id) => selectCheckbox.bind(this, id)}
+                    onSortField={(name) => this.props.onSortField.bind(this, name)} />
+
                   <Pagination
                     currentPage={(page && (parseInt(page, 10) + 1) || 1)}
                     pageCount={pageCount}

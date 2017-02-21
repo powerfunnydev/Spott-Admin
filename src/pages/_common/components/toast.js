@@ -13,7 +13,8 @@ import CompletedSVG from '../images/completed';
 import PlusSVG from '../images/plus';
 import {
   BROADCAST_CHANNEL, BROADCASTER, CHARACTER, COMMERCIAL, CONTENT_PRODUCER, EPISODE,
-  MOVIE, PERSON, PRODUCT, SEASON, SERIES_ENTRY, SHOP, TV_GUIDE_ENTRY, USER, SCHEDULE_ENTRY
+  MOVIE, PERSON, PRODUCT, PUSH_NOTIFICATION, SEASON, SERIES_ENTRY, SHOP, TV_GUIDE_ENTRY, USER,
+  SCHEDULE_ENTRY
 } from '../../../constants/entityTypes';
 
 @connect(null, (dispatch) => ({
@@ -110,6 +111,7 @@ export class SuccessMessage extends Component {
     this.episodePersistSuccess = ::this.episodePersistSuccess;
     this.personPersistSuccess = ::this.personPersistSuccess;
     this.productPersistSuccess = ::this.productPersistSuccess;
+    this.pushNotificationPersistSuccess = ::this.pushNotificationPersistSuccess;
     this.userPersistSuccess = ::this.userPersistSuccess;
     this.seasonPersistSuccess = ::this.seasonPersistSuccess;
     this.seriesEntryPersistSuccess = ::this.seriesEntryPersistSuccess;
@@ -202,6 +204,19 @@ export class SuccessMessage extends Component {
     );
   }
 
+  pushNotificationPersistSuccess (pushNotification) {
+    let linkString = pushNotification.payloadData.en;
+    if (linkString.length > 20) {
+      linkString = `${pushNotification.payloadData.en.substring(0, 17)}...`;
+    }
+    const { styles } = this.constructor;
+    return (
+      <span>
+        PushNotification <Link style={styles.clickable} to={`/content/push-notifications/read/${pushNotification.id}`}>{linkString}</Link> has been succesfully persisted.
+      </span>
+    );
+  }
+
   seasonPersistSuccess (season) {
     const { styles } = this.constructor;
     return (
@@ -286,6 +301,8 @@ export class SuccessMessage extends Component {
       return this.personPersistSuccess(entity);
     } else if (entityType === PRODUCT) {
       return this.productPersistSuccess(entity);
+    } else if (entityType === PUSH_NOTIFICATION) {
+      return this.pushNotificationPersistSuccess(entity);
     } else if (entityType === SEASON) {
       return this.seasonPersistSuccess(entity);
     } else if (entityType === SERIES_ENTRY) {

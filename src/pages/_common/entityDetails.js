@@ -12,6 +12,7 @@ export default class EntityDetails extends Component {
     style: PropTypes.object,
     subtitle: PropTypes.string,
     title: PropTypes.string.isRequired,
+    titleBadge: PropTypes.any,
     onEdit: PropTypes.func,
     onRemove: PropTypes.func
   };
@@ -57,7 +58,8 @@ export default class EntityDetails extends Component {
       ...makeTextStyle(fontWeights.regular, '12px', '0.5px')
     },
     alignRight: {
-      marginLeft: 'auto'
+      marginLeft: 'auto',
+      minWidth: '130px'
     },
     paddingLeft: {
       paddingLeft: '20px'
@@ -72,15 +74,14 @@ export default class EntityDetails extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { content, imageUrl, title, subtitle, onEdit, onRemove } = this.props;
-
+    const { content, imageUrl, title, subtitle, onEdit, onRemove, titleBadge } = this.props;
     return (
       <div style={styles.root}>
         {imageUrl
           ? <img src={imageUrl} style={styles.image} />
           : <div style={styles.noImage}>No image</div>}
         <div style={styles.paddingLeft}>
-          <div style={styles.title}>{title}</div>
+          <div style={styles.title}>{title}{titleBadge}</div>
           <div style={styles.subtitle}>{subtitle}</div>
           <div style={styles.content}>{content}</div>
         </div>
