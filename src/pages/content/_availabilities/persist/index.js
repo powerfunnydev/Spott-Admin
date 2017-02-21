@@ -15,8 +15,7 @@ import selector from './selector';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { countryId, endDate, endTime, startDate, startTime, timezone, noEndDate, videoStatus } = values.toJS();
-  if (!countryId) { validationErrors.countryId = t('common.errors.required'); }
+  const { endDate, endTime, startDate, startTime, timezone, noEndDate, videoStatus } = values.toJS();
   if (!startDate) { validationErrors.startDate = t('common.errors.required'); }
   if (!startTime) { validationErrors.startTime = t('common.errors.required'); }
   if (!timezone) { validationErrors.timezone = t('common.errors.required'); }
@@ -123,8 +122,7 @@ export default class AvailabilityModal extends Component {
           label='Country'
           name='countryId'
           options={countries.keySeq().toArray()}
-          placeholder='Country'
-          required />
+          placeholder='Country'/>
         <Field
           component={SelectInput}
           getItemText={(timezoneKey) => timezones[timezoneKey]}

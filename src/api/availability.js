@@ -8,7 +8,7 @@ export async function fetchAvailabilities (baseUrl, authenticationToken, locale,
 
 export async function persistAvailability (baseUrl, authenticationToken, locale, { availabilityFrom, availabilityTo, countryId, id, mediumId, videoStatus }) {
   const { body } = await post(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}/availabilities`, {
-    country: countryId && { uuid: countryId },
+    country: countryId ? { uuid: countryId } : null,
     endTimeStamp: availabilityTo,
     startTimeStamp: availabilityFrom,
     uuid: id,

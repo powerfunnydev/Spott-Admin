@@ -153,7 +153,7 @@ export default class Availabilities extends Component {
               return (
                 <Row isFirst={index === 0} key={index} >
                   <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]}>
-                    {countries.getIn([ availability.get('countryId'), 'name' ]) || '-'}
+                    {countries.getIn([ availability.get('countryId'), 'name' ]) || 'All'}
                   </CustomCel>
                   <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]}>
                     {availability.get('availabilityFrom') ? moment(availability.get('availabilityFrom')).format('DD/MM/YYYY HH:mm') : '-'}
