@@ -19,6 +19,7 @@ import SelectInput from '../../../_common/inputs/selectInput';
 import TextInput from '../../../_common/inputs/textInput';
 import NumberInput from '../../../_common/inputs/numberInput';
 import LanguageBar from '../../../_common/components/languageBar';
+import Audiences from '../../_audiences/list';
 import Availabilities from '../../_availabilities/list';
 import RelatedVideo from '../../../content/_relatedVideo/read';
 import Brands from '../../_helpers/_brands/list';
@@ -54,6 +55,8 @@ function validate (values, { t }) {
   loadMovie: bindActionCreators(actions.loadMovie, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
+  searchAudienceCountries: bindActionCreators(actions.searchAudienceCountries, dispatch),
+  searchAudienceLanguages: bindActionCreators(actions.searchAudienceLanguages, dispatch),
   searchHelpersBrands: bindActionCreators(actions.searchHelpersBrands, dispatch),
   searchHelpersCharacters: bindActionCreators(actions.searchHelpersCharacters, dispatch),
   searchHelpersShops: bindActionCreators(actions.searchHelpersShops, dispatch),
@@ -112,6 +115,8 @@ export default class EditMovie extends Component {
     popUpMessage: PropTypes.object,
     productsById: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
+    searchAudienceCountries: PropTypes.func.isRequired,
+    searchAudienceLanguages: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
     searchCollectionsBrands: PropTypes.func.isRequired,
     searchCollectionsCharacters: PropTypes.func.isRequired,
@@ -121,6 +126,8 @@ export default class EditMovie extends Component {
     searchHelpersCharacters: PropTypes.func.isRequired,
     searchHelpersShops: PropTypes.func.isRequired,
     searchMediumCategories: PropTypes.func.isRequired,
+    searchedAudienceCountryIds: ImmutablePropTypes.map.isRequired,
+    searchedAudienceLanguageIds: ImmutablePropTypes.map.isRequired,
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
     searchedCollectionsBrandIds: ImmutablePropTypes.map.isRequired,
     searchedCollectionsCharacterIds: ImmutablePropTypes.map.isRequired,
@@ -282,10 +289,12 @@ export default class EditMovie extends Component {
       closeModal, contentProducersById, currentModal, currentMovie,
       defaultLocale, deletePosterImage, location: { query: { tab } },
       deleteProfileImage, deleteRoundLogo, errors, handleSubmit, location, mediumCategoriesById,
-      movieBrands, movieCharacters, movieCollections, movieShops, productsById, shopsById, searchHelpersBrands,
+      movieBrands, movieCharacters, movieCollections, movieShops, productsById, shopsById,
+      searchAudienceCountries, searchAudienceLanguages, searchHelpersBrands,
       searchCollectionsBrands, searchCollectionsCharacters, searchCollectionsProducts,
       searchHelpersCharacters, searchHelpersShops, searchBroadcasters, searchContentProducers,
-      searchedHelpersBrandIds, searchedBroadcasterIds, searchedHelpersCharacterIds,
+      searchedAudienceCountryIds, searchedAudienceLanguageIds, searchedHelpersBrandIds,
+      searchedBroadcasterIds, searchedHelpersCharacterIds,
       searchedCollectionsBrandIds, searchedCollectionsCharacterIds, searchedCollectionsProductIds,
       searchedContentProducerIds, searchedMediumCategoryIds, searchMediumCategories,
       searchedHelpersShopIds, supportedLocales
@@ -487,6 +496,14 @@ export default class EditMovie extends Component {
               </Tab>
               <Tab title='Availability'>
                 <Availabilities mediumId={this.props.params.movieId} />
+              </Tab>
+              <Tab title='Audience'>
+                <Audiences
+                  mediumId={this.props.params.movieId}
+                  searchCountries={searchAudienceCountries}
+                  searchLanguages={searchAudienceLanguages}
+                  searchedCountryIds={searchedAudienceCountryIds}
+                  searchedLanguageIds={searchedAudienceLanguageIds}/>
               </Tab>
             </Tabs>
           </EditTemplate>

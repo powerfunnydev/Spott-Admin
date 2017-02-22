@@ -112,7 +112,7 @@ export async function deleteLogo (baseUrl, authenticationToken, locale, { broadc
 }
 
 export async function searchBroadcasterMedia (baseUrl, authenticationToken, locale, { broadcasterId, searchString }) {
-  let searchUrl = `${baseUrl}/v004/media/broadcasters/${broadcasterId}/media?page=0&pageSize=25`;
+  let searchUrl = `${baseUrl}/v004/media/broadcasters/${broadcasterId}/media?page=0&pageSize=25&types=TV_SERIE,MOVIE,COMMERCIAL`;
   if (searchString) {
     searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
   }

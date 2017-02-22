@@ -4,6 +4,7 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
+import { fromJS } from 'immutable';
 import TextInput from '../../../_common/inputs/textInput';
 // import Line from '../../../_common/components/line';
 import { Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
@@ -17,9 +18,9 @@ import Label from '../../../_common/inputs/_label';
 import { SERIES_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import LanguageBar from '../../../_common/components/languageBar';
+import Audiences from '../../_audiences/list';
 import { POSTER_IMAGE, PROFILE_IMAGE, ROUND_LOGO } from '../../../../constants/imageTypes';
 import selector from './selector';
-import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
@@ -45,6 +46,8 @@ function validate (values, { t }) {
   uploadPosterImage: bindActionCreators(actions.uploadPosterImage, dispatch),
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch),
   uploadRoundLogo: bindActionCreators(actions.uploadRoundLogo, dispatch),
+  searchAudienceCountries: bindActionCreators(actions.searchAudienceCountries, dispatch),
+  searchAudienceLanguages: bindActionCreators(actions.searchAudienceLanguages, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
@@ -80,6 +83,10 @@ export default class EditSeries extends Component {
     params: PropTypes.object.isRequired,
     popUpMessage: PropTypes.object,
     routerPushWithReturnTo: PropTypes.func.isRequired,
+    searchAudienceCountries: PropTypes.func.isRequired,
+    searchAudienceLanguages: PropTypes.func.isRequired,
+    searchedAudienceCountryIds: ImmutablePropTypes.map.isRequired,
+    searchedAudienceLanguageIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
@@ -196,7 +203,9 @@ export default class EditSeries extends Component {
     const {
       _activeLocale, closeModal, currentModal, currentSeriesEntry, defaultLocale,
       deletePosterImage, deleteProfileImage, deleteRoundLogo, errors, handleSubmit,
-      location, location: { query: { tab } }, supportedLocales
+      location, location: { query: { tab } }, supportedLocales,
+      searchAudienceCountries, searchAudienceLanguages, searchedAudienceCountryIds,
+      searchedAudienceLanguageIds
     } = this.props;
 
     return (
@@ -294,6 +303,14 @@ export default class EditSeries extends Component {
                   </div>
                 </div>
               </Section>
+            </Tab>
+            <Tab title='Audience'>
+              <Audiences
+                mediumId={this.props.params.seriesEntryId}
+                searchCountries={searchAudienceCountries}
+                searchLanguages={searchAudienceLanguages}
+                searchedCountryIds={searchedAudienceCountryIds}
+                searchedLanguageIds={searchedAudienceLanguageIds}/>
             </Tab>
           </Tabs>
         </EditTemplate>

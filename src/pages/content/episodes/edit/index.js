@@ -3,6 +3,7 @@ import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { fromJS } from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { FETCHING } from '../../../../constants/statusTypes';
 import { makeTextStyle, fontWeights, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
@@ -20,17 +21,17 @@ import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
 import Availabilities from '../../_availabilities/list';
 import RelatedVideo from '../../../content/_relatedVideo/read';
-import * as actions from './actions';
-import selector from './selector';
+import Audiences from '../../_audiences/list';
 import Brands from '../../_helpers/_brands/list';
 import Characters from '../../_helpers/_characters/list';
 import Collections from '../../_collections/list';
 import Shops from '../../_helpers/_shops/list';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
-import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
+import * as actions from './actions';
+import selector from './selector';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -53,6 +54,8 @@ function validate (values, { t }) {
   loadEpisode: bindActionCreators(actions.loadEpisode, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
+  searchAudienceCountries: bindActionCreators(actions.searchAudienceCountries, dispatch),
+  searchAudienceLanguages: bindActionCreators(actions.searchAudienceLanguages, dispatch),
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
   searchCollectionsBrands: bindActionCreators(actions.searchCollectionsBrands, dispatch),
   searchCollectionsCharacters: bindActionCreators(actions.searchCollectionsCharacters, dispatch),
@@ -115,6 +118,8 @@ export default class EditEpisode extends Component {
     popUpMessage: PropTypes.object,
     productsById: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
+    searchAudienceCountries: PropTypes.func.isRequired,
+    searchAudienceLanguages: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
     searchCollectionsBrands: PropTypes.func.isRequired,
     searchCollectionsCharacters: PropTypes.func.isRequired,
@@ -126,6 +131,8 @@ export default class EditEpisode extends Component {
     searchMediumCategories: PropTypes.func.isRequired,
     searchSeasons: PropTypes.func.isRequired,
     searchSeriesEntries: PropTypes.func.isRequired,
+    searchedAudienceCountryIds: ImmutablePropTypes.map.isRequired,
+    searchedAudienceLanguageIds: ImmutablePropTypes.map.isRequired,
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
     searchedCollectionsBrandIds: ImmutablePropTypes.map.isRequired,
     searchedCollectionsCharacterIds: ImmutablePropTypes.map.isRequired,
@@ -291,10 +298,12 @@ export default class EditEpisode extends Component {
       currentModal, currentSeasonId, currentSeriesEntryId, defaultLocale,
       deletePosterImage, deleteProfileImage, episodeBrands, episodeCharacters,
       episodeCollections, episodeShops, errors, handleSubmit, hasTitle, location, location: { query: { tab } },
-      mediumCategoriesById, productsById, searchHelpersBrands, searchBroadcasters, searchCollectionsBrands,
+      mediumCategoriesById, productsById, searchHelpersBrands, searchAudienceCountries,
+      searchAudienceLanguages, searchBroadcasters, searchCollectionsBrands,
       searchCollectionsCharacters, searchCollectionsProducts, searchContentProducers, searchHelpersCharacters,
-      searchHelpersShops, searchedBroadcasterIds, searchedCollectionsBrandIds,
-      searchedCollectionsCharacterIds, searchedCollectionsProductIds, searchedHelpersBrandIds, searchedHelpersCharacterIds,
+      searchHelpersShops, searchedAudienceCountryIds, searchedAudienceLanguageIds,
+      searchedBroadcasterIds, searchedCollectionsBrandIds, searchedCollectionsCharacterIds,
+      searchedCollectionsProductIds, searchedHelpersBrandIds, searchedHelpersCharacterIds,
       searchedHelpersShopIds, searchedContentProducerIds, searchedMediumCategoryIds,
       searchedSeasonIds, searchedSeriesEntryIds, searchMediumCategories,
       searchSeasons, searchSeriesEntries, seasonsById, seriesEntriesById, shopsById,
@@ -519,6 +528,14 @@ export default class EditEpisode extends Component {
               </Tab>
               <Tab title='Availability'>
                 <Availabilities mediumId={this.props.params.episodeId} />
+              </Tab>
+              <Tab title='Audience'>
+                <Audiences
+                  mediumId={this.props.params.episodeId}
+                  searchCountries={searchAudienceCountries}
+                  searchLanguages={searchAudienceLanguages}
+                  searchedCountryIds={searchedAudienceCountryIds}
+                  searchedLanguageIds={searchedAudienceLanguageIds}/>
               </Tab>
             </Tabs>
           </EditTemplate>

@@ -1,7 +1,7 @@
 import { createSelector, createStructuredSelector } from 'reselect';
 import { List, Map } from 'immutable';
 import { LAZY } from '../../../../constants/statusTypes';
-import { serializeFilterHasCharacters } from '../../../../reducers/utils';
+import { serializeFilterHasCharacters, serializeFilterHasCountries, serializeFilterHasLanguages } from '../../../../reducers/utils';
 import { currentModalSelector } from '../../../../selectors/global';
 import {
   broadcastersEntitiesSelector,
@@ -11,6 +11,8 @@ import {
   createEntityByIdSelector,
   createEntityIdsByRelationSelector,
   filterHasCharactersRelationsSelector,
+  filterHasCountriesRelationsSelector,
+  filterHasLanguagesRelationsSelector,
   listBrandsEntitiesSelector,
   listCharactersEntitiesSelector,
   listCollectionItemsEntitiesSelector,
@@ -55,6 +57,10 @@ const currentHelpersShopSearchStringSelector = (state) => state.getIn([ 'content
 const currentCollectionsBrandSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentCollectionsBrandSearchString' ]);
 const currentCollectionsCharacterSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentCollectionsCharacterSearchString' ]);
 const currentCollectionsProductSearchStringSelector = (state) => state.getIn([ 'content', 'movies', 'edit', 'currentCollectionsProductSearchString' ]);
+
+// Audience
+const currentAudienceCountriesSearchStringSelector = (state) => state.getIn([ 'content', 'commercials', 'edit', 'currentAudienceCountriesSearchString' ]);
+const currentAudienceLanguagesSearchStringSelector = (state) => state.getIn([ 'content', 'commercials', 'edit', 'currentAudienceLanguagesSearchString' ]);
 
 const collectionsCharactersFilterKeySelector = createSelector(
   currentCollectionsCharacterSearchStringSelector,
@@ -103,6 +109,20 @@ const collectionsSelector = createSelector(
   }
 );
 
+// Audience
+
+export const audienceCountriesFilterKeySelector = createSelector(
+  currentAudienceCountriesSearchStringSelector,
+  (searchString) => serializeFilterHasCountries({ searchString })
+);
+export const audienceLanguagesFilterKeySelector = createSelector(
+  currentAudienceLanguagesSearchStringSelector,
+  (searchString) => serializeFilterHasLanguages({ searchString })
+);
+
+const searchedAudienceCountryIdsSelector = createEntityIdsByRelationSelector(filterHasCountriesRelationsSelector, audienceCountriesFilterKeySelector);
+const searchedAudienceLanguageIdsSelector = createEntityIdsByRelationSelector(filterHasLanguagesRelationsSelector, audienceLanguagesFilterKeySelector);
+
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
   brandsById: listBrandsEntitiesSelector,
@@ -121,6 +141,8 @@ export default createStructuredSelector({
   movieShops: movieShopsSelector,
   popUpMessage: popUpMessageSelector,
   productsById: listProductsEntitiesSelector,
+  searchedAudienceCountryIds: searchedAudienceCountryIdsSelector,
+  searchedAudienceLanguageIds: searchedAudienceLanguageIdsSelector,
   searchedHelpersBrandIds: searchedHelpersBrandIdsSelector,
   searchedBroadcasterIds: searchedBroadcasterIdsSelector,
   searchedCollectionsBrandIds: searchedCollectionsBrandIdsSelector,

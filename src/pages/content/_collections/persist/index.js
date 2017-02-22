@@ -205,7 +205,6 @@ export default class CollectionModal extends Component {
           <Field
             component={RadioInput}
             first
-            label='Collection type'
             name='linkType'
             options={linkTypes}
             optionsStyle={{ display: 'flex' }}/>

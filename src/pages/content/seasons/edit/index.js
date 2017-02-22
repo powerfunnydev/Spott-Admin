@@ -3,6 +3,7 @@ import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { fromJS } from 'immutable';
 import { FETCHING } from '../../../../constants/statusTypes';
 import { makeTextStyle, fontWeights, Root, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import { routerPushWithReturnTo } from '../../../../actions/global';
@@ -19,12 +20,12 @@ import SelectInput from '../../../_common/inputs/selectInput';
 import CheckboxInput from '../../../_common/inputs/checkbox';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
+import Audiences from '../../_audiences/list';
 import { POSTER_IMAGE, PROFILE_IMAGE } from '../../../../constants/imageTypes';
-import selector from './selector';
-import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
+import selector from './selector';
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -46,6 +47,8 @@ function validate (values, { t }) {
   loadSeason: bindActionCreators(actions.loadSeason, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
+  searchAudienceCountries: bindActionCreators(actions.searchAudienceCountries, dispatch),
+  searchAudienceLanguages: bindActionCreators(actions.searchAudienceLanguages, dispatch),
   searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadPosterImage: bindActionCreators(actions.uploadPosterImage, dispatch),
@@ -87,7 +90,11 @@ export default class EditSeason extends Component {
     params: PropTypes.object.isRequired,
     popUpMessage: PropTypes.object,
     routerPushWithReturnTo: PropTypes.func.isRequired,
+    searchAudienceCountries: PropTypes.func.isRequired,
+    searchAudienceLanguages: PropTypes.func.isRequired,
     searchSeriesEntries: PropTypes.func.isRequired,
+    searchedAudienceCountryIds: ImmutablePropTypes.map.isRequired,
+    searchedAudienceLanguageIds: ImmutablePropTypes.map.isRequired,
     searchedSeriesEntryIds: ImmutablePropTypes.map.isRequired,
     seriesEntriesById: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
@@ -229,10 +236,14 @@ export default class EditSeason extends Component {
   }
 
   render () {
-    const { addLanguageHasTitle, closeModal, currentModal, _activeLocale, currentSeriesEntryId, searchSeriesEntries,
-        hasTitle, location, currentSeason, seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
-        handleSubmit, supportedLocales, errors, deleteProfileImage, deletePosterImage, location: { query: { tab } } } = this.props;
     const { styles } = this.constructor;
+    const {
+      addLanguageHasTitle, closeModal, currentModal, _activeLocale, currentSeriesEntryId, searchSeriesEntries,
+      hasTitle, location, currentSeason, seriesEntriesById, searchedSeriesEntryIds, defaultLocale,
+      handleSubmit, supportedLocales, errors, deleteProfileImage, deletePosterImage, location: { query: { tab } },
+      searchAudienceCountries, searchAudienceLanguages, searchedAudienceCountryIds, searchedAudienceLanguageIds
+    } = this.props;
+
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
@@ -354,6 +365,14 @@ export default class EditSeason extends Component {
                     </div>
                   </div>
                 </Section>
+              </Tab>
+              <Tab title='Audience'>
+                <Audiences
+                  mediumId={this.props.params.seasonId}
+                  searchCountries={searchAudienceCountries}
+                  searchLanguages={searchAudienceLanguages}
+                  searchedCountryIds={searchedAudienceCountryIds}
+                  searchedLanguageIds={searchedAudienceLanguageIds}/>
               </Tab>
             </Tabs>
           </EditTemplate>
