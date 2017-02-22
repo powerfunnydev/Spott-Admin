@@ -197,7 +197,7 @@ export default class EditTvGuideEntry extends Component {
           <Tabs>
             <Tab title='Details'>
               <Section>
-                <FormSubtitle>Content</FormSubtitle>
+                <FormSubtitle first>Content</FormSubtitle>
                 <Field
                   component={SelectInput}
                   getItemText={(id) => mediaById.getIn([ id, 'title' ]) && `${mediaById.getIn([ id, 'title' ])} (${t(`mediaTypes.${mediaById.getIn([ id, 'type' ])}`)})`}

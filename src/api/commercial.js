@@ -52,16 +52,16 @@ export async function persistCommercial (baseUrl, authenticationToken, locale, {
 
       switch (bannerInternalLinkType) {
         case 'ACTOR':
-          commercial.bannerActor = { uuid: bannerActorId };
+          commercial.bannerActor = bannerActorId ? { uuid: bannerActorId } : null;
           break;
         case 'BRAND':
-          commercial.bannerBrand = { uuid: bannerBrandId };
+          commercial.bannerBrand = bannerBrandId ? { uuid: bannerBrandId } : null;
           break;
         case 'CHARACTER':
-          commercial.bannerCharacter = { uuid: bannerCharacterId };
+          commercial.bannerCharacter = bannerCharacterId ? { uuid: bannerCharacterId } : null;
           break;
         case 'MEDIUM':
-          commercial.bannerMedium = { uuid: bannerMediumId };
+          commercial.bannerMedium = bannerMediumId ? { uuid: bannerMediumId } : null;
           break;
       }
     } else {
@@ -80,7 +80,7 @@ export async function persistCommercial (baseUrl, authenticationToken, locale, {
     }
 
     if (bannerSystemLinkType === 'EXTERNAL') {
-      commercial.bannerExternalLink = hasBanner ? bannerExternalLink[locale] : null;
+      localeData.bannerExternalLink = hasBanner ? bannerExternalLink[locale] : null;
     }
 
     localeData.banner = hasBanner ? {

@@ -33,13 +33,48 @@ import selector from './selector';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { _activeLocale, brandId, defaultLocale, title } = values.toJS();
+  const {
+    _activeLocale, bannerActorId, bannerBrandId, bannerCharacterId, bannerMediumId,
+    bannerExternalLink, bannerInternalLinkType, bannerSystemLinkType, brandId, defaultLocale, title
+  } = values.toJS();
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
   if (!brandId) { validationErrors.brandId = t('common.errors.required'); }
   if (title && !title[_activeLocale]) {
     validationErrors.title = validationErrors.title || {};
     validationErrors.title[_activeLocale] = t('common.errors.required');
   }
+
+  if (bannerSystemLinkType === 'EXTERNAL') {
+    if (bannerExternalLink && !bannerExternalLink[_activeLocale]) {
+      validationErrors.bannerExternalLink = validationErrors.bannerExternalLink || {};
+      validationErrors.bannerExternalLink[_activeLocale] = t('common.errors.required');
+    }
+  } else {
+    // INTERNAL
+    switch (bannerInternalLinkType) {
+      case 'ACTOR':
+        if (!bannerActorId) {
+          validationErrors.bannerActorId = t('common.errors.required');
+        }
+        break;
+      case 'BRAND':
+        if (!bannerBrandId) {
+          validationErrors.bannerBrandId = t('common.errors.required');
+        }
+        break;
+      case 'CHARACTER':
+        if (!bannerCharacterId) {
+          validationErrors.bannerCharacterId = t('common.errors.required');
+        }
+        break;
+      case 'MEDIUM':
+        if (!bannerMediumId) {
+          validationErrors.bannerMediumId = t('common.errors.required');
+        }
+        break;
+    }
+  }
+
   // Done
   return validationErrors;
 }
@@ -445,7 +480,6 @@ export default class EditCommercial extends Component {
                   <Field
                     component={TextInput}
                     disabled={!hasBanner}
-                    first
                     label='Url'
                     name={`bannerUrl.${_activeLocale}`}
                     placeholder='Url'
