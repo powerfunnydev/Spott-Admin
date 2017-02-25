@@ -14,10 +14,12 @@ class ListView extends Component {
   }
 
   async deleteItem (id, type, props) {
-    const result = await confirmation();
-    if (result) {
-      await props.deleteItem(id, type);
-      await props.load();
+    if (props.deleteItem) {
+      const result = await confirmation();
+      if (result) {
+        await props.deleteItem(id, type);
+        await props.load();
+      }
     }
   }
 
@@ -33,7 +35,7 @@ class ListView extends Component {
             columns.map((column, index) => {
               switch (column.type) {
                 case 'checkBox':
-                  return <CheckBoxCel checked={isSelected.get('ALL')} key={index} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>;
+                  return <CheckBoxCel checked={isSelected && isSelected.get('ALL')} key={index} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>;
                 case 'custom':
                   return (
                     column.sort ? (
@@ -70,7 +72,7 @@ class ListView extends Component {
                   columns.map((column, subindex) => {
                     switch (column.type) {
                       case 'checkBox':
-                        return <CheckBoxCel checked={isSelected.get(item.get('id'))} key={subindex} onChange={onCheckboxChange(item.get('id'))}/>;
+                        return <CheckBoxCel checked={isSelected && isSelected.get(item.get('id'))} key={subindex} onChange={onCheckboxChange(item.get('id'))}/>;
                       case 'custom':
                         return (
                           <CustomCel key={subindex} objectToRender={item} style={{ flex: column.colspan || 1 }} onClick={column.clickable
@@ -109,15 +111,15 @@ class ListView extends Component {
 ListView.propTypes = {
   columns: PropTypes.array.isRequired,
   data: ImmutablePropTypes.map.isRequired,
-  deleteItem: PropTypes.func.isRequired,
-  getEditUrl: PropTypes.func.isRequired,
-  isSelected: ImmutablePropTypes.map.isRequired,
+  deleteItem: PropTypes.func,
+  getEditUrl: PropTypes.func,
+  isSelected: ImmutablePropTypes.map,
   load: PropTypes.func.isRequired,
   routerPushWithReturnTo: PropTypes.func.isRequired,
-  selectAllCheckboxes: PropTypes.func.isRequired,
+  selectAllCheckboxes: PropTypes.func,
   sortDirection: PropTypes.string,
   sortField: PropTypes.string,
-  onCheckboxChange: PropTypes.func.isRequired,
+  onCheckboxChange: PropTypes.func,
   onSortField: PropTypes.func.isRequired
 };
 

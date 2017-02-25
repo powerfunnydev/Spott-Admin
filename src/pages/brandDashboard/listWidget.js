@@ -1,19 +1,34 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import Highcharts from 'react-highcharts';
-import { colors, fontWeights, makeTextStyle } from '../_common/styles';
+
+import { colors, fontWeights, makeTextStyle, mediaQueries } from '../_common/styles';
 import Spinner from '../_common/components/spinner';
 
 @Radium
-export default class HighchartsWidget extends Component {
+export default class MapWidget extends Component {
 
   static propTypes = {
-    children: PropTypes.node,
-    contentStyle: PropTypes.object,
     isLoading: PropTypes.bool,
     style: PropTypes.object,
     title: PropTypes.string
   };
+
+  constructor (props) {
+    super(props);
+
+    const markers = [];
+
+    for (let i = 0; i < 10000; i++) {
+      markers.push({
+        label: `${Math.round(Math.random() * 100)}`,
+        position: { lat: 50.3 + Math.random() * 2, lng: 4 + Math.random() * 2 }
+      });
+    }
+
+    this.state = {
+      markers
+    };
+  }
 
   static styles = {
     container: {
@@ -37,8 +52,7 @@ export default class HighchartsWidget extends Component {
       display: 'flex',
       alignItems: 'center',
       height: '2em',
-      position: 'absolute',
-      zIndex: 2
+      marginBottom: '1em'
     },
     title: {
       ...makeTextStyle(fontWeights.medium, '0.688em', '0.0455em'),
@@ -46,13 +60,20 @@ export default class HighchartsWidget extends Component {
       textTransform: 'uppercase'
     },
     widget: {
-      width: '100%'
+      width: '100%',
+      marginBottom: '1.75em',
+      paddingLeft: '0.75em',
+      paddingRight: '0.75em',
+      [mediaQueries.large]: {
+        display: 'inline-block',
+        width: '50%'
+      }
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { config, isLoading, style, title } = this.props;
+    const { isLoading, style, title } = this.props;
     return (
       <div style={[ styles.widget, style ]}>
         <div style={styles.container}>
@@ -61,7 +82,7 @@ export default class HighchartsWidget extends Component {
               <h2 style={styles.title}>{title}&nbsp;&nbsp;&nbsp;</h2>
               {isLoading && <Spinner size='small' />}
             </div>
-            <Highcharts config={config} isPureConfig />
+            List widget
           </div>
 
         </div>
