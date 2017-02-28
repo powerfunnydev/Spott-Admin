@@ -8,6 +8,7 @@ import Spinner from '../_common/components/spinner';
 export default class MapWidget extends Component {
 
   static propTypes = {
+    children: PropTypes.node,
     isLoading: PropTypes.bool,
     style: PropTypes.object,
     title: PropTypes.string
@@ -73,7 +74,7 @@ export default class MapWidget extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { isLoading, style, title } = this.props;
+    const { children, isLoading, style, title } = this.props;
     return (
       <div style={[ styles.widget, style ]}>
         <div style={styles.container}>
@@ -82,9 +83,8 @@ export default class MapWidget extends Component {
               <h2 style={styles.title}>{title}&nbsp;&nbsp;&nbsp;</h2>
               {isLoading && <Spinner size='small' />}
             </div>
-            List widget
+            {children}
           </div>
-
         </div>
       </div>
     );
