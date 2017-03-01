@@ -1,5 +1,5 @@
 import { makeApiActionCreator } from './utils';
-import * as commercialApi from '../api/commercial';
+import * as api from '../api/commercial';
 
 export const COMMERCIALS_FETCH_START = 'COMMERCIALS/COMMERCIALS_FETCH_START';
 export const COMMERCIALS_FETCH_SUCCESS = 'COMMERCIALS/COMMERCIALS_FETCH_SUCCESS';
@@ -45,13 +45,14 @@ export const COMMERCIAL_SCHEDULE_ENTRIES_FETCH_START = 'COMMERCIALS/COMMERCIAL_S
 export const COMMERCIAL_SCHEDULE_ENTRIES_FETCH_SUCCESS = 'COMMERCIALS/COMMERCIAL_SCHEDULE_ENTRIES_FETCH_SUCCESS';
 export const COMMERCIAL_SCHEDULE_ENTRIES_FETCH_ERROR = 'COMMERCIALS/COMMERCIAL_SCHEDULE_ENTRIES_FETCH_ERROR';
 
-export const fetchCommercials = makeApiActionCreator(commercialApi.fetchCommercials, COMMERCIALS_FETCH_START, COMMERCIALS_FETCH_SUCCESS, COMMERCIALS_FETCH_ERROR);
-export const fetchCommercial = makeApiActionCreator(commercialApi.fetchCommercial, COMMERCIAL_FETCH_START, COMMERCIAL_FETCH_SUCCESS, COMMERCIAL_FETCH_ERROR);
-export const persistCommercial = makeApiActionCreator(commercialApi.persistCommercial, COMMERCIAL_PERSIST_START, COMMERCIAL_PERSIST_SUCCESS, COMMERCIAL_PERSIST_ERROR);
-export const deleteCommercials = makeApiActionCreator(commercialApi.deleteCommercials, COMMERCIALS_DELETE_START, COMMERCIALS_DELETE_SUCCESS, COMMERCIALS_DELETE_ERROR);
-export const deleteCommercial = makeApiActionCreator(commercialApi.deleteCommercial, COMMERCIAL_DELETE_START, COMMERCIAL_DELETE_SUCCESS, COMMERCIAL_DELETE_ERROR);
-export const deleteBannerImage = makeApiActionCreator(commercialApi.deleteBannerImage, DELETE_BANNER_IMAGE_START, DELETE_BANNER_IMAGE_SUCCESS, DELETE_BANNER_IMAGE_ERROR);
-export const uploadBannerImage = makeApiActionCreator(commercialApi.uploadBannerImage, UPLOAD_BANNER_IMAGE_START, UPLOAD_BANNER_IMAGE_SUCCESS, UPLOAD_BANNER_IMAGE_ERROR);
-export const uploadProfileImage = makeApiActionCreator(commercialApi.uploadProfileImage, UPLOAD_PROFILE_IMAGE_START, UPLOAD_PROFILE_IMAGE_SUCCESS, UPLOAD_PROFILE_IMAGE_ERROR);
-export const uploadRoundLogo = makeApiActionCreator(commercialApi.uploadRoundLogo, UPLOAD_ROUND_LOGO_START, UPLOAD_ROUND_LOGO_SUCCESS, UPLOAD_ROUND_LOGO_ERROR);
-export const fetchScheduleEntries = makeApiActionCreator(commercialApi.fetchScheduleEntries, COMMERCIAL_SCHEDULE_ENTRIES_FETCH_START, COMMERCIAL_SCHEDULE_ENTRIES_FETCH_SUCCESS, COMMERCIAL_SCHEDULE_ENTRIES_FETCH_ERROR);
+export const deleteBannerImage = makeApiActionCreator(api.deleteBannerImage, DELETE_BANNER_IMAGE_START, DELETE_BANNER_IMAGE_SUCCESS, DELETE_BANNER_IMAGE_ERROR);
+export const deleteCommercial = makeApiActionCreator(api.deleteCommercial, COMMERCIAL_DELETE_START, COMMERCIAL_DELETE_SUCCESS, COMMERCIAL_DELETE_ERROR);
+export const deleteCommercials = makeApiActionCreator(api.deleteCommercials, COMMERCIALS_DELETE_START, COMMERCIALS_DELETE_SUCCESS, COMMERCIALS_DELETE_ERROR);
+export const fetchCommercial = makeApiActionCreator(api.fetchCommercial, COMMERCIAL_FETCH_START, COMMERCIAL_FETCH_SUCCESS, COMMERCIAL_FETCH_ERROR);
+export const fetchCommercials = makeApiActionCreator(api.fetchCommercials, COMMERCIALS_FETCH_START, COMMERCIALS_FETCH_SUCCESS, COMMERCIALS_FETCH_ERROR);
+export const fetchScheduleEntries = makeApiActionCreator(api.fetchScheduleEntries, COMMERCIAL_SCHEDULE_ENTRIES_FETCH_START, COMMERCIAL_SCHEDULE_ENTRIES_FETCH_SUCCESS, COMMERCIAL_SCHEDULE_ENTRIES_FETCH_ERROR);
+export const persistCommercial = makeApiActionCreator(api.persistCommercial, COMMERCIAL_PERSIST_START, COMMERCIAL_PERSIST_SUCCESS, COMMERCIAL_PERSIST_ERROR);
+export const uploadBannerImage = makeApiActionCreator(api.uploadBannerImage, UPLOAD_BANNER_IMAGE_START, UPLOAD_BANNER_IMAGE_SUCCESS, UPLOAD_BANNER_IMAGE_ERROR);
+export const uploadPosterImage = makeApiActionCreator(api.uploadPosterImage, UPLOAD_POSTER_IMAGE_START, UPLOAD_POSTER_IMAGE_SUCCESS, UPLOAD_POSTER_IMAGE_ERROR);
+export const uploadProfileImage = makeApiActionCreator(api.uploadProfileImage, UPLOAD_PROFILE_IMAGE_START, UPLOAD_PROFILE_IMAGE_SUCCESS, UPLOAD_PROFILE_IMAGE_ERROR);
+export const uploadRoundLogo = makeApiActionCreator(api.uploadRoundLogo, UPLOAD_ROUND_LOGO_START, UPLOAD_ROUND_LOGO_SUCCESS, UPLOAD_ROUND_LOGO_ERROR);

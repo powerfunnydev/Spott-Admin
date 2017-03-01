@@ -132,6 +132,14 @@ export async function uploadProfileImage (baseUrl, authenticationToken, locale, 
   return transformCommercial(result.body);
 }
 
+export async function uploadPosterImage (baseUrl, authenticationToken, locale, { locale: imageLocale, commercialId, image, callback }) {
+  const formData = new FormData();
+  formData.append('file', image);
+  formData.append('locale', imageLocale);
+  const result = await postFormData(authenticationToken, locale, `${baseUrl}/v004/media/media/${commercialId}/posterImage`, formData, callback);
+  return transformCommercial(result.body);
+}
+
 export async function uploadRoundLogo (baseUrl, authenticationToken, locale, { commercialId, image, callback }) {
   const formData = new FormData();
   formData.append('file', image);
