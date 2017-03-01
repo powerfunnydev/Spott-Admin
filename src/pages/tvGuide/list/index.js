@@ -1,20 +1,21 @@
 import React, { Component, PropTypes } from 'react';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import ImmutablePropTypes from 'react-immutable-proptypes';
-import { routerPushWithReturnTo } from '../../../actions/global';
+import Radium from 'radium';
 import moment from 'moment';
+import { routerPushWithReturnTo } from '../../../actions/global';
 import { Root, Container } from '../../_common/styles';
 import { isQueryChanged, tableDecorator, generalStyles, TotalEntries, Pagination } from '../../_common/components/table/index';
 import Line from '../../_common/components/line';
 import ListView from '../../_common/components/listView/index';
-import Radium from 'radium';
-import * as actions from './actions';
-import selector from './selector';
 import UtilsBar from '../../_common/components/table/utilsBar';
 import { confirmation } from '../../_common/askConfirmation';
 import { SideMenu } from '../../app/sideMenu';
 import Header from '../../app/multiFunctionalHeader';
+import { getMediumReadUrl } from '../../../utils';
+import * as actions from './actions';
+import selector from './selector';
 
 /* eslint-disable react/no-set-state*/
 
@@ -138,12 +139,12 @@ export default class TvGuideList extends Component {
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     const columns = [
       { type: 'checkBox' },
-      { type: 'custom', title: 'CHANNEL', name: 'channel', convert: (text) => text.get('name') },
-      { type: 'custom', title: 'TITLE', colspan: 2, convert: this.getMediumTitle },
-      { type: 'custom', sort: true, sortField: 'START', title: 'START', getUrl: this.determineReadUrl, convert: this.getStartDate },
-      { type: 'custom', title: 'END', convert: this.getEndDate },
-      { type: 'custom', title: 'UPDATED BY', name: 'lastUpdatedBy', colspan: 0.8 },
-      { type: 'custom', sort: true, sortField: 'LAST_MODIFIED', title: 'LAST UPDATED ON', convert: this.getLastUpdatedOn },
+      { convert: (text) => text.get('name'), name: 'channel', title: 'CHANNEL', type: 'custom' },
+      { clickable: true, colspan: 2, convert: this.getMediumTitle, getUrl: (tvGuideEntry) => getMediumReadUrl(tvGuideEntry.get('medium')), title: 'TITLE', type: 'custom' },
+      { convert: this.getStartDate, getUrl: this.determineReadUrl, sort: true, sortField: 'START', title: 'START', type: 'custom' },
+      { convert: this.getEndDate, title: 'END', type: 'custom' },
+      { colspan: 0.8, name: 'lastUpdatedBy', title: 'UPDATED BY', type: 'custom' },
+      { convert: this.getLastUpdatedOn, sort: true, sortField: 'LAST_MODIFIED', title: 'LAST UPDATED ON', type: 'custom' },
       { type: 'dropdown' }
     ];
     return (
