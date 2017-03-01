@@ -12,7 +12,7 @@ import Line from '../../../_common/components/line';
 import ListView from '../../../_common/components/listView/index';
 import { styles as dropdownStyles } from '../../../_common/components/actionDropdown';
 import { routerPushWithReturnTo } from '../../../../actions/global';
-import { slowdown } from '../../../../utils';
+import { getMediumReadUrl, slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
@@ -84,21 +84,6 @@ export default class Media extends Component {
     }
   }
 
-  determineReadUrl (medium) {
-    switch (medium.get('type')) {
-      case COMMERCIAL:
-        return `/content/commercials/read/${medium.get('id')}`;
-      case EPISODE:
-        return `/content/series/read/${medium.getIn([ 'serie', 'id' ])}/seasons/read/${medium.getIn([ 'season', 'id' ])}/episodes/read/${medium.get('id')}`;
-      case MOVIE:
-        return `/content/movies/read/${medium.get('id')}`;
-      case SEASON:
-        return `/content/series/read/${medium.getIn([ 'serie', 'id' ])}/seasons/read/${medium.get('id')}`;
-      case SERIE:
-        return `/content/series/read/${medium.get('id')}`;
-    }
-  }
-
   determineEditUrl (medium) {
     switch (medium.get('type')) {
       case COMMERCIAL:
@@ -153,7 +138,7 @@ export default class Media extends Component {
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     const columns = [
       { type: 'checkBox' },
-      { type: 'custom', sort: true, sortField: 'TITLE', title: 'TITLE', clickable: true, getUrl: this.determineReadUrl, name: 'title', colspan: 2 },
+      { type: 'custom', sort: true, sortField: 'TITLE', title: 'TITLE', clickable: true, getUrl: getMediumReadUrl, name: 'title', colspan: 2 },
       { type: 'custom', title: 'MEDIA TYPE', name: 'type', colspan: 1, convert: (text) => mediumTypes[text] },
       { type: 'custom', title: 'UPDATED BY', name: 'lastUpdatedBy', colspan: 2 },
       { type: 'custom', title: 'LAST UPDATED ON', name: 'lastUpdatedOn', dataType: 'date', colspan: 2 },
@@ -225,7 +210,7 @@ export default class Media extends Component {
                         key={`medium${index}`}
                         text={medium.get('title')}
                         onCheckboxChange={selectCheckbox.bind(this, medium.get('id'))}
-                        onClick={() => { const readUrl = this.determineReadUrl(medium); readUrl && this.props.routerPushWithReturnTo(readUrl); }}
+                        onClick={() => { const readUrl = getMediumReadUrl(medium); readUrl && this.props.routerPushWithReturnTo(readUrl); }}
                         onDelete={async (e) => { await this.deleteMedium(medium.get('id'), medium.get('type')); }}
                         onEdit={(e) => { const editUrl = this.determineEditUrl(medium); editUrl && this.props.routerPushWithReturnTo(editUrl); }}/>
                     ))}

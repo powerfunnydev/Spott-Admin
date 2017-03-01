@@ -25,7 +25,7 @@ import Availabilities from '../../_availabilities/list';
 import RelatedVideo from '../../../content/_relatedVideo/read';
 import Characters from '../../_helpers/_characters/list';
 import Collections from '../../_collections/list';
-import { BANNER_IMAGE, PROFILE_IMAGE, ROUND_LOGO } from '../../../../constants/imageTypes';
+import { BANNER_IMAGE, POSTER_IMAGE, PROFILE_IMAGE, ROUND_LOGO } from '../../../../constants/imageTypes';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 import Schedule from './schedule/list';
@@ -84,6 +84,7 @@ function validate (values, { t }) {
 @connect(selector, (dispatch) => ({
   closeModal: bindActionCreators(actions.closeModal, dispatch),
   deleteBannerImage: bindActionCreators(actions.deleteBannerImage, dispatch),
+  deletePosterImage: bindActionCreators(actions.deletePosterImage, dispatch),
   deleteProfileImage: bindActionCreators(actions.deleteProfileImage, dispatch),
   deleteRoundLogo: bindActionCreators(actions.deleteRoundLogo, dispatch),
   loadCommercial: bindActionCreators(actions.loadCommercial, dispatch),
@@ -104,6 +105,7 @@ function validate (values, { t }) {
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadBannerImage: bindActionCreators(actions.uploadBannerImage, dispatch),
+  uploadPosterImage: bindActionCreators(actions.uploadPosterImage, dispatch),
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch),
   uploadRoundLogo: bindActionCreators(actions.uploadRoundLogo, dispatch)
 }))
@@ -131,6 +133,7 @@ export default class EditCommercial extends Component {
     currentModal: PropTypes.string,
     defaultLocale: PropTypes.string,
     deleteBannerImage: PropTypes.func.isRequired,
+    deletePosterImage: PropTypes.func.isRequired,
     deleteProfileImage: PropTypes.func.isRequired,
     deleteRoundLogo: PropTypes.func.isRequired,
     dispatch: PropTypes.func.isRequired,
@@ -177,6 +180,7 @@ export default class EditCommercial extends Component {
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
     uploadBannerImage: PropTypes.func.isRequired,
+    uploadPosterImage: PropTypes.func.isRequired,
     uploadProfileImage: PropTypes.func.isRequired,
     uploadRoundLogo: PropTypes.func.isRequired
   };
@@ -332,7 +336,7 @@ export default class EditCommercial extends Component {
       _activeLocale, bannerInternalLinkType, bannerSystemLinkType, brandsById,
       broadcastersById, charactersById, closeModal, commercialCharacters,
       commercialCollections, contentProducersById, currentCommercial, currentModal,
-      defaultLocale, deleteBannerImage, deleteRoundLogo, errors, handleSubmit, hasBanner,
+      defaultLocale, deleteBannerImage, deletePosterImage, deleteRoundLogo, errors, handleSubmit, hasBanner,
       mediaById, personsById, productsById, searchCollectionsBrands, searchCollectionsCharacters, searchCollectionsProducts,
       searchBannerLinkBrands, searchBannerLinkCharacters, searchBannerLinkMedia, searchBrands,
       searchCharacters, searchAudienceCountries, searchContentProducers,
@@ -419,6 +423,21 @@ export default class EditCommercial extends Component {
                     placeholder='Broadcaster companies'/>
                   <FormSubtitle>Images</FormSubtitle>
                   <div style={[ styles.paddingTop, styles.row ]}>
+                    <div style={styles.paddingUploadImage}>
+                      <Label text='Poster image' />
+                      <Dropzone
+                        accept='image/*'
+                        downloadUrl={
+                          currentCommercial.getIn([ 'posterImage', _activeLocale, 'url' ]) ||
+                          currentCommercial.getIn([ 'posterImage', defaultLocale, 'url' ])}
+                        imageUrl={currentCommercial.getIn([ 'posterImage', _activeLocale ]) &&
+                          `${currentCommercial.getIn([ 'posterImage', _activeLocale, 'url' ])}?height=459&width=310` ||
+                          currentCommercial.getIn([ 'posterImage', defaultLocale ]) &&
+                          `${currentCommercial.getIn([ 'posterImage', defaultLocale, 'url' ])}?height=459&width=310`}
+                        type={POSTER_IMAGE}
+                        onChange={({ callback, file }) => { this.props.uploadPosterImage({ locale: _activeLocale, commercialId: this.props.params.commercialId, image: file, callback }); }}
+                        onDelete={currentCommercial.getIn([ 'posterImage', _activeLocale, 'url' ]) ? () => { deletePosterImage({ locale: _activeLocale, mediumId: currentCommercial.get('id') }); } : null}/>
+                    </div>
                     <div style={styles.paddingUploadImage}>
                       <Label text='Background image' />
                       <Dropzone

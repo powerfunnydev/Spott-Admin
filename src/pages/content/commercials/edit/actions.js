@@ -10,8 +10,8 @@ import { fetchCountries } from '../../../../actions/country';
 import { fetchLanguages } from '../../../../actions/language';
 import { createSearchAction } from '../../../../utils';
 
-export { deleteBannerImage, uploadBannerImage, uploadProfileImage, uploadRoundLogo } from '../../../../actions/commercial';
-export { deleteProfileImage, deleteRoundLogo } from '../../../../actions/media';
+export { deleteBannerImage, uploadBannerImage, uploadPosterImage, uploadProfileImage, uploadRoundLogo } from '../../../../actions/commercial';
+export { deletePosterImage, deleteProfileImage, deleteRoundLogo } from '../../../../actions/media';
 
 export { openModal, closeModal } from '../../../../actions/global';
 

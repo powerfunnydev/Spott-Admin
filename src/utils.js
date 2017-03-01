@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { getFormValues } from 'redux-form/immutable';
+import { MOVIE, EPISODE, COMMERCIAL, SERIE, SEASON } from './constants/mediumTypes';
 
 // Cache form selectors.
 const formSelectors = {};
@@ -106,4 +107,19 @@ export function createSearchAction (dataAction, startActionType, errorActionType
       }
     };
   };
+}
+
+export function getMediumReadUrl (medium) {
+  switch (medium.get('type')) {
+    case COMMERCIAL:
+      return `/content/commercials/read/${medium.get('id')}`;
+    case EPISODE:
+      return `/content/series/read/${medium.getIn([ 'serie', 'id' ])}/seasons/read/${medium.getIn([ 'season', 'id' ])}/episodes/read/${medium.get('id')}`;
+    case MOVIE:
+      return `/content/movies/read/${medium.get('id')}`;
+    case SEASON:
+      return `/content/series/read/${medium.getIn([ 'serie', 'id' ])}/seasons/read/${medium.get('id')}`;
+    case SERIE:
+      return `/content/series/read/${medium.get('id')}`;
+  }
 }
