@@ -3,13 +3,14 @@ import {
   serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
   serializeFilterHasUsers, serializeFilterHasMediumCategories, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
-  fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
+  fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasTopMedia, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
   serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasLanguages, serializeFilterHasPushNotifications, serializeBroadcasterFilterHasMedia
 } from './utils';
 
 import * as audienceActions from '../actions/audience';
 import * as availabilityActions from '../actions/availability';
 import * as brandActions from '../actions/brand';
+import * as brandDashboardActions from '../actions/brandDashboard';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcastersActions from '../actions/broadcaster';
 import * as charactersActions from '../actions/character';
@@ -77,6 +78,7 @@ export default (state = fromJS({
     similarProducts: {},
     scheduleEntries: {},
     shops: {},
+    topMedia: {}, // Used in brand dashboard. Includes media, subscriptions, etc.
     users: {},
     videos: {}
   },
@@ -126,6 +128,7 @@ export default (state = fromJS({
     searchStringHasTags: {},
     searchStringHasUsers: {},
 
+    filterHasTopMedia: {},
     characterHasFaceImages: {},
     collectionHasCollectionItems: {},
     commercialHasScheduleEntries: {},
@@ -183,6 +186,16 @@ export default (state = fromJS({
       return searchSuccess(state, 'countries', 'filterHasCountries', serializeFilterHasCountries(action), action.data.data);
     case countryActions.COUNTRIES_FETCH_ERROR:
       return searchError(state, 'filterHasCountries', serializeFilterHasCountries(action), action.error);
+
+    // Brand dashboard
+    // ///////////////
+
+    case brandDashboardActions.TOP_MEDIA_FETCH_START:
+      return searchStart(state, 'brandHasTopMedia', serializeFilterHasTopMedia(action));
+    case brandDashboardActions.TOP_MEDIA_FETCH_SUCCESS:
+      return searchSuccess(state, 'topMedia', 'brandHasTopMedia', serializeFilterHasTopMedia(action), action.data);
+    case brandDashboardActions.TOP_MEDIA_FETCH_ERROR:
+      return searchError(state, 'brandHasTopMedia', serializeFilterHasTopMedia(action), action.error);
 
     // Brands
     // /////////////////

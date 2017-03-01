@@ -843,3 +843,11 @@ export function transformAudience ({ countries, languages, name, uuid }) {
     name
   };
 }
+
+export function transformTopMedia (data) {
+  return {
+    medium: transformMedium(data),
+    taggedProducts: 25,
+    subscriptions: 234
+  };
+}

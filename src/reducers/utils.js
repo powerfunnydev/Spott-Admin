@@ -34,6 +34,7 @@ export const serializeFilterHasUsers = serialize;
 export const serializeFilterHasShops = serialize;
 export const serializeFilterHasTags = serialize;
 export const serializeFilterHasProducts = serialize;
+export const serializeFilterHasTopMedia = serialize;
 
 export function serializeBroadcasterFilterHasMedia ({ broadcasterId, ...rest }) {
   return `${serialize(rest)}&broadcasterId=${broadcasterId}`;

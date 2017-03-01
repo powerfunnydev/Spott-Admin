@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
+import * as actions from './actions';
 import * as globalActions from '../../actions/global';
 import NumberWidget from './numberWidget';
 import HighchartsWidget from './highchartsWidget';
@@ -56,7 +57,7 @@ class TopMedia extends Component {
 
 @connect(null, (dispatch) => ({
   // loadActivities: bindActionCreators(actions.loadActivities, dispatch),
-  // loadRankings: bindActionCreators(actions.loadRankings, dispatch),
+  loadTopMedia: bindActionCreators(actions.loadTopMedia, dispatch),
   routerPushWithReturnTo: bindActionCreators(globalActions.routerPushWithReturnTo, dispatch)
 }))
 @Radium
@@ -69,20 +70,12 @@ export default class BrandDashboard extends Component {
     location: PropTypes.shape({
       pathname: PropTypes.string.isRequired
     }),
-    routerPushWithReturnTo: PropTypes.func.isRequired
+    routerPushWithReturnTo: PropTypes.func.isRequired,
+    topMedia: ImmutablePropTypes.map.isRequired
   };
 
-  constructor (props) {
-    super(props);
-    this.state = {
-      topMedia: {
-        data: Map({
-          _status: 'loaded',
-          data: List()
-        })
-        // sortDirection sortField
-      }
-    };
+  onSortField (listName) {
+    console.warn('Sort fields', arguments);
   }
 
   static styles = {
@@ -116,13 +109,9 @@ export default class BrandDashboard extends Component {
     }
   };
 
-  onSortField (listName) {
-    console.warn('Sort fields', arguments);
-  }
-
   render () {
     const styles = this.constructor.styles;
-    const { children, location, routerPushWithReturnTo } = this.props;
+    const { children, loadTopMedia, location, routerPushWithReturnTo, topMedia } = this.props;
 
     return (
       <SideMenu location={location}>
@@ -152,8 +141,8 @@ export default class BrandDashboard extends Component {
           <MapWidget style={styles.paddingBottom} title='Brand activity by region' />
           <div style={styles.listWidgets}>
             <TopMedia
-              data={this.state.topMedia.data}
-              load={(query) => console.warn('Query', query)}
+              data={topMedia}
+              load={loadTopMedia}
               location={location}
               routerPushWithReturnTo={routerPushWithReturnTo}
               style={styles.paddingBottom} />
