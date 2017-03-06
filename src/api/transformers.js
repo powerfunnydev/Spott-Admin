@@ -846,7 +846,17 @@ export function transformAudience ({ countries, languages, name, uuid }) {
 
 export function transformTopMedia (data) {
   return {
-    medium: transformMedium(data),
+    id: data.uuid,
+    medium: transformListMedium(data),
+    taggedProducts: 25,
+    subscriptions: 234
+  };
+}
+
+export function transformTopPeople (data) {
+  return {
+    id: data.uuid,
+    character: transformListCharacter(data),
     taggedProducts: 25,
     subscriptions: 234
   };

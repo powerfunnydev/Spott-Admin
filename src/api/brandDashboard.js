@@ -1,10 +1,18 @@
 import { get } from './request';
-import { transformTopMedia } from './transformers';
+import { transformTopMedia, transformTopPeople } from './transformers';
 
+// TODO: implement this function
 export async function fetchTopMedia (baseUrl, authenticationToken, locale) {
-  // const { body: events } = await get(authenticationToken, locale, `${baseUrl}/v004/report/mediumActivityReportEventTypes`);
-  // return events.map(({ description, type }) => ({ description, id: type }));
-  const searchUrl = `${baseUrl}/v004/media/media?pageSize=1000&types=TV_SERIE,MOVIE`;
-  const { body: { data } } = await get(authenticationToken, locale, searchUrl);
-  return data.map(transformTopMedia);
+  const searchUrl = `${baseUrl}/v004/media/media?types=TV_SERIE,MOVIE`;
+  const { body } = await get(authenticationToken, locale, searchUrl);
+  body.data = body.data.map(transformTopMedia);
+  return body;
+}
+
+// TODO: implement this function
+export async function fetchTopPeople (baseUrl, authenticationToken, locale) {
+  const searchUrl = `${baseUrl}/v004/media/characters`;
+  const { body } = await get(authenticationToken, locale, searchUrl);
+  body.data = body.data.map(transformTopPeople);
+  return body;
 }

@@ -25,10 +25,10 @@ class ListView extends Component {
 
   render () {
     const { data, columns, isSelected, selectAllCheckboxes, onSortField, sortField, sortDirection, routerPushWithReturnTo,
-      onCheckboxChange, getEditUrl } = this.props;
+      onCheckboxChange, getEditUrl, style } = this.props;
     const { deleteItem } = this;
     return (
-      <Table>
+      <Table style={style}>
         <Headers>
           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
           {

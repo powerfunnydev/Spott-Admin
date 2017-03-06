@@ -5,7 +5,7 @@ import { colors, fontWeights, makeTextStyle, mediaQueries } from '../_common/sty
 import Spinner from '../_common/components/spinner';
 
 @Radium
-export default class MapWidget extends Component {
+export default class ListWidget extends Component {
 
   static propTypes = {
     children: PropTypes.node,
@@ -16,7 +16,6 @@ export default class MapWidget extends Component {
 
   constructor (props) {
     super(props);
-
     const markers = [];
 
     for (let i = 0; i < 10000; i++) {

@@ -12,10 +12,6 @@ export class ImageWithDropdown extends Component {
     onDelete: PropTypes.func
   }
 
-  constructor (props) {
-    super(props);
-  }
-
   static styles = {
     root: {
       position: 'relative'
@@ -26,13 +22,13 @@ export class ImageWithDropdown extends Component {
       right: 10
     },
     imageContainer: {
-      marginRight: '20px',
-      marginBottom: '20px'
+      marginRight: 20,
+      marginBottom: 20
     },
     image: {
       objectFit: 'contain',
-      height: '180px',
-      borderRadius: '2px'
+      height: 180,
+      borderRadius: 2
     }
   }
 

@@ -4,7 +4,7 @@ import {
   serializeFilterHasUsers, serializeFilterHasMediumCategories, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasTopMedia, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
-  serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasLanguages, serializeFilterHasPushNotifications, serializeBroadcasterFilterHasMedia
+  serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasTopPeople, serializeFilterHasLanguages, serializeFilterHasPushNotifications, serializeBroadcasterFilterHasMedia
 } from './utils';
 
 import * as audienceActions from '../actions/audience';
@@ -79,6 +79,7 @@ export default (state = fromJS({
     scheduleEntries: {},
     shops: {},
     topMedia: {}, // Used in brand dashboard. Includes media, subscriptions, etc.
+    topPeople: {},
     users: {},
     videos: {}
   },
@@ -108,6 +109,8 @@ export default (state = fromJS({
     filterHasSeasons: {},
     filterHasSeriesEntries: {},
     filterHasTags: {},
+    filterHasTopMedia: {},
+    filterHasTopPeople: {},
     filterHasTvGuideEntries: {},
     filterHasUsers: {},
 
@@ -128,7 +131,6 @@ export default (state = fromJS({
     searchStringHasTags: {},
     searchStringHasUsers: {},
 
-    filterHasTopMedia: {},
     characterHasFaceImages: {},
     collectionHasCollectionItems: {},
     commercialHasScheduleEntries: {},
@@ -191,11 +193,20 @@ export default (state = fromJS({
     // ///////////////
 
     case brandDashboardActions.TOP_MEDIA_FETCH_START:
-      return searchStart(state, 'brandHasTopMedia', serializeFilterHasTopMedia(action));
+      return searchStart(state, 'filterHasTopMedia', serializeFilterHasTopMedia(action));
     case brandDashboardActions.TOP_MEDIA_FETCH_SUCCESS:
-      return searchSuccess(state, 'topMedia', 'brandHasTopMedia', serializeFilterHasTopMedia(action), action.data);
+      return searchSuccess(state, 'topMedia', 'filterHasTopMedia', serializeFilterHasTopMedia(action), action.data.data);
     case brandDashboardActions.TOP_MEDIA_FETCH_ERROR:
-      return searchError(state, 'brandHasTopMedia', serializeFilterHasTopMedia(action), action.error);
+      return searchError(state, 'filterHasTopMedia', serializeFilterHasTopMedia(action), action.error);
+
+    case brandDashboardActions.TOP_PEOPLE_FETCH_START:
+      console.warn('SERIALIZ RED', serializeFilterHasTopMedia(action));
+      return searchStart(state, 'filterHasTopPeople', serializeFilterHasTopPeople(action));
+    case brandDashboardActions.TOP_PEOPLE_FETCH_SUCCESS:
+      console.warn('DATa', action.data.data);
+      return searchSuccess(state, 'topPeople', 'filterHasTopPeople', serializeFilterHasTopPeople(action), action.data.data);
+    case brandDashboardActions.TOP_PEOPLE_FETCH_ERROR:
+      return searchError(state, 'filterHasTopPeople', serializeFilterHasTopPeople(action), action.error);
 
     // Brands
     // /////////////////
