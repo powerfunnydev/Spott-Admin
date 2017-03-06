@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
+import { colors, fontWeights, makeTextStyle, Container } from '../../_common/styles';
 
 @Radium
 export default class NumberWidget extends Component {

@@ -306,7 +306,7 @@ class VerticalSideMenu extends Component {
               <Link activeStyle={styles.sectionActive} key='rankings' style={styles.section} to='/reporting/rankings'>
                 <div style={styles.sectionTitle}>RANKINGS</div>
               </Link>
-              <Link activeStyle={styles.sectionActive} key='brand-dashboard' style={styles.section} to='/brand-dashboard'>
+              <Link activeStyle={styles.sectionActive} key='brand-dashboard' style={styles.section} to='/reporting/brand-dashboard'>
                 <div style={styles.sectionTitle}>BRAND DASHBOARD</div>
               </Link>
             </div>}

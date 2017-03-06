@@ -6,14 +6,16 @@ import { bindActionCreators } from 'redux';
 import { Link } from 'react-router';
 
 import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
-import MediaFilterForm from './forms/mediaFilterForm';
-import * as actions from './actions';
+import MediaFilterForm
+from './_mediaFilter';
+import * as activityActions from './activity/actions';
+import * as rankingsActions from './rankings/actions';
 import { SideMenu } from '../app/sideMenu';
 import Header from '../app/multiFunctionalHeader';
 
 @connect(null, (dispatch) => ({
-  loadActivities: bindActionCreators(actions.loadActivities, dispatch),
-  loadRankings: bindActionCreators(actions.loadRankings, dispatch),
+  loadActivities: bindActionCreators(activityActions.loadActivities, dispatch),
+  loadRankings: bindActionCreators(rankingsActions.loadRankings, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @Radium
@@ -98,16 +100,19 @@ export default class Reporting extends Component {
                   }}>Rankings</Link>
                 </div>
               </div>
-              <MediaFilterForm fields={{
-                media: typeof media === 'string' ? [ media ] : media
-              }} style={styles.mediaFilterForm} onChange={(field, type, value) => {
-                this.props.routerPushWithReturnTo({
-                  ...location,
-                  query: {
-                    ...location.query,
-                    [field]: type === 'string' || type === 'array' ? value : value.format('YYYY-MM-DD') }
-                });
-              }} />
+              <MediaFilterForm
+                fields={{
+                  media: typeof media === 'string' ? [ media ] : media
+                }}
+                style={styles.mediaFilterForm}
+                onChange={(field, type, value) => {
+                  this.props.routerPushWithReturnTo({
+                    ...location,
+                    query: {
+                      ...location.query,
+                      [field]: type === 'string' || type === 'array' ? value : value.format('YYYY-MM-DD') }
+                  });
+                }} />
             </Container>
           </div>
           {children}

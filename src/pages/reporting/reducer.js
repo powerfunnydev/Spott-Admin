@@ -1,5 +1,5 @@
 import { fromJS, Map } from 'immutable';
-import { CLEAR_RANKINGS, MEDIA_SEARCH_START, SAVE_FILTER_QUERY } from './actions';
+import { CLEAR_RANKINGS, MEDIA_SEARCH_START, SAVE_FILTER_QUERY } from './activity/actions';
 import * as actions from '../../actions/reporting';
 import { fetchError, fetchStart } from '../../reducers/utils';
 import { LOADED } from '../../constants/statusTypes';

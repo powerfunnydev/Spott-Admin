@@ -3,15 +3,15 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { routerPushWithReturnTo } from '../../actions/global';
-import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
-import InfiniteScroll from '../_common/components/infiniteScroll';
-import { isLoading } from '../../constants/statusTypes';
-import { arraysEqual, slowdown } from '../../utils';
+import { routerPushWithReturnTo } from '../../../actions/global';
+import { colors, fontWeights, makeTextStyle, Container } from '../../_common/styles';
+import InfiniteScroll from '../../_common/components/infiniteScroll';
+import { isLoading } from '../../../constants/statusTypes';
+import { arraysEqual, slowdown } from '../../../utils';
+import Widget from '../widget';
 import * as actions from './actions';
+import RankingsFilterForm from './filters';
 import { rankingsSelector } from './selector';
-import Widget from './widget';
-import RankingsFilterForm from './forms/rankingsFilterForm';
 
 @Radium
 class RankingItem extends Component {

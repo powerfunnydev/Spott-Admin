@@ -6,8 +6,8 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import SelectInput from '../../_common/inputs/selectInput';
 import { fontWeights, makeTextStyle, mediaQueries } from '../../_common/styles';
 import { FETCHING, isLoading } from '../../../constants/statusTypes';
-import * as actions from '../actions';
-import { rankingsFilterSelector } from '../selector';
+import * as actions from './actions';
+import { rankingsFilterSelector } from './selector';
 
 @connect(rankingsFilterSelector, (dispatch) => ({
   loadAges: bindActionCreators(actions.loadAges, dispatch),

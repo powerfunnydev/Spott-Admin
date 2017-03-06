@@ -1,6 +1,5 @@
-import { fetchTopMedia, fetchTopPeople } from '../../actions/brandDashboard';
-import { fetchAges, fetchGenders } from '../../actions/reporting';
-import { locationSelector } from '../../selectors/global';
+import { fetchTopMedia, fetchTopPeople } from '../../../actions/brandDashboard';
+import { fetchAges, fetchGenders } from '../../../actions/reporting';
 
 // Events are for every view the same.
 export const loadAges = fetchAges;

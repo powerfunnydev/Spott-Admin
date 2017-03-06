@@ -1,14 +1,48 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
+import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
+import MarkerClusterer from 'react-google-maps/lib/addons/MarkerClusterer';
 
-import { colors, fontWeights, makeTextStyle, mediaQueries } from '../_common/styles';
-import Spinner from '../_common/components/spinner';
+import { colors, fontWeights, makeTextStyle } from '../../_common/styles';
+import Spinner from '../../_common/components/spinner';
+
+function sizeCalculator (markers) {
+  return {
+    index: 1,
+    text: markers.reduce((total, marker) => total + parseInt(marker.label, 10), 0)
+  };
+}
+
+const RegionMap = withGoogleMap((props) => (
+  <GoogleMap
+    defaultCenter={{ lat: 50.9333, lng: 4.0333 }}
+    defaultZoom={9}
+    ref={(map) => console.log(map)}
+    onClick={() => console.warn('test')}>
+
+      <MarkerClusterer
+        averageCenter
+        calculator={sizeCalculator}
+        enableRetinaIcons
+        gridSize={60}
+        styles={[ {
+          height: 40,
+          url: require('./images/cluster.png'),
+          width: 40,
+          fontSize: '14px',
+          fontFamily: 'Rubik-Medium',
+          textColor: 'white'
+        } ]}>
+
+        {props.markers.map((marker, index) => <Marker {...marker} key={index}/>)}
+      </MarkerClusterer>
+  </GoogleMap>
+));
 
 @Radium
-export default class ListWidget extends Component {
+export default class MapWidget extends Component {
 
   static propTypes = {
-    children: PropTypes.node,
     isLoading: PropTypes.bool,
     style: PropTypes.object,
     title: PropTypes.string
@@ -16,6 +50,7 @@ export default class ListWidget extends Component {
 
   constructor (props) {
     super(props);
+
     const markers = [];
 
     for (let i = 0; i < 10000; i++) {
@@ -60,20 +95,13 @@ export default class ListWidget extends Component {
       textTransform: 'uppercase'
     },
     widget: {
-      width: '100%',
-      marginBottom: '1.75em',
-      paddingLeft: '0.75em',
-      paddingRight: '0.75em',
-      [mediaQueries.large]: {
-        display: 'inline-block',
-        width: '50%'
-      }
+      width: '100%'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { children, isLoading, style, title } = this.props;
+    const { isLoading, style, title } = this.props;
     return (
       <div style={[ styles.widget, style ]}>
         <div style={styles.container}>
@@ -82,8 +110,16 @@ export default class ListWidget extends Component {
               <h2 style={styles.title}>{title}&nbsp;&nbsp;&nbsp;</h2>
               {isLoading && <Spinner size='small' />}
             </div>
-            {children}
+            <RegionMap
+              containerElement={
+                <div style={{ height: 400 }} />
+              }
+              mapElement={
+                <div style={{ height: 400 }} />
+              }
+              markers={this.state.markers}/>
           </div>
+
         </div>
       </div>
     );

@@ -6,8 +6,8 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import SelectInput from '../../_common/inputs/selectInput';
 import DateInput from '../../_common/inputs/dateInput';
 import { FETCHING } from '../../../constants/statusTypes';
-import * as actions from '../actions';
-import { eventsFilterSelector } from '../selector';
+import * as actions from './actions';
+import { eventsFilterSelector } from './selector';
 
 // endDate: moment().startOf('day'),
 // // We assume the ALL event will be always there.

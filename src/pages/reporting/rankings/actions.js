@@ -1,13 +1,13 @@
 import moment from 'moment';
-import { searchMedia as dataSearchMedia } from '../../actions/media';
+import { searchMedia as dataSearchMedia } from '../../../actions/media';
 import {
   fetchAges, fetchEvents, fetchGenders, fetchTimelineData, fetchAgeData,
   fetchBrandSubscriptions, fetchMediumSyncs, fetchMediumSubscriptions,
   fetchGenderData, fetchCharacterSubscriptions, fetchProductBuys,
   fetchProductImpressions, fetchProductViews
-} from '../../actions/reporting';
+} from '../../../actions/reporting';
 import { currentAgesSelector, currentGendersSelector, currentEventsSelector, currentMediaSelector } from './selector';
-import { locationSelector } from '../../selectors/global';
+import { locationSelector } from '../../../selectors/global';
 
 // Action types
 // ////////////

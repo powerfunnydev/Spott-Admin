@@ -2,9 +2,9 @@ import { createStructuredSelector } from 'reselect';
 import {
   createEntitiesByRelationSelector, filterHasTopMediaRelationsSelector,
   filterHasTopPeopleRelationsSelector, topMediaEntitiesSelector, topPeopleEntitiesSelector
-} from '../../selectors/data';
-import { getInformationFromQuery } from '../_common/components/table/index';
-import { serializeFilterHasTopMedia, serializeFilterHasTopPeople } from '../../reducers/utils';
+} from '../../../selectors/data';
+import { getInformationFromQuery } from '../../_common/components/table/index';
+import { serializeFilterHasTopMedia, serializeFilterHasTopPeople } from '../../../reducers/utils';
 
 export const topMediaPrefix = 'topMedia';
 export const topPeoplePrefix = 'topPeople';

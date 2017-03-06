@@ -6,18 +6,18 @@ import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
 import * as actions from './actions';
-import * as globalActions from '../../actions/global';
+import * as globalActions from '../../../actions/global';
 import NumberWidget from './numberWidget';
 import HighchartsWidget from './highchartsWidget';
 import MapWidget from './mapWidget';
 import ListWidget from './listWidget';
-import ListView from '../_common/components/listView/index';
-import { tableDecorator } from '../_common/components/table/index';
+import ListView from '../../_common/components/listView/index';
+import { tableDecorator } from '../../_common/components/table/index';
 import DemographicsWidget from './demographicsWidget';
 
-import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
-import { SideMenu } from '../app/sideMenu';
-import Header from '../app/multiFunctionalHeader';
+import { colors, fontWeights, makeTextStyle, Container } from '../../_common/styles';
+import { SideMenu } from '../../app/sideMenu';
+import Header from '../../app/multiFunctionalHeader';
 import { brandActivityConfig } from './defaultHighchartsConfig';
 
 import selector, { topMediaPrefix } from './selector';

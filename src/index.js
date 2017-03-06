@@ -69,7 +69,7 @@ import ResetPassword from './pages/resetPassword';
 import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
 import ReportingRankings from './pages/reporting/rankings';
-import BrandDashboard from './pages/brandDashboard';
+import ReportingBrandDashboard from './pages/reporting/brandDashboard';
 import ShopsCreate from './pages/content/shops/create';
 import ShopsEdit from './pages/content/shops/edit';
 import ShopsList from './pages/content/shops/list';
@@ -152,12 +152,14 @@ function getRoutes ({ dispatch, getState }) {
         <IndexRoute component={MediaHome}/>
         <Route component={MediaUpload} path='upload' />
       </Route>
+
       <Route component={Reporting} path='reporting' onEnter={requireOneRole([ BROADCASTER, CONTENT_MANAGER, ADMIN ])}>
         <IndexRedirect to='activity' />
-        <Route component={ReportingActivity} path='activity' />
-        <Route component={ReportingRankings} path='rankings' />
+        <Route component={ReportingActivity} path='activity'/>
+        <Route component={ReportingRankings} path='rankings'/>
+        {/* TODO: update roles! */}
+        <Route component={ReportingBrandDashboard} path='brand-dashboard'/>
       </Route>
-      <Route component={BrandDashboard} path='brand-dashboard' onEnter={requireOneRole([ BROADCASTER, CONTENT_MANAGER, ADMIN ])}/>
       <Route path='content' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <IndexRedirect to='content-producers' />
         <Route component={BrandsList} path='brands'>

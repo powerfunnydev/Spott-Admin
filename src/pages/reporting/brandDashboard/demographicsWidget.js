@@ -1,8 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-
-import { colors, fontWeights, makeTextStyle, mediaQueries } from '../_common/styles';
-import Spinner from '../_common/components/spinner';
+import { colors, fontWeights, makeTextStyle, mediaQueries } from '../../_common/styles';
+import Spinner from '../../_common/components/spinner';
 
 class Demographic extends Component {
 

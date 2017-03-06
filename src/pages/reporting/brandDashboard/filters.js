@@ -3,9 +3,9 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import SelectInput from '../_common/inputs/selectInput';
-import DateInput from '../_common/inputs/dateInput';
-import { FETCHING, isLoading } from '../../constants/statusTypes';
+import SelectInput from '../../_common/inputs/selectInput';
+import DateInput from '../../_common/inputs/dateInput';
+import { FETCHING, isLoading } from '../../../constants/statusTypes';
 // import * as actions from '../actions';
 // import { filtersSelector } from '../selector';
 

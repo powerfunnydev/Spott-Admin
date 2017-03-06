@@ -3,19 +3,19 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Highcharts from 'react-highcharts';
-import { routerPushWithReturnTo } from '../../actions/global';
+import { routerPushWithReturnTo } from '../../../actions/global';
 import moment from 'moment';
 // Note that Highcharts has to be in the codebase already
 // Highcharts more
 import HighchartsMore from 'highcharts-more';
 // Highcharts exporting
 import HighchartsExporting from 'highcharts-exporting';
-import Widget, { largeWidgetStyle, mediumWidgetStyle } from './widget';
-import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
-import ActivityFilterForm from './forms/activityFilterForm';
+import Widget, { largeWidgetStyle, mediumWidgetStyle } from '../widget';
+import { colors, fontWeights, makeTextStyle, Container } from '../../_common/styles';
+import ActivityFilterForm from './filters';
 import * as actions from './actions';
 import { activitySelector } from './selector';
-import { arraysEqual, slowdown } from '../../utils';
+import { arraysEqual, slowdown } from '../../../utils';
 
 HighchartsMore(Highcharts.Highcharts);
 HighchartsExporting(Highcharts.Highcharts);
