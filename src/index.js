@@ -153,12 +153,12 @@ function getRoutes ({ dispatch, getState }) {
         <Route component={MediaUpload} path='upload' />
       </Route>
 
+      {/* TODO: update roles! */}
+      <Route component={ReportingBrandDashboard} path='reporting/brand-dashboard' onEnter={requireOneRole([ BROADCASTER, CONTENT_MANAGER, ADMIN ])}/>
       <Route component={Reporting} path='reporting' onEnter={requireOneRole([ BROADCASTER, CONTENT_MANAGER, ADMIN ])}>
         <IndexRedirect to='activity' />
         <Route component={ReportingActivity} path='activity'/>
         <Route component={ReportingRankings} path='rankings'/>
-        {/* TODO: update roles! */}
-        <Route component={ReportingBrandDashboard} path='brand-dashboard'/>
       </Route>
       <Route path='content' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <IndexRedirect to='content-producers' />

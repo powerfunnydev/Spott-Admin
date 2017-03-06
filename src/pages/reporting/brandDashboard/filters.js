@@ -6,18 +6,8 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import SelectInput from '../../_common/inputs/selectInput';
 import DateInput from '../../_common/inputs/dateInput';
 import { FETCHING, isLoading } from '../../../constants/statusTypes';
-// import * as actions from '../actions';
-// import { filtersSelector } from '../selector';
-
-function filtersSelector () {
-  return {};
-}
-const actions = {};
-
-// endDate: moment().startOf('day'),
-// // We assume the ALL event will be always there.
-// event: 'ALL',
-// startDate: moment().startOf('day').subtract(1, 'months').date(1)
+import * as actions from './actions';
+import { filtersSelector } from './selector';
 
 @connect(filtersSelector, (dispatch) => ({
   loadAges: bindActionCreators(actions.loadAges, dispatch),
@@ -27,14 +17,21 @@ const actions = {};
 export default class Filters extends Component {
 
   static propTypes = {
+    ages: ImmutablePropTypes.map.isRequired,
+    agesById: ImmutablePropTypes.map.isRequired,
     events: ImmutablePropTypes.map,
     eventsById: ImmutablePropTypes.map,
     fields: PropTypes.shape({
+      ages: PropTypes.array,
       endDate: PropTypes.object,
       events: PropTypes.array, // event ids
-      startDate: PropTypes.object
+      startDate: PropTypes.object,
+      genders: PropTypes.array
     }).isRequired,
-    loadEvents: PropTypes.func.isRequired,
+    genders: ImmutablePropTypes.map.isRequired,
+    gendersById: ImmutablePropTypes.map.isRequired,
+    loadAges: PropTypes.func.isRequired,
+    loadGenders: PropTypes.func.isRequired,
     style: PropTypes.object,
     onChange: PropTypes.func.isRequired
   };
@@ -72,7 +69,7 @@ export default class Filters extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      ages, agesById, events, eventsById, fields, genders, gendersById, style, onChange
+      ages, agesById, fields, genders, gendersById, style, onChange
     } = this.props;
 
     return (
@@ -99,7 +96,6 @@ export default class Filters extends Component {
             placeholder='Gender'
             style={styles.field}
             onChange={onChange.bind(null, 'genders', 'array')} />
-          {/* TODO: Add location filter. */}
         </div>
         <DateInput
           dateFormat='D MMMM YYYY'

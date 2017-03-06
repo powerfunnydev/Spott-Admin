@@ -5,21 +5,20 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
-import * as actions from './actions';
 import * as globalActions from '../../../actions/global';
-import NumberWidget from './numberWidget';
-import HighchartsWidget from './highchartsWidget';
-import MapWidget from './mapWidget';
-import ListWidget from './listWidget';
 import ListView from '../../_common/components/listView/index';
 import { tableDecorator } from '../../_common/components/table/index';
-import DemographicsWidget from './demographicsWidget';
-
 import { colors, fontWeights, makeTextStyle, Container } from '../../_common/styles';
 import { SideMenu } from '../../app/sideMenu';
 import Header from '../../app/multiFunctionalHeader';
 import { brandActivityConfig } from './defaultHighchartsConfig';
-
+import DemographicsWidget from './demographicsWidget';
+import Filters from './filters';
+import NumberWidget from './numberWidget';
+import HighchartsWidget from './highchartsWidget';
+import MapWidget from './mapWidget';
+import ListWidget from './listWidget';
+import * as actions from './actions';
 import selector, { topMediaPrefix } from './selector';
 
 const listViewStyle = {
@@ -214,6 +213,7 @@ export default class BrandDashboard extends Component {
     return (
       <SideMenu location={location}>
         <Header hierarchy={[ { title: 'Dashboard', url: '/brand-dashboard' } ]}/>
+        <Filters/>
         <Container style={styles.wrapper}>
           <div style={styles.numberWidgets}>
             <NumberWidget style={styles.numberWidget} title='Tagged products'>

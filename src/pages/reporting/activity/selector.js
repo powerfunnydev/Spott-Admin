@@ -1,10 +1,8 @@
 import { createSelector, createStructuredSelector } from 'reselect';
 import {
-  createEntityIdsByRelationSelector,
   createEntitiesByListSelector,
   eventsEntitiesSelector,
   eventsListSelector,
-  searchStringHasMediaRelationsSelector,
   listMediaEntitiesSelector,
   gendersEntitiesSelector
 } from '../../../selectors/data';
@@ -23,19 +21,7 @@ const ageDataSelector = (state) => state.getIn([ 'reporting', 'ageData' ]);
 const genderDataSelector = (state) => state.getIn([ 'reporting', 'genderData' ]);
 const timelineDataSelector = (state) => state.getIn([ 'reporting', 'timelineData' ]);
 
-const currentMediaSearchStringSelector = (state) => state.getIn([ 'reporting', 'currentMediaSearchString' ]);
-
-const searchedMediumIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediaRelationsSelector, currentMediaSearchStringSelector);
-
 const eventsSelector = createEntitiesByListSelector(eventsListSelector, eventsEntitiesSelector);
-
-// Header
-// //////
-
-export const mediaFilterSelector = createStructuredSelector({
-  mediaById: listMediaEntitiesSelector,
-  searchedMediumIds: searchedMediumIdsSelector
-});
 
 // Activity tab
 // ////////////

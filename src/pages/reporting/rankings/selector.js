@@ -1,10 +1,7 @@
 import { createSelector, createStructuredSelector } from 'reselect';
 import { Map } from 'immutable';
 import {
-  createEntityIdsByRelationSelector,
   createEntitiesByListSelector,
-  searchStringHasMediaRelationsSelector,
-  listMediaEntitiesSelector,
   gendersListSelector,
   gendersEntitiesSelector,
   agesListSelector,
@@ -51,8 +48,6 @@ function createInfiniteListSelector (dataSelector) {
   );
 }
 
-const currentMediaSearchStringSelector = (state) => state.getIn([ 'reporting', 'currentMediaSearchString' ]);
-
 const brandSubscriptionsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'brandSubscriptions' ]));
 const characterSubscriptionsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'characterSubscriptions' ]));
 const mediumSubscriptionsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'mediumSubscriptions' ]));
@@ -69,18 +64,8 @@ const currentProductBuysPageSelector = (state) => state.getIn([ 'reporting', 'cu
 const currentProductImpressionsPageSelector = (state) => state.getIn([ 'reporting', 'currentProductImpressionsPage' ]);
 const currentProductViewsPageSelector = (state) => state.getIn([ 'reporting', 'currentProductViewsPage' ]);
 
-const searchedMediumIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediaRelationsSelector, currentMediaSearchStringSelector);
-
 const gendersSelector = createEntitiesByListSelector(gendersListSelector, gendersEntitiesSelector);
 const agesSelector = createEntitiesByListSelector(agesListSelector, agesEntitiesSelector);
-
-// Header
-// //////
-
-export const mediaFilterSelector = createStructuredSelector({
-  mediaById: listMediaEntitiesSelector,
-  searchedMediumIds: searchedMediumIdsSelector
-});
 
 // Rankings tab
 // ////////////

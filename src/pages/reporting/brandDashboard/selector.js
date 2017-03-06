@@ -6,6 +6,28 @@ import {
 import { getInformationFromQuery } from '../../_common/components/table/index';
 import { serializeFilterHasTopMedia, serializeFilterHasTopPeople } from '../../../reducers/utils';
 
+// Filters
+// ///////
+import {
+  createEntityIdsByRelationSelector,
+  searchStringHasMediaRelationsSelector,
+  listMediaEntitiesSelector
+} from '../../../selectors/data';
+
+const currentMediaSearchStringSelector = (state) => state.getIn([ 'reporting', 'currentMediaSearchString' ]);
+const searchedMediumIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediaRelationsSelector, currentMediaSearchStringSelector);
+
+// Header
+// //////
+
+// export default createStructuredSelector({
+//   mediaById: listMediaEntitiesSelector,
+//   searchedMediumIds: searchedMediumIdsSelector
+// });
+
+// Brand Dashboard
+// ///////////////
+
 export const topMediaPrefix = 'topMedia';
 export const topPeoplePrefix = 'topPeople';
 
