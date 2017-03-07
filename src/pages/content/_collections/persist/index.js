@@ -88,9 +88,7 @@ export default class CollectionModal extends Component {
     const { collection, currentLocale, initialize, localeNames } = this.props;
 
     if (collection) {
-      console.warn('COLL', collection);
       for (const [ locale ] of localeNames) {
-        console.warn('locale', locale);
         if (typeof collection.basedOnDefaultLocale[locale] === 'undefined') {
           collection.basedOnDefaultLocale[locale] = true;
         }

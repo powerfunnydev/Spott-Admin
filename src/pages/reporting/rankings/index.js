@@ -3,6 +3,7 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
+import moment from 'moment';
 import { routerPushWithReturnTo } from '../../../actions/global';
 import { colors, fontWeights, makeTextStyle, Container } from '../../_common/styles';
 import InfiniteScroll from '../../_common/components/infiniteScroll';
@@ -255,7 +256,7 @@ export default class Rankings extends Component {
       currentProductImpressionsPage, currentProductViewsPage,
       characterSubscriptions, loadBrandSubscriptions, loadCharacterSubscriptions,
       loadMediumSubscriptions, loadMediumSyncs, loadProductBuys, loadProductImpressions,
-      loadProductViews, location: { query: { ages, genders } }, mediumSubscriptions,
+      loadProductViews, location: { query: { ages, endDate, genders, startDate } }, mediumSubscriptions,
       mediumSyncs, productBuys, productImpressions, productViews
     } = this.props;
 
@@ -265,7 +266,9 @@ export default class Rankings extends Component {
           <RankingsFilterForm
             fields={{
               ages: typeof ages === 'string' ? [ ages ] : ages,
-              genders: typeof genders === 'string' ? [ genders ] : genders
+              endDate: moment(endDate),
+              genders: typeof genders === 'string' ? [ genders ] : genders,
+              startDate: moment(startDate)
             }}
             style={styles.filter}
             onChange={this.onChangeRankingsFilter}/>

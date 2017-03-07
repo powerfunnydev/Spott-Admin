@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
+import moment from 'moment';
 import * as globalActions from '../../../actions/global';
 import ListView from '../../_common/components/listView/index';
 import { tableDecorator } from '../../_common/components/table/index';
@@ -17,11 +18,12 @@ import Filters from './filters';
 import NumberWidget from './numberWidget';
 import HighchartsWidget from './highchartsWidget';
 import MapWidget from './mapWidget';
-import ListWidget from './listWidget';
+import Widget from './widget';
+import OpportunitiesWidget from './opportunitiesWidget';
 import * as actions from './actions';
 import selector, { topMediaPrefix } from './selector';
 
-const listViewStyle = {
+const listViewContainerStyle = {
   height: 410,
   overflowY: 'scroll'
 };
@@ -39,6 +41,12 @@ const rowStyles = {
   },
   imagePlaceholder: {
     paddingRight: 39
+  },
+  title: {
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    width: '100%'
   }
 };
 
@@ -65,32 +73,33 @@ class TopMedia extends Component {
           <div style={rowStyles.container}>
             <img src={`${topMedia.getIn([ 'medium', 'posterImage', 'url' ])}?height=150&width=150`} style={rowStyles.image} />
           </div>) || <div style={rowStyles.imagePlaceholder}/>}
-        {topMedia.getIn([ 'medium', 'title' ])}
+        <div style={rowStyles.title}>{topMedia.getIn([ 'medium', 'title' ])}</div>
       </div>
     );
   }
 
   render () {
-    const { data, load, location: { query: { topMediaSortDirection, topMediaSortField } }, routerPushWithReturnTo, onSortField } = this.props;
+    const { data, load, location: { query: { topMediaSortDirection, topMediaSortField } }, routerPushWithReturnTo, style, onSortField } = this.props;
 
     const columns = [
-      { clickable: true, convert: this.getTitle, sort: true, sortField: 'TITLE', title: 'TITLE', type: 'custom' },
-      { clickable: true, name: 'taggedProducts', sort: true, sortField: 'TAGGED_PRODUCTS', title: 'TAGGED PRODUCTS', type: 'custom' },
-      { clickable: true, name: 'subscriptions', sort: true, sortField: 'SUBSCRIPTIONS', title: 'SUBSCRIPTIONS', type: 'custom' }
+      { clickable: true, colspan: 3, convert: this.getTitle, sort: true, sortField: 'TITLE', title: 'TITLE', type: 'custom' },
+      { clickable: true, colspan: 1, name: 'taggedProducts', sort: true, sortField: 'TAGGED_PRODUCTS', title: 'TAGGED PRODUCTS', type: 'custom' },
+      { clickable: true, colspan: 1, name: 'subscriptions', sort: true, sortField: 'SUBSCRIPTIONS', title: 'SUBSCRIPTIONS', type: 'custom' }
     ];
 
     return (
-      <ListWidget title='Top media for your brand'>
-        <ListView
-          columns={columns}
-          data={data}
-          load={load}
-          routerPushWithReturnTo={routerPushWithReturnTo}
-          sortDirection={topMediaSortDirection}
-          sortField={topMediaSortField}
-          style={listViewStyle}
-          onSortField={(name) => onSortField.bind(this, name)} />
-      </ListWidget>
+      <Widget style={style} title='Top media for your brand'>
+        <div style={listViewContainerStyle}>
+          <ListView
+            columns={columns}
+            data={data}
+            load={load}
+            routerPushWithReturnTo={routerPushWithReturnTo}
+            sortDirection={topMediaSortDirection}
+            sortField={topMediaSortField}
+            onSortField={(name) => onSortField.bind(this, name)} />
+        </div>
+      </Widget>
     );
   }
 }
@@ -118,7 +127,7 @@ class TopPeople extends Component {
           <div style={rowStyles.container}>
             <img src={`${topMedia.getIn([ 'character', 'portraitImage', 'url' ])}?height=150&width=150`} style={rowStyles.image} />
           </div>) || <div style={rowStyles.imagePlaceholder}/>}
-        {topMedia.getIn([ 'character', 'name' ])}
+        <div style={rowStyles.title}>{topMedia.getIn([ 'character', 'name' ])}</div>
       </div>
     );
   }
@@ -127,23 +136,24 @@ class TopPeople extends Component {
     const { data, load, location: { query: { topMediaSortDirection, topMediaSortField } }, routerPushWithReturnTo, style, onSortField } = this.props;
 
     const columns = [
-      { clickable: true, convert: this.getTitle, sort: true, sortField: 'TITLE', title: 'TITLE', type: 'custom' },
-      { clickable: true, name: 'taggedProducts', sort: true, sortField: 'TAGGED_PRODUCTS', title: 'TAGGED PRODUCTS', type: 'custom' },
-      { clickable: true, name: 'subscriptions', sort: true, sortField: 'SUBSCRIPTIONS', title: 'SUBSCRIPTIONS', type: 'custom' }
+      { clickable: true, colspan: 3, convert: this.getTitle, sort: true, sortField: 'TITLE', title: 'TITLE', type: 'custom' },
+      { clickable: true, colspan: 1, name: 'taggedProducts', sort: true, sortField: 'TAGGED_PRODUCTS', title: 'TAGGED PRODUCTS', type: 'custom' },
+      { clickable: true, colspan: 1, name: 'subscriptions', sort: true, sortField: 'SUBSCRIPTIONS', title: 'SUBSCRIPTIONS', type: 'custom' }
     ];
 
     return (
-      <ListWidget style={style} title='Top people and characters for your brand'>
-        <ListView
-          columns={columns}
-          data={data}
-          load={load}
-          routerPushWithReturnTo={routerPushWithReturnTo}
-          sortDirection={topMediaSortDirection}
-          sortField={topMediaSortField}
-          style={listViewStyle}
-          onSortField={(name) => onSortField.bind(this, name)} />
-      </ListWidget>
+      <Widget style={style} title='Top people and characters for your brand'>
+        <div style={listViewContainerStyle}>
+          <ListView
+            columns={columns}
+            data={data}
+            load={load}
+            routerPushWithReturnTo={routerPushWithReturnTo}
+            sortDirection={topMediaSortDirection}
+            sortField={topMediaSortField}
+            onSortField={(name) => onSortField.bind(this, name)} />
+        </div>
+      </Widget>
     );
   }
 }
@@ -165,6 +175,11 @@ export default class BrandDashboard extends Component {
     topMedia: ImmutablePropTypes.map.isRequired
   };
 
+  constructor (props) {
+    super(props);
+    this.onChangeFilter = ::this.onChangeFilter;
+  }
+
   onSortField (listName) {
     console.warn('Sort fields', arguments);
   }
@@ -174,9 +189,24 @@ export default class BrandDashboard extends Component {
     this.props.loadTopPeople(this.props.location.query);
   }
 
+  onChangeFilter (field, type, value) {
+    this.props.routerPushWithReturnTo({
+      ...this.props.location,
+      query: {
+        ...this.props.location.query,
+        [field]: value
+      }
+    });
+  }
+
   static styles = {
     paddingBottom: {
       paddingBottom: '1.5em'
+    },
+    listWidget: {
+      paddingBottom: '1.5em',
+      paddingLeft: '0.75em',
+      paddingRight: '0.75em'
     },
     tabs: {
       borderBottomWidth: 1,
@@ -204,16 +234,34 @@ export default class BrandDashboard extends Component {
       display: 'flex',
       marginLeft: '-0.75em',
       marginRight: '-0.75em'
+    },
+    filters: {
+      paddingTop: '1.5em',
+      paddingBottom: '1em'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { children, loadTopMedia, topPeople, loadTopPeople, location, routerPushWithReturnTo, topMedia } = this.props;
+    const {
+      children, loadTopMedia, loadTopPeople, location, location: { query: { ages,
+      endDate, genders, languages, startDate } }, routerPushWithReturnTo, topMedia, topPeople
+    } = this.props;
     return (
       <SideMenu location={location}>
         <Header hierarchy={[ { title: 'Dashboard', url: '/brand-dashboard' } ]}/>
-        <Filters/>
+        <Container>
+          <Filters
+            fields={{
+              ages: typeof ages === 'string' ? [ ages ] : ages,
+              genders: typeof genders === 'string' ? [ genders ] : genders,
+              languages: typeof languages === 'string' ? [ languages ] : languages,
+              endDate: moment(endDate),
+              startDate: moment(startDate)
+            }}
+            style={styles.filters}
+            onChange={this.onChangeFilter}/>
+        </Container>
         <Container style={styles.wrapper}>
           <div style={styles.numberWidgets}>
             <NumberWidget style={styles.numberWidget} title='Tagged products'>
@@ -236,22 +284,23 @@ export default class BrandDashboard extends Component {
             </NumberWidget>
           </div>
           <HighchartsWidget config={brandActivityConfig} style={styles.paddingBottom} title='Brand activity' />
-          <MapWidget style={styles.paddingBottom} title='Brand activity by region' />
+          {/* <MapWidget style={styles.paddingBottom} title='Brand activity by region' /> */}
           <div style={styles.listWidgets}>
             <TopMedia
               data={topMedia}
               load={() => loadTopMedia(location.query)}
               location={location}
               routerPushWithReturnTo={routerPushWithReturnTo}
-              style={styles.paddingBottom} />
+              style={styles.listWidget} />
             <TopPeople
               data={topPeople}
               load={() => loadTopPeople(location.query)}
               location={location}
               routerPushWithReturnTo={routerPushWithReturnTo}
-              style={styles.paddingBottom} />
+              style={styles.listWidget} />
           </div>
-          <DemographicsWidget title='Demographics' />
+          <DemographicsWidget style={styles.paddingBottom} title='Demographics' />
+          <OpportunitiesWidget style={styles.paddingBottom}/>
         </Container>
         {children}
       </SideMenu>

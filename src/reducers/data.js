@@ -200,10 +200,8 @@ export default (state = fromJS({
       return searchError(state, 'filterHasTopMedia', serializeFilterHasTopMedia(action), action.error);
 
     case brandDashboardActions.TOP_PEOPLE_FETCH_START:
-      console.warn('SERIALIZ RED', serializeFilterHasTopMedia(action));
       return searchStart(state, 'filterHasTopPeople', serializeFilterHasTopPeople(action));
     case brandDashboardActions.TOP_PEOPLE_FETCH_SUCCESS:
-      console.warn('DATa', action.data.data);
       return searchSuccess(state, 'topPeople', 'filterHasTopPeople', serializeFilterHasTopPeople(action), action.data.data);
     case brandDashboardActions.TOP_PEOPLE_FETCH_ERROR:
       return searchError(state, 'filterHasTopPeople', serializeFilterHasTopPeople(action), action.error);

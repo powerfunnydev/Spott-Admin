@@ -1,9 +1,11 @@
+import { fetchLanguages } from '../../../actions/language';
 import { fetchTopMedia, fetchTopPeople } from '../../../actions/brandDashboard';
 import { fetchAges, fetchGenders } from '../../../actions/reporting';
 
 // Events are for every view the same.
 export const loadAges = fetchAges;
 export const loadGenders = fetchGenders;
+export const loadLanguages = fetchLanguages;
 
 // Action types
 // ////////////

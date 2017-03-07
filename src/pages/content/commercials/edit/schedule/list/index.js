@@ -132,25 +132,25 @@ export default class Schedule extends Component {
         <Table style={styles.customTable}>
           <Headers>
             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-            <CustomCel style={[ headerStyles.header, headerStyles.firstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>
+            <CustomCel style={[ headerStyles.base, headerStyles.first, styles.adaptedCustomCel, { flex: 2 } ]}>
               Broadcaster
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>
+            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 2 } ]}>
               Channels
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>
+            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 2 } ]}>
               Content
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>
+            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 2 } ]}>
               Start
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>
+            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 2 } ]}>
               End
             </CustomCel>
-            {/* <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>
+            {/* <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 2 } ]}>
               Status
             </CustomCel> */}
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 1 } ]} />
+            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 1 } ]} />
           </Headers>
           <Rows style={styles.adaptedRows}>
             {scheduleEntries.get('data').map((scheduleEntry, index) => {

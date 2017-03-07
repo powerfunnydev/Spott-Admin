@@ -123,16 +123,16 @@ export default class Audiences extends Component {
         <Table style={styles.customTable}>
           <Headers>
             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-            <CustomCel style={[ headerStyles.header, headerStyles.firstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>
+            <CustomCel style={[ headerStyles.base, headerStyles.first, styles.adaptedCustomCel, { flex: 2 } ]}>
               Name
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>
+            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 2 } ]}>
               Locations
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>
+            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 2 } ]}>
               Languages
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 1 } ]} />
+            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 1 } ]} />
           </Headers>
           <Rows style={styles.adaptedRows}>
             {audiences.get('data').map((audience, index) => {

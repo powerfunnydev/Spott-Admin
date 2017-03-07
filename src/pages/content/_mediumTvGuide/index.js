@@ -181,24 +181,24 @@ export default class TvGuideList extends Component {
             <Table style={generalStyles.lightGrayBorder}>
               <Headers>
                 {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes.bind(this.mediumId)}/>
-                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Channel</CustomCel>
-                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Title</CustomCel>
+                <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.base, headerStyles.first ]} onChange={selectAllCheckboxes.bind(this.mediumId)}/>
+                <CustomCel style={[ headerStyles.base, { flex: 1 } ]}>Channel</CustomCel>
+                <CustomCel style={[ headerStyles.base, { flex: 2 } ]}>Title</CustomCel>
                 <CustomCel
                   sortColumn={this.props.onSortField.bind(this, 'START')}
                   sortDirection={tvGuideSortField === 'START' ? sortDirections[tvGuideSortDirection] : NONE}
-                  style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>
+                  style={[ headerStyles.base, headerStyles.clickable, { flex: 1 } ]}>
                   Start
                 </CustomCel>
-                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>End</CustomCel>
-                <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 0.8 } ]}>Updated by</CustomCel>
+                <CustomCel style={[ headerStyles.base, { flex: 1 } ]}>End</CustomCel>
+                <CustomCel style={[ headerStyles.base, { flex: 0.8 } ]}>Updated by</CustomCel>
                 <CustomCel
                   sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')}
                   sortDirection={tvGuideSortField === 'LAST_MODIFIED' ? sortDirections[tvGuideSortDirection] : NONE}
-                  style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>
+                  style={[ headerStyles.base, headerStyles.clickable, { flex: 1 } ]}>
                   Last updated on
                 </CustomCel>
-                <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
+                <DropdownCel style={headerStyles.base}/>
               </Headers>
               <Rows isLoading={tvGuideEntries.get('_status') !== 'loaded'}>
                 {tvGuideEntries.get('data').map((tvGuideEntry, index) => {

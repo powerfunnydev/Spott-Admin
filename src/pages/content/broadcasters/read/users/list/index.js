@@ -126,12 +126,12 @@ export default class Users extends Component {
                 <Table style={generalStyles.lightGrayBorder}>
                   <Headers>
                     {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                    <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'USERNAME')} sortDirection = {usersSortField === 'USERNAME' ? sortDirections[usersSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 2 } ]}>Username</CustomCel>
-                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>Email</CustomCel>
-                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>First Name</CustomCel>
-                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 1 } ]}>Last Name</CustomCel>
-                    <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
+                    <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.base, headerStyles.first ]} onChange={selectAllCheckboxes}/>
+                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'USERNAME')} sortDirection = {usersSortField === 'USERNAME' ? sortDirections[usersSortDirection] : NONE} style={[ headerStyles.base, headerStyles.clickable, { flex: 2 } ]}>Username</CustomCel>
+                    <CustomCel style={[ headerStyles.base, { flex: 2 } ]}>Email</CustomCel>
+                    <CustomCel style={[ headerStyles.base, { flex: 1 } ]}>First Name</CustomCel>
+                    <CustomCel style={[ headerStyles.base, { flex: 1 } ]}>Last Name</CustomCel>
+                    <DropdownCel style={[ headerStyles.base ]}/>
                   </Headers>
                   <Rows isLoading={users.get('_status') !== 'loaded'}>
                     {users.get('data').map((user, index) => {

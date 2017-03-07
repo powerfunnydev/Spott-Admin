@@ -68,22 +68,20 @@ export const generalStyles = {
 };
 
 export const headerStyles = {
-  header: {
+  base: {
     minHeight: '32px',
     ...makeTextStyle(null, '11px', '0.50px'),
-    textTransform: 'uppercase'
-  },
-  firstHeader: {
-    borderBottom: `1px solid ${colors.lightGray2}`
-  },
-  notFirstHeader: {
+    textTransform: 'uppercase',
     borderLeft: `1px solid ${colors.lightGray2}`,
     borderBottom: `1px solid ${colors.lightGray2}`
   },
-  clickableHeader: {
+  clickable: {
     ':hover': {
       backgroundColor: colors.lightGray4
     }
+  },
+  first: {
+    borderLeft: 'none'
   }
 };
 

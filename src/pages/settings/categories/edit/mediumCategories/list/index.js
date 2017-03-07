@@ -113,10 +113,10 @@ export default class MediumCategories extends Component {
         <Table style={styles.customTable}>
           <Headers>
             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-            <CustomCel style={[ headerStyles.header, headerStyles.firstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>
+            <CustomCel style={[ headerStyles.base, headerStyles.first, styles.adaptedCustomCel, { flex: 2 } ]}>
               Medium Category
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { width: 60 } ]} />
+            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { width: 60 } ]} />
           </Headers>
           <Rows style={styles.adaptedRows}>
             {mediumCategories.get('data').map((mediumCategory, index) => {

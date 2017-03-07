@@ -35,27 +35,31 @@ class ListView extends Component {
             columns.map((column, index) => {
               switch (column.type) {
                 case 'checkBox':
-                  return <CheckBoxCel checked={isSelected && isSelected.get('ALL')} key={index} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>;
+                  return (<CheckBoxCel
+                    checked={isSelected && isSelected.get('ALL')}
+                    key={index}
+                    name='header'
+                    style={[ headerStyles.base, index === 0 && headerStyles.first ]} onChange={selectAllCheckboxes}/>);
                 case 'custom':
                   return (
                     column.sort ? (
                       <CustomCel
                         key={index} sortColumn={onSortField(column.sortField)}
                         sortDirection = {sortField === column.sortField ? sortDirections[sortDirection] : NONE}
-                        style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: column.colspan || 1 } ]}>
+                        style={[ headerStyles.base, index === 0 && headerStyles.first, headerStyles.clickable, { flex: column.colspan || 1 } ]}>
                         {column.title}
                       </CustomCel>) : (
                       <CustomCel
-                        key={index} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: column.colspan || 1 } ]}>
+                        key={index} style={[ headerStyles.base, index === 0 && headerStyles.first, { flex: column.colspan || 1 } ]}>
                         {column.title}
                       </CustomCel>)
                   );
                 case 'dropdown':
-                  return <DropdownCel key={index} style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>;
+                  return <DropdownCel key={index} style={[ headerStyles.base, index === 0 && headerStyles.first ]}/>;
                 default:
                   return (
                     <CustomCel
-                      key={index} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: column.colspan || 1 } ]}>
+                      key={index} style={[ headerStyles.base, index === 0 && headerStyles.first, { flex: column.colspan || 1 } ]}>
                       {column.title}
                     </CustomCel>
                   );

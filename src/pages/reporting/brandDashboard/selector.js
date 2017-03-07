@@ -1,29 +1,25 @@
 import { createStructuredSelector } from 'reselect';
 import {
-  createEntitiesByRelationSelector, filterHasTopMediaRelationsSelector,
-  filterHasTopPeopleRelationsSelector, topMediaEntitiesSelector, topPeopleEntitiesSelector
+  agesEntitiesSelector, gendersEntitiesSelector, gendersListSelector, agesListSelector,
+  createEntitiesByRelationSelector, createEntitiesByListSelector, filterHasTopMediaRelationsSelector,
+  filterHasTopPeopleRelationsSelector, topMediaEntitiesSelector, topPeopleEntitiesSelector, languagesEntitiesSelector
 } from '../../../selectors/data';
 import { getInformationFromQuery } from '../../_common/components/table/index';
 import { serializeFilterHasTopMedia, serializeFilterHasTopPeople } from '../../../reducers/utils';
 
 // Filters
 // ///////
-import {
-  createEntityIdsByRelationSelector,
-  searchStringHasMediaRelationsSelector,
-  listMediaEntitiesSelector
-} from '../../../selectors/data';
 
-const currentMediaSearchStringSelector = (state) => state.getIn([ 'reporting', 'currentMediaSearchString' ]);
-const searchedMediumIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediaRelationsSelector, currentMediaSearchStringSelector);
+const gendersSelector = createEntitiesByListSelector(gendersListSelector, gendersEntitiesSelector);
+const agesSelector = createEntitiesByListSelector(agesListSelector, agesEntitiesSelector);
 
-// Header
-// //////
-
-// export default createStructuredSelector({
-//   mediaById: listMediaEntitiesSelector,
-//   searchedMediumIds: searchedMediumIdsSelector
-// });
+export const filtersSelector = createStructuredSelector({
+  ages: agesSelector,
+  agesById: agesEntitiesSelector,
+  genders: gendersSelector,
+  gendersById: gendersEntitiesSelector,
+  languagesById: languagesEntitiesSelector
+});
 
 // Brand Dashboard
 // ///////////////

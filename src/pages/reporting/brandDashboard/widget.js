@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { colors, fontWeights, makeTextStyle, mediaQueries } from '../../_common/styles';
+import { colors, fontWeights, makeTextStyle } from '../../_common/styles';
 import Spinner from '../../_common/components/spinner';
 
 @Radium
@@ -12,22 +12,6 @@ export default class ListWidget extends Component {
     style: PropTypes.object,
     title: PropTypes.string
   };
-
-  constructor (props) {
-    super(props);
-    const markers = [];
-
-    for (let i = 0; i < 10000; i++) {
-      markers.push({
-        label: `${Math.round(Math.random() * 100)}`,
-        position: { lat: 50.3 + Math.random() * 2, lng: 4 + Math.random() * 2 }
-      });
-    }
-
-    this.state = {
-      markers
-    };
-  }
 
   static styles = {
     container: {
@@ -41,12 +25,6 @@ export default class ListWidget extends Component {
       paddingLeft: '1.5em',
       paddingRight: '1.5em'
     },
-    wrapper: {
-      position: 'relative'
-    },
-    content: {
-
-    },
     header: {
       display: 'flex',
       alignItems: 'center',
@@ -59,14 +37,7 @@ export default class ListWidget extends Component {
       textTransform: 'uppercase'
     },
     widget: {
-      width: '100%',
-      marginBottom: '1.75em',
-      paddingLeft: '0.75em',
-      paddingRight: '0.75em',
-      [mediaQueries.large]: {
-        display: 'inline-block',
-        width: '50%'
-      }
+      width: '100%'
     }
   };
 
@@ -76,13 +47,12 @@ export default class ListWidget extends Component {
     return (
       <div style={[ styles.widget, style ]}>
         <div style={styles.container}>
-          <div style={styles.wrapper}>
+          {title &&
             <div style={styles.header}>
               <h2 style={styles.title}>{title}&nbsp;&nbsp;&nbsp;</h2>
               {isLoading && <Spinner size='small' />}
-            </div>
-            {children}
-          </div>
+            </div>}
+          {children}
         </div>
       </div>
     );
