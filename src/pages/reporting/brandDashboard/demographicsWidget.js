@@ -101,7 +101,7 @@ export default class DemographicsWidget extends Component {
                   { label: 'Top Character', value: 'Jana' },
                   { label: 'Top Person', value: 'Penelope Cruz' }
                 ].map(({ label, value }, i) => (
-                  <div style={styles.section}>
+                  <div key={i} style={styles.section}>
                     <div style={styles.label}>{label}</div>
                     <div style={[ styles.value, { marginTop: 4 } ]}>{value}</div>
                   </div>
@@ -118,7 +118,7 @@ export default class DemographicsWidget extends Component {
                     { label: 'Product Clicktroughs', value: 862 },
                     { label: 'Product Buys', value: 23 }
                   ].map(({ label, value }, i) => (
-                    <div style={styles.section}>
+                    <div key={i} style={styles.section}>
                       <div style={styles.value}>{value}</div>
                       <div style={[ styles.label, { marginTop: 4 } ]}>{label}</div>
                     </div>
@@ -134,7 +134,7 @@ export default class DemographicsWidget extends Component {
                     { label: 'Product Clicktroughs', value: 862 },
                     { label: 'Product Buys', value: 23 }
                   ].map(({ label, value }, i) => (
-                    <div style={styles.section}>
+                    <div key={i} style={styles.section}>
                       <div style={styles.value}>{value}</div>
                       <div style={[ styles.label, { marginTop: 4 } ]}>{label}</div>
                     </div>

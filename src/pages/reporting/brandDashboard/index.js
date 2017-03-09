@@ -69,7 +69,6 @@ class TopMedia extends Component {
             columns={columns}
             data={data}
             load={load}
-            routerPushWithReturnTo={routerPushWithReturnTo}
             sortDirection={topMediaSortDirection}
             sortField={topMediaSortField}
             onSortField={(name) => onSortField.bind(this, name)} />
@@ -99,7 +98,7 @@ class TopPeople extends Component {
     return (
       <ImageTitle
         imageUrl={topPeople.getIn([ 'character', 'portraitImage', 'url' ])}
-        title={topPeople.getIn([ 'character', 'title' ])}/>
+        title={topPeople.getIn([ 'character', 'name' ])}/>
     );
   }
 
@@ -119,7 +118,6 @@ class TopPeople extends Component {
             columns={columns}
             data={data}
             load={load}
-            routerPushWithReturnTo={routerPushWithReturnTo}
             sortDirection={topMediaSortDirection}
             sortField={topMediaSortField}
             onSortField={(name) => onSortField.bind(this, name)} />

@@ -31,9 +31,9 @@ export class CustomCel extends Component {
       fontSize: '0.75em',
       paddingLeft: '1em',
       paddingRight: '1em',
-      minHeight: 45,
-      paddingTop: '1em',
-      paddingBottom: '1em'
+      minHeight: 40,
+      paddingTop: '0.5em',
+      paddingBottom: '0.5em'
     },
     pointer: {
       cursor: 'pointer'

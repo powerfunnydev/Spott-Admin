@@ -1,12 +1,35 @@
 import React, { Component, PropTypes } from 'react';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import moment from 'moment';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as globalActions from '../../../../actions/global';
 import { DropdownCel, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row } from '../table/index';
-import Dropdown, { styles as dropdownStyles } from '../actionDropdown';
 import { confirmation } from '../../askConfirmation';
+import Dropdown, { styles as dropdownStyles } from '../actionDropdown';
 
 const numberOfRows = 25;
-class ListView extends Component {
+
+@connect(null, (dispatch) => ({
+  routerPushWithReturnTo: bindActionCreators(globalActions.routerPushWithReturnTo, dispatch)
+}))
+export default class ListView extends Component {
+
+  static propTypes = {
+    columns: PropTypes.array.isRequired,
+    data: ImmutablePropTypes.map.isRequired,
+    deleteItem: PropTypes.func,
+    getEditUrl: PropTypes.func,
+    isSelected: ImmutablePropTypes.map,
+    load: PropTypes.func,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
+    selectAllCheckboxes: PropTypes.func,
+    sortDirection: PropTypes.string,
+    sortField: PropTypes.string,
+    style: PropTypes.object,
+    onCheckboxChange: PropTypes.func,
+    onSortField: PropTypes.func
+  };
 
   getFormatedDate = (dateString) => {
     const date = new Date(dateString);
@@ -18,7 +41,9 @@ class ListView extends Component {
       const result = await confirmation();
       if (result) {
         await props.deleteItem(id, type);
-        await props.load();
+        if (props.load) {
+          await props.load();
+        }
       }
     }
   }
@@ -44,7 +69,7 @@ class ListView extends Component {
                   return (
                     column.sort ? (
                       <CustomCel
-                        key={index} sortColumn={onSortField(column.sortField)}
+                        key={index} sortColumn={onSortField && onSortField(column.sortField)}
                         sortDirection = {sortField === column.sortField ? sortDirections[sortDirection] : NONE}
                         style={[ headerStyles.base, index === 0 && headerStyles.first, headerStyles.clickable, { flex: column.colspan || 1 } ]}>
                         {column.title}
@@ -111,20 +136,3 @@ class ListView extends Component {
     );
   }
 }
-
-ListView.propTypes = {
-  columns: PropTypes.array.isRequired,
-  data: ImmutablePropTypes.map.isRequired,
-  deleteItem: PropTypes.func,
-  getEditUrl: PropTypes.func,
-  isSelected: ImmutablePropTypes.map,
-  load: PropTypes.func.isRequired,
-  routerPushWithReturnTo: PropTypes.func.isRequired,
-  selectAllCheckboxes: PropTypes.func,
-  sortDirection: PropTypes.string,
-  sortField: PropTypes.string,
-  onCheckboxChange: PropTypes.func,
-  onSortField: PropTypes.func.isRequired
-};
-
-export default ListView;

@@ -1,10 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import { List, Map } from 'immutable';
+import { fromJS } from 'immutable';
 import { colors, fontWeights, makeTextStyle, mediaQueries } from '../../_common/styles';
+import * as globalActions from '../../../actions/global';
+import ListView from '../../_common/components/listView/index';
+import Button from '../../_common/components/buttons/button';
+import ImageTitle from './imageTitle';
 import Widget from './widget';
 import OpportunitySection from './opportunitySection';
-import ListView from '../../_common/components/listView/index';
 
 @Radium
 export default class OpportunitiesWidget extends Component {
@@ -101,8 +104,26 @@ export default class OpportunitiesWidget extends Component {
       textAlign: 'center',
       paddingBottom: 20,
       textTransform: 'uppercase'
+    },
+    mailAccounts: {
+      label: {
+        ...makeTextStyle(fontWeights.medium, '1.5em'),
+        color: colors.lightGreen,
+        textAlign: 'center',
+        paddingBottom: 7
+      },
+      title: {
+        ...makeTextStyle(fontWeights.medium, '1.063em'),
+        color: colors.black2,
+        textAlign: 'center',
+        paddingBottom: 40
+      }
     }
   };
+
+  getTitle (item) {
+    return <ImageTitle imageUrl={item.get('url')} title={item.get('title')} />;
+  }
 
   render () {
     const styles = this.constructor.styles;
@@ -111,9 +132,18 @@ export default class OpportunitiesWidget extends Component {
 
     const columns = [
       { colspan: 3, convert: this.getTitle, title: 'TITLE', type: 'custom' },
-      { colspan: 1, name: 'taggedProducts', title: 'TYPE', type: 'custom' },
+      { colspan: 1, name: 'type', title: 'TYPE', type: 'custom' },
       { colspan: 1, name: 'subscriptions', title: 'SUBSCRIPTIONS', type: 'custom' }
     ];
+
+    const productPlacementData = fromJS({
+      _status: 'loaded',
+      data: [
+        { convert: this.getTitle, title: 'Familie', type: 'TV-Series', subscriptions: 468, url: 'https://spott-cms-rest-tst.appiness.mobi:443/apptvate/rest/v004/image/images/51305c9e-8db8-4f2f-8afe-6b21eef92711' },
+        { title: 'Louise Van den Bossche', type: 'Character', subscriptions: 234, url: 'https://spott-cms-rest-tst.appiness.mobi:443/apptvate/rest/v004/image/images/51305c9e-8db8-4f2f-8afe-6b21eef92711' },
+        { title: 'Modern Family', type: 'TV-Series', subscriptions: 542, url: 'https://spott-cms-rest-tst.appiness.mobi:443/apptvate/rest/v004/image/images/51305c9e-8db8-4f2f-8afe-6b21eef92711' }
+      ]
+    });
 
     return (
       <Widget style={[ style, styles.widget ]} title={title}>
@@ -149,15 +179,24 @@ export default class OpportunitiesWidget extends Component {
             <div style={styles.sectionTitle}>Our product placement suggestions</div>
             <ListView
               columns={columns}
-              data={data}/>
+              data={productPlacementData}/>
+            <Button style={{ marginLeft: 0, marginTop: 24, width: '100%' }} text='Contact us and start a product placement deal' onClick={() => null}/>
           </OpportunitySection>
           <OpportunitySection style={styles.opportunitySection} title='Quarterly newsletter'>
             Quarterly newsletter
           </OpportunitySection>
-          <OpportunitySection title='Mail accounts'>
-            <div style={styles.sectionDescription}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas nisl dolor, aliquam ac commodo quis, rutrum at tortor. Aenean semper, eros ut facilisis ultrices, lorem lectus ultrices ipsum dolor amet.</div>
-            <div style={styles.sectionTitle}>Our product placement suggestions</div>
+          <OpportunitySection style={styles.opportunitySection} title='Mail accounts'>
+            <div style={[ styles.sectionDescription, { paddingBottom: 32 } ]}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas nisl dolor, aliquam ac commodo quis, rutrum at tortor. Aenean semper, eros ut facilisis ultrices, lorem lectus ultrices ipsum dolor amet.</div>
+            <div style={styles.mailAccounts.label}>3580 users</div>
+            <div style={styles.mailAccounts.title}>Subscribed to your brand</div>
+            <Button style={{ marginLeft: 0, width: '100%' }} text='Contact us and start a product placement deal' onClick={() => null}/>
           </OpportunitySection>
+          <div>
+            <div style={[ styles.description, { fontSize: '0.813em', paddingBottom: 18, paddingTop: 26 } ]}>
+              Feel free to contact us for more information on our offerings.
+            </div>
+            <Button style={{ marginBottom: 20, marginLeft: 0 }} text='Get in touch' onClick={() => null}/>
+          </div>
         </div>
       </Widget>
     );
