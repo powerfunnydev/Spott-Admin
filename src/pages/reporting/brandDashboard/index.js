@@ -19,6 +19,7 @@ import NumberWidget from './numberWidget';
 import HighchartsWidget from './highchartsWidget';
 import MapWidget from './mapWidget';
 import Widget from './widget';
+import ImageTitle from './imageTitle';
 import OpportunitiesWidget from './opportunitiesWidget';
 import * as actions from './actions';
 import selector, { topMediaPrefix } from './selector';
@@ -26,28 +27,6 @@ import selector, { topMediaPrefix } from './selector';
 const listViewContainerStyle = {
   height: 410,
   overflowY: 'scroll'
-};
-
-const rowStyles = {
-  container: {
-    paddingRight: 10,
-    display: 'inline-flex'
-  },
-  image: {
-    borderRadius: 2,
-    height: 29,
-    objectFit: 'contain',
-    width: 29
-  },
-  imagePlaceholder: {
-    paddingRight: 39
-  },
-  title: {
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    width: '100%'
-  }
 };
 
 @tableDecorator(topMediaPrefix)
@@ -68,13 +47,9 @@ class TopMedia extends Component {
 
   getTitle (topMedia) {
     return (
-      <div style={{ alignItems: 'center', display: 'inline-flex' }}>
-        {(topMedia.getIn([ 'medium', 'posterImage' ]) &&
-          <div style={rowStyles.container}>
-            <img src={`${topMedia.getIn([ 'medium', 'posterImage', 'url' ])}?height=150&width=150`} style={rowStyles.image} />
-          </div>) || <div style={rowStyles.imagePlaceholder}/>}
-        <div style={rowStyles.title}>{topMedia.getIn([ 'medium', 'title' ])}</div>
-      </div>
+      <ImageTitle
+        imageUrl={topMedia.getIn([ 'medium', 'posterImage', 'url' ])}
+        title={topMedia.getIn([ 'medium', 'title' ])}/>
     );
   }
 
@@ -120,15 +95,11 @@ class TopPeople extends Component {
     this.getTitle = ::this.getTitle;
   }
 
-  getTitle (topMedia) {
+  getTitle (topPeople) {
     return (
-      <div style={{ alignItems: 'center', display: 'inline-flex' }}>
-        {(topMedia.getIn([ 'character', 'portraitImage' ]) &&
-          <div style={rowStyles.container}>
-            <img src={`${topMedia.getIn([ 'character', 'portraitImage', 'url' ])}?height=150&width=150`} style={rowStyles.image} />
-          </div>) || <div style={rowStyles.imagePlaceholder}/>}
-        <div style={rowStyles.title}>{topMedia.getIn([ 'character', 'name' ])}</div>
-      </div>
+      <ImageTitle
+        imageUrl={topPeople.getIn([ 'character', 'portraitImage', 'url' ])}
+        title={topPeople.getIn([ 'character', 'title' ])}/>
     );
   }
 
