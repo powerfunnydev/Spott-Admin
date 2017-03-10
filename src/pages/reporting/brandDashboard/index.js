@@ -6,9 +6,11 @@ import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
 import moment from 'moment';
+import Highcharts from 'react-highcharts';
 import * as globalActions from '../../../actions/global';
 import ListView from '../../_common/components/listView/index';
 import { tableDecorator } from '../../_common/components/table/index';
+import MultiSelectInput from '../../_common/inputs/multiSelectInput';
 import { colors, fontWeights, makeTextStyle, Container } from '../../_common/styles';
 import { SideMenu } from '../../app/sideMenu';
 import Header from '../../app/multiFunctionalHeader';
@@ -16,7 +18,6 @@ import { brandActivityConfig } from './defaultHighchartsConfig';
 import DemographicsWidget from './demographicsWidget';
 import Filters from './filters';
 import NumberWidget from './numberWidget';
-import HighchartsWidget from './highchartsWidget';
 import MapWidget from './mapWidget';
 import Widget from './widget';
 import ImageTitle from './imageTitle';
@@ -128,6 +129,7 @@ class TopPeople extends Component {
 }
 
 @connect(selector, (dispatch) => ({
+  loadEvents: bindActionCreators(actions.loadEvents, dispatch),
   loadTopMedia: bindActionCreators(actions.loadTopMedia, dispatch),
   loadTopPeople: bindActionCreators(actions.loadTopPeople, dispatch),
   routerPushWithReturnTo: bindActionCreators(globalActions.routerPushWithReturnTo, dispatch)
@@ -137,6 +139,9 @@ export default class BrandDashboard extends Component {
 
   static propTypes = {
     // children: PropTypes.node.isRequired,
+    events: ImmutablePropTypes.map.isRequired,
+    eventsById: ImmutablePropTypes.map.isRequired,
+    loadEvents: PropTypes.func.isRequired,
     loadTopMedia: PropTypes.func.isRequired,
     loadTopPeople: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
@@ -156,6 +161,7 @@ export default class BrandDashboard extends Component {
   componentDidMount () {
     this.props.loadTopMedia(this.props.location.query);
     this.props.loadTopPeople(this.props.location.query);
+    this.props.loadEvents();
   }
 
   onChangeFilter (field, type, value) {
@@ -213,9 +219,12 @@ export default class BrandDashboard extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      children, loadTopMedia, loadTopPeople, location, location: { query: { ages,
-      endDate, genders, languages, startDate } }, routerPushWithReturnTo, topMedia, topPeople
+      children, eventsById, events, loadTopMedia, loadTopPeople, location, location:
+      { query: { ages, brandActivityEvents, endDate, genders, languages, startDate } },
+      routerPushWithReturnTo, topMedia, topPeople
     } = this.props;
+
+    console.warn('EVENTS', eventsById.toJS(), events.toJS());
     return (
       <SideMenu location={location}>
         <Header hierarchy={[ { title: 'Dashboard', url: '/brand-dashboard' } ]}/>
@@ -252,7 +261,19 @@ export default class BrandDashboard extends Component {
               <span>4%</span>
             </NumberWidget>
           </div>
-          <HighchartsWidget config={brandActivityConfig} style={styles.paddingBottom} title='Brand activity' />
+          <Widget style={styles.paddingBottom} title='Brand activity'>
+            <MultiSelectInput
+              first
+              getItemText={(id) => eventsById.getIn([ id, 'description' ])}
+              input={{ value: typeof brandActivityEvents === 'string' ? [ brandActivityEvents ] : brandActivityEvents }}
+              multiselect
+              name='brandActivityEvents'
+              options={events.get('data').map((e) => e.get('id')).toJS()}
+              placeholder='Events'
+              style={[ styles.field, { paddingRight: '0.75em' } ]}
+              onChange={this.onChangeFilter.bind(this, 'brandActivityEvents', 'array')} />
+            <Highcharts config={brandActivityConfig} isPureConfig />
+          </Widget>
           {/* <MapWidget style={styles.paddingBottom} title='Brand activity by region' /> */}
           <div style={styles.listWidgets}>
             <TopMedia

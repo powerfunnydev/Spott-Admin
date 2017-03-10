@@ -1,0 +1,12 @@
+.Multi > .Select-control {
+  line-height: 20px !important;
+  height: 20px !important;
+}
+
+.Multi > .Select-control .Select-value {
+  line-height: 20px !important;
+}
+
+.Multi > .Select-control .Select-input {
+  height: 20px !important;
+}

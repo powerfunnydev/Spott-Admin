@@ -1,7 +1,8 @@
 import { createStructuredSelector } from 'reselect';
 import {
   agesEntitiesSelector, gendersEntitiesSelector, gendersListSelector, agesListSelector,
-  createEntitiesByRelationSelector, createEntitiesByListSelector, filterHasTopMediaRelationsSelector,
+  createEntitiesByRelationSelector, createEntitiesByListSelector, eventsEntitiesSelector,
+  filterHasTopMediaRelationsSelector, eventsListSelector,
   filterHasTopPeopleRelationsSelector, topMediaEntitiesSelector, topPeopleEntitiesSelector, languagesEntitiesSelector
 } from '../../../selectors/data';
 import { getInformationFromQuery } from '../../_common/components/table/index';
@@ -49,7 +50,11 @@ export const topPeopleSelector = createEntitiesByRelationSelector(
   topPeopleEntitiesSelector
 );
 
+const eventsSelector = createEntitiesByListSelector(eventsListSelector, eventsEntitiesSelector);
+
 export default createStructuredSelector({
+  events: eventsSelector,
+  eventsById: eventsEntitiesSelector,
   topMedia: topMediaSelector,
   topPeople: topPeopleSelector
 });

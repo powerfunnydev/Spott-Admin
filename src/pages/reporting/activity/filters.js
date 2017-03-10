@@ -22,8 +22,8 @@ import { eventsFilterSelector } from './selector';
 export default class ActivityFilterForm extends Component {
 
   static propTypes = {
-    events: ImmutablePropTypes.map,
-    eventsById: ImmutablePropTypes.map,
+    events: ImmutablePropTypes.map.isRequired,
+    eventsById: ImmutablePropTypes.map.isRequired,
     fields: PropTypes.shape({
       endDate: PropTypes.object,
       events: PropTypes.array, // event ids
