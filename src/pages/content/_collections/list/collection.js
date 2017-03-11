@@ -326,7 +326,7 @@ export default class Collection extends Component {
     const { open } = this.state;
     const {
       collection, connectDragSource, connectDropTarget, contentStyle, isDragging, isLoading, isOver, style, onCollectionItemCreate,
-      onCollectionItemDelete, onCollectionItemEdit, onCollectionDelete, onCollectionEdit, onChangeCollectionVisibility,
+      onCollectionItemEdit, onCollectionDelete, onCollectionEdit, onChangeCollectionVisibility,
       moveCollection, persistMoveCollectionItem
     } = this.props;
 
