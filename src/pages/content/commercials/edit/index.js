@@ -421,6 +421,10 @@ export default class EditCommercial extends Component {
                     name='broadcasters'
                     options={searchedBroadcasterIds.get('data').toJS()}
                     placeholder='Broadcaster companies'/>
+                  <Field
+                    component={CheckboxInput}
+                    label='Live'
+                    name='live' />
                   <FormSubtitle>Images</FormSubtitle>
                   <div style={[ styles.paddingTop, styles.row ]}>
                     <div style={styles.paddingUploadImage}>

@@ -8,24 +8,27 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Section from '../../../_common/components/section';
 import { buttonStyles, colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } from '../../../_common/styles';
+import Button from '../../../_common/components/buttons/button';
 import PlusButton from '../../../_common/components/buttons/plusButton';
 import Collection from './collection';
 import PersistCollectionModal from '../persist';
 import PersistCollectionItemModal from './collectionItems/persist';
+import PersistModal, { dialogStyle } from '../../../_common/components/persistModal';
 import * as actions from './actions';
 
 @connect(null, (dispatch) => ({
+  deleteCollection: bindActionCreators(actions.deleteCollection, dispatch),
+  deleteCollectionItem: bindActionCreators(actions.deleteCollectionItem, dispatch),
   loadCollection: bindActionCreators(actions.loadCollection, dispatch),
-  loadCollections: bindActionCreators(actions.loadCollections, dispatch),
   loadCollectionItem: bindActionCreators(actions.loadCollectionItem, dispatch),
   loadCollectionItems: bindActionCreators(actions.fetchCollectionItems, dispatch),
+  loadCollections: bindActionCreators(actions.loadCollections, dispatch),
+  persistCollection: bindActionCreators(actions.persistCollection, dispatch),
+  persistCollectionItem: bindActionCreators(actions.persistCollectionItem, dispatch),
   persistMoveCollection: bindActionCreators(actions.moveCollection, dispatch),
   persistMoveCollectionItem: bindActionCreators(actions.moveCollectionItem, dispatch),
   persistMoveCollectionItemToOtherCollection: bindActionCreators(actions.moveCollectionItemToOtherCollection, dispatch),
-  persistCollection: bindActionCreators(actions.persistCollection, dispatch),
-  persistCollectionItem: bindActionCreators(actions.persistCollectionItem, dispatch),
-  deleteCollection: bindActionCreators(actions.deleteCollection, dispatch),
-  deleteCollectionItem: bindActionCreators(actions.deleteCollectionItem, dispatch)
+  reorderCollections: bindActionCreators(actions.reorderCollections, dispatch)
 }))
 @Radium
 export default class Collections extends Component {
@@ -47,6 +50,7 @@ export default class Collections extends Component {
     persistMoveCollectionItem: PropTypes.func.isRequired,
     persistMoveCollectionItemToOtherCollection: PropTypes.func.isRequired,
     productsById: ImmutablePropTypes.map.isRequired,
+    reorderCollections: PropTypes.func.isRequired,
     searchBrands: PropTypes.func.isRequired,
     searchCharacters: PropTypes.func.isRequired,
     searchProducts: PropTypes.func.isRequired,
@@ -58,6 +62,7 @@ export default class Collections extends Component {
   constructor (props) {
     super(props);
     this.moveCollection = ::this.moveCollection;
+    this.moveLiveCollection = ::this.moveLiveCollection;
     this.onClickNewEntry = ::this.onClickNewEntry;
     this.onCollectionItemMove = ::this.onCollectionItemMove;
     this.onCollectionItemMoveToOtherCollection = ::this.onCollectionItemMoveToOtherCollection;
@@ -69,7 +74,10 @@ export default class Collections extends Component {
       createCollection: false,
       createCollectionItem: false,
       editCollection: false,
-      editCollectionItem: false
+      editCollectionItem: false,
+      editLiveCollections: false,
+      liveCollections: props.mediumCollections,
+      visibleCollections: {}
     };
   }
 
@@ -82,7 +90,8 @@ export default class Collections extends Component {
     if (this.props.mediumCollections !== newProps.mediumCollections && newProps.mediumCollections.get('_status') === 'loaded') {
       this.setState({
         ...this.state,
-        collections: newProps.mediumCollections
+        collections: newProps.mediumCollections,
+        liveCollections: newProps.mediumCollections
       });
     }
   }
@@ -101,7 +110,25 @@ export default class Collections extends Component {
 
     this.setState({
       ...this.state,
-      collections: collections.set('data', newData)
+      collections: collections.set('data', newData),
+      liveCollections: collections.set('data', newData)
+    });
+  }
+
+  moveLiveCollection (dragIndex, hoverIndex) {
+    const { liveCollections } = this.state;
+    const collectionsData = liveCollections.get('data');
+    const dragCollection = collectionsData.get(dragIndex);
+
+    console.warn('MOVE LIVE COLLECTION', dragIndex, hoverIndex);
+
+    const newData = collectionsData
+      .remove(dragIndex)
+      .splice(hoverIndex, 0, dragCollection);
+
+    this.setState({
+      ...this.state,
+      liveCollections: liveCollections.set('data', newData)
     });
   }
 
@@ -239,8 +266,8 @@ export default class Collections extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      brandsById, charactersById, mediumId, productsById, searchBrands, searchCharacters,
-      searchProducts, searchedBrandIds, searchedProductIds, searchedCharacterIds
+      brandsById, charactersById, loadCollections, mediumId, productsById, reorderCollections, searchBrands,
+      searchCharacters, searchProducts, searchedBrandIds, searchedProductIds, searchedCharacterIds
     } = this.props;
     return (
       <div>
@@ -249,6 +276,21 @@ export default class Collections extends Component {
             <div>
               <FormSubtitle first>Collections</FormSubtitle>
               <FormDescription style={styles.description}>These are shown on and episode landing page. It’s a way to explore the products of an episode without browsing through all the frames.</FormDescription>
+              <Button
+                first
+                style={[ buttonStyles.gray, buttonStyles.extraSmall, { marginBottom: 40 } ]}
+                text='Manage Live Collections'
+                onClick={() => {
+                  const visibleCollections = {};
+                  for (const collection of this.state.collections.get('data')) {
+                    visibleCollections[collection.get('id')] = collection.get('visible');
+                  }
+                  this.setState({
+                    ...this.state,
+                    editLiveCollections: true,
+                    visibleCollections
+                  });
+                }}/>
             </div>
             <div>
               <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='Create Collection' onClick={this.onClickNewEntry} />
@@ -295,6 +337,58 @@ export default class Collections extends Component {
             searchedProductIds={searchedProductIds}
             onClose={() => this.setState({ ...this.state, createCollectionItem: false, editCollectionItem: false })}
             onSubmit={this.onSubmitCollectionItem} />}
+        {this.state.editLiveCollections &&
+          <PersistModal
+            isOpen
+            style={{
+              ...dialogStyle,
+              content: {
+                ...dialogStyle.content,
+                maxWidth: 830
+              }
+            }}
+            submitButtonText='Save'
+            title='Manage Live Collections'
+            onClose={() => this.setState({ ...this.state, editLiveCollections: false })}
+            onSubmit={async () => {
+              // We kept track of the visibility of a collection, with the state.
+              const { liveCollections, visibleCollections } = this.state;
+              const collections = [];
+              // Create an array of tuples with the collection id and the visibility.
+              for (const liveCollection of liveCollections.get('data')) {
+                collections.push({
+                  id: liveCollection.get('id'),
+                  visible: visibleCollections[liveCollection.get('id')]
+                });
+              }
+              // Reorder the collections and change the visibility.
+              await reorderCollections({ collections, mediumId });
+              await loadCollections({ mediumId });
+              this.setState({ ...this.state, editLiveCollections: false });
+            }}>
+            <div>
+              <FormSubtitle first>Live Collections</FormSubtitle>
+              <FormDescription style={styles.description}>Enable or disable the collections that will be visible to the user in a matter of seconds upon saving.</FormDescription>
+            </div>
+            {this.state.liveCollections.get('data').map((collection, index) => {
+              const collectionId = collection.get('id');
+              return (
+                <Collection
+                  collection={collection.set('visible', this.state.visibleCollections[collectionId])}
+                  collectionId={collectionId}
+                  index={index}
+                  key={collection.get('id')}
+                  moveCollection={this.moveLiveCollection}
+                  persistMoveCollection={() => console.warn('persist collection move!')}
+                  onChangeCollectionVisibility={() => {
+                    // Update the visibility in the state.
+                    const visibleCollections = this.state.visibleCollections;
+                    visibleCollections[collectionId] = !visibleCollections[collectionId];
+                    this.setState({ ...this.state, visibleCollections });
+                  }}/>
+              );
+            })}
+          </PersistModal>}
       </div>
     );
   }

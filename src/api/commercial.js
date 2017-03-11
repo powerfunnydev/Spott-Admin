@@ -26,7 +26,7 @@ export async function persistCommercial (baseUrl, authenticationToken, locale, {
   bannerActorId, bannerBarColor, bannerBrandId, bannerCharacterId, bannerExternalLink,
   bannerInternalLinkType, bannerMediumId, bannerSystemLinkType, bannerText, bannerTextColor, bannerUrl,
   basedOnDefaultLocale, brandId, broadcasters, commercialId, contentProducers, defaultLocale,
-  description, hasBanner, locales, publishStatus, title
+  description, hasBanner, live, locales, publishStatus, title
 }) {
   let commercial = {};
   if (commercialId) {
@@ -39,6 +39,7 @@ export async function persistCommercial (baseUrl, authenticationToken, locale, {
   commercial.contentProducers = contentProducers && contentProducers.map((cp) => ({ uuid: cp }));
   commercial.defaultLocale = defaultLocale;
   commercial.hasBanner = hasBanner;
+  commercial.live = live;
   commercial.publishStatus = publishStatus;
 
   commercial.bannerActor = null;

@@ -436,37 +436,39 @@ export function transformCharacter ({
  *  Complete version of a medium. Locales includes.
  */
 export function transformMedium ({ availabilities, brand, broadcasters, characters, contentProducers, number,
-  auditInfo, type, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource }, serie, season, uuid: id, publishStatus,
+  auditInfo, type, defaultLocale, externalReference: { reference: externalReference, source: externalReferenceSource },
+  live, serie, season, uuid: id, publishStatus,
   defaultTitle, localeData, video, categories: mediumCategories }) {
   const medium = {
     availabilities: availabilities && availabilities.map(transformAvailability),
+    basedOnDefaultLocale: {},
     brand: brand && transformListBrand(brand),
     broadcasters: broadcasters && broadcasters.map(transformBroadcaster),
     characters: characters && characters.map(transformListCharacter),
     contentProducers: contentProducers && contentProducers.map(transformContentProducer),
-    mediumCategories: mediumCategories && mediumCategories.map((mc) => mc.uuid),
-    number,
-    basedOnDefaultLocale: {},
-    description: {},
-    startYear: {},
-    endYear: {},
-    hasTitle: {},
-    title: {},
-    subTitle: {},
-    locales: [],
-    posterImage: {},
-    profileImage: {},
-    roundLogo: {},
     defaultLocale,
+    description: {},
+    endYear: {},
     externalReference,
     externalReferenceSource,
+    hasTitle: {},
     id,
-    publishStatus,
-    type,
-    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    live,
+    locales: [],
+    mediumCategories: mediumCategories && mediumCategories.map((mc) => mc.uuid),
+    number,
+    posterImage: {},
+    profileImage: {},
+    publishStatus,
+    roundLogo: {},
     season: season && { title: season.title, id: season.uuid },
     seriesEntry: serie && { title: serie.title, id: serie.uuid },
+    startYear: {},
+    subTitle: {},
+    title: {},
+    type,
     videoId: video && video.uuid
   };
   if (localeData) {
@@ -759,7 +761,7 @@ export function transformVideo ({ audioFingerprints, description,
 
 export function transformListCollection ({
   auditInfo, linkType, linkedBrand, linkedCharacter, localeData, medium,
-  recurring, recurringEntries, sortOrder, title, uuid
+  recurring, recurringEntries, sortOrder, title, uuid, visible
 }) {
   return {
     brand: linkedBrand && transformListBrand(linkedBrand),
@@ -773,7 +775,8 @@ export function transformListCollection ({
     recurring,
     recurringEntries,
     sortOrder,
-    title
+    title,
+    visible
   };
 }
 

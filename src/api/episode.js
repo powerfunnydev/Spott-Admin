@@ -30,7 +30,7 @@ export async function fetchNextEpisode (baseUrl, authenticationToken, locale, { 
 
 export async function persistEpisode (baseUrl, authenticationToken, locale, {
   basedOnDefaultLocale, broadcasters, characters, contentProducers, defaultLocale,
-  defaultTitle, description, endYear, episodeId, hasTitle, locales, number,
+  defaultTitle, description, endYear, episodeId, hasTitle, live, locales, number,
   publishStatus, relatedCharacterIds, seasonId, seriesEntryId, startYear, title,
   lastEpisodeId, mediumCategories
 }) {
@@ -47,6 +47,7 @@ export async function persistEpisode (baseUrl, authenticationToken, locale, {
   episode.defaultTitle = defaultTitle;
   // episode.externalReference.reference = externalReference;
   // episode.externalReference.source = externalReferenceSource;
+  episode.live = live;
   episode.publishStatus = publishStatus;
   episode.season = { uuid: seasonId };
   episode.serie = { uuid: seriesEntryId };

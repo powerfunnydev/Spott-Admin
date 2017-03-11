@@ -16,6 +16,7 @@ import Label from '../../../_common/inputs/_label';
 import localized from '../../../_common/decorators/localized';
 import Section from '../../../_common/components/section';
 import SelectInput from '../../../_common/inputs/selectInput';
+import CheckboxInput from '../../../_common/inputs/checkbox';
 import TextInput from '../../../_common/inputs/textInput';
 import NumberInput from '../../../_common/inputs/numberInput';
 import LanguageBar from '../../../_common/components/languageBar';
@@ -400,6 +401,10 @@ export default class EditMovie extends Component {
                     name='broadcasters'
                     options={searchedBroadcasterIds.get('data').toJS()}
                     placeholder='Broadcaster companies'/>
+                  <Field
+                    component={CheckboxInput}
+                    label='Live'
+                    name='live' />
                   <FormSubtitle>Images</FormSubtitle>
                   <div style={[ styles.paddingTop, styles.row ]}>
                     <div style={styles.paddingUploadImage}>

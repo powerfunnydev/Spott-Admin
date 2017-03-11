@@ -10,7 +10,7 @@ import { ErrorComponent, HintComponent, InfoComponent } from '../infoPopUps';
 
 const crossImage = require('./cross.svg');
 
-const dialogStyle = {
+export const dialogStyle = {
   overlay: {
     display: 'flex',
     position: 'fixed',

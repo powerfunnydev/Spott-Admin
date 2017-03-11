@@ -3,7 +3,7 @@ import { searchMediumCharacters as dataSearchMediumCharacters } from '../../../.
 import { fetchMediumCollections } from '../../../../actions/collection';
 import { fetchCollectionItems } from '../../../../actions/collectionItem';
 
-export { fetchCollection as loadCollection, deleteCollection, moveCollection, persistCollection } from '../../../../actions/collection';
+export { fetchCollection as loadCollection, deleteCollection, moveCollection, persistCollection, reorderCollections } from '../../../../actions/collection';
 export { fetchCollectionItem as loadCollectionItem, fetchCollectionItems, deleteCollectionItem, persistCollectionItem, moveCollectionItem, moveCollectionItemToOtherCollection } from '../../../../actions/collectionItem';
 export const MEDIUM_BRANDS_SEARCH_ERROR = 'HELPERS_COLLECTIIONS/MEDIUM_BRANDS_SEARCH_ERROR';
 export const MEDIUM_CHARACTERS_SEARCH_ERROR = 'HELPERS_COLLECTIIONS/MEDIUM_CHARACTERS_SEARCH_ERROR';

@@ -10,6 +10,7 @@ import Spinner from '../../../_common/components/spinner';
 import CollectionItems from './collectionItems/list';
 import EditButton from '../../../_common/components/buttons/editButton';
 import RemoveButton from '../../../_common/components/buttons/removeButton';
+import Toggle from '../../../_common/inputs/toggleInput';
 
 import MaximizeSVG from '../../../_common/images/maximize';
 import MinimizeSVG from '../../../_common/images/minimize';
@@ -130,15 +131,16 @@ export default class Collection extends Component {
     isOver: PropTypes.bool.isRequired,
     // Move in state.
     moveCollection: PropTypes.func.isRequired,
-    persistMoveCollection: PropTypes.func.isRequired,
-    persistMoveCollectionItem: PropTypes.func.isRequired,
-    persistMoveCollectionItemToOtherCollection: PropTypes.func.isRequired,
+    // Persisting is only used for non live collections.
+    persistMoveCollection: PropTypes.func,
+    persistMoveCollectionItem: PropTypes.func,
+    persistMoveCollectionItemToOtherCollection: PropTypes.func,
     style: PropTypes.object,
-    onCollectionDelete: PropTypes.func.isRequired,
-    onCollectionEdit: PropTypes.func.isRequired,
-    onCollectionItemCreate: PropTypes.func.isRequired,
-    onCollectionItemDelete: PropTypes.func.isRequired,
-    onCollectionItemEdit: PropTypes.func.isRequired
+    onCollectionDelete: PropTypes.func,
+    onCollectionEdit: PropTypes.func,
+    onCollectionItemCreate: PropTypes.func,
+    onCollectionItemDelete: PropTypes.func,
+    onCollectionItemEdit: PropTypes.func
   };
 
   constructor (props) {
@@ -324,7 +326,7 @@ export default class Collection extends Component {
     const { open } = this.state;
     const {
       collection, connectDragSource, connectDropTarget, contentStyle, isDragging, isLoading, isOver, style, onCollectionItemCreate,
-      onCollectionItemDelete, onCollectionItemEdit, onCollectionDelete, onCollectionEdit,
+      onCollectionItemDelete, onCollectionItemEdit, onCollectionDelete, onCollectionEdit, onChangeCollectionVisibility,
       moveCollection, persistMoveCollection, persistMoveCollectionItem, persistMoveCollectionItemToOtherCollection
     } = this.props;
 
@@ -337,13 +339,14 @@ export default class Collection extends Component {
                 {this.renderTitle()}&nbsp;&nbsp;&nbsp;{isLoading && <Spinner size='small' />}
               </div>
               <div style={styles.headerContainer}>
-                <EditButton style={styles.marginRight} onClick={onCollectionEdit} />
-                <RemoveButton cross style={styles.marginRight} onClick={onCollectionDelete}/>
+                {onChangeCollectionVisibility && <Toggle checked={collection.get('visible')} first style={styles.marginRight} onChange={onChangeCollectionVisibility}/>}
+                {onCollectionEdit && <EditButton style={styles.marginRight} onClick={onCollectionEdit} />}
+                {onCollectionDelete && <RemoveButton cross style={styles.marginRight} onClick={onCollectionDelete}/>}
                 {this.state.open
-                  ? <button title='Minimize' onClick={this.onMinimizeClick}>
+                  ? <button style={{ marginBottom: -4 }} title='Minimize' onClick={this.onMinimizeClick}>
                       <MinimizeSVG color={colors.lightGray3} hoverColor={colors.darkGray2}/>
                     </button>
-                  : <button title='Maximize' onClick={this.onMaximizeClick}>
+                  : <button style={{ marginBottom: -4 }} title='Maximize' onClick={this.onMaximizeClick}>
                       <MaximizeSVG color={colors.lightGray3} hoverColor={colors.darkGray2}/>
                     </button>}
               </div>
@@ -354,13 +357,7 @@ export default class Collection extends Component {
                   collectionId={collection.get('id')}
                   collectionItems={this.state.collectionItems}
                   moveCollection={moveCollection}
-                  moveCollectionItem={this.moveCollectionItem}
-                  persistMoveCollection={persistMoveCollection}
-                  persistMoveCollectionItem={persistMoveCollectionItem}
-                  persistMoveCollectionItemToOtherCollection={persistMoveCollectionItemToOtherCollection}
-                  onCollectionItemCreate={onCollectionItemCreate}
-                  onCollectionItemDelete={onCollectionItemDelete}
-                  onCollectionItemEdit={onCollectionItemEdit}/>
+                  moveCollectionItem={persistMoveCollectionItem ? this.moveCollectionItem : null}/>
               </div>}
           </div>
         </div>
