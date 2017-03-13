@@ -33,7 +33,7 @@ const collectionItemSource = {
       // If we move an item in the same collection, just move it.
       if (sourceCollectionId === targetCollectionId) {
         // Persist the item move.
-        props.persistMoveCollectionItem({
+        props.persistMoveCollectionItem && props.persistMoveCollectionItem({
           before,
           sourceCollectionId,
           sourceCollectionItemId,
@@ -41,7 +41,7 @@ const collectionItemSource = {
         });
       } else {
         // Persist, move item to other collection.
-        props.persistMoveCollectionItemToOtherCollection({
+        props.persistMoveCollectionItemToOtherCollection && props.persistMoveCollectionItemToOtherCollection({
           sourceCollectionId,
           sourceCollectionItemId,
           targetCollectionId: dropResult.targetCollectionId
@@ -120,11 +120,11 @@ class CollectionItem extends Component {
     connectDragSource: PropTypes.func.isRequired,
     connectDropTarget: PropTypes.func.isRequired,
     isDragging: PropTypes.bool.isRequired,
-    moveCollectionItem: PropTypes.func.isRequired,
-    persistMoveCollectionItem: PropTypes.func.isRequired,
-    persistMoveCollectionItemToOtherCollection: PropTypes.func.isRequired,
-    onCollectionItemDelete: PropTypes.func.isRequired,
-    onCollectionItemEdit: PropTypes.func.isRequired
+    moveCollectionItem: PropTypes.func,
+    persistMoveCollectionItem: PropTypes.func,
+    persistMoveCollectionItemToOtherCollection: PropTypes.func,
+    onCollectionItemDelete: PropTypes.func,
+    onCollectionItemEdit: PropTypes.func
   }
 
   constructor (props) {
@@ -184,7 +184,7 @@ class CollectionItem extends Component {
     const styles = this.constructor.styles;
     const {
       collectionItem, connectDragSource, connectDropTarget, isDragging,
-      onCollectionItemDelete, onCollectionItemEdit
+      moveCollectionItem, onCollectionItemDelete, onCollectionItemEdit
     } = this.props;
     const productImageUrl = collectionItem.getIn([ 'product', 'logo', 'url' ]);
 
@@ -201,9 +201,12 @@ class CollectionItem extends Component {
             {productImageUrl &&
               <div key='downloadImage' style={dropdownStyles.floatOption} onClick={() => downloadFile(productImageUrl)}>Download</div>}
             {productImageUrl && <div style={dropdownStyles.line}/>}
-            <div key='onEdit' style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); onCollectionItemEdit(); }}>Edit</div>
-            <div style={dropdownStyles.line}/>
-            <div key='onDelete' style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); onCollectionItemDelete(); }}>Remove</div>
+            {onCollectionItemEdit &&
+              <div key='onEdit' style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); onCollectionItemEdit(); }}>Edit</div>}
+            {onCollectionItemEdit &&
+              <div style={dropdownStyles.line}/>}
+            {onCollectionItemDelete &&
+              <div key='onDelete' style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); onCollectionItemDelete(); }}>Remove</div>}
           </Dropdown>}
         {collectionItem.getIn([ 'product', 'affiliate' ]) &&
           <DollarSVG style={styles.affiliate}/>}
@@ -213,7 +216,7 @@ class CollectionItem extends Component {
       </div>
     );
 
-    return connectDragSource(connectDropTarget(component));
+    return moveCollectionItem ? connectDragSource(connectDropTarget(component)) : component;
   }
 }
 
@@ -222,12 +225,13 @@ export default class CollectionItems extends Component {
   static propTypes = {
     collectionId: PropTypes.string.isRequired,
     collectionItems: ImmutablePropTypes.map.isRequired,
-    moveCollectionItem: PropTypes.func.isRequired,
-    persistMoveCollectionItem: PropTypes.func.isRequired,
-    persistMoveCollectionItemToOtherCollection: PropTypes.func.isRequired,
-    onCollectionItemCreate: PropTypes.func.isRequired,
-    onCollectionItemDelete: PropTypes.func.isRequired,
-    onCollectionItemEdit: PropTypes.func.isRequired
+    moveCollectionItem: PropTypes.func,
+    // Persisting is only used for non-live collections.
+    persistMoveCollectionItem: PropTypes.func,
+    persistMoveCollectionItemToOtherCollection: PropTypes.func,
+    onCollectionItemCreate: PropTypes.func,
+    onCollectionItemDelete: PropTypes.func,
+    onCollectionItemEdit: PropTypes.func
   }
 
   static styles = {
@@ -254,10 +258,11 @@ export default class CollectionItems extends Component {
             moveCollectionItem={moveCollectionItem}
             persistMoveCollectionItem={persistMoveCollectionItem}
             persistMoveCollectionItemToOtherCollection={persistMoveCollectionItemToOtherCollection}
-            onCollectionItemDelete={onCollectionItemDelete.bind(this, item.get('id'))}
-            onCollectionItemEdit={onCollectionItemEdit.bind(this, item.get('id'))}/>)
+            onCollectionItemDelete={onCollectionItemDelete ? onCollectionItemDelete.bind(this, item.get('id')) : null}
+            onCollectionItemEdit={onCollectionItemEdit ? onCollectionItemEdit.bind(this, item.get('id')) : null}/>)
         )}
-        <CreateCollectionItem onCollectionItemCreate={onCollectionItemCreate}/>
+        {onCollectionItemCreate &&
+          <CreateCollectionItem onCollectionItemCreate={onCollectionItemCreate}/>}
       </div>
     );
   }

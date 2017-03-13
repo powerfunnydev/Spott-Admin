@@ -29,8 +29,6 @@ export async function persistCollection (baseUrl, authenticationToken, locale, {
     collection = body;
   }
 
-  console.warn('post', basedOnDefaultLocale);
-
   collection.defaultLocale = defaultLocale;
   collection.linkedBrand = linkType === 'BRAND' && brandId ? { uuid: brandId } : null;
   collection.linkedCharacter = linkType === 'CHARACTER' && characterId ? { uuid: characterId } : null;
@@ -60,4 +58,9 @@ export async function deleteCollection (baseUrl, authenticationToken, locale, { 
 export async function moveCollection (baseUrl, authenticationToken, locale, { before = true, sourceCollectionId, targetCollectionId }) {
   const url = `${baseUrl}/v004/media/mediumItemCollections/${sourceCollectionId}/actions/${before ? 'moveInFrontOf' : 'moveBehind'}?otherCollectionUuid=${targetCollectionId}`;
   await post(authenticationToken, locale, url, {});
+}
+
+export async function reorderCollections (baseUrl, authenticationToken, locale, { collections, mediumId }) {
+  const url = `${baseUrl}/v004/media/media/${mediumId}/itemCollections/actions/reorder`;
+  await post(authenticationToken, locale, url, { entries: collections.map(({ id, visible }) => ({ uuid: id, visible })) });
 }

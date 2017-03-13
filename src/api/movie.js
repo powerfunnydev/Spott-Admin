@@ -24,8 +24,8 @@ export async function fetchMovie (baseUrl, authenticationToken, locale, { movieI
 
 export async function persistMovie (baseUrl, authenticationToken, locale, {
   basedOnDefaultLocale, broadcasters, characters, contentProducers, defaultLocale,
-  defaultTitle, description, endYear, movieId, locales,
-  publishStatus, relatedCharacterIds, startYear, title, subTitle, mediumCategories
+  defaultTitle, description, endYear, live, locales, mediumCategories, movieId,
+  publishStatus, relatedCharacterIds, startYear, subTitle, title
 }) {
   let movie = {};
   if (movieId) {
@@ -41,6 +41,7 @@ export async function persistMovie (baseUrl, authenticationToken, locale, {
   // movie.externalReference.source = externalReferenceSource;
   movie.publishStatus = publishStatus;
   movie.type = 'MOVIE';
+  movie.live = live;
   // Update locale data.
   movie.localeData = [];
   locales.forEach((locale) => {

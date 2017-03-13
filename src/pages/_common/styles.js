@@ -151,7 +151,7 @@ export const buttonStyles = {
     minWidth: '70px'
   },
   extraSmall: {
-    fontSize: '13px',
+    fontSize: '11px',
     paddingTop: '4px',
     paddingBottom: '4px',
     paddingLeft: '10px',
@@ -184,6 +184,7 @@ export const buttonStyles = {
     ':focus': hoveredBorderedButtonStyle
   },
   gray: {
+    backgroundColor: colors.white,
     border: '1px solid rgb(196, 200, 203)',
     color: 'rgb(157, 163, 164)',
     ':hover': hoveredGrayButtonStyle,
