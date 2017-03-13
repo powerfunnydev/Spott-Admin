@@ -127,6 +127,7 @@ export default class Collection extends Component {
     connectDropTarget: PropTypes.func.isRequired,
     contentStyle: PropTypes.object,
     index: PropTypes.number.isRequired,
+    isDragging: PropTypes.bool.isRequired,
     isLoading: PropTypes.bool,
     isOver: PropTypes.bool.isRequired,
     // Move in state.
@@ -136,6 +137,7 @@ export default class Collection extends Component {
     persistMoveCollectionItem: PropTypes.func,
     persistMoveCollectionItemToOtherCollection: PropTypes.func,
     style: PropTypes.object,
+    onChangeCollectionVisibility: PropTypes.func,
     onCollectionDelete: PropTypes.func,
     onCollectionEdit: PropTypes.func,
     onCollectionItemCreate: PropTypes.func,
@@ -325,9 +327,11 @@ export default class Collection extends Component {
     const styles = this.constructor.styles;
     const { open } = this.state;
     const {
-      collection, connectDragSource, connectDropTarget, contentStyle, isDragging, isLoading, isOver, style, onCollectionItemCreate,
+      collection, connectDragSource, connectDropTarget, contentStyle, isDragging,
+      isLoading, isOver, style, onCollectionItemCreate,
       onCollectionItemEdit, onCollectionDelete, onCollectionEdit, onChangeCollectionVisibility,
-      moveCollection, persistMoveCollectionItem
+      onCollectionItemDelete, moveCollection, persistMoveCollectionItem, persistMoveCollection,
+      persistMoveCollectionItemToOtherCollection
     } = this.props;
 
     return (
@@ -357,7 +361,13 @@ export default class Collection extends Component {
                   collectionId={collection.get('id')}
                   collectionItems={this.state.collectionItems}
                   moveCollection={moveCollection}
-                  moveCollectionItem={persistMoveCollectionItem ? this.moveCollectionItem : null}/>
+                  moveCollectionItem={persistMoveCollectionItem ? this.moveCollectionItem : null}
+                  persistMoveCollection={persistMoveCollection}
+                  persistMoveCollectionItem={persistMoveCollectionItem}
+                  persistMoveCollectionItemToOtherCollection={persistMoveCollectionItemToOtherCollection}
+                  onCollectionItemCreate={onCollectionItemCreate}
+                  onCollectionItemDelete={onCollectionItemDelete}
+                  onCollectionItemEdit={onCollectionItemEdit}/>
               </div>}
           </div>
         </div>

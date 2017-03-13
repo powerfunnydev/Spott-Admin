@@ -80,17 +80,9 @@ export default class CollectionItemModal extends Component {
     this.props.onClose();
   }
 
-  static styles = {
-    col2: {
-      display: 'flex',
-      flexDirection: 'row'
-    }
-  };
-
   render () {
-    // const { styles } = this.constructor;
     const {
-      edit, handleSubmit, productsById, searchProducts, searchedProductIds
+      edit, handleSubmit, productsById, searchedProductIds
     } = this.props;
     return (
       <PersistModal
