@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { colors, fontWeights, makeTextStyle, mediaQueries } from '../../_common/styles';
 import Spinner from '../../_common/components/spinner';
+import ToolTip from '../../_common/components/toolTip';
+import InfoSVG from '../../_common/images/info';
 import Widget from './widget';
 
 @Radium
@@ -49,7 +51,8 @@ export default class DemographicsWidget extends Component {
       ...makeTextStyle(fontWeights.regular, '0.688em', 0.5),
       alignItems: 'center',
       backgroundColor: colors.veryLightGray,
-      border: `solid 1px ${colors.lightGray2}`,
+      borderBottom: `solid 1px ${colors.lightGray2}`,
+      borderTop: `solid 1px ${colors.lightGray2}`,
       color: colors.darkGray2,
       display: 'flex',
       textTransform: 'uppercase',
@@ -61,23 +64,59 @@ export default class DemographicsWidget extends Component {
       display: 'flex',
       width: '100%'
     },
-    section: {
-      paddingLeft: '0.625em',
-      paddingRight: '0.625em',
-      paddingTop: '0.625em',
-      paddingBottom: '0.625em',
-      textAlign: 'center',
-      flex: 1,
-      width: '100%',
+    borderRight: {
       borderRight: `solid 1px ${colors.lightGray2}`
     },
+    section: {
+      base: {
+        borderRight: `solid 1px ${colors.lightGray2}`,
+        flex: 1,
+        paddingBottom: '0.625em',
+        paddingLeft: '0.625em',
+        paddingRight: '0.625em',
+        paddingTop: '0.625em',
+        position: 'relative',
+        textAlign: 'center',
+        width: '100%'
+      },
+      blue: {
+        backgroundColor: colors.lightBlue
+      },
+      gray: {
+        backgroundColor: colors.lightGray4
+      },
+      green: {
+        backgroundColor: colors.lightGreen2
+      }
+    },
     value: {
-      ...makeTextStyle(fontWeights.regular, '0.875em', 0.5),
-      color: colors.black2
+      base: {
+        ...makeTextStyle(fontWeights.regular, '0.875em', 0.5),
+        color: colors.black2
+      },
+      blue: {
+        color: colors.primaryBlue
+      },
+      green: {
+        color: colors.lightGreen
+      }
     },
     label: {
       ...makeTextStyle(fontWeights.regular, '0.75em', 0.5),
       color: colors.lightGray3
+    },
+    tooltipOverlay: {
+      padding: 11,
+      backgroundColor: 'white',
+      display: 'flex',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      maxWidth: 500
+    },
+    infoSvg: {
+      position: 'absolute',
+      top: 7,
+      right: 7
     }
   };
 
@@ -92,25 +131,31 @@ export default class DemographicsWidget extends Component {
             <div style={styles.audienceCount}>1868</div>
             <div style={styles.audienceLabel}>Users in this demographic</div>
           </div>
-          <div style={[ styles.right, { marginLeft: -1, marginRight: -1 } ]}>
+          <div style={styles.right}>
             <div style={{ width: '100%' }}>
-              <div style={[ styles.header, { marginTop: -1 } ]}>Demographic insight</div>
+              <div style={[ styles.header, { borderTop: 'none' } ]}>Demographic insight</div>
               <div style={styles.sections}>
                 {[
                   { label: 'Top Media', value: 'Familie' },
                   { label: 'Top Character', value: 'Jana' },
                   { label: 'Top Person', value: 'Penelope Cruz' }
                 ].map(({ label, value }, i) => (
-                  <div key={i} style={styles.section}>
+                  <div key={i} style={[ styles.section.base, i === 2 && { borderRight: 'none' }, value > 50 && styles.section.gray, value > 500 && styles.section.green, value > 1000 && styles.section.blue ]}>
                     <div style={styles.label}>{label}</div>
-                    <div style={[ styles.value, { marginTop: 4 } ]}>{value}</div>
+                    <div style={[ styles.value.base, { marginTop: 4 } ]}>{value}</div>
+                    <ToolTip
+                      arrowContent={<div className='rc-tooltip-arrow-inner' />}
+                      overlay={<div style={styles.tooltipOverlay}>Test 123</div>}
+                      placement='top'>
+                      <div style={styles.infoSvg}><InfoSVG color={colors.lightGray3} hoverColor={colors.darkGray2}/></div>
+                    </ToolTip>
                   </div>
                 ))}
               </div>
             </div>
             <div style={styles.sections}>
               <div style={{ width: '100%' }}>
-                <div style={styles.header}>Interaction with your brand</div>
+                <div style={[ styles.header, styles.borderRight ]}>Interaction with your brand</div>
                 <div style={styles.sections}>
                   {[
                     { label: 'Brand Subscriptions', value: 154 },
@@ -118,24 +163,24 @@ export default class DemographicsWidget extends Component {
                     { label: 'Product Clicktroughs', value: 862 },
                     { label: 'Product Buys', value: 23 }
                   ].map(({ label, value }, i) => (
-                    <div key={i} style={styles.section}>
-                      <div style={styles.value}>{value}</div>
+                    <div key={i} style={[ styles.section.base, value > 50 && styles.section.gray, value > 500 && styles.section.green, value > 1000 && styles.section.blue ]}>
+                      <div style={[ styles.value.base, value > 50 && styles.value.gray, value > 500 && styles.value.green, value > 1000 && styles.value.blue ]}>{value}</div>
                       <div style={[ styles.label, { marginTop: 4 } ]}>{label}</div>
                     </div>
                   ))}
                 </div>
               </div>
               <div style={{ width: '100%' }}>
-                <div style={[ styles.header, { marginLeft: -1 } ]}>Insights</div>
+                <div style={[ styles.header ]}>Insights</div>
                 <div style={styles.sections}>
                   {[
                     { label: 'Brand Subscriptions', value: 154 },
                     { label: 'Product Impressions', value: 1556 },
-                    { label: 'Product Clicktroughs', value: 862 },
-                    { label: 'Product Buys', value: 23 }
+                    { label: 'Ranking of 235 brands', value: 53 },
+                    { label: 'Posible Reach', value: 1453 }
                   ].map(({ label, value }, i) => (
-                    <div key={i} style={styles.section}>
-                      <div style={styles.value}>{value}</div>
+                    <div key={i} style={[ styles.section.base, i === 3 && { borderRight: 'none' }, value > 50 && styles.section.gray, value > 500 && styles.section.green, value > 1000 && styles.section.blue ]}>
+                      <div style={[ styles.value.base, value > 50 && styles.value.gray, value > 500 && styles.value.green, value > 1000 && styles.value.blue ]}>{value}</div>
                       <div style={[ styles.label, { marginTop: 4 } ]}>{label}</div>
                     </div>
                   ))}

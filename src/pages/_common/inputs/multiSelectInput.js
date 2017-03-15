@@ -60,7 +60,6 @@ export default class MultiSelectInput extends Component {
   // Will be invoked when an item is selected, not when we are typing in the input (that triggers onInputChange, see render)
   onInternalChange (index, internalValue) {
     const { input, onChange } = this.props;
-    console.warn('internalValue', internalValue);
     const newValues = input.value || [];
     if (internalValue) {
       newValues[index] = internalValue.value;
@@ -73,8 +72,19 @@ export default class MultiSelectInput extends Component {
   }
 
   static styles = {
+    container: {
+      display: 'flex',
+      marginBottom: -12,
+      width: '100%',
+      flexWrap: 'wrap'
+    },
     padTop: {
       paddingTop: '1.25em'
+    },
+    selectContainer: {
+      paddingRight: 12,
+      paddingBottom: 12,
+      minWidth: 200
     },
     base: {
       border: `1px solid ${colors.lightGray2}`,
@@ -99,23 +109,28 @@ export default class MultiSelectInput extends Component {
     },
     text: {
       cursor: 'pointer',
-      lineHeight: '30px',
+      lineHeight: 30,
       fontSize: '0.688em',
       color: colors.veryDarkGray
     },
     addButton: {
-      border: `solid 1px ${colors.lightGray2}`,
-      borderRadius: 2,
-      height: 20,
-      width: 20
+      base: {
+        border: `solid 1px ${colors.lightGray2}`,
+        borderRadius: 2,
+        height: 22,
+        width: 22
+      },
+      disabled: {
+        opacity: 0.5
+      }
     }
   };
 
   render () {
     const styles = this.constructor.styles;
     const {
-      onCreateOption, disabled, first, getItemText, getOptions, filter, input,
-      isLoading, label, meta, multiselect, optionComponent, placeholder,
+      disabled, first, getItemText, getItem, getOptions, filter, input,
+      isLoading, label, meta, valueComponent, placeholder,
       required, style
     } = this.props;
 
@@ -123,62 +138,63 @@ export default class MultiSelectInput extends Component {
     // first time we initialize a multiselect, we retrieve a immutable List. The select components
     // expects a classic array. So we invoke toJS on the list.
     if (Immutable.Iterable.isIterable(input.value)) {
-      value = (input.value || []).map((o) => ({ value: o, label: getItemText(o) })).toJS();
+      value = (input.value || []).map((o) => ({ item: getItem(o), label: getItemText(o), value: o })).toJS();
     } else { // If it isn't a immutable List, but a classic array.
       // We fall back to [] because of https://github.com/erikras/redux-form/issues/621
-      value = (input.value || []).map((o) => ({ value: o, label: getItemText(o) }));
+      value = (input.value || []).map((o) => ({ item: getItem(o), label: getItemText(o), value: o }));
     }
 
     if (value.length === 0) {
       value = [ null ];
     }
 
-    const options = (this.props.options ? this.props.options.map((o) => ({ value: o, label: getItemText(o) })) : [])
+    const options = (this.props.options ? this.props.options.map((o) => ({ item: getItem(o), label: getItemText(o), value: o })) : [])
       .filter((option) => !(input.value || []).includes(option.value));
 
-    console.warn('LAQST', value[value.length - 1]);
+    const disableAddButton = !(value[value.length - 1] && value[value.length - 1].label && options.length > 0);
 
     return (
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
-        {value.map((v, i) => (
-          <WrappedSelect
-            // {...input}
-            cache={false}
-            className='Multi'
-            clearable={i !== 0} // First input field is not clearable.
-            disabled={disabled}
-            filterOption={filter ? filter : () => true}
-            isLoading={isLoading}
-            key={i}
-            optionComponent={optionComponent}
-            options={options}
-            placeholder={placeholder}
-            style={mergeStyles([
-              styles.base,
-              styles.text,
-              disabled && styles.disabled,
-              meta && meta.touched && meta.error && styles.error
-            ])}
-            value={v} // Overides value of of {...field}
-            // onBlur={() => input.onBlur && input.onBlur(input.value)} // Overides onBlur of {...field}
-            onChange={this.onInternalChange.bind(this, i)}  // Overides onChange of {...field};
-            // onInputChange={(val) => {
-            //   this.setState({ value: val });
-            //   getOptions && getOptions(val);
-            // }}
-            onOpen={getOptions} />
-        ))}
-        <button disabled={!(value[value.length - 1] && value[value.length - 1].value)} style={styles.addButton} title='Add' onClick={() => {
-          console.warn('input', input.value);
-          const lastValue = value[value.length - 1];
-          console.warn('last value', lastValue);
-          if (lastValue) {
-            this.onInternalChange(value.length, {});
-          }
-        }}>
-        <PlusSVG color={colors.darkGray2} />
-      </button>
+        <div style={styles.container}>
+          {value.map((v, i) => (
+            <div key={i} style={styles.selectContainer}>
+              <WrappedSelect
+                // {...input}
+                cache={false}
+                className='Multi'
+                clearable={i !== 0} // First input field is not clearable.
+                disabled={disabled}
+                filterOption={filter ? filter : () => true}
+                isLoading={isLoading}
+                options={options}
+                placeholder={placeholder}
+                style={mergeStyles([
+                  styles.base,
+                  styles.text,
+                  disabled && styles.disabled,
+                  meta && meta.touched && meta.error && styles.error
+                ])}
+                value={v} // Overides value of of {...field}
+                valueComponent={valueComponent}
+                // onBlur={() => input.onBlur && input.onBlur(input.value)} // Overides onBlur of {...field}
+                onChange={this.onInternalChange.bind(this, i)}  // Overides onChange of {...field};
+                // onInputChange={(val) => {
+                //   this.setState({ value: val });
+                //   getOptions && getOptions(val);
+                // }}
+                onOpen={getOptions} />
+            </div>
+          ))}
+          <button disabled={disableAddButton} style={[ styles.addButton.base, disableAddButton && styles.addButton.disabled ]} title='Add' onClick={() => {
+            const lastValue = value[value.length - 1];
+            if (lastValue && lastValue.label) {
+              this.onInternalChange(value.length, {});
+            }
+          }}>
+            <PlusSVG color={colors.darkGray2} />
+          </button>
+        </div>
         {meta && meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
       </div>
     );

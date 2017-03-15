@@ -3,7 +3,7 @@
   height: 20px !important;
 }
 
-.Multi > .Select-control .Select-value {
+.Multi > .Select-control .Select-value, .Multi > .Select-control .Select-placeholder {
   line-height: 20px !important;
 }
 

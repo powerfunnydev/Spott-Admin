@@ -7,6 +7,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
 import moment from 'moment';
 import Highcharts from 'react-highcharts';
+import Papa from 'papaparse';
 import * as globalActions from '../../../actions/global';
 import ListView from '../../_common/components/listView/index';
 import { tableDecorator } from '../../_common/components/table/index';
@@ -14,7 +15,7 @@ import MultiSelectInput from '../../_common/inputs/multiSelectInput';
 import { colors, fontWeights, makeTextStyle, Container } from '../../_common/styles';
 import { SideMenu } from '../../app/sideMenu';
 import Header from '../../app/multiFunctionalHeader';
-import { brandActivityConfig } from './defaultHighchartsConfig';
+import { ageConfig, brandActivityConfig, genderConfig } from './defaultHighchartsConfig';
 import DemographicsWidget from './demographicsWidget';
 import Filters from './filters';
 import NumberWidget from './numberWidget';
@@ -24,6 +25,39 @@ import ImageTitle from './imageTitle';
 import OpportunitiesWidget from './opportunitiesWidget';
 import * as actions from './actions';
 import selector, { topMediaPrefix } from './selector';
+
+const colorStyle = {
+  borderRadius: '100%',
+  height: 6,
+  width: 6,
+  marginRight: 6
+};
+
+@Radium
+class ColorValue extends Component {
+
+  static propTypes = {
+    children: React.PropTypes.node,
+    placeholder: React.PropTypes.string,
+    value: React.PropTypes.object
+  };
+
+  render () {
+    const event = this.props.value.item;
+    return (
+			<div className='Select-value' title={this.props.value.title}>
+				<span className='Select-value-label'>
+					{event &&
+            <div style={{ alignItems: 'center', display: 'flex' }}>
+              <div style={[ colorStyle, { backgroundColor: event.get('color') } ]} />
+              {event.get('description')}
+            </div>}
+				</span>
+			</div>
+    );
+  }
+
+}
 
 const listViewContainerStyle = {
   height: 410,
@@ -178,10 +212,11 @@ export default class BrandDashboard extends Component {
     paddingBottom: {
       paddingBottom: '1.5em'
     },
-    listWidget: {
+    widget: {
       paddingBottom: '1.5em',
       paddingLeft: '0.75em',
-      paddingRight: '0.75em'
+      paddingRight: '0.75em',
+      width: '50%'
     },
     tabs: {
       borderBottomWidth: 1,
@@ -204,7 +239,7 @@ export default class BrandDashboard extends Component {
       paddingTop: '1.5em',
       paddingBottom: '3em'
     },
-    listWidgets: {
+    widgets: {
       alignItems: 'flex-start',
       display: 'flex',
       marginLeft: '-0.75em',
@@ -215,6 +250,26 @@ export default class BrandDashboard extends Component {
       paddingBottom: '1em'
     }
   };
+
+  // downloadCsv () {
+  //   const csv = Papa.unparse({
+  //     fields: [ 'Column 1', 'Column 2' ],
+  //     data: [
+  //   		[ 'foo', 'bar' ],
+  //   		[ 'abc', 'def' ]
+  //     ]
+  //   });
+  //
+  //   const csvData = new Blob([ csv ], { type: 'text/csv;charset=utf-8;' });
+  //   // Fix for IE11, see: https://github.com/mholt/PapaParse/issues/175
+  //   const csvUrl = navigator.msSaveBlob ? navigator.msSaveBlob(csvData, 'download.cv') : window.URL.createObjectURL(csvData);
+  //   const a = window.document.createElement('a');
+  //   a.href = csvUrl;
+  //   a.setAttribute('download', 'download.csv');
+  //   document.body.appendChild(a);
+  //   a.click();
+  //   document.body.removeChild(a);
+  // }
 
   render () {
     const styles = this.constructor.styles;
@@ -261,33 +316,48 @@ export default class BrandDashboard extends Component {
               <span>4%</span>
             </NumberWidget>
           </div>
-          <Widget style={styles.paddingBottom} title='Brand activity'>
-            <MultiSelectInput
-              first
-              getItemText={(id) => eventsById.getIn([ id, 'description' ])}
-              input={{ value: typeof brandActivityEvents === 'string' ? [ brandActivityEvents ] : brandActivityEvents }}
-              multiselect
-              name='brandActivityEvents'
-              options={events.get('data').map((e) => e.get('id')).toJS()}
-              placeholder='Events'
-              style={[ styles.field, { paddingRight: '0.75em' } ]}
-              onChange={this.onChangeFilter.bind(this, 'brandActivityEvents', 'array')} />
+          <Widget
+            header={
+              <MultiSelectInput
+                first
+                getItem={(id) => eventsById.get(id)}
+                getItemText={(id) => eventsById.getIn([ id, 'description' ])}
+                input={{ value: typeof brandActivityEvents === 'string' ? [ brandActivityEvents ] : brandActivityEvents }}
+                name='brandActivityEvents'
+                options={events.get('data').map((e) => e.get('id')).toJS()}
+                placeholder='Events'
+                style={[ styles.field, { paddingRight: '0.75em' } ]}
+                valueComponent={ColorValue}
+                onChange={this.onChangeFilter.bind(this, 'brandActivityEvents', 'array')} />
+            }
+            style={styles.paddingBottom} title='Brand activity'>
+            <button onClick={(e) => { e.preventDefault(); this.downloadCsv(); }}>
+              Donwload csv
+            </button>
             <Highcharts config={brandActivityConfig} isPureConfig />
           </Widget>
+          <div style={styles.widgets}>
+            <Widget style={styles.widget} title='Age'>
+              <Highcharts config={ageConfig} isPureConfig />
+            </Widget>
+            <Widget style={styles.widget} title='Gender'>
+              <Highcharts config={genderConfig} isPureConfig />
+            </Widget>
+          </div>
           {/* <MapWidget style={styles.paddingBottom} title='Brand activity by region' /> */}
-          <div style={styles.listWidgets}>
+          <div style={styles.widgets}>
             <TopMedia
               data={topMedia}
               load={() => loadTopMedia(location.query)}
               location={location}
               routerPushWithReturnTo={routerPushWithReturnTo}
-              style={styles.listWidget} />
+              style={styles.widget} />
             <TopPeople
               data={topPeople}
               load={() => loadTopPeople(location.query)}
               location={location}
               routerPushWithReturnTo={routerPushWithReturnTo}
-              style={styles.listWidget} />
+              style={styles.widget} />
           </div>
           <DemographicsWidget style={styles.paddingBottom} title='Demographics' />
           <OpportunitiesWidget style={styles.paddingBottom}/>

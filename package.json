@@ -70,6 +70,7 @@
     "moment": "2.11.0",
     "normalizr": "2.2.1",
     "nouislider": "8.2.1",
+    "papaparse": "^4.1.4",
     "perfect-scrollbar": "0.6.8",
     "phantomjs-prebuilt": "2.1.13",
     "radium": "0.18.1",

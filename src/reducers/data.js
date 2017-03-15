@@ -3,7 +3,7 @@ import {
   serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
   serializeFilterHasUsers, serializeFilterHasMediumCategories, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
-  fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasTopMedia, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
+  fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasTopMedia, serializeFilterHasDemographics, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
   serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasTopPeople, serializeFilterHasLanguages, serializeFilterHasPushNotifications, serializeBroadcasterFilterHasMedia
 } from './utils';
 
@@ -51,6 +51,7 @@ export default (state = fromJS({
     collections: {},
     contentProducers: {},
     countries: {},
+    demographics: {},
     events: {},
     faceImages: {}, // Characters and persons has faceImages
     genders: {},
@@ -96,18 +97,19 @@ export default (state = fromJS({
     filterHasCommercials: {},
     filterHasContentProducers: {},
     filterHasCountries: {},
+    filterHasDemographics: {},
     filterHasEpisodes: {},
     filterHasLanguages: {},
     filterHasMedia: {},
     filterHasMediumCategories: {},
     filterHasMovies: {},
     filterHasPersons: {},
-    filterHasShops: {},
-    filterHasProducts: {},
     filterHasProductCategories: {},
+    filterHasProducts: {},
     filterHasPushNotifications: {},
     filterHasSeasons: {},
     filterHasSeriesEntries: {},
+    filterHasShops: {},
     filterHasTags: {},
     filterHasTopMedia: {},
     filterHasTopPeople: {},
@@ -205,6 +207,20 @@ export default (state = fromJS({
       return searchSuccess(state, 'topPeople', 'filterHasTopPeople', serializeFilterHasTopPeople(action), action.data.data);
     case brandDashboardActions.TOP_PEOPLE_FETCH_ERROR:
       return searchError(state, 'filterHasTopPeople', serializeFilterHasTopPeople(action), action.error);
+
+    case brandDashboardActions.DEMOGRAPHICS_FETCH_START:
+      return searchStart(state, 'filterHasDemographics', serializeFilterHasDemographics(action));
+    case brandDashboardActions.DEMOGRAPHICS_FETCH_SUCCESS:
+      return searchSuccess(state, 'demographics', 'filterHasDemographics', serializeFilterHasDemographics(action), action.data.data);
+    case brandDashboardActions.DEMOGRAPHICS_FETCH_ERROR:
+      return searchError(state, 'filterHasDemographics', serializeFilterHasDemographics(action), action.error);
+
+    // case brandDashboardActions.AGE_DATA_FETCH_START:
+    //   return searchStart(state, 'filterHasDemographics', serializeFilterHasDemographics(action));
+    // case brandDashboardActions.AGE_DATA_FETCH_SUCCESS:
+    //   return searchSuccess(state, 'demographics', 'filterHasDemographics', serializeFilterHasDemographics(action), action.data.data);
+    // case brandDashboardActions.AGE_DATA_FETCH_ERROR:
+    //   return searchError(state, 'filterHasDemographics', serializeFilterHasDemographics(action), action.error);
 
     // Brands
     // /////////////////

@@ -8,6 +8,7 @@ export default class ListWidget extends Component {
 
   static propTypes = {
     children: PropTypes.node,
+    header: PropTypes.node,
     isLoading: PropTypes.bool,
     style: PropTypes.object,
     title: PropTypes.string
@@ -28,13 +29,14 @@ export default class ListWidget extends Component {
     header: {
       display: 'flex',
       alignItems: 'center',
-      height: '2em',
+      minHeight: '2em',
       marginBottom: '1em'
     },
     title: {
       ...makeTextStyle(fontWeights.medium, '0.688em', '0.0455em'),
       color: colors.veryDarkGray,
-      textTransform: 'uppercase'
+      textTransform: 'uppercase',
+      paddingRight: 24
     },
     widget: {
       width: '100%'
@@ -43,7 +45,7 @@ export default class ListWidget extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { children, isLoading, style, title } = this.props;
+    const { children, header, isLoading, style, title } = this.props;
     return (
       <div style={[ styles.widget, style ]}>
         <div style={styles.container}>
@@ -51,6 +53,7 @@ export default class ListWidget extends Component {
             <div style={styles.header}>
               <h2 style={styles.title}>{title}&nbsp;&nbsp;&nbsp;</h2>
               {isLoading && <Spinner size='small' />}
+              {header}
             </div>}
           {children}
         </div>
