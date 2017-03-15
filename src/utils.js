@@ -101,7 +101,7 @@ export function createSearchAction (dataAction, startActionType, errorActionType
       const payload = selector ? selector(getState()) : {};
       try {
         dispatch({ searchString: lowerCaseSearchString, type: startActionType, ...payload });
-        return await dispatch(dataAction({ searchString, ...payload }));
+        return await dispatch(dataAction({ searchString: lowerCaseSearchString, ...payload }));
       } catch (error) {
         dispatch({ error, searchString: lowerCaseSearchString, type: errorActionType, ...payload });
       }
