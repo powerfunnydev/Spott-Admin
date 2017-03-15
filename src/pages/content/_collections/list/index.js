@@ -350,7 +350,8 @@ export default class Collections extends Component {
             submitButtonText='Save'
             title='Manage Live Collections'
             onClose={() => this.setState({ ...this.state, editLiveCollections: false })}
-            onSubmit={async () => {
+            onSubmit={async (e) => {
+              e.preventDefault();
               // We kept track of the visibility of a collection, with the state.
               const { liveCollections, visibleCollections } = this.state;
               const collections = [];
