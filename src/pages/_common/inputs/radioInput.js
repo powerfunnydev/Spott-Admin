@@ -7,6 +7,7 @@ import Label from './_label';
 export default class RadioInput extends Component {
 
   static propTypes = {
+    disabled: PropTypes.bool,
     first: PropTypes.bool,
     input: PropTypes.object.isRequired,
     label: PropTypes.string,
@@ -21,11 +22,13 @@ export default class RadioInput extends Component {
 
   onClick (value, e) {
     e.preventDefault();
-    this.props.input.onChange(value);
+    if (!this.props.disabled) {
+      this.props.input.onChange(value);
 
-    const onChange = this.props.onChange;
-    if (onChange) {
-      onChange(value);
+      const onChange = this.props.onChange;
+      if (onChange) {
+        onChange(value);
+      }
     }
   }
 
@@ -57,12 +60,15 @@ export default class RadioInput extends Component {
       fontSize: '13px',
       marginRight: 25,
       paddingLeft: 15
+    },
+    disabled: {
+      opacity: 0.5
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { first, input, label, labelStyle, options, optionsStyle, required, style } = this.props;
+    const { disabled, first, input, label, labelStyle, options, optionsStyle, required, style } = this.props;
 
     const inputValue = input.value || false;
 
@@ -92,7 +98,7 @@ export default class RadioInput extends Component {
             }
 
             return (
-              <label key={i} style={styles.container}>
+              <label key={i} style={[ styles.container, disabled && styles.disabled ]}>
                 <input
                   checked={checked}
                   id={i}
