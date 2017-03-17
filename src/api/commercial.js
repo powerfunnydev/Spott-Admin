@@ -46,6 +46,7 @@ export async function persistCommercial (baseUrl, authenticationToken, locale, {
   commercial.bannerBrand = null;
   commercial.bannerCharacter = null;
   commercial.bannerMedium = null;
+  commercial.bannerLinkType = null;
 
   if (hasBanner) {
     if (bannerSystemLinkType === 'INTERNAL') {
