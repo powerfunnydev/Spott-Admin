@@ -5,22 +5,6 @@ import {
   transformProductBuy, transformProductImpression
 } from './transformers';
 
-const chartColors = [
-  '#058dc7',
-  '#50b432',
-  '#ed561b',
-  '#dddf00',
-  '#24cbe5',
-  '#64e572',
-  '#ff9655',
-  '#fff263',
-  '#6af9c4',
-  '#f45b5b',
-  '#8085e9',
-  '#2b908f',
-  '#f7a35c'
-];
-
 /**
  * GET /report/activityReportEventTypes
  * Get the event types.
@@ -33,7 +17,7 @@ const chartColors = [
  */
 export async function getActivityReportEvents (baseUrl, authenticationToken, locale) {
   const { body: events } = await get(authenticationToken, locale, `${baseUrl}/v004/report/mediumActivityReportEventTypes`);
-  return events.map(({ description, type }, i) => ({ color: chartColors[i % chartColors.length], description, id: type }));
+  return events.map(({ description, type }, i) => ({ description, id: type }));
 }
 
 export async function getAges (baseUrl, authenticationToken, locale) {

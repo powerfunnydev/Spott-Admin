@@ -15,7 +15,7 @@ import MultiSelectInput from '../../_common/inputs/multiSelectInput';
 import { colors, fontWeights, makeTextStyle, Container } from '../../_common/styles';
 import { SideMenu } from '../../app/sideMenu';
 import Header from '../../app/multiFunctionalHeader';
-import { ageConfig, brandActivityConfig, genderConfig } from './defaultHighchartsConfig';
+import { ageConfig, genderConfig } from './defaultHighchartsConfig';
 import DemographicsWidget from './demographicsWidget';
 import Filters from './filters';
 import NumberWidget from './numberWidget';
@@ -24,7 +24,7 @@ import Widget from './widget';
 import ImageTitle from './imageTitle';
 import OpportunitiesWidget from './opportunitiesWidget';
 import * as actions from './actions';
-import selector, { topMediaPrefix } from './selector';
+import selector, { topMediaPrefix, topPeoplePrefix, topProductsPrefix } from './selector';
 
 const colorStyle = {
   borderRadius: '100%',
@@ -113,7 +113,7 @@ class TopMedia extends Component {
   }
 }
 
-@tableDecorator(topMediaPrefix)
+@tableDecorator(topPeoplePrefix)
 class TopPeople extends Component {
 
   static propTypes = {
@@ -162,8 +162,59 @@ class TopPeople extends Component {
   }
 }
 
+@tableDecorator(topProductsPrefix)
+class TopProducts extends Component {
+
+  static propTypes = {
+    data: ImmutablePropTypes.map.isRequired,
+    load: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
+    style: PropTypes.object
+  };
+
+  constructor (props) {
+    super(props);
+    this.getTitle = ::this.getTitle;
+  }
+
+  getTitle (topMedia) {
+    return (
+      <ImageTitle
+        imageUrl={topMedia.getIn([ 'medium', 'posterImage', 'url' ])}
+        title={topMedia.getIn([ 'medium', 'title' ])}/>
+    );
+  }
+
+  render () {
+    const { data, load, location: { query: { topMediaSortDirection, topMediaSortField } }, routerPushWithReturnTo, style, onSortField } = this.props;
+
+    const columns = [
+      { clickable: true, colspan: 3, convert: this.getTitle, sort: true, sortField: 'TITLE', title: 'TITLE', type: 'custom' },
+      { clickable: true, colspan: 1, name: 'taggedProducts', sort: true, sortField: 'TAGGED_PRODUCTS', title: 'TAGGED PRODUCTS', type: 'custom' },
+      { clickable: true, colspan: 1, name: 'subscriptions', sort: true, sortField: 'SUBSCRIPTIONS', title: 'SUBSCRIPTIONS', type: 'custom' }
+    ];
+
+    return (
+      <Widget style={style} title='Top media for your brand'>
+        <div style={listViewContainerStyle}>
+          <ListView
+            columns={columns}
+            data={data}
+            load={load}
+            sortDirection={topMediaSortDirection}
+            sortField={topMediaSortField}
+            onSortField={(name) => onSortField.bind(this, name)} />
+        </div>
+      </Widget>
+    );
+  }
+}
+
 @connect(selector, (dispatch) => ({
+  loadDateData: bindActionCreators(actions.loadDateData, dispatch),
   loadEvents: bindActionCreators(actions.loadEvents, dispatch),
+  loadKeyMetrics: bindActionCreators(actions.loadKeyMetrics, dispatch),
   loadTopMedia: bindActionCreators(actions.loadTopMedia, dispatch),
   loadTopPeople: bindActionCreators(actions.loadTopPeople, dispatch),
   routerPushWithReturnTo: bindActionCreators(globalActions.routerPushWithReturnTo, dispatch)
@@ -173,9 +224,12 @@ export default class BrandDashboard extends Component {
 
   static propTypes = {
     // children: PropTypes.node.isRequired,
+    dateDataConfig: PropTypes.object.isRequired,
     events: ImmutablePropTypes.map.isRequired,
     eventsById: ImmutablePropTypes.map.isRequired,
+    loadDateData: PropTypes.func.isRequired,
     loadEvents: PropTypes.func.isRequired,
+    loadKeyMetrics: PropTypes.func.isRequired,
     loadTopMedia: PropTypes.func.isRequired,
     loadTopPeople: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
@@ -192,10 +246,21 @@ export default class BrandDashboard extends Component {
     console.warn('Sort fields', arguments);
   }
 
-  componentDidMount () {
-    this.props.loadTopMedia(this.props.location.query);
-    this.props.loadTopPeople(this.props.location.query);
-    this.props.loadEvents();
+  async componentDidMount () {
+    const location = this.props.location;
+    const query = {
+      // We assume the ALL event will be always there.
+      endDate: moment().startOf('day').format('YYYY-MM-DD'),
+      startDate: moment().startOf('day').subtract(1, 'months').date(1).format('YYYY-MM-DD'),
+      ...location.query
+    };
+    await this.props.routerPushWithReturnTo({ ...location, query });
+
+    await this.props.loadEvents();
+    await this.props.loadKeyMetrics();
+    await this.props.loadTopMedia();
+    await this.props.loadTopPeople();
+    await this.props.loadDateData();
   }
 
   onChangeFilter (field, type, value) {
@@ -248,6 +313,9 @@ export default class BrandDashboard extends Component {
     filters: {
       paddingTop: '1.5em',
       paddingBottom: '1em'
+    },
+    topProductsWidget: {
+      paddingBottom: '1.5em'
     }
   };
 
@@ -274,12 +342,11 @@ export default class BrandDashboard extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      children, eventsById, events, loadTopMedia, loadTopPeople, location, location:
+      children, dateDataConfig, eventsById, events, loadTopMedia, loadTopPeople, location, location:
       { query: { ages, brandActivityEvents, endDate, genders, languages, startDate } },
-      routerPushWithReturnTo, topMedia, topPeople
+      keyMetrics, routerPushWithReturnTo, topMedia, topPeople
     } = this.props;
 
-    console.warn('EVENTS', eventsById.toJS(), events.toJS());
     return (
       <SideMenu location={location}>
         <Header hierarchy={[ { title: 'Dashboard', url: '/brand-dashboard' } ]}/>
@@ -298,22 +365,22 @@ export default class BrandDashboard extends Component {
         <Container style={styles.wrapper}>
           <div style={styles.numberWidgets}>
             <NumberWidget style={styles.numberWidget} title='Tagged products'>
-              <span>124</span>
+              <span>{keyMetrics.get('taggedProducts') || 0}</span>
             </NumberWidget>
             <NumberWidget style={styles.numberWidget} title='Brand subscriptions'>
-              <span>2586</span>
+              <span>{keyMetrics.get('brandSubscriptions') || 0}</span>
             </NumberWidget>
             <NumberWidget style={styles.numberWidget} title='Product impressions'>
-              <span>403</span>
+              <span>{keyMetrics.get('productImpressions') || 0}</span>
             </NumberWidget>
             <NumberWidget style={styles.numberWidget} title='Product views'>
-              <span>280</span>
+              <span>{keyMetrics.get('productViews') || 0}</span>
             </NumberWidget>
             <NumberWidget style={styles.numberWidget} title='Product buys'>
-              <span>8</span>
+              <span>{keyMetrics.get('productBuys') || 0}</span>
             </NumberWidget>
             <NumberWidget style={styles.numberWidget} title='Conversion'>
-              <span>4%</span>
+              <span>{keyMetrics.get('conversion') || 0}%</span>
             </NumberWidget>
           </div>
           <Widget
@@ -331,20 +398,11 @@ export default class BrandDashboard extends Component {
                 onChange={this.onChangeFilter.bind(this, 'brandActivityEvents', 'array')} />
             }
             style={styles.paddingBottom} title='Brand activity'>
-            <button onClick={(e) => { e.preventDefault(); this.downloadCsv(); }}>
+            {/* <button onClick={(e) => { e.preventDefault(); this.downloadCsv(); }}>
               Donwload csv
-            </button>
-            <Highcharts config={brandActivityConfig} isPureConfig />
+            </button> */}
+            <Highcharts config={dateDataConfig} isPureConfig />
           </Widget>
-          <div style={styles.widgets}>
-            <Widget style={styles.widget} title='Age'>
-              <Highcharts config={ageConfig} isPureConfig />
-            </Widget>
-            <Widget style={styles.widget} title='Gender'>
-              <Highcharts config={genderConfig} isPureConfig />
-            </Widget>
-          </div>
-          {/* <MapWidget style={styles.paddingBottom} title='Brand activity by region' /> */}
           <div style={styles.widgets}>
             <TopMedia
               data={topMedia}
@@ -359,6 +417,22 @@ export default class BrandDashboard extends Component {
               routerPushWithReturnTo={routerPushWithReturnTo}
               style={styles.widget} />
           </div>
+          <TopProducts
+            data={topMedia}
+            load={() => loadTopPeople(location.query)}
+            location={location}
+            routerPushWithReturnTo={routerPushWithReturnTo}
+            style={styles.topProductsWidget}/>
+          <div style={styles.widgets}>
+            <Widget style={styles.widget} title='Age'>
+              <Highcharts config={ageConfig} isPureConfig />
+            </Widget>
+            <Widget style={styles.widget} title='Gender'>
+              <Highcharts config={genderConfig} isPureConfig />
+            </Widget>
+          </div>
+          {/* <MapWidget style={styles.paddingBottom} title='Brand activity by region' /> */}
+
           <DemographicsWidget style={styles.paddingBottom} title='Demographics' />
           <OpportunitiesWidget style={styles.paddingBottom}/>
         </Container>

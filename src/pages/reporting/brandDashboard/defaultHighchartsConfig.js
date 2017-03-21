@@ -1,6 +1,6 @@
 import { fromJS } from 'immutable';
 
-export const brandActivityConfig = {
+export const dateDataConfig = fromJS({
   exporting: {
     buttons: {
       contextButton: {
@@ -85,7 +85,7 @@ export const brandActivityConfig = {
     data: [ [ new Date().getTime(), 560 ], [ new Date().getTime() + 100000000, 510 ], [ new Date().getTime() + 200000000, 410 ], [ new Date().getTime() + 300000000, 510 ] ],
     name: 'Subscriptions'
   } ]
-};
+});
 
 export const ageConfig = {
   chart: {

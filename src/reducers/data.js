@@ -44,6 +44,7 @@ export default (state = fromJS({
     ages: {},
     audiences: {},
     availabilities: {},
+    brandDashboardEvents: {},
     brands: {},
     broadcastChannels: {},
     broadcasters: {},
@@ -928,6 +929,13 @@ export default (state = fromJS({
 
     // Reporting
     // /////////
+
+    case brandDashboardActions.EVENTS_FETCH_START:
+      return fetchListStart(state, 'brandDashboardEvents');
+    case brandDashboardActions.EVENTS_FETCH_SUCCESS:
+      return fetchListSuccess(state, 'brandDashboardEvents', 'brandDashboardEvents', action.data);
+    case brandDashboardActions.EVENTS_FETCH_ERROR:
+      return fetchListError(state, 'brandDashboardEvents', action.error);
 
     case reportingActions.AGES_FETCH_START:
       return fetchListStart(state, 'ages');

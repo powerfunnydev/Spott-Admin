@@ -7,15 +7,8 @@ import {
   agesListSelector,
   agesEntitiesSelector
 } from '../../../selectors/data';
-import { locationSelector } from '../../../selectors/global';
+import { createQueryStringArraySelector } from '../../../selectors/global';
 import { LAZY } from '../../../constants/statusTypes';
-
-function createQueryStringArraySelector (field) {
-  return createSelector(
-    locationSelector,
-    ({ query }) => typeof query[field] === 'string' ? [ query[field] ] : (query[field] || [])
-  );
-}
 
 // Used in actions
 export const currentAgesSelector = createQueryStringArraySelector('ages');

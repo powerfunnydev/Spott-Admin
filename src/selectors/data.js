@@ -12,6 +12,7 @@ export const charactersEntitiesSelector = (state) => state.getIn([ 'data', 'enti
 export const collectionsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'collections' ]);
 export const contentProducersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'contentProducers' ]);
 export const countriesEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'countries' ]);
+export const brandDashboardEventsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'brandDashboardEvents' ]);
 export const eventsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'events' ]);
 export const faceImagesEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'faceImages' ]);
 export const gendersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'genders' ]);
@@ -107,6 +108,7 @@ export const seriesEntryHasEpisodesRelationsSelector = (state) => state.getIn([ 
 export const seasonHasEpisodesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'seasonHasEpisodes' ]);
 
 export const agesListSelector = (state) => state.getIn([ 'data', 'lists', 'ages' ]);
+export const brandDashboardEventsListSelector = (state) => state.getIn([ 'data', 'lists', 'brandDashboardEvents' ]);
 export const eventsListSelector = (state) => state.getIn([ 'data', 'lists', 'events' ]);
 export const gendersListSelector = (state) => state.getIn([ 'data', 'lists', 'genders' ]);
 export const broadcastChannelsListSelector = (state) => state.getIn([ 'data', 'lists', 'broadcastChannels' ]);
