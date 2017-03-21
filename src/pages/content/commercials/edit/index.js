@@ -36,7 +36,8 @@ function validate (values, { t }) {
   const validationErrors = {};
   const {
     _activeLocale, bannerActorId, bannerBrandId, bannerCharacterId, bannerMediumId,
-    bannerExternalLink, bannerInternalLinkType, bannerSystemLinkType, brandId, defaultLocale, title
+    bannerExternalLink, bannerInternalLinkType, bannerSystemLinkType, brandId, defaultLocale,
+    hasBanner, title
   } = values.toJS();
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
   if (!brandId) { validationErrors.brandId = t('common.errors.required'); }
@@ -45,34 +46,36 @@ function validate (values, { t }) {
     validationErrors.title[_activeLocale] = t('common.errors.required');
   }
 
-  if (bannerSystemLinkType === 'EXTERNAL') {
-    if (bannerExternalLink && !bannerExternalLink[_activeLocale]) {
-      validationErrors.bannerExternalLink = validationErrors.bannerExternalLink || {};
-      validationErrors.bannerExternalLink[_activeLocale] = t('common.errors.required');
-    }
-  } else {
-    // INTERNAL
-    switch (bannerInternalLinkType) {
-      case 'ACTOR':
-        if (!bannerActorId) {
-          validationErrors.bannerActorId = t('common.errors.required');
-        }
-        break;
-      case 'BRAND':
-        if (!bannerBrandId) {
-          validationErrors.bannerBrandId = t('common.errors.required');
-        }
-        break;
-      case 'CHARACTER':
-        if (!bannerCharacterId) {
-          validationErrors.bannerCharacterId = t('common.errors.required');
-        }
-        break;
-      case 'MEDIUM':
-        if (!bannerMediumId) {
-          validationErrors.bannerMediumId = t('common.errors.required');
-        }
-        break;
+  if (hasBanner) {
+    if (bannerSystemLinkType === 'EXTERNAL') {
+      if (bannerExternalLink && !bannerExternalLink[_activeLocale]) {
+        validationErrors.bannerExternalLink = validationErrors.bannerExternalLink || {};
+        validationErrors.bannerExternalLink[_activeLocale] = t('common.errors.required');
+      }
+    } else {
+      // INTERNAL
+      switch (bannerInternalLinkType) {
+        case 'ACTOR':
+          if (!bannerActorId) {
+            validationErrors.bannerActorId = t('common.errors.required');
+          }
+          break;
+        case 'BRAND':
+          if (!bannerBrandId) {
+            validationErrors.bannerBrandId = t('common.errors.required');
+          }
+          break;
+        case 'CHARACTER':
+          if (!bannerCharacterId) {
+            validationErrors.bannerCharacterId = t('common.errors.required');
+          }
+          break;
+        case 'MEDIUM':
+          if (!bannerMediumId) {
+            validationErrors.bannerMediumId = t('common.errors.required');
+          }
+          break;
+      }
     }
   }
 
@@ -423,7 +426,7 @@ export default class EditCommercial extends Component {
                     placeholder='Broadcaster companies'/>
                   <Field
                     component={CheckboxInput}
-                    label='Live'
+                    label='Enable live collections'
                     name='live' />
                   <FormSubtitle>Images</FormSubtitle>
                   <div style={[ styles.paddingTop, styles.row ]}>

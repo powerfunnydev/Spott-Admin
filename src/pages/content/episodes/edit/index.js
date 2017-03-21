@@ -449,7 +449,7 @@ export default class EditEpisode extends Component {
                     placeholder='Broadcaster companies'/>
                   <Field
                     component={CheckboxInput}
-                    label='Live'
+                    label='Enable live collections'
                     name='live' />
                   <FormSubtitle>Images</FormSubtitle>
                   <div style={[ styles.paddingTop, styles.row ]}>
