@@ -318,8 +318,8 @@ export default class EditPerson extends Component {
                 <div style={styles.faceImagesContainer}>
                   {faceImages.get('data').map((faceImage, index) =>
                     <ImageWithDropdown
-                      downloadUrl={faceImage.getIn([ 'image', 'url' ])}
-                      imageUrl={faceImage.getIn([ 'image', 'url' ])}
+                      downloadUrl={faceImage.get('url')}
+                      imageUrl={faceImage.get('url')}
                       key={`ImageWithDropdown${index}`}
                       onDelete={async () => {
                         await deleteFaceImage({ personId: currentPerson.get('id'), faceImageId: faceImage.get('id') });
