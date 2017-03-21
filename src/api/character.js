@@ -24,7 +24,11 @@ export async function fetchCharacter (baseUrl, authenticationToken, locale, { ch
 export async function fetchFaceImages (baseUrl, authenticationToken, locale, { characterId, sortDirection = 'DESC', sortField = 'ADDED_ON' }) {
   const url = `${baseUrl}/v004/media/characters/${characterId}/faceImages?sortDirection=${sortDirection}&sortField=${sortField}`;
   const { body } = await get(authenticationToken, locale, url);
-  body.data = body.data.map(transformImage);
+  body.data = body.data.map(({ image, uuid }) => {
+    const faceImage = transformImage(image);
+    faceImage.id = uuid;
+    return faceImage;
+  });
   return body;
 }
 
