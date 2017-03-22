@@ -603,13 +603,9 @@ export const transformMovie = transformMedium;
 export function transformCommercial (data) {
   const commercial = transformMedium(data);
   commercial.hasBanner = data.hasBanner;
-  commercial.bannerBarColor = {};
   commercial.bannerExternalLink = {};
   commercial.bannerImage = {};
   commercial.bannerLogo = {};
-  commercial.bannerText = {};
-  commercial.bannerTextColor = {};
-  commercial.bannerUrl = {};
 
   const { bannerLinkType, bannerActor, bannerBrand, bannerCharacter, bannerMedium, localeData } = data;
 
@@ -625,20 +621,9 @@ export function transformCommercial (data) {
     commercial.bannerInternalLinkType = bannerLinkType;
   }
 
-  for (const { banner, bannerExternalLink, bannerImage, locale } of localeData) {
+  for (const { bannerExternalLink, bannerImage, locale } of localeData) {
     commercial.bannerImage[locale] = transformImage(bannerImage);
     commercial.bannerExternalLink[locale] = bannerExternalLink;
-    if (banner) {
-      const { barColor, logo, text, textColor, url } = banner;
-      commercial.bannerBarColor[locale] = barColor;
-      commercial.bannerLogo[locale] = logo ? { id: logo.uuid, url: logo.url } : null;
-      commercial.bannerText[locale] = text;
-      commercial.bannerTextColor[locale] = textColor;
-      commercial.bannerUrl[locale] = url;
-    } else {
-      commercial.bannerBarColor[locale] = '#000000';
-      commercial.bannerTextColor[locale] = '#000000';
-    }
   }
   return commercial;
 }

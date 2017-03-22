@@ -24,7 +24,7 @@ export async function fetchCommercial (baseUrl, authenticationToken, locale, { c
 
 export async function persistCommercial (baseUrl, authenticationToken, locale, {
   bannerActorId, bannerBarColor, bannerBrandId, bannerCharacterId, bannerExternalLink,
-  bannerInternalLinkType, bannerMediumId, bannerSystemLinkType, bannerText, bannerTextColor, bannerUrl,
+  bannerInternalLinkType, bannerMediumId, bannerSystemLinkType,
   basedOnDefaultLocale, brandId, broadcasters, commercialId, contentProducers, defaultLocale,
   description, hasBanner, live, locales, publishStatus, title
 }) {
@@ -84,13 +84,6 @@ export async function persistCommercial (baseUrl, authenticationToken, locale, {
     if (bannerSystemLinkType === 'EXTERNAL') {
       localeData.bannerExternalLink = hasBanner ? bannerExternalLink[locale] : null;
     }
-
-    localeData.banner = hasBanner ? {
-      barColor: bannerBarColor[locale],
-      text: bannerText[locale],
-      textColor: bannerTextColor[locale],
-      url: bannerUrl[locale]
-    } : null;
     // basedOnDefaultLocale is always provided, no check needed
     localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
     localeData.description = description && description[locale];

@@ -16,7 +16,6 @@ import localized from '../../../_common/decorators/localized';
 import CheckboxInput from '../../../_common/inputs/checkbox';
 import RadioInput from '../../../_common/inputs/radioInput';
 import Section from '../../../_common/components/section';
-import ColorInput from '../../../_common/inputs/colorInput';
 import SelectInput from '../../../_common/inputs/selectInput';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
@@ -492,32 +491,6 @@ export default class EditCommercial extends Component {
                     component={CheckboxInput}
                     label='Activate banner'
                     name='hasBanner' />
-                  <Field
-                    component={TextInput}
-                    disabled={!hasBanner}
-                    label='Text'
-                    name={`bannerText.${_activeLocale}`}
-                    placeholder='Text'
-                    required />
-                  <Field
-                    component={TextInput}
-                    disabled={!hasBanner}
-                    label='Url'
-                    name={`bannerUrl.${_activeLocale}`}
-                    placeholder='Url'
-                    required />
-                  <Field
-                    component={ColorInput}
-                    disabled={!hasBanner}
-                    label='Text color'
-                    name={`bannerTextColor.${_activeLocale}`}
-                    required />
-                  <Field
-                    component={ColorInput}
-                    disabled={!hasBanner}
-                    label='Bar color'
-                    name={`bannerBarColor.${_activeLocale}`}
-                    required />
                   <FormSubtitle>Banner Image</FormSubtitle>
                   <Label style={styles.label} text={bannerImage ? `${bannerImage.getIn([ 'dimension', 'width' ])} x ${bannerImage.getIn([ 'dimension', 'height' ])} (640 x 200 Recommended)` : '640 x 200 Recommended'} />
                   <Dropzone
