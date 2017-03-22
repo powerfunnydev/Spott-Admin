@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { FETCHING } from '../../../../constants/statusTypes';
-import { colors, fontWeights, makeTextStyle, EditTemplate, FormDescription, FormSubtitle, Root } from '../../../_common/styles';
+import { colors, errorTextStyle, fontWeights, makeTextStyle, EditTemplate, FormDescription, FormSubtitle, Root } from '../../../_common/styles';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { COMMERCIAL_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
@@ -36,16 +36,21 @@ function validate (values, { t }) {
   const {
     _activeLocale, bannerActorId, bannerBrandId, bannerCharacterId, bannerMediumId,
     bannerExternalLink, bannerInternalLinkType, bannerSystemLinkType, brandId, defaultLocale,
-    hasBanner, title
+    hasBanner, bannerImage, title
   } = values.toJS();
+
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
   if (!brandId) { validationErrors.brandId = t('common.errors.required'); }
   if (title && !title[_activeLocale]) {
     validationErrors.title = validationErrors.title || {};
     validationErrors.title[_activeLocale] = t('common.errors.required');
   }
-
   if (hasBanner) {
+    if (bannerImage && !bannerImage[_activeLocale]) {
+      validationErrors.bannerImage = validationErrors.bannerImage || {};
+      validationErrors.bannerImage[_activeLocale] = t('common.errors.required');
+    }
+
     if (bannerSystemLinkType === 'EXTERNAL') {
       if (bannerExternalLink && !bannerExternalLink[_activeLocale]) {
         validationErrors.bannerExternalLink = validationErrors.bannerExternalLink || {};
@@ -500,8 +505,19 @@ export default class EditCommercial extends Component {
                     height={100}
                     imageUrl={bannerImage && `${bannerImage.get('url')}?height=200&width=640`}
                     type={BANNER_IMAGE}
-                    onChange={({ callback, file }) => { this.props.uploadBannerImage({ commercialId: this.props.params.commercialId, image: file, callback }); }}
-                    onDelete={() => { deleteBannerImage({ commercialId: currentCommercial.get('id'), locale: _activeLocale }); }}/>
+                    onChange={async ({ callback, file }) => {
+                      const { change, dispatch, uploadBannerImage } = this.props;
+                      await uploadBannerImage({ commercialId: this.props.params.commercialId, image: file, callback });
+                      dispatch(change(`bannerImage.${_activeLocale}`, true));
+                    }}
+                    onDelete={async () => {
+                      const { change, dispatch } = this.props;
+                      await deleteBannerImage({ commercialId: currentCommercial.get('id'), locale: _activeLocale });
+                      dispatch(change(`bannerImage.${_activeLocale}`, false));
+                    }}/>
+                  <Field
+                    component={({ meta }) => meta && meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div> || null}
+                    name={`bannerImage.${_activeLocale}`}/>
                   <FormSubtitle>Banner Link</FormSubtitle>
                   <Field
                     component={RadioInput}
