@@ -147,7 +147,7 @@ export default class Collections extends Component {
   }
 
   async onCollectionEdit (collectionId) {
-    const { basedOnDefaultLocale, brand, character, defaultLocale, id, linkType, recurring, recurringEntries, title } = await this.props.loadCollection({ collectionId });
+    const { basedOnDefaultLocale, brand, character, defaultLocale, id, linkType, recurring, recurringEntries, title, visible } = await this.props.loadCollection({ collectionId });
     const editCollection = {
       basedOnDefaultLocale,
       brandId: brand && brand.id,
@@ -157,7 +157,8 @@ export default class Collections extends Component {
       linkType,
       recurring,
       recurringEntries,
-      title
+      title,
+      visible
     };
     this.setState({
       ...this.state,
@@ -220,6 +221,20 @@ export default class Collections extends Component {
   async onCollectionMove ({ before, sourceCollectionId, targetCollectionId }) {
     const { loadCollections, mediumId, persistMoveCollection } = this.props;
     await persistMoveCollection({ before, sourceCollectionId, targetCollectionId });
+    await loadCollections({ mediumId });
+  }
+
+  async onChangeCollectionVisibility (collectionId) {
+    const { loadCollection, loadCollections, persistCollection } = this.props;
+    const { brand, character, id, mediumId, visible, ...rest } = await loadCollection({ collectionId });
+    await persistCollection({
+      ...rest,
+      brandId: brand && brand.id,
+      characterId: character && character.id,
+      collectionId: id,
+      mediumId,
+      visible: !visible
+    });
     await loadCollections({ mediumId });
   }
 
@@ -312,7 +327,8 @@ export default class Collections extends Component {
                 onCollectionEdit={this.onCollectionEdit.bind(this, collectionId)}
                 onCollectionItemCreate={this.onCollectionItemCreate.bind(this, collectionId)}
                 onCollectionItemDelete={this.onCollectionItemDelete.bind(this, collectionId)}
-                onCollectionItemEdit={this.onCollectionItemEdit.bind(this, collectionId)}/>
+                onCollectionItemEdit={this.onCollectionItemEdit.bind(this, collectionId)}
+                onChangeCollectionVisibility={this.onChangeCollectionVisibility.bind(this, collectionId)}/>
             );
           })}
         </Section>

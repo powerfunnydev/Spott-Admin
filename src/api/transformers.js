@@ -767,7 +767,7 @@ export function transformListCollection ({
 
 export function transformCollection ({
   auditInfo, linkType, linkedBrand, linkedCharacter, defaultLocale,
-  localeData, medium, recurring, recurringEntries, sortOrder, uuid
+  localeData, medium, recurring, recurringEntries, sortOrder, uuid, visible
 }) {
   const collection = {
     basedOnDefaultLocale: {},
@@ -783,7 +783,8 @@ export function transformCollection ({
     mediumId: medium && medium.uuid,
     recurring,
     recurringEntries,
-    title: {}
+    title: {},
+    visible
   };
   if (localeData) {
     for (const { basedOnDefaultLocale, locale, title } of localeData) {
