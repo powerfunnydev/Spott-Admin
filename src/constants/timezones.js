@@ -65,3 +65,8 @@ export const timezoneKeys = [
   '+11:00',
   '+12:00'
 ];
+
+// E.g., -0400
+const tempTimezone = new Date().toString().match(/([-\+][0-9]+)\s/)[1];
+// E.g. -04:00
+export const myTimezone = `${tempTimezone.slice(0, 3)}:${tempTimezone.slice(3)}`;
