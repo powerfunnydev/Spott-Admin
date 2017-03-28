@@ -48,19 +48,20 @@ export default class Audiences extends Component {
   }
 
   componentWillMount () {
-    const { loadAudiences, mediumId } = this.props;
-    loadAudiences({ mediumId });
+    const { loadAudiences, mediumId, mediumType } = this.props;
+    loadAudiences({ mediumId, mediumType });
   }
 
   getAudience (index) {
     const mediumId = this.props.mediumId;
-    const { countries, id, languages, name } = this.props.audiences.getIn([ 'data', index ]).toJS();
+    const { countries, id, languages, mediumType, name } = this.props.audiences.getIn([ 'data', index ]).toJS();
     return {
       countryIds: countries && countries.map((c) => c.id),
       id,
       languageIds: languages && languages.map((l) => l.id),
       name,
-      mediumId
+      mediumId,
+      mediumType
     };
   }
 
@@ -70,15 +71,15 @@ export default class Audiences extends Component {
   }
 
   async onClickDeleteAudience (audienceId) {
-    const { deleteAudience, loadAudiences, mediumId } = this.props;
-    await deleteAudience({ audienceId, mediumId });
-    await loadAudiences({ mediumId });
+    const { deleteAudience, loadAudiences, mediumId, mediumType } = this.props;
+    await deleteAudience({ audienceId, mediumId, mediumType });
+    await loadAudiences({ mediumId, mediumType });
   }
 
   async onSubmit (form) {
-    const { loadAudiences, mediumId, persistAudience } = this.props;
+    const { loadAudiences, mediumId, mediumType, persistAudience } = this.props;
     await persistAudience(form);
-    await loadAudiences({ mediumId });
+    await loadAudiences({ mediumId, mediumType });
   }
 
   static styles = {
@@ -112,7 +113,7 @@ export default class Audiences extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      audiences, loadAudience, mediumId, searchCountries, searchLanguages,
+      audiences, loadAudience, mediumId, mediumType, searchCountries, searchLanguages,
       searchedCountryIds, searchedLanguageIds
     } = this.props;
 
@@ -153,7 +154,7 @@ export default class Audiences extends Component {
                   </CustomCel>
                   <CustomCel style={[ styles.adaptedCustomCel, { flex: 1 } ]}>
                     <EditButton style={styles.editButton} onClick={async () => {
-                      await loadAudience({ audienceId: audience.get('id'), mediumId });
+                      await loadAudience({ audienceId: audience.get('id'), mediumId, mediumType });
                       this.setState({ edit: index });
                     }} />
                     <RemoveButton onClick={this.onClickDeleteAudience.bind(this, audience.get('id'))} />
@@ -170,7 +171,8 @@ export default class Audiences extends Component {
           {this.state.create &&
             <PersistAudienceModal
               initialValues={{
-                mediumId
+                mediumId,
+                mediumType
               }}
               searchCountries={searchCountries}
               searchLanguages={searchLanguages}

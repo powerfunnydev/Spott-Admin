@@ -832,3 +832,52 @@ export function transformAudience ({ countries, languages, name, uuid }) {
     name
   };
 }
+
+export function transformListSpott ({ auditInfo, promoted, publishStatus, title, uuid }) {
+  return {
+    createdBy: auditInfo && auditInfo.createdBy,
+    createdOn: auditInfo && auditInfo.createdOn,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    id: uuid,
+    promoted,
+    publishStatus,
+    title
+  };
+}
+
+export function transformTopic ({ text, uuid }) {
+  return {
+    id: uuid,
+    text
+  };
+}
+
+export function transformSpott ({
+  auditInfo, defaultLocale, localeData, publishStatus, promoted, topics, uuid
+}) {
+  const spott = {
+    basedOnDefaultLocale: {},
+    createdBy: auditInfo && auditInfo.createdBy,
+    createdOn: auditInfo && auditInfo.createdOn,
+    comment: {},
+    defaultLocale,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    locales: [],
+    promoted,
+    title: {},
+    topics: (topics || []).map(transformTopic),
+    publishStatus
+  };
+  if (localeData) {
+    for (const { basedOnDefaultLocale, comment, locale, title } of localeData) {
+      spott.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      spott.comment[locale] = comment;
+      spott.title[locale] = title;
+      spott.locales.push(locale);
+    }
+  }
+  return spott;
+}

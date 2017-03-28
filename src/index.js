@@ -15,44 +15,43 @@ import BrandsCreate from './pages/content/brands/create';
 import BrandsEdit from './pages/content/brands/edit';
 import BrandsList from './pages/content/brands/list';
 import BrandsRead from './pages/content/brands/read';
-import BroadcastersList from './pages/content/broadcasters/list';
-import BroadcastersCreate from './pages/content/broadcasters/create';
-import BroadcastersEdit from './pages/content/broadcasters/edit';
-import BroadcastersRead from './pages/content/broadcasters/read';
-import CharactersList from './pages/content/characters/list';
-import CharactersCreate from './pages/content/characters/create';
-import CharactersEdit from './pages/content/characters/edit';
-import CharactersRead from './pages/content/characters/read';
-import CommercialsList from './pages/content/commercials/list';
-import CommercialsCreate from './pages/content/commercials/create';
-import CommercialsEdit from './pages/content/commercials/edit';
-import CommercialsRead from './pages/content/commercials/read';
-import LinkUserToBroadcaster from './pages/content/broadcasters/read/users/linkUser';
 import BroadcastChannelCreate from './pages/content/broadcastChannels/create';
 import BroadcastChannelEdit from './pages/content/broadcastChannels/edit';
 import BroadcastChannelList from './pages/content/broadcastChannels/list';
-import ContentProducersList from './pages/content/contentProducers/list';
+import BroadcastersCreate from './pages/content/broadcasters/create';
+import BroadcastersEdit from './pages/content/broadcasters/edit';
+import BroadcastersList from './pages/content/broadcasters/list';
+import BroadcastersRead from './pages/content/broadcasters/read';
+import CharactersCreate from './pages/content/characters/create';
+import CharactersEdit from './pages/content/characters/edit';
+import CharactersList from './pages/content/characters/list';
+import CharactersRead from './pages/content/characters/read';
+import CommercialsCreate from './pages/content/commercials/create';
+import CommercialsEdit from './pages/content/commercials/edit';
+import CommercialsList from './pages/content/commercials/list';
+import CommercialsRead from './pages/content/commercials/read';
 import ContentProducersCreate from './pages/content/contentProducers/create';
 import ContentProducersEdit from './pages/content/contentProducers/edit';
+import ContentProducersList from './pages/content/contentProducers/list';
 import ContentProducersRead from './pages/content/contentProducers/read';
+import EpisodeCreate from './pages/content/episodes/create';
+import EpisodeEdit from './pages/content/episodes/edit';
 import EpisodeList from './pages/content/episodes/list';
 import EpisodeRead from './pages/content/episodes/read';
-import EpisodeEdit from './pages/content/episodes/edit';
-import EpisodeCreate from './pages/content/episodes/create';
-import VideoEdit from './pages/content/videos/edit';
-import LinkUserToContentProducer from './pages/content/contentProducers/read/users/linkUser';
 import Error404 from './pages/error404/main';
-import MediaSinglePage from './pages/media/singlePage';
+import ForgotPassword from './pages/forgotPassword';
+import LinkUserToBroadcaster from './pages/content/broadcasters/read/users/linkUser';
+import LinkUserToContentProducer from './pages/content/contentProducers/read/users/linkUser';
+import Login from './pages/login';
 import MediaHome from './pages/media/home';
+import MediaList from './pages/content/media/list';
+import MediaSinglePage from './pages/media/singlePage';
 import MediaUpload from './pages/media/upload';
 import MediaWelcome from './pages/media/welcome';
-import MediaList from './pages/content/media/list';
 import MoviesCreate from './pages/content/movies/create';
 import MoviesEdit from './pages/content/movies/edit';
 import MoviesList from './pages/content/movies/list';
 import MoviesRead from './pages/content/movies/read';
-import Login from './pages/login';
-import ForgotPassword from './pages/forgotPassword';
 import PersonsCreate from './pages/content/persons/create';
 import PersonsEdit from './pages/content/persons/edit';
 import PersonsList from './pages/content/persons/list';
@@ -62,26 +61,31 @@ import ProductsEdit from './pages/content/products/edit';
 import ProductsList from './pages/content/products/list';
 import ProductsRead from './pages/content/products/read';
 import PushNotificationsCreate from './pages/content/pushNotifications/create';
-import PushNotificationsList from './pages/content/pushNotifications/list';
 import PushNotificationsEdit from './pages/content/pushNotifications/edit';
+import PushNotificationsList from './pages/content/pushNotifications/list';
 import PushNotificationsRead from './pages/content/pushNotifications/read';
-import ResetPassword from './pages/resetPassword';
 import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
 import ReportingRankings from './pages/reporting/rankings';
+import ResetPassword from './pages/resetPassword';
+import SeasonCreate from './pages/content/seasons/create';
+import SeasonEdit from './pages/content/seasons/edit';
+import SeasonList from './pages/content/seasons/list';
+import SeasonRead from './pages/content/seasons/read';
+import SeriesCreate from './pages/content/series/create';
+import SeriesEdit from './pages/content/series/edit';
+import SeriesList from './pages/content/series/list';
+import SeriesRead from './pages/content/series/read';
+import SettingsCategoriesEdit from './pages/settings/categories/edit';
 import ShopsCreate from './pages/content/shops/create';
 import ShopsEdit from './pages/content/shops/edit';
 import ShopsList from './pages/content/shops/list';
 import ShopsRead from './pages/content/shops/read';
-import SeasonList from './pages/content/seasons/list';
-import SeasonRead from './pages/content/seasons/read';
-import SeasonEdit from './pages/content/seasons/edit';
-import SeasonCreate from './pages/content/seasons/create';
-import SeriesList from './pages/content/series/list';
-import SeriesRead from './pages/content/series/read';
-import SeriesCreate from './pages/content/series/create';
-import SeriesEdit from './pages/content/series/edit';
-import SettingsCategoriesEdit from './pages/settings/categories/edit';
+import SpottsCreate from './pages/content/spotts/create';
+import SpottsEdit from './pages/content/spotts/edit';
+import SpottsList from './pages/content/spotts/list';
+import SpottsRead from './pages/content/spotts/read';
+import TaggerApplication from './tagger/components/main';
 import TvGuideCreateEntry from './pages/tvGuide/create';
 import TvGuideEditEntry from './pages/tvGuide/edit';
 import TvGuideList from './pages/tvGuide/list';
@@ -89,7 +93,7 @@ import UsersCreate from './pages/users/create';
 import UsersEdit from './pages/users/edit';
 import UsersList from './pages/users/list';
 import UsersRead from './pages/users/read';
-import TaggerApplication from './tagger/components/main';
+import VideoEdit from './pages/content/videos/edit';
 import { authenticationTokenSelector, userRolesSelector } from './selectors/global';
 import reducer from './reducers';
 
@@ -158,6 +162,13 @@ function getRoutes ({ dispatch, getState }) {
       </Route>
       <Route path='content' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <IndexRedirect to='content-producers' />
+        <Route component={SpottsList} path='spotts'>
+          <Route component={SpottsCreate} path ='create'/>
+        </Route>
+        <Route path='spotts'>
+          <Route component={SpottsRead} path='read/:spottId'/>
+          <Route component={SpottsEdit} path='edit/:spottId'/>
+        </Route>
         <Route component={BrandsList} path='brands'>
           <Route component={BrandsCreate} path ='create'/>
         </Route>

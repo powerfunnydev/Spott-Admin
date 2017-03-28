@@ -4,7 +4,9 @@ import {
   serializeFilterHasUsers, serializeFilterHasMediumCategories, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
-  serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasLanguages, serializeFilterHasPushNotifications, serializeBroadcasterFilterHasMedia
+  serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasLanguages,
+  serializeFilterHasPushNotifications, serializeFilterHasSpotts, serializeBroadcasterFilterHasMedia,
+  serializeFilterHasTopics
 } from './utils';
 
 import * as audienceActions from '../actions/audience';
@@ -33,7 +35,9 @@ import * as scheduleEntryActions from '../actions/scheduleEntry';
 import * as shopActions from '../actions/shop';
 import * as seasonActions from '../actions/season';
 import * as seriesActions from '../actions/series';
+import * as spottActions from '../actions/spott';
 import * as tagActions from '../actions/tag';
+import * as topicActions from '../actions/topic';
 import * as tvGuideActions from '../actions/tvGuide';
 import * as userActions from '../actions/user';
 import * as videoActions from '../actions/video';
@@ -77,6 +81,8 @@ export default (state = fromJS({
     similarProducts: {},
     scheduleEntries: {},
     shops: {},
+    spotts: {},
+    topics: {},
     users: {},
     videos: {}
   },
@@ -99,12 +105,14 @@ export default (state = fromJS({
     filterHasMediumCategories: {},
     filterHasMovies: {},
     filterHasPersons: {},
-    filterHasShops: {},
-    filterHasProducts: {},
     filterHasProductCategories: {},
+    filterHasProducts: {},
     filterHasPushNotifications: {},
     filterHasSeasons: {},
+    filterHasShops: {},
+
     filterHasSeriesEntries: {},
+    filterHasSpotts: {},
     filterHasTags: {},
     filterHasTvGuideEntries: {},
     filterHasUsers: {},
@@ -124,6 +132,7 @@ export default (state = fromJS({
     searchStringHasShops: {},
     searchStringHasSeriesEntries: {},
     searchStringHasTags: {},
+    searchStringHasTopics: {},
     searchStringHasUsers: {},
 
     characterHasFaceImages: {},
@@ -508,6 +517,16 @@ export default (state = fromJS({
     case languageActions.LANGUAGES_FETCH_ERROR:
       return searchError(state, 'filterHasLanguages', serializeFilterHasLanguages(action), action.error);
 
+    // Topics
+    // //////
+
+    case topicActions.TOPICS_SEARCH_START:
+      return searchStart(state, 'searchStringHasTopics', action.searchString);
+    case topicActions.TOPICS_SEARCH_SUCCESS:
+      return searchSuccess(state, 'topics', 'searchStringHasTopics', action.searchString, action.data.data);
+    case topicActions.TOPICS_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasTopics', action.searchString, action.error);
+
     // Media
     // /////
 
@@ -840,6 +859,22 @@ export default (state = fromJS({
       return searchSuccess(state, 'listMedia', 'seriesEntryHasSeasons', action.seriesEntryId, action.data);
     case seriesActions.SEASONS_SEARCH_ERROR:
       return searchError(state, 'seriesEntryHasSeasons', action.seriesEntryId, action.error);
+
+    case spottActions.SPOTT_FETCH_START:
+      return fetchStart(state, [ 'entities', 'spotts', action.spottId ]);
+    case spottActions.SPOTT_FETCH_SUCCESS: {
+      const newState = action.data.topics && mergeListOfEntities(state, [ 'entities', 'topics' ], action.data.topics) || state;
+      return fetchSuccess(newState, [ 'entities', 'spotts', action.spottId ], action.data);
+    }
+    case spottActions.SPOTT_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'spotts', action.spottId ], action.error);
+
+    case spottActions.SPOTTS_FETCH_START:
+      return searchStart(state, 'filterHasSpotts', serializeFilterHasSpotts(action));
+    case spottActions.SPOTTS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listSpotts', 'filterHasSpotts', serializeFilterHasSpotts(action), action.data.data);
+    case spottActions.SPOTTS_FETCH_ERROR:
+      return searchError(state, 'filterHasSpotts', serializeFilterHasSpotts(action), action.error);
 
     // Tags
     // //////////////

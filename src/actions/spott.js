@@ -1,0 +1,28 @@
+import * as api from '../api/spott';
+import { makeApiActionCreator } from './utils';
+
+export const SPOTT_FETCH_START = 'SPOTT/SPOTT_FETCH_START';
+export const SPOTT_FETCH_SUCCESS = 'SPOTT/SPOTT_FETCH_SUCCESS';
+export const SPOTT_FETCH_ERROR = 'SPOTT/SPOTT_FETCH_ERROR';
+
+export const SPOTTS_FETCH_START = 'SPOTT/SPOTTS_FETCH_START';
+export const SPOTTS_FETCH_SUCCESS = 'SPOTT/SPOTTS_FETCH_SUCCESS';
+export const SPOTTS_FETCH_ERROR = 'SPOTT/SPOTTS_FETCH_ERROR';
+
+export const SPOTT_DELETE_START = 'SPOTT/SPOTT_DELETE_START';
+export const SPOTT_DELETE_SUCCESS = 'SPOTT/SPOTT_DELETE_SUCCESS';
+export const SPOTT_DELETE_ERROR = 'SPOTT/SPOTT_DELETE_ERROR';
+
+export const SPOTTS_DELETE_START = 'SPOTT/SPOTTS_DELETE_START';
+export const SPOTTS_DELETE_SUCCESS = 'SPOTT/SPOTTS_DELETE_SUCCESS';
+export const SPOTTS_DELETE_ERROR = 'SPOTT/SPOTTS_DELETE_ERROR';
+
+export const SPOTT_PERSIST_START = 'SPOTT/SPOTT_PERSIST_START';
+export const SPOTT_PERSIST_SUCCESS = 'SPOTT/SPOTT_PERSIST_SUCCESS';
+export const SPOTT_PERSIST_ERROR = 'SPOTT/SPOTT_PERSIST_ERROR';
+
+export const fetchSpott = makeApiActionCreator(api.fetchSpott, SPOTT_FETCH_START, SPOTT_FETCH_SUCCESS, SPOTT_FETCH_ERROR);
+export const fetchSpotts = makeApiActionCreator(api.fetchSpotts, SPOTTS_FETCH_START, SPOTTS_FETCH_SUCCESS, SPOTTS_FETCH_ERROR);
+export const deleteSpott = makeApiActionCreator(api.deleteSpott, SPOTT_DELETE_START, SPOTT_DELETE_SUCCESS, SPOTT_DELETE_ERROR);
+export const deleteSpotts = makeApiActionCreator(api.deleteSpotts, SPOTTS_DELETE_START, SPOTTS_DELETE_SUCCESS, SPOTTS_DELETE_ERROR);
+export const persistSpott = makeApiActionCreator(api.persistSpott, SPOTT_PERSIST_START, SPOTT_PERSIST_SUCCESS, SPOTT_PERSIST_ERROR);

@@ -204,6 +204,13 @@ class VerticalSideMenu extends Component {
             <div style={styles.category}>
               <div style={styles.categoryTitle}>CONTENT</div>
             </div>
+            {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
+              <div>
+                <Link activeStyle={styles.sectionActive} key='spotts' onlyActiveOnIndex style={styles.section} to='/content/spotts'>
+                  <div style={styles.sectionTitle}>SPOTTS</div>
+                </Link>
+              </div>
+            }
             <Link key='media' style={mergeStyles([ styles.section, styles.sectionTitle, this.isMedia() && styles.sectionActive ])} to='/content/media'>
               MEDIA
             </Link>

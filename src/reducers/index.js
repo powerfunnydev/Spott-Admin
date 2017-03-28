@@ -49,6 +49,9 @@ import seriesReadEpisodes from '../pages/content/series/read/episodes/reducer';
 import seriesReadSeasons from '../pages/content/series/read/seasons/reducer';
 import shopsEdit from '../pages/content/shops/edit/reducer';
 import shopsList from '../pages/content/shops/list/reducer';
+import spottsCreate from '../pages/content/spotts/create/reducer';
+import spottsEdit from '../pages/content/spotts/edit/reducer';
+import spottsList from '../pages/content/spotts/list/reducer';
 import Toast from './toast';
 import tvGuideCreate from '../pages/tvGuide/create/reducer';
 import tvGuideEdit from '../pages/tvGuide/edit/reducer';
@@ -152,6 +155,11 @@ export default combineReducers({
         seasons: seriesReadSeasons,
         episodes: seriesReadEpisodes
       })
+    }),
+    spotts: combineReducers({
+      create: spottsCreate,
+      edit: spottsEdit,
+      list: spottsList
     })
   }),
   users: combineReducers({
