@@ -11,6 +11,7 @@ import { colors, fontWeights, makeTextStyle, FormSubtitle, FormDescription } fro
 import Plus from '../../../_common/images/plus';
 import EditButton from '../../../_common/components/buttons/editButton';
 import RemoveButton from '../../../_common/components/buttons/removeButton';
+import { myTimezone } from '../../../../constants/timezones';
 import PersistAvailabilityModal from '../persist';
 import selector from './selector';
 import * as actions from './actions';
@@ -63,16 +64,17 @@ export default class Availabilities extends Component {
   getAvailability (index) {
     const mediumId = this.props.mediumId;
     const { availabilityFrom, availabilityTo, countryId, id, videoStatus } = this.props.availabilities.getIn([ 'data', index ]).toJS();
+
     return {
       countryId,
       endDate: availabilityTo && moment(availabilityTo).startOf('day'),
-      endTime: availabilityTo && moment(availabilityTo).utc(),
+      endTime: availabilityTo && moment(availabilityTo),
       id,
       noEndDate: !availabilityTo,
       mediumId,
       startDate: availabilityFrom && moment(availabilityFrom).startOf('day'),
-      startTime: availabilityFrom && moment(availabilityFrom).utc(),
-      timezone: '+00:00',
+      startTime: availabilityFrom && moment(availabilityFrom),
+      timezone: myTimezone,
       videoStatus
     };
   }
@@ -186,7 +188,7 @@ export default class Availabilities extends Component {
                 mediumId,
                 startDate: moment().startOf('day'),
                 startTime: moment(),
-                timezone: '+01:00',
+                timezone: myTimezone,
                 videoStatus: 'DISABLED'
               }}
               onClose={() => this.setState({ create: false })}
