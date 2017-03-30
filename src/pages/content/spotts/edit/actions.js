@@ -1,6 +1,7 @@
 import { persistSpott, fetchSpott as dataFetchSpott } from '../../../../actions/spott';
 import { searchTopics as dataSearchTopics } from '../../../../actions/topic';
 import { fetchCountries } from '../../../../actions/country';
+import { searchProducts as dataSearchProducts } from '../../../../actions/product';
 import { fetchLanguages } from '../../../../actions/language';
 import { createSearchAction } from '../../../../utils';
 
@@ -9,6 +10,9 @@ export const CLOSE_POP_UP_MESSAGE = 'SPOTTS_EDIT/CLOSE_POP_UP_MESSAGE';
 
 export const TOPICS_SEARCH_START = 'SPOTT_EDIT/TOPICS_SEARCH_START';
 export const TOPICS_SEARCH_ERROR = 'SPOTT_EDIT/TOPICS_SEARCH_ERROR';
+
+export const TAGS_PRODUCTS_SEARCH_START = 'SPOTTS_EDIT/TAGS_PRODUCTS_SEARCH_START';
+export const TAGS_PRODUCTS_SEARCH_ERROR = 'SPOTTS_EDIT/TAGS_PRODUCTS_SEARCH_ERROR';
 
 export const AUDIENCE_COUNTRIES_SEARCH_START = 'SPOTTS_EDIT/AUDIENCE_COUNTRIES_SEARCH_START';
 export const AUDIENCE_COUNTRIES_SEARCH_ERROR = 'SPOTTS_EDIT/AUDIENCE_COUNTRIES_SEARCH_ERROR';
@@ -35,6 +39,11 @@ export function loadSpott (spottId) {
     }
   };
 }
+
+// Tags
+// ////
+
+export const searchProducts = createSearchAction(dataSearchProducts, TAGS_PRODUCTS_SEARCH_START, TAGS_PRODUCTS_SEARCH_ERROR);
 
 // Audience
 // ////////

@@ -70,18 +70,18 @@ export default class ReadSpott extends Component {
       <SideMenu>
         <Root>
           <Header hierarchy={[
-            { title: 'Spotts', url: '/content/brands' },
-            { title: currentSpott.getIn([ 'name', defaultLocale ]), url: location } ]}/>
+            { title: 'Spotts', url: '/content/spotts' },
+            { title: currentSpott.getIn([ 'title', defaultLocale ]), url: location } ]}/>
           <Container>
             {currentSpott.get('_status') === 'loaded' && currentSpott &&
               <EntityDetails
-                imageUrl={currentSpott.getIn([ 'logo', defaultLocale, 'url' ]) && `${currentSpott.getIn([ 'logo', defaultLocale, 'url' ])}?height=203&width=360`}
-                title={currentSpott.getIn([ 'name', defaultLocale ])}
-                onEdit={() => { this.props.routerPushWithReturnTo(`/content/brands/edit/${params.brandId}`); }}
+                imageUrl={currentSpott.getIn([ 'image', 'url' ]) && `${currentSpott.getIn([ 'image', 'url' ])}?height=203&width=360`}
+                title={currentSpott.getIn([ 'title', defaultLocale ])}
+                onEdit={() => { this.props.routerPushWithReturnTo(`/content/spotts/edit/${params.spottId}`); }}
                 onRemove={async () => { await deleteSpott(currentSpott.get('id')); this.redirect(); }}/>}
           </Container>
           <Line/>
-          <div style={[ generalStyles.fillPage, styles.table ]}>
+          {/* <div style={[ generalStyles.fillPage, styles.table ]}>
             <Container>
               <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
                 <Tab title='Products'>
@@ -89,7 +89,7 @@ export default class ReadSpott extends Component {
                 </Tab>
               </Tabs>
             </Container>
-          </div>
+          </div> */}
           {children}
         </Root>
       </SideMenu>

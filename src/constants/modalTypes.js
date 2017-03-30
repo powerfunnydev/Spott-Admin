@@ -8,3 +8,4 @@ export const SEASON_CREATE_LANGUAGE = 'seasonCreateLanguage';
 export const SERIES_CREATE_AVAILABILITY = 'seriesCreateAvailability';
 export const SERIES_CREATE_LANGUAGE = 'seriesCreateLanguage';
 export const PUSH_NOTIFICATION_CREATE_LANGUAGE = 'pushNotificationCreateLanguage';
+export const SPOTT_CREATE_LANGUAGE = 'spottCreateLanguage';

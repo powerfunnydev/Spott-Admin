@@ -854,7 +854,7 @@ export function transformTopic ({ text, uuid }) {
 }
 
 export function transformSpott ({
-  auditInfo, defaultLocale, localeData, publishStatus, promoted, topics, uuid
+  auditInfo, defaultLocale, image, localeData, publishStatus, promoted, topics, uuid
 }) {
   const spott = {
     basedOnDefaultLocale: {},
@@ -863,6 +863,7 @@ export function transformSpott ({
     comment: {},
     defaultLocale,
     id: uuid,
+    image: transformImage(image),
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     locales: [],

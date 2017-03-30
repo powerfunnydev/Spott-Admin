@@ -9,7 +9,9 @@ import {
   filterHasLanguagesRelationsSelector,
   searchStringHasTopicsRelationsSelector,
   spottsEntitiesSelector,
-  topicsEntitiesSelector
+  topicsEntitiesSelector,
+  listProductsEntitiesSelector,
+  searchStringHasProductsRelationsSelector
 } from '../../../../selectors/data';
 
 const formName = 'spottEdit';
@@ -23,7 +25,7 @@ const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 const currentSpottIdSelector = (state, props) => props.params.spottId;
 const currentSpottSelector = createEntityByIdSelector(spottsEntitiesSelector, currentSpottIdSelector);
 
-const popUpMessageSelector = (state) => state.getIn([ 'content', 'brands', 'edit', 'popUpMessage' ]);
+const popUpMessageSelector = (state) => state.getIn([ 'content', 'spotts', 'edit', 'popUpMessage' ]);
 
 export const currentTopicsSearchStringSelector = (state) => state.getIn([ 'content', 'spotts', 'edit', 'currentTopicsSearchString' ]);
 
@@ -60,4 +62,13 @@ export default createStructuredSelector({
   searchedTopicIds: searchedTopicIdsSelector,
   supportedLocales: supportedLocalesSelector,
   topicsById: topicsEntitiesSelector
+});
+
+export const currentProductsSearchStringSelector = (state) => state.getIn([ 'content', 'spotts', 'edit', 'currentTagsProductsSearchString' ]);
+
+export const searchedProductIdsSelector = createEntityIdsByRelationSelector(searchStringHasProductsRelationsSelector, currentProductsSearchStringSelector);
+
+export const tagsSelector = createStructuredSelector({
+  productsById: listProductsEntitiesSelector,
+  searchedProductIds: searchedProductIdsSelector
 });

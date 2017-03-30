@@ -12,7 +12,7 @@ import { Tabs, Tab } from '../../../_common/components/formTabs';
 import Section from '../../../_common/components/section';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Label from '../../../_common/inputs/_label';
-import { BRAND_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
+import { SPOTT_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import { FETCHING } from '../../../../constants/statusTypes';
 import CreateLanguageModal from '../../_languageModal/create';
 import selector from './selector';
@@ -26,12 +26,13 @@ import Audiences from '../../_audiences/list';
 import Header from '../../../app/multiFunctionalHeader';
 import SelectInput from '../../../_common/inputs/selectInput';
 import Checkbox from '../../../_common/inputs/checkbox';
+import CreateTag from './tags/create';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { defaultLocale, name } = values.toJS();
+  const { defaultLocale } = values.toJS();
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
-  if (!name) { validationErrors.name = t('common.errors.required'); }
+  // if (!name) { validationErrors.name = t('common.errors.required'); }
 
 // Done
   return validationErrors;
@@ -146,7 +147,7 @@ export default class EditSpott extends Component {
 
   openCreateLanguageModal () {
     if (this.props.onBeforeChangeTab()) {
-      this.props.openModal(BRAND_CREATE_LANGUAGE);
+      this.props.openModal(SPOTT_CREATE_LANGUAGE);
     }
   }
 
@@ -215,14 +216,15 @@ export default class EditSpott extends Component {
       searchTopics, searchedTopicIds, topicsById
     } = this.props;
 
-    console.log('_activeLocale', _activeLocale);
+    console.log('TEST SPOT', defaultLocale,
+supportedLocales && supportedLocales.toJS());
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
           <Header hierarchy={[
             { title: 'Spotts', url: '/content/spotts' },
             { title: currentSpott.getIn([ 'title', defaultLocale ]), url: location } ]}/>
-          {currentModal === BRAND_CREATE_LANGUAGE &&
+          {currentModal === SPOTT_CREATE_LANGUAGE &&
             <CreateLanguageModal
               supportedLocales={supportedLocales}
               onCloseClick={closeModal}
@@ -234,71 +236,92 @@ export default class EditSpott extends Component {
                 placeholder='Title'
                 required />
             </CreateLanguageModal>}
+          {this.state.modal === 'createTag' &&
+            <CreateTag
+              onClose={() => this.setState({ ...this.state, modal: null })}
+              onSubmit={(form) => {
+                console.warn('SUBMIT', form);
+              }}/>}
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
             <Tabs activeTab={tab} showPublishStatus onBeforeChange={this.props.onBeforeChangeTab} onChange={this.props.onChangeTab}>
               <Tab title='Details'>
-                <Section noPadding style={styles.background}>
-                  <LanguageBar
-                    _activeLocale={_activeLocale}
-                    defaultLocale={defaultLocale}
-                    errors={errors}
-                    openCreateLanguageModal={this.openCreateLanguageModal}
-                    removeLanguage={this.removeLanguage}
-                    supportedLocales={supportedLocales}
-                    onSetDefaultLocale={this.onSetDefaultLocale}/>
-                </Section>
-                <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage}>
-                  <FormSubtitle first>General</FormSubtitle>
-                  <Field
-                    component={TextInput}
-                    label='Title'
-                    name={`title.${_activeLocale}`}
-                    placeholder='Title'
-                    required/>
-                  <Field
-                    component={TextInput}
-                    label='Comment'
-                    name={`comment.${_activeLocale}`}
-                    placeholder='Comment'/>
-                  <Field
-                    component={SelectInput}
-                    getItemText={(id) => topicsById.getIn([ id, 'text' ])}
-                    getOptions={searchTopics}
-                    isLoading={searchedTopicIds.get('_status') === FETCHING}
-                    label='Topics'
-                    multiselect
-                    name='topicIds'
-                    options={searchedTopicIds.get('data').toJS()}
-                    placeholder='Topics'/>
-                {/* <FormSubtitle>Images</FormSubtitle>
-                <div style={[ styles.paddingTop, styles.row ]}>
-                  <div>
-                    <Label text='Logo image' />
-                    <ImageDropzone
-                      accept='image/*'
-                      downloadUrl={currentSpott.getIn([ 'logo', _activeLocale, 'url' ]) ||
-                                    currentSpott.getIn([ 'logo', defaultLocale, 'url' ])}
-                      imageUrl={currentSpott.getIn([ 'logo', _activeLocale, 'url' ]) && `${currentSpott.getIn([ 'logo', _activeLocale, 'url' ])}?height=203&width=360` ||
-                                currentSpott.getIn([ 'logo', defaultLocale, 'url' ]) && `${currentSpott.getIn([ 'logo', defaultLocale, 'url' ])}?height=203&width=360`}
-                      showOnlyUploadedImage
-                      onChange={({ callback, file }) => { this.props.uploadLogoImage({ locale: _activeLocale, brandId: this.props.params.brandId, image: file, callback }); }}
-                      onDelete={currentSpott.getIn([ 'logo', _activeLocale, 'url' ]) ? () => { deleteLogoImage({ locale: _activeLocale, brandId: currentSpott.get('id') }); } : null}/>
+                <div style={{ display: 'flex', marginTop: -1 }}>
+                  <div style={{ width: '40%' }}>
+                    <Section style={{ marginTop: 0, marginRight: -1 }}>
+                      <img src={currentSpott.getIn([ 'image', 'url' ])} style={{ width: '100%' }} />
+                      <button onClick={(e) => {
+                        e.preventDefault();
+                        this.setState({ ...this.state, modal: 'createTag' });
+                      }}>
+                        Create tag
+                      </button>
+                    </Section>
                   </div>
-                  <div style={styles.paddingLeftUploadImage}>
-                    <Label text='Profile image' />
-                    <ImageDropzone
-                      accept='image/*'
-                      downloadUrl={currentSpott.getIn([ 'profileImage', _activeLocale, 'url' ]) ||
-                                  currentSpott.getIn([ 'profileImage', defaultLocale, 'url' ])}
-                      imageUrl={currentSpott.getIn([ 'profileImage', _activeLocale, 'url' ]) && `${currentSpott.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360` ||
-                                currentSpott.getIn([ 'profileImage', defaultLocale, 'url' ]) && `${currentSpott.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
-                      showOnlyUploadedImage
-                      type={PROFILE_IMAGE}
-                      onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, brandId: this.props.params.brandId, image: file, callback }); }}
-                      onDelete={currentSpott.getIn([ 'profileImage', _activeLocale, 'url' ]) ? () => { deleteProfileImage({ locale: _activeLocale, brandId: currentSpott.get('id') }); } : null}/>
-                  </div>
-                </div> */}
-              </Section>
+                  <div style={{ width: '60%', display: 'flex', flexDirection: 'column' }}>
+                    <Section noPadding style={[ styles.background, { marginTop: 0 } ]}>
+                      <LanguageBar
+                        _activeLocale={_activeLocale}
+                        defaultLocale={defaultLocale}
+                        errors={errors}
+                        openCreateLanguageModal={this.openCreateLanguageModal}
+                        removeLanguage={this.removeLanguage}
+                        supportedLocales={supportedLocales}
+                        onSetDefaultLocale={this.onSetDefaultLocale}/>
+                    </Section>
+                    <Section clearPopUpMessage={this.props.closePopUpMessage} style={{ height: '100%' }} popUpObject={this.props.popUpMessage}>
+                      <FormSubtitle first>General</FormSubtitle>
+                      <Field
+                        component={TextInput}
+                        label='Title'
+                        name={`title.${_activeLocale}`}
+                        placeholder='Title'
+                        required/>
+                      <Field
+                        component={TextInput}
+                        label='Comment'
+                        name={`comment.${_activeLocale}`}
+                        placeholder='Comment'/>
+                      <Field
+                        component={SelectInput}
+                        getItemText={(id) => topicsById.getIn([ id, 'text' ])}
+                        getOptions={searchTopics}
+                        isLoading={searchedTopicIds.get('_status') === FETCHING}
+                        label='Topics'
+                        multiselect
+                        name='topicIds'
+                        options={searchedTopicIds.get('data').toJS()}
+                        placeholder='Topics'/>
+                    {/* <FormSubtitle>Images</FormSubtitle>
+                    <div style={[ styles.paddingTop, styles.row ]}>
+                      <div>
+                        <Label text='Logo image' />
+                        <ImageDropzone
+                          accept='image/*'
+                          downloadUrl={currentSpott.getIn([ 'logo', _activeLocale, 'url' ]) ||
+                                        currentSpott.getIn([ 'logo', defaultLocale, 'url' ])}
+                          imageUrl={currentSpott.getIn([ 'logo', _activeLocale, 'url' ]) && `${currentSpott.getIn([ 'logo', _activeLocale, 'url' ])}?height=203&width=360` ||
+                                    currentSpott.getIn([ 'logo', defaultLocale, 'url' ]) && `${currentSpott.getIn([ 'logo', defaultLocale, 'url' ])}?height=203&width=360`}
+                          showOnlyUploadedImage
+                          onChange={({ callback, file }) => { this.props.uploadLogoImage({ locale: _activeLocale, brandId: this.props.params.brandId, image: file, callback }); }}
+                          onDelete={currentSpott.getIn([ 'logo', _activeLocale, 'url' ]) ? () => { deleteLogoImage({ locale: _activeLocale, brandId: currentSpott.get('id') }); } : null}/>
+                      </div>
+                      <div style={styles.paddingLeftUploadImage}>
+                        <Label text='Profile image' />
+                        <ImageDropzone
+                          accept='image/*'
+                          downloadUrl={currentSpott.getIn([ 'profileImage', _activeLocale, 'url' ]) ||
+                                      currentSpott.getIn([ 'profileImage', defaultLocale, 'url' ])}
+                          imageUrl={currentSpott.getIn([ 'profileImage', _activeLocale, 'url' ]) && `${currentSpott.getIn([ 'profileImage', _activeLocale, 'url' ])}?height=203&width=360` ||
+                                    currentSpott.getIn([ 'profileImage', defaultLocale, 'url' ]) && `${currentSpott.getIn([ 'profileImage', defaultLocale, 'url' ])}?height=203&width=360`}
+                          showOnlyUploadedImage
+                          type={PROFILE_IMAGE}
+                          onChange={({ callback, file }) => { this.props.uploadProfileImage({ locale: _activeLocale, brandId: this.props.params.brandId, image: file, callback }); }}
+                          onDelete={currentSpott.getIn([ 'profileImage', _activeLocale, 'url' ]) ? () => { deleteProfileImage({ locale: _activeLocale, brandId: currentSpott.get('id') }); } : null}/>
+                      </div>
+                    </div> */}
+                  </Section>
+                </div>
+              </div>
             </Tab>
             <Tab title='Promote'>
               <Section>

@@ -1,13 +1,13 @@
 import { createStructuredSelector } from 'reselect';
 import {
-  brandsEntitiesSelector,
+  spottsEntitiesSelector,
   createEntityByIdSelector
 } from '../../../../selectors/data';
 
-export const currentBrandIdSelector = (state, props) => { return props.params.brandId; };
+export const currentSpottIdSelector = (state, props) => props.params.brandId;
 
-export const currentBrandSelector = createEntityByIdSelector(brandsEntitiesSelector, currentBrandIdSelector);
+export const currentSpottSelector = createEntityByIdSelector(spottsEntitiesSelector, currentSpottIdSelector);
 
 export default createStructuredSelector({
-  currentBrand: currentBrandSelector
+  currentSpott: currentSpottSelector
 });

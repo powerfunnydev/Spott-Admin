@@ -1,4 +1,4 @@
-import { del, get, post } from './request';
+import { del, get, postFormData } from './request';
 import { transformBrand, transformListSpott, transformSpott } from './transformers';
 
 export async function fetchSpotts (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
@@ -22,7 +22,7 @@ export async function fetchSpott (baseUrl, authenticationToken, locale, { spottI
 }
 
 export async function persistSpott (baseUrl, authenticationToken, locale, {
-  basedOnDefaultLocale, defaultLocale, comment, locales, promoted, publishStatus,
+  basedOnDefaultLocale, defaultLocale, comment, image, locales, promoted, publishStatus,
   spottId, title, topicIds }) {
   let spott = {};
   if (spottId) {
@@ -48,9 +48,13 @@ export async function persistSpott (baseUrl, authenticationToken, locale, {
     localeData.title = title && title[locale];
     localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
   });
-  console.log('spott post', spott);
+
+  const formData = new FormData();
+  formData.append('image', image);
+  formData.append('json', new Blob([ JSON.stringify(spott) ], { type: 'application/json' }));
+
   const url = `${baseUrl}/v004/post/posts`;
-  const result = await post(authenticationToken, locale, url, spott);
+  const result = await postFormData(authenticationToken, locale, url, formData, () => console.warn('uploading...'));
   return transformSpott(result.body);
 }
 
