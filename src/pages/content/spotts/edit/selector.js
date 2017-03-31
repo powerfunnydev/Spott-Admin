@@ -10,7 +10,9 @@ import {
   searchStringHasTopicsRelationsSelector,
   spottsEntitiesSelector,
   topicsEntitiesSelector,
+  listCharactersEntitiesSelector,
   listProductsEntitiesSelector,
+  searchStringHasCharactersRelationsSelector,
   searchStringHasProductsRelationsSelector
 } from '../../../../selectors/data';
 
@@ -21,6 +23,7 @@ const valuesSelector = (state) => state.getIn([ 'form', formName, 'values' ]);
 const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultLocale');
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
 const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
+const spottTagsSelector = createFormValueSelector(formName, 'tags');
 
 const currentSpottIdSelector = (state, props) => props.params.spottId;
 const currentSpottSelector = createEntityByIdSelector(spottsEntitiesSelector, currentSpottIdSelector);
@@ -61,14 +64,22 @@ export default createStructuredSelector({
   searchedAudienceLanguageIds: searchedAudienceLanguageIdsSelector,
   searchedTopicIds: searchedTopicIdsSelector,
   supportedLocales: supportedLocalesSelector,
+  tags: spottTagsSelector,
   topicsById: topicsEntitiesSelector
 });
 
+export const currentCharactersSearchStringSelector = (state) => state.getIn([ 'content', 'spotts', 'edit', 'currentTagsCharactersSearchString' ]);
 export const currentProductsSearchStringSelector = (state) => state.getIn([ 'content', 'spotts', 'edit', 'currentTagsProductsSearchString' ]);
 
+export const searchedCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCharactersSearchStringSelector);
 export const searchedProductIdsSelector = createEntityIdsByRelationSelector(searchStringHasProductsRelationsSelector, currentProductsSearchStringSelector);
 
+const entityTypeSelector = createFormValueSelector('tagCreate', 'entityType');
+
 export const tagsSelector = createStructuredSelector({
+  charactersById: listCharactersEntitiesSelector,
+  entityType: entityTypeSelector,
   productsById: listProductsEntitiesSelector,
+  searchedCharacterIds: searchedCharacterIdsSelector,
   searchedProductIds: searchedProductIdsSelector
 });

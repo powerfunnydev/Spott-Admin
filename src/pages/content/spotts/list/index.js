@@ -169,9 +169,9 @@ export default class Spotts extends Component {
                     {spotts.get('data').map((spott, index) => (
                       <Tile
                         checked={isSelected.get(spott.get('id'))}
-                        imageUrl={spott.get('logo') && `${spott.getIn([ 'logo', 'url' ])}?height=203&width=360`}
+                        imageUrl={spott.get('image') && `${spott.getIn([ 'image', 'url' ])}?height=360&width=360`}
                         key={`spott${index}`}
-                        text={spott.get('name')}
+                        text={spott.get('title')}
                         onCheckboxChange={selectCheckbox.bind(this, spott.get('id'))}
                         onClick={() => { this.props.routerPushWithReturnTo(`/content/spotts/read/${spott.get('id')}`); }}
                         onDelete={async (e) => { e.preventDefault(); await this.deleteSpott(spott.get('id')); }}

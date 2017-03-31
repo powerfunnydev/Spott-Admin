@@ -140,8 +140,8 @@ export default class ImageDropzone extends Component {
       cursor: 'copy'
     },
     uploadImage: {
-      width: '12px',
-      height: '14px'
+      width: 12,
+      height: 14
     },
     completed: {
       display: 'flex',
@@ -241,7 +241,7 @@ export default class ImageDropzone extends Component {
             ((!noPreview && imageUrlOrPreview) &&
               <img src={imageUrlOrPreview} style={[ styles.chosenImage, type === ROUND_LOGO && styles.roundImageClip ]}/>) ||
             // Idle state, user has to chose a image.
-            <img src={uploadIcon} style={styles.uploadImage}/>}
+            <img src={uploadIcon} style={styles.uploadImage} onClick={this.onChange}/>}
           </div>
         </ReactDropzone>
       </div>

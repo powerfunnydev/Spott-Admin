@@ -54,7 +54,7 @@ export async function persistSpott (baseUrl, authenticationToken, locale, {
   formData.append('json', new Blob([ JSON.stringify(spott) ], { type: 'application/json' }));
 
   const url = `${baseUrl}/v004/post/posts`;
-  const result = await postFormData(authenticationToken, locale, url, formData, () => console.warn('uploading...'));
+  const result = await postFormData(authenticationToken, locale, url, formData);
   return transformSpott(result.body);
 }
 

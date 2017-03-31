@@ -42,13 +42,13 @@ export default class ReadSpott extends Component {
   }
 
   async componentWillMount () {
-    if (this.props.params.brandId) {
-      await this.props.loadSpott(this.props.params.brandId);
+    if (this.props.params.spottId) {
+      await this.props.loadSpott(this.props.params.spottId);
     }
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('/content/characters', true);
+    this.props.routerPushWithReturnTo('/content/spotts', true);
   }
 
   onChangeTab (index) {
@@ -75,7 +75,8 @@ export default class ReadSpott extends Component {
           <Container>
             {currentSpott.get('_status') === 'loaded' && currentSpott &&
               <EntityDetails
-                imageUrl={currentSpott.getIn([ 'image', 'url' ]) && `${currentSpott.getIn([ 'image', 'url' ])}?height=203&width=360`}
+                imageUrl={currentSpott.getIn([ 'image', 'url' ]) && `${currentSpott.getIn([ 'image', 'url' ])}?height=360&width=360`}
+                subtitle={currentSpott.getIn([ 'comment', defaultLocale ])}
                 title={currentSpott.getIn([ 'title', defaultLocale ])}
                 onEdit={() => { this.props.routerPushWithReturnTo(`/content/spotts/edit/${params.spottId}`); }}
                 onRemove={async () => { await deleteSpott(currentSpott.get('id')); this.redirect(); }}/>}
