@@ -273,32 +273,32 @@ export default class TaggerApplication extends Component {
     return (
       <div style={styles.container}>
         <CustomDragLayer />
-          <Header style={styles.header} />
-          {activeTab === ORGANIZE &&
-            <HotKeys handlers={filterKeyEventsInInputFields(organizerHandlers)} key={ORGANIZE} keyMap={organizerKeyMap} style={styles.body}>
-              <Organizer style={styles.organizer} />
+        <Header style={styles.header} />
+        {activeTab === ORGANIZE &&
+          <HotKeys handlers={filterKeyEventsInInputFields(organizerHandlers)} key={ORGANIZE} keyMap={organizerKeyMap} style={styles.body}>
+            <Organizer style={styles.organizer} />
+          </HotKeys>}
+        {activeTab === TAG &&
+          <HotKeys handlers={filterKeyEventsInInputFields(tagHandlers)} key={TAG} keyMap={tagKeyMap} style={styles.body}>
+            <QuickiesBar style={[ styles.sidebar.base, styles.sidebar.left ]} />
+            <div style={styles.middleBar}>
+              <SceneEditor style={styles.sceneEditor} />
+              <SceneSelector style={styles.sceneSelector} />
+            </div>
+            <Sidebar style={[ styles.sidebar.base, styles.sidebar.right ]} />
+          </HotKeys>}
+          {activeTab === CURATE &&
+            <HotKeys handlers={filterKeyEventsInInputFields(curatorHandlers)} key={CURATE} keyMap={curatorKeyMap} style={styles.body}>
+              <CuratorSidebar style={[ styles.sidebar.base, styles.sidebar.left ]} />
+              <Curator style={styles.curator} />
             </HotKeys>}
-          {activeTab === TAG &&
-            <HotKeys handlers={filterKeyEventsInInputFields(tagHandlers)} key={TAG} keyMap={tagKeyMap} style={styles.body}>
-              <QuickiesBar style={[ styles.sidebar.base, styles.sidebar.left ]} />
-              <div style={styles.middleBar}>
-                <SceneEditor style={styles.sceneEditor} />
-                <SceneSelector style={styles.sceneSelector} />
-              </div>
-              <Sidebar style={[ styles.sidebar.base, styles.sidebar.right ]} />
+          {activeTab === MVP &&
+            <HotKeys handlers={mvpHandlers} key={MVP} keyMap={mvpKeyMap} style={styles.body}>
+              <Mvp style={styles.mvp} />
             </HotKeys>}
-            {activeTab === CURATE &&
-              <HotKeys handlers={filterKeyEventsInInputFields(curatorHandlers)} key={CURATE} keyMap={curatorKeyMap} style={styles.body}>
-                <CuratorSidebar style={[ styles.sidebar.base, styles.sidebar.left ]} />
-                <Curator style={styles.curator} />
-              </HotKeys>}
-            {activeTab === MVP &&
-              <HotKeys handlers={mvpHandlers} key={MVP} keyMap={mvpKeyMap} style={styles.body}>
-                <Mvp style={styles.mvp} />
-              </HotKeys>}
-          <Modals />
-          <ContextMenus />
-          <Toast />
+        <Modals />
+        <ContextMenus />
+        <Toast />
       </div>
     );
   }

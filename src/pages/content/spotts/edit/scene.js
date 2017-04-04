@@ -1,26 +1,49 @@
+/* eslint-disable react/no-set-state */
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
+import { DropTarget } from 'react-dnd';
+import ImageDropzone from '../../../_common/dropzone/imageDropzone';
 import SelectionArea from '../../../../tagger/components/sceneEditor/selectionArea';
+import Tag from './tag';
 
+const sceneTarget = {
+  drop (props, monitor, component) {
+    console.warn('DROP');
+    const itemType = monitor.getItemType();
+
+    switch (itemType) {
+      case 'TAG': {
+        const { x: clientX, y: clientY } = monitor.getDifferenceFromInitialOffset();
+        const { height, width } = component._wrapper.getBoundingClientRect();
+        return {
+          x: Math.round(clientX / width * 100),
+          y: Math.round(clientY / height * 100)
+        };
+      }
+    }
+  }
+};
+
+@DropTarget([ 'TAG' ], sceneTarget, (connect, monitor) => ({
+  connectDropTarget: connect.dropTarget()
+}))
 @Radium
 export default class Scene extends Component {
 
   static propTypes = {
+    connectDropTarget: PropTypes.func.isRequired,
     imageUrl: PropTypes.string.isRequired,
+    onChangeImage: PropTypes.func.isRequired,
+    onEditTag: PropTypes.func.isRequired,
+    onMoveTag: PropTypes.func.isRequired,
+    onRemoveTag: PropTypes.func.isRequired,
     onSelectionRegion: PropTypes.func.isRequired
-  };
-
-  static styles = {
-    wrapper: {
-      display: 'inline-block',
-      lineHeight: 0,
-      position: 'relative'
-    }
   };
 
   constructor (props) {
     super(props);
     this.onSelectionRegion = ::this.onSelectionRegion;
+    this.state = { disableSelectionArea: false, localeImage: null };
   }
 
   onSelectionRegion (selection) {
@@ -46,18 +69,111 @@ export default class Scene extends Component {
     this.props.onSelectionRegion(point, region);
   }
 
+  static styles = {
+    container: {
+      alignItems: 'center',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center'
+    },
+    wrapper: {
+      display: 'inline-block',
+      lineHeight: 0,
+      marginBottom: '1em',
+      position: 'relative'
+    },
+    layover: {
+      position: 'absolute',
+      bottom: 0,
+      top: 0,
+      left: 0,
+      right: 0,
+      overflow: 'hidden',
+      userDrag: 'none',
+      userSelect: 'none'
+    }
+  }
+
+  // // When no point is defined in the appearance, we use point { x: 0, y: 0 } as default.
+  // renderTooltip (hoveredAppearanceTuple) {
+  //   if (hoveredAppearanceTuple) {
+  //     const point = hoveredAppearanceTuple.getIn([ 'appearance', 'point' ]);
+  //
+  //     return (
+  //       <MarkerImageTooltip
+  //         imageUrl={hoveredAppearanceTuple.getIn([ 'entity', 'imageUrl' ]) || hoveredAppearanceTuple.getIn([ 'entity', 'portraitImageUrl' ])}
+  //         relativeLeft={(point && point.get('x')) || 0}
+  //         relativeTop={(point && point.get('y')) || 0} />
+  //     );
+  //   }
+  // }
+
   render () {
-    const { imageUrl } = this.props;
+    const { connectDropTarget, imageUrl, tags, onChangeImage, onEditTag, onMoveTag, onRemoveTag } = this.props;
+    const { localeImage } = this.state;
     const styles = this.constructor.styles;
 
+    const noop = (c) => c;
+
+    console.warn('tags in scene', tags);
+
     return (
-      <SelectionArea
-        disable={false}
-        ref={(c) => { this._wrapper = c && c.component; }}
-        style={styles.wrapper}
-        onSelection={this.onSelectionRegion}>
-        <img src={imageUrl} style={{ width: '100%' }} />
-      </SelectionArea>
+      <div style={styles.container}>
+        <SelectionArea
+          disable={this.state.disableSelectionArea}
+          ref={(c) => { this._wrapper = c && c.component; }}
+          style={styles.wrapper}
+          onSelection={this.onSelectionRegion}>
+          <img draggable={false} src={localeImage ? localeImage.preview : imageUrl} style={{ pointerEvents: 'none', userDrag: 'none', userSelect: 'none', width: '100%' }} />
+          {connectDropTarget(
+            <div style={styles.layover}>
+              {tags && tags.map((tag) => {
+                const { entityType, point, id } = tag;
+                const hovered = false; // Boolean(hoveredAppearanceTuple) && hoveredAppearanceTuple.get('appearance') === appearance;
+                // const onEdit =
+                // appearanceType === PRODUCT
+                //   ? onEditAppearance.bind(this, appearanceId)
+                //   : () => console.warn('Editing a character is not yet implemented.');
+                return (
+                  <Tag
+                    appearanceId={id}
+                    appearanceType={entityType}
+                    hovered={hovered}
+                    key={id}
+                    relativeLeft={point.x}
+                    relativeTop={point.y}
+                    selected={false}
+                    // hidden={}
+                    // region={region}
+                    // selected={appearanceId === selectedAppearance}
+                    onCopy={noop}
+                    onEdit={onEditTag.bind(null, id)}
+                    onHover={() => this.setState({ disableSelectionArea: true })}
+                    onLeave={() => this.setState({ disableSelectionArea: false })}
+                    onMove={onMoveTag.bind(null, id)} // onMoveAppearance.bind(this, appearanceId)}
+                    onRemove={onRemoveTag.bind(null, id)}
+                    onSelect={noop} // onSelectAppearance.bind(this, appearanceId)}
+                    onToggleSelect={noop}/> // onToggleSelectAppearance.bind(this, appearanceId)} />
+                );
+              })}
+            </div>)}
+        </SelectionArea>
+        <ImageDropzone
+          accept='image/*'
+          downloadUrl={imageUrl}
+          height={200}
+          imageUrl={imageUrl}
+          onChange={({ callback, file }) => {
+            this.setState({ localeImage: file });
+            onChangeImage(file);
+            // Fake the progress...
+            callback(1, 1);
+          }}
+          onDelete={() => {
+            this.setState({ localeImage: null });
+            onChangeImage(null);
+          }}/>
+      </div>
     );
   }
 

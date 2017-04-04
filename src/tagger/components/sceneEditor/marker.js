@@ -36,19 +36,7 @@ const markerBackgroundPulse = Radium.keyframes({
   '100%': { backgroundColor: 'rgba(255,255,255,.25)' }
 }, 'markerBackgroundPulse');
 
-@ContextMenuLayer('sceneEditor-marker', (props) => {
-  return {
-    onCopy: props.onCopy,
-    onEdit: props.onEdit,
-    onRemove: props.onRemove
-  };
-})
-@DragSource(MARKER, markerSource, (connect, monitor) => ({
-  connectDragSource: connect.dragSource(),
-  isDragging: monitor.isDragging()
-}))
-@Radium
-export default class Marker extends Component {
+export class MarkerContainer extends Component {
 
   static propTypes = {
     appearanceId: PropTypes.string.isRequired,
@@ -152,3 +140,14 @@ export default class Marker extends Component {
   }
 
 }
+
+export default ContextMenuLayer('sceneEditor-marker', (props) => {
+  return {
+    onCopy: props.onCopy,
+    onEdit: props.onEdit,
+    onRemove: props.onRemove
+  };
+})(DragSource(MARKER, markerSource, (connect, monitor) => ({
+  connectDragSource: connect.dragSource(),
+  isDragging: monitor.isDragging()
+}))(Radium(MarkerContainer)));

@@ -51,7 +51,7 @@ function validate (values, { t }) {
   validate
 })
 @Radium
-export default class CreateTag extends Component {
+export default class PersistTag extends Component {
 
   static propTypes = {
     charactersById: ImmutablePropTypes.map.isRequired,
@@ -64,6 +64,7 @@ export default class CreateTag extends Component {
     searchProducts: PropTypes.func.isRequired,
     searchedCharacterIds: ImmutablePropTypes.map.isRequired,
     searchedProductIds: ImmutablePropTypes.map.isRequired,
+    submitButtonText: PropTypes.string,
     t: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired
@@ -87,9 +88,12 @@ export default class CreateTag extends Component {
   }
 
   render () {
-    const { charactersById, entityType, handleSubmit, productsById, searchedCharacterIds, searchedProductIds, onClose } = this.props;
+    const {
+      charactersById, entityType, handleSubmit, productsById, searchedCharacterIds,
+      searchedProductIds, submitButtonText, onClose
+    } = this.props;
     return (
-      <PersistModal isOpen title='Tag your spott' onClose={onClose} onSubmit={handleSubmit(this.submit)}>
+      <PersistModal isOpen submitButtonText={submitButtonText} title='Tag your spott' onClose={onClose} onSubmit={handleSubmit(this.submit)}>
         <Field
           component={RadioInput}
           first

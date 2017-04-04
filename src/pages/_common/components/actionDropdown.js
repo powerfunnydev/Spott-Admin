@@ -208,7 +208,7 @@ export default class Dropdown extends Component {
     document.removeEventListener('touchend', this.handleDocumentClick, false);
   }
 
-  toggleOpen (e) {
+  toggleOpen () {
     this.setState({ isOpen: !this.state.isOpen });
   }
 

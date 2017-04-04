@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
+import ImageDropzone from '../../../_common/dropzone/imageDropzone';
 import { Root, FormDescription, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
@@ -24,10 +25,10 @@ import Audiences from '../../_audiences/list';
 import Header from '../../../app/multiFunctionalHeader';
 import SelectInput from '../../../_common/inputs/selectInput';
 import Checkbox from '../../../_common/inputs/checkbox';
-import CreateTag from './tags/create';
+import PersistTag from './tags/persist';
 import Scene from './scene';
 
-const spottCount = 1;
+let spottCount = 1;
 
 function validate (values, { t }) {
   const validationErrors = {};
@@ -105,7 +106,11 @@ export default class EditSpott extends Component {
     this.openCreateLanguageModal = :: this.openCreateLanguageModal;
     this.languageAdded = :: this.languageAdded;
     this.removeLanguage = :: this.removeLanguage;
-    this.onCreateTag = ::this.onCreateTag;
+    this.onPersistTag = ::this.onPersistTag;
+    this.onChangeImage = ::this.onChangeImage;
+    this.onEditTag = ::this.onEditTag;
+    this.onMoveTag = ::this.onMoveTag;
+    this.onRemoveTag = ::this.onRemoveTag;
     this.onSelectionRegion = ::this.onSelectionRegion;
   }
 
@@ -175,16 +180,45 @@ export default class EditSpott extends Component {
     dispatch(change('defaultLocale', _activeLocale));
   }
 
-  onCreateTag (tag) {
+  onPersistTag (tag) {
     const { change, dispatch, tags } = this.props;
-    console.warn('Created new tag', tag);
-    const newTags = tags.push(tag);
+    let newTags = tags;
+    // Edit an existing tag.
+    if (tag.id) {
+      const index = tags.findIndex((t) => t.id === tag.id);
+      newTags = tags.set(index, tag);
+    } else { // Create a new tag.
+      const newTag = { id: `_${spottCount++}`, ...tag };
+      newTags = tags.push(newTag);
+    }
     dispatch(change('tags', newTags));
-    console.warn('Tags', newTags.toJS());
   }
 
-  onSelectionRegion (point, region) {
-    this.setState({ ...this.state, point, region, modal: 'createTag' });
+  onChangeImage (image) {
+    const { change, dispatch } = this.props;
+    dispatch(change('image', image));
+  }
+
+  onEditTag (tagId) {
+    const { tags } = this.props;
+    this.setState({ ...this.state, modal: 'editTag', tag: tags.find((t) => t.id === tagId) });
+  }
+
+  onRemoveTag (tagId) {
+    const { change, dispatch, tags } = this.props;
+    const newTags = tags.filter((t) => t.id !== tagId);
+    dispatch(change('tags', newTags));
+  }
+
+  onSelectionRegion (point) { // Skip region
+    this.setState({ ...this.state, point, modal: 'createTag' });
+  }
+
+  onMoveTag (tagId, point) {
+    const { change, dispatch, tags } = this.props;
+    const tag = tags.find((t) => t.id === tagId);
+    tag.point = point;
+    dispatch(change('tags', tags));
   }
 
   static styles = {
@@ -230,7 +264,7 @@ export default class EditSpott extends Component {
       _activeLocale, errors, currentModal, closeModal, supportedLocales, defaultLocale,
       currentSpott, location, handleSubmit, location: { query: { tab } },
       searchAudienceCountries, searchAudienceLanguages, searchedAudienceCountryIds, searchedAudienceLanguageIds,
-      searchTopics, searchedTopicIds, topicsById
+      searchTopics, searchedTopicIds, tags, topicsById
     } = this.props;
 
     return (
@@ -252,15 +286,20 @@ export default class EditSpott extends Component {
                 required />
             </CreateLanguageModal>}
           {this.state.modal === 'createTag' &&
-            <CreateTag
+            <PersistTag
               initialValues={{
                 entityType: 'PRODUCT',
                 point: this.state.point,
-                region: this.state.region,
                 relevance: 'EXACT'
               }}
               onClose={() => this.setState({ ...this.state, modal: null })}
-              onSubmit={this.onCreateTag}/>}
+              onSubmit={this.onPersistTag}/>}
+          {this.state.modal === 'editTag' && this.state.tag &&
+            <PersistTag
+              initialValues={this.state.tag}
+              submitButtonText='Save'
+              onClose={() => this.setState({ ...this.state, modal: null })}
+              onSubmit={this.onPersistTag}/>}
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
             <Tabs activeTab={tab} showPublishStatus onBeforeChange={this.props.onBeforeChangeTab} onChange={this.props.onChangeTab}>
               <Tab title='Details'>
@@ -270,6 +309,11 @@ export default class EditSpott extends Component {
                       {currentSpott.get('image') &&
                         <Scene
                           imageUrl={currentSpott.getIn([ 'image', 'url' ])}
+                          tags={tags}
+                          onChangeImage={this.onChangeImage}
+                          onEditTag={this.onEditTag}
+                          onMoveTag={this.onMoveTag}
+                          onRemoveTag={this.onRemoveTag}
                           onSelectionRegion={this.onSelectionRegion}/>}
                     </Section>
                   </div>

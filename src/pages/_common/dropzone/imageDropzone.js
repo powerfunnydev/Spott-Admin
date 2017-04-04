@@ -192,7 +192,10 @@ export default class ImageDropzone extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { accept, height = 200, type, imageUrl, downloadUrl, onDelete, style, onChange, noPreview, multiple, showOnlyUploadedImage, showNoImage } = this.props;
+    const {
+      accept, downloadUrl, height = 200, imageUrl, multiple, noPreview,
+      showNoImage, showOnlyUploadedImage, style, type, width, onChange, onDelete
+    } = this.props;
     // If we have delete an image, we don't want to display the imageUrl or downloadUrl,
     // cause it doesn't exist anymore.
     // If we didn't delete an image, but there is an image, show that image.

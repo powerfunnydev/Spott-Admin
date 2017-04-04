@@ -90,7 +90,7 @@ export function mergeListOfEntities (state, path, listOfEntities) {
   listOfEntities.map((entity) => {
     const copyPath = path.slice();
     copyPath.push(entity.id);
-    newState = fetchSuccess(state, copyPath, entity);
+    newState = fetchSuccess(newState, copyPath, entity);
   });
   return newState;
 }

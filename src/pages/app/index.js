@@ -4,6 +4,7 @@ import HTML5Backend from 'react-dnd-html5-backend';
 import { DragDropContext } from 'react-dnd';
 import { init, pageView } from './googleAnalytics';
 import Toast from '../_common/components/toast';
+import ContextMenus from './contextMenus';
 
 // Require application-global stylesheets
 require('./reset.css');
@@ -59,6 +60,7 @@ export default class Application extends Component {
     return (
       <StyleRoot key='root' style={styles.fullHeight}>
         <Toast/>
+        <ContextMenus/>
         {this.props.children}
       </StyleRoot>
     );
