@@ -64,8 +64,12 @@ export default class SelectInput extends Component {
         ? internalValue.map((v) => v.value)
         : internalValue.value;
       // When the user clicked on 'Create option ...'
-      if (internalValue.className === 'Select-create-option-placeholder') {
-        this.props.onCreateOption(internalValue.value);
+      if (internalValue.className === 'Select-create-option-placeholder' || (multiselect && internalValue[internalValue.length - 1] && internalValue[internalValue.length - 1].className === 'Select-create-option-placeholder')) {
+        if (multiselect) {
+          this.props.onCreateOption(internalValue[internalValue.length - 1].value);
+        } else {
+          this.props.onCreateOption(internalValue.value);
+        }
       } else {
         input.onChange && input.onChange(newValue);
         onChange && onChange(newValue);

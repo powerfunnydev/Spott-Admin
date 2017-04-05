@@ -1,4 +1,4 @@
-import { get } from './request';
+import { get, post } from './request';
 import { transformTopic } from './transformers';
 
 export async function searchTopics (baseUrl, authenticationToken, locale, { searchString }) {
@@ -9,4 +9,18 @@ export async function searchTopics (baseUrl, authenticationToken, locale, { sear
   const { body } = await get(authenticationToken, locale, url);
   body.data = body.data.map(transformTopic);
   return body;
+}
+
+export async function persistTopic (baseUrl, authenticationToken, locale, { text, topicId }) {
+  let topic = {};
+  if (topicId) {
+    const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/data/topics/${topicId}`);
+    topic = body;
+  }
+
+  topic.text = text;
+
+  const url = `${baseUrl}/v004/data/topics`;
+  const { body } = await post(authenticationToken, locale, url, topic);
+  return transformTopic(body);
 }

@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import TextInput from '../../../_common/inputs/textInput';
-import ImageDropzone from '../../../_common/dropzone/imageDropzone';
 import { Root, FormDescription, FormSubtitle, colors, EditTemplate } from '../../../_common/styles';
 import localized from '../../../_common/decorators/localized';
 import * as actions from './actions';
@@ -47,6 +46,7 @@ function validate (values, { t }) {
   closePopUpMessage: bindActionCreators(actions.closePopUpMessage, dispatch),
   loadSpott: bindActionCreators(actions.loadSpott, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
+  persistTopic: bindActionCreators(actions.persistTopic, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchAudienceCountries: bindActionCreators(actions.searchAudienceCountries, dispatch),
   searchAudienceLanguages: bindActionCreators(actions.searchAudienceLanguages, dispatch),
@@ -81,6 +81,7 @@ export default class EditSpott extends Component {
     location: PropTypes.object.isRequired,
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
+    persistTopic: PropTypes.func.isRequired,
     popUpMessage: PropTypes.object,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchAudienceCountries: PropTypes.func.isRequired,
@@ -93,6 +94,7 @@ export default class EditSpott extends Component {
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
     tags: ImmutablePropTypes.list,
+    topicIds: PropTypes.array,
     topicsById: ImmutablePropTypes.map.isRequired,
     onBeforeChangeTab: PropTypes.func.isRequired,
     onChangeTab: PropTypes.func.isRequired
@@ -108,6 +110,7 @@ export default class EditSpott extends Component {
     this.removeLanguage = :: this.removeLanguage;
     this.onPersistTag = ::this.onPersistTag;
     this.onChangeImage = ::this.onChangeImage;
+    this.onCreateTopic = ::this.onCreateTopic;
     this.onEditTag = ::this.onEditTag;
     this.onMoveTag = ::this.onMoveTag;
     this.onRemoveTag = ::this.onRemoveTag;
@@ -221,6 +224,13 @@ export default class EditSpott extends Component {
     dispatch(change('tags', tags));
   }
 
+  async onCreateTopic (text) {
+    const { change, dispatch, persistTopic, topicIds } = this.props;
+    const { id } = await persistTopic({ text });
+    topicIds.push(id);
+    dispatch(change('topicIds', topicIds));
+  }
+
   static styles = {
     selectInput: {
       paddingTop: 0,
@@ -264,7 +274,7 @@ export default class EditSpott extends Component {
       _activeLocale, errors, currentModal, closeModal, supportedLocales, defaultLocale,
       currentSpott, location, handleSubmit, location: { query: { tab } },
       searchAudienceCountries, searchAudienceLanguages, searchedAudienceCountryIds, searchedAudienceLanguageIds,
-      searchTopics, searchedTopicIds, tags, topicsById
+      searchTopics, searchedTopicIds, tags, topicsById, topicIds
     } = this.props;
 
     return (
@@ -315,6 +325,11 @@ export default class EditSpott extends Component {
                           onMoveTag={this.onMoveTag}
                           onRemoveTag={this.onRemoveTag}
                           onSelectionRegion={this.onSelectionRegion}/>}
+                        <Field
+                          component={TextInput}
+                          label='Image source'
+                          name='imageSource'
+                          placeholder='Image source'/>
                     </Section>
                   </div>
                   <div style={{ width: '60%', display: 'flex', flexDirection: 'column' }}>
@@ -350,7 +365,8 @@ export default class EditSpott extends Component {
                         multiselect
                         name='topicIds'
                         options={searchedTopicIds.get('data').toJS()}
-                        placeholder='Topics'/>
+                        placeholder='Topics'
+                        onCreateOption={this.onCreateTopic}/>
                   </Section>
                 </div>
               </div>

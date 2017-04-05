@@ -71,10 +71,10 @@ export default class Scene extends Component {
 
   static styles = {
     container: {
-      alignItems: 'center',
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center'
+      // alignItems: 'center',
+      // display: 'flex',
+      // flexDirection: 'column',
+      // justifyContent: 'center'
     },
     wrapper: {
       display: 'inline-block',
@@ -161,7 +161,7 @@ export default class Scene extends Component {
         <ImageDropzone
           accept='image/*'
           downloadUrl={imageUrl}
-          height={200}
+          height={100}
           imageUrl={imageUrl}
           onChange={({ callback, file }) => {
             this.setState({ localeImage: file });

@@ -1,3 +1,4 @@
+export const BRAND = 'brand';
 export const BROADCAST_CHANNEL = 'broadcastChannel';
 export const BROADCASTER = 'broadcaster';
 export const CHARACTER = 'character';
@@ -8,9 +9,10 @@ export const MOVIE = 'movie';
 export const PERSON = 'person';
 export const PRODUCT = 'product';
 export const PUSH_NOTIFICATION = 'pushNotification';
+export const SCHEDULE_ENTRY = 'scheduleEntry';
 export const SEASON = 'season';
 export const SERIES_ENTRY = 'seriesEntry';
 export const SHOP = 'shop';
+export const SPOTT = 'spott';
 export const TV_GUIDE_ENTRY = 'tvGuideEntry';
 export const USER = 'user';
-export const SCHEDULE_ENTRY = 'scheduleEntry';

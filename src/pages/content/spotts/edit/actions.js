@@ -2,6 +2,7 @@ import { persistSpott, fetchSpott as dataFetchSpott } from '../../../../actions/
 import { searchTopics as dataSearchTopics } from '../../../../actions/topic';
 import { fetchCountries } from '../../../../actions/country';
 import { searchCharacters as dataSearchCharacters } from '../../../../actions/character';
+import { searchPersons as dataSearchPersons } from '../../../../actions/person';
 import { searchProducts as dataSearchProducts } from '../../../../actions/product';
 import { fetchLanguages } from '../../../../actions/language';
 import { createSearchAction } from '../../../../utils';
@@ -15,6 +16,9 @@ export const TOPICS_SEARCH_ERROR = 'SPOTT_EDIT/TOPICS_SEARCH_ERROR';
 export const TAGS_CHARACTERS_SEARCH_START = 'SPOTTS_EDIT/TAGS_CHARACTERS_SEARCH_START';
 export const TAGS_CHARACTERS_SEARCH_ERROR = 'SPOTTS_EDIT/TAGS_CHARACTERS_SEARCH_ERROR';
 
+export const TAGS_PERSONS_SEARCH_START = 'SPOTTS_EDIT/TAGS_PERSONS_SEARCH_START';
+export const TAGS_PERSONS_SEARCH_ERROR = 'SPOTTS_EDIT/TAGS_PERSONS_SEARCH_ERROR';
+
 export const TAGS_PRODUCTS_SEARCH_START = 'SPOTTS_EDIT/TAGS_PRODUCTS_SEARCH_START';
 export const TAGS_PRODUCTS_SEARCH_ERROR = 'SPOTTS_EDIT/TAGS_PRODUCTS_SEARCH_ERROR';
 
@@ -25,6 +29,8 @@ export const AUDIENCE_LANGUAGES_SEARCH_START = 'SPOTTS_EDIT/AUDIENCE_LANGUAGES_S
 export const AUDIENCE_LANGUAGES_SEARCH_ERROR = 'SPOTTS_EDIT/AUDIENCE_LANGUAGES_SEARCH_ERROR';
 
 export { openModal, closeModal } from '../../../../actions/global';
+
+export { persistTopic } from '../../../../actions/topic';
 
 export const submit = persistSpott;
 
@@ -48,6 +54,7 @@ export function loadSpott (spottId) {
 // ////
 
 export const searchCharacters = createSearchAction(dataSearchCharacters, TAGS_CHARACTERS_SEARCH_START, TAGS_CHARACTERS_SEARCH_ERROR);
+export const searchPersons = createSearchAction(dataSearchPersons, TAGS_PERSONS_SEARCH_START, TAGS_PERSONS_SEARCH_ERROR);
 export const searchProducts = createSearchAction(dataSearchProducts, TAGS_PRODUCTS_SEARCH_START, TAGS_PRODUCTS_SEARCH_ERROR);
 
 // Audience

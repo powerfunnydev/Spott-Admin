@@ -11,8 +11,10 @@ import {
   spottsEntitiesSelector,
   topicsEntitiesSelector,
   listCharactersEntitiesSelector,
+  listPersonsEntitiesSelector,
   listProductsEntitiesSelector,
   searchStringHasCharactersRelationsSelector,
+  searchStringHasPersonsRelationsSelector,
   searchStringHasProductsRelationsSelector
 } from '../../../../selectors/data';
 
@@ -24,6 +26,10 @@ const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultL
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
 const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 const spottTagsSelector = createFormValueSelector(formName, 'tags');
+const topicIdsSelector = createSelector(
+  createFormValueSelector(formName, 'topicIds'),
+  (topicIds) => topicIds && typeof topicIds.toJS === 'function' ? topicIds.toJS() : topicIds
+);
 
 const currentSpottIdSelector = (state, props) => props.params.spottId;
 const currentSpottSelector = createEntityByIdSelector(spottsEntitiesSelector, currentSpottIdSelector);
@@ -65,13 +71,16 @@ export default createStructuredSelector({
   searchedTopicIds: searchedTopicIdsSelector,
   supportedLocales: supportedLocalesSelector,
   tags: spottTagsSelector,
+  topicIds: topicIdsSelector,
   topicsById: topicsEntitiesSelector
 });
 
 export const currentCharactersSearchStringSelector = (state) => state.getIn([ 'content', 'spotts', 'edit', 'currentTagsCharactersSearchString' ]);
+export const currentPersonsSearchStringSelector = (state) => state.getIn([ 'content', 'spotts', 'edit', 'currentTagsPersonsSearchString' ]);
 export const currentProductsSearchStringSelector = (state) => state.getIn([ 'content', 'spotts', 'edit', 'currentTagsProductsSearchString' ]);
 
 export const searchedCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCharactersSearchStringSelector);
+export const searchedPersonIdsSelector = createEntityIdsByRelationSelector(searchStringHasPersonsRelationsSelector, currentPersonsSearchStringSelector);
 export const searchedProductIdsSelector = createEntityIdsByRelationSelector(searchStringHasProductsRelationsSelector, currentProductsSearchStringSelector);
 
 const entityTypeSelector = createFormValueSelector('tagCreate', 'entityType');
@@ -79,7 +88,9 @@ const entityTypeSelector = createFormValueSelector('tagCreate', 'entityType');
 export const tagsSelector = createStructuredSelector({
   charactersById: listCharactersEntitiesSelector,
   entityType: entityTypeSelector,
+  personsById: listPersonsEntitiesSelector,
   productsById: listProductsEntitiesSelector,
   searchedCharacterIds: searchedCharacterIdsSelector,
+  searchedPersonIds: searchedPersonIdsSelector,
   searchedProductIds: searchedProductIdsSelector
 });

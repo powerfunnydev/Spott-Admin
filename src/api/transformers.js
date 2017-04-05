@@ -833,7 +833,14 @@ export function transformAudience ({ countries, languages, name, uuid }) {
   };
 }
 
-export function transformListSpott ({ auditInfo, promoted, publishStatus, title, uuid }) {
+export function transformTopic ({ text, uuid }) {
+  return {
+    id: uuid,
+    text
+  };
+}
+
+export function transformListSpott ({ auditInfo, promoted, publishStatus, title, topics, uuid }) {
   return {
     createdBy: auditInfo && auditInfo.createdBy,
     createdOn: auditInfo && auditInfo.createdOn,
@@ -842,19 +849,13 @@ export function transformListSpott ({ auditInfo, promoted, publishStatus, title,
     id: uuid,
     promoted,
     publishStatus,
-    title
-  };
-}
-
-export function transformTopic ({ text, uuid }) {
-  return {
-    id: uuid,
-    text
+    title,
+    topics: topics && topics.map(transformTopic)
   };
 }
 
 export function transformSpott ({
-  auditInfo, defaultLocale, image, localeData, publishStatus, promoted, topics, uuid
+  auditInfo, defaultLocale, image, imageSource, localeData, publishStatus, promoted, topics, uuid
 }) {
   const spott = {
     basedOnDefaultLocale: {},
@@ -864,6 +865,7 @@ export function transformSpott ({
     defaultLocale,
     id: uuid,
     image: transformImage(image),
+    imageSource,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     locales: [],

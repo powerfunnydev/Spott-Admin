@@ -22,8 +22,8 @@ export async function fetchSpott (baseUrl, authenticationToken, locale, { spottI
 }
 
 export async function persistSpott (baseUrl, authenticationToken, locale, {
-  basedOnDefaultLocale, defaultLocale, comment, image, locales, promoted, publishStatus,
-  spottId, title, topicIds }) {
+  basedOnDefaultLocale, defaultLocale, comment, image, imageSource, locales,
+  promoted, publishStatus, spottId, title, topicIds }) {
   let spott = {};
   if (spottId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/post/posts/${spottId}`);
@@ -31,6 +31,7 @@ export async function persistSpott (baseUrl, authenticationToken, locale, {
   }
 
   spott.defaultLocale = defaultLocale;
+  spott.imageSource = imageSource;
   spott.promoted = promoted;
   spott.publishStatus = publishStatus;
 

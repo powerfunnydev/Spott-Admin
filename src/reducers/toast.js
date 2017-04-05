@@ -1,4 +1,5 @@
 import { Map, List } from 'immutable';
+import * as brandActions from '../actions/brand';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcasterActions from '../actions/broadcaster';
 import * as characterActions from '../actions/character';
@@ -13,6 +14,7 @@ import * as pushNotificationActions from '../actions/pushNotification';
 import * as seasonActions from '../actions/season';
 import * as seriesActions from '../actions/series';
 import * as shopActions from '../actions/shop';
+import * as spottActions from '../actions/spott';
 import * as toastActions from '../actions/toast';
 import * as tvGuideActions from '../actions/tvGuide';
 import * as userActions from '../actions/user';
@@ -41,6 +43,11 @@ function pop (state) {
 export default (state = List(), action) => {
   switch (action.type) {
     // Error messages
+    case brandActions.BRAND_DELETE_ERROR:
+    case brandActions.BRANDS_DELETE_ERROR:
+    case brandActions.BRAND_PERSIST_ERROR:
+      return pushError(state, action.error, entityTypes.BRAND);
+
     case broadcastChannelActions.BROADCAST_CHANNEL_DELETE_ERROR:
     case broadcastChannelActions.BROADCAST_CHANNELS_DELETE_ERROR:
     case broadcastChannelActions.BROADCAST_CHANNEL_PERSIST_ERROR:
@@ -115,12 +122,21 @@ export default (state = List(), action) => {
     case scheduleEntryActions.SCHEDULE_ENTRY_PERSIST_ERROR:
       return pushError(state, action.error, entityTypes.SCHEDULE_ENTRY);
 
+    case spottActions.SPOTT_DELETE_ERROR:
+    case spottActions.SPOTTS_DELETE_ERROR:
+    case spottActions.SPOTT_PERSIST_ERROR:
+      return pushError(state, action.error, entityTypes.SPOTT);
+
     case userActions.USERS_DELETE_ERROR:
     case userActions.USER_DELETE_ERROR:
     case userActions.USER_PERSIST_ERROR:
       return pushError(state, action.error, entityTypes.USER);
 
     // Success messages
+
+    case brandActions.BRAND_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, entityTypes.BRAND);
+
     case broadcastChannelActions.BROADCAST_CHANNEL_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.BROADCAST_CHANNEL);
 
@@ -162,6 +178,9 @@ export default (state = List(), action) => {
 
     case shopActions.SHOP_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.SHOP);
+
+    case spottActions.SPOTT_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, entityTypes.SPOTT);
 
     case tvGuideActions.TV_GUIDE_ENTRY_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.TV_GUIDE_ENTRY);

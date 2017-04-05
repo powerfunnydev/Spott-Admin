@@ -36,7 +36,7 @@ export const dialogStyle = {
     width: '100%',
     // Set width and center horizontally
     minWidth: 200,
-    maxWidth: 430,
+    maxWidth: 450,
     // Internal padding
     padding: 0,
     display: 'flex',

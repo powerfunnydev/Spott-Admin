@@ -20,21 +20,27 @@ const relevanceTypes = [
 
 const entityTypes = [
   { label: 'Add product', value: 'PRODUCT' },
-  { label: 'Add character', value: 'CHARACTER' }
+  { label: 'Add character', value: 'CHARACTER' },
+  { label: 'Add person', value: 'PERSON' }
 ];
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { characterId, entityType, relevance, productId } = values.toJS();
-  if (entityType) {
-    if (entityType === 'CHARACTER') {
+  const { characterId, entityType, personId, productId, relevance } = values.toJS();
+
+  switch (entityType) {
+    case 'CHARACTER':
       if (!characterId) { validationErrors.characterId = t('common.errors.required'); }
-    } else if (entityType === 'PRODUCT') {
+      break;
+    case 'PERSON':
+      if (!personId) { validationErrors.personId = t('common.errors.required'); }
+      break;
+    case 'PRODUCT':
       if (!relevance) { validationErrors.relevance = t('common.errors.required'); }
       if (!productId) { validationErrors.productId = t('common.errors.required'); }
-    }
-  } else {
-    validationErrors.entityType = t('common.errors.required');
+      break;
+    default:
+      validationErrors.entityType = t('common.errors.required');
   }
 
   // Done
@@ -44,6 +50,7 @@ function validate (values, { t }) {
 @localized
 @connect(tagsSelector, (dispatch) => ({
   searchCharacters: bindActionCreators(actions.searchCharacters, dispatch),
+  searchPersons: bindActionCreators(actions.searchPersons, dispatch),
   searchProducts: bindActionCreators(actions.searchProducts, dispatch)
 }))
 @reduxForm({
@@ -59,10 +66,13 @@ export default class PersistTag extends Component {
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
+    personsById: ImmutablePropTypes.map.isRequired,
     productsById: ImmutablePropTypes.map.isRequired,
     searchCharacters: PropTypes.func.isRequired,
+    searchPersons: PropTypes.func.isRequired,
     searchProducts: PropTypes.func.isRequired,
     searchedCharacterIds: ImmutablePropTypes.map.isRequired,
+    searchedPersonIds: ImmutablePropTypes.map.isRequired,
     searchedProductIds: ImmutablePropTypes.map.isRequired,
     submitButtonText: PropTypes.string,
     t: PropTypes.func.isRequired,
@@ -73,6 +83,7 @@ export default class PersistTag extends Component {
   constructor (props) {
     super(props);
     this.searchCharacters = slowdown(props.searchCharacters, 300);
+    this.searchPersons = slowdown(props.searchPersons, 300);
     this.searchProducts = slowdown(props.searchProducts, 300);
     this.submit = ::this.submit;
   }
@@ -89,8 +100,9 @@ export default class PersistTag extends Component {
 
   render () {
     const {
-      charactersById, entityType, handleSubmit, productsById, searchedCharacterIds,
-      searchedProductIds, submitButtonText, onClose
+      charactersById, entityType, handleSubmit, personsById, productsById,
+      searchedCharacterIds, searchedPersonIds, searchedProductIds, submitButtonText,
+      onClose
     } = this.props;
     return (
       <PersistModal isOpen submitButtonText={submitButtonText} title='Tag your spott' onClose={onClose} onSubmit={handleSubmit(this.submit)}>
@@ -129,6 +141,19 @@ export default class PersistTag extends Component {
               name='characterId'
               options={searchedCharacterIds.get('data').toArray()}
               placeholder='Search for characters'
+              required/>
+          </div>}
+        {entityType === 'PERSON' &&
+          <div>
+            <FormSubtitle>Find person</FormSubtitle>
+            <Field
+              component={SelectInput}
+              getItemText={(personId) => personsById.getIn([ personId, 'fullName' ])}
+              getOptions={this.searchPersons}
+              label='Person name'
+              name='personId'
+              options={searchedPersonIds.get('data').toArray()}
+              placeholder='Search for persons'
               required/>
           </div>}
       </PersistModal>

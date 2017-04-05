@@ -12,9 +12,9 @@ import { colors, makeTextStyle, fontWeights } from '../styles';
 import CompletedSVG from '../images/completed';
 import PlusSVG from '../images/plus';
 import {
-  BROADCAST_CHANNEL, BROADCASTER, CHARACTER, COMMERCIAL, CONTENT_PRODUCER, EPISODE,
-  MOVIE, PERSON, PRODUCT, PUSH_NOTIFICATION, SEASON, SERIES_ENTRY, SHOP, TV_GUIDE_ENTRY, USER,
-  SCHEDULE_ENTRY
+  BRAND, BROADCAST_CHANNEL, BROADCASTER, CHARACTER, COMMERCIAL, CONTENT_PRODUCER, EPISODE,
+  MOVIE, PERSON, PRODUCT, PUSH_NOTIFICATION, SEASON, SERIES_ENTRY, SHOP, SPOTT,
+  TV_GUIDE_ENTRY, USER, SCHEDULE_ENTRY
 } from '../../../constants/entityTypes';
 
 @connect(null, (dispatch) => ({
@@ -29,10 +29,6 @@ export class ErrorMessage extends Component {
     popToast: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired
   };
-
-  constructor (props) {
-    super(props);
-  }
 
   async redirect (url) {
     await this.props.routerPushWithReturnTo(url);
@@ -104,6 +100,7 @@ export class SuccessMessage extends Component {
 
   constructor (props) {
     super(props);
+    this.brandPersistSuccess = ::this.brandPersistSuccess;
     this.broadcastChannelPersistSuccess = ::this.broadcastChannelPersistSuccess;
     this.broadcasterPersistSuccess = ::this.broadcasterPersistSuccess;
     this.characterPersistSuccess = ::this.characterPersistSuccess;
@@ -116,11 +113,21 @@ export class SuccessMessage extends Component {
     this.seasonPersistSuccess = ::this.seasonPersistSuccess;
     this.seriesEntryPersistSuccess = ::this.seriesEntryPersistSuccess;
     this.seriesEntryPersistSuccess = ::this.seriesEntryPersistSuccess;
+    this.spottPersistSuccess = ::this.spottPersistSuccess;
   }
 
   async redirect (url) {
     await this.props.routerPushWithReturnTo(url);
     await this.props.popToast();
+  }
+
+  brandPersistSuccess (brand) {
+    const { styles } = this.constructor;
+    return (
+      <span>
+        Brand <Link style={styles.clickable} to={`/content/brands/read/${brand.id}`}>{brand.name[brand.defaultLocale]}</Link> has been succesfully persisted.
+      </span>
+    );
   }
 
   broadcastChannelPersistSuccess (broadcastChannel) {
@@ -244,19 +251,28 @@ export class SuccessMessage extends Component {
     );
   }
 
+  scheduleEntryPersistSuccess () {
+    return (
+      <span>
+        Schedule Entry has been succesfully persisted.
+      </span>
+    );
+  }
+
+  spottPersistSuccess (spott) {
+    const { styles } = this.constructor;
+    return (
+      <span>
+        Spott <Link style={styles.clickable} to={`/content/spotts/read/${spott.id}`}>{spott.title[spott.defaultLocale]}</Link> has been succesfully persisted.
+      </span>
+    );
+  }
+
   tvGuideEntryPersistSuccess (tvGuideEntry) {
     const { styles } = this.constructor;
     return (
       <span>
         TV Guide Entry <Link style={styles.clickable} to={`/tv-guide/edit/${tvGuideEntry.id}`}>{tvGuideEntry.medium && tvGuideEntry.medium.title}</Link> has been succesfully persisted.
-      </span>
-    );
-  }
-
-  scheduleEntryPersistSuccess () {
-    return (
-      <span>
-        Schedule Entry has been succesfully persisted.
       </span>
     );
   }
@@ -283,40 +299,47 @@ export class SuccessMessage extends Component {
 
   render () {
     const { entityType, entity } = this.props;
-    if (entityType === BROADCAST_CHANNEL) {
-      return this.broadcastChannelPersistSuccess(entity);
-    } else if (entityType === BROADCASTER) {
-      return this.broadcasterPersistSuccess(entity);
-    } else if (entityType === CHARACTER) {
-      return this.characterPersistSuccess(entity);
-    } else if (entityType === CONTENT_PRODUCER) {
-      return this.contentProducerPersistSuccess(entity);
-    } else if (entityType === COMMERCIAL) {
-      return this.commercialPersistSuccess(entity);
-    } else if (entityType === EPISODE) {
-      return this.episodePersistSuccess(entity);
-    } else if (entityType === MOVIE) {
-      return this.moviePersistSuccess(entity);
-    } else if (entityType === PERSON) {
-      return this.personPersistSuccess(entity);
-    } else if (entityType === PRODUCT) {
-      return this.productPersistSuccess(entity);
-    } else if (entityType === PUSH_NOTIFICATION) {
-      return this.pushNotificationPersistSuccess(entity);
-    } else if (entityType === SEASON) {
-      return this.seasonPersistSuccess(entity);
-    } else if (entityType === SERIES_ENTRY) {
-      return this.seriesEntryPersistSuccess(entity);
-    } else if (entityType === SHOP) {
-      return this.shopPersistSuccess(entity);
-    } else if (entityType === TV_GUIDE_ENTRY) {
-      return this.tvGuideEntryPersistSuccess(entity);
-    } else if (entityType === USER) {
-      return this.userPersistSuccess(entity);
-    } else if (entityType === SCHEDULE_ENTRY) {
-      return this.scheduleEntryPersistSuccess(entity);
+    switch (entityType) {
+      case BRAND:
+        return this.brandPersistSuccess(entity);
+      case BROADCAST_CHANNEL:
+        return this.broadcastChannelPersistSuccess(entity);
+      case BROADCASTER:
+        return this.broadcasterPersistSuccess(entity);
+      case CHARACTER:
+        return this.characterPersistSuccess(entity);
+      case CONTENT_PRODUCER:
+        return this.contentProducerPersistSuccess(entity);
+      case COMMERCIAL:
+        return this.commercialPersistSuccess(entity);
+      case EPISODE:
+        return this.episodePersistSuccess(entity);
+      case MOVIE:
+        return this.moviePersistSuccess(entity);
+      case PERSON:
+        return this.personPersistSuccess(entity);
+      case PRODUCT:
+        return this.productPersistSuccess(entity);
+      case PUSH_NOTIFICATION:
+        return this.pushNotificationPersistSuccess(entity);
+      case SCHEDULE_ENTRY:
+        return this.scheduleEntryPersistSuccess(entity);
+      case SEASON:
+        return this.seasonPersistSuccess(entity);
+      case SERIES_ENTRY:
+        return this.seriesEntryPersistSuccess(entity);
+      case SHOP:
+        return this.shopPersistSuccess(entity);
+      case SPOTT:
+        return this.spottPersistSuccess(entity);
+      case TV_GUIDE_ENTRY:
+        return this.tvGuideEntryPersistSuccess(entity);
+      case USER:
+        return this.userPersistSuccess(entity);
+
+      default:
+        return <span>Entity has been succesfully persisted.</span>;
     }
-    return <span>Toast message of this entity isn't supported yet.</span>;
   }
 }
 

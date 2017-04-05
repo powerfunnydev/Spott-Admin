@@ -526,6 +526,9 @@ export default (state = fromJS({
     case topicActions.TOPICS_SEARCH_ERROR:
       return searchError(state, 'searchStringHasTopics', action.searchString, action.error);
 
+    case topicActions.TOPIC_PERSIST_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'topics', action.data.id ], action.data);
+
     // Media
     // /////
 
