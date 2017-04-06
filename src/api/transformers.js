@@ -271,6 +271,7 @@ export function transformMediumCategory ({ uuid: id, localeData }) {
 
 export const transformListProductCategory = transformListMediumCategory;
 export const transformProductCategory = transformMediumCategory;
+
 /**
  *  Light version of a medium. No locales includes.
  */

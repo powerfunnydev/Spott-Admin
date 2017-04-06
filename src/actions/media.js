@@ -52,7 +52,12 @@ export const MEDIA_FETCH_START = 'MEDIA/MEDIA_FETCH_START';
 export const MEDIA_FETCH_SUCCESS = 'MEDIA/MEDIA_FETCH_SUCCESS';
 export const MEDIA_FETCH_ERROR = 'MEDIA/MEDIA_FETCH_ERROR';
 
+export const MEDIUM_FETCH_START = 'MEDIA/MEDIUM_FETCH_START';
+export const MEDIUM_FETCH_SUCCESS = 'MEDIA/MEDIUM_FETCH_SUCCESS';
+export const MEDIUM_FETCH_ERROR = 'MEDIA/MEDIUM_FETCH_ERROR';
+
 export const fetchTvGuideEntries = makeApiActionCreator(mediaApi.fetchTvGuideEntries, TV_GUIDE_ENTRIES_FETCH_START, TV_GUIDE_ENTRIES_FETCH_SUCCESS, TV_GUIDE_ENTRIES_FETCH_ERROR);
+export const fetchMedium = makeApiActionCreator(mediaApi.fetchMedium, MEDIUM_FETCH_START, MEDIUM_FETCH_SUCCESS, MEDIUM_FETCH_ERROR);
 export const fetchMedia = makeApiActionCreator(mediaApi.fetchMedia, MEDIA_FETCH_START, MEDIA_FETCH_SUCCESS, MEDIA_FETCH_ERROR);
 export const searchMedia = makeApiActionCreator(mediaApi.searchMedia, MEDIA_SEARCH_START, MEDIA_SEARCH_SUCCESS, MEDIA_SEARCH_ERROR);
 export const deleteProfileImage = makeApiActionCreator(mediaApi.deleteProfileImage, DELETE_PROFILE_IMAGE_START, DELETE_PROFILE_IMAGE_SUCCESS, DELETE_PROFILE_IMAGE_ERROR);

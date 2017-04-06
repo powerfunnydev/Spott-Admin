@@ -88,7 +88,7 @@ export function mergeListOfEntities (state, path, listOfEntities) {
   listOfEntities.map((entity) => {
     const copyPath = path.slice();
     copyPath.push(entity.id);
-    newState = fetchSuccess(state, copyPath, entity);
+    newState = fetchSuccess(newState, copyPath, entity);
   });
   return newState;
 }
@@ -126,4 +126,25 @@ export function fetchListSuccess (state, listKey, entitiesKey, data) {
 }
 export function fetchListError (state, listKey, error) {
   return fetchError(state, [ 'lists', listKey ], error);
+}
+
+// Transform an already transformed medium to a list medium.
+export function transformMediumToListMedium ({ defaultLocale, id, lastUpdatedBy,
+  lastUpdatedOn, number, posterImage, profileImage, publishStatus, roundLogo,
+  season, serie, title, type
+ }) {
+  return {
+    id,
+    title: title[defaultLocale],
+    type,
+    number,
+    publishStatus,
+    season,
+    serie,
+    posterImage: posterImage[defaultLocale],
+    profileImage: profileImage[defaultLocale],
+    roundLogo: roundLogo[defaultLocale],
+    lastUpdatedOn,
+    lastUpdatedBy
+  };
 }

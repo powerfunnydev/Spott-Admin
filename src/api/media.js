@@ -282,3 +282,8 @@ export async function fetchTvGuideEntries (baseUrl, authenticationToken, locale,
   body.data = body.data.map(transformTvGuideEntry);
   return body;
 }
+
+export async function fetchMedium (baseUrl, authenticationToken, locale, { mediumId }) {
+  const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/media/media/${mediumId}`);
+  return transformMedium(body);
+}
