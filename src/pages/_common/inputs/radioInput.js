@@ -68,33 +68,33 @@ export default class RadioInput extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { disabled, first, input, label, labelStyle, options, optionsStyle, required, style } = this.props;
+    const { disabled, first, input, label: labelText, labelStyle, options, optionsStyle, required, style } = this.props;
 
     const inputValue = input.value || false;
 
     return (
       <div style={[ !first && styles.padTop, style ]}>
-        {label && <Label required={required} style={labelStyle} text={label}/>}
+        {labelText && <Label required={required} style={labelStyle} text={labelText}/>}
         <div style={optionsStyle}>
           {options.map(({ label, value }, i) => {
             const onClick = this.onClick.bind(this, value);
             const checked = inputValue === value;
 
             const radioButtonStyle = [ styles.radioButton ];
-            const labelStyle = [ styles.label ];
+            const labelStyles = [ styles.label ];
 
             if (checked) {
               radioButtonStyle.push({
                 boxShadow: `inset 0px 0px 0px 4px ${colors.primaryBlue}`,
                 backgroundColor: 'white'
               });
-              labelStyle.push({ color: 'rgb(45, 48, 50)' });
+              labelStyles.push({ color: 'rgb(45, 48, 50)' });
             } else {
               radioButtonStyle.push({
                 backgroundColor: 'white',
                 border: `solid 1px ${colors.lightGray2}`
               });
-              labelStyle.push({ color: colors.darkGray2 });
+              labelStyles.push({ color: colors.darkGray2 });
             }
 
             return (
@@ -106,7 +106,7 @@ export default class RadioInput extends Component {
                   type='radio'
                   onChange={onClick} />
                 <span style={radioButtonStyle} onClick={onClick} />
-                <span htmlFor={i} style={labelStyle} onClick={onClick}>{label}</span>
+                <span htmlFor={i} style={labelStyles} onClick={onClick}>{label}</span>
               </label>
             );
           })}

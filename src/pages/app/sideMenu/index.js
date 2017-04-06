@@ -31,7 +31,7 @@ function mergeStyles (array) {
 @Radium
 class VerticalSideMenu extends Component {
   static propTypes = {
-    children: PropTypes.object,
+    children: PropTypes.node,
     isAuthenticated: PropTypes.bool.isRequired,
     location: PropTypes.object.isRequired,
     logout: PropTypes.func.isRequired,

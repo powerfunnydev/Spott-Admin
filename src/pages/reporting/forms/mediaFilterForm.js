@@ -36,9 +36,11 @@ export default class MediaFilterForm extends Component {
       const firstFiveMedia = mediaResults.map(({ id }) => id).splice(0, 5);
       this.props.onChange('media', 'array', firstFiveMedia);
     }
-    // Get media which are not yet in the state.
-    for (const mediumId of media) {
-      await fetchMedium({ mediumId });
+    if (media) {
+      // Get media which are not yet in the state.
+      for (const mediumId of media) {
+        await fetchMedium({ mediumId });
+      }
     }
   }
 

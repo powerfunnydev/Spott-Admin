@@ -1,4 +1,3 @@
-
 /* eslint-disable react/no-set-state */
 // False positive on the arguments of an async function.
 /* eslint-disable react/prop-types */

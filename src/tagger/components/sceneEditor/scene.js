@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { DropTarget } from 'react-dnd';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { findDOMNode } from 'react-dom';
 import Appearance from './appearance';
 import MarkerImageTooltip from './markerImageTooltip';
 import SelectionArea from './selectionArea';
