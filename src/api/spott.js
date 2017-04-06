@@ -23,12 +23,36 @@ export async function fetchSpott (baseUrl, authenticationToken, locale, { spottI
 
 export async function persistSpott (baseUrl, authenticationToken, locale, {
   basedOnDefaultLocale, defaultLocale, comment, image, imageSource, locales,
-  promoted, publishStatus, spottId, title, topicIds }) {
+  promoted, publishStatus, spottId, tags, title, topicIds }) {
   let spott = {};
   if (spottId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/post/posts/${spottId}`);
     spott = body;
   }
+
+  spott.productMarkers = [];
+  spott.personMarkers = [];
+
+  console.warn('tags', tags);
+
+  if (tags) {
+    const personTags = tags.filter(({ entityType }) => entityType === 'CHARACTER' || entityType === 'PERSON');
+    spott.personMarkers = personTags.map(({ characterId, entityType, personId, point }) => ({
+      character: characterId ? { uuid: characterId } : null,
+      person: personId ? { uuid: personId } : null,
+      point
+    }));
+
+    const productTags = tags.filter(({ entityType }) => entityType === 'PRODUCT');
+    spott.productMarkers = productTags.map(({ entityType, point, productId, relevance }) => ({
+      // TODO character or person
+      point,
+      product: { uuid: productId },
+      relevance
+    }));
+  }
+
+  console.warn('SPOTT BODY', spott);
 
   spott.defaultLocale = defaultLocale;
   spott.imageSource = imageSource;

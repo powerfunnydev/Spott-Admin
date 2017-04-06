@@ -854,8 +854,38 @@ export function transformListSpott ({ auditInfo, promoted, publishStatus, title,
   };
 }
 
+function transformPersonMarker ({ character, person, point, uuid }) {
+  if (character) {
+    return {
+      character: transformListCharacter(character),
+      entityType: 'CHARACTER',
+      id: uuid,
+      point
+    };
+  }
+  if (person) {
+    return {
+      entityType: 'PERSON',
+      id: uuid,
+      person: transformListPerson(person),
+      point
+    };
+  }
+}
+
+function transformProductMarker ({ point, product, relevance, uuid }) {
+  return {
+    entityType: 'PRODUCT',
+    id: uuid,
+    point,
+    product: transformListProduct(product),
+    relevance
+  };
+}
+
 export function transformSpott ({
-  auditInfo, defaultLocale, image, imageSource, localeData, publishStatus, promoted, topics, uuid
+  auditInfo, defaultLocale, image, imageSource, localeData, personMarkers, productMarkers,
+  publishStatus, promoted, topics, uuid
 }) {
   const spott = {
     basedOnDefaultLocale: {},
@@ -870,6 +900,7 @@ export function transformSpott ({
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     locales: [],
     promoted,
+    tags: personMarkers.map(transformPersonMarker).concat(productMarkers.map(transformProductMarker)),
     title: {},
     topics: (topics || []).map(transformTopic),
     publishStatus

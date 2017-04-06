@@ -4,6 +4,7 @@ import Radium from 'radium';
 import { DropTarget } from 'react-dnd';
 import ImageDropzone from '../../../_common/dropzone/imageDropzone';
 import SelectionArea from '../../../../tagger/components/sceneEditor/selectionArea';
+import MarkerImageTooltip from '../../../../tagger/components/sceneEditor/markerImageTooltip';
 import Tag from './tag';
 
 const sceneTarget = {
@@ -43,7 +44,7 @@ export default class Scene extends Component {
   constructor (props) {
     super(props);
     this.onSelectionRegion = ::this.onSelectionRegion;
-    this.state = { disableSelectionArea: false, localeImage: null };
+    this.state = { hoveredTag: null, localeImage: null };
   }
 
   onSelectionRegion (selection) {
@@ -94,19 +95,32 @@ export default class Scene extends Component {
     }
   }
 
-  // // When no point is defined in the appearance, we use point { x: 0, y: 0 } as default.
-  // renderTooltip (hoveredAppearanceTuple) {
-  //   if (hoveredAppearanceTuple) {
-  //     const point = hoveredAppearanceTuple.getIn([ 'appearance', 'point' ]);
-  //
-  //     return (
-  //       <MarkerImageTooltip
-  //         imageUrl={hoveredAppearanceTuple.getIn([ 'entity', 'imageUrl' ]) || hoveredAppearanceTuple.getIn([ 'entity', 'portraitImageUrl' ])}
-  //         relativeLeft={(point && point.get('x')) || 0}
-  //         relativeTop={(point && point.get('y')) || 0} />
-  //     );
-  //   }
-  // }
+  renderTooltip (tag) {
+    if (tag) {
+      console.warn('TAG', tag);
+      let image;
+      switch (tag.entityType) {
+        case 'CHARACTER':
+          image = tag.character.profileImage;
+          break;
+        case 'PERSON':
+          image = tag.person.profileImage;
+          break;
+        case 'PRODUCT':
+          image = tag.product.logo;
+          break;
+      }
+
+      if (image) {
+        return (
+          <MarkerImageTooltip
+            imageUrl={image.url}
+            relativeLeft={tag.point.x}
+            relativeTop={tag.point.y} />
+        );
+      }
+    }
+  }
 
   render () {
     const { connectDropTarget, imageUrl, tags, onChangeImage, onEditTag, onMoveTag, onRemoveTag } = this.props;
@@ -115,41 +129,33 @@ export default class Scene extends Component {
 
     const noop = (c) => c;
 
-    console.warn('tags in scene', tags);
-
     return (
       <div style={styles.container}>
+
         <SelectionArea
-          disable={this.state.disableSelectionArea}
+          disable={Boolean(this.state.hoveredTag)}
           ref={(c) => { this._wrapper = c && c.component; }}
           style={styles.wrapper}
           onSelection={this.onSelectionRegion}>
           <img draggable={false} src={localeImage ? localeImage.preview : imageUrl} style={{ pointerEvents: 'none', userDrag: 'none', userSelect: 'none', width: '100%' }} />
+          {this.renderTooltip(this.state.hoveredTag)}
           {connectDropTarget(
             <div style={styles.layover}>
               {tags && tags.map((tag) => {
                 const { entityType, point, id } = tag;
-                const hovered = false; // Boolean(hoveredAppearanceTuple) && hoveredAppearanceTuple.get('appearance') === appearance;
-                // const onEdit =
-                // appearanceType === PRODUCT
-                //   ? onEditAppearance.bind(this, appearanceId)
-                //   : () => console.warn('Editing a character is not yet implemented.');
                 return (
                   <Tag
                     appearanceId={id}
                     appearanceType={entityType}
-                    hovered={hovered}
+                    hovered={false}
                     key={id}
                     relativeLeft={point.x}
                     relativeTop={point.y}
                     selected={false}
-                    // hidden={}
-                    // region={region}
-                    // selected={appearanceId === selectedAppearance}
                     onCopy={noop}
                     onEdit={onEditTag.bind(null, id)}
-                    onHover={() => this.setState({ disableSelectionArea: true })}
-                    onLeave={() => this.setState({ disableSelectionArea: false })}
+                    onHover={() => this.setState({ hoveredTag: tag })}
+                    onLeave={() => this.setState({ hoveredTag: null })}
                     onMove={onMoveTag.bind(null, id)} // onMoveAppearance.bind(this, appearanceId)}
                     onRemove={onRemoveTag.bind(null, id)}
                     onSelect={noop} // onSelectAppearance.bind(this, appearanceId)}

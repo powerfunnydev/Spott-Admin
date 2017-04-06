@@ -93,7 +93,7 @@ export default class EditSpott extends Component {
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
-    tags: ImmutablePropTypes.list,
+    tags: PropTypes.array,
     topicIds: PropTypes.array,
     topicsById: ImmutablePropTypes.map.isRequired,
     onBeforeChangeTab: PropTypes.func.isRequired,
@@ -123,7 +123,18 @@ export default class EditSpott extends Component {
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale,
-        tags: [], // TODO
+        tags: editObj.tags.map(({ character, entityType, id, person, point, product, relevance }) => ({
+          character,
+          characterId: character ? character.id : null,
+          entityType,
+          id,
+          person,
+          personId: person ? person.id : null,
+          point,
+          product,
+          productId: product ? product.id : null,
+          relevance
+        })),
         topicIds: editObj.topics.map(({ id }) => id)
       });
     }
@@ -184,17 +195,29 @@ export default class EditSpott extends Component {
   }
 
   onPersistTag (tag) {
-    const { change, dispatch, tags } = this.props;
-    let newTags = tags;
+    const { change, charactersById, dispatch, personsById, productsById, tags } = this.props;
+
+    switch (tag.entityType) {
+      case 'CHARACTER':
+        tag.character = charactersById.get(tag.characterId).toJS();
+        break;
+      case 'PERSON':
+        tag.person = personsById.get(tag.personId).toJS();
+        break;
+      case 'PRODUCT':
+        tag.product = productsById.get(tag.productId).toJS();
+        break;
+    }
+
     // Edit an existing tag.
     if (tag.id) {
       const index = tags.findIndex((t) => t.id === tag.id);
-      newTags = tags.set(index, tag);
+      tags[index] = tag;
     } else { // Create a new tag.
       const newTag = { id: `_${spottCount++}`, ...tag };
-      newTags = tags.push(newTag);
+      tags.push(newTag);
     }
-    dispatch(change('tags', newTags));
+    dispatch(change('tags', tags));
   }
 
   onChangeImage (image) {
@@ -306,7 +329,10 @@ export default class EditSpott extends Component {
               onSubmit={this.onPersistTag}/>}
           {this.state.modal === 'editTag' && this.state.tag &&
             <PersistTag
-              initialValues={this.state.tag}
+              initialValues={{
+                relevance: 'EXACT',
+                ...this.state.tag
+              }}
               submitButtonText='Save'
               onClose={() => this.setState({ ...this.state, modal: null })}
               onSubmit={this.onPersistTag}/>}

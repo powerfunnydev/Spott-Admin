@@ -25,7 +25,10 @@ const valuesSelector = (state) => state.getIn([ 'form', formName, 'values' ]);
 const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultLocale');
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
 const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
-const spottTagsSelector = createFormValueSelector(formName, 'tags');
+const spottTagsSelector = createSelector(
+  createFormValueSelector(formName, 'tags'),
+  (tags) => tags && typeof tags.toJS === 'function' ? tags.toJS() : tags
+);
 const topicIdsSelector = createSelector(
   createFormValueSelector(formName, 'topicIds'),
   (topicIds) => topicIds && typeof topicIds.toJS === 'function' ? topicIds.toJS() : topicIds
@@ -60,12 +63,15 @@ const searchedAudienceLanguageIdsSelector = createEntityIdsByRelationSelector(fi
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
+  charactersById: listCharactersEntitiesSelector,
   currentModal: currentModalSelector,
   currentSpott: currentSpottSelector,
   defaultLocale: currentDefaultLocaleSelector,
   errors: formErrorsSelector,
   formValues: valuesSelector,
+  personsById: listPersonsEntitiesSelector,
   popUpMessage: popUpMessageSelector,
+  productsById: listProductsEntitiesSelector,
   searchedAudienceCountryIds: searchedAudienceCountryIdsSelector,
   searchedAudienceLanguageIds: searchedAudienceLanguageIdsSelector,
   searchedTopicIds: searchedTopicIdsSelector,
