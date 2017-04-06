@@ -5,7 +5,8 @@ import {
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
   serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasLanguages,
-  serializeFilterHasPushNotifications, serializeFilterHasSpotts, serializeBroadcasterFilterHasMedia
+  serializeFilterHasPushNotifications, serializeFilterHasSpotts, serializeBroadcasterFilterHasMedia,
+  transformMediumToListMedium
 } from './utils';
 
 import * as audienceActions from '../actions/audience';
@@ -550,6 +551,19 @@ export default (state = fromJS({
       return searchSuccess(state, 'tvGuideEntries', 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.data.data);
     case mediaActions.TV_GUIDE_ENTRIES_FETCH_ERROR:
       return searchError(state, 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.error);
+
+    case mediaActions.MEDIUM_FETCH_START:
+      return fetchStart(state, [ 'entities', 'media', action.mediumId ]);
+    case mediaActions.MEDIUM_FETCH_SUCCESS: {
+      let newState = state;
+      newState = action.data.broadcasters && mergeListOfEntities(newState, [ 'entities', 'broadcasters' ], action.data.broadcasters) || newState;
+      newState = action.data.contentProducers && mergeListOfEntities(newState, [ 'entities', 'contentProducers' ], action.data.contentProducers) || newState;
+      const listMedium = transformMediumToListMedium(action.data);
+      newState = fetchSuccess(newState, [ 'entities', 'listMedia', action.mediumId ], listMedium);
+      return fetchSuccess(newState, [ 'entities', 'media', action.mediumId ], action.data);
+    }
+    case mediaActions.MEDIUM_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'media', action.mediumId ], action.error);
 
     case mediaActions.MEDIA_FETCH_START:
       return searchStart(state, 'filterHasMedia', serializeFilterHasMedia(action));

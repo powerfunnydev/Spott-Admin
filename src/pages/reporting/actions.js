@@ -21,6 +21,8 @@ export const ACTIVITIES_FETCH_ERROR = 'REPORTING/ACTIVITIES_FETCH_ERROR';
 export const CLEAR_RANKINGS = 'REPORTING/CLEAR_RANKINGS';
 export const SAVE_FILTER_QUERY = 'REPORTING/SAVE_FILTER_QUERY';
 
+export { fetchMedium } from '../../actions/media';
+
 export function searchMedia (searchString = '') {
   return async (dispatch, getState) => {
     try {

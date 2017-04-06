@@ -28,24 +28,18 @@ const productSource = {
     const dropResult = monitor.getDropResult();
 
     if (dropResult && dropResult.targetCollectionId) {
-      console.warn('sourceProductId', sourceProductId, ' collectionId', dropResult.targetCollectionId);
       // Persist, move collection.
       props.onAddProductToCollection({
         collectionId: dropResult.targetCollectionId,
         productId: sourceProductId,
         relevance: sourceProductRelevance
       });
-      // props.persistMoveCollection({
-      //   before,
-      //   sourceCollectionId,
-      //   targetCollectionId
-      // });
     }
   }
 };
 
-@DragSource(UNASSIGNED_PRODUCT, productSource, (connect, monitor) => ({
-  connectDragSource: connect.dragSource(),
+@DragSource(UNASSIGNED_PRODUCT, productSource, (conn, monitor) => ({
+  connectDragSource: conn.dragSource(),
   isDragging: monitor.isDragging()
 }))
 @connect(null, (dispatch) => ({

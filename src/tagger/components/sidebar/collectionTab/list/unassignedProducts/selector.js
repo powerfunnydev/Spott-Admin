@@ -1,4 +1,4 @@
-import { createSelector, createStructuredSelector } from 'reselect';
+import { createStructuredSelector } from 'reselect';
 import { currentMediumIdSelector } from '../../../../../selectors/common';
 import {
   createEntitiesByRelationSelector,

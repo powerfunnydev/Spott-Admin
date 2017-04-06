@@ -9,12 +9,14 @@ import * as actions from '../actions';
 import { mediaFilterSelector } from '../selector';
 
 @connect(mediaFilterSelector, (dispatch) => ({
+  fetchMedium: bindActionCreators(actions.fetchMedium, dispatch),
   searchMedia: bindActionCreators(actions.searchMedia, dispatch)
 }))
 @Radium
 export default class MediaFilterForm extends Component {
 
   static propTypes = {
+    fetchMedium: PropTypes.func.isRequired,
     fields: PropTypes.shape({
       media: PropTypes.array
     }).isRequired,
@@ -27,12 +29,18 @@ export default class MediaFilterForm extends Component {
 
   // If there are no media, select the first 5.
   async componentDidMount () {
-    const { media } = this.props.fields;
-    const mediaResults = await this.props.searchMedia();
+    const { fetchMedium, fields: { media } } = this.props;
     if (!media || media.length === 0) {
       // Select the first 5 media.
+      const mediaResults = await this.props.searchMedia();
       const firstFiveMedia = mediaResults.map(({ id }) => id).splice(0, 5);
       this.props.onChange('media', 'array', firstFiveMedia);
+    }
+    if (media) {
+      // Get media which are not yet in the state.
+      for (const mediumId of media) {
+        await fetchMedium({ mediumId });
+      }
     }
   }
 
