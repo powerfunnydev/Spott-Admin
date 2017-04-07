@@ -91,11 +91,45 @@ export const searchedProductIdsSelector = createEntityIdsByRelationSelector(sear
 
 const entityTypeSelector = createFormValueSelector('tagCreate', 'entityType');
 
+const productCharactersSelector = createSelector(
+  spottTagsSelector,
+  listCharactersEntitiesSelector,
+  listPersonsEntitiesSelector,
+  (tags, charactersById, personsById) => {
+    const characters = [];
+    for (const tag of tags) {
+      if (tag.entityType === 'CHARACTER') {
+        const character = charactersById.get(tag.characterId);
+        if (character) {
+          characters.push({
+            entityType: 'CHARACTER',
+            id: character.get('id'),
+            imageUrl: character.getIn([ 'portraitImage', 'url' ]),
+            name: character.get('name')
+          });
+        }
+      } else if (tag.entityType === 'PERSON') {
+        const person = personsById.get(tag.personId);
+        if (person) {
+          characters.push({
+            entityType: 'PERSON',
+            id: person.get('id'),
+            imageUrl: person.getIn([ 'portraitImage', 'url' ]),
+            name: person.get('fullName')
+          });
+        }
+      }
+    }
+    return characters;
+  }
+);
+
 export const tagsSelector = createStructuredSelector({
   charactersById: listCharactersEntitiesSelector,
   entityType: entityTypeSelector,
   personsById: listPersonsEntitiesSelector,
   productsById: listProductsEntitiesSelector,
+  productCharacters: productCharactersSelector,
   searchedCharacterIds: searchedCharacterIdsSelector,
   searchedPersonIds: searchedPersonIdsSelector,
   searchedProductIds: searchedProductIdsSelector

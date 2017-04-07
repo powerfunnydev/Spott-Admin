@@ -123,7 +123,7 @@ export default class EditSpott extends Component {
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale,
-        tags: editObj.tags.map(({ character, entityType, id, person, point, product, relevance }) => ({
+        tags: editObj.tags.map(({ character, entityType, id, person, point, product, productCharacter, relevance }) => ({
           character,
           characterId: character ? character.id : null,
           entityType,
@@ -132,6 +132,7 @@ export default class EditSpott extends Component {
           personId: person ? person.id : null,
           point,
           product,
+          productCharacter, // { entityType: 'CHARACTER' or 'PERSON', id }
           productId: product ? product.id : null,
           relevance
         })),
@@ -197,6 +198,8 @@ export default class EditSpott extends Component {
   onPersistTag (tag) {
     const { change, charactersById, dispatch, personsById, productsById, tags } = this.props;
 
+    const newTags = [ ...tags ];
+
     switch (tag.entityType) {
       case 'CHARACTER':
         tag.character = charactersById.get(tag.characterId).toJS();
@@ -212,12 +215,12 @@ export default class EditSpott extends Component {
     // Edit an existing tag.
     if (tag.id) {
       const index = tags.findIndex((t) => t.id === tag.id);
-      tags[index] = tag;
+      newTags[index] = tag;
     } else { // Create a new tag.
       const newTag = { id: `_${spottCount++}`, ...tag };
-      tags.push(newTag);
+      newTags.push(newTag);
     }
-    dispatch(change('tags', tags));
+    dispatch(change('tags', newTags));
   }
 
   onChangeImage (image) {
@@ -330,8 +333,8 @@ export default class EditSpott extends Component {
           {this.state.modal === 'editTag' && this.state.tag &&
             <PersistTag
               initialValues={{
-                relevance: 'EXACT',
-                ...this.state.tag
+                ...this.state.tag,
+                relevance: this.state.tag.relevance || 'EXACT'
               }}
               submitButtonText='Save'
               onClose={() => this.setState({ ...this.state, modal: null })}

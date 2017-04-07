@@ -12,6 +12,7 @@ import PersistModal from '../../../../../_common/components/persistModal';
 import { slowdown } from '../../../../../../utils';
 import * as actions from '../../actions';
 import { tagsSelector } from '../../selector';
+import ProductCharacter from './productCharacter';
 
 const relevanceTypes = [
   { label: 'Exact', value: 'EXACT' },
@@ -47,6 +48,27 @@ function validate (values, { t }) {
   return validationErrors;
 }
 
+function renderProductCharacterInput ({ productCharacters, style, ...props }) {
+  return (
+    <div style={style}>
+      <ProductCharacter
+        {...props}
+        empty
+        key='none' />
+      {productCharacters.map((pc, i) => (
+        <ProductCharacter
+          {...props}
+          {...pc}
+          key={pc.id} />
+      ))}
+    </div>
+  );
+}
+renderProductCharacterInput.propTypes = {
+  productCharacters: PropTypes.array.isRequired,
+  style: PropTypes.object
+};
+
 @localized
 @connect(tagsSelector, (dispatch) => ({
   searchCharacters: bindActionCreators(actions.searchCharacters, dispatch),
@@ -67,6 +89,7 @@ export default class PersistTag extends Component {
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
     personsById: ImmutablePropTypes.map.isRequired,
+    productCharacters: PropTypes.array.isRequired,
     productsById: ImmutablePropTypes.map.isRequired,
     searchCharacters: PropTypes.func.isRequired,
     searchPersons: PropTypes.func.isRequired,
@@ -98,9 +121,18 @@ export default class PersistTag extends Component {
     }
   }
 
+  static styles = {
+    productCharacters: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      paddingTop: 14
+    }
+  };
+
   render () {
+    const styles = this.constructor.styles;
     const {
-      charactersById, entityType, handleSubmit, personsById, productsById,
+      charactersById, entityType, handleSubmit, personsById, productCharacters, productsById,
       searchedCharacterIds, searchedPersonIds, searchedProductIds, submitButtonText,
       onClose
     } = this.props;
@@ -129,6 +161,12 @@ export default class PersistTag extends Component {
               first
               name='relevance'
               options={relevanceTypes}/>
+            <FormSubtitle>Worn by</FormSubtitle>
+            <Field
+              component={renderProductCharacterInput}
+              name='productCharacter'
+              productCharacters={productCharacters}
+              style={styles.productCharacters} />
           </div>}
         {entityType === 'CHARACTER' &&
           <div>

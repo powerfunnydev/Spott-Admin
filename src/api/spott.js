@@ -33,7 +33,7 @@ export async function persistSpott (baseUrl, authenticationToken, locale, {
   spott.productMarkers = [];
   spott.personMarkers = [];
 
-  console.warn('tags', tags);
+  console.warn('TO persist tags', tags);
 
   if (tags) {
     const personTags = tags.filter(({ entityType }) => entityType === 'CHARACTER' || entityType === 'PERSON');
@@ -44,8 +44,9 @@ export async function persistSpott (baseUrl, authenticationToken, locale, {
     }));
 
     const productTags = tags.filter(({ entityType }) => entityType === 'PRODUCT');
-    spott.productMarkers = productTags.map(({ entityType, point, productId, relevance }) => ({
-      // TODO character or person
+    spott.productMarkers = productTags.map(({ entityType, point, productCharacter, productId, relevance }) => ({
+      character: productCharacter && productCharacter.entityType === 'CHARACTER' ? { uuid: productCharacter.id } : null,
+      person: productCharacter && productCharacter.entityType === 'PERSON' ? { uuid: productCharacter.id } : null,
       point,
       product: { uuid: productId },
       relevance

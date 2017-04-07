@@ -874,12 +874,20 @@ function transformPersonMarker ({ character, person, point, uuid }) {
   }
 }
 
-function transformProductMarker ({ point, product, relevance, uuid }) {
+function transformProductMarker ({ character, person, point, product, relevance, uuid }) {
+  let productCharacter = null;
+  if (character) {
+    productCharacter = { entityType: 'CHARACTER', id: character.uuid };
+  }
+  if (person) {
+    productCharacter = { entityType: 'PERSON', id: person.uuid };
+  }
   return {
     entityType: 'PRODUCT',
     id: uuid,
     point,
     product: transformListProduct(product),
+    productCharacter,
     relevance
   };
 }
