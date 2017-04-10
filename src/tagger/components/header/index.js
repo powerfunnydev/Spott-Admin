@@ -4,7 +4,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Clock from './clock';
-import { CURATE, MVP, ORGANIZE, TAG } from '../../constants/mainTabTypes';
+import { CROPS, CURATE, MVP, ORGANIZE, TAG } from '../../constants/mainTabTypes';
 import { currentMediumSelector } from '../../selectors/header';
 import { selectTab } from '../../actions/global';
 import colors from '../colors';
@@ -13,7 +13,8 @@ const tabs = [
   { text: 'Organize', type: ORGANIZE },
   { text: 'Tag', type: TAG },
   { text: 'Curate', type: CURATE },
-  { text: 'MVP', type: MVP }
+  { text: 'MVP', type: MVP },
+  { text: 'Crops', type: CROPS }
 ];
 
 @connect(currentMediumSelector, (dispatch) => ({
