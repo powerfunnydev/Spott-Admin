@@ -431,7 +431,7 @@ export default class BrandDashboard extends Component {
               <Highcharts config={genderConfig} isPureConfig />
             </Widget>
           </div>
-          {/* <MapWidget style={styles.paddingBottom} title='Brand activity by region' /> */}
+          <MapWidget style={styles.paddingBottom} title='Brand activity by region' />
 
           <DemographicsWidget style={styles.paddingBottom} title='Demographics' />
           <OpportunitiesWidget style={styles.paddingBottom}/>

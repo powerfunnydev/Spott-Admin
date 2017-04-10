@@ -51,7 +51,7 @@ export default class MapWidget extends Component {
 
     const markers = [];
 
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < 5000; i++) {
       markers.push({
         label: `${Math.round(Math.random() * 100)}`,
         position: { lat: 50.3 + Math.random() * 2, lng: 4 + Math.random() * 2 }
