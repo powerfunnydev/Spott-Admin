@@ -3,6 +3,7 @@ import { routerReducer as router } from 'react-router-redux';
 import globalReducer from './global';
 import app from './app';
 import collections from './collections';
+import crops from './crops';
 import curator from './curator';
 import data from './data';
 import marker from './marker';
@@ -22,6 +23,7 @@ export default combineReducers({
   tagger: combineReducers({
     app,
     collections,
+    crops,
     curator,
     data,
     marker,

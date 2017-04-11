@@ -4,28 +4,15 @@ import React, { Component, PropTypes } from 'react';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
-import { HotKeys } from 'react-hotkeys';
-import Frame from '../_helpers/frame';
-import BottomBar from '../_helpers/bottomBar';
-import LargeFrameModal from '../_helpers/largeFrameModal';
 import PureRender from '../_helpers/pureRenderDecorator';
-import { filterKeyEventsInInputFields } from '../_helpers/utils';
-import selector from '../../selectors/mvp';
-import * as mvpActions from '../../actions/mvp';
+import selector from './selector';
 import colors from '../colors';
-
-const flashEmptyImage = require('../_images/flashEmpty.svg');
-const flashFilledImage = require('../_images/flashFilled.svg');
+import PersistCrop from './persist';
+import SelectFrame from './persist/selectFrame';
+import * as actions from './actions';
 
 @connect(selector, (dispatch) => ({
-  minimizeFrame: bindActionCreators(mvpActions.minimizeFrame, dispatch),
-  selectLeftFrame: bindActionCreators(mvpActions.selectLeftFrame, dispatch),
-  selectRightFrame: bindActionCreators(mvpActions.selectRightFrame, dispatch),
-  selectFrame: bindActionCreators(mvpActions.selectFrame, dispatch),
-  toggleHideNonKeyFrames: bindActionCreators(mvpActions.toggleHideNonKeyFrames, dispatch),
-  toggleFrameSize: bindActionCreators(mvpActions.toggleFrameSize, dispatch),
-  toggleKeyFrame: bindActionCreators(mvpActions.toggleKeyFrame, dispatch),
-  updateScale: bindActionCreators(mvpActions.updateScale, dispatch)
+  selectFrame: bindActionCreators(actions.selectFrame, dispatch)
 }))
 @Radium
 @PureRender
@@ -33,51 +20,31 @@ export default class Crops extends Component {
 
   static propTypes = {
     currentScene: ImmutablePropTypes.map,
-    enlargeFrame: PropTypes.bool.isRequired,
-    hideNonKeyFrames: PropTypes.bool.isRequired,
-    minimizeFrame: PropTypes.func.isRequired,
-    numKeyFrames: PropTypes.number.isRequired,
-    scale: PropTypes.number.isRequired,
-    scenes: ImmutablePropTypes.list.isRequired,
-    selectFrame: PropTypes.func.isRequired,
-    selectLeftFrame: PropTypes.func.isRequired,
-    selectRightFrame: PropTypes.func.isRequired,
-    style: PropTypes.object,
-    toggleFrameSize: PropTypes.func.isRequired,
-    toggleHideNonKeyFrames: PropTypes.func.isRequired,
-    toggleKeyFrame: PropTypes.func.isRequired,
-    updateScale: PropTypes.func.isRequired
+    spotts: ImmutablePropTypes.list.isRequired,
+    style: PropTypes.object
   };
 
   constructor (props) {
     super(props);
-    this.onScaleChange = ::this.onScaleChange;
+    this.onAddSpott = ::this.onAddSpott;
+    this.onSelectFrame = ::this.onSelectFrame;
   }
 
-  // Auto scroll to current scene.
-  // NOTE: Only tested on Chrome! No support for Firefox!
-  componentWillReceiveProps (newProps) {
-    const currentScene = this.props.currentScene;
-    if ((currentScene && currentScene.get('id')) !== (newProps.currentScene && newProps.currentScene.get('id')) && newProps.currentScene) {
-      const scene = document.getElementById(newProps.currentScene.get('id'));
-      if (scene && scene.scrollIntoViewIfNeeded) {
-        scene.scrollIntoViewIfNeeded();
-      }
-    }
+  onAddSpott (e) {
+    e.preventDefault();
+    this.setState({ modal: 'selectFrame' });
   }
 
-  onScaleChange (scale) {
-    this.props.updateScale(scale);
+  onSelectFrame ({ sceneId }) {
+    console.warn('Select', sceneId);
+    this.props.selectFrame({ sceneId });
+    console.warn('set state');
+    this.setState({ modal: 'createCrop' });
   }
 
-  // The HotKeys compontent allows us to capture space key presses,
-  // to enlarge/minimize a scene. The key is the function name of the handler
-  // that is passed to the HotKeys component. The value is the name of the key that
-  // triggers the function.
-  static keyMap = {
-    toggleFrameSize: 'space',
-    minimizeFrame: 'esc'
-  };
+  onPersistCrop () {
+
+  }
 
   static styles = {
     container: {
@@ -139,45 +106,44 @@ export default class Crops extends Component {
         fontSize: '0.75em'
       }
     },
-    addButton: {
+    addSpottButton: {
       border: 'dashed 1px #cacaca',
       borderRadius: 2,
+      cursor: 'pointer',
       height: '12em',
       width: '12em'
     }
   };
 
   render () {
-    const { keyMap, styles } = this.constructor;
-    const {
-      currentScene, hideNonKeyFrames,
-      enlargeFrame, minimizeFrame, numKeyFrames, selectLeftFrame, selectRightFrame, scenes,
-      selectFrame, toggleFrameSize, toggleKeyFrame, toggleHideNonKeyFrames
-    } = this.props;
+    const styles = this.constructor.styles;
+    const { currentScene, selectFrame } = this.props;
 
-    // From small images to large images. The number of images on each row shrinks, when sliding to the right.
-    // this.props.scale is the number of images on a row.
-    const reverseScale = 13 - this.props.scale;
-    const handlers = {
-      toggleFrameSize: (e) => {
-        // Prevent default so now buttons get an onClick triggered.
-        e.preventDefault();
-        toggleFrameSize();
-      },
-      minimizeFrame
-    };
+    console.warn('MODAL', this.state.modal);
 
     // Calculate the procentual width of each item
     return (
       <div style={[ styles.container, this.props.style ]}>
         <div style={styles.scenes.listContainer}>
           <div style={styles.info.base}>
-            <h1 style={styles.info.title.base}>{numKeyFrames} <span style={styles.info.title.emph}>Add crops</span></h1>
+            <h1 style={styles.info.title.base}><span style={styles.info.title.emph}>Add crops</span></h1>
             <h2 style={styles.info.subtitle}>Create crops to single-out the most interesting parts of the frames</h2>
           </div>
-          <div style={styles.addButton} />
+          <div style={styles.addSpottButton} onClick={this.onAddSpott}/>
         </div>
+        {this.state.modal === 'selectFrame' &&
+          <SelectFrame
+            onClose={() => this.state.modal === 'selectFrame' && this.setState({ modal: null })}
+            onSubmit={this.onSelectFrame}/>}
+        {this.state.modal === 'createCrop' &&
+          <PersistCrop
+            currentScene={currentScene}
+            submitButtonText='create'
+            title='Create crop'
+            onClose={() => this.setState({ modal: null })}
+            onSubmit={this.onPersistCrop}/>}
       </div>
+
       // The HotKeys component does not use Radium, therefore we need to join the styles manually.
       // <HotKeys handlers={filterKeyEventsInInputFields(handlers)} keyMap={keyMap} style={{ ...styles.container, ...this.props.style }}>
       //   <LargeFrameModal
