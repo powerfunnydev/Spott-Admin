@@ -13,6 +13,7 @@ import localized from '../../../../pages/_common/decorators/localized';
 import PersistModal, { dialogStyle } from '../../../../pages/_common/components/persistModal';
 import { FETCHING } from '../../../../constants/statusTypes';
 import { slowdown } from '../../../../utils';
+import Scene from './scene';
 
 import * as actions from '../actions';
 import { persistCropSelector } from '../selector';
@@ -29,6 +30,7 @@ import { persistCropSelector } from '../selector';
 export default class PersistCrop extends Component {
 
   static propTypes = {
+    currentScene: ImmutablePropTypes.map.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
@@ -75,27 +77,23 @@ export default class PersistCrop extends Component {
       _activeLocale, currentScene, handleSubmit, searchTopics, searchedTopicIds,
       submitButtonText, title, topicsById, onClose
     } = this.props;
+    const noop = console.warn;
     return (
       <PersistModal isOpen style={styles.modal} submitButtonText={submitButtonText} title={title} onClose={onClose} onSubmit={handleSubmit(this.submit)}>
         <div style={{ display: 'flex', marginTop: -1 }}>
-          <div style={{ width: '40%' }}>
+          <div style={{ width: '65%' }}>
             <Section style={{ backgroundColor: 'none', marginTop: 0, marginRight: -1 }}>
-              {/* {currentSpott.get('image') &&
-                <Scene
-                  imageUrl={currentSpott.getIn([ 'image', 'url' ])}
-                  tags={tags}
-                  onChangeImage={this.onChangeImage}
-                  onEditTag={this.onEditTag}
-                  onMoveTag={this.onMoveTag}
-                  onRemoveTag={this.onRemoveTag}
-                  onSelectionRegion={this.onSelectionRegion}/>} */}
+              <Scene
+                imageUrl={currentScene.get('imageUrl')}
+                tags={[]}
+                onSelectionRegion={noop}/>
             </Section>
           </div>
-          <div style={{ width: '60%', display: 'flex', flexDirection: 'column' }}>
-            <Section clearPopUpMessage={this.props.closePopUpMessage} popUpObject={this.props.popUpMessage} style={{ backgroundColor: 'none', height: '100%', paddingTop: 0 }}>
-              <FormSubtitle first>General</FormSubtitle>
+          <div style={{ width: '35%', display: 'flex', flexDirection: 'column' }}>
+            <Section clearPopUpMessage={this.props.closePopUpMessage} innerStyle={{ paddingBottom: 0, paddingTop: 0 }} popUpObject={this.props.popUpMessage} style={{ backgroundColor: 'none', height: '100%' }}>
               <Field
                 component={TextInput}
+                first
                 label='Title'
                 name={`title.${_activeLocale}`}
                 placeholder='Title'
