@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import Radium from 'radium';
 import List from '../../_helpers/search/list';
 import itemStyle from '../../_helpers/search/itemStyle';

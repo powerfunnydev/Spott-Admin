@@ -1,5 +1,6 @@
 
 import { searchTopics as dataSearchTopics } from '../../../actions/topic';
+import { fetchProductsOfScene } from '../../actions/product';
 import { createSearchAction } from '../../../utils';
 
 export const TOPICS_SEARCH_START = 'CROP_EDIT/TOPICS_SEARCH_START';
@@ -13,4 +14,10 @@ export const searchTopics = createSearchAction(dataSearchTopics, TOPICS_SEARCH_S
 
 export function selectFrame ({ sceneId }) {
   return { sceneId, type: SELECT_FRAME };
+}
+
+export function loadAppearances (sceneId) {
+  return async (dispatch) => {
+    await dispatch(fetchProductsOfScene({ sceneId }));
+  };
 }

@@ -1,5 +1,6 @@
 import Radium from 'radium';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 
 @Radium
 export default class RelevanceOption extends Component {

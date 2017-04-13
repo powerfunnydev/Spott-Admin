@@ -70,18 +70,31 @@ function updateCurrentScene (scene) {
  * redux-combine-actions redux middleware.
  */
 export function select (scene) {
-  return {
-    types: [ SCENE_SELECT_START, SCENE_SELECT_SUCCESS, SCENE_SELECT_ERROR ],
-    payload: [
-      // Update the currentSceneId.
-      updateCurrentScene.bind(null, scene),
-      fetchCharactersOfScene,
-      fetchProductsOfScene,
-      fetchCharacters,
-      fetchProducts
-    ],
-    sequence: true
+  return async (dispatch, getState) => {
+    dispatch({ type: SCENE_SELECT_START });
+    try {
+      await dispatch(updateCurrentScene(scene));
+      await dispatch(fetchCharactersOfScene());
+      await dispatch(fetchProductsOfScene({ sceneId: scene.get('id') }));
+      await dispatch(fetchCharacters());
+      await dispatch(fetchProducts());
+      return dispatch({ type: SCENE_SELECT_SUCCESS });
+    } catch (error) {
+      return dispatch({ error, type: SCENE_SELECT_ERROR });
+    }
   };
+  // return {
+  //   types: [ SCENE_SELECT_START, SCENE_SELECT_SUCCESS, SCENE_SELECT_ERROR ],
+  //   payload: [
+  //     // Update the currentSceneId.
+  //     updateCurrentScene.bind(null, scene),
+  //     fetchCharactersOfScene,
+  //     fetchProductsOfScene,
+  //     fetchCharacters,
+  //     fetchProducts
+  //   ],
+  //   sequence: true
+  // };
 }
 
 /**
@@ -94,8 +107,7 @@ export function selectFirstScene () {
 
     // If all frames are hidden, there is no first scene to select.
     if (firstScene) {
-      // Check if the redux-combine-actions middleware, produces an error when
-      // handling the combined action. If it returns an error we throw it, so it
+      // If the action returns an error we throw it, so it
       // can be handled by the select video combined action.
       const action = await dispatch(select(firstScene));
       if (action.error) {

@@ -1,9 +1,11 @@
 /* eslint-disable react/no-set-state */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import Radium from 'radium';
 import ReactCrop from 'react-image-crop';
 import MarkerImageTooltip from '../../sceneEditor/markerImageTooltip';
 // import Tag from './tag';
+import 'react-image-crop/dist/ReactCrop.css';
 
 @Radium
 export default class Scene extends Component {
@@ -45,6 +47,7 @@ export default class Scene extends Component {
 
   static styles = {
     container: {
+      paddingRight: '1.5em'
       // alignItems: 'center',
       // display: 'flex',
       // flexDirection: 'column',
@@ -97,13 +100,13 @@ export default class Scene extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { imageUrl, tags } = this.props;
+    const { imageUrl, region, tags, onSelectionRegion } = this.props;
 
     const noop = (c) => c;
 
     return (
       <div style={styles.container}>
-        <ReactCrop src={imageUrl} style={{ width: '100%' }} />
+        <ReactCrop crop={region} src={imageUrl} onComplete={onSelectionRegion}/>
         {/* <SelectionArea
           disable={Boolean(this.state.hoveredTag)}
           ref={(c) => { this._wrapper = c && c.component; }}

@@ -1,7 +1,8 @@
 /* eslint-disable react/no-set-state */
 import Radium from 'radium';
 import ReactDOM from 'react-dom';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import ReactModal from 'react-modal';
 
 // Note: get merged with defaults by react-modal

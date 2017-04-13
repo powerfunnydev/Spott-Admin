@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import { colors, fontWeights, makeTextStyle } from '../../../../../../../pages/_common/styles';
 import Plus from '../../../../../../../pages/_common/images/plus';
 

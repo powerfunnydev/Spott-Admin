@@ -1,6 +1,7 @@
 /* eslint-disable react/no-set-state */ // TODO remove this line.
 import Radium from 'radium';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
@@ -117,7 +118,7 @@ export default class Crops extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { currentScene, selectFrame } = this.props;
+    const { currentLocale, currentScene, selectFrame } = this.props;
 
     console.warn('MODAL', this.state.modal);
 
@@ -138,7 +139,8 @@ export default class Crops extends Component {
         {this.state.modal === 'createCrop' &&
           <PersistCrop
             currentScene={currentScene}
-            submitButtonText='create'
+            initialValues={{ _activeLocale: currentLocale }}
+            submitButtonText='Create'
             title='Create crop'
             onClose={() => this.setState({ modal: null })}
             onSubmit={this.onPersistCrop}/>}

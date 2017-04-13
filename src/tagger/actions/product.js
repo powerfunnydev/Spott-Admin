@@ -52,15 +52,12 @@ export const fetchVideoProducts = makeApiActionCreator(productApi.getVideoProduc
 export const fetchProductAppearances = makeApiActionCreator(productApi.getProductAppearances, PRODUCT_APPEARANCES_FETCH_START, PRODUCT_APPEARANCES_FETCH_SUCCESS, PRODUCT_APPEARANCES_FETCH_ERROR);
 export const persistProductAppearance = makeApiActionCreator(productApi.postSceneProduct, PRODUCT_APPEARANCE_PERSIST_START, PRODUCT_APPEARANCE_PERSIST_SUCCESS, PRODUCT_APPEARANCE_PERSIST_ERROR);
 
+export const fetchProductsOfScene = makeApiActionCreator(productApi.getSceneProducts, SCENE_PRODUCTS_FETCH_START, SCENE_PRODUCTS_FETCH_SUCCESS, SCENE_PRODUCTS_FETCH_ERROR);
+
 function _getProductsOfScene (state) {
   const sceneId = currentSceneIdSelector(state);
   return sceneHasProductsRelationsSelector(state).get(sceneId) || List();
 }
-
-export const fetchProductsOfScene = makeFetchRecordsActionCreator(productApi.getSceneProducts, (state) => ({
-  sceneId: currentSceneIdSelector(state),
-  videoId: currentVideoIdSelector(state)
-}), SCENE_PRODUCTS_FETCH_START, SCENE_PRODUCTS_FETCH_SUCCESS, SCENE_PRODUCTS_FETCH_ERROR);
 
 /**
  * Performs a request to add a region within the given image with given imageId

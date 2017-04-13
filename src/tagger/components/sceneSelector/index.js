@@ -1,6 +1,7 @@
 /* eslint-disable react/no-set-state */ // TODO remove this line.
 import Radium from 'radium';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { List } from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';

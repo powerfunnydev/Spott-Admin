@@ -1,6 +1,7 @@
 /* eslint-disable react/no-set-state */
 import Radium from 'radium';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import ReactModal from 'react-modal';
 import { connect } from 'react-redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';

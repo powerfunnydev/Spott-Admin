@@ -1,5 +1,5 @@
 import { createSelector, createStructuredSelector } from 'reselect';
-import { currentModalSelector } from '../../../selectors/global';
+import { currentLocaleSelector, currentModalSelector } from '../../../selectors/global';
 import { createFormValueSelector } from '../../../utils';
 import { serializeFilterHasCountries, serializeFilterHasLanguages } from '../../../reducers/utils';
 import {
@@ -17,7 +17,6 @@ import {
   searchStringHasPersonsRelationsSelector,
   searchStringHasProductsRelationsSelector
 } from '../../../selectors/data';
-
 import { List, Map } from 'immutable';
 import {
   appearanceEntitiesSelector,
@@ -32,7 +31,9 @@ import {
   sceneGroupEntitiesSelector,
   videoHasProductsRelationsSelector,
   productEntitiesSelector,
-  productHasAppearancesRelationsSelector
+  productHasAppearancesRelationsSelector,
+  sceneHasCharactersRelationsSelector,
+  sceneHasProductsRelationsSelector
 } from '../../selectors/common';
 
 const formName = 'cropPersist';
@@ -104,10 +105,11 @@ export const allScenesSelector = createSelector(
 //     //     (!hideNonKeyFrames || f.get('isKeyFrame')));
 //   }
 // );
-const currentSceneIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'crops', 'currentSceneId' ]);
+export const currentSceneIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'crops', 'currentSceneId' ]);
 const currentSceneSelector = createEntityByIdSelector(sceneEntitiesSelector, currentSceneIdSelector);
 
 export default createStructuredSelector({
+  currentLocale: currentLocaleSelector,
   currentScene: currentSceneSelector,
   // currentModal: currentModalSelector,
   // currentSpott: currentSpottSelector,
@@ -133,8 +135,30 @@ export const selectCropSelector = createStructuredSelector({
 // Persist a crop modal
 // ///////////////////
 
+const appearancesSelector = createSelector(
+  currentSceneIdSelector,
+  sceneHasCharactersRelationsSelector,
+  sceneHasProductsRelationsSelector,
+  appearanceEntitiesSelector,
+  (sceneId, sceneHasCharacters, sceneHasProducts, appearancesEntities) => {
+    const characterAppearanceIds = sceneHasCharacters.get(sceneId) || List();
+    const productAppearanceIds = sceneHasProducts.get(sceneId) || List();
+
+    let appearances = List();
+    characterAppearanceIds.forEach((characterAppearanceId) => {
+      appearances = appearances.push(appearancesEntities.get(characterAppearanceId));
+    });
+    productAppearanceIds.forEach((productAppearanceId) => {
+      appearances = appearances.push(appearancesEntities.get(productAppearanceId));
+    });
+
+    return appearances;
+  }
+);
+
 export const persistCropSelector = createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
+  appearances: appearancesSelector,
   defaultLocale: currentDefaultLocaleSelector,
   searchedTopicIds: searchedTopicIdsSelector,
   supportedLocales: supportedLocalesSelector,

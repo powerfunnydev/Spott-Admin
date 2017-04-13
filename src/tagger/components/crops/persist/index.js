@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import { connect } from 'react-redux';
@@ -18,8 +19,19 @@ import Scene from './scene';
 import * as actions from '../actions';
 import { persistCropSelector } from '../selector';
 
+function renderScene ({ imageUrl, input, tags }) {
+  return (
+    <Scene
+      imageUrl={imageUrl}
+      region={input.value}
+      tags={[]}
+      onSelectionRegion={input.onChange}/>
+  );
+}
+
 @localized
 @connect(persistCropSelector, (dispatch) => ({
+  loadAppearances: bindActionCreators(actions.loadAppearances, dispatch),
   searchTopics: bindActionCreators(actions.searchTopics, dispatch)
 }))
 @reduxForm({
@@ -34,6 +46,7 @@ export default class PersistCrop extends Component {
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
+    loadAppearances: PropTypes.func.isRequired,
     scene: ImmutablePropTypes.map,
     searchTopics: PropTypes.func.isRequired,
     searchedTopicIds: ImmutablePropTypes.map.isRequired,
@@ -50,11 +63,17 @@ export default class PersistCrop extends Component {
     this.submit = ::this.submit;
   }
 
+  componentDidMount () {
+    const { currentScene, loadAppearances } = this.props;
+    loadAppearances(currentScene.get('id'));
+  }
+
   async submit (form) {
+    console.warn('SUBMIT', form.toJS());
     try {
       const { onSubmit } = this.props;
-      await onSubmit(form.toJS());
-      this.props.onClose();
+      // await onSubmit(form.toJS());
+      // this.props.onClose();
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
@@ -74,19 +93,20 @@ export default class PersistCrop extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      _activeLocale, currentScene, handleSubmit, searchTopics, searchedTopicIds,
+      _activeLocale, appearances, currentScene, handleSubmit, searchTopics, searchedTopicIds,
       submitButtonText, title, topicsById, onClose
     } = this.props;
-    const noop = console.warn;
+    console.warn('appearances', appearances && appearances.toJS());
     return (
       <PersistModal isOpen style={styles.modal} submitButtonText={submitButtonText} title={title} onClose={onClose} onSubmit={handleSubmit(this.submit)}>
         <div style={{ display: 'flex', marginTop: -1 }}>
           <div style={{ width: '65%' }}>
-            <Section style={{ backgroundColor: 'none', marginTop: 0, marginRight: -1 }}>
-              <Scene
+            <Section innerStyle={{ paddingBottom: 0, paddingTop: 0 }} style={{ backgroundColor: 'none', marginTop: 0, marginRight: -1 }}>
+              <Field
+                component={renderScene}
                 imageUrl={currentScene.get('imageUrl')}
-                tags={[]}
-                onSelectionRegion={noop}/>
+                name='region'
+                tags={[]}/>
             </Section>
           </div>
           <div style={{ width: '35%', display: 'flex', flexDirection: 'column' }}>

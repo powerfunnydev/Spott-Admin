@@ -1,7 +1,8 @@
 /* eslint-disable react/no-set-state */
 // False positive on the arguments of an async function.
 /* eslint-disable react/prop-types */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import Radium from 'radium';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
