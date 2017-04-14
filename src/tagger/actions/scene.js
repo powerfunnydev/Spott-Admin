@@ -74,7 +74,7 @@ export function select (scene) {
     dispatch({ type: SCENE_SELECT_START });
     try {
       await dispatch(updateCurrentScene(scene));
-      await dispatch(fetchCharactersOfScene());
+      await dispatch(fetchCharactersOfScene({ sceneId: scene.get('id') }));
       await dispatch(fetchProductsOfScene({ sceneId: scene.get('id') }));
       await dispatch(fetchCharacters());
       await dispatch(fetchProducts());

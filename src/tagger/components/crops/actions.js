@@ -1,6 +1,8 @@
 
-import { searchTopics as dataSearchTopics } from '../../../actions/topic';
+import { fetchCharactersOfScene } from '../../actions/character';
 import { fetchProductsOfScene } from '../../actions/product';
+
+import { searchTopics as dataSearchTopics } from '../../../actions/topic';
 import { createSearchAction } from '../../../utils';
 
 export const TOPICS_SEARCH_START = 'CROP_EDIT/TOPICS_SEARCH_START';
@@ -12,6 +14,8 @@ export const submit = console.warn;
 
 export const searchTopics = createSearchAction(dataSearchTopics, TOPICS_SEARCH_START, TOPICS_SEARCH_ERROR);
 
+export { persistCrop } from '../../actions/crop';
+
 export function selectFrame ({ sceneId }) {
   return { sceneId, type: SELECT_FRAME };
 }
@@ -19,5 +23,7 @@ export function selectFrame ({ sceneId }) {
 export function loadAppearances (sceneId) {
   return async (dispatch) => {
     await dispatch(fetchProductsOfScene({ sceneId }));
+    await dispatch(fetchCharactersOfScene({ sceneId }));
+    // TODO load persons
   };
 }

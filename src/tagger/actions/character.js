@@ -53,10 +53,7 @@ function _getCharactersOfScene (state) {
   return sceneHasCharactersRelationsSelector(state).get(sceneId) || List();
 }
 
-export const fetchCharactersOfScene = makeFetchRecordsActionCreator(characterApi.getSceneCharacters, (state) => ({
-  sceneId: currentSceneIdSelector(state),
-  videoId: currentVideoIdSelector(state)
-}), CHARACTERS_OF_SCENE_FETCH_START, CHARACTERS_OF_SCENE_FETCH_SUCCESS, CHARACTERS_OF_SCENE_FETCH_ERROR);
+export const fetchCharactersOfScene = makeApiActionCreator(characterApi.getSceneCharacters, CHARACTERS_OF_SCENE_FETCH_START, CHARACTERS_OF_SCENE_FETCH_SUCCESS, CHARACTERS_OF_SCENE_FETCH_ERROR);
 
 export const fetchCharacter = makeApiActionCreator(characterApi.getCharacter, CHARACTER_FETCH_START, CHARACTER_FETCH_SUCCESS, CHARACTER_FETCH_ERROR);
 export const fetchVideoCharacters = makeApiActionCreator(characterApi.getVideoCharacters, VIDEO_CHARACTERS_FETCH_START, VIDEO_CHARACTERS_FETCH_SUCCESS, VIDEO_CHARACTERS_FETCH_ERROR);

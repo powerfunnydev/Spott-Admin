@@ -93,7 +93,8 @@ export class MarkerContainer extends Component {
         marginTop: -18,
         opacity: 0.7,
         position: 'absolute',
-        width: 36
+        width: 36,
+        pointerEvents: 'all'
       },
       hidden: {
         border: '2px dashed #fff'

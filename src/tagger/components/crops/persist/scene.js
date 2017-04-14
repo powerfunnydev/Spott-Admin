@@ -3,51 +3,29 @@ import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import Radium from 'radium';
 import ReactCrop from 'react-image-crop';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import MarkerImageTooltip from '../../sceneEditor/markerImageTooltip';
-// import Tag from './tag';
+import { MarkerContainer } from '../../sceneEditor/marker';
 import 'react-image-crop/dist/ReactCrop.css';
 
 @Radium
 export default class Scene extends Component {
 
   static propTypes = {
+    appearances: ImmutablePropTypes.list.isRequired,
     imageUrl: PropTypes.string.isRequired,
-    tags: PropTypes.array.isRequired,
     onSelectionRegion: PropTypes.func.isRequired
   };
 
   constructor (props) {
     super(props);
-    this.onSelectionRegion = ::this.onSelectionRegion;
-    this.state = { hoveredTag: null, localeImage: null };
-  }
-
-  onSelectionRegion (selection) {
-    // The Element.getBoundingClientRect() method returns the size of an element and its position relative to the viewport.
-    // Get mouse position relative to the canvas for .x & .y
-    const { height, left, top, width } = this._wrapper.getBoundingClientRect();
-
-    const region = {
-      x: Math.round((selection.x - left) / width * 100),
-      y: Math.round((selection.y - top) / height * 100),
-      width: Math.round(selection.width / width * 100),
-      height: Math.round(selection.height / height * 100)
-    };
-
-    // Use the center of the selected region as marker position.
-    const point = {
-      x: Math.round(region.x + (region.width / 2)),
-      y: Math.round(region.y + (region.height / 2))
-    };
-
-    console.warn('Point', point);
-    console.warn('Region', region);
-    this.props.onSelectionRegion(point, region);
+    this.state = { hoveredAppearanceTuple: null };
   }
 
   static styles = {
     container: {
-      paddingRight: '1.5em'
+      paddingRight: '1.5em',
+      position: 'relative'
       // alignItems: 'center',
       // display: 'flex',
       // flexDirection: 'column',
@@ -67,78 +45,66 @@ export default class Scene extends Component {
       right: 0,
       overflow: 'hidden',
       userDrag: 'none',
-      userSelect: 'none'
+      userSelect: 'none',
+      pointerEvents: 'none'
     }
   }
 
-  renderTooltip (tag) {
-    if (tag) {
-      console.warn('TAG', tag);
-      let image;
-      switch (tag.entityType) {
-        case 'CHARACTER':
-          image = tag.character.profileImage;
-          break;
-        case 'PERSON':
-          image = tag.person.profileImage;
-          break;
-        case 'PRODUCT':
-          image = tag.product.logo;
-          break;
-      }
+  renderTooltip (hoveredAppearanceTuple) {
+    if (hoveredAppearanceTuple) {
+      console.warn('hoveredAppearanceTuple', hoveredAppearanceTuple.toJS());
+      const point = hoveredAppearanceTuple.getIn([ 'appearance', 'point' ]);
 
-      if (image) {
-        return (
-          <MarkerImageTooltip
-            imageUrl={image.url}
-            relativeLeft={tag.point.x}
-            relativeTop={tag.point.y} />
-        );
-      }
+      return (
+        <MarkerImageTooltip
+          imageUrl={hoveredAppearanceTuple.getIn([ 'entity', 'imageUrl' ]) || hoveredAppearanceTuple.getIn([ 'entity', 'portraitImageUrl' ])}
+          relativeLeft={(point && point.get('x')) || 0}
+          relativeTop={(point && point.get('y')) || 0} />
+      );
     }
   }
 
   render () {
     const styles = this.constructor.styles;
-    const { imageUrl, region, tags, onSelectionRegion } = this.props;
+    const { appearances, imageUrl, region, onSelectionRegion } = this.props;
 
     const noop = (c) => c;
 
     return (
       <div style={styles.container}>
-        <ReactCrop crop={region} src={imageUrl} onComplete={onSelectionRegion}/>
-        {/* <SelectionArea
-          disable={Boolean(this.state.hoveredTag)}
-          ref={(c) => { this._wrapper = c && c.component; }}
-          style={styles.wrapper}
-          onSelection={this.onSelectionRegion}>
-          <img draggable={false} src={localeImage ? localeImage.preview : imageUrl} style={{ pointerEvents: 'none', userDrag: 'none', userSelect: 'none', width: '100%' }} />
-          {this.renderTooltip(this.state.hoveredTag)}
-
-          <div style={styles.layover}>
-            {tags && tags.map((tag) => {
-              const { entityType, point, id } = tag;
-              return (
-                <Tag
-                  appearanceId={id}
-                  appearanceType={entityType}
-                  hovered={false}
-                  key={id}
-                  relativeLeft={point.x}
-                  relativeTop={point.y}
-                  selected={false}
-                  onCopy={noop}
-                  onEdit={onEditTag.bind(null, id)}
-                  onHover={() => this.setState({ hoveredTag: tag })}
-                  onLeave={() => this.setState({ hoveredTag: null })}
-                  onMove={onMoveTag.bind(null, id)} // onMoveAppearance.bind(this, appearanceId)}
-                  onRemove={onRemoveTag.bind(null, id)}
-                  onSelect={noop} // onSelectAppearance.bind(this, appearanceId)}
-                  onToggleSelect={noop}/> // onToggleSelectAppearance.bind(this, appearanceId)} />
-              );
-            })}
-          </div>
-        </SelectionArea> */}
+        <ReactCrop crop={region} src={imageUrl} onComplete={({ height, width, x, y }) => onSelectionRegion({ height, width, x, y })}/>
+        {this.renderTooltip(this.state.hoveredAppearanceTuple)}
+        <div style={styles.layover}>
+          {appearances.map((appearanceTuple) => {
+            const appearance = appearanceTuple.get('appearance');
+            const appearanceType = appearance.get('type');
+            const point = appearance.get('point');
+            const appearanceId = appearance.get('appearanceId');
+            const hidden = appearance.get('markerHidden');
+            const hovered = this.state.hoveredAppearanceTuple === appearanceTuple;
+            return (
+              <MarkerContainer
+                appearanceId={appearanceId}
+                appearanceType={appearanceType}
+                connectDragSource={noop}
+                hidden={hidden}
+                hovered={hovered}
+                isDragging={false}
+                key={appearanceId}
+                relativeLeft={point.get('x')}
+                relativeTop={point.get('y')}
+                selected={false}
+                onCopy={noop}
+                onEdit={noop}
+                onHover={() => this.setState({ hoveredAppearanceTuple: appearanceTuple })}
+                onLeave={() => this.setState({ hoveredAppearanceTuple: null })}
+                onMove={noop} // onMoveAppearance.bind(this, appearanceId)}
+                onRemove={noop}
+                onSelect={noop} // onSelectAppearance.bind(this, appearanceId)}
+                onToggleSelect={noop}/> // onToggleSelectAppearance.bind(this, appearanceId)} />
+            );
+          })}
+        </div>
       </div>
     );
   }

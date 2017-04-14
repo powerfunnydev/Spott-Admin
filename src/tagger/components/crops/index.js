@@ -12,7 +12,10 @@ import PersistCrop from './persist';
 import SelectFrame from './persist/selectFrame';
 import * as actions from './actions';
 
+import plusIcon from '../_images/plus.svg';
+
 @connect(selector, (dispatch) => ({
+  persistCrop: bindActionCreators(actions.persistCrop, dispatch),
   selectFrame: bindActionCreators(actions.selectFrame, dispatch)
 }))
 @Radium
@@ -29,6 +32,7 @@ export default class Crops extends Component {
     super(props);
     this.onAddSpott = ::this.onAddSpott;
     this.onSelectFrame = ::this.onSelectFrame;
+    this.onPersistCrop = ::this.onPersistCrop;
   }
 
   onAddSpott (e) {
@@ -43,8 +47,9 @@ export default class Crops extends Component {
     this.setState({ modal: 'createCrop' });
   }
 
-  onPersistCrop () {
-
+  onPersistCrop (crop) {
+    console.warn('persist crop', crop);
+    this.props.persistCrop(crop);
   }
 
   static styles = {
@@ -108,19 +113,22 @@ export default class Crops extends Component {
       }
     },
     addSpottButton: {
+      alignItems: 'center',
       border: 'dashed 1px #cacaca',
       borderRadius: 2,
       cursor: 'pointer',
+      display: 'flex',
       height: '12em',
+      justifyContent: 'center',
       width: '12em'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { currentLocale, currentScene, selectFrame } = this.props;
+    const { currentLocale, currentScene, selectFrame, supportedLocales } = this.props;
 
-    console.warn('MODAL', this.state.modal);
+    console.warn('supportedLocales', supportedLocales);
 
     // Calculate the procentual width of each item
     return (
@@ -130,7 +138,9 @@ export default class Crops extends Component {
             <h1 style={styles.info.title.base}><span style={styles.info.title.emph}>Add crops</span></h1>
             <h2 style={styles.info.subtitle}>Create crops to single-out the most interesting parts of the frames</h2>
           </div>
-          <div style={styles.addSpottButton} onClick={this.onAddSpott}/>
+          <div style={styles.addSpottButton} onClick={this.onAddSpott}>
+            <img src={plusIcon}/>
+          </div>
         </div>
         {this.state.modal === 'selectFrame' &&
           <SelectFrame
@@ -139,50 +149,17 @@ export default class Crops extends Component {
         {this.state.modal === 'createCrop' &&
           <PersistCrop
             currentScene={currentScene}
-            initialValues={{ _activeLocale: currentLocale }}
+            initialValues={{
+              _activeLocale: currentLocale,
+              defaultLocale: currentLocale,
+              locales: [ currentLocale ],
+              sceneId: currentScene.get('id')
+            }}
             submitButtonText='Create'
             title='Create crop'
             onClose={() => this.setState({ modal: null })}
             onSubmit={this.onPersistCrop}/>}
       </div>
-
-      // The HotKeys component does not use Radium, therefore we need to join the styles manually.
-      // <HotKeys handlers={filterKeyEventsInInputFields(handlers)} keyMap={keyMap} style={{ ...styles.container, ...this.props.style }}>
-      //   <LargeFrameModal
-      //     emptyImage={flashEmptyImage}
-      //     filledImage={flashFilledImage}
-      //     frame={currentScene}
-      //     isOpen={enlargeFrame}
-      //     onClose={minimizeFrame}
-      //     onSelectLeftFrame={selectLeftFrame}
-      //     onSelectRightFrame={selectRightFrame}
-      //     onToggleKeyFrame={toggleKeyFrame} />
-      //   {/* Render the list of scenes of the current scene group. */}
-      //   <div style={styles.scenes.listContainer}>
-      //     <div style={styles.info.base}>
-      //       <h1 style={styles.info.title.base}>{numKeyFrames} <span style={styles.info.title.emph}>Add crops</span></h1>
-      //       <h2 style={styles.info.subtitle}>Create crops to single-out the most interesting parts of the frames</h2>
-      //     </div>
-      //     {scenes.map((frame, j) => (
-      //       <Frame
-      //         emptyImage={flashEmptyImage}
-      //         filledImage={flashFilledImage}
-      //         frame={frame}
-      //         isKeyFrame={frame.get('isKeyFrame')}
-      //         isSelected={(currentScene && currentScene.get('id')) === frame.get('id')}
-      //         key={frame.get('id')}
-      //         procentualHeightOfWidth={60}
-      //         procentualWidth={100 / reverseScale}
-      //         size={this.props.scale > 6 ? 'big' : 'small'}
-      //         onClickFrame={selectFrame}
-      //         onEnlargeFrameSize={toggleFrameSize}
-      //         onToggleKeyFrame={toggleKeyFrame} />
-      //     ))}
-      //   </div>
-      //
-      //   {/* Render bottom bar */}
-      //   <BottomBar info={`${numKeyFrames} crops`} />
-      // </HotKeys>
     );
   }
 }

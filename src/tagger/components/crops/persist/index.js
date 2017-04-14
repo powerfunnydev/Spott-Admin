@@ -19,14 +19,29 @@ import Scene from './scene';
 import * as actions from '../actions';
 import { persistCropSelector } from '../selector';
 
-function renderScene ({ imageUrl, input, tags }) {
+function renderScene ({ appearances, imageUrl, input, tags }) {
   return (
     <Scene
+      appearances={appearances}
       imageUrl={imageUrl}
       region={input.value}
-      tags={[]}
       onSelectionRegion={input.onChange}/>
   );
+}
+
+function validate (values, { t }) {
+  const validationErrors = {};
+  const { _activeLocale, defaultLocale, region, sceneId, title } = values.toJS();
+  if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
+  if (!region) { validationErrors.region = t('common.errors.required'); }
+  if (!sceneId) { validationErrors.sceneId = t('common.errors.required'); }
+  if (title && !title[_activeLocale]) {
+    validationErrors.title = validationErrors.title || {};
+    validationErrors.title[_activeLocale] = t('common.errors.required');
+  }
+  console.warn('errors', validationErrors);
+  // Done
+  return validationErrors;
 }
 
 @localized
@@ -36,7 +51,7 @@ function renderScene ({ imageUrl, input, tags }) {
 }))
 @reduxForm({
   form: 'cropPersist',
-  validate: () => ({})
+  validate
 })
 @Radium
 export default class PersistCrop extends Component {
@@ -69,11 +84,10 @@ export default class PersistCrop extends Component {
   }
 
   async submit (form) {
-    console.warn('SUBMIT', form.toJS());
     try {
       const { onSubmit } = this.props;
-      // await onSubmit(form.toJS());
-      // this.props.onClose();
+      await onSubmit(form.toJS());
+      this.props.onClose();
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
@@ -103,10 +117,10 @@ export default class PersistCrop extends Component {
           <div style={{ width: '65%' }}>
             <Section innerStyle={{ paddingBottom: 0, paddingTop: 0 }} style={{ backgroundColor: 'none', marginTop: 0, marginRight: -1 }}>
               <Field
+                appearances={appearances}
                 component={renderScene}
                 imageUrl={currentScene.get('imageUrl')}
-                name='region'
-                tags={[]}/>
+                name='region'/>
             </Section>
           </div>
           <div style={{ width: '35%', display: 'flex', flexDirection: 'column' }}>
@@ -125,7 +139,7 @@ export default class PersistCrop extends Component {
                 placeholder='Comment'/>
               <Field
                 component={SelectInput}
-                getItemText={(id) => topicsById.getIn([ id, 'text' ])}
+                getItemText={(id) => `(${topicsById.getIn([ id, 'sourceType' ]).toLowerCase()}) ${topicsById.getIn([ id, 'text' ])}`}
                 getOptions={searchTopics}
                 isLoading={searchedTopicIds.get('_status') === FETCHING}
                 label='Topics'

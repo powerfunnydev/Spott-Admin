@@ -834,9 +834,10 @@ export function transformAudience ({ countries, languages, name, uuid }) {
   };
 }
 
-export function transformTopic ({ text, uuid }) {
+export function transformTopic ({ sourceType, text, uuid }) {
   return {
     id: uuid,
+    sourceType,
     text
   };
 }

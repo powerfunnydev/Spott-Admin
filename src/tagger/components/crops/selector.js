@@ -35,6 +35,7 @@ import {
   sceneHasCharactersRelationsSelector,
   sceneHasProductsRelationsSelector
 } from '../../selectors/common';
+import { CHARACTER, PRODUCT } from '../../constants/appearanceTypes';
 
 const formName = 'cropPersist';
 const formErrorsSelector = (state) => { return state.getIn([ 'form', formName, 'syncErrors' ]); };
@@ -42,7 +43,7 @@ const formErrorsSelector = (state) => { return state.getIn([ 'form', formName, '
 const valuesSelector = (state) => state.getIn([ 'form', formName, 'values' ]);
 const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultLocale');
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
-const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
+
 const spottTagsSelector = createSelector(
   createFormValueSelector(formName, 'tags'),
   (tags) => tags && typeof tags.toJS === 'function' ? tags.toJS() : tags
@@ -120,7 +121,6 @@ export default createStructuredSelector({
   // productsById: listProductsEntitiesSelector,
 
   spotts: () => List()
-  // supportedLocales: supportedLocalesSelector,
   // tags: spottTagsSelector,
 
 });
@@ -135,7 +135,7 @@ export const selectCropSelector = createStructuredSelector({
 // Persist a crop modal
 // ///////////////////
 
-const appearancesSelector = createSelector(
+const _appearancesSelector = createSelector(
   currentSceneIdSelector,
   sceneHasCharactersRelationsSelector,
   sceneHasProductsRelationsSelector,
@@ -156,12 +156,36 @@ const appearancesSelector = createSelector(
   }
 );
 
+const appearancesSelector = createSelector(
+  _appearancesSelector,
+  characterEntitiesSelector,
+  productEntitiesSelector,
+  (appearances, charactersById, productsById) => {
+    return appearances.map((appearance) => {
+      switch (appearance.get('type')) {
+        case CHARACTER:
+          return Map({
+            appearance,
+            entity: charactersById.get(appearance.get('id'))
+          });
+        case PRODUCT:
+          return Map({
+            appearance,
+            entity: productsById.get(appearance.get('id'))
+          });
+      }
+      console.warn('Selectors:sceneEditor: Unsupported appearance type ', appearance);
+      return null;
+    });
+  }
+);
+
 export const persistCropSelector = createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
   appearances: appearancesSelector,
   defaultLocale: currentDefaultLocaleSelector,
   searchedTopicIds: searchedTopicIdsSelector,
-  supportedLocales: supportedLocalesSelector,
+
   topicIds: topicIdsSelector,
   topicsById: topicsEntitiesSelector
 });
