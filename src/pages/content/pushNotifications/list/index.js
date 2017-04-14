@@ -189,7 +189,6 @@ export default class PushNotifications extends Component {
                     getEditUrl={this.determineEditUrl}
                     isSelected={isSelected}
                     load={() => this.props.load(this.props.location.query)}
-                    routerPushWithReturnTo={this.props.routerPushWithReturnTo}
                     selectAllCheckboxes={selectAllCheckboxes}
                     sortDirection={sortDirection}
                     sortField={sortField}

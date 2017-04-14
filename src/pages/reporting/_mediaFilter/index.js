@@ -5,15 +5,15 @@ import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import SelectInput from '../../_common/inputs/selectInput';
 import { FETCHING } from '../../../constants/statusTypes';
-import * as actions from '../actions';
-import { mediaFilterSelector } from '../selector';
+import * as actions from './actions';
+import selector from './selector';
 
-@connect(mediaFilterSelector, (dispatch) => ({
+@connect(selector, (dispatch) => ({
   fetchMedium: bindActionCreators(actions.fetchMedium, dispatch),
   searchMedia: bindActionCreators(actions.searchMedia, dispatch)
 }))
 @Radium
-export default class MediaFilterForm extends Component {
+export default class MediaFilter extends Component {
 
   static propTypes = {
     fetchMedium: PropTypes.func.isRequired,

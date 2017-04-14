@@ -531,6 +531,14 @@ export function transformActivityData (dataList, transformer) {
   return res;
 }
 
+// export function transformActivityData (dataList, transformer) {
+//   const res = {};
+//   for (const { data, medium } of dataList) {
+//     res[medium.uuid] = transformer(data);
+//   }
+//   return res;
+// }
+
 /**
   * @returnExample
   * {
@@ -923,4 +931,22 @@ export function transformSpott ({
     }
   }
   return spott;
+}
+
+export function transformTopMedia (data) {
+  return {
+    id: data.uuid,
+    medium: transformListMedium(data),
+    taggedProducts: 25,
+    subscriptions: 234
+  };
+}
+
+export function transformTopPeople (data) {
+  return {
+    id: data.uuid,
+    character: transformListCharacter(data),
+    taggedProducts: 25,
+    subscriptions: 234
+  };
 }

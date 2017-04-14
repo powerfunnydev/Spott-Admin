@@ -3,15 +3,16 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { routerPushWithReturnTo } from '../../actions/global';
-import { colors, fontWeights, makeTextStyle, Container } from '../_common/styles';
-import InfiniteScroll from '../_common/components/infiniteScroll';
-import { isLoading } from '../../constants/statusTypes';
-import { arraysEqual, slowdown } from '../../utils';
+import moment from 'moment';
+import { routerPushWithReturnTo } from '../../../actions/global';
+import { colors, fontWeights, makeTextStyle, Container } from '../../_common/styles';
+import InfiniteScroll from '../../_common/components/infiniteScroll';
+import { isLoading } from '../../../constants/statusTypes';
+import { arraysEqual, slowdown } from '../../../utils';
+import Widget from '../widget';
 import * as actions from './actions';
+import RankingsFilterForm from './filters';
 import { rankingsSelector } from './selector';
-import Widget from './widget';
-import RankingsFilterForm from './forms/rankingsFilterForm';
 
 @Radium
 class RankingItem extends Component {
@@ -255,7 +256,7 @@ export default class Rankings extends Component {
       currentProductImpressionsPage, currentProductViewsPage,
       characterSubscriptions, loadBrandSubscriptions, loadCharacterSubscriptions,
       loadMediumSubscriptions, loadMediumSyncs, loadProductBuys, loadProductImpressions,
-      loadProductViews, location: { query: { ages, genders } }, mediumSubscriptions,
+      loadProductViews, location: { query: { ages, endDate, genders, startDate } }, mediumSubscriptions,
       mediumSyncs, productBuys, productImpressions, productViews
     } = this.props;
 
@@ -265,7 +266,9 @@ export default class Rankings extends Component {
           <RankingsFilterForm
             fields={{
               ages: typeof ages === 'string' ? [ ages ] : ages,
-              genders: typeof genders === 'string' ? [ genders ] : genders
+              endDate: moment(endDate),
+              genders: typeof genders === 'string' ? [ genders ] : genders,
+              startDate: moment(startDate)
             }}
             style={styles.filter}
             onChange={this.onChangeRankingsFilter}/>

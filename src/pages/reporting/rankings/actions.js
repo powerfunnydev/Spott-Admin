@@ -1,13 +1,13 @@
 import moment from 'moment';
-import { searchMedia as dataSearchMedia } from '../../actions/media';
+import { searchMedia as dataSearchMedia } from '../../../actions/media';
 import {
   fetchAges, fetchEvents, fetchGenders, fetchTimelineData, fetchAgeData,
   fetchBrandSubscriptions, fetchMediumSyncs, fetchMediumSubscriptions,
   fetchGenderData, fetchCharacterSubscriptions, fetchProductBuys,
   fetchProductImpressions, fetchProductViews
-} from '../../actions/reporting';
+} from '../../../actions/reporting';
 import { currentAgesSelector, currentGendersSelector, currentEventsSelector, currentMediaSelector } from './selector';
-import { locationSelector } from '../../selectors/global';
+import { locationSelector } from '../../../selectors/global';
 
 // Action types
 // ////////////
@@ -20,8 +20,6 @@ export const ACTIVITIES_FETCH_ERROR = 'REPORTING/ACTIVITIES_FETCH_ERROR';
 
 export const CLEAR_RANKINGS = 'REPORTING/CLEAR_RANKINGS';
 export const SAVE_FILTER_QUERY = 'REPORTING/SAVE_FILTER_QUERY';
-
-export { fetchMedium } from '../../actions/media';
 
 export function searchMedia (searchString = '') {
   return async (dispatch, getState) => {

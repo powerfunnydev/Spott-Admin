@@ -201,11 +201,11 @@ export default class Products extends Component {
                   <Table>
                     <Headers>
                       {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                      <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'FULL_NAME')} sortDirection = {productsSortField === 'FULL_NAME' ? sortDirections[productsSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 1 } ]}>FULL NAME</CustomCel>
-                      <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { width: 150 } ]}>OFFERINGS</CustomCel>
-                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {productsSortField === 'LAST_MODIFIED' ? sortDirections[productsSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { width: 150 } ]}>LAST UPDATED ON</CustomCel>
-                      <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
+                      <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.base, headerStyles.first ]} onChange={selectAllCheckboxes}/>
+                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'FULL_NAME')} sortDirection = {productsSortField === 'FULL_NAME' ? sortDirections[productsSortDirection] : NONE} style={[ headerStyles.base, headerStyles.clickable, { flex: 1 } ]}>FULL NAME</CustomCel>
+                      <CustomCel style={[ headerStyles.base, { width: 150 } ]}>OFFERINGS</CustomCel>
+                      <CustomCel sortColumn={this.props.onSortField.bind(this, 'LAST_MODIFIED')} sortDirection = {productsSortField === 'LAST_MODIFIED' ? sortDirections[productsSortDirection] : NONE} style={[ headerStyles.base, headerStyles.clickable, { width: 150 } ]}>LAST UPDATED ON</CustomCel>
+                      <DropdownCel style={[ headerStyles.base ]}/>
                     </Headers>
                     <Rows isLoading={products.get('_status') !== 'loaded'}>
                       {products.get('data').map((product, index) => {

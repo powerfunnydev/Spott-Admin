@@ -45,7 +45,7 @@ export function arraysEqual (a, b) {
  * stopped entering the search string, we want to perform a single search.
  * NOTE: based on underscore's debounce()
  * @param {function} func The function to be applied after a certain time.
- * @param {wait} number The number of milliseconds to wait until execution.
+ * @param {number} wait The number of milliseconds to wait until execution.
  */
 /* eslint-disable */
 export function slowdown (func, wait, immediate) {

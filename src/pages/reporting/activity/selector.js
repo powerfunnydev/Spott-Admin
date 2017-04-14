@@ -1,20 +1,14 @@
 import { createSelector, createStructuredSelector } from 'reselect';
-import { Map } from 'immutable';
 import {
-  createEntityIdsByRelationSelector,
   createEntitiesByListSelector,
   eventsEntitiesSelector,
   eventsListSelector,
-  searchStringHasMediaRelationsSelector,
   listMediaEntitiesSelector,
-  gendersListSelector,
-  gendersEntitiesSelector,
-  agesListSelector,
-  agesEntitiesSelector
-} from '../../selectors/data';
-import { locationSelector } from '../../selectors/global';
+  gendersEntitiesSelector
+} from '../../../selectors/data';
+import { isLoading } from '../../../constants/statusTypes';
+import { locationSelector } from '../../../selectors/global';
 import { ageConfig, genderConfig, timelineConfig } from './defaultHighchartsConfig';
-import { LAZY, isLoading } from '../../constants/statusTypes';
 
 function createQueryStringArraySelector (field) {
   return createSelector(
@@ -23,75 +17,16 @@ function createQueryStringArraySelector (field) {
   );
 }
 
-export const ageDataSelector = (state) => state.getIn([ 'reporting', 'ageData' ]);
-export const genderDataSelector = (state) => state.getIn([ 'reporting', 'genderData' ]);
-export const timelineDataSelector = (state) => state.getIn([ 'reporting', 'timelineData' ]);
-
-export const filterQuerySelector = (state) => state.getIn([ 'reporting', 'filterQuery' ]);
-
-function createInfiniteListSelector (dataSelector) {
-  return createSelector(
-    dataSelector,
-    (pageHasData) => {
-      let i = 0;
-      let result = [];
-      let status = LAZY;
-      while (true) {
-        const data = pageHasData.get(i++);
-        if (data) {
-          if (data.get('data')) {
-            result = result.concat(data.get('data'));
-          }
-          if (data.get('_status')) {
-            status = data.get('_status');
-          }
-        } else {
-          break;
-        }
-      }
-      return Map({ _status: status, data: result });
-    }
-  );
-}
-
-export const currentMediaSearchStringSelector = (state) => state.getIn([ 'reporting', 'currentMediaSearchString' ]);
-
-export const brandSubscriptionsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'brandSubscriptions' ]));
-export const characterSubscriptionsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'characterSubscriptions' ]));
-export const mediumSubscriptionsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'mediumSubscriptions' ]));
-export const mediumSyncsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'mediumSyncs' ]));
-export const productBuysSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'productBuys' ]));
-export const productViewsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'productViews' ]));
-export const productImpressionsSelector = createInfiniteListSelector((state) => state.getIn([ 'reporting', 'productImpressions' ]));
-
-export const currentBrandSubscriptionsPageSelector = (state) => state.getIn([ 'reporting', 'currentBrandSubscriptionsPage' ]);
-export const currentCharacterSubscriptionsPageSelector = (state) => state.getIn([ 'reporting', 'currentCharacterSubscriptionsPage' ]);
-export const currentMediumSubscriptionsPageSelector = (state) => state.getIn([ 'reporting', 'currentMediumSubscriptionsPage' ]);
-export const currentMediumSyncsPageSelector = (state) => state.getIn([ 'reporting', 'currentMediumSyncsPage' ]);
-export const currentProductBuysPageSelector = (state) => state.getIn([ 'reporting', 'currentProductBuysPage' ]);
-export const currentProductImpressionsPageSelector = (state) => state.getIn([ 'reporting', 'currentProductImpressionsPage' ]);
-export const currentProductViewsPageSelector = (state) => state.getIn([ 'reporting', 'currentProductViewsPage' ]);
-
-export const searchedMediumIdsSelector = createEntityIdsByRelationSelector(searchStringHasMediaRelationsSelector, currentMediaSearchStringSelector);
+const ageDataSelector = (state) => state.getIn([ 'reporting', 'ageData' ]);
+const genderDataSelector = (state) => state.getIn([ 'reporting', 'genderData' ]);
+const timelineDataSelector = (state) => state.getIn([ 'reporting', 'timelineData' ]);
 
 const eventsSelector = createEntitiesByListSelector(eventsListSelector, eventsEntitiesSelector);
-const gendersSelector = createEntitiesByListSelector(gendersListSelector, gendersEntitiesSelector);
-const agesSelector = createEntitiesByListSelector(agesListSelector, agesEntitiesSelector);
-
-// Header
-// //////
-
-export const mediaFilterSelector = createStructuredSelector({
-  mediaById: listMediaEntitiesSelector,
-  searchedMediumIds: searchedMediumIdsSelector
-});
 
 // Activity tab
 // ////////////
 
-export const currentAgesSelector = createQueryStringArraySelector('ages');
 export const currentEventsSelector = createQueryStringArraySelector('events');
-export const currentGendersSelector = createQueryStringArraySelector('genders');
 export const currentMediaSelector = createQueryStringArraySelector('media');
 
 export const eventsFilterSelector = createStructuredSelector({
@@ -232,31 +167,4 @@ export const activitySelector = createStructuredSelector({
   mediaById: listMediaEntitiesSelector,
   mediumIds: currentMediaSelector,
   timelineConfig: timelineConfigSelector
-});
-
-// Rankings tab
-// ////////////
-
-export const rankingsFilterSelector = createStructuredSelector({
-  ages: agesSelector,
-  agesById: agesEntitiesSelector,
-  genders: gendersSelector,
-  gendersById: gendersEntitiesSelector
-});
-
-export const rankingsSelector = createStructuredSelector({
-  brandSubscriptions: brandSubscriptionsSelector,
-  currentBrandSubscriptionsPage: currentBrandSubscriptionsPageSelector,
-  currentCharacterSubscriptionsPage: currentCharacterSubscriptionsPageSelector,
-  currentMediumSubscriptionsPage: currentMediumSubscriptionsPageSelector,
-  currentMediumSyncsPage: currentMediumSyncsPageSelector,
-  currentProductBuysPage: currentProductBuysPageSelector,
-  currentProductImpressionsPage: currentProductImpressionsPageSelector,
-  currentProductViewsPage: currentProductViewsPageSelector,
-  characterSubscriptions: characterSubscriptionsSelector,
-  mediumSubscriptions: mediumSubscriptionsSelector,
-  mediumSyncs: mediumSyncsSelector,
-  productBuys: productBuysSelector,
-  productImpressions: productImpressionsSelector,
-  productViews: productViewsSelector
 });

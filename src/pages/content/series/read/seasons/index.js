@@ -156,12 +156,12 @@ export default class List extends Component {
                 <Table style={generalStyles.lightGrayBorder}>
                   <Headers>
                     {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                    <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'TITLE')} sortDirection = {seasonsSortField === 'TITLE' ? sortDirections[seasonsSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 5 } ]}>TITLE</CustomCel>
-                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'NUMBER')} sortDirection = {seasonsSortField === 'NUMBER' ? sortDirections[seasonsSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { minWidth: 60 } ]}>#</CustomCel>
-                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>UPDATED BY</CustomCel>
-                    <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
-                    <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
+                    <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.base, headerStyles.first ]} onChange={selectAllCheckboxes}/>
+                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'TITLE')} sortDirection = {seasonsSortField === 'TITLE' ? sortDirections[seasonsSortDirection] : NONE} style={[ headerStyles.base, headerStyles.clickable, { flex: 5 } ]}>TITLE</CustomCel>
+                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'NUMBER')} sortDirection = {seasonsSortField === 'NUMBER' ? sortDirections[seasonsSortDirection] : NONE} style={[ headerStyles.base, headerStyles.clickable, { minWidth: 60 } ]}>#</CustomCel>
+                    <CustomCel style={[ headerStyles.base, { flex: 2 } ]}>UPDATED BY</CustomCel>
+                    <CustomCel style={[ headerStyles.base, { flex: 2 } ]}>LAST UPDATED ON</CustomCel>
+                    <DropdownCel style={[ headerStyles.base ]}/>
                   </Headers>
                   <Rows isLoading={seasons.get('_status') !== 'loaded'}>
                     {seasons.get('data').map((season, index) => {

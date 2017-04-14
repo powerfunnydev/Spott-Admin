@@ -119,28 +119,28 @@ export default class ProductOfferings extends Component {
         <Table style={styles.customTable}>
           <Headers>
             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-            <CustomCel style={[ headerStyles.header, headerStyles.firstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>
+            <CustomCel style={[ headerStyles.base, headerStyles.first, styles.adaptedCustomCel, { flex: 2 } ]}>
               Shop
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 1 } ]}>
+            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 1 } ]}>
               Price
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 1 } ]}>
+            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 1 } ]}>
               Currency
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 1 } ]}>
+            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 1 } ]}>
               Locale
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 5 } ]}>
+            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 5 } ]}>
               Product url
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 5 } ]}>
+            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 5 } ]}>
               Affiliate url
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { width: 100 } ]}>
+            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { width: 100 } ]}>
               Available
             </CustomCel>
-            <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 1 } ]} />
+            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 1 } ]} />
           </Headers>
           <Rows style={styles.adaptedRows}>
             {productOfferings.get('data').map((productOffering, index) => {

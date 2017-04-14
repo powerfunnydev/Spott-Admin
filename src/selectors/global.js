@@ -1,3 +1,5 @@
+import { createSelector } from 'reselect';
+
 export const apiBaseUrlSelector = (state) => state.getIn([ 'global', 'configuration', 'urls', 'api' ]);
 export const apptvateWebsiteBaseUrlSelector = (state) => state.getIn([ 'global', 'configuration', 'urls', 'apptvateWebsite' ]);
 export const authenticationTokenSelector = (state) => state.getIn([ 'global', 'authentication', 'authenticationToken' ]);
@@ -15,3 +17,10 @@ export const userRolesSelector = (state) => state.getIn([ 'global', 'authenticat
 export const versionSelector = (state) => state.getIn([ 'global', 'configuration', 'version' ]);
 export const gendersSelector = (state) => state.getIn([ 'global', 'configuration', 'genders' ]);
 export const localeNamesSelector = (state) => state.getIn([ 'global', 'configuration', 'localeNames' ]);
+
+export function createQueryStringArraySelector (field) {
+  return createSelector(
+    locationSelector,
+    ({ query }) => typeof query[field] === 'string' ? [ query[field] ] : (query[field] || [])
+  );
+}

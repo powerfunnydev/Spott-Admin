@@ -66,6 +66,7 @@ import PushNotificationsList from './pages/content/pushNotifications/list';
 import PushNotificationsRead from './pages/content/pushNotifications/read';
 import Reporting from './pages/reporting';
 import ReportingActivity from './pages/reporting/activity';
+import ReportingBrandDashboard from './pages/reporting/brandDashboard';
 import ReportingRankings from './pages/reporting/rankings';
 import ResetPassword from './pages/resetPassword';
 import SeasonCreate from './pages/content/seasons/create';
@@ -155,10 +156,13 @@ function getRoutes ({ dispatch, getState }) {
         <IndexRoute component={MediaHome}/>
         <Route component={MediaUpload} path='upload' />
       </Route>
+
+      {/* TODO: update roles! */}
+      <Route component={ReportingBrandDashboard} path='reporting/brand-dashboard' onEnter={requireOneRole([ BROADCASTER, CONTENT_MANAGER, ADMIN ])}/>
       <Route component={Reporting} path='reporting' onEnter={requireOneRole([ BROADCASTER, CONTENT_MANAGER, ADMIN ])}>
         <IndexRedirect to='activity' />
-        <Route component={ReportingActivity} path='activity' />
-        <Route component={ReportingRankings} path='rankings' />
+        <Route component={ReportingActivity} path='activity'/>
+        <Route component={ReportingRankings} path='rankings'/>
       </Route>
       <Route path='content' onEnter={requireOneRole([ CONTENT_MANAGER, ADMIN ])}>
         <IndexRedirect to='content-producers' />

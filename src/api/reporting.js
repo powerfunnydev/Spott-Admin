@@ -17,7 +17,7 @@ import {
  */
 export async function getActivityReportEvents (baseUrl, authenticationToken, locale) {
   const { body: events } = await get(authenticationToken, locale, `${baseUrl}/v004/report/mediumActivityReportEventTypes`);
-  return events.map(({ description, type }) => ({ description, id: type }));
+  return events.map(({ description, type }, i) => ({ description, id: type }));
 }
 
 export async function getAges (baseUrl, authenticationToken, locale) {

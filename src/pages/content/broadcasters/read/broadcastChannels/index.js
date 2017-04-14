@@ -139,9 +139,9 @@ export default class List extends Component {
                 <Table style={generalStyles.lightGrayBorder}>
                   <Headers>
                     {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-                    <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>
-                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {broadcasterChannelsSortField === 'NAME' ? sortDirections[broadcasterChannelsSortDirection] : NONE} style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: 5 } ]}>NAME</CustomCel>
-                    <DropdownCel style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>
+                    <CheckBoxCel checked={isSelected.get('ALL')} name='header' style={[ headerStyles.base, headerStyles.first ]} onChange={selectAllCheckboxes}/>
+                    <CustomCel sortColumn={this.props.onSortField.bind(this, 'NAME')} sortDirection = {broadcasterChannelsSortField === 'NAME' ? sortDirections[broadcasterChannelsSortDirection] : NONE} style={[ headerStyles.base, headerStyles.clickable, { flex: 5 } ]}>NAME</CustomCel>
+                    <DropdownCel style={[ headerStyles.base ]}/>
                   </Headers>
                   <Rows isLoading={broadcasterChannels.get('_status') !== 'loaded'}>
                     {broadcasterChannels.get('data').map((broadcastChannel, index) => {

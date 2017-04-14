@@ -1,12 +1,35 @@
 import React, { Component, PropTypes } from 'react';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import moment from 'moment';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as globalActions from '../../../../actions/global';
 import { DropdownCel, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row } from '../table/index';
-import Dropdown, { styles as dropdownStyles } from '../actionDropdown';
 import { confirmation } from '../../askConfirmation';
+import Dropdown, { styles as dropdownStyles } from '../actionDropdown';
 
 const numberOfRows = 25;
-class ListView extends Component {
+
+@connect(null, (dispatch) => ({
+  routerPushWithReturnTo: bindActionCreators(globalActions.routerPushWithReturnTo, dispatch)
+}))
+export default class ListView extends Component {
+
+  static propTypes = {
+    columns: PropTypes.array.isRequired,
+    data: ImmutablePropTypes.map.isRequired,
+    deleteItem: PropTypes.func,
+    getEditUrl: PropTypes.func,
+    isSelected: ImmutablePropTypes.map,
+    load: PropTypes.func,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
+    selectAllCheckboxes: PropTypes.func,
+    sortDirection: PropTypes.string,
+    sortField: PropTypes.string,
+    style: PropTypes.object,
+    onCheckboxChange: PropTypes.func,
+    onSortField: PropTypes.func
+  };
 
   getFormatedDate = (dateString) => {
     const date = new Date(dateString);
@@ -14,46 +37,54 @@ class ListView extends Component {
   }
 
   async deleteItem (id, type, props) {
-    const result = await confirmation();
-    if (result) {
-      await props.deleteItem(id, type);
-      await props.load();
+    if (props.deleteItem) {
+      const result = await confirmation();
+      if (result) {
+        await props.deleteItem(id, type);
+        if (props.load) {
+          await props.load();
+        }
+      }
     }
   }
 
   render () {
     const { data, columns, isSelected, selectAllCheckboxes, onSortField, sortField, sortDirection, routerPushWithReturnTo,
-      onCheckboxChange, getEditUrl } = this.props;
+      onCheckboxChange, getEditUrl, style } = this.props;
     const { deleteItem } = this;
     return (
-      <Table>
+      <Table style={style}>
         <Headers>
           {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
           {
             columns.map((column, index) => {
               switch (column.type) {
                 case 'checkBox':
-                  return <CheckBoxCel checked={isSelected.get('ALL')} key={index} name='header' style={[ headerStyles.header, headerStyles.firstHeader ]} onChange={selectAllCheckboxes}/>;
+                  return (<CheckBoxCel
+                    checked={isSelected && isSelected.get('ALL')}
+                    key={index}
+                    name='header'
+                    style={[ headerStyles.base, index === 0 && headerStyles.first ]} onChange={selectAllCheckboxes}/>);
                 case 'custom':
                   return (
                     column.sort ? (
                       <CustomCel
-                        key={index} sortColumn={onSortField(column.sortField)}
+                        key={index} sortColumn={onSortField && onSortField(column.sortField)}
                         sortDirection = {sortField === column.sortField ? sortDirections[sortDirection] : NONE}
-                        style={[ headerStyles.header, headerStyles.notFirstHeader, headerStyles.clickableHeader, { flex: column.colspan || 1 } ]}>
+                        style={[ headerStyles.base, index === 0 && headerStyles.first, headerStyles.clickable, { flex: column.colspan || 1 } ]}>
                         {column.title}
                       </CustomCel>) : (
                       <CustomCel
-                        key={index} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: column.colspan || 1 } ]}>
+                        key={index} style={[ headerStyles.base, index === 0 && headerStyles.first, { flex: column.colspan || 1 } ]}>
                         {column.title}
                       </CustomCel>)
                   );
                 case 'dropdown':
-                  return <DropdownCel key={index} style={[ headerStyles.header, headerStyles.notFirstHeader ]}/>;
+                  return <DropdownCel key={index} style={[ headerStyles.base, index === 0 && headerStyles.first ]}/>;
                 default:
                   return (
                     <CustomCel
-                      key={index} style={[ headerStyles.header, headerStyles.notFirstHeader, { flex: column.colspan || 1 } ]}>
+                      key={index} style={[ headerStyles.base, index === 0 && headerStyles.first, { flex: column.colspan || 1 } ]}>
                       {column.title}
                     </CustomCel>
                   );
@@ -70,7 +101,7 @@ class ListView extends Component {
                   columns.map((column, subindex) => {
                     switch (column.type) {
                       case 'checkBox':
-                        return <CheckBoxCel checked={isSelected.get(item.get('id'))} key={subindex} onChange={onCheckboxChange(item.get('id'))}/>;
+                        return <CheckBoxCel checked={isSelected && isSelected.get(item.get('id'))} key={subindex} onChange={onCheckboxChange(item.get('id'))}/>;
                       case 'custom':
                         return (
                           <CustomCel key={subindex} objectToRender={item} style={{ flex: column.colspan || 1 }} onClick={column.clickable
@@ -105,20 +136,3 @@ class ListView extends Component {
     );
   }
 }
-
-ListView.propTypes = {
-  columns: PropTypes.array.isRequired,
-  data: ImmutablePropTypes.map.isRequired,
-  deleteItem: PropTypes.func.isRequired,
-  getEditUrl: PropTypes.func.isRequired,
-  isSelected: ImmutablePropTypes.map.isRequired,
-  load: PropTypes.func.isRequired,
-  routerPushWithReturnTo: PropTypes.func.isRequired,
-  selectAllCheckboxes: PropTypes.func.isRequired,
-  sortDirection: PropTypes.string,
-  sortField: PropTypes.string,
-  onCheckboxChange: PropTypes.func.isRequired,
-  onSortField: PropTypes.func.isRequired
-};
-
-export default ListView;

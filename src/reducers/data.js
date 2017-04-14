@@ -6,12 +6,13 @@ import {
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
   serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasLanguages,
   serializeFilterHasPushNotifications, serializeFilterHasSpotts, serializeBroadcasterFilterHasMedia,
-  transformMediumToListMedium
+  transformMediumToListMedium, serializeFilterHasTopMedia, serializeFilterHasDemographics, serializeFilterHasTopPeople
 } from './utils';
 
 import * as audienceActions from '../actions/audience';
 import * as availabilityActions from '../actions/availability';
 import * as brandActions from '../actions/brand';
+import * as brandDashboardActions from '../actions/brandDashboard';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcastersActions from '../actions/broadcaster';
 import * as charactersActions from '../actions/character';
@@ -47,6 +48,7 @@ export default (state = fromJS({
     ages: {},
     audiences: {},
     availabilities: {},
+    brandDashboardEvents: {},
     brands: {},
     broadcastChannels: {},
     broadcasters: {},
@@ -54,6 +56,7 @@ export default (state = fromJS({
     collections: {},
     contentProducers: {},
     countries: {},
+    demographics: {},
     events: {},
     faceImages: {}, // Characters and persons has faceImages
     genders: {},
@@ -83,6 +86,8 @@ export default (state = fromJS({
     shops: {},
     spotts: {},
     topics: {},
+    topMedia: {}, // Used in brand dashboard. Includes media, subscriptions, etc.
+    topPeople: {},
     users: {},
     videos: {}
   },
@@ -99,6 +104,7 @@ export default (state = fromJS({
     filterHasCommercials: {},
     filterHasContentProducers: {},
     filterHasCountries: {},
+    filterHasDemographics: {},
     filterHasEpisodes: {},
     filterHasLanguages: {},
     filterHasMedia: {},
@@ -109,11 +115,12 @@ export default (state = fromJS({
     filterHasProducts: {},
     filterHasPushNotifications: {},
     filterHasSeasons: {},
-    filterHasShops: {},
-
     filterHasSeriesEntries: {},
+    filterHasShops: {},
     filterHasSpotts: {},
     filterHasTags: {},
+    filterHasTopMedia: {},
+    filterHasTopPeople: {},
     filterHasTvGuideEntries: {},
     filterHasUsers: {},
 
@@ -192,6 +199,37 @@ export default (state = fromJS({
       return searchSuccess(state, 'countries', 'filterHasCountries', serializeFilterHasCountries(action), action.data.data);
     case countryActions.COUNTRIES_FETCH_ERROR:
       return searchError(state, 'filterHasCountries', serializeFilterHasCountries(action), action.error);
+
+    // Brand dashboard
+    // ///////////////
+
+    case brandDashboardActions.TOP_MEDIA_FETCH_START:
+      return searchStart(state, 'filterHasTopMedia', serializeFilterHasTopMedia(action));
+    case brandDashboardActions.TOP_MEDIA_FETCH_SUCCESS:
+      return searchSuccess(state, 'topMedia', 'filterHasTopMedia', serializeFilterHasTopMedia(action), action.data.data);
+    case brandDashboardActions.TOP_MEDIA_FETCH_ERROR:
+      return searchError(state, 'filterHasTopMedia', serializeFilterHasTopMedia(action), action.error);
+
+    case brandDashboardActions.TOP_PEOPLE_FETCH_START:
+      return searchStart(state, 'filterHasTopPeople', serializeFilterHasTopPeople(action));
+    case brandDashboardActions.TOP_PEOPLE_FETCH_SUCCESS:
+      return searchSuccess(state, 'topPeople', 'filterHasTopPeople', serializeFilterHasTopPeople(action), action.data.data);
+    case brandDashboardActions.TOP_PEOPLE_FETCH_ERROR:
+      return searchError(state, 'filterHasTopPeople', serializeFilterHasTopPeople(action), action.error);
+
+    case brandDashboardActions.DEMOGRAPHICS_FETCH_START:
+      return searchStart(state, 'filterHasDemographics', serializeFilterHasDemographics(action));
+    case brandDashboardActions.DEMOGRAPHICS_FETCH_SUCCESS:
+      return searchSuccess(state, 'demographics', 'filterHasDemographics', serializeFilterHasDemographics(action), action.data.data);
+    case brandDashboardActions.DEMOGRAPHICS_FETCH_ERROR:
+      return searchError(state, 'filterHasDemographics', serializeFilterHasDemographics(action), action.error);
+
+    // case brandDashboardActions.AGE_DATA_FETCH_START:
+    //   return searchStart(state, 'filterHasDemographics', serializeFilterHasDemographics(action));
+    // case brandDashboardActions.AGE_DATA_FETCH_SUCCESS:
+    //   return searchSuccess(state, 'demographics', 'filterHasDemographics', serializeFilterHasDemographics(action), action.data.data);
+    // case brandDashboardActions.AGE_DATA_FETCH_ERROR:
+    //   return searchError(state, 'filterHasDemographics', serializeFilterHasDemographics(action), action.error);
 
     // Brands
     // /////////////////
@@ -948,6 +986,13 @@ export default (state = fromJS({
 
     // Reporting
     // /////////
+
+    case brandDashboardActions.EVENTS_FETCH_START:
+      return fetchListStart(state, 'brandDashboardEvents');
+    case brandDashboardActions.EVENTS_FETCH_SUCCESS:
+      return fetchListSuccess(state, 'brandDashboardEvents', 'brandDashboardEvents', action.data);
+    case brandDashboardActions.EVENTS_FETCH_ERROR:
+      return fetchListError(state, 'brandDashboardEvents', action.error);
 
     case reportingActions.AGES_FETCH_START:
       return fetchListStart(state, 'ages');

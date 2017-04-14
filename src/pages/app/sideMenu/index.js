@@ -313,8 +313,10 @@ class VerticalSideMenu extends Component {
               <Link activeStyle={styles.sectionActive} key='rankings' style={styles.section} to='/reporting/rankings'>
                 <div style={styles.sectionTitle}>RANKINGS</div>
               </Link>
-            </div>
-          }
+              <Link activeStyle={styles.sectionActive} key='brand-dashboard' style={styles.section} to='/reporting/brand-dashboard'>
+                <div style={styles.sectionTitle}>BRAND DASHBOARD</div>
+              </Link>
+            </div>}
           {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
             <div>
               <div style={styles.seperator}/>

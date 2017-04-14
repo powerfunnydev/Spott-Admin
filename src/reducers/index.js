@@ -39,6 +39,7 @@ import pushNotificationsList from '../pages/content/pushNotifications/list/reduc
 import pushNotificationsEdit from '../pages/content/pushNotifications/edit/reducer';
 import relatedVideoPersist from '../pages/content/_relatedVideo/persist/reducer';
 import reporting from '../pages/reporting/reducer';
+import brandDashboard from '../pages/reporting/brandDashboard/reducer';
 import seasonsCreate from '../pages/content/seasons/create/reducer';
 import seasonsEdit from '../pages/content/seasons/edit/reducer';
 import seasonsList from '../pages/content/seasons/list/reducer';
@@ -171,6 +172,7 @@ export default combineReducers({
   global: globalReducer,
   media,
   reporting,
+  brandDashboard,
   router,
   tvGuide: combineReducers({
     create: tvGuideCreate,

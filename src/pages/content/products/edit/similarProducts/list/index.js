@@ -302,10 +302,10 @@ export default class SimilarProducts extends Component {
           <Table style={styles.customTable}>
             <Headers>
               {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
-              <CustomCel style={[ headerStyles.header, headerStyles.firstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>Product</CustomCel>
-              <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { flex: 2 } ]}>Brand</CustomCel>
-              <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { width: 150 } ]}>Offerings</CustomCel>
-              <CustomCel style={[ headerStyles.header, headerStyles.notFirstHeader, styles.adaptedCustomCel, { width: 30 } ]} />
+              <CustomCel style={[ headerStyles.base, headerStyles.first, styles.adaptedCustomCel, { flex: 2 } ]}>Product</CustomCel>
+              <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 2 } ]}>Brand</CustomCel>
+              <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { width: 150 } ]}>Offerings</CustomCel>
+              <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { width: 30 } ]} />
             </Headers>
             <Rows style={styles.adaptedRows}>
               {similarProducts.get('data').map((similarProduct, index) => {

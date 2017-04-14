@@ -2,9 +2,9 @@
 import React, { Component, PropTypes } from 'react';
 import Select from 'react-select';
 import Radium from 'radium';
+import Immutable from 'immutable';
 import { colors, errorTextStyle } from '../styles';
 import Label from './_label';
-import Immutable from 'immutable';
 
 require('./styles/selectInputStyle.css');
 
@@ -115,7 +115,11 @@ export default class SelectInput extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { onCreateOption, disabled, first, getItemText, getOptions, filter, input, isLoading, label, meta, maxSelect, multiselect, placeholder, required, style } = this.props;
+    const {
+      onCreateOption, disabled, first, getItemText, getOptions, filter, input,
+      isLoading, label, meta, maxSelect, multiselect, optionComponent, placeholder,
+      required, style
+    } = this.props;
     const options = this.props.options ? this.props.options.map((o) => ({ value: o, label: getItemText(o) })) : [];
     onCreateOption && this.state.value && options.push({ value: this.state.value, label: `Add ${this.state.value}`, className: 'Select-create-option-placeholder' });
     let value;
@@ -142,6 +146,7 @@ export default class SelectInput extends Component {
           filterOption={filter ? filter : () => true}
           isLoading={isLoading}
           multi={multiselect}
+          optionComponent={optionComponent}
           options={maxSelected ? [] : options}
           placeholder={placeholder}
           style={mergeStyles([
