@@ -5,16 +5,19 @@ import * as PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
+import Masonry from 'react-masonry-component';
 import PureRender from '../_helpers/pureRenderDecorator';
-import selector from './selector';
 import colors from '../colors';
 import PersistCrop from './persist';
 import SelectFrame from './persist/selectFrame';
+import Crop from './crop';
 import * as actions from './actions';
+import selector from './selector';
 
 import plusIcon from '../_images/plus.svg';
 
 @connect(selector, (dispatch) => ({
+  loadCrops: bindActionCreators(actions.loadCrops, dispatch),
   persistCrop: bindActionCreators(actions.persistCrop, dispatch),
   selectFrame: bindActionCreators(actions.selectFrame, dispatch)
 }))
@@ -35,6 +38,10 @@ export default class Crops extends Component {
     this.onPersistCrop = ::this.onPersistCrop;
   }
 
+  componentDidMount () {
+    this.props.loadCrops();
+  }
+
   onAddSpott (e) {
     e.preventDefault();
     this.setState({ modal: 'selectFrame' });
@@ -47,9 +54,10 @@ export default class Crops extends Component {
     this.setState({ modal: 'createCrop' });
   }
 
-  onPersistCrop (crop) {
+  async onPersistCrop (crop) {
     console.warn('persist crop', crop);
-    this.props.persistCrop(crop);
+    await this.props.persistCrop(crop);
+    await this.props.loadCrops();
   }
 
   static styles = {
@@ -113,24 +121,25 @@ export default class Crops extends Component {
       }
     },
     addSpottButton: {
-      alignItems: 'center',
+      display: 'inline-block',
       border: 'dashed 1px #cacaca',
       borderRadius: 2,
       cursor: 'pointer',
-      display: 'flex',
       height: '12em',
-      justifyContent: 'center',
-      width: '12em'
+      width: '12em',
+      textAlign: 'center',
+      verticalAlign: 'top'
+    },
+    crops: {
+      columnGap: '0.875em',
+      columnFill: 'initial'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { currentLocale, currentScene, selectFrame, supportedLocales } = this.props;
+    const { crops, currentLocale, currentScene, selectFrame, supportedLocales } = this.props;
 
-    console.warn('supportedLocales', supportedLocales);
-
-    // Calculate the procentual width of each item
     return (
       <div style={[ styles.container, this.props.style ]}>
         <div style={styles.scenes.listContainer}>
@@ -138,9 +147,13 @@ export default class Crops extends Component {
             <h1 style={styles.info.title.base}><span style={styles.info.title.emph}>Add crops</span></h1>
             <h2 style={styles.info.subtitle}>Create crops to single-out the most interesting parts of the frames</h2>
           </div>
-          <div style={styles.addSpottButton} onClick={this.onAddSpott}>
-            <img src={plusIcon}/>
-          </div>
+          <Masonry>
+            <div style={styles.addSpottButton} onClick={this.onAddSpott}>
+              <img src={plusIcon}/>
+            </div>
+            {crops.get('data').map((crop) => (<Crop crop={crop} key={crop.get('id')} />))}
+          </Masonry>
+
         </div>
         {this.state.modal === 'selectFrame' &&
           <SelectFrame

@@ -1,37 +1,23 @@
 import { createSelector, createStructuredSelector } from 'reselect';
-import { currentLocaleSelector, currentModalSelector } from '../../../selectors/global';
+import { currentLocaleSelector } from '../../../selectors/global';
 import { createFormValueSelector } from '../../../utils';
-import { serializeFilterHasCountries, serializeFilterHasLanguages } from '../../../reducers/utils';
 import {
   createEntityIdsByRelationSelector,
   createEntityByIdSelector,
-  filterHasCountriesRelationsSelector,
-  filterHasLanguagesRelationsSelector,
   searchStringHasTopicsRelationsSelector,
-  spottsEntitiesSelector,
-  topicsEntitiesSelector,
-  listCharactersEntitiesSelector,
-  listPersonsEntitiesSelector,
-  listProductsEntitiesSelector,
-  searchStringHasCharactersRelationsSelector,
-  searchStringHasPersonsRelationsSelector,
-  searchStringHasProductsRelationsSelector
+  topicsEntitiesSelector
 } from '../../../selectors/data';
 import { List, Map } from 'immutable';
 import {
   appearanceEntitiesSelector,
   characterEntitiesSelector,
-  characterHasAppearancesRelationsSelector,
   createEntitiesByRelationSelector,
   currentVideoIdSelector,
   sceneEntitiesSelector,
-  videoHasCharactersRelationsSelector,
   videoHasScenesRelationsSelector,
-  videoHasSceneGroupsRelationsSelector,
-  sceneGroupEntitiesSelector,
-  videoHasProductsRelationsSelector,
+  videoHasCropsRelationsSelector,
+  listCropEntitiesSelector,
   productEntitiesSelector,
-  productHasAppearancesRelationsSelector,
   sceneHasCharactersRelationsSelector,
   sceneHasProductsRelationsSelector
 } from '../../selectors/common';
@@ -109,7 +95,10 @@ export const allScenesSelector = createSelector(
 export const currentSceneIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'crops', 'currentSceneId' ]);
 const currentSceneSelector = createEntityByIdSelector(sceneEntitiesSelector, currentSceneIdSelector);
 
+const cropsSelector = createEntitiesByRelationSelector(videoHasCropsRelationsSelector, currentVideoIdSelector, listCropEntitiesSelector);
+
 export default createStructuredSelector({
+  crops: cropsSelector,
   currentLocale: currentLocaleSelector,
   currentScene: currentSceneSelector,
   // currentModal: currentModalSelector,

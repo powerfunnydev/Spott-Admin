@@ -9,13 +9,15 @@ import * as characterActions from '../actions/character';
 import * as productActions from '../actions/product';
 import * as videoActions from '../actions/video';
 import * as sceneActions from '../actions/scene';
+import * as cropActions from '../actions/crop';
 
 const appearance = new Schema('appearances', { idAttribute: 'appearanceId' });
 const character = new Schema('characters');
-const sceneGroup = new Schema('sceneGroups');
+const crop = new Schema('crops');
 const product = new Schema('products');
 const productGroup = new Schema('productGroups');
 const scene = new Schema('scenes');
+const sceneGroup = new Schema('sceneGroups');
 
 /**
  * Helper function to fetch an entity and set it's _status to either
@@ -150,13 +152,14 @@ function stripSimilarProducts (similarProducts) {
 export default (state = fromJS({
   entities: {
     appearances: {}, brands: {}, characters: {}, globalAppearances: {}, products: {},
-    productGroups: {}, sceneGroups: {}, scenes: {}, media: {}, videos: {}
+    productGroups: {}, sceneGroups: {}, scenes: {}, listCrops: {}, media: {}, videos: {}
   },
   relations: {
     characterHasAppearances: {}, characterSearch: {}, characterHasProductGroups: {},
     mediumHasProductGroups: {}, productHasAppearances: {}, productHasSimilarProducts: {},
     productSearch: {}, sceneHasCharacters: {}, sceneHasProducts: {}, videoHasCharacters: {},
-    videoHasProducts: {}, videoHasGlobalProducts: {}, videoHasScenes: {}, videoHasSceneGroups: {}
+    videoHasCrops: {}, videoHasProducts: {}, videoHasGlobalProducts: {}, videoHasScenes: {},
+    videoHasSceneGroups: {}
   }
 }), action) => {
   switch (action.type) {
@@ -331,6 +334,12 @@ export default (state = fromJS({
       return state
         .mergeIn([ 'entities', 'scenes' ], sceneEntities)
         .setIn([ 'relations', 'videoHasScenes', action.videoId ], List(scenesResult));
+    }
+    case cropActions.CROPS_FETCH_SUCCESS: {
+      const { entities: { crops: cropEntities }, result: cropsResult } = normalize(action.data, arrayOf(crop));
+      return state
+        .mergeIn([ 'entities', 'listCrops' ], cropEntities)
+        .setIn([ 'relations', 'videoHasCrops', action.videoId ], Map({ _status: LOADED, data: fromJS(cropsResult) }));
     }
     case videoActions.VIDEO_FETCH_START:
       return state.setIn([ 'entities', 'videos', action.videoId ], Map({ _status: FETCHING }));

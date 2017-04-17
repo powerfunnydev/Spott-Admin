@@ -94,6 +94,7 @@
     "react-image-crop": "^2.0.3",
     "react-immutable-proptypes": "2.1.0",
     "react-infinite": "0.10.0",
+    "react-masonry-component": "^5.0.5",
     "react-modal": "1.4.0",
     "react-onclickoutside": "5.8.3",
     "react-redux": "4.4.5",

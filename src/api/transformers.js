@@ -842,6 +842,29 @@ export function transformTopic ({ sourceType, text, uuid }) {
   };
 }
 
+export function transformListCrop ({ area, auditInfo, post: {
+  comment, image, promoted, publishStatus, title, topics }, scene, uuid }) {
+  return {
+    comment,
+    createdBy: auditInfo && auditInfo.createdBy,
+    createdOn: auditInfo && auditInfo.createdOn,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    id: uuid,
+    image: transformImage(image),
+    publishStatus,
+    promoted,
+    region: {
+      height: area.height,
+      width: area.width,
+      x: area.x,
+      y: area.y
+    },
+    title,
+    topics: topics && topics.map(transformTopic)
+  };
+}
+
 export function transformListSpott ({ auditInfo, promoted, publishStatus, title, topics, uuid }) {
   return {
     createdBy: auditInfo && auditInfo.createdBy,

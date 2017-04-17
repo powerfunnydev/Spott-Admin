@@ -1,4 +1,5 @@
 import { get, post } from '../../api/request';
+import { transformListCrop } from '../../api/transformers';
 
 export async function persistCrop (baseUrl, authenticationToken, locale, { basedOnDefaultLocale, comment, cropId, defaultLocale, region, sceneId, title, topicIds = [], locales }) {
   console.warn('test', { basedOnDefaultLocale, comment, cropId, defaultLocale, region, sceneId, title, topicIds, locales });
@@ -32,5 +33,5 @@ export async function persistCrop (baseUrl, authenticationToken, locale, { based
 
 export async function fetchCrops (baseUrl, authenticationToken, locale, { videoId }) {
   const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/sceneCrops`);
-  console.warn('Body', body.data);
+  return body.data.map(transformListCrop);
 }

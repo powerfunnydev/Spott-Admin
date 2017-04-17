@@ -1,9 +1,10 @@
 
 import { fetchCharactersOfScene } from '../../actions/character';
 import { fetchProductsOfScene } from '../../actions/product';
-
 import { searchTopics as dataSearchTopics } from '../../../actions/topic';
 import { createSearchAction } from '../../../utils';
+import { currentVideoIdSelector } from '../../selectors/common';
+import { fetchCrops } from '../../actions/crop';
 
 export const TOPICS_SEARCH_START = 'CROP_EDIT/TOPICS_SEARCH_START';
 export const TOPICS_SEARCH_ERROR = 'CROP_EDIT/TOPICS_SEARCH_ERROR';
@@ -25,5 +26,12 @@ export function loadAppearances (sceneId) {
     await dispatch(fetchProductsOfScene({ sceneId }));
     await dispatch(fetchCharactersOfScene({ sceneId }));
     // TODO load persons
+  };
+}
+
+export function loadCrops () {
+  return (dispatch, getState) => {
+    const videoId = currentVideoIdSelector(getState());
+    dispatch(fetchCrops({ videoId }));
   };
 }
