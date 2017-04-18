@@ -17,6 +17,8 @@ import selector from './selector';
 import plusIcon from '../_images/plus.svg';
 
 @connect(selector, (dispatch) => ({
+  deleteCrop: bindActionCreators(actions.deleteCrop, dispatch),
+  loadCrop: bindActionCreators(actions.fetchCrop, dispatch),
   loadCrops: bindActionCreators(actions.loadCrops, dispatch),
   persistCrop: bindActionCreators(actions.persistCrop, dispatch),
   selectFrame: bindActionCreators(actions.selectFrame, dispatch)
@@ -26,7 +28,13 @@ import plusIcon from '../_images/plus.svg';
 export default class Crops extends Component {
 
   static propTypes = {
+    currentLocale: PropTypes.string.isRequired,
     currentScene: ImmutablePropTypes.map,
+    deleteCrop: PropTypes.func.isRequired,
+    loadCrop: PropTypes.func.isRequired,
+    loadCrops: PropTypes.func.isRequired,
+    persistCrop: PropTypes.func.isRequired,
+    selectFrame: PropTypes.func.isRequired,
     spotts: ImmutablePropTypes.list.isRequired,
     style: PropTypes.object
   };
@@ -34,8 +42,10 @@ export default class Crops extends Component {
   constructor (props) {
     super(props);
     this.onAddSpott = ::this.onAddSpott;
-    this.onSelectFrame = ::this.onSelectFrame;
+    this.onDeleteCrop = ::this.onDeleteCrop;
+    this.onEditCrop = ::this.onEditCrop;
     this.onPersistCrop = ::this.onPersistCrop;
+    this.onSelectFrame = ::this.onSelectFrame;
   }
 
   componentDidMount () {
@@ -47,10 +57,13 @@ export default class Crops extends Component {
     this.setState({ modal: 'selectFrame' });
   }
 
+  async onDeleteCrop (cropId) {
+    await this.props.deleteCrop({ cropId });
+    await this.props.loadCrops();
+  }
+
   onSelectFrame ({ sceneId }) {
-    console.warn('Select', sceneId);
     this.props.selectFrame({ sceneId });
-    console.warn('set state');
     this.setState({ modal: 'createCrop' });
   }
 
@@ -58,6 +71,13 @@ export default class Crops extends Component {
     console.warn('persist crop', crop);
     await this.props.persistCrop(crop);
     await this.props.loadCrops();
+  }
+
+  async onEditCrop (cropId) {
+    const crop = await this.props.loadCrop({ cropId });
+    this.props.selectFrame({ sceneId: crop.sceneId });
+    console.warn('THE CROP', crop);
+    this.setState({ crop, modal: 'editCrop' });
   }
 
   static styles = {
@@ -120,25 +140,26 @@ export default class Crops extends Component {
         fontSize: '0.75em'
       }
     },
-    addSpottButton: {
-      display: 'inline-block',
+    addCropButton: {
+      alignItems: 'center',
       border: 'dashed 1px #cacaca',
       borderRadius: 2,
       cursor: 'pointer',
-      height: '12em',
-      width: '12em',
-      textAlign: 'center',
-      verticalAlign: 'top'
+      display: 'flex',
+      height: '100%',
+      justifyContent: 'center'
     },
-    crops: {
-      columnGap: '0.875em',
-      columnFill: 'initial'
+    addCropContainer: {
+      height: '14em',
+      padding: '0.438em',
+      width: '14em'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { crops, currentLocale, currentScene, selectFrame, supportedLocales } = this.props;
+    const { crops, currentLocale, currentScene, supportedLocales } = this.props;
+    const crop = this.state.crop;
 
     return (
       <div style={[ styles.container, this.props.style ]}>
@@ -148,12 +169,18 @@ export default class Crops extends Component {
             <h2 style={styles.info.subtitle}>Create crops to single-out the most interesting parts of the frames</h2>
           </div>
           <Masonry>
-            <div style={styles.addSpottButton} onClick={this.onAddSpott}>
-              <img src={plusIcon}/>
+            <div style={styles.addCropContainer}>
+              <div style={styles.addCropButton} onClick={this.onAddSpott}>
+                <img src={plusIcon}/>
+              </div>
             </div>
-            {crops.get('data').map((crop) => (<Crop crop={crop} key={crop.get('id')} />))}
+            {crops.get('data').map((crop) => (
+              <Crop
+                crop={crop}
+                key={crop.get('id')}
+                onDelete={this.onDeleteCrop}
+                onEdit={this.onEditCrop}/>))}
           </Masonry>
-
         </div>
         {this.state.modal === 'selectFrame' &&
           <SelectFrame
@@ -170,6 +197,19 @@ export default class Crops extends Component {
             }}
             submitButtonText='Create'
             title='Create crop'
+            onClose={() => this.setState({ modal: null })}
+            onSubmit={this.onPersistCrop}/>}
+        {this.state.modal === 'editCrop' &&
+          <PersistCrop
+            currentScene={currentScene}
+            initialValues={{
+              ...crop,
+              _activeLocale: crop.defaultLocale,
+              cropId: crop.id,
+              topicIds: crop.topics && crop.topics.map(({ id }) => id)
+            }}
+            submitButtonText='Save'
+            title='Edit crop'
             onClose={() => this.setState({ modal: null })}
             onSubmit={this.onPersistCrop}/>}
       </div>

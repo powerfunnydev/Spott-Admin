@@ -15,7 +15,7 @@ export const submit = console.warn;
 
 export const searchTopics = createSearchAction(dataSearchTopics, TOPICS_SEARCH_START, TOPICS_SEARCH_ERROR);
 
-export { persistCrop } from '../../actions/crop';
+export { deleteCrop, fetchCrop, persistCrop } from '../../actions/crop';
 
 export function selectFrame ({ sceneId }) {
   return { sceneId, type: SELECT_FRAME };

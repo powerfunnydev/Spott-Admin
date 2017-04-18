@@ -1,5 +1,5 @@
-import { get, post } from '../../api/request';
-import { transformListCrop } from '../../api/transformers';
+import { del, get, post } from '../../api/request';
+import { transformCrop, transformListCrop } from '../../api/transformers';
 
 export async function persistCrop (baseUrl, authenticationToken, locale, { basedOnDefaultLocale, comment, cropId, defaultLocale, region, sceneId, title, topicIds = [], locales }) {
   console.warn('test', { basedOnDefaultLocale, comment, cropId, defaultLocale, region, sceneId, title, topicIds, locales });
@@ -29,6 +29,15 @@ export async function persistCrop (baseUrl, authenticationToken, locale, { based
     localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
   });
   await post(authenticationToken, locale, `${baseUrl}/v004/video/sceneCrops`, crop);
+}
+
+export async function deleteCrop (baseUrl, authenticationToken, locale, { cropId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/video/sceneCrops/${cropId}`);
+}
+
+export async function fetchCrop (baseUrl, authenticationToken, locale, { cropId }) {
+  const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/video/sceneCrops/${cropId}`);
+  return transformCrop(body);
 }
 
 export async function fetchCrops (baseUrl, authenticationToken, locale, { videoId }) {

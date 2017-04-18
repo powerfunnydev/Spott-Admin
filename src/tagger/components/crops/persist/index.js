@@ -20,11 +20,12 @@ import * as actions from '../actions';
 import { persistCropSelector } from '../selector';
 
 function renderScene ({ appearances, imageUrl, input, tags }) {
+  const region = input.value && input.value.toJS ? input.value.toJS() : input.value;
   return (
     <Scene
       appearances={appearances}
       imageUrl={imageUrl}
-      region={input.value}
+      region={region}
       onSelectionRegion={input.onChange}/>
   );
 }
@@ -139,7 +140,7 @@ export default class PersistCrop extends Component {
                 placeholder='Comment'/>
               <Field
                 component={SelectInput}
-                getItemText={(id) => `(${topicsById.getIn([ id, 'sourceType' ]).toLowerCase()}) ${topicsById.getIn([ id, 'text' ])}`}
+                getItemText={(id) => `(${topicsById.getIn([ id, 'sourceType' ]) && topicsById.getIn([ id, 'sourceType' ]).toLowerCase()}) ${topicsById.getIn([ id, 'text' ])}`}
                 getOptions={searchTopics}
                 isLoading={searchedTopicIds.get('_status') === FETCHING}
                 label='Topics'

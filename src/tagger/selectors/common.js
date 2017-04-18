@@ -109,6 +109,7 @@ export const videoHasSceneGroupsRelationsSelector = (state) => state.getIn([ 'ta
 export const appearanceEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'appearances' ]);
 export const brandEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'brands' ]);
 export const characterEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'characters' ]);
+export const cropEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'crops' ]);
 export const listCropEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'listCrops' ]);
 export const currentSceneSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'scenes', currentSceneIdSelector(state) ]);
 export const globalAppearanceEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'globalAppearances' ]);

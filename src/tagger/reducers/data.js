@@ -151,7 +151,7 @@ function stripSimilarProducts (similarProducts) {
   */
 export default (state = fromJS({
   entities: {
-    appearances: {}, brands: {}, characters: {}, globalAppearances: {}, products: {},
+    appearances: {}, brands: {}, characters: {}, crops: {}, globalAppearances: {}, products: {},
     productGroups: {}, sceneGroups: {}, scenes: {}, listCrops: {}, media: {}, videos: {}
   },
   relations: {
@@ -182,6 +182,16 @@ export default (state = fromJS({
       return state.setIn([ 'entities', 'characters', action.characterId ], Map(action.data));
     case actionTypes.CHARACTER_FETCH_ERROR:
       return state.setIn([ 'entities', 'characters', action.characterId ], Map({ _error: action.error, _status: ERROR }));
+
+    // Crops
+    // -----
+
+    case cropActions.CROP_FETCH_START:
+      return _fetchEntity(state, 'crops', action.cropId);
+    case cropActions.CROP_FETCH_SUCCESS:
+      return state.setIn([ 'entities', 'crops', action.cropId ], fromJS(action.data));
+    case cropActions.CROP_FETCH_ERROR:
+      return state.setIn([ 'entities', 'crops', action.cropId ], Map({ _error: action.error, _status: ERROR }));
 
     // Mediums
     // -------

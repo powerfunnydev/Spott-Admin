@@ -865,6 +865,42 @@ export function transformListCrop ({ area, auditInfo, post: {
   };
 }
 
+export function transformCrop ({ area, auditInfo, post: { defaultLocale, image, localeData, promoted, publishStatus, title, topics }, scene, uuid }) {
+  const crop = {
+    basedOnDefaultLocale: {},
+    comment: {},
+    createdBy: auditInfo && auditInfo.createdBy,
+    createdOn: auditInfo && auditInfo.createdOn,
+    defaultLocale,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    id: uuid,
+    image: transformImage(image),
+    locales: [],
+    publishStatus,
+    promoted,
+    region: {
+      height: area.height,
+      width: area.width,
+      x: area.x,
+      y: area.y
+    },
+    sceneId: scene && scene.uuid,
+    title: {},
+    topics: topics && topics.map(transformTopic)
+  };
+
+  if (localeData) {
+    for (const { basedOnDefaultLocale, comment, locale, title } of localeData) {
+      crop.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      crop.comment[locale] = comment;
+      crop.title[locale] = title;
+      crop.locales.push(locale);
+    }
+  }
+  return crop;
+}
+
 export function transformListSpott ({ auditInfo, promoted, publishStatus, title, topics, uuid }) {
   return {
     createdBy: auditInfo && auditInfo.createdBy,
