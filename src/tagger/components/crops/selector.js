@@ -5,18 +5,21 @@ import {
   createEntityIdsByRelationSelector,
   createEntityByIdSelector,
   searchStringHasTopicsRelationsSelector,
-  topicsEntitiesSelector
+  topicsEntitiesSelector,
+  videoHasCropsRelationsSelector,
+  listCropsEntitiesSelector
 } from '../../../selectors/data';
 import { List, Map } from 'immutable';
 import {
   appearanceEntitiesSelector,
   characterEntitiesSelector,
   createEntitiesByRelationSelector,
+  characterHasAppearancesRelationsSelector,
   currentVideoIdSelector,
   sceneEntitiesSelector,
+  videoHasSceneGroupsRelationsSelector,
   videoHasScenesRelationsSelector,
-  videoHasCropsRelationsSelector,
-  listCropEntitiesSelector,
+  sceneGroupEntitiesSelector,
   productEntitiesSelector,
   sceneHasCharactersRelationsSelector,
   sceneHasProductsRelationsSelector
@@ -44,8 +47,8 @@ export const currentTopicsSearchStringSelector = (state) => state.getIn([ 'tagge
 export const searchedTopicIdsSelector = createEntityIdsByRelationSelector(searchStringHasTopicsRelationsSelector, currentTopicsSearchStringSelector);
 
 // const _sceneGroupsSelector = createEntitiesByRelationSelector(videoHasSceneGroupsRelationsSelector, currentVideoIdSelector, sceneGroupEntitiesSelector);
-// export const characterAppearancesSelector = createEntitiesByRelationSelector(characterHasAppearancesRelationsSelector, currentCharacterIdSelector, appearanceEntitiesSelector);
-// export const productAppearancesSelector = createEntitiesByRelationSelector(productHasAppearancesRelationsSelector, currentProductIdSelector, appearanceEntitiesSelector);
+// const characterAppearancesSelector = createEntitiesByRelationSelector(characterHasAppearancesRelationsSelector, currentCharacterIdSelector, appearanceEntitiesSelector);
+// const productAppearancesSelector = createEntitiesByRelationSelector(productHasAppearancesRelationsSelector, currentProductIdSelector, appearanceEntitiesSelector);
 
 export const allScenesSelector = createSelector(
    currentVideoIdSelector,
@@ -56,7 +59,7 @@ export const allScenesSelector = createSelector(
      return sceneIds.map((sceneId) => scenes.get(sceneId));
    }
  );
-//
+
 // export const visibleScenesSelector = createSelector(
 //   _sceneGroupsSelector,
 //   characterAppearancesSelector,
@@ -92,10 +95,11 @@ export const allScenesSelector = createSelector(
 //     //     (!hideNonKeyFrames || f.get('isKeyFrame')));
 //   }
 // );
+
 export const currentSceneIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'crops', 'currentSceneId' ]);
 const currentSceneSelector = createEntityByIdSelector(sceneEntitiesSelector, currentSceneIdSelector);
 
-const cropsSelector = createEntitiesByRelationSelector(videoHasCropsRelationsSelector, currentVideoIdSelector, listCropEntitiesSelector);
+const cropsSelector = createEntitiesByRelationSelector(videoHasCropsRelationsSelector, currentVideoIdSelector, listCropsEntitiesSelector);
 
 export default createStructuredSelector({
   crops: cropsSelector,
@@ -174,7 +178,6 @@ export const persistCropSelector = createStructuredSelector({
   appearances: appearancesSelector,
   defaultLocale: currentDefaultLocaleSelector,
   searchedTopicIds: searchedTopicIdsSelector,
-
   topicIds: topicIdsSelector,
   topicsById: topicsEntitiesSelector
 });

@@ -19,14 +19,17 @@ import Scene from './scene';
 import * as actions from '../actions';
 import { persistCropSelector } from '../selector';
 
-function renderScene ({ appearances, imageUrl, input, tags }) {
+function renderScene ({ appearances, imageUrl, input, tags, onChange }) {
   const region = input.value && input.value.toJS ? input.value.toJS() : input.value;
   return (
     <Scene
       appearances={appearances}
       imageUrl={imageUrl}
       region={region}
-      onSelectionRegion={input.onChange}/>
+      onSelectionRegion={(newRegion) => {
+        onChange(newRegion);
+        input.onChange(newRegion);
+      }}/>
   );
 }
 
@@ -48,6 +51,7 @@ function validate (values, { t }) {
 @localized
 @connect(persistCropSelector, (dispatch) => ({
   loadAppearances: bindActionCreators(actions.loadAppearances, dispatch),
+  loadCropTopics: bindActionCreators(actions.fetchCropTopics, dispatch),
   searchTopics: bindActionCreators(actions.searchTopics, dispatch)
 }))
 @reduxForm({
@@ -58,17 +62,21 @@ function validate (values, { t }) {
 export default class PersistCrop extends Component {
 
   static propTypes = {
+    change: PropTypes.func.isRequired,
     currentScene: ImmutablePropTypes.map.isRequired,
+    dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
     loadAppearances: PropTypes.func.isRequired,
+    loadCropTopics: PropTypes.func.isRequired,
     scene: ImmutablePropTypes.map,
     searchTopics: PropTypes.func.isRequired,
     searchedTopicIds: ImmutablePropTypes.map.isRequired,
     submitButtonText: PropTypes.string,
     t: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
+    topicIds: PropTypes.array,
     topicsById: ImmutablePropTypes.map.isRequired,
     onClose: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired
@@ -108,7 +116,7 @@ export default class PersistCrop extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      _activeLocale, appearances, currentScene, handleSubmit, searchTopics, searchedTopicIds,
+      _activeLocale, appearances, currentScene, handleSubmit, loadCropTopics, searchTopics, searchedTopicIds,
       submitButtonText, title, topicsById, onClose
     } = this.props;
     console.warn('appearances', appearances && appearances.toJS());
@@ -121,7 +129,20 @@ export default class PersistCrop extends Component {
                 appearances={appearances}
                 component={renderScene}
                 imageUrl={currentScene.get('imageUrl')}
-                name='region'/>
+                name='region'
+                onChange={async (region) => {
+                  const { change, dispatch, loadCropTopics, topicIds } = this.props;
+                  if (topicIds) {
+                    // Load the topics inside the crop. Make sure these are selected.
+                    const { data: topics } = await loadCropTopics({ region, sceneId: currentScene.get('id') });
+                    for (const { id } of topics) {
+                      if (topicIds.indexOf(id) === -1) {
+                        topicIds.push(id);
+                      }
+                    }
+                    dispatch(change('topicIds', topicIds));
+                  }
+                }}/>
             </Section>
           </div>
           <div style={{ width: '35%', display: 'flex', flexDirection: 'column' }}>

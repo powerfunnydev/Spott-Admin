@@ -4,7 +4,7 @@ import { fetchProductsOfScene } from '../../actions/product';
 import { searchTopics as dataSearchTopics } from '../../../actions/topic';
 import { createSearchAction } from '../../../utils';
 import { currentVideoIdSelector } from '../../selectors/common';
-import { fetchCrops } from '../../actions/crop';
+import { fetchCrops } from '../../../actions/crop';
 
 export const TOPICS_SEARCH_START = 'CROP_EDIT/TOPICS_SEARCH_START';
 export const TOPICS_SEARCH_ERROR = 'CROP_EDIT/TOPICS_SEARCH_ERROR';
@@ -15,7 +15,8 @@ export const submit = console.warn;
 
 export const searchTopics = createSearchAction(dataSearchTopics, TOPICS_SEARCH_START, TOPICS_SEARCH_ERROR);
 
-export { deleteCrop, fetchCrop, persistCrop } from '../../actions/crop';
+export { deleteCrop, fetchCrop, persistCrop } from '../../../actions/crop';
+export { fetchCropTopics } from '../../../actions/topic';
 
 export function selectFrame ({ sceneId }) {
   return { sceneId, type: SELECT_FRAME };

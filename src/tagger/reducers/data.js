@@ -9,11 +9,9 @@ import * as characterActions from '../actions/character';
 import * as productActions from '../actions/product';
 import * as videoActions from '../actions/video';
 import * as sceneActions from '../actions/scene';
-import * as cropActions from '../actions/crop';
 
 const appearance = new Schema('appearances', { idAttribute: 'appearanceId' });
 const character = new Schema('characters');
-const crop = new Schema('crops');
 const product = new Schema('products');
 const productGroup = new Schema('productGroups');
 const scene = new Schema('scenes');
@@ -151,14 +149,14 @@ function stripSimilarProducts (similarProducts) {
   */
 export default (state = fromJS({
   entities: {
-    appearances: {}, brands: {}, characters: {}, crops: {}, globalAppearances: {}, products: {},
-    productGroups: {}, sceneGroups: {}, scenes: {}, listCrops: {}, media: {}, videos: {}
+    appearances: {}, brands: {}, characters: {}, globalAppearances: {}, products: {},
+    productGroups: {}, sceneGroups: {}, scenes: {}, media: {}, videos: {}
   },
   relations: {
     characterHasAppearances: {}, characterSearch: {}, characterHasProductGroups: {},
     mediumHasProductGroups: {}, productHasAppearances: {}, productHasSimilarProducts: {},
     productSearch: {}, sceneHasCharacters: {}, sceneHasProducts: {}, videoHasCharacters: {},
-    videoHasCrops: {}, videoHasProducts: {}, videoHasGlobalProducts: {}, videoHasScenes: {},
+    videoHasProducts: {}, videoHasGlobalProducts: {}, videoHasScenes: {},
     videoHasSceneGroups: {}
   }
 }), action) => {
@@ -182,16 +180,6 @@ export default (state = fromJS({
       return state.setIn([ 'entities', 'characters', action.characterId ], Map(action.data));
     case actionTypes.CHARACTER_FETCH_ERROR:
       return state.setIn([ 'entities', 'characters', action.characterId ], Map({ _error: action.error, _status: ERROR }));
-
-    // Crops
-    // -----
-
-    case cropActions.CROP_FETCH_START:
-      return _fetchEntity(state, 'crops', action.cropId);
-    case cropActions.CROP_FETCH_SUCCESS:
-      return state.setIn([ 'entities', 'crops', action.cropId ], fromJS(action.data));
-    case cropActions.CROP_FETCH_ERROR:
-      return state.setIn([ 'entities', 'crops', action.cropId ], Map({ _error: action.error, _status: ERROR }));
 
     // Mediums
     // -------
@@ -344,12 +332,6 @@ export default (state = fromJS({
       return state
         .mergeIn([ 'entities', 'scenes' ], sceneEntities)
         .setIn([ 'relations', 'videoHasScenes', action.videoId ], List(scenesResult));
-    }
-    case cropActions.CROPS_FETCH_SUCCESS: {
-      const { entities: { crops: cropEntities }, result: cropsResult } = normalize(action.data, arrayOf(crop));
-      return state
-        .mergeIn([ 'entities', 'listCrops' ], cropEntities)
-        .setIn([ 'relations', 'videoHasCrops', action.videoId ], Map({ _status: LOADED, data: fromJS(cropsResult) }));
     }
     case videoActions.VIDEO_FETCH_START:
       return state.setIn([ 'entities', 'videos', action.videoId ], Map({ _status: FETCHING }));

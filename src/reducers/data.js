@@ -20,6 +20,7 @@ import * as collectionItemsActions from '../actions/collectionItem';
 import * as commercialActions from '../actions/commercial';
 import * as contentProducersActions from '../actions/contentProducer';
 import * as countryActions from '../actions/country';
+import * as cropActions from '../actions/crop';
 import * as episodeActions from '../actions/episode';
 import * as languageActions from '../actions/language';
 import * as mediaActions from '../actions/media';
@@ -54,6 +55,7 @@ export default (state = fromJS({
     collections: {},
     contentProducers: {},
     countries: {},
+    crops: {},
     events: {},
     faceImages: {}, // Characters and persons has faceImages
     genders: {},
@@ -62,6 +64,7 @@ export default (state = fromJS({
     listCharacters: {}, // listCharacters is the light version of characters, without locales
     listCollectionItems: {},
     listCollections: {},
+    listCrops: {},
     listMedia: {}, // listMedia is the light version of media, without locales
     listMediumCategories: {},
     listProducts: {},
@@ -151,7 +154,8 @@ export default (state = fromJS({
     productHasSimilarProducts: {},
     seasonHasEpisodes: {},
     seriesEntryHasEpisodes: {},
-    seriesEntryHasSeasons: {}
+    seriesEntryHasSeasons: {},
+    videoHasCrops: {}
   }
 }), action) => {
   switch (action.type) {
@@ -487,8 +491,27 @@ export default (state = fromJS({
     case contentProducersActions.CONTENT_PRODUCER_SEARCH_ERROR:
       return searchError(state, 'searchStringHasContentProducers', action.searchString, action.error);
 
+    // Crops
+    // /////
+
+    case cropActions.CROP_FETCH_START:
+      return fetchStart(state, [ 'entities', 'crops', action.cropId ]);
+    case cropActions.CROP_FETCH_SUCCESS: {
+      const newState = action.data.topics && mergeListOfEntities(state, [ 'entities', 'topics' ], action.data.topics) || state;
+      return fetchSuccess(newState, [ 'entities', 'crops', action.cropId ], action.data);
+    }
+    case cropActions.CROP_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'crops', action.cropId ], action.error);
+
+    case cropActions.CROPS_FETCH_START:
+      return searchStart(state, 'videoHasCrops', action.videoId);
+    case cropActions.CROPS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listCrops', 'videoHasCrops', action.videoId, action.data);
+    case cropActions.CROPS_FETCH_ERROR:
+      return searchError(state, 'videoHasCrops', action.videoId, action.error);
+
     // Episodes
-    // /////////////////
+    // ////////
 
     case episodeActions.UPLOAD_POSTER_IMAGE_SUCCESS:
       return fetchSuccess(state, [ 'entities', 'media', action.episodeId ], action.data);
@@ -529,6 +552,9 @@ export default (state = fromJS({
 
     case topicActions.TOPIC_PERSIST_SUCCESS:
       return fetchSuccess(state, [ 'entities', 'topics', action.data.id ], action.data);
+
+    case topicActions.CROP_TOPICS_FETCH_SUCCESS:
+      return mergeListOfEntities(state, [ 'entities', 'topics' ], action.data.data);
 
     // Media
     // /////

@@ -1,5 +1,5 @@
-import { del, get, post } from '../../api/request';
-import { transformCrop, transformListCrop } from '../../api/transformers';
+import { del, get, post } from './request';
+import { transformCrop, transformListCrop } from './transformers';
 
 export async function persistCrop (baseUrl, authenticationToken, locale, { basedOnDefaultLocale, comment, cropId, defaultLocale, region, sceneId, title, topicIds = [], locales }) {
   console.warn('test', { basedOnDefaultLocale, comment, cropId, defaultLocale, region, sceneId, title, topicIds, locales });

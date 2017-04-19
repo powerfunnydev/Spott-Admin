@@ -1,5 +1,5 @@
-import { makeApiActionCreator } from './utils';
 import * as countryApi from '../api/country';
+import { makeApiActionCreator } from './utils';
 
 export const COUNTRIES_FETCH_START = 'COUNTRY/COUNTRIES_FETCH_START';
 export const COUNTRIES_FETCH_SUCCESS = 'COUNTRY/COUNTRIES_FETCH_SUCCESS';
