@@ -1,6 +1,7 @@
 /* eslint-disable react/no-set-state */
 import Radium from 'radium';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import NonKeyFramesHider from './nonKeyFramesHider';
 import Enlarge from './enlarge';
@@ -12,17 +13,17 @@ import colors from '../colors';
 export default class Frame extends Component {
 
   static propTypes = {
-    emptyImage: PropTypes.string.isRequired,
-    filledImage: PropTypes.string.isRequired,
+    emptyImage: PropTypes.string,
+    filledImage: PropTypes.string,
     frame: ImmutablePropTypes.map.isRequired,
-    isKeyFrame: PropTypes.bool.isRequired,
+    isKeyFrame: PropTypes.bool,
     isSelected: PropTypes.bool.isRequired,
     procentualHeightOfWidth: PropTypes.number.isRequired,
     procentualWidth: PropTypes.number.isRequired,
     size: PropTypes.string.isRequired,
     onClickFrame: PropTypes.func.isRequired,
-    onEnlargeFrameSize: PropTypes.func.isRequired,
-    onToggleKeyFrame: PropTypes.func.isRequired
+    onEnlargeFrameSize: PropTypes.func,
+    onToggleKeyFrame: PropTypes.func
   };
 
   constructor (props) {
@@ -133,15 +134,15 @@ export default class Frame extends Component {
         <div key='button' role='button' style={contentStyle} onClick={onClickFrame.bind(this, frame)}>
           <div key='overlay' style={[ styles.overlay.base, hovered && styles.overlay.hovered ]} />
           <div style={styles.buttons}>
-            {hovered &&
+            {hovered && onEnlargeFrameSize &&
               <Enlarge
                 style={styles.enlarge}
                 onEnlarge={onEnlargeFrameSize.bind(null, frame)} />}
-            {(hovered || isKeyFrame) &&
+            {(hovered || isKeyFrame) && emptyImage && filledImage && onToggleKeyFrame &&
               <NonKeyFramesHider
                 emptyImage={emptyImage}
                 filledImage={filledImage}
-                isKeyFrame={isKeyFrame}
+                isKeyFrame={Boolean(isKeyFrame)}
                 single
                 style={styles.framesHider}
                 onToggleKeyFrame={onToggleKeyFrame.bind(null, frame)} />}

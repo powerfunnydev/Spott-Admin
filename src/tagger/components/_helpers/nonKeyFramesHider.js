@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import Radium from 'radium';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import colors from '../colors';
 
 @Radium

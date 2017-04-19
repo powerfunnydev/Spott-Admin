@@ -70,6 +70,7 @@ export default class PersistModal extends Component {
     cancelButtonText: PropTypes.string,
     children: PropTypes.node,
     clearPopUpMessage: PropTypes.func,
+    contentStyle: PropTypes.object,
     createAnother: PropTypes.bool,
     error: PropTypes.any,
     isOpen: PropTypes.bool.isRequired,
@@ -163,7 +164,7 @@ export default class PersistModal extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { cancelButtonText, createAnother, children, isOpen, style, title, onClose,
+    const { cancelButtonText, contentStyle, createAnother, children, isOpen, style, title, onClose,
       onSubmit, submitButtonText, popUpObject, clearPopUpMessage, noContentStyle } = this.props;
     return (
       <ReactModal
@@ -196,7 +197,7 @@ export default class PersistModal extends Component {
               {popUpObject && popUpObject.type === 'info' && popUpObject.message &&
                 <InfoComponent message={popUpObject.message} onClose={clearPopUpMessage}/>
               }
-              <div style={[ !noContentStyle && styles.content ]}>
+              <div style={[ !noContentStyle && styles.content, contentStyle ]}>
                 {children}
               </div>
               <div style={styles.footer}>

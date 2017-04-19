@@ -1,6 +1,7 @@
 /* eslint-disable no-return-assign */
 /* eslint-disable react/no-set-state */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 
 const plusIcon = require('../images/plus.svg');
 

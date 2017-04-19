@@ -1,5 +1,6 @@
 import Radium from 'radium';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import NonKeyFramesHider from '../_helpers/nonKeyFramesHider';
 import Slider from '../_helpers/slider';
 import colors from '../colors';
@@ -10,13 +11,13 @@ const resizeIconImage = require('../_images/resizeIcon.svg');
 export default class BottomBar extends Component {
 
   static propTypes = {
-    emptyImage: PropTypes.string.isRequired,
-    filledImage: PropTypes.string.isRequired,
-    hideNonKeyFrames: PropTypes.bool.isRequired,
+    emptyImage: PropTypes.string,
+    filledImage: PropTypes.string,
+    hideNonKeyFrames: PropTypes.bool,
     info: PropTypes.node,
-    scale: PropTypes.number.isRequired,
-    onScaleChange: PropTypes.func.isRequired,
-    onToggleHideNonKeyFrames: PropTypes.func.isRequired
+    scale: PropTypes.number,
+    onScaleChange: PropTypes.func,
+    onToggleHideNonKeyFrames: PropTypes.func
   };
 
   static styles= {
@@ -67,28 +68,30 @@ export default class BottomBar extends Component {
 
     return (
       <div style={styles.container}>
-        <div title={`Increase/decrease thumbnail size (currently ${13 - this.props.scale} on a row)`}>
+        {this.props.onScaleChange &&
+          <div title={`Increase/decrease thumbnail size (currently ${13 - this.props.scale} on a row)`}>
           <div style={styles.sliderImage}>
             <img src={resizeIconImage} />
           </div>
           <div style={styles.sliderContainer}>
             <Slider max={8} min={5} style={styles.slider} value={this.props.scale} onChange={this.props.onScaleChange}/>
           </div>
-        </div>
+        </div>}
 
         <div style={styles.info}>
           {info}
         </div>
 
-        <div style={styles.buttonContainer}>
-          {/* Hide/show all hidden frames. */}
-          <NonKeyFramesHider
-            emptyImage={emptyImage}
-            filledImage={filledImage}
-            isKeyFrame={hideNonKeyFrames}
-            style={styles.framesHider}
-            onToggleKeyFrame={onToggleHideNonKeyFrames} />
-        </div>
+        {onToggleHideNonKeyFrames &&
+          <div style={styles.buttonContainer}>
+            {/* Hide/show all hidden frames. */}
+            <NonKeyFramesHider
+              emptyImage={emptyImage}
+              filledImage={filledImage}
+              isKeyFrame={hideNonKeyFrames}
+              style={styles.framesHider}
+              onToggleKeyFrame={onToggleHideNonKeyFrames} />
+          </div>}
       </div>
     );
   }

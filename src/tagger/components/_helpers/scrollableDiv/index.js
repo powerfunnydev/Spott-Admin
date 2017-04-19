@@ -1,6 +1,7 @@
 import PerfectScrollbar from 'perfect-scrollbar';
 import Radium from 'radium';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import { findDOMNode } from 'react-dom';
 
 require('./style.css');

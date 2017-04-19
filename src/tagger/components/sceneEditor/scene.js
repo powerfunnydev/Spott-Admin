@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import { DropTarget } from 'react-dnd';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import Appearance from './appearance';

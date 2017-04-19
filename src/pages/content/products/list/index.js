@@ -136,7 +136,7 @@ export default class Products extends Component {
             prefixCls='no-arrow'>
             <img src={`${product.getIn([ 'logo', 'url' ])}?height=150&width=150`} style={styles.logo} />
           </ToolTip>
-        </div> || <div style={styles.logoPlaceholder}/>} {product.get('shortName')}
+        </div> || <div style={styles.logoPlaceholder}/>} {product.get('fullName')}
       </div>
     );
   }

@@ -1,5 +1,6 @@
 /* eslint-disable react/no-set-state */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import CreateCollectionItem from './createCollectionItem';
 import CollectionItem from './collectionItem';

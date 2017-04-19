@@ -17,6 +17,7 @@ export const userRolesSelector = (state) => state.getIn([ 'global', 'authenticat
 export const versionSelector = (state) => state.getIn([ 'global', 'configuration', 'version' ]);
 export const gendersSelector = (state) => state.getIn([ 'global', 'configuration', 'genders' ]);
 export const localeNamesSelector = (state) => state.getIn([ 'global', 'configuration', 'localeNames' ]);
+export const localesSelector = (state) => state.getIn([ 'global', 'configuration', 'locales' ]);
 
 export function createQueryStringArraySelector (field) {
   return createSelector(

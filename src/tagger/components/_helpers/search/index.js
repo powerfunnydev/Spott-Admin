@@ -1,7 +1,8 @@
 /* eslint-disable react/no-set-state */
 /* eslint-disable no-return-assign */
 import Radium from 'radium';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import { Typeahead } from 'react-typeahead';
 import { slowdown } from '../../_helpers/utils';
 import './style.css';

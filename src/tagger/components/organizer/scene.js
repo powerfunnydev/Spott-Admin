@@ -1,6 +1,7 @@
 /* eslint-disable react/no-set-state */
 import Radium from 'radium';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import FramesHider from './framesHider';
 import Enlarge from '../_helpers/enlarge';

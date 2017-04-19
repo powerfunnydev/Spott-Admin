@@ -1,5 +1,6 @@
 import Radium from 'radium';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import { DragSource } from 'react-dnd';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { ContextMenuLayer } from 'react-contextmenu';

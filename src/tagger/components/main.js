@@ -1,5 +1,6 @@
 import Radium from 'radium';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { HotKeys } from 'react-hotkeys';
@@ -12,9 +13,10 @@ import * as organizerActions from '../actions/organizer';
 import * as curatorActions from '../actions/curator';
 import * as mvpActions from '../actions/mvp';
 import { mainSelector } from '../selectors/main';
-import { CURATE, ORGANIZE, TAG, MVP } from '../constants/mainTabTypes';
+import { CROPS, CURATE, ORGANIZE, TAG, MVP } from '../constants/mainTabTypes';
 import { filterKeyEventsInInputFields } from './_helpers/utils';
 import ContextMenus from './contextMenus';
+import Crops from './crops';
 import Curator from './curator';
 import CuratorSidebar from './curator/sidebar';
 import CustomDragLayer from './customDragLayer';
@@ -296,6 +298,10 @@ export default class TaggerApplication extends Component {
             <HotKeys handlers={mvpHandlers} key={MVP} keyMap={mvpKeyMap} style={styles.body}>
               <Mvp style={styles.mvp} />
             </HotKeys>}
+          {activeTab === CROPS &&
+            <div style={styles.body}>
+              <Crops style={styles.mvp} />
+            </div>}
         <Modals />
         <ContextMenus />
         <Toast />

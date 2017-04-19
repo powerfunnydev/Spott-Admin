@@ -12,10 +12,10 @@ import * as sceneActions from '../actions/scene';
 
 const appearance = new Schema('appearances', { idAttribute: 'appearanceId' });
 const character = new Schema('characters');
-const sceneGroup = new Schema('sceneGroups');
 const product = new Schema('products');
 const productGroup = new Schema('productGroups');
 const scene = new Schema('scenes');
+const sceneGroup = new Schema('sceneGroups');
 
 /**
  * Helper function to fetch an entity and set it's _status to either
@@ -156,7 +156,8 @@ export default (state = fromJS({
     characterHasAppearances: {}, characterSearch: {}, characterHasProductGroups: {},
     mediumHasProductGroups: {}, productHasAppearances: {}, productHasSimilarProducts: {},
     productSearch: {}, sceneHasCharacters: {}, sceneHasProducts: {}, videoHasCharacters: {},
-    videoHasProducts: {}, videoHasGlobalProducts: {}, videoHasScenes: {}, videoHasSceneGroups: {}
+    videoHasProducts: {}, videoHasGlobalProducts: {}, videoHasScenes: {},
+    videoHasSceneGroups: {}
   }
 }), action) => {
   switch (action.type) {

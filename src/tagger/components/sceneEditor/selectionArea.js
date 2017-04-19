@@ -1,12 +1,13 @@
 /* eslint-disable react/no-set-state */
 /* eslint-disable no-return-assign */
 import React, { Component, PropTypes } from 'react';
+// import * as PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 
 export default class SelectionArea extends Component {
 
   static propTypes = {
-    children: PropTypes.node.isRequired,
+    children: PropTypes.node,
     disable: PropTypes.bool.isRequired,
     style: PropTypes.object.isRequired,
     // Event that will be fired when a selection was made.

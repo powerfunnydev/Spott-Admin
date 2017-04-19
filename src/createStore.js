@@ -1,9 +1,7 @@
 import { applyMiddleware, createStore } from 'redux';
 import createLogger from 'redux-logger';
-// import { syncHistory } from 'redux-simple-router';
 import { routerMiddleware } from 'react-router-redux';
 import thunkMiddleware from 'redux-thunk';
-import combineActionsMiddleware from 'redux-combine-actions';
 
 /**
  * Creates a Redux store that holds the complete state tree of this app.
@@ -16,8 +14,6 @@ export default function (theHistory, reducers, initialState) {
   const middleware = [];
   // Install react-router-redux's router middleware
   middleware.push(routerMiddleware(theHistory));
-  // Install combine actions middleware
-  middleware.push(combineActionsMiddleware);
   // Install thunk middleware
   middleware.push(thunkMiddleware);
   // Install logging middleware when not in production

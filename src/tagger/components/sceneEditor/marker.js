@@ -1,5 +1,6 @@
 import Radium from 'radium';
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import { DragSource } from 'react-dnd';
 import DefaultAppearanceBehavior from '../_helpers/defaultAppearanceBehavior';
@@ -92,7 +93,8 @@ export class MarkerContainer extends Component {
         marginTop: -18,
         opacity: 0.7,
         position: 'absolute',
-        width: 36
+        width: 36,
+        pointerEvents: 'all'
       },
       hidden: {
         border: '2px dashed #fff'
