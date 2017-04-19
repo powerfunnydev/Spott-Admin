@@ -28,6 +28,7 @@ import plusIcon from '../_images/plus.svg';
 export default class Crops extends Component {
 
   static propTypes = {
+    crops: ImmutablePropTypes.map.isRequired,
     currentLocale: PropTypes.string.isRequired,
     currentScene: ImmutablePropTypes.map,
     deleteCrop: PropTypes.func.isRequired,
@@ -35,7 +36,6 @@ export default class Crops extends Component {
     loadCrops: PropTypes.func.isRequired,
     persistCrop: PropTypes.func.isRequired,
     selectFrame: PropTypes.func.isRequired,
-    spotts: ImmutablePropTypes.list.isRequired,
     style: PropTypes.object
   };
 
@@ -68,7 +68,6 @@ export default class Crops extends Component {
   }
 
   async onPersistCrop (crop) {
-    console.warn('persist crop', crop);
     await this.props.persistCrop(crop);
     await this.props.loadCrops();
   }
@@ -76,7 +75,6 @@ export default class Crops extends Component {
   async onEditCrop (cropId) {
     const crop = await this.props.loadCrop({ cropId });
     this.props.selectFrame({ sceneId: crop.sceneId });
-    console.warn('THE CROP', crop);
     this.setState({ crop, modal: 'editCrop' });
   }
 
@@ -85,10 +83,6 @@ export default class Crops extends Component {
       backgroundColor: '#000',
       outline: 0,
       position: 'relative'
-      // paddingTop: '2em',
-      // paddingBottom: '2em',
-      // paddingLeft: '2.5em',
-      // paddingRight: '2.5em'
     },
     scenes: {
       listContainer: {
@@ -158,7 +152,7 @@ export default class Crops extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { crops, currentLocale, currentScene, supportedLocales } = this.props;
+    const { crops, currentLocale, currentScene, locales, supportedLocales } = this.props;
     const crop = this.state.crop;
 
     return (
@@ -192,7 +186,7 @@ export default class Crops extends Component {
             initialValues={{
               _activeLocale: currentLocale,
               defaultLocale: currentLocale,
-              locales: [ currentLocale ],
+              locales,
               sceneId: currentScene.get('id')
             }}
             submitButtonText='Create'

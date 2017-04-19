@@ -2,8 +2,6 @@ import { del, get, post } from './request';
 import { transformCrop, transformListCrop } from './transformers';
 
 export async function persistCrop (baseUrl, authenticationToken, locale, { basedOnDefaultLocale, comment, cropId, defaultLocale, region, sceneId, title, topicIds = [], locales }) {
-  console.warn('test', { basedOnDefaultLocale, comment, cropId, defaultLocale, region, sceneId, title, topicIds, locales });
-
   let crop = {};
   if (cropId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/video/sceneCrops/${cropId}`);
@@ -17,7 +15,7 @@ export async function persistCrop (baseUrl, authenticationToken, locale, { based
   crop.post.defaultLocale = defaultLocale;
   crop.post.topics = topicIds.map((uuid) => ({ uuid }));
 
-  crop.post.localeData = crop.post.localeData || []; // Ensure we have locale data
+  crop.post.localeData = [];
   locales.forEach((locale) => {
     let localeData = crop.post.localeData.find((ld) => ld.locale === locale);
     if (!localeData) {

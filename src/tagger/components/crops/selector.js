@@ -1,5 +1,5 @@
 import { createSelector, createStructuredSelector } from 'reselect';
-import { currentLocaleSelector } from '../../../selectors/global';
+import { currentLocaleSelector, localesSelector } from '../../../selectors/global';
 import { createFormValueSelector } from '../../../utils';
 import {
   createEntityIdsByRelationSelector,
@@ -32,6 +32,7 @@ const formErrorsSelector = (state) => { return state.getIn([ 'form', formName, '
 const valuesSelector = (state) => state.getIn([ 'form', formName, 'values' ]);
 const currentDefaultLocaleSelector = createFormValueSelector(formName, 'defaultLocale');
 const _activeLocaleSelector = createFormValueSelector(formName, '_activeLocale');
+const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 
 const spottTagsSelector = createSelector(
   createFormValueSelector(formName, 'tags'),
@@ -105,17 +106,7 @@ export default createStructuredSelector({
   crops: cropsSelector,
   currentLocale: currentLocaleSelector,
   currentScene: currentSceneSelector,
-  // currentModal: currentModalSelector,
-  // currentSpott: currentSpottSelector,
-
-  // errors: formErrorsSelector,
-  // formValues: valuesSelector,
-  // popUpMessage: popUpMessageSelector,
-  // productsById: listProductsEntitiesSelector,
-
-  spotts: () => List()
-  // tags: spottTagsSelector,
-
+  locales: localesSelector
 });
 
 // Select a crop modal
@@ -177,7 +168,9 @@ export const persistCropSelector = createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
   appearances: appearancesSelector,
   defaultLocale: currentDefaultLocaleSelector,
+  errors: formErrorsSelector,
   searchedTopicIds: searchedTopicIdsSelector,
+  supportedLocales: supportedLocalesSelector,
   topicIds: topicIdsSelector,
   topicsById: topicsEntitiesSelector
 });

@@ -14,6 +14,7 @@ export default class Scene extends Component {
   static propTypes = {
     appearances: ImmutablePropTypes.list.isRequired,
     imageUrl: PropTypes.string.isRequired,
+    region: PropTypes.object,
     onSelectionRegion: PropTypes.func.isRequired
   };
 
@@ -24,12 +25,7 @@ export default class Scene extends Component {
 
   static styles = {
     container: {
-      paddingRight: '1.5em',
       position: 'relative'
-      // alignItems: 'center',
-      // display: 'flex',
-      // flexDirection: 'column',
-      // justifyContent: 'center'
     },
     wrapper: {
       display: 'inline-block',
@@ -52,7 +48,6 @@ export default class Scene extends Component {
 
   renderTooltip (hoveredAppearanceTuple) {
     if (hoveredAppearanceTuple) {
-      console.warn('hoveredAppearanceTuple', hoveredAppearanceTuple.toJS());
       const point = hoveredAppearanceTuple.getIn([ 'appearance', 'point' ]);
 
       return (

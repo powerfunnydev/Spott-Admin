@@ -26,7 +26,7 @@ export async function persistTopic (baseUrl, authenticationToken, locale, { text
 }
 
 export async function fetchCropTopics (baseUrl, authenticationToken, locale, { region: { height, width, x, y }, sceneId }) {
-  const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/video/scenes/${sceneId}/topics?height=${Math.round(height)}&width=${Math.round(width)}&x=${x}&y=${y}`);
+  const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/video/scenes/${sceneId}/topics?height=${Math.round(height)}&width=${Math.round(width)}&x=${Math.round(x)}&y=${Math.round(y)}`);
   body.data = body.data.map(transformTopic);
   return body;
 }

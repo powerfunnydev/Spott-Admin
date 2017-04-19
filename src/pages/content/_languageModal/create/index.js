@@ -49,6 +49,7 @@ export default class CreateLanguageModal extends Component {
           filter={(option, filter) => {
             return option && filter ? localeNames.get(option.value).toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
           }}
+          first
           getItemText={(language) => (localeNames.get(language))}
           label= 'Add language'
           name='language'

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-set-state */
 import React, { Component } from 'react';
 import * as PropTypes from 'prop-types';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
@@ -5,22 +6,22 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { EditTemplate, FormSubtitle } from '../../../../pages/_common/styles';
+import { colors } from '../../../../pages/_common/styles';
+import CreateLanguageModal from '../../../../pages/content/_languageModal/create';
+import LanguageBar from '../../../../pages/_common/components/languageBar';
 import Section from '../../../../pages/_common/section';
 import SelectInput from '../../../../pages/_common/inputs/selectInput';
-import RadioInput from '../../../../pages/_common/inputs/radioInput';
 import TextInput from '../../../../pages/_common/inputs/textInput';
 import localized from '../../../../pages/_common/decorators/localized';
 import PersistModal, { dialogStyle } from '../../../../pages/_common/components/persistModal';
 import { FETCHING } from '../../../../constants/statusTypes';
-import { slowdown } from '../../../../utils';
 import Scene from './scene';
 
 import * as actions from '../actions';
 import { persistCropSelector } from '../selector';
 
 function renderScene ({ appearances, imageUrl, input, tags, onChange }) {
-  const region = input.value && input.value.toJS ? input.value.toJS() : input.value;
+  const region = input.value && input.value.toJS ? input.value.toJS() : input.value || null;
   return (
     <Scene
       appearances={appearances}
@@ -43,7 +44,6 @@ function validate (values, { t }) {
     validationErrors.title = validationErrors.title || {};
     validationErrors.title[_activeLocale] = t('common.errors.required');
   }
-  console.warn('errors', validationErrors);
   // Done
   return validationErrors;
 }
@@ -62,10 +62,13 @@ function validate (values, { t }) {
 export default class PersistCrop extends Component {
 
   static propTypes = {
+    _activeLocale: PropTypes.string,
+    appearances: ImmutablePropTypes.list,
     change: PropTypes.func.isRequired,
     currentScene: ImmutablePropTypes.map.isRequired,
+    defaultLocale: PropTypes.string,
     dispatch: PropTypes.func.isRequired,
-    error: PropTypes.any,
+    errors: PropTypes.object,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
     loadAppearances: PropTypes.func.isRequired,
@@ -74,6 +77,7 @@ export default class PersistCrop extends Component {
     searchTopics: PropTypes.func.isRequired,
     searchedTopicIds: ImmutablePropTypes.map.isRequired,
     submitButtonText: PropTypes.string,
+    supportedLocales: PropTypes.any,
     t: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
     topicIds: PropTypes.array,
@@ -84,12 +88,35 @@ export default class PersistCrop extends Component {
 
   constructor (props) {
     super(props);
+    this.languageAdded = ::this.languageAdded;
+    this.removeLanguage = ::this.removeLanguage;
     this.submit = ::this.submit;
+    this.onSetDefaultLocale = ::this.onSetDefaultLocale;
   }
 
   componentDidMount () {
     const { currentScene, loadAppearances } = this.props;
     loadAppearances(currentScene.get('id'));
+  }
+
+  languageAdded (form) {
+    const { language } = form && form.toJS();
+    const { dispatch, change, supportedLocales } = this.props;
+    if (language) {
+      const newSupportedLocales = supportedLocales.push(language);
+      dispatch(change('locales', newSupportedLocales));
+      dispatch(change('_activeLocale', language));
+    }
+    this.setState({ modal: null });
+  }
+
+  removeLanguage () {
+    const { dispatch, change, supportedLocales, _activeLocale, defaultLocale } = this.props;
+    if (_activeLocale) {
+      const newSupportedLocales = supportedLocales.delete(supportedLocales.indexOf(_activeLocale));
+      dispatch(change('locales', newSupportedLocales));
+      dispatch(change('_activeLocale', defaultLocale));
+    }
   }
 
   async submit (form) {
@@ -102,7 +129,20 @@ export default class PersistCrop extends Component {
     }
   }
 
+  onSetDefaultLocale (locale) {
+    const { change, dispatch, _activeLocale } = this.props;
+    dispatch(change('defaultLocale', _activeLocale));
+  }
+
   static styles = {
+    languageSection: {
+      backgroundColor: colors.lightGray4,
+      borderBottom: `1px solid ${colors.lightGray2}`
+    },
+    languageSectionInner: {
+      paddingBottom: 0,
+      paddingTop: 0
+    },
     modal: {
       ...dialogStyle,
       content: {
@@ -110,43 +150,63 @@ export default class PersistCrop extends Component {
         maxHeight: '95%',
         maxWidth: '90%'
       }
+    },
+    modalContent: {
+      paddingTop: 0,
+      paddingBottom: 0,
+      paddingRight: 0,
+      paddingLeft: 0
     }
   };
 
   render () {
     const styles = this.constructor.styles;
     const {
-      _activeLocale, appearances, currentScene, handleSubmit, loadCropTopics, searchTopics, searchedTopicIds,
+      _activeLocale, appearances, currentScene, defaultLocale, errors, handleSubmit,
+      searchTopics, searchedTopicIds, supportedLocales,
       submitButtonText, title, topicsById, onClose
     } = this.props;
-    console.warn('appearances', appearances && appearances.toJS());
+    const currentModal = this.state.modal;
     return (
-      <PersistModal isOpen style={styles.modal} submitButtonText={submitButtonText} title={title} onClose={onClose} onSubmit={handleSubmit(this.submit)}>
-        <div style={{ display: 'flex', marginTop: -1 }}>
-          <div style={{ width: '65%' }}>
-            <Section innerStyle={{ paddingBottom: 0, paddingTop: 0 }} style={{ backgroundColor: 'none', marginTop: 0, marginRight: -1 }}>
+      <PersistModal contentStyle={styles.modalContent} isOpen style={styles.modal} submitButtonText={submitButtonText} title={title} onClose={onClose} onSubmit={handleSubmit(this.submit)}>
+        {currentModal === 'createLanguage' &&
+          <CreateLanguageModal
+            supportedLocales={supportedLocales}
+            onCloseClick={() => this.setState({ modal: null })}
+            onCreate={this.languageAdded}/>}
+        <div style={{ display: 'flex' }}>
+          <div style={{ width: '60%', padding: '1.5em', borderRight: `1px solid ${colors.lightGray2}` }}>
+            <Section innerStyle={{ paddingBottom: 0, paddingTop: 0 }} style={{ backgroundColor: 'none', marginTop: 0 }}>
               <Field
                 appearances={appearances}
                 component={renderScene}
                 imageUrl={currentScene.get('imageUrl')}
                 name='region'
                 onChange={async (region) => {
-                  const { change, dispatch, loadCropTopics, topicIds } = this.props;
-                  if (topicIds) {
-                    // Load the topics inside the crop. Make sure these are selected.
-                    const { data: topics } = await loadCropTopics({ region, sceneId: currentScene.get('id') });
-                    for (const { id } of topics) {
-                      if (topicIds.indexOf(id) === -1) {
-                        topicIds.push(id);
-                      }
+                  const { change, dispatch, loadCropTopics, topicIds = [] } = this.props;
+                  // Load the topics inside the crop. Make sure these are selected.
+                  const { data: topics } = await loadCropTopics({ region, sceneId: currentScene.get('id') });
+                  for (const { id } of topics) {
+                    if (topicIds.indexOf(id) === -1) {
+                      topicIds.push(id);
                     }
-                    dispatch(change('topicIds', topicIds));
                   }
+                  dispatch(change('topicIds', topicIds));
                 }}/>
             </Section>
           </div>
-          <div style={{ width: '35%', display: 'flex', flexDirection: 'column' }}>
-            <Section clearPopUpMessage={this.props.closePopUpMessage} innerStyle={{ paddingBottom: 0, paddingTop: 0 }} popUpObject={this.props.popUpMessage} style={{ backgroundColor: 'none', height: '100%' }}>
+          <div style={{ width: '40%', display: 'flex', flexDirection: 'column' }}>
+            <Section innerStyle={styles.languageSectionInner} style={styles.languageSection}>
+              <LanguageBar
+                _activeLocale={_activeLocale}
+                defaultLocale={defaultLocale}
+                errors={errors}
+                openCreateLanguageModal={() => this.setState({ modal: 'createLanguage' })}
+                removeLanguage={this.removeLanguage}
+                supportedLocales={supportedLocales}
+                onSetDefaultLocale={this.onSetDefaultLocale}/>
+            </Section>
+            <Section innerStyle={{ paddingLeft: 22.5, paddingRight: 22.5, paddingBottom: 15, paddingTop: 15 }} style={{ backgroundColor: 'none', height: '100%' }}>
               <Field
                 component={TextInput}
                 first
