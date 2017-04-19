@@ -39,6 +39,6 @@ export async function fetchCrop (baseUrl, authenticationToken, locale, { cropId 
 }
 
 export async function fetchCrops (baseUrl, authenticationToken, locale, { videoId }) {
-  const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/sceneCrops`);
+  const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/sceneCrops?pageSize=1000`);
   return body.data.map(transformListCrop);
 }

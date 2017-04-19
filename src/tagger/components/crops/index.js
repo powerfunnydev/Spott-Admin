@@ -11,6 +11,7 @@ import colors from '../colors';
 import PersistCrop from './persist';
 import SelectFrame from './persist/selectFrame';
 import Crop from './crop';
+import BottomBar from '../_helpers/bottomBar';
 import * as actions from './actions';
 import selector from './selector';
 
@@ -34,9 +35,11 @@ export default class Crops extends Component {
     deleteCrop: PropTypes.func.isRequired,
     loadCrop: PropTypes.func.isRequired,
     loadCrops: PropTypes.func.isRequired,
+    locales: PropTypes.any,
     persistCrop: PropTypes.func.isRequired,
     selectFrame: PropTypes.func.isRequired,
-    style: PropTypes.object
+    style: PropTypes.object,
+    supportedLocales: PropTypes.array
   };
 
   constructor (props) {
@@ -168,14 +171,17 @@ export default class Crops extends Component {
                 <img src={plusIcon}/>
               </div>
             </div>
-            {crops.get('data').map((crop) => (
+            {crops.get('data').map((c) => (
               <Crop
-                crop={crop}
-                key={crop.get('id')}
+                crop={c}
+                key={c.get('id')}
                 onDelete={this.onDeleteCrop}
                 onEdit={this.onEditCrop}/>))}
           </Masonry>
         </div>
+        {/* Render bottom bar. */}
+        <BottomBar info={`${crops.get('data').size} crops`} />
+        {/* Render modals. */}
         {this.state.modal === 'selectFrame' &&
           <SelectFrame
             onClose={() => this.state.modal === 'selectFrame' && this.setState({ modal: null })}

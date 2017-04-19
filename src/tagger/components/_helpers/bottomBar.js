@@ -76,7 +76,7 @@ export default class BottomBar extends Component {
           <div style={styles.sliderContainer}>
             <Slider max={8} min={5} style={styles.slider} value={this.props.scale} onChange={this.props.onScaleChange}/>
           </div>
-        </div>}
+        </div> || <div/>}
 
         <div style={styles.info}>
           {info}
@@ -91,7 +91,7 @@ export default class BottomBar extends Component {
               isKeyFrame={hideNonKeyFrames}
               style={styles.framesHider}
               onToggleKeyFrame={onToggleHideNonKeyFrames} />
-          </div>}
+          </div> || <div/>}
       </div>
     );
   }
