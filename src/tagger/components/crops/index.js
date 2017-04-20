@@ -35,7 +35,6 @@ export default class Crops extends Component {
     deleteCrop: PropTypes.func.isRequired,
     loadCrop: PropTypes.func.isRequired,
     loadCrops: PropTypes.func.isRequired,
-    locales: PropTypes.any,
     persistCrop: PropTypes.func.isRequired,
     selectFrame: PropTypes.func.isRequired,
     style: PropTypes.object,
@@ -155,7 +154,7 @@ export default class Crops extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { crops, currentLocale, currentScene, locales, supportedLocales } = this.props;
+    const { crops, currentLocale, currentScene, supportedLocales } = this.props;
     const crop = this.state.crop;
 
     return (
@@ -192,7 +191,7 @@ export default class Crops extends Component {
             initialValues={{
               _activeLocale: currentLocale,
               defaultLocale: currentLocale,
-              locales,
+              locales: [ currentLocale ],
               sceneId: currentScene.get('id')
             }}
             submitButtonText='Create'
@@ -202,6 +201,7 @@ export default class Crops extends Component {
         {this.state.modal === 'editCrop' &&
           <PersistCrop
             currentScene={currentScene}
+            edit
             initialValues={{
               ...crop,
               _activeLocale: crop.defaultLocale,

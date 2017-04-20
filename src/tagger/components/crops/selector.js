@@ -105,8 +105,7 @@ const cropsSelector = createEntitiesByRelationSelector(videoHasCropsRelationsSel
 export default createStructuredSelector({
   crops: cropsSelector,
   currentLocale: currentLocaleSelector,
-  currentScene: currentSceneSelector,
-  locales: localesSelector
+  currentScene: currentSceneSelector
 });
 
 // Select a crop modal

@@ -40,7 +40,7 @@ function validate (values, { t }) {
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
   if (!region) { validationErrors.region = t('common.errors.required'); }
   if (!sceneId) { validationErrors.sceneId = t('common.errors.required'); }
-  if (title && !title[_activeLocale]) {
+  if (!title || !title[_activeLocale]) {
     validationErrors.title = validationErrors.title || {};
     validationErrors.title[_activeLocale] = t('common.errors.required');
   }
@@ -68,6 +68,7 @@ export default class PersistCrop extends Component {
     currentScene: ImmutablePropTypes.map.isRequired,
     defaultLocale: PropTypes.string,
     dispatch: PropTypes.func.isRequired,
+    edit: PropTypes.bool,
     errors: PropTypes.object,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
