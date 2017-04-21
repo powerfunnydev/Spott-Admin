@@ -61,13 +61,20 @@ export async function fetchAgeData (baseUrl, authenticationToken, locale) {
 }
 
 export async function fetchDateData (baseUrl, authenticationToken, locale, { ages, brandId, eventIds, endDate, genders, startDate }) {
-  const result = {};
+  const eventData = {};
   for (const eventId of eventIds) {
-    const url = `${baseUrl}/v004/report/reports/brands/dateGraph?ageRanges=${ages.join(',')}&brandUuid=${brandId}&genders=${genders.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}`;
+    const url = `${baseUrl}/v004/report/reports/brands/dateGraph?ageRanges=${ages.join(',')}&brandUuid=${brandId}&eventType=${eventId}&genders=${genders.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}`;
     const { body } = await get(authenticationToken, locale, url);
-    result[eventId] = body.data;
+    eventData[eventId] = body.data;
   }
-  return result;
+
+  const url = `${baseUrl}/v004/report/reports/brands/userGraph?ageRanges=${ages.join(',')}&brandUuid=${brandId}&eventType=${eventIds.join(',')}&genders=${genders.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}`;
+  const { body: { data: userData } } = await get(authenticationToken, locale, url);
+
+  return {
+    eventData,
+    userData
+  };
 }
 
 const metrics = {

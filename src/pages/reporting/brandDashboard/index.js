@@ -24,6 +24,7 @@ import Widget from './widget';
 import ImageTitle from './imageTitle';
 import OpportunitiesWidget from './opportunitiesWidget';
 import * as actions from './actions';
+import { arraysEqual } from '../../../utils';
 import selector, { topMediaPrefix, topPeoplePrefix, topProductsPrefix } from './selector';
 
 const colorStyle = {
@@ -249,6 +250,7 @@ export default class BrandDashboard extends Component {
   async componentDidMount () {
     const location = this.props.location;
     const query = {
+      brandActivityEvents: [ 'PRODUCT_IMPRESSIONS' ],
       // We assume the ALL event will be always there.
       endDate: moment().startOf('day').format('YYYY-MM-DD'),
       startDate: moment().startOf('day').subtract(1, 'months').date(1).format('YYYY-MM-DD'),
@@ -258,19 +260,22 @@ export default class BrandDashboard extends Component {
 
     await this.props.loadEvents();
     await this.props.loadKeyMetrics();
-    await this.props.loadTopMedia();
-    await this.props.loadTopPeople();
+    // await this.props.loadTopMedia();
+    // await this.props.loadTopPeople();
     await this.props.loadDateData();
   }
 
-  onChangeFilter (field, type, value) {
-    this.props.routerPushWithReturnTo({
+  async onChangeFilter (field, type, value) {
+    await this.props.routerPushWithReturnTo({
       ...this.props.location,
       query: {
         ...this.props.location.query,
         [field]: value
       }
     });
+
+    await this.props.loadKeyMetrics();
+    await this.props.loadDateData();
   }
 
   static styles = {
@@ -431,10 +436,10 @@ export default class BrandDashboard extends Component {
               <Highcharts config={genderConfig} isPureConfig />
             </Widget>
           </div>
-          <MapWidget style={styles.paddingBottom} title='Brand activity by region' />
+          {/* <MapWidget style={styles.paddingBottom} title='Brand activity by region' /> */}
 
-          <DemographicsWidget style={styles.paddingBottom} title='Demographics' />
-          <OpportunitiesWidget style={styles.paddingBottom}/>
+          {/* <DemographicsWidget style={styles.paddingBottom} title='Demographics' />
+          <OpportunitiesWidget style={styles.paddingBottom}/> */}
         </Container>
         {children}
       </SideMenu>

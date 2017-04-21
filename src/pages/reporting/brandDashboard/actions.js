@@ -96,8 +96,16 @@ export function loadDateData () {
       const endDate = moment(query.endDate);
       const startDate = moment(query.startDate);
 
-      const args = { ages, brandId, eventIds, endDate, genders, languages, startDate };
-
+      const args = {
+        ages,
+        brandId,
+        eventIds: eventIds.filter((e) => e !== 'undefined'),
+        endDate,
+        genders,
+        languages,
+        startDate
+      };
+      console.warn('Fetch date data', args);
       return await dispatch(fetchDateData(args));
     }
   };

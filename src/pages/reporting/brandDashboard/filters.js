@@ -74,8 +74,6 @@ export default class Filters extends Component {
       ages, agesById, fields, genders, gendersById, languagesById, style, onChange
     } = this.props;
 
-    console.warn('languages', this.props.languagesById.toJS());
-
     return (
       <form style={[ styles.container, style ]}>
         <SelectInput
@@ -87,7 +85,7 @@ export default class Filters extends Component {
           name='ages'
           options={ages.get('data').map((e) => e.get('id')).toJS()}
           placeholder='Age'
-          style={[ styles.field, { flex: 2 } ]}
+          style={[ styles.field, { flex: 3 } ]}
           onChange={onChange.bind(null, 'ages', 'array')} />
         <SelectInput
           getItemText={(id) => gendersById.getIn([ id, 'description' ])}
@@ -98,9 +96,9 @@ export default class Filters extends Component {
           name='genders'
           options={genders.get('data').map((e) => e.get('id')).toJS()}
           placeholder='Gender'
-          style={[ styles.field, { flex: 1.5 } ]}
+          style={[ styles.field, { flex: 3 } ]}
           onChange={onChange.bind(null, 'genders', 'array')} />
-        <SelectInput
+        {/* <SelectInput
           getItemText={(id) => languagesById.getIn([ id, 'name' ])}
           input={{ value: fields.languages }}
           label='Language'
@@ -109,8 +107,8 @@ export default class Filters extends Component {
           options={languagesById.keySeq().toJS()}
           placeholder='Languages'
           style={[ styles.field, { flex: 2 } ]}
-          onChange={onChange.bind(null, 'languages', 'array')} />
-        <div style={{ display: 'flex', flex: 3.5, marginLeft: 20 }}>
+          onChange={onChange.bind(null, 'languages', 'array')} /> */}
+        <div style={{ display: 'flex', flex: 4, marginLeft: 20 }}>
           <DateInput
             dateFormat='D MMMM YYYY'
             first

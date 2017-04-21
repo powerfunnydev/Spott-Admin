@@ -70,21 +70,21 @@ export const dateDataConfig = fromJS({
         enabled: true
       }
     }
-  },
-  series: [ {
-    type: 'column',
-    data: [ [ new Date().getTime(), 1000 ], [ new Date().getTime() + 100000000, 690 ], [ new Date().getTime() + 200000000, 650 ], [ new Date().getTime() + 300000000, 600 ] ],
-    name: 'users',
-    yAxis: 1
-  }, {
-    type: 'spline',
-    data: [ [ new Date().getTime(), 890 ], [ new Date().getTime() + 100000000, 590 ], [ new Date().getTime() + 200000000, 450 ], [ new Date().getTime() + 300000000, 600 ] ],
-    name: 'Impressions'
-  }, {
-    type: 'spline',
-    data: [ [ new Date().getTime(), 560 ], [ new Date().getTime() + 100000000, 510 ], [ new Date().getTime() + 200000000, 410 ], [ new Date().getTime() + 300000000, 510 ] ],
-    name: 'Subscriptions'
-  } ]
+  }
+  // series: [ {
+  //   type: 'column',
+  //   data: [ [ new Date().getTime(), 1000 ], [ new Date().getTime() + 100000000, 690 ], [ new Date().getTime() + 200000000, 650 ], [ new Date().getTime() + 300000000, 600 ] ],
+  //   name: 'users',
+  //   yAxis: 1
+  // }, {
+  //   type: 'spline',
+  //   data: [ [ new Date().getTime(), 890 ], [ new Date().getTime() + 100000000, 590 ], [ new Date().getTime() + 200000000, 450 ], [ new Date().getTime() + 300000000, 600 ] ],
+  //   name: 'Impressions'
+  // }, {
+  //   type: 'spline',
+  //   data: [ [ new Date().getTime(), 560 ], [ new Date().getTime() + 100000000, 510 ], [ new Date().getTime() + 200000000, 410 ], [ new Date().getTime() + 300000000, 510 ] ],
+  //   name: 'Subscriptions'
+  // } ]
 });
 
 export const ageConfig = {

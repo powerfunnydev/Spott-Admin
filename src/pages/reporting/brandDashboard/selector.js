@@ -69,25 +69,45 @@ const dateDataConfigSelector = createSelector(
   brandDashboardEventsEntitiesSelector,
   dateDataSelector,
   (_eventIds, eventsById, dateData) => {
+    console.warn('Date data', dateData);
     const series = [];
     // Filter unknown types.
     const eventIds = _eventIds.filter((eventId) => eventsById.get(eventId));
     const eventTypes = eventIds.map((eventId) => eventsById.getIn([ eventId, 'description' ])).join(', ');
-    if (eventTypes) {
+    const colors = [];
+
+    if (eventTypes && dateData.get('eventData') && dateData.get('userData')) {
+      // Add the lines for each of the event types.
       for (const eventId of eventIds) {
-        const d = (dateData.get(eventId) && dateData.get(eventId).toJS()) || [];
+        const eventData = dateData.getIn([ 'eventData', eventId ]);
+        const d = (eventData && eventData.toJS()) || [];
         // There should be data available, otherwise Highcharts will crash.
         if (d.length > 0) {
+          colors.push(eventsById.getIn([ eventId, 'color' ]));
           series.push({
             data: d.map(({ timestamp, value }) => ([ new Date(timestamp).getTime(), value ])),
             name: eventsById.getIn([ eventId, 'description' ]),
-            type: 'spline'
+            type: 'spline',
+            zIndex: 2
           });
         }
       }
+
+      // Add columns for the user count.
+      const d = dateData.get('userData').toJS();
+      // Add user column color.
+      colors.push('#eaeced');
+      series.push({
+        data: d.map(({ timestamp, value }) => ([ new Date(timestamp).getTime(), value ])),
+        name: 'Users',
+        type: 'column',
+        yAxis: 1,
+        zIndex: 1
+      });
     }
 
     return dateDataConfig
+      .set('colors', colors)
       .setIn([ 'tooltip', 'headerFormat' ], dateDataConfig.getIn([ 'tooltip', 'headerFormat' ]).replace('{eventType}', eventTypes))
       .set('series', series)
       .toJS();
