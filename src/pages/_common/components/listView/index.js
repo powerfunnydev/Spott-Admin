@@ -7,6 +7,7 @@ import * as globalActions from '../../../../actions/global';
 import { DropdownCel, headerStyles, NONE, sortDirections, CheckBoxCel, Table, Headers, CustomCel, Rows, Row } from '../table/index';
 import { confirmation } from '../../askConfirmation';
 import Dropdown, { styles as dropdownStyles } from '../actionDropdown';
+import { colors } from '../../styles';
 
 const numberOfRows = 25;
 
@@ -48,7 +49,16 @@ export default class ListView extends Component {
     }
   }
 
+  static styles = {
+    noData: {
+      color: colors.darkGray2,
+      textAlign: 'center',
+      lineHeight: '5.25em'
+    }
+  };
+
   render () {
+    const styles = this.constructor.styles;
     const { data, columns, isSelected, selectAllCheckboxes, onSortField, sortField, sortDirection, routerPushWithReturnTo,
       onCheckboxChange, getEditUrl, style } = this.props;
     const { deleteItem } = this;
@@ -93,6 +103,8 @@ export default class ListView extends Component {
           }
         </Headers>
         <Rows isLoading={data.get('_status') !== 'loaded'}>
+          {data.get('data').size === 0 && data.get('_status') === 'loaded' &&
+            <div style={styles.noData}>No data available.</div>}
           {data.get('data').map((item, index) => {
             return (
               <Row index={index} isFirst={index % numberOfRows === 0} key={index} >

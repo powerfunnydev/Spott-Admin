@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import { List, Map } from 'immutable';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -7,12 +6,13 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
 import moment from 'moment';
 import Highcharts from 'react-highcharts';
-import Papa from 'papaparse';
+// import Papa from 'papaparse';
 import * as globalActions from '../../../actions/global';
 import ListView from '../../_common/components/listView/index';
 import { tableDecorator } from '../../_common/components/table/index';
 import MultiSelectInput from '../../_common/inputs/multiSelectInput';
 import { colors, fontWeights, makeTextStyle, Container } from '../../_common/styles';
+import { isLoading } from '../../../constants/statusTypes';
 import { SideMenu } from '../../app/sideMenu';
 import Header from '../../app/multiFunctionalHeader';
 import { ageConfig, genderConfig } from './defaultHighchartsConfig';
@@ -73,7 +73,8 @@ class TopMedia extends Component {
     load: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
-    style: PropTypes.object
+    style: PropTypes.object,
+    onSortField: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -93,9 +94,9 @@ class TopMedia extends Component {
     const { data, load, location: { query: { topMediaSortDirection, topMediaSortField } }, routerPushWithReturnTo, style, onSortField } = this.props;
 
     const columns = [
-      { clickable: true, colspan: 3, convert: this.getTitle, sort: true, sortField: 'TITLE', title: 'TITLE', type: 'custom' },
-      { clickable: true, colspan: 1, name: 'taggedProducts', sort: true, sortField: 'TAGGED_PRODUCTS', title: 'TAGGED PRODUCTS', type: 'custom' },
-      { clickable: true, colspan: 1, name: 'subscriptions', sort: true, sortField: 'SUBSCRIPTIONS', title: 'SUBSCRIPTIONS', type: 'custom' }
+      { clickable: true, colspan: 3, convert: this.getTitle, title: 'TITLE', type: 'custom' },
+      { clickable: true, colspan: 1, name: 'taggedProductCount', sort: true, sortField: 'TAGGED_PRODUCT_COUNT', title: 'TAGGED PRODUCTS', type: 'custom' },
+      { clickable: true, colspan: 1, name: 'subscriptionCount', sort: true, sortField: 'SUBSCRIBER_COUNT', title: 'SUBSCRIPTIONS', type: 'custom' }
     ];
 
     return (
@@ -107,7 +108,12 @@ class TopMedia extends Component {
             load={load}
             sortDirection={topMediaSortDirection}
             sortField={topMediaSortField}
-            onSortField={(name) => onSortField.bind(this, name)} />
+            onSortField={(name) => (...args) => {
+              // Update url
+              onSortField(name, ...args);
+              // Trigger load actions
+              load();
+            }} />
         </div>
       </Widget>
     );
@@ -139,12 +145,12 @@ class TopPeople extends Component {
   }
 
   render () {
-    const { data, load, location: { query: { topMediaSortDirection, topMediaSortField } }, routerPushWithReturnTo, style, onSortField } = this.props;
+    const { data, load, location: { query: { topPeopleSortDirection, topPeopleSortField } }, routerPushWithReturnTo, style, onSortField } = this.props;
 
     const columns = [
-      { clickable: true, colspan: 3, convert: this.getTitle, sort: true, sortField: 'TITLE', title: 'TITLE', type: 'custom' },
-      { clickable: true, colspan: 1, name: 'taggedProducts', sort: true, sortField: 'TAGGED_PRODUCTS', title: 'TAGGED PRODUCTS', type: 'custom' },
-      { clickable: true, colspan: 1, name: 'subscriptions', sort: true, sortField: 'SUBSCRIPTIONS', title: 'SUBSCRIPTIONS', type: 'custom' }
+      { clickable: true, colspan: 3, convert: this.getTitle, title: 'TITLE', type: 'custom' },
+      { clickable: true, colspan: 1, name: 'taggedProductCount', sort: true, sortField: 'TAGGED_PRODUCT_COUNT', title: 'TAGGED PRODUCTS', type: 'custom' },
+      { clickable: true, colspan: 1, name: 'subscriptionCount', sort: true, sortField: 'SUBSCRIBER_COUNT', title: 'SUBSCRIPTIONS', type: 'custom' }
     ];
 
     return (
@@ -154,9 +160,14 @@ class TopPeople extends Component {
             columns={columns}
             data={data}
             load={load}
-            sortDirection={topMediaSortDirection}
-            sortField={topMediaSortField}
-            onSortField={(name) => onSortField.bind(this, name)} />
+            sortDirection={topPeopleSortDirection}
+            sortField={topPeopleSortField}
+            onSortField={(name) => (...args) => {
+              // Update url
+              onSortField(name, ...args);
+              // Trigger load actions
+              load();
+            }} />
         </div>
       </Widget>
     );
@@ -260,9 +271,9 @@ export default class BrandDashboard extends Component {
 
     await this.props.loadEvents();
     await this.props.loadKeyMetrics();
-    // await this.props.loadTopMedia();
-    // await this.props.loadTopPeople();
     await this.props.loadDateData();
+    await this.props.loadTopMedia();
+    await this.props.loadTopPeople();
   }
 
   async onChangeFilter (field, type, value) {
@@ -276,6 +287,8 @@ export default class BrandDashboard extends Component {
 
     await this.props.loadKeyMetrics();
     await this.props.loadDateData();
+    await this.props.loadTopMedia();
+    await this.props.loadTopPeople();
   }
 
   static styles = {
@@ -352,6 +365,8 @@ export default class BrandDashboard extends Component {
       keyMetrics, routerPushWithReturnTo, topMedia, topPeople
     } = this.props;
 
+    const brandActivityEventsValue = typeof brandActivityEvents === 'string' ? [ brandActivityEvents ] : brandActivityEvents;
+
     return (
       <SideMenu location={location}>
         <Header hierarchy={[ { title: 'Dashboard', url: '/brand-dashboard' } ]}/>
@@ -394,7 +409,7 @@ export default class BrandDashboard extends Component {
                 first
                 getItem={(id) => eventsById.get(id)}
                 getItemText={(id) => eventsById.getIn([ id, 'description' ])}
-                input={{ value: typeof brandActivityEvents === 'string' ? [ brandActivityEvents ] : brandActivityEvents }}
+                input={{ value: brandActivityEventsValue }}
                 name='brandActivityEvents'
                 options={events.get('data').map((e) => e.get('id')).toJS()}
                 placeholder='Events'
@@ -402,6 +417,7 @@ export default class BrandDashboard extends Component {
                 valueComponent={ColorValue}
                 onChange={this.onChangeFilter.bind(this, 'brandActivityEvents', 'array')} />
             }
+            isLoading={isLoading(events) || (brandActivityEventsValue && brandActivityEventsValue.length + 1 !== dateDataConfig.series.length)}
             style={styles.paddingBottom} title='Brand activity'>
             {/* <button onClick={(e) => { e.preventDefault(); this.downloadCsv(); }}>
               Donwload csv
@@ -411,20 +427,20 @@ export default class BrandDashboard extends Component {
           <div style={styles.widgets}>
             <TopMedia
               data={topMedia}
-              load={() => loadTopMedia(location.query)}
+              load={loadTopMedia}
               location={location}
               routerPushWithReturnTo={routerPushWithReturnTo}
               style={styles.widget} />
             <TopPeople
               data={topPeople}
-              load={() => loadTopPeople(location.query)}
+              load={loadTopPeople}
               location={location}
               routerPushWithReturnTo={routerPushWithReturnTo}
               style={styles.widget} />
           </div>
           <TopProducts
             data={topMedia}
-            load={() => loadTopPeople(location.query)}
+            load={loadTopPeople}
             location={location}
             routerPushWithReturnTo={routerPushWithReturnTo}
             style={styles.topProductsWidget}/>

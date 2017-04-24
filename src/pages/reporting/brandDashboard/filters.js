@@ -6,7 +6,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { fontWeights, makeTextStyle } from '../../_common/styles';
 import SelectInput from '../../_common/inputs/selectInput';
 import DateInput from '../../_common/inputs/dateInput';
-import { FETCHING, isLoading } from '../../../constants/statusTypes';
+import { isLoading } from '../../../constants/statusTypes';
 import * as actions from './actions';
 import { filtersSelector } from './selector';
 
@@ -29,7 +29,7 @@ export default class Filters extends Component {
     }).isRequired,
     genders: ImmutablePropTypes.map.isRequired,
     gendersById: ImmutablePropTypes.map.isRequired,
-    languagesById: ImmutablePropTypes.map.isRequired,
+    // languagesById: ImmutablePropTypes.map.isRequired,
     loadAges: PropTypes.func.isRequired,
     loadGenders: PropTypes.func.isRequired,
     loadLanguages: PropTypes.func.isRequired,
@@ -71,7 +71,7 @@ export default class Filters extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      ages, agesById, fields, genders, gendersById, languagesById, style, onChange
+      ages, agesById, fields, genders, gendersById, style, onChange
     } = this.props;
 
     return (
@@ -90,7 +90,7 @@ export default class Filters extends Component {
         <SelectInput
           getItemText={(id) => gendersById.getIn([ id, 'description' ])}
           input={{ value: fields.genders }}
-          isLoading={genders.get('_status') === FETCHING}
+          isLoading={isLoading(genders)}
           label='Gender'
           multiselect
           name='genders'

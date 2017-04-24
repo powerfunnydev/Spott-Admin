@@ -23,18 +23,22 @@ export async function fetchBrandDashboardEvents (baseUrl, authenticationToken, l
   return events.map(({ description, type }, i) => ({ color: chartColors[i % chartColors.length], description, id: type }));
 }
 
-// TODO: implement this function
-export async function fetchTopMedia (baseUrl, authenticationToken, locale) {
-  const searchUrl = `${baseUrl}/v004/media/media?types=TV_SERIE,MOVIE`;
-  const { body } = await get(authenticationToken, locale, searchUrl);
+export async function fetchTopMedia (baseUrl, authenticationToken, locale, { ages, brandId, eventIds, endDate, genders, startDate, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/report/reports/brands/topMedia?ageRanges=${ages.join(',')}&brandUuid=${brandId}&eventType=${eventIds.join(',')}&genders=${genders.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}`;
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  const { body } = await get(authenticationToken, locale, url);
   body.data = body.data.map(transformTopMedia);
   return body;
 }
 
-// TODO: implement this function
-export async function fetchTopPeople (baseUrl, authenticationToken, locale) {
-  const searchUrl = `${baseUrl}/v004/media/characters`;
-  const { body } = await get(authenticationToken, locale, searchUrl);
+export async function fetchTopPeople (baseUrl, authenticationToken, locale, { ages, brandId, eventIds, endDate, genders, startDate, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/report/reports/brands/topCharacters?ageRanges=${ages.join(',')}&brandUuid=${brandId}&eventType=${eventIds.join(',')}&genders=${genders.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}`;
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  const { body } = await get(authenticationToken, locale, url);
   body.data = body.data.map(transformTopPeople);
   return body;
 }
@@ -65,12 +69,13 @@ export async function fetchDateData (baseUrl, authenticationToken, locale, { age
   for (const eventId of eventIds) {
     const url = `${baseUrl}/v004/report/reports/brands/dateGraph?ageRanges=${ages.join(',')}&brandUuid=${brandId}&eventType=${eventId}&genders=${genders.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}`;
     const { body } = await get(authenticationToken, locale, url);
+    body.data.pop();
     eventData[eventId] = body.data;
   }
 
   const url = `${baseUrl}/v004/report/reports/brands/userGraph?ageRanges=${ages.join(',')}&brandUuid=${brandId}&eventType=${eventIds.join(',')}&genders=${genders.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}`;
   const { body: { data: userData } } = await get(authenticationToken, locale, url);
-
+  userData.pop();
   return {
     eventData,
     userData

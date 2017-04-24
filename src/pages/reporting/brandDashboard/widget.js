@@ -36,10 +36,17 @@ export default class ListWidget extends Component {
       ...makeTextStyle(fontWeights.medium, '0.688em', '0.0455em'),
       color: colors.veryDarkGray,
       textTransform: 'uppercase',
-      paddingRight: 24
+      marginRight: 14
     },
     widget: {
       width: '100%'
+    },
+    spinner: {
+      marginRight: 14
+    },
+    placeholderSpinner: {
+      width: 14,
+      marginRight: 14
     }
   };
 
@@ -51,8 +58,8 @@ export default class ListWidget extends Component {
         <div style={styles.container}>
           {title &&
             <div style={styles.header}>
-              <h2 style={styles.title}>{title}&nbsp;&nbsp;&nbsp;</h2>
-              {isLoading && <Spinner size='small' />}
+              <h2 style={styles.title}>{title}</h2>
+              {isLoading ? <Spinner size='small' style={styles.spinner} /> : <div style={styles.placeholderSpinner} />}
               {header}
             </div>}
           {children}

@@ -993,20 +993,20 @@ export function transformSpott ({
   return spott;
 }
 
-export function transformTopMedia (data) {
+export function transformTopMedia ({ medium, subscriptionCount, taggedProductCount }) {
   return {
-    id: data.uuid,
-    medium: transformListMedium(data),
-    taggedProducts: 25,
-    subscriptions: 234
+    id: medium.uuid,
+    medium: transformListMedium(medium),
+    subscriptionCount,
+    taggedProductCount
   };
 }
 
-export function transformTopPeople (data) {
+export function transformTopPeople ({ character, subscriptionCount, taggedProductCount }) {
   return {
-    id: data.uuid,
-    character: transformListCharacter(data),
-    taggedProducts: 25,
-    subscriptions: 234
+    id: character.uuid,
+    character: transformListCharacter(character),
+    subscriptionCount,
+    taggedProductCount
   };
 }

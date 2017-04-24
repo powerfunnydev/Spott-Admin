@@ -69,7 +69,6 @@ const dateDataConfigSelector = createSelector(
   brandDashboardEventsEntitiesSelector,
   dateDataSelector,
   (_eventIds, eventsById, dateData) => {
-    console.warn('Date data', dateData);
     const series = [];
     // Filter unknown types.
     const eventIds = _eventIds.filter((eventId) => eventsById.get(eventId));

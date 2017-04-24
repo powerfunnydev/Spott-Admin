@@ -33,8 +33,6 @@ export async function persistSpott (baseUrl, authenticationToken, locale, {
   spott.productMarkers = [];
   spott.personMarkers = [];
 
-  console.warn('TO persist tags', tags);
-
   if (tags) {
     const personTags = tags.filter(({ entityType }) => entityType === 'CHARACTER' || entityType === 'PERSON');
     spott.personMarkers = personTags.map(({ characterId, entityType, personId, point }) => ({
@@ -52,8 +50,6 @@ export async function persistSpott (baseUrl, authenticationToken, locale, {
       relevance
     }));
   }
-
-  console.warn('SPOTT BODY', spott);
 
   spott.defaultLocale = defaultLocale;
   spott.imageSource = imageSource;
