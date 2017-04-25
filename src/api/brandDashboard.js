@@ -1,6 +1,5 @@
 import { get } from './request';
-import { transformTopMedia, transformTopPeople } from './transformers';
-import { BRAND_SUBSCRIPTIONS, CONVERSION, PRODUCT_BUYS, PRODUCT_IMPRESSIONS, PRODUCT_VIEWS, TAGGED_PRODUCTS } from '../constants/metricTypes';
+import { transformTopMedia, transformTopPeople, transformTopProduct, transformKeyMetrics } from './transformers';
 
 const chartColors = [
   '#058dc7',
@@ -43,6 +42,17 @@ export async function fetchTopPeople (baseUrl, authenticationToken, locale, { ag
   return body;
 }
 
+export async function fetchTopProducts (baseUrl, authenticationToken, locale, { ages, brandId, eventIds, endDate, genders, startDate, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/report/reports/brands/topProducts?ageRanges=${ages.join(',')}&brandUuid=${brandId}&currency=EUR&eventType=${eventIds.join(',')}&genders=${genders.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}`;
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  const { body } = await get(authenticationToken, locale, url);
+  console.warn('Body data', body.data);
+  body.data = body.data.map(transformTopProduct);
+  return body;
+}
+
 export async function fetchDemographics (baseUrl, authenticationToken, locale) {
   const searchUrl = `${baseUrl}/v004/media/characters`;
   const { body } = await get(authenticationToken, locale, searchUrl);
@@ -82,22 +92,8 @@ export async function fetchDateData (baseUrl, authenticationToken, locale, { age
   };
 }
 
-const metrics = {
-  [BRAND_SUBSCRIPTIONS]: 'brandSubscriptions',
-  [CONVERSION]: 'conversion',
-  [PRODUCT_BUYS]: 'productBuys',
-  [PRODUCT_IMPRESSIONS]: 'productImpressions',
-  [PRODUCT_VIEWS]: 'productViews',
-  [TAGGED_PRODUCTS]: 'taggedProducts'
-};
-
 export async function fetchKeyMetrics (baseUrl, authenticationToken, locale, { ages, brandId, endDate, genders, startDate }) {
-  const result = {};
-  for (const type in metrics) {
-    const url = `${baseUrl}/v004/report/reports/brands/metrics?ageRanges=${ages.join(',')}&brandUuid=${brandId}&genders=${genders.join(',')}&type=${type}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}`;
-    const { body: { value } } = await get(authenticationToken, locale, url);
-    result[metrics[type]] = value;
-  }
-  // { brandSubscriptions: 123, ... }
-  return result;
+  const url = `${baseUrl}/v004/report/reports/brands/activityMetrics?ageRanges=${ages.join(',')}&brandUuid=${brandId}&genders=${genders.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}`;
+  const { body } = await get(authenticationToken, locale, url);
+  return transformKeyMetrics(body);
 }

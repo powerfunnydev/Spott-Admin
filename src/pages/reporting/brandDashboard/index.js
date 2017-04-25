@@ -190,33 +190,45 @@ class TopProducts extends Component {
     this.getTitle = ::this.getTitle;
   }
 
-  getTitle (topMedia) {
+  getTitle (topProduct) {
     return (
       <ImageTitle
-        imageUrl={topMedia.getIn([ 'medium', 'posterImage', 'url' ])}
-        title={topMedia.getIn([ 'medium', 'title' ])}/>
+        imageUrl={topProduct.getIn([ 'product', 'logo', 'url' ])}
+        title={topProduct.getIn([ 'product', 'fullName' ])}/>
     );
   }
 
+  getSales (topProduct) {
+    // TODO Add support for other currencies.
+    return `€ ${topProduct.getIn([ 'sales', 'amount' ])}`;
+  }
+
   render () {
-    const { data, load, location: { query: { topMediaSortDirection, topMediaSortField } }, routerPushWithReturnTo, style, onSortField } = this.props;
+    const { data, load, location: { query: { topProductsSortDirection, topProductsSortField } }, routerPushWithReturnTo, style, onSortField } = this.props;
 
     const columns = [
       { clickable: true, colspan: 3, convert: this.getTitle, sort: true, sortField: 'TITLE', title: 'TITLE', type: 'custom' },
-      { clickable: true, colspan: 1, name: 'taggedProducts', sort: true, sortField: 'TAGGED_PRODUCTS', title: 'TAGGED PRODUCTS', type: 'custom' },
-      { clickable: true, colspan: 1, name: 'subscriptions', sort: true, sortField: 'SUBSCRIPTIONS', title: 'SUBSCRIPTIONS', type: 'custom' }
+      { clickable: true, colspan: 1, name: 'impressions', sort: true, sortField: 'IMPRESSIONS', title: 'IMPRESSIONS', type: 'custom' },
+      { clickable: true, colspan: 1, name: 'clicks', sort: true, sortField: 'CLICKS', title: 'CLICKS', type: 'custom' },
+      { clickable: true, colspan: 1, name: 'buys', sort: true, sortField: 'BUYS', title: 'BUYS', type: 'custom' },
+      { clickable: true, colspan: 1, convert: this.getSales, sort: true, sortField: 'TOTAL_SALES', title: 'EST. SALES', type: 'custom' }
     ];
 
     return (
-      <Widget style={style} title='Top media for your brand'>
+      <Widget style={style} title='Top products for your brand'>
         <div style={listViewContainerStyle}>
           <ListView
             columns={columns}
             data={data}
             load={load}
-            sortDirection={topMediaSortDirection}
-            sortField={topMediaSortField}
-            onSortField={(name) => onSortField.bind(this, name)} />
+            sortDirection={topProductsSortDirection}
+            sortField={topProductsSortField}
+            onSortField={(name) => (...args) => {
+              // Update url
+              onSortField(name, ...args);
+              // Trigger load actions
+              load();
+            }} />
         </div>
       </Widget>
     );
@@ -229,6 +241,7 @@ class TopProducts extends Component {
   loadKeyMetrics: bindActionCreators(actions.loadKeyMetrics, dispatch),
   loadTopMedia: bindActionCreators(actions.loadTopMedia, dispatch),
   loadTopPeople: bindActionCreators(actions.loadTopPeople, dispatch),
+  loadTopProducts: bindActionCreators(actions.loadTopProducts, dispatch),
   routerPushWithReturnTo: bindActionCreators(globalActions.routerPushWithReturnTo, dispatch)
 }))
 @Radium
@@ -244,9 +257,12 @@ export default class BrandDashboard extends Component {
     loadKeyMetrics: PropTypes.func.isRequired,
     loadTopMedia: PropTypes.func.isRequired,
     loadTopPeople: PropTypes.func.isRequired,
+    loadTopProducts: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
-    topMedia: ImmutablePropTypes.map.isRequired
+    topMedia: ImmutablePropTypes.map.isRequired,
+    topPeople: ImmutablePropTypes.map.isRequired,
+    topProducts: ImmutablePropTypes.map.isRequired
   };
 
   constructor (props) {
@@ -270,10 +286,11 @@ export default class BrandDashboard extends Component {
     await this.props.routerPushWithReturnTo({ ...location, query });
 
     await this.props.loadEvents();
-    await this.props.loadKeyMetrics();
-    await this.props.loadDateData();
-    await this.props.loadTopMedia();
-    await this.props.loadTopPeople();
+    // await this.props.loadKeyMetrics();
+    // await this.props.loadDateData();
+    // await this.props.loadTopMedia();
+    // await this.props.loadTopPeople();
+    await this.props.loadTopProducts();
   }
 
   async onChangeFilter (field, type, value) {
@@ -281,14 +298,15 @@ export default class BrandDashboard extends Component {
       ...this.props.location,
       query: {
         ...this.props.location.query,
-        [field]: value
+        [field]: type === 'date' ? value.format('YYYY-MM-DD') : value
       }
     });
 
-    await this.props.loadKeyMetrics();
-    await this.props.loadDateData();
-    await this.props.loadTopMedia();
-    await this.props.loadTopPeople();
+    // await this.props.loadKeyMetrics();
+    // await this.props.loadDateData();
+    // await this.props.loadTopMedia();
+    // await this.props.loadTopPeople();
+    await this.props.loadTopProducts();
   }
 
   static styles = {
@@ -360,13 +378,14 @@ export default class BrandDashboard extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      children, dateDataConfig, eventsById, events, loadTopMedia, loadTopPeople, location, location:
-      { query: { ages, brandActivityEvents, endDate, genders, languages, startDate } },
-      keyMetrics, routerPushWithReturnTo, topMedia, topPeople
+      children, dateDataConfig, eventsById, events, loadTopMedia, loadTopPeople, loadTopProducts,
+      location, location: { query: { ages, brandActivityEvents, endDate, genders, languages, startDate } },
+      keyMetrics, routerPushWithReturnTo, topMedia, topPeople, topProducts
     } = this.props;
 
     const brandActivityEventsValue = typeof brandActivityEvents === 'string' ? [ brandActivityEvents ] : brandActivityEvents;
 
+    console.warn('top products', topProducts && topProducts.toJS());
     return (
       <SideMenu location={location}>
         <Header hierarchy={[ { title: 'Dashboard', url: '/brand-dashboard' } ]}/>
@@ -385,7 +404,7 @@ export default class BrandDashboard extends Component {
         <Container style={styles.wrapper}>
           <div style={styles.numberWidgets}>
             <NumberWidget style={styles.numberWidget} title='Tagged products'>
-              <span>{keyMetrics.get('taggedProducts') || 0}</span>
+              <span>{keyMetrics.get('taggedProductCount') || 0}</span>
             </NumberWidget>
             <NumberWidget style={styles.numberWidget} title='Brand subscriptions'>
               <span>{keyMetrics.get('brandSubscriptions') || 0}</span>
@@ -400,7 +419,7 @@ export default class BrandDashboard extends Component {
               <span>{keyMetrics.get('productBuys') || 0}</span>
             </NumberWidget>
             <NumberWidget style={styles.numberWidget} title='Conversion'>
-              <span>{keyMetrics.get('conversion') || 0}%</span>
+              <span>{keyMetrics.get('productConversionRatePercentage') || 0}%</span>
             </NumberWidget>
           </div>
           <Widget
@@ -439,8 +458,8 @@ export default class BrandDashboard extends Component {
               style={styles.widget} />
           </div>
           <TopProducts
-            data={topMedia}
-            load={loadTopPeople}
+            data={topProducts}
+            load={loadTopProducts}
             location={location}
             routerPushWithReturnTo={routerPushWithReturnTo}
             style={styles.topProductsWidget}/>

@@ -33,7 +33,8 @@ export class CustomCel extends Component {
       paddingRight: '1em',
       minHeight: 40,
       paddingTop: '0.5em',
-      paddingBottom: '0.5em'
+      paddingBottom: '0.5em',
+      minWidth: 0
     },
     pointer: {
       cursor: 'pointer'
@@ -51,7 +52,8 @@ export class CustomCel extends Component {
     },
     inlineFlex: {
       display: 'inline-flex',
-      alignItems: 'center'
+      alignItems: 'center',
+      width: '100%'
     }
   }
 

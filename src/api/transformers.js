@@ -1010,3 +1010,26 @@ export function transformTopPeople ({ character, subscriptionCount, taggedProduc
     taggedProductCount
   };
 }
+
+export function transformTopProduct ({ buys, clicks, impressions, product, sales }) {
+  return {
+    buys,
+    clicks,
+    id: product.uuid,
+    impressions,
+    product: transformListProduct(product),
+    sales: sales && { amount: sales.amount, currency: sales.currency }
+  };
+}
+
+export function transformKeyMetrics ({ productBuys, productConversionRatePercentage, productImpressions, productViews, taggedProductCount }) {
+  return {
+    // TODO
+    brandSubscriptions: -1,
+    productBuys,
+    productConversionRatePercentage,
+    productImpressions,
+    productViews,
+    taggedProductCount
+  };
+}

@@ -8,7 +8,12 @@ export async function persistCrop (baseUrl, authenticationToken, locale, { based
     crop = body;
   }
 
-  crop.area = region;
+  crop.area = {
+    height: Math.round(region.height),
+    width: Math.round(region.width),
+    x: Math.round(region.x),
+    y: Math.round(region.y)
+  };
   crop.scene = { uuid: sceneId };
 
   crop.post = crop.post || {};

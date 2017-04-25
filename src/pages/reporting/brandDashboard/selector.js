@@ -3,10 +3,11 @@ import {
   agesEntitiesSelector, gendersEntitiesSelector, gendersListSelector, agesListSelector,
   createEntitiesByRelationSelector, createEntitiesByListSelector, brandDashboardEventsEntitiesSelector,
   filterHasTopMediaRelationsSelector, brandDashboardEventsListSelector,
-  filterHasTopPeopleRelationsSelector, topMediaEntitiesSelector, topPeopleEntitiesSelector, languagesEntitiesSelector
+  filterHasTopPeopleRelationsSelector, filterHasTopProductsRelationsSelector, topProductsEntitiesSelector,
+  topMediaEntitiesSelector, topPeopleEntitiesSelector, languagesEntitiesSelector
 } from '../../../selectors/data';
 import { getInformationFromQuery } from '../../_common/components/table/index';
-import { serializeFilterHasTopMedia, serializeFilterHasTopPeople } from '../../../reducers/utils';
+import { serializeFilterHasTopMedia, serializeFilterHasTopPeople, serializeFilterHasTopProducts } from '../../../reducers/utils';
 import { createQueryStringArraySelector } from '../../../selectors/global';
 import { dateDataConfig } from './defaultHighchartsConfig';
 
@@ -47,6 +48,11 @@ const topPeopleFilterKeySelector = (state, props) => serializeFilterHasTopPeople
   // brandId: 'BRAND_ID_PLACEHOLDER'
 });
 
+const topProductsFilterKeySelector = (state, props) => serializeFilterHasTopProducts({
+  ...getInformationFromQuery(props.location.query, topProductsPrefix)
+  // brandId: 'BRAND_ID_PLACEHOLDER'
+});
+
 export const topMediaSelector = createEntitiesByRelationSelector(
   filterHasTopMediaRelationsSelector,
   topMediaFilterKeySelector,
@@ -57,6 +63,12 @@ export const topPeopleSelector = createEntitiesByRelationSelector(
   filterHasTopPeopleRelationsSelector,
   topPeopleFilterKeySelector,
   topPeopleEntitiesSelector
+);
+
+export const topProductsSelector = createEntitiesByRelationSelector(
+  filterHasTopProductsRelationsSelector,
+  topProductsFilterKeySelector,
+  topProductsEntitiesSelector
 );
 
 const keyMetricsSelector = (state) => state.getIn([ 'brandDashboard', 'keyMetrics' ]);
@@ -119,5 +131,6 @@ export default createStructuredSelector({
   eventsById: brandDashboardEventsEntitiesSelector,
   keyMetrics: keyMetricsSelector,
   topMedia: topMediaSelector,
-  topPeople: topPeopleSelector
+  topPeople: topPeopleSelector,
+  topProducts: topProductsSelector
 });
