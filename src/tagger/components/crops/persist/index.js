@@ -52,6 +52,7 @@ function validate (values, { t }) {
 @connect(persistCropSelector, (dispatch) => ({
   loadAppearances: bindActionCreators(actions.loadAppearances, dispatch),
   loadCropTopics: bindActionCreators(actions.fetchCropTopics, dispatch),
+  persistTopic: bindActionCreators(actions.persistTopic, dispatch),
   searchTopics: bindActionCreators(actions.searchTopics, dispatch)
 }))
 @reduxForm({
@@ -74,6 +75,7 @@ export default class PersistCrop extends Component {
     initialize: PropTypes.func.isRequired,
     loadAppearances: PropTypes.func.isRequired,
     loadCropTopics: PropTypes.func.isRequired,
+    persistTopic: PropTypes.func.isRequired,
     scene: ImmutablePropTypes.map,
     searchTopics: PropTypes.func.isRequired,
     searchedTopicIds: ImmutablePropTypes.map.isRequired,
@@ -93,6 +95,7 @@ export default class PersistCrop extends Component {
     this.removeLanguage = ::this.removeLanguage;
     this.submit = ::this.submit;
     this.onSetDefaultLocale = ::this.onSetDefaultLocale;
+    this.onCreateTopic = ::this.onCreateTopic;
   }
 
   componentDidMount () {
@@ -133,6 +136,16 @@ export default class PersistCrop extends Component {
   onSetDefaultLocale (locale) {
     const { change, dispatch, _activeLocale } = this.props;
     dispatch(change('defaultLocale', _activeLocale));
+  }
+
+  async onCreateTopic (text) {
+    const { change, dispatch, persistTopic, topicIds = [] } = this.props;
+    const { id } = await persistTopic({ text });
+    console.warn('id:', id);
+    console.log('topics:', topicIds);
+    const newTopicIds = [ ...topicIds ];
+    newTopicIds.push(id);
+    dispatch(change('topicIds', newTopicIds));
   }
 
   static styles = {
@@ -187,12 +200,14 @@ export default class PersistCrop extends Component {
                   const { change, dispatch, loadCropTopics, topicIds = [] } = this.props;
                   // Load the topics inside the crop. Make sure these are selected.
                   const { data: topics } = await loadCropTopics({ region, sceneId: currentScene.get('id') });
+                  // Here we create a new Array, otherwise redux-form won't update the form.
+                  const newTopicIds = [ ...topicIds ];
                   for (const { id } of topics) {
-                    if (topicIds.indexOf(id) === -1) {
-                      topicIds.push(id);
+                    if (newTopicIds.indexOf(id) === -1) {
+                      newTopicIds.push(id);
                     }
                   }
-                  dispatch(change('topicIds', topicIds));
+                  dispatch(change('topicIds', newTopicIds));
                 }}/>
             </Section>
           </div>

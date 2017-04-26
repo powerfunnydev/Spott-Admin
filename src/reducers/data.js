@@ -943,14 +943,17 @@ export default (state = fromJS({
     case spottActions.SPOTT_FETCH_START:
       return fetchStart(state, [ 'entities', 'spotts', action.spottId ]);
     case spottActions.SPOTT_FETCH_SUCCESS: {
-      const characters = action.data.tags.filter(({ entityType }) => entityType === 'CHARACTER').map(({ character }) => character);
-      const persons = action.data.tags.filter(({ entityType }) => entityType === 'PERSON').map(({ person }) => person);
-      const products = action.data.tags.filter(({ entityType }) => entityType === 'PRODUCT').map(({ product }) => product);
+      const { promotedForBrand, tags, topics } = action.data;
+      const characters = tags.filter(({ entityType }) => entityType === 'CHARACTER').map(({ character }) => character);
+      const persons = tags.filter(({ entityType }) => entityType === 'PERSON').map(({ person }) => person);
+      const products = tags.filter(({ entityType }) => entityType === 'PRODUCT').map(({ product }) => product);
 
       let newState = mergeListOfEntities(state, [ 'entities', 'listCharacters' ], characters);
       newState = mergeListOfEntities(newState, [ 'entities', 'listPersons' ], persons);
       newState = mergeListOfEntities(newState, [ 'entities', 'listProducts' ], products);
-      newState = action.data.topics && mergeListOfEntities(newState, [ 'entities', 'topics' ], action.data.topics) || newState;
+      newState = topics && mergeListOfEntities(newState, [ 'entities', 'topics' ], topics) || newState;
+      newState = promotedForBrand && fetchSuccess(state, [ 'entities', 'listBrands', promotedForBrand.id ], promotedForBrand) || newState;
+
       return fetchSuccess(newState, [ 'entities', 'spotts', action.spottId ], action.data);
     }
     case spottActions.SPOTT_FETCH_ERROR:

@@ -33,7 +33,8 @@ export default class Scene extends Component {
 
   static propTypes = {
     connectDropTarget: PropTypes.func.isRequired,
-    imageUrl: PropTypes.string.isRequired,
+    imageUrl: PropTypes.string,
+    tags: PropTypes.array,
     onChangeImage: PropTypes.func.isRequired,
     onEditTag: PropTypes.func.isRequired,
     onMoveTag: PropTypes.func.isRequired,
@@ -48,6 +49,7 @@ export default class Scene extends Component {
   }
 
   onSelectionRegion (selection) {
+    console.warn('testtt');
     // The Element.getBoundingClientRect() method returns the size of an element and its position relative to the viewport.
     // Get mouse position relative to the canvas for .x & .y
     const { height, left, top, width } = this._wrapper.getBoundingClientRect();
@@ -131,39 +133,39 @@ export default class Scene extends Component {
 
     return (
       <div style={styles.container}>
-
-        <SelectionArea
-          disable={Boolean(this.state.hoveredTag)}
-          ref={(c) => { this._wrapper = c && c.component; }}
-          style={styles.wrapper}
-          onSelection={this.onSelectionRegion}>
-          <img draggable={false} src={localeImage ? localeImage.preview : imageUrl} style={{ pointerEvents: 'none', userDrag: 'none', userSelect: 'none', width: '100%' }} />
-          {this.renderTooltip(this.state.hoveredTag)}
-          {connectDropTarget(
-            <div style={styles.layover}>
-              {tags && tags.map((tag) => {
-                const { entityType, point, id } = tag;
-                return (
-                  <Tag
-                    appearanceId={id}
-                    appearanceType={entityType}
-                    hovered={false}
-                    key={id}
-                    relativeLeft={point.x}
-                    relativeTop={point.y}
-                    selected={false}
-                    onCopy={noop}
-                    onEdit={onEditTag.bind(null, id)}
-                    onHover={() => this.setState({ hoveredTag: tag })}
-                    onLeave={() => this.setState({ hoveredTag: null })}
-                    onMove={onMoveTag.bind(null, id)} // onMoveAppearance.bind(this, appearanceId)}
-                    onRemove={onRemoveTag.bind(null, id)}
-                    onSelect={noop} // onSelectAppearance.bind(this, appearanceId)}
-                    onToggleSelect={noop}/> // onToggleSelectAppearance.bind(this, appearanceId)} />
-                );
-              })}
+        {imageUrl &&
+          <SelectionArea
+            disable={Boolean(this.state.hoveredTag)}
+            ref={(c) => { this._wrapper = c && c.component; }}
+            style={styles.wrapper}
+            onSelection={this.onSelectionRegion}>
+            <img draggable={false} src={localeImage ? localeImage.preview : imageUrl} style={{ pointerEvents: 'none', userDrag: 'none', userSelect: 'none', width: '100%' }} />
+            {this.renderTooltip(this.state.hoveredTag)}
+            {connectDropTarget(
+              <div style={styles.layover}>
+                {tags && tags.map((tag) => {
+                  const { entityType, point, id } = tag;
+                  return (
+                    <Tag
+                      appearanceId={id}
+                      appearanceType={entityType}
+                      hovered={false}
+                      key={id}
+                      relativeLeft={point.x}
+                      relativeTop={point.y}
+                      selected={false}
+                      onCopy={noop}
+                      onEdit={onEditTag.bind(null, id)}
+                      onHover={() => this.setState({ hoveredTag: tag })}
+                      onLeave={() => this.setState({ hoveredTag: null })}
+                      onMove={onMoveTag.bind(null, id)} // onMoveAppearance.bind(this, appearanceId)}
+                      onRemove={onRemoveTag.bind(null, id)}
+                      onSelect={noop} // onSelectAppearance.bind(this, appearanceId)}
+                      onToggleSelect={noop}/> // onToggleSelectAppearance.bind(this, appearanceId)} />
+                  );
+                })}
             </div>)}
-        </SelectionArea>
+        </SelectionArea>}
         <ImageDropzone
           accept='image/*'
           downloadUrl={imageUrl}

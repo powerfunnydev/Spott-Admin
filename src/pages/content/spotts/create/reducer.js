@@ -1,10 +1,16 @@
 import { Map } from 'immutable';
-import { TOPICS_SEARCH_START } from './actions';
+import * as actions from './actions';
 
 export default (state = Map({}), action) => {
   switch (action.type) {
-    case TOPICS_SEARCH_START:
+    case actions.TOPICS_SEARCH_START:
       return state.set('currentTopicsSearchString', action.searchString);
+    case actions.TAGS_CHARACTERS_SEARCH_START:
+      return state.set('currentTagsCharactersSearchString', action.searchString);
+    case actions.TAGS_PERSONS_SEARCH_START:
+      return state.set('currentTagsPersonsSearchString', action.searchString);
+    case actions.TAGS_PRODUCTS_SEARCH_START:
+      return state.set('currentTagsProductsSearchString', action.searchString);
     // Uninteresting actions
     default:
       return state;

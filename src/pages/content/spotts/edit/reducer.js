@@ -7,6 +7,8 @@ export default (state = Map({}), action) => {
       return state.set('currentAudienceCountriesSearchString', action.searchString);
     case actions.AUDIENCE_LANGUAGES_SEARCH_START:
       return state.set('currentAudienceLanguagesSearchString', action.searchString);
+    case actions.BRANDS_SEARCH_START:
+      return state.set('currentBrandsSearchString', action.searchString);
     case actions.CLOSE_POP_UP_MESSAGE:
       return state.set('popUpMessage', null);
     case actions.TOPICS_SEARCH_START:

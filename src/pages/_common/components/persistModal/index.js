@@ -42,7 +42,7 @@ export const dialogStyle = {
     display: 'flex',
     flexDirection: 'column',
     maxHeight: '100%',
-    overflow: 'auto'
+    overflow: 'inherit'
   }
 };
 

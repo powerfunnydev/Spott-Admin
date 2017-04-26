@@ -4,7 +4,7 @@ import { transformShop, transformListShop } from './transformers';
 export async function fetchShops (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/product/shops?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
@@ -65,7 +65,7 @@ export async function deleteShops (baseUrl, authenticationToken, locale, { shopI
 export async function searchShops (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 100 }) {
   let url = `${baseUrl}/v004/product/shops?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   const { body: { data } } = await get(authenticationToken, locale, url);
   return data.map(transformListShop);
@@ -74,7 +74,7 @@ export async function searchShops (baseUrl, authenticationToken, locale, { searc
 export async function searchMediumShops (baseUrl, authenticationToken, locale, { mediumId, searchString = '', page = 0, pageSize = 100 }) {
   let url = `${baseUrl}/v004/media/media/${mediumId}/shopDeals?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   const { body: { data } } = await get(authenticationToken, locale, url);
   return data.map(transformListShop);

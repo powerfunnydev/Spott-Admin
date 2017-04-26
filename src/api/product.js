@@ -6,7 +6,7 @@ export async function fetchProducts (baseUrl, authenticationToken, locale, {
 }) {
   let url = `${baseUrl}/v004/product/products?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url += `&searchString=${searchString}`;
+    url += `&searchString=${encodeURIComponent(searchString)}`;
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url += `&sortField=${sortField}&sortDirection=${sortDirection}`;
@@ -48,7 +48,7 @@ export async function fetchSuggestedProducts (baseUrl, authenticationToken, loca
 export async function fetchSimilarProducts (baseUrl, authenticationToken, locale, { productId, publishStatus, used, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/product/products/${productId}/similarProducts?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url += `&searchString=${searchString}`;
+    url += `&searchString=${encodeURIComponent(searchString)}`;
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url += `&sortField=${sortField}&sortDirection=${sortDirection}`;
@@ -70,7 +70,7 @@ export async function fetchSimilarProducts (baseUrl, authenticationToken, locale
 export async function fetchProductOfferings (baseUrl, authenticationToken, locale, { productId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/product/products/${productId}/offerings?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
@@ -133,7 +133,7 @@ export async function deleteProducts (baseUrl, authenticationToken, locale, { pr
 export async function searchProducts (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25 }) {
   let url = `${baseUrl}/v004/product/products?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   const { body: { data } } = await get(authenticationToken, locale, url);
   return data.map(transformListProduct);

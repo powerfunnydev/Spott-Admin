@@ -4,7 +4,7 @@ import { transformImage, transformCharacter, transformListCharacter } from './tr
 export async function fetchCharacters (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/characters?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
@@ -76,7 +76,7 @@ export async function deleteCharacters (baseUrl, authenticationToken, locale, { 
 export async function searchCharacters (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25 }) {
   let url = `${baseUrl}/v004/media/characters?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   const { body: { data } } = await get(authenticationToken, locale, url);
   return data.map(transformListCharacter);
@@ -85,7 +85,7 @@ export async function searchCharacters (baseUrl, authenticationToken, locale, { 
 export async function searchMediumCharacters (baseUrl, authenticationToken, locale, { mediumId, searchString = '', page = 0, pageSize = 100 }) {
   let url = `${baseUrl}/v004/media/media/${mediumId}/castMembers?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   const { body: { data } } = await get(authenticationToken, locale, url);
   return data.map(transformListCharacter);

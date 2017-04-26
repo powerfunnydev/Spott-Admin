@@ -24,8 +24,14 @@ import Audiences from '../../_audiences/list';
 import Header from '../../../app/multiFunctionalHeader';
 import SelectInput from '../../../_common/inputs/selectInput';
 import Checkbox from '../../../_common/inputs/checkbox';
-import PersistTag from './tags/persist';
-import Scene from './scene';
+import createPersistTag from '../_common/tags/persist';
+import Scene from '../_common/scene';
+import createTagsSelector from '../_common/selector';
+
+// The persist dialog for tags depends on the above dialog (perist spott)
+// where the tags are managed.
+const tagsSelector = createTagsSelector('spottEdit', 'edit');
+const PersistTag = createPersistTag(tagsSelector, actions);
 
 let spottCount = 1;
 
@@ -50,6 +56,7 @@ function validate (values, { t }) {
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchAudienceCountries: bindActionCreators(actions.searchAudienceCountries, dispatch),
   searchAudienceLanguages: bindActionCreators(actions.searchAudienceLanguages, dispatch),
+  searchBrands: bindActionCreators(actions.searchBrands, dispatch),
   searchTopics: bindActionCreators(actions.searchTopics, dispatch),
   submit: bindActionCreators(actions.submit, dispatch)
 }))
@@ -63,7 +70,9 @@ export default class EditSpott extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
+    brandsById: ImmutablePropTypes.map.isRequired,
     change: PropTypes.func.isRequired,
+    charactersById: ImmutablePropTypes.map.isRequired,
     closeModal: PropTypes.func.isRequired,
     closePopUpMessage: PropTypes.func.isRequired,
     currentModal: PropTypes.string,
@@ -82,13 +91,18 @@ export default class EditSpott extends Component {
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     persistTopic: PropTypes.func.isRequired,
+    personsById: ImmutablePropTypes.map.isRequired,
     popUpMessage: PropTypes.object,
+    productsById: ImmutablePropTypes.map.isRequired,
+    promoted: PropTypes.bool,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchAudienceCountries: PropTypes.func.isRequired,
     searchAudienceLanguages: PropTypes.func.isRequired,
+    searchBrands: PropTypes.func.isRequired,
     searchTopics: PropTypes.func.isRequired,
     searchedAudienceCountryIds: ImmutablePropTypes.map.isRequired,
     searchedAudienceLanguageIds: ImmutablePropTypes.map.isRequired,
+    searchedBrandIds: ImmutablePropTypes.map.isRequired,
     searchedTopicIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
@@ -123,6 +137,7 @@ export default class EditSpott extends Component {
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale,
+        brandId: editObj.promotedForBrand && editObj.promotedForBrand.id,
         tags: editObj.tags.map(({ character, entityType, id, person, point, product, productCharacter, relevance }) => ({
           character,
           characterId: character ? character.id : null,
@@ -297,12 +312,12 @@ export default class EditSpott extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      _activeLocale, errors, currentModal, closeModal, supportedLocales, defaultLocale,
-      currentSpott, location, handleSubmit, location: { query: { tab } },
+      _activeLocale, brandsById, errors, currentModal, closeModal, supportedLocales, defaultLocale,
+      currentSpott, location, handleSubmit, location: { query: { tab } }, promoted,
       searchAudienceCountries, searchAudienceLanguages, searchedAudienceCountryIds, searchedAudienceLanguageIds,
-      searchTopics, searchedTopicIds, tags, topicsById, topicIds
+      searchBrands, searchTopics, searchedBrandIds, searchedTopicIds, tags, topicsById
     } = this.props;
-
+    console.warn('PROPS', this.props);
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
@@ -409,6 +424,22 @@ export default class EditSpott extends Component {
                   first
                   label='Promote this spott'
                   name='promoted'/>
+                {
+                  promoted &&
+                  <div>
+                    <FormSubtitle >More options</FormSubtitle>
+                    <Field
+                      component={SelectInput}
+                      disabled={_activeLocale !== defaultLocale}
+                      getItemText={(id) => brandsById.getIn([ id, 'name' ])}
+                      getOptions={searchBrands}
+                      isLoading={searchedBrandIds.get('_status') === FETCHING}
+                      label='Link to brand'
+                      name='brandId'
+                      options={searchedBrandIds.get('data').toJS()}
+                      placeholder='Brand name'/>
+                  </div>
+                }
               </Section>
             </Tab>
             <Tab title='Audience'>

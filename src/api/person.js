@@ -8,7 +8,7 @@ import { transformPerson, transformListPerson, transformImage } from './transfor
 export async function fetchPersons (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/actors?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
@@ -83,7 +83,7 @@ export async function deletePersons (baseUrl, authenticationToken, locale, { per
 export async function searchPersons (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25 }) {
   let url = `${baseUrl}/v004/media/actors?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   const { body: { data } } = await get(authenticationToken, locale, url);
   return data.map(transformListPerson);

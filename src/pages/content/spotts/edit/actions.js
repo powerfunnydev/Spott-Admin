@@ -1,3 +1,4 @@
+import { searchBrands as dataSearchBrands } from '../../../../actions/brand';
 import { persistSpott, fetchSpott as dataFetchSpott } from '../../../../actions/spott';
 import { searchTopics as dataSearchTopics } from '../../../../actions/topic';
 import { fetchCountries } from '../../../../actions/country';
@@ -6,6 +7,9 @@ import { searchPersons as dataSearchPersons } from '../../../../actions/person';
 import { searchProducts as dataSearchProducts } from '../../../../actions/product';
 import { fetchLanguages } from '../../../../actions/language';
 import { createSearchAction } from '../../../../utils';
+
+export const BRANDS_SEARCH_START = 'PRODUCTS_EDIT/BRANDS_SEARCH_START';
+export const BRANDS_SEARCH_ERROR = 'PRODUCTS_EDIT/BRANDS_SEARCH_ERROR';
 
 export const SPOTT_FETCH_ENTRY_ERROR = 'SPOTTS_EDIT/FETCH_ENTRY_ERROR';
 export const CLOSE_POP_UP_MESSAGE = 'SPOTTS_EDIT/CLOSE_POP_UP_MESSAGE';
@@ -46,6 +50,17 @@ export function loadSpott (spottId) {
       return await dispatch(dataFetchSpott({ spottId }));
     } catch (error) {
       dispatch({ error, type: SPOTT_FETCH_ENTRY_ERROR });
+    }
+  };
+}
+
+export function searchBrands (searchString) {
+  return async (dispatch, getState) => {
+    try {
+      await dispatch({ type: BRANDS_SEARCH_START, searchString });
+      return await dispatch(dataSearchBrands({ searchString }));
+    } catch (error) {
+      dispatch({ error, type: BRANDS_SEARCH_ERROR });
     }
   };
 }

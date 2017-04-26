@@ -909,13 +909,15 @@ export function transformCrop ({ area, auditInfo, post: { defaultLocale, image, 
   return crop;
 }
 
-export function transformListSpott ({ auditInfo, promoted, publishStatus, title, topics, uuid }) {
+export function transformListSpott ({ auditInfo, comment, image, promoted, publishStatus, title, topics, uuid }) {
   return {
+    comment,
     createdBy: auditInfo && auditInfo.createdBy,
     createdOn: auditInfo && auditInfo.createdOn,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     id: uuid,
+    image: transformImage(image),
     promoted,
     publishStatus,
     title,
@@ -962,7 +964,7 @@ function transformProductMarker ({ character, person, point, product, relevance,
 
 export function transformSpott ({
   auditInfo, defaultLocale, image, imageSource, localeData, personMarkers, productMarkers,
-  publishStatus, promoted, topics, uuid
+  publishStatus, promoted, promotedForBrand, topics, uuid
 }) {
   const spott = {
     basedOnDefaultLocale: {},
@@ -977,6 +979,7 @@ export function transformSpott ({
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     locales: [],
     promoted,
+    promotedForBrand: promotedForBrand && transformListBrand(promotedForBrand),
     tags: personMarkers.map(transformPersonMarker).concat(productMarkers.map(transformProductMarker)),
     title: {},
     topics: (topics || []).map(transformTopic),
