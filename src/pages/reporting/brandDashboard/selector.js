@@ -138,7 +138,7 @@ const ageDataConfigSelector = createSelector(
     // There should be data available, otherwise Highcharts will crash.
     if (d.size > 0) {
       series = series.push(Map({
-        data: d.map((t) => t.get('value') || 24),
+        data: d.map((t) => t.get('value')),
         name: 'Brand subscriptions'
       }));
     }
@@ -160,7 +160,7 @@ const genderDataConfigSelector = createSelector(
     // There should be data available, otherwise Highcharts will crash.
     if (d.size > 0) {
       series = series.push(Map({
-        data: d.map((t) => t.get('value') || 24),
+        data: d.map((t) => t.get('value')),
         name: 'Brand subscriptions'
       }));
     }
