@@ -5,7 +5,7 @@ import { transformPushNotification } from './transformers';
 export async function fetchPushNotifications (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField, type = '' }) {
   let url = `${baseUrl}/v004/push/messages?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);

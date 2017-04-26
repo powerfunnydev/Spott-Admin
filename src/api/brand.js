@@ -4,7 +4,7 @@ import { transformProductOffering, transformBrand, transformListBrand, transform
 export async function fetchBrands (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/product/brands?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
@@ -17,7 +17,7 @@ export async function fetchBrands (baseUrl, authenticationToken, locale, { searc
 export async function fetchProducts (baseUrl, authenticationToken, locale, { brandId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/product/brands/${brandId}/products?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
@@ -85,7 +85,7 @@ export async function deleteBrands (baseUrl, authenticationToken, locale, { bran
 export async function searchBrands (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25 }) {
   let url = `${baseUrl}/v004/product/brands?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   const { body: { data } } = await get(authenticationToken, locale, url);
   return data.map(transformListBrand);
@@ -94,7 +94,7 @@ export async function searchBrands (baseUrl, authenticationToken, locale, { sear
 export async function searchMediumBrands (baseUrl, authenticationToken, locale, { mediumId, searchString = '', page = 0, pageSize = 100 }) {
   let url = `${baseUrl}/v004/media/media/${mediumId}/brandDeals?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   const { body: { data } } = await get(authenticationToken, locale, url);
   return data.map(transformListBrand);

@@ -238,7 +238,7 @@ export async function deletePosterImage (baseUrl, authenticationToken, locale, {
 export async function fetchMedia (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/media?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
@@ -271,7 +271,7 @@ export async function deleteRoundLogo (baseUrl, authenticationToken, locale, { l
 export async function fetchTvGuideEntries (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField, mediumId }) {
   let url = `${baseUrl}/v004/media/media/${mediumId}/tvGuideEntries?page=${page}&pageSize=${pageSize}&mediumUuid=${mediumId}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);

@@ -3,19 +3,18 @@ import { currentModalSelector } from '../../../../selectors/global';
 import { createFormValueSelector } from '../../../../utils';
 import { serializeFilterHasCountries, serializeFilterHasLanguages } from '../../../../reducers/utils';
 import {
-  createEntityIdsByRelationSelector,
   createEntityByIdSelector,
+  createEntityIdsByRelationSelector,
   filterHasCountriesRelationsSelector,
   filterHasLanguagesRelationsSelector,
-  searchStringHasTopicsRelationsSelector,
-  spottsEntitiesSelector,
-  topicsEntitiesSelector,
+  listBrandsEntitiesSelector,
   listCharactersEntitiesSelector,
   listPersonsEntitiesSelector,
   listProductsEntitiesSelector,
-  searchStringHasCharactersRelationsSelector,
-  searchStringHasPersonsRelationsSelector,
-  searchStringHasProductsRelationsSelector
+  searchStringHasBrandsRelationsSelector,
+  searchStringHasTopicsRelationsSelector,
+  spottsEntitiesSelector,
+  topicsEntitiesSelector
 } from '../../../../selectors/data';
 
 const formName = 'spottEdit';
@@ -33,6 +32,7 @@ const topicIdsSelector = createSelector(
   createFormValueSelector(formName, 'topicIds'),
   (topicIds) => topicIds && typeof topicIds.toJS === 'function' ? topicIds.toJS() : topicIds
 );
+const promotedSelector = createFormValueSelector(formName, 'promoted');
 
 const currentSpottIdSelector = (state, props) => props.params.spottId;
 const currentSpottSelector = createEntityByIdSelector(spottsEntitiesSelector, currentSpottIdSelector);
@@ -61,8 +61,12 @@ export const audienceLanguagesFilterKeySelector = createSelector(
 const searchedAudienceCountryIdsSelector = createEntityIdsByRelationSelector(filterHasCountriesRelationsSelector, audienceCountriesFilterKeySelector);
 const searchedAudienceLanguageIdsSelector = createEntityIdsByRelationSelector(filterHasLanguagesRelationsSelector, audienceLanguagesFilterKeySelector);
 
+const currentBrandsSearchStringSelector = (state) => state.getIn([ 'content', 'spotts', 'edit', 'currentBrandsSearchString' ]);
+const searchedBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentBrandsSearchStringSelector);
+
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
+  brandsById: listBrandsEntitiesSelector,
   charactersById: listCharactersEntitiesSelector,
   currentModal: currentModalSelector,
   currentSpott: currentSpottSelector,
@@ -72,65 +76,13 @@ export default createStructuredSelector({
   personsById: listPersonsEntitiesSelector,
   popUpMessage: popUpMessageSelector,
   productsById: listProductsEntitiesSelector,
+  promoted: promotedSelector,
   searchedAudienceCountryIds: searchedAudienceCountryIdsSelector,
   searchedAudienceLanguageIds: searchedAudienceLanguageIdsSelector,
+  searchedBrandIds: searchedBrandIdsSelector,
   searchedTopicIds: searchedTopicIdsSelector,
   supportedLocales: supportedLocalesSelector,
   tags: spottTagsSelector,
   topicIds: topicIdsSelector,
   topicsById: topicsEntitiesSelector
-});
-
-export const currentCharactersSearchStringSelector = (state) => state.getIn([ 'content', 'spotts', 'edit', 'currentTagsCharactersSearchString' ]);
-export const currentPersonsSearchStringSelector = (state) => state.getIn([ 'content', 'spotts', 'edit', 'currentTagsPersonsSearchString' ]);
-export const currentProductsSearchStringSelector = (state) => state.getIn([ 'content', 'spotts', 'edit', 'currentTagsProductsSearchString' ]);
-
-export const searchedCharacterIdsSelector = createEntityIdsByRelationSelector(searchStringHasCharactersRelationsSelector, currentCharactersSearchStringSelector);
-export const searchedPersonIdsSelector = createEntityIdsByRelationSelector(searchStringHasPersonsRelationsSelector, currentPersonsSearchStringSelector);
-export const searchedProductIdsSelector = createEntityIdsByRelationSelector(searchStringHasProductsRelationsSelector, currentProductsSearchStringSelector);
-
-const entityTypeSelector = createFormValueSelector('tagCreate', 'entityType');
-
-const productCharactersSelector = createSelector(
-  spottTagsSelector,
-  listCharactersEntitiesSelector,
-  listPersonsEntitiesSelector,
-  (tags, charactersById, personsById) => {
-    const characters = [];
-    for (const tag of tags) {
-      if (tag.entityType === 'CHARACTER') {
-        const character = charactersById.get(tag.characterId);
-        if (character) {
-          characters.push({
-            entityType: 'CHARACTER',
-            id: character.get('id'),
-            imageUrl: character.getIn([ 'portraitImage', 'url' ]),
-            name: character.get('name')
-          });
-        }
-      } else if (tag.entityType === 'PERSON') {
-        const person = personsById.get(tag.personId);
-        if (person) {
-          characters.push({
-            entityType: 'PERSON',
-            id: person.get('id'),
-            imageUrl: person.getIn([ 'portraitImage', 'url' ]),
-            name: person.get('fullName')
-          });
-        }
-      }
-    }
-    return characters;
-  }
-);
-
-export const tagsSelector = createStructuredSelector({
-  charactersById: listCharactersEntitiesSelector,
-  entityType: entityTypeSelector,
-  personsById: listPersonsEntitiesSelector,
-  productsById: listProductsEntitiesSelector,
-  productCharacters: productCharactersSelector,
-  searchedCharacterIds: searchedCharacterIdsSelector,
-  searchedPersonIds: searchedPersonIdsSelector,
-  searchedProductIds: searchedProductIdsSelector
 });

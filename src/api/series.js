@@ -4,7 +4,7 @@ import { transformListSeriesEntry, transformSeriesEntry004, transformListSeason,
 export async function fetchSeriesEntrySeasons (baseUrl, authenticationToken, locale, { seriesEntryId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/series/${seriesEntryId}/seasons?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
@@ -19,7 +19,7 @@ export async function fetchSeriesEntrySeasons (baseUrl, authenticationToken, loc
 export async function fetchSeriesEntryEpisodes (baseUrl, authenticationToken, locale, { publishStatus, seriesEntryId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/series/${seriesEntryId}/episodes?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
@@ -37,7 +37,7 @@ export async function fetchSeriesEntryEpisodes (baseUrl, authenticationToken, lo
 export async function fetchSeriesEntries (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/series?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);

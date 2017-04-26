@@ -4,7 +4,7 @@ import { transformListMediumCategory, transformMediumCategory } from './transfor
 export async function fetchMediumCategories (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 100, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/mediumCategories?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);

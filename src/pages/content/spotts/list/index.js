@@ -1,13 +1,16 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import * as PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Radium from 'radium';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
+import Masonry from 'react-masonry-component';
 import moment from 'moment';
 import { Root, Container } from '../../../_common/styles';
-import { Tile, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, Pagination } from '../../../_common/components/table/index';
+import { UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, Pagination } from '../../../_common/components/table/index';
 import Line from '../../../_common/components/line';
 import ListView from '../../../_common/components/listView/index';
+import ToolTip from '../../../_common/components/toolTip';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
@@ -15,6 +18,7 @@ import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 import * as actions from './actions';
 import selector from './selector';
+import Spott from './spott';
 
 @tableDecorator()
 @connect(selector, (dispatch) => ({
@@ -90,6 +94,40 @@ export default class Spotts extends Component {
     return moment(date).format('YYYY-MM-DD HH:mm');
   }
 
+  getNameItem (spott) {
+    const styles = {
+      logo: {
+        width: '22px',
+        height: '22px',
+        borderRadius: '2px'
+      },
+      logoContainer: {
+        paddingRight: '10px',
+        display: 'inline-flex'
+      },
+      logoPlaceholder: {
+        paddingRight: '32px'
+      },
+      overlay: {
+        height: '200px',
+        objectFit: 'cover',
+        width: '150px'
+      }
+    };
+    return (
+      <div style={{ alignItems: 'center', display: 'inline-flex' }}>
+        {spott.get('image') && <div style={styles.logoContainer}>
+          <ToolTip
+            overlay={<img src={`${spott.getIn([ 'image', 'url' ])}?height=150&width=150`} style={styles.overlay}/>}
+            placement='top'
+            prefixCls='no-arrow'>
+            <img src={`${spott.getIn([ 'image', 'url' ])}?height=150&width=150`} style={styles.logo} />
+          </ToolTip>
+        </div> || <div style={styles.logoPlaceholder}/>} {spott.get('title')}
+      </div>
+    );
+  }
+
   onCreateSpott (e) {
     e.preventDefault();
     this.props.routerPushWithReturnTo('/content/spotts/create');
@@ -114,7 +152,7 @@ export default class Spotts extends Component {
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     const columns = [
       { type: 'checkBox' },
-      { type: 'custom', name: 'title', sort: true, sortField: 'TITLE', title: 'TITLE', clickable: true, getUrl: this.determineReadUrl },
+      { type: 'custom', sort: true, sortField: 'TITLE', title: 'TITLE', clickable: true, getUrl: this.determineReadUrl, convert: this.getNameItem, colspan: 2 },
       { type: 'custom', title: 'UPDATED BY', name: 'lastUpdatedBy' },
       { type: 'custom', sort: true, sortField: 'LAST_MODIFIED', title: 'LAST UPDATED ON', convert: this.getLastUpdatedOn },
       { type: 'custom', title: 'PUBLISH STATUS', name: 'publishStatus' },
@@ -165,20 +203,17 @@ export default class Spotts extends Component {
               }
               {display === 'grid' &&
                 <div>
-                  <div style={generalStyles.row}>
+                  <Masonry>
                     {spotts.get('data').map((spott, index) => (
-                      <Tile
+                      <Spott
                         checked={isSelected.get(spott.get('id'))}
-                        imageUrl={spott.get('image') && `${spott.getIn([ 'image', 'url' ])}?height=360&width=360`}
                         key={`spott${index}`}
-                        text={spott.get('title')}
+                        spott={spott}
                         onCheckboxChange={selectCheckbox.bind(this, spott.get('id'))}
                         onClick={() => { this.props.routerPushWithReturnTo(`/content/spotts/read/${spott.get('id')}`); }}
                         onDelete={async (e) => { e.preventDefault(); await this.deleteSpott(spott.get('id')); }}
-                        onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/spotts/edit/${spott.get('id')}`); }}/>
-                    ))}
-                    <Tile key={'createSpott'} onCreate={() => { this.props.routerPushWithReturnTo('/content/spotts/create'); }}/>
-                  </div>
+                        onEdit={(e) => { e.preventDefault(); this.props.routerPushWithReturnTo(`/content/spotts/edit/${spott.get('id')}`); }}/>))}
+                  </Masonry>
                   <Pagination currentPage={(page && (parseInt(page, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(page, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(page, 10), true); }}/>
                 </div>
               }

@@ -4,7 +4,7 @@ import { transformBrand, transformListSpott, transformSpott } from './transforme
 export async function fetchSpotts (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/post/posts?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
@@ -22,7 +22,7 @@ export async function fetchSpott (baseUrl, authenticationToken, locale, { spottI
 }
 
 export async function persistSpott (baseUrl, authenticationToken, locale, {
-  basedOnDefaultLocale, defaultLocale, comment, image, imageSource, locales,
+  basedOnDefaultLocale, brandId, defaultLocale, comment, image, imageSource, locales,
   promoted, publishStatus, spottId, tags, title, topicIds }) {
   let spott = {};
   if (spottId) {
@@ -54,6 +54,7 @@ export async function persistSpott (baseUrl, authenticationToken, locale, {
   spott.defaultLocale = defaultLocale;
   spott.imageSource = imageSource;
   spott.promoted = promoted;
+  spott.promotedForBrand = promoted && brandId ? { uuid: brandId } : null;
   spott.publishStatus = publishStatus;
 
   spott.topics = (topicIds || []).map((id) => ({ uuid: id }));

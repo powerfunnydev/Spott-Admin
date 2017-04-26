@@ -4,7 +4,7 @@ import { transformListProductCategory, transformProductCategory } from './transf
 export async function fetchProductCategories (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 100, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/product/categories?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
-    url = url.concat(`&searchString=${searchString}`);
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
