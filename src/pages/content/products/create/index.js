@@ -129,6 +129,8 @@ export default class CreateProductModal extends Component {
           required/>
         <Field
           component={SelectInput}
+          getItemImage={(id) => brandsById.getIn([ id, 'logo', 'url' ])}
+          getItemLargeImage={(id) => brandsById.getIn([ id, 'logo', 'url' ])}
           getItemText={(id) => brandsById.getIn([ id, 'name' ])}
           getOptions={searchBrands}
           isLoading={searchedBrandIds.get('_status') === FETCHING}

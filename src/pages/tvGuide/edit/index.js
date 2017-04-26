@@ -200,6 +200,8 @@ export default class EditTvGuideEntry extends Component {
                 <FormSubtitle first>Content</FormSubtitle>
                 <Field
                   component={SelectInput}
+                  getItemImage={(id) => mediaById.getIn([ id, 'posterImage', 'url' ])}
+                  getItemLargeImage={(id) => mediaById.getIn([ id, 'posterImage', 'url' ])}
                   getItemText={(id) => mediaById.getIn([ id, 'title' ]) && `${mediaById.getIn([ id, 'title' ])} (${t(`mediaTypes.${mediaById.getIn([ id, 'type' ])}`)})`}
                   getOptions={searchMedia}
                   isLoading={searchedMediumIds.get('_status') === FETCHING}
@@ -241,6 +243,8 @@ export default class EditTvGuideEntry extends Component {
                 <FormSubtitle>Airtime</FormSubtitle>
                 <Field
                   component={SelectInput}
+                  getItemImage={(id) => broadcastChannelsById.getIn([ id, 'logo', 'url' ])}
+                  getItemLargeImage={(id) => broadcastChannelsById.getIn([ id, 'logo', 'url' ])}
                   getItemText={(id) => broadcastChannelsById.getIn([ id, 'name' ])}
                   getOptions={searchBroadcastChannels}
                   isLoading={searchedBroadcastChannelIds.get('_status') === FETCHING}

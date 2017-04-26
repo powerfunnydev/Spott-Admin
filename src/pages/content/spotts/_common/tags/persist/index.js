@@ -4,7 +4,7 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { FormSubtitle } from '../../../../../_common/styles';
+import { FormSubtitle, buttonStyles } from '../../../../../_common/styles';
 import SelectInput from '../../../../../_common/inputs/selectInput';
 import RadioInput from '../../../../../_common/inputs/radioInput';
 import localized from '../../../../../_common/decorators/localized';
@@ -97,6 +97,7 @@ export default function createPersistTag (selector, actions) {
         searchedCharacterIds: ImmutablePropTypes.map.isRequired,
         searchedPersonIds: ImmutablePropTypes.map.isRequired,
         searchedProductIds: ImmutablePropTypes.map.isRequired,
+        selectedProductId: PropTypes.string,
         submitButtonText: PropTypes.string,
         t: PropTypes.func.isRequired,
         onClose: PropTypes.func.isRequired,
@@ -126,6 +127,21 @@ export default function createPersistTag (selector, actions) {
           display: 'flex',
           flexWrap: 'wrap',
           paddingTop: 14
+        },
+        grayButton: {
+          backgroundColor: 'rgb(123, 129, 134)',
+          color: 'rgb(220, 222, 223)',
+          fontFamily: 'Rubik-Regular'
+        },
+        link: {
+          fontFamily: 'Rubik-Regular',
+          textDecoration: 'none'
+        },
+        buttons: {
+          paddingTop: '10px',
+          alignItems: 'flex-end',
+          display: 'flex',
+          justifyContent: 'flex-end'
         }
       };
 
@@ -133,7 +149,7 @@ export default function createPersistTag (selector, actions) {
         const styles = this.constructor.styles;
         const {
           charactersById, entityType, handleSubmit, personsById, productCharacters, productsById,
-          searchedCharacterIds, searchedPersonIds, searchedProductIds, submitButtonText,
+          searchedCharacterIds, searchedPersonIds, searchedProductIds, selectedProductId, submitButtonText,
           onClose
         } = this.props;
         return (
@@ -149,13 +165,20 @@ export default function createPersistTag (selector, actions) {
                 <FormSubtitle>Find product</FormSubtitle>
                 <Field
                   component={SelectInput}
-                  getItemText={(productId) => productsById.getIn([ productId, 'shortName' ])}
+                  getItemImage={(id) => productsById.getIn([ id, 'logo', 'url' ])}
+                  getItemLargeImage={(id) => productsById.getIn([ id, 'logo', 'url' ])}
+                  getItemText={(productId) => `${productsById.getIn([ productId, 'brand', 'name' ])} - ${productsById.getIn([ productId, 'fullName' ])}`}
                   getOptions={this.searchProducts}
+                  isLoading={searchedProductIds.get('_status') !== 'loaded'}
                   label='Product name'
                   name='productId'
                   options={searchedProductIds.get('data').toArray()}
                   placeholder='Search for products'
                   required/>
+                  <div style={styles.buttons}>
+                  {selectedProductId &&
+                    <a href={`/#/content/products/edit/${selectedProductId}`} style={[ buttonStyles.base, buttonStyles.extraSmall, styles.grayButton, styles.link ]} target='_blank'>Edit product</a>}
+                  </div>
                 <Field
                   component={RadioInput}
                   first
@@ -173,6 +196,8 @@ export default function createPersistTag (selector, actions) {
                 <FormSubtitle>Find character</FormSubtitle>
                 <Field
                   component={SelectInput}
+                  getItemImage={(id) => charactersById.getIn([ id, 'portraitImage', 'url' ])}
+                  getItemLargeImage={(id) => charactersById.getIn([ id, 'portraitImage', 'url' ])}
                   getItemText={(characterId) => charactersById.getIn([ characterId, 'name' ])}
                   getOptions={this.searchCharacters}
                   label='Character name'
@@ -186,6 +211,8 @@ export default function createPersistTag (selector, actions) {
                 <FormSubtitle>Find person</FormSubtitle>
                 <Field
                   component={SelectInput}
+                  getItemImage={(id) => personsById.getIn([ id, 'portraitImage', 'url' ])}
+                  getItemLargeImage={(id) => personsById.getIn([ id, 'portraitImage', 'url' ])}
                   getItemText={(personId) => personsById.getIn([ personId, 'fullName' ])}
                   getOptions={this.searchPersons}
                   label='Person name'

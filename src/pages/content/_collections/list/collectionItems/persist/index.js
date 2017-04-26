@@ -96,7 +96,7 @@ export default class CollectionItemModal extends Component {
         <Field
           component={SelectInput}
           first
-          getItemText={(productId) => productsById.getIn([ productId, 'shortName' ])}
+          getItemText={(productId) => productsById.getIn([ productId, 'fullName' ])}
           getOptions={this.searchProducts}
           label='Product'
           name='productId'

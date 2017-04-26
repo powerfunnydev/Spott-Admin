@@ -193,7 +193,7 @@ class CollectionItem extends Component {
       : (
         <div
           style={styles.container}
-          title={collectionItem.getIn([ 'product', 'shortName' ])}
+          title={collectionItem.getIn([ 'product', 'fullName' ])}
           onMouseEnter={() => { this.setState({ hover: true }); }}
           onMouseLeave={() => { this.setState({ hover: false }); }}>
         {this.state.hover &&

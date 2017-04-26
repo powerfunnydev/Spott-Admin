@@ -60,6 +60,7 @@ export default function createTagSelector (formName, type) {
     }
   );
 
+  const selectedProductSelector = createFormValueSelector('tagCreate', 'productId');
   return createStructuredSelector({
     charactersById: listCharactersEntitiesSelector,
     entityType: entityTypeSelector,
@@ -68,6 +69,7 @@ export default function createTagSelector (formName, type) {
     productCharacters: productCharactersSelector,
     searchedCharacterIds: searchedCharacterIdsSelector,
     searchedPersonIds: searchedPersonIdsSelector,
-    searchedProductIds: searchedProductIdsSelector
+    searchedProductIds: searchedProductIdsSelector,
+    selectedProductId: selectedProductSelector
   });
 }
