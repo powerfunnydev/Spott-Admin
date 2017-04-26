@@ -1,5 +1,5 @@
 import { get } from './request';
-import { transformTopMedia, transformTopPeople, transformTopProduct, transformKeyMetrics } from './transformers';
+import { transformTopMedia, transformTopPeople, transformTopProduct, transformKeyMetrics, transformAgeRange } from './transformers';
 
 const chartColors = [
   '#058dc7',
@@ -48,7 +48,6 @@ export async function fetchTopProducts (baseUrl, authenticationToken, locale, { 
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }
   const { body } = await get(authenticationToken, locale, url);
-  console.warn('Body data', body.data);
   body.data = body.data.map(transformTopProduct);
   return body;
 }
@@ -60,17 +59,17 @@ export async function fetchDemographics (baseUrl, authenticationToken, locale) {
   return body;
 }
 
-export async function fetchGenderData (baseUrl, authenticationToken, locale) {
-  const searchUrl = `${baseUrl}/v004/media/characters`;
-  const { body } = await get(authenticationToken, locale, searchUrl);
-  body.data = body.data.map(transformTopPeople);
+export async function fetchAgeData (baseUrl, authenticationToken, locale, { ages, brandId, endDate, genders, startDate }) {
+  const url = `${baseUrl}/v004/report/reports/brands/ageGraph?ageRanges=${ages.join(',')}&brandUuid=${brandId}&eventType=BRAND_SUBSCRIPTIONS&genders=${genders.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}`;
+  const { body } = await get(authenticationToken, locale, url);
+  body.data = body.data.map(transformAgeRange);
   return body;
 }
 
-export async function fetchAgeData (baseUrl, authenticationToken, locale) {
-  const searchUrl = `${baseUrl}/v004/media/characters`;
-  const { body } = await get(authenticationToken, locale, searchUrl);
-  body.data = body.data.map(transformTopPeople);
+export async function fetchGenderData (baseUrl, authenticationToken, locale, { ages, brandId, endDate, genders, startDate }) {
+  const url = `${baseUrl}/v004/report/reports/brands/genderGraph?ageRanges=${ages.join(',')}&brandUuid=${brandId}&eventType=BRAND_SUBSCRIPTIONS&gender=${genders.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}`;
+  const { body } = await get(authenticationToken, locale, url);
+  body.data = body.data.map(({ gender, value }) => ({ id: gender, value }));
   return body;
 }
 
@@ -90,6 +89,14 @@ export async function fetchDateData (baseUrl, authenticationToken, locale, { age
     eventData,
     userData
   };
+}
+
+export async function fetchLocationData (baseUrl, authenticationToken, locale, { ages, brandId, eventId, endDate, genders, startDate }) {
+  const url = `${baseUrl}/v004/report/reports/brands/locationData?ageRanges=${ages.join(',')}&brandUuid=${brandId}&eventType=${eventId}&gender=${genders.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}`;
+  const { body } = await get(authenticationToken, locale, url);
+  console.warn('Location data', body);
+  // body.data = body.data;
+  return body;
 }
 
 export async function fetchKeyMetrics (baseUrl, authenticationToken, locale, { ages, brandId, endDate, genders, startDate }) {

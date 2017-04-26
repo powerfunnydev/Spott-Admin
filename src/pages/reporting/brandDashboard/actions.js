@@ -205,24 +205,40 @@ export function loadDemographics (query) {
   };
 }
 
-export function loadAgeData (query) {
-  return async (dispatch) => {
-    try {
-      dispatch({ ...query, type: AGE_DATA_FETCH_START });
-      return await dispatch(fetchAgeData());
-    } catch (error) {
-      dispatch({ ...query, error, type: AGE_DATA_FETCH_ERROR });
+export function loadAgeData () {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const query = locationSelector(state).query;
+
+    if (query.endDate && query.startDate) {
+      const ages = currentAgesSelector(state);
+      const genders = currentGendersSelector(state);
+      const languages = currentLanguagesSelector(state);
+      const endDate = moment(query.endDate);
+      const startDate = moment(query.startDate);
+
+      const args = { ages, brandId, endDate, genders, languages, startDate };
+
+      return await dispatch(fetchAgeData(args));
     }
   };
 }
 
 export function loadGenderData (query) {
-  return async (dispatch) => {
-    try {
-      dispatch({ ...query, type: GENDER_DATA_FETCH_START });
-      return await dispatch(fetchGenderData());
-    } catch (error) {
-      dispatch({ ...query, error, type: GENDER_DATA_FETCH_ERROR });
+  return async (dispatch, getState) => {
+    const state = getState();
+    const query = locationSelector(state).query;
+
+    if (query.endDate && query.startDate) {
+      const ages = currentAgesSelector(state);
+      const genders = currentGendersSelector(state);
+      const languages = currentLanguagesSelector(state);
+      const endDate = moment(query.endDate);
+      const startDate = moment(query.startDate);
+
+      const args = { ages, brandId, endDate, genders, languages, startDate };
+
+      return await dispatch(fetchGenderData(args));
     }
   };
 }

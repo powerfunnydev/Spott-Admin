@@ -1016,20 +1016,25 @@ export function transformTopProduct ({ buys, clicks, impressions, product, sales
     buys,
     clicks,
     id: product.uuid,
-    impressions,
     product: transformListProduct(product),
     sales: sales && { amount: sales.amount, currency: sales.currency }
   };
 }
 
-export function transformKeyMetrics ({ productBuys, productConversionRatePercentage, productImpressions, productViews, taggedProductCount }) {
+export function transformKeyMetrics ({ brandSubscriptions, productBuys, productConversionRatePercentage, productImpressions, productViews, taggedProductCount }) {
   return {
-    // TODO
-    brandSubscriptions: -1,
+    brandSubscriptions,
     productBuys,
     productConversionRatePercentage,
     productImpressions,
     productViews,
     taggedProductCount
+  };
+}
+
+export function transformAgeRange ({ ageRange: { from, to }, value }) {
+  return {
+    label: to ? `${from}-${to}` : `${from}+`,
+    value
   };
 }

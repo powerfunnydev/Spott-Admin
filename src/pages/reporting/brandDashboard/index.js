@@ -15,7 +15,6 @@ import { colors, fontWeights, makeTextStyle, Container } from '../../_common/sty
 import { isLoading } from '../../../constants/statusTypes';
 import { SideMenu } from '../../app/sideMenu';
 import Header from '../../app/multiFunctionalHeader';
-import { ageConfig, genderConfig } from './defaultHighchartsConfig';
 import DemographicsWidget from './demographicsWidget';
 import Filters from './filters';
 import NumberWidget from './numberWidget';
@@ -207,8 +206,7 @@ class TopProducts extends Component {
     const { data, load, location: { query: { topProductsSortDirection, topProductsSortField } }, routerPushWithReturnTo, style, onSortField } = this.props;
 
     const columns = [
-      { clickable: true, colspan: 3, convert: this.getTitle, sort: true, sortField: 'TITLE', title: 'TITLE', type: 'custom' },
-      { clickable: true, colspan: 1, name: 'impressions', sort: true, sortField: 'IMPRESSIONS', title: 'IMPRESSIONS', type: 'custom' },
+      { clickable: true, colspan: 3, convert: this.getTitle, title: 'TITLE', type: 'custom' },
       { clickable: true, colspan: 1, name: 'clicks', sort: true, sortField: 'CLICKS', title: 'CLICKS', type: 'custom' },
       { clickable: true, colspan: 1, name: 'buys', sort: true, sortField: 'BUYS', title: 'BUYS', type: 'custom' },
       { clickable: true, colspan: 1, convert: this.getSales, sort: true, sortField: 'TOTAL_SALES', title: 'EST. SALES', type: 'custom' }
@@ -236,8 +234,10 @@ class TopProducts extends Component {
 }
 
 @connect(selector, (dispatch) => ({
+  loadAgeData: bindActionCreators(actions.loadAgeData, dispatch),
   loadDateData: bindActionCreators(actions.loadDateData, dispatch),
   loadEvents: bindActionCreators(actions.loadEvents, dispatch),
+  loadGenderData: bindActionCreators(actions.loadGenderData, dispatch),
   loadKeyMetrics: bindActionCreators(actions.loadKeyMetrics, dispatch),
   loadTopMedia: bindActionCreators(actions.loadTopMedia, dispatch),
   loadTopPeople: bindActionCreators(actions.loadTopPeople, dispatch),
@@ -252,8 +252,10 @@ export default class BrandDashboard extends Component {
     dateDataConfig: PropTypes.object.isRequired,
     events: ImmutablePropTypes.map.isRequired,
     eventsById: ImmutablePropTypes.map.isRequired,
+    loadAgeData: PropTypes.func.isRequired,
     loadDateData: PropTypes.func.isRequired,
     loadEvents: PropTypes.func.isRequired,
+    loadGenderData: PropTypes.func.isRequired,
     loadKeyMetrics: PropTypes.func.isRequired,
     loadTopMedia: PropTypes.func.isRequired,
     loadTopPeople: PropTypes.func.isRequired,
@@ -286,11 +288,13 @@ export default class BrandDashboard extends Component {
     await this.props.routerPushWithReturnTo({ ...location, query });
 
     await this.props.loadEvents();
-    // await this.props.loadKeyMetrics();
-    // await this.props.loadDateData();
-    // await this.props.loadTopMedia();
-    // await this.props.loadTopPeople();
+    await this.props.loadKeyMetrics();
+    await this.props.loadDateData();
+    await this.props.loadTopMedia();
+    await this.props.loadTopPeople();
     await this.props.loadTopProducts();
+    await this.props.loadAgeData();
+    await this.props.loadGenderData();
   }
 
   async onChangeFilter (field, type, value) {
@@ -302,11 +306,13 @@ export default class BrandDashboard extends Component {
       }
     });
 
-    // await this.props.loadKeyMetrics();
-    // await this.props.loadDateData();
-    // await this.props.loadTopMedia();
-    // await this.props.loadTopPeople();
+    await this.props.loadKeyMetrics();
+    await this.props.loadDateData();
+    await this.props.loadTopMedia();
+    await this.props.loadTopPeople();
     await this.props.loadTopProducts();
+    await this.props.loadAgeData();
+    await this.props.loadGenderData();
   }
 
   static styles = {
@@ -378,14 +384,15 @@ export default class BrandDashboard extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      children, dateDataConfig, eventsById, events, loadTopMedia, loadTopPeople, loadTopProducts,
+      ageDataConfig, children, dateDataConfig, eventsById, events, genderDataConfig,
+      loadTopMedia, loadTopPeople, loadTopProducts,
       location, location: { query: { ages, brandActivityEvents, endDate, genders, languages, startDate } },
       keyMetrics, routerPushWithReturnTo, topMedia, topPeople, topProducts
     } = this.props;
 
     const brandActivityEventsValue = typeof brandActivityEvents === 'string' ? [ brandActivityEvents ] : brandActivityEvents;
 
-    console.warn('top products', topProducts && topProducts.toJS());
+    console.warn('ageDataConfig', ageDataConfig);
     return (
       <SideMenu location={location}>
         <Header hierarchy={[ { title: 'Dashboard', url: '/brand-dashboard' } ]}/>
@@ -465,10 +472,10 @@ export default class BrandDashboard extends Component {
             style={styles.topProductsWidget}/>
           <div style={styles.widgets}>
             <Widget style={styles.widget} title='Age'>
-              <Highcharts config={ageConfig} isPureConfig />
+              <Highcharts config={ageDataConfig} isPureConfig />
             </Widget>
             <Widget style={styles.widget} title='Gender'>
-              <Highcharts config={genderConfig} isPureConfig />
+              <Highcharts config={genderDataConfig} isPureConfig />
             </Widget>
           </div>
           {/* <MapWidget style={styles.paddingBottom} title='Brand activity by region' /> */}

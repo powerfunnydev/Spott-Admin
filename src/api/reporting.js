@@ -2,7 +2,7 @@ import { get } from './request';
 import {
   transformPaging, transformActivityData, transformBrandSubscription,
   transformCharacterSubscription, transformProductView, transformMediumInfo,
-  transformProductBuy, transformProductImpression
+  transformProductBuy, transformProductImpression, transformAgeRange
 } from './transformers';
 
 /**
@@ -78,7 +78,8 @@ export async function getTimelineData (baseUrl, authenticationToken, locale, { e
 export async function _getAgeData (baseUrl, authenticationToken, locale, { endDate, eventId, mediumIds, startDate }) {
   const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v004/report/reports/mediumActivity?dataFormat=AGE_BASED&type=${eventId}&mediumUuid=${mediumIds.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}&aggregationLevel=DAY&fillGaps=true`);
   // There is no need for an id for ages.
-  return transformActivityData(data, (d) => d.map(({ ageRange: { from, to }, value }) => ({ label: to ? `${from}-${to}` : `${from}+`, value })));
+  // label, value tuples.
+  return transformActivityData(data, (d) => d.map(transformAgeRange));
 }
 
 // Aggregates the data for all events.

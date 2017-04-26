@@ -52,7 +52,7 @@ export const dateDataConfig = fromJS({
     borderColor: '#ced6da',
     borderRadius: 2,
     boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)',
-    headerFormat: '<p style="font-size: 10px; color: #6d8791; margin-bottom: 9px; margin-left: 3px; margin-top: 3px;">{eventType} ({point.x:%a %e %b})</p>',
+    headerFormat: '<p style="font-size: 10px; color: #6d8791; margin-bottom: 9px; margin-left: 3px; margin-top: 3px;">{point.x:%A %e %b %Y}</p>',
     pointFormat: '<p style="font-size: 12px; margin-bottom: 7px; margin-left: 3px;"><span style="color:{point.color};">{series.name}</span>\u00a0\u00a0\u00a0\u00a0<b>{point.y}</b></p>',
     shared: true,
     style: {
@@ -63,7 +63,12 @@ export const dateDataConfig = fromJS({
 
   plotOptions: {
     series: {
-      animation: false
+      animation: false,
+      states: {
+        hover: {
+          brightness: -0.2 // darken
+        }
+      }
     },
     spline: {
       marker: {
@@ -87,7 +92,7 @@ export const dateDataConfig = fromJS({
   // } ]
 });
 
-export const ageConfig = {
+export const ageDataConfig = fromJS({
   chart: {
     style: {
       fontFamily: 'Rubik-Regular, Verdana, sans-serif'
@@ -118,7 +123,7 @@ export const ageConfig = {
     borderColor: '#ced6da',
     borderRadius: 2,
     boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)',
-    headerFormat: '<p style="font-size: 10px; color: #6d8791; margin-bottom: 9px; margin-left: 3px; margin-top: 3px;">{eventType} ({point.x})</p>',
+    headerFormat: '<p style="font-size: 10px; color: #6d8791; margin-bottom: 9px; margin-left: 3px; margin-top: 3px;">Age: {point.x}</p>',
     pointFormat: '<p style="font-size: 12px; margin-bottom: 7px; margin-left: 3px;"><span style="color:{point.color};">{series.name}</span>\u00a0\u00a0\u00a0\u00a0<b>{point.y:.0f}</b></p>',
     shared: true,
     style: {
@@ -140,12 +145,17 @@ export const ageConfig = {
   } ],
   plotOptions: {
     series: {
-      animation: false
+      animation: false,
+      states: {
+        hover: {
+          brightness: -0.2 // darken
+        }
+      }
     }
   }
-};
+});
 
-export const genderConfig = {
+export const genderDataConfig = fromJS({
   chart: {
     style: {
       fontFamily: 'Rubik-Regular, Verdana, sans-serif'
@@ -198,7 +208,12 @@ export const genderConfig = {
   } ],
   plotOptions: {
     series: {
-      animation: false
+      animation: false,
+      states: {
+        hover: {
+          brightness: -0.2 // darken
+        }
+      }
     }
   }
-};
+});
