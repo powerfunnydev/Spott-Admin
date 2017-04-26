@@ -306,13 +306,18 @@ export default class BrandDashboard extends Component {
       }
     });
 
-    await this.props.loadKeyMetrics();
-    await this.props.loadDateData();
-    await this.props.loadTopMedia();
-    await this.props.loadTopPeople();
-    await this.props.loadTopProducts();
-    await this.props.loadAgeData();
-    await this.props.loadGenderData();
+    if (field === 'brandActivityEvents') {
+      // If the brandActivityEvents are changed we only need to update the date data.
+      await this.props.loadDateData();
+    } else {
+      await this.props.loadKeyMetrics();
+      await this.props.loadDateData();
+      await this.props.loadTopMedia();
+      await this.props.loadTopPeople();
+      await this.props.loadTopProducts();
+      await this.props.loadAgeData();
+      await this.props.loadGenderData();
+    }
   }
 
   static styles = {
