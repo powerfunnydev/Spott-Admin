@@ -78,12 +78,12 @@ export default class ReadProduct extends Component {
         <Root>
           <Header hierarchy={[
             { title: 'Products', url: '/content/products' },
-            { title: currentProduct.getIn([ 'shortName', defaultLocale ]), url: location } ]}/>
+            { title: currentProduct.getIn([ 'fullName', defaultLocale ]), url: location } ]}/>
           <Container>
             {currentProduct.get('_status') === 'loaded' && currentProduct &&
               <EntityDetails
                 imageUrl={currentProduct.getIn([ 'logo', defaultLocale, 'url' ]) && `${currentProduct.getIn([ 'logo', defaultLocale, 'url' ])}?height=203&width=360`}
-                title={currentProduct.getIn([ 'shortName', defaultLocale ])}
+                title={currentProduct.getIn([ 'fullName', defaultLocale ])}
                 onEdit={() => { this.props.routerPushWithReturnTo(`/content/products/edit/${params.productId}`); }}
                 onRemove={async () => { await deleteProduct(currentProduct.getIn([ 'id' ])); this.redirect(); }}/>}
           </Container>

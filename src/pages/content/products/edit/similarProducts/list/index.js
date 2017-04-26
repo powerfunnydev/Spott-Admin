@@ -265,7 +265,7 @@ export default class SimilarProducts extends Component {
                 <div style={styles.subTitle}>Add by product name</div>
                 <div style={styles.firstPart}>
                   <Autosuggest
-                    getItemText={(id) => productsById.getIn([ id, 'shortName' ])}
+                    getItemText={(id) => productsById.getIn([ id, 'fullName' ])}
                     getOptions={this.slowSearchProducts}
                     isLoading={searchedProductIds.get('_status') === FETCHING}
                     name='productId'
@@ -279,7 +279,7 @@ export default class SimilarProducts extends Component {
                           prefixCls='no-arrow'>
                           <img src={`${productsById.getIn([ id, 'logo', 'url' ])}?height=150&width=150`} style={styles.autoCompleteLogo} />
                         </ToolTip>
-                        <div style={styles.autoSuggestTitle}>{productsById.getIn([ id, 'shortName' ])}</div>
+                        <div style={styles.autoSuggestTitle}>{productsById.getIn([ id, 'fullName' ])}</div>
                         <div style={styles.autoSuggestButton}>
                           <div style={styles.autoSuggestPlusContainer}><PlusSVG color={colors.primaryBlue}/></div>
                           <div style={styles.autoSuggestAdd}>Add</div></div>
@@ -338,7 +338,7 @@ export default class SimilarProducts extends Component {
                           prefixCls='no-arrow'>
                           <img src={`${similarProduct.getIn([ 'product2', 'logo', 'url' ])}?height=150&width=150`} style={styles.logo} />
                         </ToolTip>
-                      </div> || <div style={styles.logoPlaceholder}/>} {similarProduct.getIn([ 'product2', 'shortName' ])}
+                      </div> || <div style={styles.logoPlaceholder}/>} {similarProduct.getIn([ 'product2', 'fullName' ])}
                     </CustomCel>
                     <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]} onClick={() => { this.props.routerPushWithReturnTo(`/content/brands/read/${similarProduct.getIn([ 'product2', 'brand', 'id' ])}`); }}>
                       {similarProduct.getIn([ 'product2', 'brand', 'name' ])}

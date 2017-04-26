@@ -317,7 +317,6 @@ export default class EditSpott extends Component {
       searchAudienceCountries, searchAudienceLanguages, searchedAudienceCountryIds, searchedAudienceLanguageIds,
       searchBrands, searchTopics, searchedBrandIds, searchedTopicIds, tags, topicsById
     } = this.props;
-    console.warn('PROPS', this.props);
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
@@ -402,6 +401,7 @@ export default class EditSpott extends Component {
                         placeholder='Comment'/>
                       <Field
                         component={SelectInput}
+                        getItemImage={(id) => topicsById.getIn([ id, 'icon', 'url' ])}
                         getItemText={(id) => topicsById.getIn([ id, 'text' ])}
                         getOptions={searchTopics}
                         isLoading={searchedTopicIds.get('_status') === FETCHING}
