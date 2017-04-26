@@ -46,7 +46,12 @@ export const timelineConfig = fromJS({
 
   plotOptions: {
     series: {
-      animation: false
+      animation: false,
+      states: {
+        hover: {
+          brightness: -0.2 // darken
+        }
+      }
     },
     spline: {
       marker: {
@@ -107,7 +112,12 @@ export const ageConfig = fromJS({
   series: [],
   plotOptions: {
     series: {
-      animation: false
+      animation: false,
+      states: {
+        hover: {
+          brightness: -0.2 // darken
+        }
+      }
     }
   }
 });
@@ -273,7 +283,12 @@ export const genderConfig = fromJS({
       stacking: 'percent'
     },
     series: {
-      animation: false
+      animation: false,
+      states: {
+        hover: {
+          brightness: -0.2 // darken
+        }
+      }
     }
   },
   series: []

@@ -1,14 +1,16 @@
 import { createSelector, createStructuredSelector } from 'reselect';
+import { List, Map } from 'immutable';
 import {
   agesEntitiesSelector, gendersEntitiesSelector, gendersListSelector, agesListSelector,
   createEntitiesByRelationSelector, createEntitiesByListSelector, brandDashboardEventsEntitiesSelector,
   filterHasTopMediaRelationsSelector, brandDashboardEventsListSelector,
-  filterHasTopPeopleRelationsSelector, topMediaEntitiesSelector, topPeopleEntitiesSelector, languagesEntitiesSelector
+  filterHasTopPeopleRelationsSelector, filterHasTopProductsRelationsSelector, topProductsEntitiesSelector,
+  topMediaEntitiesSelector, topPeopleEntitiesSelector, languagesEntitiesSelector
 } from '../../../selectors/data';
 import { getInformationFromQuery } from '../../_common/components/table/index';
-import { serializeFilterHasTopMedia, serializeFilterHasTopPeople } from '../../../reducers/utils';
+import { serializeFilterHasTopMedia, serializeFilterHasTopPeople, serializeFilterHasTopProducts } from '../../../reducers/utils';
 import { createQueryStringArraySelector } from '../../../selectors/global';
-import { dateDataConfig } from './defaultHighchartsConfig';
+import { ageDataConfig, dateDataConfig, genderDataConfig } from './defaultHighchartsConfig';
 
 // Used in actions
 export const currentAgesSelector = createQueryStringArraySelector('ages');
@@ -47,6 +49,11 @@ const topPeopleFilterKeySelector = (state, props) => serializeFilterHasTopPeople
   // brandId: 'BRAND_ID_PLACEHOLDER'
 });
 
+const topProductsFilterKeySelector = (state, props) => serializeFilterHasTopProducts({
+  ...getInformationFromQuery(props.location.query, topProductsPrefix)
+  // brandId: 'BRAND_ID_PLACEHOLDER'
+});
+
 export const topMediaSelector = createEntitiesByRelationSelector(
   filterHasTopMediaRelationsSelector,
   topMediaFilterKeySelector,
@@ -59,8 +66,16 @@ export const topPeopleSelector = createEntitiesByRelationSelector(
   topPeopleEntitiesSelector
 );
 
-const keyMetricsSelector = (state) => state.getIn([ 'brandDashboard', 'keyMetrics' ]);
+export const topProductsSelector = createEntitiesByRelationSelector(
+  filterHasTopProductsRelationsSelector,
+  topProductsFilterKeySelector,
+  topProductsEntitiesSelector
+);
+
+const ageDataSelector = (state) => state.getIn([ 'brandDashboard', 'ageData' ]);
 const dateDataSelector = (state) => state.getIn([ 'brandDashboard', 'dateData' ]);
+const genderDataSelector = (state) => state.getIn([ 'brandDashboard', 'genderData' ]);
+const keyMetricsSelector = (state) => state.getIn([ 'brandDashboard', 'keyMetrics' ]);
 
 const brandDashboardEventsSelector = createEntitiesByListSelector(brandDashboardEventsListSelector, brandDashboardEventsEntitiesSelector);
 
@@ -113,11 +128,58 @@ const dateDataConfigSelector = createSelector(
   }
 );
 
+const ageDataConfigSelector = createSelector(
+  ageDataSelector,
+  (ageData) => {
+    let series = List();
+    const d = ageData.get('data') || List();
+
+    console.warn('DATA AGE', d);
+    // There should be data available, otherwise Highcharts will crash.
+    if (d.size > 0) {
+      series = series.push(Map({
+        data: d.map((t) => t.get('value') || 24),
+        name: 'Brand subscriptions'
+      }));
+    }
+
+    return ageDataConfig
+      .setIn([ 'xAxis', 'categories' ], d.map((t) => t.get('label')))
+      .set('series', series)
+      .toJS();
+  }
+);
+
+const genderDataConfigSelector = createSelector(
+  genderDataSelector,
+  gendersEntitiesSelector,
+  (genderData, gendersById) => {
+    let series = List();
+    const d = genderData.get('data') || List();
+
+    // There should be data available, otherwise Highcharts will crash.
+    if (d.size > 0) {
+      series = series.push(Map({
+        data: d.map((t) => t.get('value') || 24),
+        name: 'Brand subscriptions'
+      }));
+    }
+
+    return genderDataConfig
+      .setIn([ 'xAxis', 'categories' ], d.map((t) => gendersById.getIn([ t.get('id'), 'description' ])))
+      .set('series', series)
+      .toJS();
+  }
+);
+
 export default createStructuredSelector({
+  ageDataConfig: ageDataConfigSelector,
   dateDataConfig: dateDataConfigSelector,
   events: brandDashboardEventsSelector,
   eventsById: brandDashboardEventsEntitiesSelector,
+  genderDataConfig: genderDataConfigSelector,
   keyMetrics: keyMetricsSelector,
   topMedia: topMediaSelector,
-  topPeople: topPeopleSelector
+  topPeople: topPeopleSelector,
+  topProducts: topProductsSelector
 });

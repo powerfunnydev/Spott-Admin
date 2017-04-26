@@ -6,7 +6,7 @@ import {
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
   serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasLanguages,
   serializeFilterHasPushNotifications, serializeFilterHasSpotts, serializeBroadcasterFilterHasMedia,
-  transformMediumToListMedium, serializeFilterHasTopMedia, serializeFilterHasDemographics, serializeFilterHasTopPeople
+  transformMediumToListMedium, serializeFilterHasTopMedia, serializeFilterHasDemographics, serializeFilterHasTopPeople, serializeFilterHasTopProducts
 } from './utils';
 
 import * as audienceActions from '../actions/audience';
@@ -91,6 +91,7 @@ export default (state = fromJS({
     topics: {},
     topMedia: {}, // Used in brand dashboard. Includes media, subscriptions, etc.
     topPeople: {},
+    topProducts: {},
     users: {},
     videos: {}
   },
@@ -124,6 +125,7 @@ export default (state = fromJS({
     filterHasTags: {},
     filterHasTopMedia: {},
     filterHasTopPeople: {},
+    filterHasTopProducts: {},
     filterHasTvGuideEntries: {},
     filterHasUsers: {},
 
@@ -220,6 +222,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'topPeople', 'filterHasTopPeople', serializeFilterHasTopPeople(action), action.data.data);
     case brandDashboardActions.TOP_PEOPLE_FETCH_ERROR:
       return searchError(state, 'filterHasTopPeople', serializeFilterHasTopPeople(action), action.error);
+
+    case brandDashboardActions.TOP_PRODUCTS_FETCH_START:
+      return searchStart(state, 'filterHasTopProducts', serializeFilterHasTopProducts(action));
+    case brandDashboardActions.TOP_PRODUCTS_FETCH_SUCCESS:
+      return searchSuccess(state, 'topProducts', 'filterHasTopProducts', serializeFilterHasTopProducts(action), action.data.data);
+    case brandDashboardActions.TOP_PRODUCTS_FETCH_ERROR:
+      return searchError(state, 'filterHasTopProducts', serializeFilterHasTopProducts(action), action.error);
 
     case brandDashboardActions.DEMOGRAPHICS_FETCH_START:
       return searchStart(state, 'filterHasDemographics', serializeFilterHasDemographics(action));

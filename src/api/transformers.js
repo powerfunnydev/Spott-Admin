@@ -1013,3 +1013,31 @@ export function transformTopPeople ({ character, subscriptionCount, taggedProduc
     taggedProductCount
   };
 }
+
+export function transformTopProduct ({ buys, clicks, impressions, product, sales }) {
+  return {
+    buys,
+    clicks,
+    id: product.uuid,
+    product: transformListProduct(product),
+    sales: sales && { amount: sales.amount, currency: sales.currency }
+  };
+}
+
+export function transformKeyMetrics ({ brandSubscriptions, productBuys, productConversionRatePercentage, productImpressions, productViews, taggedProductCount }) {
+  return {
+    brandSubscriptions,
+    productBuys,
+    productConversionRatePercentage,
+    productImpressions,
+    productViews,
+    taggedProductCount
+  };
+}
+
+export function transformAgeRange ({ ageRange: { from, to }, value }) {
+  return {
+    label: to ? `${from}-${to}` : `${from}+`,
+    value
+  };
+}

@@ -24,12 +24,12 @@ export default class ImageTitle extends Component {
     title: {
       textOverflow: 'ellipsis',
       overflow: 'hidden',
-      whiteSpace: 'nowrap',
-      width: '100%'
+      whiteSpace: 'nowrap'
     },
     wrapper: {
       alignItems: 'center',
-      display: 'inline-flex'
+      display: 'inline-flex',
+      width: '100%'
     }
   };
 
@@ -42,7 +42,7 @@ export default class ImageTitle extends Component {
           <div style={styles.container}>
             <img src={`${imageUrl}?height=150&width=150`} style={styles.image} />
           </div>) || <div style={styles.imagePlaceholder}/>}
-        <div style={styles.title}>{title}</div>
+        <div style={styles.title} title={title}>{title}</div>
       </div>
     );
   }
