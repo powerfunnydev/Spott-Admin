@@ -7,7 +7,8 @@ export default (state = fromJS({
   ageData: {},
   dateData: {},
   genderData: {},
-  keyMetrics: {}
+  keyMetrics: {},
+  locationData: {}
 }), action) => {
   switch (action.type) {
 
@@ -28,6 +29,13 @@ export default (state = fromJS({
       return fetchSuccess(state, [ 'dateData' ], action.data);
     case actions.DATE_DATA_FETCH_ERROR:
       return fetchError(state, [ 'dateData' ], action.error);
+
+    case actions.LOCATION_DATA_FETCH_START:
+      return fetchStart(state, [ 'locationData' ]);
+    case actions.LOCATION_DATA_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'locationData' ], action.data);
+    case actions.LOCATION_DATA_FETCH_ERROR:
+      return fetchError(state, [ 'locationData' ], action.error);
 
     case actions.AGE_DATA_FETCH_START:
       return fetchStart(state, [ 'ageData' ]);

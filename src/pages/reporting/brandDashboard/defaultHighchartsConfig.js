@@ -186,7 +186,7 @@ export const genderDataConfig = fromJS({
     borderColor: '#ced6da',
     borderRadius: 2,
     boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.25)',
-    headerFormat: '<p style="font-size: 10px; color: #6d8791; margin-bottom: 9px; margin-left: 3px; margin-top: 3px;">{eventType} ({point.x})</p>',
+    headerFormat: '<p style="font-size: 10px; color: #6d8791; margin-bottom: 9px; margin-left: 3px; margin-top: 3px;">Gender: {point.x}</p>',
     pointFormat: '<p style="font-size: 12px; margin-bottom: 7px; margin-left: 3px;"><span style="color:{point.color};">{series.name}</span>\u00a0\u00a0\u00a0\u00a0<b>{point.y:.0f}</b></p>',
     shared: true,
     style: {

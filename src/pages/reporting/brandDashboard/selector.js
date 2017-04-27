@@ -17,6 +17,7 @@ export const currentAgesSelector = createQueryStringArraySelector('ages');
 export const currentGendersSelector = createQueryStringArraySelector('genders');
 export const currentLanguagesSelector = createQueryStringArraySelector('languages');
 export const currentBrandActivityEventsSelector = createQueryStringArraySelector('brandActivityEvents');
+export const currentBrandActivityByRegionEventSelector = createQueryStringArraySelector('brandActivityByRegionEvent');
 
 // Filters
 // ///////
@@ -76,6 +77,7 @@ const ageDataSelector = (state) => state.getIn([ 'brandDashboard', 'ageData' ]);
 const dateDataSelector = (state) => state.getIn([ 'brandDashboard', 'dateData' ]);
 const genderDataSelector = (state) => state.getIn([ 'brandDashboard', 'genderData' ]);
 const keyMetricsSelector = (state) => state.getIn([ 'brandDashboard', 'keyMetrics' ]);
+const locationDataSelector = (state) => state.getIn([ 'brandDashboard', 'locationData' ]);
 
 const brandDashboardEventsSelector = createEntitiesByListSelector(brandDashboardEventsListSelector, brandDashboardEventsEntitiesSelector);
 
@@ -120,11 +122,15 @@ const dateDataConfigSelector = createSelector(
       });
     }
 
-    return dateDataConfig
-      .set('colors', colors)
-      .setIn([ 'tooltip', 'headerFormat' ], dateDataConfig.getIn([ 'tooltip', 'headerFormat' ]).replace('{eventType}', eventTypes))
-      .set('series', series)
-      .toJS();
+    return dateData
+      .set(
+        'data',
+        dateDataConfig
+          .set('colors', colors)
+          .setIn([ 'tooltip', 'headerFormat' ], dateDataConfig.getIn([ 'tooltip', 'headerFormat' ]).replace('{eventType}', eventTypes))
+          .set('series', series)
+          .toJS()
+      );
   }
 );
 
@@ -143,10 +149,14 @@ const ageDataConfigSelector = createSelector(
       }));
     }
 
-    return ageDataConfig
-      .setIn([ 'xAxis', 'categories' ], d.map((t) => t.get('label')))
-      .set('series', series)
-      .toJS();
+    return ageData
+      .set(
+        'data',
+        ageDataConfig
+          .setIn([ 'xAxis', 'categories' ], d.map((t) => t.get('label')))
+          .set('series', series)
+          .toJS()
+      );
   }
 );
 
@@ -165,11 +175,32 @@ const genderDataConfigSelector = createSelector(
       }));
     }
 
-    return genderDataConfig
-      .setIn([ 'xAxis', 'categories' ], d.map((t) => gendersById.getIn([ t.get('id'), 'description' ])))
-      .set('series', series)
-      .toJS();
+    return genderData
+      .set(
+        'data',
+        genderDataConfig
+          .setIn([ 'xAxis', 'categories' ], d.map((t) => gendersById.getIn([ t.get('id'), 'description' ])))
+          .set('series', series)
+          .toJS()
+      );
   }
+);
+
+// The markers shown in the Brand activity by region widget.
+const markersSelector = createSelector(
+  locationDataSelector,
+  (locationData) => (
+    locationData.set(
+      'data',
+      (locationData.get('data') || List()).map((l) => ({
+        label: `${l.get('value')}`,
+        position: {
+          lat: l.get('latitude'),
+          lng: l.get('longitude')
+        }
+      })).toJS()
+    )
+  )
 );
 
 export default createStructuredSelector({
@@ -179,6 +210,7 @@ export default createStructuredSelector({
   eventsById: brandDashboardEventsEntitiesSelector,
   genderDataConfig: genderDataConfigSelector,
   keyMetrics: keyMetricsSelector,
+  markers: markersSelector,
   topMedia: topMediaSelector,
   topPeople: topPeopleSelector,
   topProducts: topProductsSelector

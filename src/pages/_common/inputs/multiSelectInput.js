@@ -59,16 +59,22 @@ export default class MultiSelectInput extends Component {
 
   // Will be invoked when an item is selected, not when we are typing in the input (that triggers onInputChange, see render)
   onInternalChange (index, internalValue) {
-    const { input, onChange } = this.props;
-    const newValues = input.value || [];
-    if (internalValue) {
-      newValues[index] = internalValue.value;
+    console.warn('internalValue', internalValue);
+    const { input, multiselect, onChange } = this.props;
+    if (multiselect) {
+      const newValues = input.value || [];
+      if (internalValue) {
+        newValues[index] = internalValue.value;
+      } else {
+        // Remove element if value was set to null.
+        newValues.splice(index, 1);
+      }
+      input.onChange && input.onChange(newValues);
+      onChange && onChange(newValues);
     } else {
-      // Remove element if value was set to null.
-      newValues.splice(index, 1);
+      input.onChange && input.onChange(internalValue && internalValue.value);
+      onChange && onChange(internalValue && internalValue.value);
     }
-    input.onChange && input.onChange(newValues);
-    onChange && onChange(newValues);
   }
 
   static styles = {
@@ -130,7 +136,7 @@ export default class MultiSelectInput extends Component {
     const styles = this.constructor.styles;
     const {
       disabled, first, getItemText, getItem, getOptions, filter, input,
-      isLoading, label, meta, valueComponent, placeholder,
+      isLoading, label, meta, valueComponent, multiselect, placeholder,
       required, style
     } = this.props;
 
@@ -139,25 +145,27 @@ export default class MultiSelectInput extends Component {
     // expects a classic array. So we invoke toJS on the list.
     if (Immutable.Iterable.isIterable(input.value)) {
       value = (input.value || []).map((o) => ({ item: getItem(o), label: getItemText(o), value: o })).toJS();
-    } else { // If it isn't a immutable List, but a classic array.
+    } else if (multiselect) { // If it isn't a immutable List, but a classic array.
       // We fall back to [] because of https://github.com/erikras/redux-form/issues/621
       value = (input.value || []).map((o) => ({ item: getItem(o), label: getItemText(o), value: o }));
+    } else {
+      value = input.value && { value: input.value, label: getItemText(input.value) };
     }
 
-    if (value.length === 0) {
+    if (multiselect && value.length === 0) {
       value = [ null ];
     }
 
     const options = (this.props.options ? this.props.options.map((o) => ({ item: getItem(o), label: getItemText(o), value: o })) : [])
-      .filter((option) => !(input.value || []).includes(option.value));
+        .filter((option) => !multiselect || !(input.value || []).includes(option.value));
 
-    const disableAddButton = !(value[value.length - 1] && value[value.length - 1].label && options.length > 0);
+    const disableAddButton = multiselect && !(value[value.length - 1] && value[value.length - 1].label && options.length > 0);
 
     return (
       <div style={[ !first && styles.padTop, style ]}>
         {label && <Label required={required} text={label} />}
         <div style={styles.container}>
-          {value.map((v, i) => (
+          {multiselect ? value.map((v, i) => (
             <div key={i} style={styles.selectContainer}>
               <WrappedSelect
                 // {...input}
@@ -185,15 +193,41 @@ export default class MultiSelectInput extends Component {
                 // }}
                 onOpen={getOptions} />
             </div>
-          ))}
-          <button disabled={disableAddButton} style={[ styles.addButton.base, disableAddButton && styles.addButton.disabled ]} title='Add' onClick={() => {
-            const lastValue = value[value.length - 1];
-            if (lastValue && lastValue.label) {
-              this.onInternalChange(value.length, {});
-            }
-          }}>
-            <PlusSVG color={colors.darkGray2} />
-          </button>
+          )) :
+          <div style={styles.selectContainer}>
+            <WrappedSelect
+              cache={false}
+              className='Multi'
+              clearable={false}
+              disabled={disabled}
+              isLoading={isLoading}
+              options={options}
+              placeholder={placeholder}
+              style={mergeStyles([
+                styles.base,
+                styles.text,
+                disabled && styles.disabled,
+                meta && meta.touched && meta.error && styles.error
+              ])}
+              value={input.value} // Overides value of of {...field}
+              valueComponent={valueComponent}
+              // onBlur={() => input.onBlur && input.onBlur(input.value)} // Overides onBlur of {...field}
+              onChange={this.onInternalChange.bind(this, null)}  // Overides onChange of {...field};
+              // onInputChange={(val) => {
+              //   this.setState({ value: val });
+              //   getOptions && getOptions(val);
+              // }}
+              onOpen={getOptions} />
+          </div>}
+          {multiselect &&
+            <button disabled={disableAddButton} style={[ styles.addButton.base, disableAddButton && styles.addButton.disabled ]} title='Add' onClick={() => {
+              const lastValue = value[value.length - 1];
+              if (lastValue && lastValue.label) {
+                this.onInternalChange(value.length, {});
+              }
+            }}>
+              <PlusSVG color={colors.darkGray2} />
+            </button>}
         </div>
         {meta && meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
       </div>
