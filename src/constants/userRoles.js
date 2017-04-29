@@ -1,6 +1,7 @@
+export const ADMIN = 'SYS_ADMIN';
+export const BRAND_REPRESENTATIVE = 'BRAND_REPRESENTATIVE';
 export const BROADCASTER = 'BROADCASTER';
 export const CONTENT_MANAGER = 'CONTENT_MANAGER';
-export const ADMIN = 'SYS_ADMIN';
 export const CONTENT_PRODUCER = 'CONTENT_PRODUCER';
 
 export const ACTIVE = 'ACTIVE';

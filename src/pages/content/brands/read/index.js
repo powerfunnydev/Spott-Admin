@@ -12,6 +12,7 @@ import Line from '../../../_common/components/line';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 import ProductList from './products/list';
+import UserList from './users/list';
 import { generalStyles } from '../../../_common/components/table/index';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 
@@ -87,6 +88,9 @@ export default class ReadBrand extends Component {
               <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
                 <Tab title='Products'>
                   <ProductList {...this.props}/>
+                </Tab>
+                <Tab title='Users'>
+                  <UserList {...this.props}/>
                 </Tab>
               </Tabs>
             </Container>

@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformProductOffering, transformBrand, transformListBrand, transformListProduct } from './transformers';
+import { transformProductOffering, transformBrand, transformListBrand, transformListProduct, transformUser } from './transformers';
 
 export async function fetchBrands (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/product/brands?page=${page}&pageSize=${pageSize}`;
@@ -31,6 +31,19 @@ export async function fetchProducts (baseUrl, authenticationToken, locale, { bra
     data.push(prod);
   }
   body.data = data;
+  return body;
+}
+
+export async function fetchBrandUsers (baseUrl, authenticationToken, locale, { brandId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/product/brands/${brandId}/users?page=${page}&pageSize=${pageSize}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${searchString}`);
+  }
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  const { body } = await get(authenticationToken, locale, url);
+  body.data = body.data.map(transformUser);
   return body;
 }
 
@@ -139,4 +152,20 @@ export async function deleteProfileImage (baseUrl, authenticationToken, locale, 
     url = `${url }?locale=${mediumLocale}`;
   }
   await del(authenticationToken, locale, url);
+}
+
+export async function persistLinkUser (baseUrl, authenticationToken, locale, { brandId, userId }) {
+  const url = `${baseUrl}/v004/product/brands/${brandId}/users/${userId}`;
+  return await post(authenticationToken, locale, url);
+}
+
+export async function deleteLinkUser (baseUrl, authenticationToken, locale, { brandId, userId }) {
+  const url = `${baseUrl}/v004/product/brands/${brandId}/users/${userId}`;
+  return await del(authenticationToken, locale, url);
+}
+
+export async function deleteLinkUsers (baseUrl, authenticationToken, locale, { brandId, userIds }) {
+  for (const userId of userIds) {
+    await deleteLinkUser(baseUrl, authenticationToken, locale, { brandId, userId });
+  }
 }

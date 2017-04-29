@@ -46,6 +46,7 @@ function validate (values, { t }) {
   uploadProfileImage: bindActionCreators(actions.uploadProfileImage, dispatch),
   resetPassword: bindActionCreators(actions.resetPassword, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
+  searchBrands: bindActionCreators(actions.searchBrands, dispatch),
   searchBroadcasters: bindActionCreators(actions.searchBroadcasters, dispatch),
   searchContentProducers: bindActionCreators(actions.searchContentProducers, dispatch)
 }))
@@ -58,6 +59,7 @@ function validate (values, { t }) {
 export default class EditUser extends Component {
 
   static propTypes = {
+    brandsById: ImmutablePropTypes.map.isRequired,
     broadcastersById: ImmutablePropTypes.map.isRequired,
     clearPopUpMessage: PropTypes.func,
     contentProducersById: ImmutablePropTypes.map.isRequired,
@@ -75,8 +77,10 @@ export default class EditUser extends Component {
     popUpMessage: PropTypes.object,
     resetPassword: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
+    searchBrands: PropTypes.func.isRequired,
     searchBroadcasters: PropTypes.func.isRequired,
     searchContentProducers: PropTypes.func.isRequired,
+    searchedBrandIds: ImmutablePropTypes.map.isRequired,
     searchedBroadcasterIds: ImmutablePropTypes.map.isRequired,
     searchedContentProducerIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
@@ -159,8 +163,12 @@ export default class EditUser extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { currentUser, currentUserStatus, contentProducersById, searchedContentProducerIds, searchContentProducers,
-      broadcastersById, searchedBroadcasterIds, searchBroadcasters, location, handleSubmit, localeNames, genders } = this.props;
+    const {
+      brandsById, broadcastersById, currentUser, currentUserStatus, contentProducersById,
+      searchedContentProducerIds, searchContentProducers, searchedBrandIds,
+      searchedBroadcasterIds, searchBrands, searchBroadcasters, location, handleSubmit,
+      localeNames, genders
+    } = this.props;
     return (
       <SideMenu location={location}>
         <Root style={styles.background}>
@@ -285,6 +293,28 @@ export default class EditUser extends Component {
                         first
                         name='sysAdmin'/>
                       <div style={[ styles.paddingLeftCheckbox, styles.fontSize ]}>System admin</div>
+                    </div>
+                    <div style={[ styles.row, styles.paddingTopRow ]}>
+                      <Field
+                        component={Checkbox}
+                        first
+                        name='brand'/>
+                      <div style={[ styles.paddingLeftCheckbox, styles.column ]}>
+                        <div style={styles.fontSize}>Brand</div>
+                        <div style={styles.paddingTopSpecificCheckbox}>
+                          <Label required text='Brands'/>
+                          <Field
+                            component={SelectInput}
+                            getItemText={(brandId) => brandsById.getIn([ brandId, 'name' ])}
+                            getOptions={searchBrands}
+                            isLoading={searchedBrandIds.get('_status') === FETCHING}
+                            multiselect
+                            name='brands'
+                            options={searchedBrandIds.get('data').toJS()}
+                            placeholder='Brands'
+                            style={styles.paddingTopMultiselect}/>
+                        </div>
+                      </div>
                     </div>
                     <div style={[ styles.row, styles.paddingTopRow ]}>
                       <Field

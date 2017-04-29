@@ -278,6 +278,13 @@ export default (state = fromJS({
     case brandActions.PRODUCTS_FETCH_ERROR:
       return searchError(state, 'filterHasProducts', serializeFilterHasProducts(action, 'brands'), action.error);
 
+    case brandActions.BRAND_USERS_FETCH_START:
+      return searchStart(state, 'filterHasUsers', serializeFilterHasUsers(action, 'brands'));
+    case brandActions.BRAND_USERS_FETCH_SUCCESS:
+      return searchSuccess(state, 'users', 'filterHasUsers', serializeFilterHasUsers(action, 'brands'), action.data.data);
+    case brandActions.BRAND_USERS_FETCH_ERROR:
+      return searchError(state, 'filterHasUsers', serializeFilterHasUsers(action, 'brands'), action.error);
+
     case brandActions.BRAND_SEARCH_START:
       return searchStart(state, 'searchStringHasBrands', action.searchString);
     case brandActions.BRAND_SEARCH_SUCCESS:

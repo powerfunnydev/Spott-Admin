@@ -1,10 +1,14 @@
 import { Map } from 'immutable';
-import { CLEAR_POP_UP_MESSAGE, FORGOT_PASSWORD_ERROR, FORGOT_PASSWORD_SUCCESS,
+import {
+  BRANDS_SEARCH_START, CLEAR_POP_UP_MESSAGE, FORGOT_PASSWORD_ERROR, FORGOT_PASSWORD_SUCCESS,
   BROADCASTERS_SEARCH_START, CONTENT_PRODUCERS_SEARCH_START,
-BROADCASTERS_SEARCH_ERROR, CONTENT_PRODUCERS_SEARCH_ERROR, USER_FETCH_ENTRY_ERROR } from './actions';
+  BROADCASTERS_SEARCH_ERROR, CONTENT_PRODUCERS_SEARCH_ERROR, USER_FETCH_ENTRY_ERROR
+} from './actions';
 
 export default (state = Map({}), action) => {
   switch (action.type) {
+    case BRANDS_SEARCH_START: // Autocompletion field of brands
+      return state.set('currentBrandsSearchString', action.searchString);
     case BROADCASTERS_SEARCH_START: // Autocompletion field of broadcasters
       return state.set('currentBroadcastersSearchString', action.searchString);
     case CONTENT_PRODUCERS_SEARCH_START: // Autocompletion field of content producers
