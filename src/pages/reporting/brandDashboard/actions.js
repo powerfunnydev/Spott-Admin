@@ -1,20 +1,23 @@
 import moment from 'moment';
-import { fetchLanguages } from '../../../actions/language';
+// import { fetchLanguages } from '../../../actions/language';
 import {
   fetchAgeData, fetchDateData, fetchDemographics, fetchBrandDashboardEvents,
   fetchGenderData, fetchKeyMetrics, fetchTopMedia, fetchTopPeople, fetchTopProducts,
   fetchLocationData
 } from '../../../actions/brandDashboard';
-import { fetchAges, fetchEvents, fetchGenders } from '../../../actions/reporting';
+import { fetchBrand as dataFetchBrand, searchBrands as dataSearchBrands } from '../../../actions/brand';
+import { fetchAges, fetchGenders } from '../../../actions/reporting';
 import { locationSelector } from '../../../selectors/global';
-import { currentAgesSelector, currentBrandActivityEventsSelector, currentBrandActivityByRegionEventSelector, currentGendersSelector, currentLanguagesSelector } from './selector';
+import { createSearchAction } from '../../../utils';
+import { currentAgesSelector, currentBrandSelector, currentBrandActivityEventsSelector, currentBrandActivityByRegionEventSelector, currentGendersSelector, currentLanguagesSelector } from './selector';
 
 // Events are for every view the same.
 export const loadAges = fetchAges;
 
 export const loadEvents = fetchBrandDashboardEvents;
 export const loadGenders = fetchGenders;
-export const loadLanguages = fetchLanguages;
+export const fetchBrand = dataFetchBrand;
+// export const loadLanguages = fetchLanguages;
 
 // Action types
 // ////////////
@@ -22,14 +25,18 @@ export const loadLanguages = fetchLanguages;
 export const CLEAR_BRAND_DASHBOARD = 'BRAND_DASHBOARD/CLEAR_BRAND_DASHBOARD';
 export const BRAND_DASHBOARD_FETCH_ERROR = 'BRAND_DASHBOARD/BRAND_DASHBOARD_FETCH_ERROR';
 
-const brandId = '83af3531-8235-46bc-9071-dcee03a338cd';
+export const BRANDS_SEARCH_START = 'BRAND_DASHBOARD/BRANDS_SEARCH_START';
+export const BRANDS_SEARCH_ERROR = 'BRAND_DASHBOARD/BRANDS_SEARCH_ERROR';
+
+export const searchBrands = createSearchAction(dataSearchBrands, BRANDS_SEARCH_START, BRANDS_SEARCH_ERROR);
 
 export function loadKeyMetrics () {
   return async (dispatch, getState) => {
     const state = getState();
     const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
 
-    if (query.endDate && query.startDate) {
+    if (brandId && query.endDate && query.startDate) {
       const ages = currentAgesSelector(state);
       const genders = currentGendersSelector(state);
       const languages = currentLanguagesSelector(state);
@@ -47,9 +54,10 @@ export function loadDateData () {
   return async (dispatch, getState) => {
     const state = getState();
     const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
     const eventIds = currentBrandActivityEventsSelector(state);
 
-    if (query.endDate && query.startDate && eventIds) {
+    if (brandId && query.endDate && query.startDate && eventIds) {
       const ages = currentAgesSelector(state);
       const genders = currentGendersSelector(state);
       const languages = currentLanguagesSelector(state);
@@ -74,9 +82,10 @@ export function loadLocationData () {
   return async (dispatch, getState) => {
     const state = getState();
     const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
     const eventId = currentBrandActivityByRegionEventSelector(state);
 
-    if (query.endDate && query.startDate && eventId) {
+    if (brandId && query.endDate && query.startDate && eventId) {
       const ages = currentAgesSelector(state);
       const genders = currentGendersSelector(state);
       const languages = currentLanguagesSelector(state);
@@ -101,9 +110,10 @@ export function loadTopMedia () {
   return async (dispatch, getState) => {
     const state = getState();
     const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
     const eventIds = currentBrandActivityEventsSelector(state);
 
-    if (query.endDate && query.startDate && eventIds) {
+    if (brandId && query.endDate && query.startDate && eventIds) {
       const ages = currentAgesSelector(state);
       const genders = currentGendersSelector(state);
       const endDate = moment(query.endDate);
@@ -128,9 +138,10 @@ export function loadTopPeople () {
   return async (dispatch, getState) => {
     const state = getState();
     const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
     const eventIds = currentBrandActivityEventsSelector(state);
 
-    if (query.endDate && query.startDate && eventIds) {
+    if (brandId && query.endDate && query.startDate && eventIds) {
       const ages = currentAgesSelector(state);
       const genders = currentGendersSelector(state);
       const endDate = moment(query.endDate);
@@ -155,9 +166,10 @@ export function loadTopProducts () {
   return async (dispatch, getState) => {
     const state = getState();
     const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
     const eventIds = currentBrandActivityEventsSelector(state);
 
-    if (query.endDate && query.startDate && eventIds) {
+    if (brandId && query.endDate && query.startDate && eventIds) {
       const ages = currentAgesSelector(state);
       const genders = currentGendersSelector(state);
       const endDate = moment(query.endDate);
@@ -193,8 +205,9 @@ export function loadAgeData () {
   return async (dispatch, getState) => {
     const state = getState();
     const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
 
-    if (query.endDate && query.startDate) {
+    if (brandId && query.endDate && query.startDate) {
       const ages = currentAgesSelector(state);
       const genders = currentGendersSelector(state);
       const languages = currentLanguagesSelector(state);
@@ -212,8 +225,9 @@ export function loadGenderData (query) {
   return async (dispatch, getState) => {
     const state = getState();
     const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
 
-    if (query.endDate && query.startDate) {
+    if (brandId && query.endDate && query.startDate) {
       const ages = currentAgesSelector(state);
       const genders = currentGendersSelector(state);
       const languages = currentLanguagesSelector(state);

@@ -10,7 +10,7 @@ import localized from '../../_common/decorators/localized';
 import { menuSelector } from '../selectors';
 import * as globalActions from '../../../actions/global';
 import * as actions from '../../../actions/user';
-import { ADMIN, BROADCASTER, CONTENT_MANAGER } from '../../../constants/userRoles';
+import { ADMIN, BRAND_REPRESENTATIVE, BROADCASTER, CONTENT_MANAGER } from '../../../constants/userRoles';
 
 @localized
 @connect(menuSelector, (dispatch) => ({
@@ -117,6 +117,10 @@ export default class Menu extends Component {
         {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER) || userRoles.includes(BROADCASTER)) &&
           <RouterLink to={{ pathname: 'reporting/activity', query: filterQuery }}>
             <button key='reporting' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Reporting</button>
+          </RouterLink>}
+        {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER) || userRoles.includes(BRAND_REPRESENTATIVE)) &&
+          <RouterLink to='reporting/brand-dashboard'>
+            <button key='reporting' style={[ buttonStyles.base, buttonStyles.extraSmall, styles.linkButton ]}>Brand dashboard</button>
           </RouterLink>}
 
         {isAuthenticated

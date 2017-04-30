@@ -1,5 +1,5 @@
 import { fromJS, Map } from 'immutable';
-import { CLEAR_BRAND_DASHBOARD } from './actions';
+import { BRANDS_SEARCH_START, CLEAR_BRAND_DASHBOARD } from './actions';
 import * as actions from '../../../actions/brandDashboard';
 import { fetchError, fetchStart, fetchSuccess } from '../../../reducers/utils';
 
@@ -11,6 +11,9 @@ export default (state = fromJS({
   locationData: {}
 }), action) => {
   switch (action.type) {
+
+    case BRANDS_SEARCH_START:
+      return state.set('currentBrandsSearchString', action.searchString);
 
     case CLEAR_BRAND_DASHBOARD:
       return state

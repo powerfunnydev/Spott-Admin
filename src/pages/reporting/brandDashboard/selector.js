@@ -2,18 +2,22 @@ import { createSelector, createStructuredSelector } from 'reselect';
 import { List, Map } from 'immutable';
 import {
   agesEntitiesSelector, gendersEntitiesSelector, gendersListSelector, agesListSelector,
-  createEntitiesByRelationSelector, createEntitiesByListSelector, brandDashboardEventsEntitiesSelector,
-  filterHasTopMediaRelationsSelector, brandDashboardEventsListSelector,
+  createEntitiesByRelationSelector, createEntityIdsByRelationSelector, createEntitiesByListSelector, brandDashboardEventsEntitiesSelector,
+  filterHasTopMediaRelationsSelector, brandDashboardEventsListSelector, listBrandsEntitiesSelector,
   filterHasTopPeopleRelationsSelector, filterHasTopProductsRelationsSelector, topProductsEntitiesSelector,
-  topMediaEntitiesSelector, topPeopleEntitiesSelector, languagesEntitiesSelector
+  topMediaEntitiesSelector, topPeopleEntitiesSelector, languagesEntitiesSelector, searchStringHasBrandsRelationsSelector
 } from '../../../selectors/data';
 import { getInformationFromQuery } from '../../_common/components/table/index';
 import { serializeFilterHasTopMedia, serializeFilterHasTopPeople, serializeFilterHasTopProducts } from '../../../reducers/utils';
 import { createQueryStringArraySelector } from '../../../selectors/global';
 import { ageDataConfig, dateDataConfig, genderDataConfig } from './defaultHighchartsConfig';
 
+const currentBrandsSearchStringSelector = (state) => state.getIn([ 'brandDashboard', 'currentBrandsSearchString' ]);
+const searchedBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentBrandsSearchStringSelector);
+
 // Used in actions
 export const currentAgesSelector = createQueryStringArraySelector('ages');
+export const currentBrandSelector = (state) => state.get('router').locationBeforeTransitions.query.brand;
 export const currentGendersSelector = createQueryStringArraySelector('genders');
 export const currentLanguagesSelector = createQueryStringArraySelector('languages');
 export const currentBrandActivityEventsSelector = createQueryStringArraySelector('brandActivityEvents');
@@ -140,7 +144,6 @@ const ageDataConfigSelector = createSelector(
     let series = List();
     const d = ageData.get('data') || List();
 
-    console.warn('DATA AGE', d);
     // There should be data available, otherwise Highcharts will crash.
     if (d.size > 0) {
       series = series.push(Map({
@@ -205,12 +208,14 @@ const markersSelector = createSelector(
 
 export default createStructuredSelector({
   ageDataConfig: ageDataConfigSelector,
+  brandsById: listBrandsEntitiesSelector,
   dateDataConfig: dateDataConfigSelector,
   events: brandDashboardEventsSelector,
   eventsById: brandDashboardEventsEntitiesSelector,
   genderDataConfig: genderDataConfigSelector,
   keyMetrics: keyMetricsSelector,
   markers: markersSelector,
+  searchedBrandIds: searchedBrandIdsSelector,
   topMedia: topMediaSelector,
   topPeople: topPeopleSelector,
   topProducts: topProductsSelector

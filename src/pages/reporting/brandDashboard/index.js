@@ -12,6 +12,7 @@ import ListView from '../../_common/components/listView/index';
 import { tableDecorator } from '../../_common/components/table/index';
 import MultiSelectInput from '../../_common/inputs/multiSelectInput';
 import { colors, fontWeights, makeTextStyle, Container } from '../../_common/styles';
+import SelectInput from '../../_common/inputs/selectInput';
 import { isLoading } from '../../../constants/statusTypes';
 import { SideMenu } from '../../app/sideMenu';
 import Header from '../../app/multiFunctionalHeader';
@@ -24,6 +25,7 @@ import ImageTitle from './imageTitle';
 import OpportunitiesWidget from './opportunitiesWidget';
 import * as actions from './actions';
 import { arraysEqual } from '../../../utils';
+import { FETCHING } from '../../../constants/statusTypes';
 import selector, { topMediaPrefix, topPeoplePrefix, topProductsPrefix } from './selector';
 
 const colorStyle = {
@@ -234,6 +236,7 @@ class TopProducts extends Component {
 }
 
 @connect(selector, (dispatch) => ({
+  fetchBrand: bindActionCreators(actions.fetchBrand, dispatch),
   loadAgeData: bindActionCreators(actions.loadAgeData, dispatch),
   loadDateData: bindActionCreators(actions.loadDateData, dispatch),
   loadEvents: bindActionCreators(actions.loadEvents, dispatch),
@@ -243,7 +246,8 @@ class TopProducts extends Component {
   loadTopMedia: bindActionCreators(actions.loadTopMedia, dispatch),
   loadTopPeople: bindActionCreators(actions.loadTopPeople, dispatch),
   loadTopProducts: bindActionCreators(actions.loadTopProducts, dispatch),
-  routerPushWithReturnTo: bindActionCreators(globalActions.routerPushWithReturnTo, dispatch)
+  routerPushWithReturnTo: bindActionCreators(globalActions.routerPushWithReturnTo, dispatch),
+  searchBrands: bindActionCreators(actions.searchBrands, dispatch)
 }))
 @Radium
 export default class BrandDashboard extends Component {
@@ -253,6 +257,7 @@ export default class BrandDashboard extends Component {
     dateDataConfig: PropTypes.object.isRequired,
     events: ImmutablePropTypes.map.isRequired,
     eventsById: ImmutablePropTypes.map.isRequired,
+    fetchBrand: PropTypes.func.isRequired,
     loadAgeData: PropTypes.func.isRequired,
     loadDateData: PropTypes.func.isRequired,
     loadEvents: PropTypes.func.isRequired,
@@ -264,6 +269,7 @@ export default class BrandDashboard extends Component {
     loadTopProducts: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
+    searchBrands: PropTypes.func.isRequired,
     topMedia: ImmutablePropTypes.map.isRequired,
     topPeople: ImmutablePropTypes.map.isRequired,
     topProducts: ImmutablePropTypes.map.isRequired
@@ -274,13 +280,25 @@ export default class BrandDashboard extends Component {
     this.onChangeFilter = ::this.onChangeFilter;
   }
 
-  onSortField (listName) {
-    console.warn('Sort fields', arguments);
-  }
-
   async componentDidMount () {
     const location = this.props.location;
+    let brand;
+    try {
+      if (location.query.brand) {
+        await this.props.fetchBrand({ brandId: location.query.brand });
+      } else {
+        const brands = await this.props.searchBrands();
+        if (brands.length > 0) {
+          // Ùse first brand id.
+          brand = brands[0].id;
+        }
+      }
+    } catch (e) {
+      console.warn('Error', e);
+    }
+
     const query = {
+      brand,
       brandActivityByRegionEvent: 'PRODUCT_IMPRESSIONS',
       brandActivityEvents: [ 'PRODUCT_IMPRESSIONS' ],
       // We assume the ALL event will be always there.
@@ -370,6 +388,14 @@ export default class BrandDashboard extends Component {
     },
     topProductsWidget: {
       paddingBottom: '1.5em'
+    },
+    brand: {
+      width: '100%',
+      maxWidth: 200
+    },
+    slash: {
+      ...makeTextStyle(fontWeights.regular, '17px'),
+      color: colors.lightGray3
     }
   };
 
@@ -396,23 +422,37 @@ export default class BrandDashboard extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      ageDataConfig, children, dateDataConfig, eventsById, events, genderDataConfig,
+      ageDataConfig, brandsById, children, dateDataConfig, eventsById, events, genderDataConfig,
       loadTopMedia, loadTopPeople, loadTopProducts,
-      location, location: { query: { ages, brandActivityByRegionEvent, brandActivityEvents, endDate, genders, languages, startDate } },
-      keyMetrics, markers, routerPushWithReturnTo, topMedia, topPeople, topProducts
+      location, location: { query: { ages, brand, brandActivityByRegionEvent, brandActivityEvents, endDate, genders, /* languages, */ startDate } },
+      keyMetrics, markers, routerPushWithReturnTo, searchBrands, searchedBrandIds, topMedia, topPeople, topProducts
     } = this.props;
 
     const brandActivityEventsValue = typeof brandActivityEvents === 'string' ? [ brandActivityEvents ] : brandActivityEvents;
 
     return (
       <SideMenu location={location}>
-        <Header hierarchy={[ { title: 'Dashboard', url: '/brand-dashboard' } ]}/>
+        <Header hierarchy={[ { title: 'Dashboard', url: '/brand-dashboard' } ]}>
+          <SelectInput
+            first
+            getItemText={(id) => brandsById.getIn([ id, 'name' ])}
+            getOptions={searchBrands}
+            input={{ value: brand }}
+            isLoading={searchedBrandIds.get('_status') === FETCHING}
+            name='brand'
+            options={searchedBrandIds.get('data').toJS()}
+            placeholder='Brand name'
+            required
+            style={styles.brand}
+            onChange={this.onChangeFilter.bind(this, 'brand', 'string')}/>
+          <span style={styles.slash}>&nbsp;&nbsp;/&nbsp;&nbsp;</span>
+        </Header>
         <Container>
           <Filters
             fields={{
               ages: typeof ages === 'string' ? [ ages ] : ages,
               genders: typeof genders === 'string' ? [ genders ] : genders,
-              languages: typeof languages === 'string' ? [ languages ] : languages,
+              // languages: typeof languages === 'string' ? [ languages ] : languages,
               endDate: moment(endDate),
               startDate: moment(startDate)
             }}

@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import createStore from './createStore';
 import { getAuthorizedConfig, init } from './actions/global';
 import { LOGIN_SUCCESS } from './actions/user';
-import { ADMIN, BROADCASTER, CONTENT_MANAGER } from './constants/userRoles';
+import { ADMIN, BRAND_REPRESENTATIVE, BROADCASTER, CONTENT_MANAGER } from './constants/userRoles';
 import { TOGGLE_HOT_KEYS_INFO } from './tagger/actions/organizer';
 import { COMMERCIAL, EPISODE, MOVIE } from './constants/mediumTypes';
 
@@ -159,7 +159,7 @@ function getRoutes ({ dispatch, getState }) {
       </Route>
 
       {/* TODO: update roles! */}
-      <Route component={ReportingBrandDashboard} path='reporting/brand-dashboard' onEnter={requireOneRole([ BROADCASTER, CONTENT_MANAGER, ADMIN ])}/>
+      <Route component={ReportingBrandDashboard} path='reporting/brand-dashboard' onEnter={requireOneRole([ BRAND_REPRESENTATIVE, CONTENT_MANAGER, ADMIN ])}/>
       <Route component={Reporting} path='reporting' onEnter={requireOneRole([ BROADCASTER, CONTENT_MANAGER, ADMIN ])}>
         <IndexRedirect to='activity' />
         <Route component={ReportingActivity} path='activity'/>
