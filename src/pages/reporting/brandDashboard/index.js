@@ -12,18 +12,20 @@ import ListView from '../../_common/components/listView/index';
 import { tableDecorator } from '../../_common/components/table/index';
 import MultiSelectInput from '../../_common/inputs/multiSelectInput';
 import { colors, fontWeights, makeTextStyle, Container } from '../../_common/styles';
+import SelectInput from '../../_common/inputs/selectInput';
 import { isLoading } from '../../../constants/statusTypes';
 import { SideMenu } from '../../app/sideMenu';
 import Header from '../../app/multiFunctionalHeader';
 import DemographicsWidget from './demographicsWidget';
 import Filters from './filters';
 import NumberWidget from './numberWidget';
-import MapWidget from './mapWidget';
+import MarkersMap from './markersMap';
 import Widget from './widget';
 import ImageTitle from './imageTitle';
 import OpportunitiesWidget from './opportunitiesWidget';
 import * as actions from './actions';
 import { arraysEqual } from '../../../utils';
+import { FETCHING } from '../../../constants/statusTypes';
 import selector, { topMediaPrefix, topPeoplePrefix, topProductsPrefix } from './selector';
 
 const colorStyle = {
@@ -234,15 +236,18 @@ class TopProducts extends Component {
 }
 
 @connect(selector, (dispatch) => ({
+  fetchBrand: bindActionCreators(actions.fetchBrand, dispatch),
   loadAgeData: bindActionCreators(actions.loadAgeData, dispatch),
   loadDateData: bindActionCreators(actions.loadDateData, dispatch),
   loadEvents: bindActionCreators(actions.loadEvents, dispatch),
   loadGenderData: bindActionCreators(actions.loadGenderData, dispatch),
+  loadLocationData: bindActionCreators(actions.loadLocationData, dispatch),
   loadKeyMetrics: bindActionCreators(actions.loadKeyMetrics, dispatch),
   loadTopMedia: bindActionCreators(actions.loadTopMedia, dispatch),
   loadTopPeople: bindActionCreators(actions.loadTopPeople, dispatch),
   loadTopProducts: bindActionCreators(actions.loadTopProducts, dispatch),
-  routerPushWithReturnTo: bindActionCreators(globalActions.routerPushWithReturnTo, dispatch)
+  routerPushWithReturnTo: bindActionCreators(globalActions.routerPushWithReturnTo, dispatch),
+  searchBrands: bindActionCreators(actions.searchBrands, dispatch)
 }))
 @Radium
 export default class BrandDashboard extends Component {
@@ -252,16 +257,19 @@ export default class BrandDashboard extends Component {
     dateDataConfig: PropTypes.object.isRequired,
     events: ImmutablePropTypes.map.isRequired,
     eventsById: ImmutablePropTypes.map.isRequired,
+    fetchBrand: PropTypes.func.isRequired,
     loadAgeData: PropTypes.func.isRequired,
     loadDateData: PropTypes.func.isRequired,
     loadEvents: PropTypes.func.isRequired,
     loadGenderData: PropTypes.func.isRequired,
     loadKeyMetrics: PropTypes.func.isRequired,
+    loadLocationData: PropTypes.func.isRequired,
     loadTopMedia: PropTypes.func.isRequired,
     loadTopPeople: PropTypes.func.isRequired,
     loadTopProducts: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
+    searchBrands: PropTypes.func.isRequired,
     topMedia: ImmutablePropTypes.map.isRequired,
     topPeople: ImmutablePropTypes.map.isRequired,
     topProducts: ImmutablePropTypes.map.isRequired
@@ -272,13 +280,26 @@ export default class BrandDashboard extends Component {
     this.onChangeFilter = ::this.onChangeFilter;
   }
 
-  onSortField (listName) {
-    console.warn('Sort fields', arguments);
-  }
-
   async componentDidMount () {
     const location = this.props.location;
+    let brand;
+    try {
+      if (location.query.brand) {
+        await this.props.fetchBrand({ brandId: location.query.brand });
+      } else {
+        const brands = await this.props.searchBrands();
+        if (brands.length > 0) {
+          // Ùse first brand id.
+          brand = brands[0].id;
+        }
+      }
+    } catch (e) {
+      console.warn('Error', e);
+    }
+
     const query = {
+      brand,
+      brandActivityByRegionEvent: 'PRODUCT_IMPRESSIONS',
       brandActivityEvents: [ 'PRODUCT_IMPRESSIONS' ],
       // We assume the ALL event will be always there.
       endDate: moment().startOf('day').format('YYYY-MM-DD'),
@@ -295,6 +316,7 @@ export default class BrandDashboard extends Component {
     await this.props.loadTopProducts();
     await this.props.loadAgeData();
     await this.props.loadGenderData();
+    await this.props.loadLocationData();
   }
 
   async onChangeFilter (field, type, value) {
@@ -309,6 +331,8 @@ export default class BrandDashboard extends Component {
     if (field === 'brandActivityEvents') {
       // If the brandActivityEvents are changed we only need to update the date data.
       await this.props.loadDateData();
+    } else if (field === 'brandActivityByRegionEvent') {
+      await this.props.loadLocationData();
     } else {
       await this.props.loadKeyMetrics();
       await this.props.loadDateData();
@@ -317,6 +341,7 @@ export default class BrandDashboard extends Component {
       await this.props.loadTopProducts();
       await this.props.loadAgeData();
       await this.props.loadGenderData();
+      await this.props.loadLocationData();
     }
   }
 
@@ -363,6 +388,14 @@ export default class BrandDashboard extends Component {
     },
     topProductsWidget: {
       paddingBottom: '1.5em'
+    },
+    brand: {
+      width: '100%',
+      maxWidth: 200
+    },
+    slash: {
+      ...makeTextStyle(fontWeights.regular, '17px'),
+      color: colors.lightGray3
     }
   };
 
@@ -389,24 +422,37 @@ export default class BrandDashboard extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      ageDataConfig, children, dateDataConfig, eventsById, events, genderDataConfig,
+      ageDataConfig, brandsById, children, dateDataConfig, eventsById, events, genderDataConfig,
       loadTopMedia, loadTopPeople, loadTopProducts,
-      location, location: { query: { ages, brandActivityEvents, endDate, genders, languages, startDate } },
-      keyMetrics, routerPushWithReturnTo, topMedia, topPeople, topProducts
+      location, location: { query: { ages, brand, brandActivityByRegionEvent, brandActivityEvents, endDate, genders, /* languages, */ startDate } },
+      keyMetrics, markers, routerPushWithReturnTo, searchBrands, searchedBrandIds, topMedia, topPeople, topProducts
     } = this.props;
 
     const brandActivityEventsValue = typeof brandActivityEvents === 'string' ? [ brandActivityEvents ] : brandActivityEvents;
 
-    console.warn('ageDataConfig', ageDataConfig);
     return (
       <SideMenu location={location}>
-        <Header hierarchy={[ { title: 'Dashboard', url: '/brand-dashboard' } ]}/>
+        <Header hierarchy={[ { title: 'Dashboard', url: '/brand-dashboard' } ]}>
+          <SelectInput
+            first
+            getItemText={(id) => brandsById.getIn([ id, 'name' ])}
+            getOptions={searchBrands}
+            input={{ value: brand }}
+            isLoading={searchedBrandIds.get('_status') === FETCHING}
+            name='brand'
+            options={searchedBrandIds.get('data').toJS()}
+            placeholder='Brand name'
+            required
+            style={styles.brand}
+            onChange={this.onChangeFilter.bind(this, 'brand', 'string')}/>
+          <span style={styles.slash}>&nbsp;&nbsp;/&nbsp;&nbsp;</span>
+        </Header>
         <Container>
           <Filters
             fields={{
               ages: typeof ages === 'string' ? [ ages ] : ages,
               genders: typeof genders === 'string' ? [ genders ] : genders,
-              languages: typeof languages === 'string' ? [ languages ] : languages,
+              // languages: typeof languages === 'string' ? [ languages ] : languages,
               endDate: moment(endDate),
               startDate: moment(startDate)
             }}
@@ -441,6 +487,7 @@ export default class BrandDashboard extends Component {
                 getItem={(id) => eventsById.get(id)}
                 getItemText={(id) => eventsById.getIn([ id, 'description' ])}
                 input={{ value: brandActivityEventsValue }}
+                multiselect
                 name='brandActivityEvents'
                 options={events.get('data').map((e) => e.get('id')).toJS()}
                 placeholder='Events'
@@ -448,12 +495,12 @@ export default class BrandDashboard extends Component {
                 valueComponent={ColorValue}
                 onChange={this.onChangeFilter.bind(this, 'brandActivityEvents', 'array')} />
             }
-            isLoading={isLoading(events) || (brandActivityEventsValue && brandActivityEventsValue.length + 1 !== dateDataConfig.series.length)}
+            isLoading={isLoading(dateDataConfig)}
             style={styles.paddingBottom} title='Brand activity'>
             {/* <button onClick={(e) => { e.preventDefault(); this.downloadCsv(); }}>
               Donwload csv
             </button> */}
-            <Highcharts config={dateDataConfig} isPureConfig />
+            <Highcharts config={dateDataConfig.get('data')} isPureConfig />
           </Widget>
           <div style={styles.widgets}>
             <TopMedia
@@ -476,14 +523,32 @@ export default class BrandDashboard extends Component {
             routerPushWithReturnTo={routerPushWithReturnTo}
             style={styles.topProductsWidget}/>
           <div style={styles.widgets}>
-            <Widget style={styles.widget} title='Age'>
-              <Highcharts config={ageDataConfig} isPureConfig />
+            <Widget isLoading={isLoading(ageDataConfig)} style={styles.widget} title='Age'>
+              <Highcharts config={ageDataConfig.get('data')} isPureConfig />
             </Widget>
-            <Widget style={styles.widget} title='Gender'>
-              <Highcharts config={genderDataConfig} isPureConfig />
+            <Widget isLoading={isLoading(genderDataConfig)} style={styles.widget} title='Gender'>
+              <Highcharts config={genderDataConfig.get('data')} isPureConfig />
             </Widget>
           </div>
-          {/* <MapWidget style={styles.paddingBottom} title='Brand activity by region' /> */}
+          <Widget
+            header={
+              <MultiSelectInput
+                first
+                getItem={(id) => eventsById.get(id)}
+                getItemText={(id) => eventsById.getIn([ id, 'description' ])}
+                input={{ value: brandActivityByRegionEvent }}
+                name='brandActivityByRegionEvent'
+                options={events.get('data').map((e) => e.get('id')).toJS()}
+                placeholder='Event'
+                style={[ styles.field, { paddingRight: '0.75em' } ]}
+                valueComponent={ColorValue}
+                onChange={this.onChangeFilter.bind(this, 'brandActivityByRegionEvent', 'string')} />
+              }
+            isLoading={isLoading(markers)}
+            style={styles.paddingBottom}
+            title='Brand activity by region'>
+            <MarkersMap markers={markers.get('data')} />
+          </Widget>
 
           {/* <DemographicsWidget style={styles.paddingBottom} title='Demographics' />
           <OpportunitiesWidget style={styles.paddingBottom}/> */}

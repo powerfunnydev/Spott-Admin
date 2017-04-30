@@ -1,40 +1,23 @@
 import moment from 'moment';
-import { fetchLanguages } from '../../../actions/language';
-import { fetchAgeData, fetchDateData, fetchDemographics, fetchBrandDashboardEvents, fetchGenderData, fetchKeyMetrics, fetchTopMedia, fetchTopPeople, fetchTopProducts } from '../../../actions/brandDashboard';
-import { fetchAges, fetchEvents, fetchGenders } from '../../../actions/reporting';
+// import { fetchLanguages } from '../../../actions/language';
+import {
+  fetchAgeData, fetchDateData, fetchDemographics, fetchBrandDashboardEvents,
+  fetchGenderData, fetchKeyMetrics, fetchTopMedia, fetchTopPeople, fetchTopProducts,
+  fetchLocationData
+} from '../../../actions/brandDashboard';
+import { fetchBrand as dataFetchBrand, searchBrands as dataSearchBrands } from '../../../actions/brand';
+import { fetchAges, fetchGenders } from '../../../actions/reporting';
 import { locationSelector } from '../../../selectors/global';
-import { currentAgesSelector, currentBrandActivityEventsSelector, currentGendersSelector, currentLanguagesSelector } from './selector';
+import { createSearchAction } from '../../../utils';
+import { currentAgesSelector, currentBrandSelector, currentBrandActivityEventsSelector, currentBrandActivityByRegionEventSelector, currentGendersSelector, currentLanguagesSelector } from './selector';
 
 // Events are for every view the same.
 export const loadAges = fetchAges;
 
 export const loadEvents = fetchBrandDashboardEvents;
 export const loadGenders = fetchGenders;
-export const loadLanguages = fetchLanguages;
-
-// Action types
-// ////////////
-
-export const TOP_MEDIA_FETCH_START = 'BRAND_DASHBOARD/TOP_MEDIA_FETCH_START';
-export const TOP_MEDIA_FETCH_ERROR = 'BRAND_DASHBOARD/TOP_MEDIA_FETCH_ERROR';
-
-export const TOP_PEOPLE_FETCH_START = 'BRAND_DASHBOARD/TOP_PEOPLE_FETCH_START';
-export const TOP_PEOPLE_FETCH_ERROR = 'BRAND_DASHBOARD/TOP_PEOPLE_FETCH_ERROR';
-
-export const TOP_PRODUCTS_FETCH_START = 'BRAND_DASHBOARD/TOP_PRODUCTS_FETCH_START';
-export const TOP_PRODUCTS_FETCH_ERROR = 'BRAND_DASHBOARD/TOP_PRODUCTS_FETCH_ERROR';
-
-export const AGE_DATA_FETCH_START = 'BRAND_DASHBOARD/AGE_DATA_FETCH_START';
-export const AGE_DATA_FETCH_ERROR = 'BRAND_DASHBOARD/AGE_DATA_FETCH_ERROR';
-
-export const GENDER_DATA_FETCH_START = 'BRAND_DASHBOARD/GENDER_DATA_FETCH_START';
-export const GENDER_DATA_FETCH_ERROR = 'BRAND_DASHBOARD/GENDER_DATA_FETCH_ERROR';
-
-export const DATA_DATA_FETCH_START = 'BRAND_DASHBOARD/DATA_DATA_FETCH_START';
-export const DATA_DATA_FETCH_ERROR = 'BRAND_DASHBOARD/DATA_DATA_FETCH_ERROR';
-
-export const DEMOGRAPHICS_FETCH_START = 'BRAND_DASHBOARD/DEMOGRAPHICS_FETCH_START';
-export const DEMOGRAPHICS_FETCH_ERROR = 'BRAND_DASHBOARD/DEMOGRAPHICS_FETCH_ERROR';
+export const fetchBrand = dataFetchBrand;
+// export const loadLanguages = fetchLanguages;
 
 // Action types
 // ////////////
@@ -42,37 +25,18 @@ export const DEMOGRAPHICS_FETCH_ERROR = 'BRAND_DASHBOARD/DEMOGRAPHICS_FETCH_ERRO
 export const CLEAR_BRAND_DASHBOARD = 'BRAND_DASHBOARD/CLEAR_BRAND_DASHBOARD';
 export const BRAND_DASHBOARD_FETCH_ERROR = 'BRAND_DASHBOARD/BRAND_DASHBOARD_FETCH_ERROR';
 
-const brandId = '83af3531-8235-46bc-9071-dcee03a338cd';
+export const BRANDS_SEARCH_START = 'BRAND_DASHBOARD/BRANDS_SEARCH_START';
+export const BRANDS_SEARCH_ERROR = 'BRAND_DASHBOARD/BRANDS_SEARCH_ERROR';
 
-// Load all brand dashboard data based on the query in the url.
-// export function loadBrandDashboard () {
-//   return async (dispatch, getState) => {
-//     const state = getState();
-//     const query = locationSelector(state).query;
-//     try {
-//       if (query.endDate && query.startDate) {
-//         const ages = currentAgesSelector(state);
-//         const genders = currentGendersSelector(state);
-//         const languages = currentLanguagesSelector(state);
-//         const endDate = moment(query.endDate);
-//         const startDate = moment(query.startDate);
-//
-//         const args = { ages, brandId, endDate, genders, languages, startDate };
-//
-//         return await dispatch(fetchKeyMetrics(args));
-//       }
-//     } catch (error) {
-//       dispatch({ error, type: BRAND_DASHBOARD_FETCH_ERROR });
-//     }
-//   };
-// }
+export const searchBrands = createSearchAction(dataSearchBrands, BRANDS_SEARCH_START, BRANDS_SEARCH_ERROR);
 
 export function loadKeyMetrics () {
   return async (dispatch, getState) => {
     const state = getState();
     const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
 
-    if (query.endDate && query.startDate) {
+    if (brandId && query.endDate && query.startDate) {
       const ages = currentAgesSelector(state);
       const genders = currentGendersSelector(state);
       const languages = currentLanguagesSelector(state);
@@ -90,9 +54,10 @@ export function loadDateData () {
   return async (dispatch, getState) => {
     const state = getState();
     const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
     const eventIds = currentBrandActivityEventsSelector(state);
 
-    if (query.endDate && query.startDate && eventIds) {
+    if (brandId && query.endDate && query.startDate && eventIds) {
       const ages = currentAgesSelector(state);
       const genders = currentGendersSelector(state);
       const languages = currentLanguagesSelector(state);
@@ -113,13 +78,42 @@ export function loadDateData () {
   };
 }
 
+export function loadLocationData () {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
+    const eventId = currentBrandActivityByRegionEventSelector(state);
+
+    if (brandId && query.endDate && query.startDate && eventId) {
+      const ages = currentAgesSelector(state);
+      const genders = currentGendersSelector(state);
+      const languages = currentLanguagesSelector(state);
+      const endDate = moment(query.endDate);
+      const startDate = moment(query.startDate);
+
+      const args = {
+        ages,
+        brandId,
+        eventId,
+        endDate,
+        genders,
+        languages,
+        startDate
+      };
+      return await dispatch(fetchLocationData(args));
+    }
+  };
+}
+
 export function loadTopMedia () {
   return async (dispatch, getState) => {
     const state = getState();
     const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
     const eventIds = currentBrandActivityEventsSelector(state);
 
-    if (query.endDate && query.startDate && eventIds) {
+    if (brandId && query.endDate && query.startDate && eventIds) {
       const ages = currentAgesSelector(state);
       const genders = currentGendersSelector(state);
       const endDate = moment(query.endDate);
@@ -144,9 +138,10 @@ export function loadTopPeople () {
   return async (dispatch, getState) => {
     const state = getState();
     const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
     const eventIds = currentBrandActivityEventsSelector(state);
 
-    if (query.endDate && query.startDate && eventIds) {
+    if (brandId && query.endDate && query.startDate && eventIds) {
       const ages = currentAgesSelector(state);
       const genders = currentGendersSelector(state);
       const endDate = moment(query.endDate);
@@ -171,9 +166,10 @@ export function loadTopProducts () {
   return async (dispatch, getState) => {
     const state = getState();
     const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
     const eventIds = currentBrandActivityEventsSelector(state);
 
-    if (query.endDate && query.startDate && eventIds) {
+    if (brandId && query.endDate && query.startDate && eventIds) {
       const ages = currentAgesSelector(state);
       const genders = currentGendersSelector(state);
       const endDate = moment(query.endDate);
@@ -196,12 +192,12 @@ export function loadTopProducts () {
 
 export function loadDemographics (query) {
   return async (dispatch) => {
-    try {
-      dispatch({ ...query, type: TOP_PEOPLE_FETCH_START });
-      return await dispatch(fetchDemographics());
-    } catch (error) {
-      dispatch({ ...query, error, type: TOP_PEOPLE_FETCH_ERROR });
-    }
+    // try {
+    //   dispatch({ ...query, type: TOP_PEOPLE_FETCH_START });
+    //   return await dispatch(fetchDemographics());
+    // } catch (error) {
+    //   dispatch({ ...query, error, type: TOP_PEOPLE_FETCH_ERROR });
+    // }
   };
 }
 
@@ -209,8 +205,9 @@ export function loadAgeData () {
   return async (dispatch, getState) => {
     const state = getState();
     const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
 
-    if (query.endDate && query.startDate) {
+    if (brandId && query.endDate && query.startDate) {
       const ages = currentAgesSelector(state);
       const genders = currentGendersSelector(state);
       const languages = currentLanguagesSelector(state);
@@ -228,8 +225,9 @@ export function loadGenderData (query) {
   return async (dispatch, getState) => {
     const state = getState();
     const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
 
-    if (query.endDate && query.startDate) {
+    if (brandId && query.endDate && query.startDate) {
       const ages = currentAgesSelector(state);
       const genders = currentGendersSelector(state);
       const languages = currentLanguagesSelector(state);

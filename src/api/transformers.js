@@ -1,4 +1,4 @@
-import { ACTIVE, INACTIVE, ADMIN, CONTENT_MANAGER, CONTENT_PRODUCER, BROADCASTER } from '../constants/userRoles';
+import { ACTIVE, ADMIN, BRAND_REPRESENTATIVE, BROADCASTER, CONTENT_MANAGER, CONTENT_PRODUCER, INACTIVE } from '../constants/userRoles';
 import moment from 'moment';
 
 export function transformImage (image) {
@@ -684,22 +684,34 @@ export function transformPaging ({ page, pageCount, pageSize, totalResultCount }
 export function transformUser ({ profileImage, avatar, languages, dateOfBirth, disabled, disabledReason,
   userName, gender, firstName, lastName, email, uuid: id, roles, ...restProps }) {
   const obj = {};
+  const brands = [];
   const broadcasters = [];
   const contentProducers = [];
   roles && roles.map((role) => {
-    if (role.role === BROADCASTER) {
-      obj.broadcaster = true;
-      broadcasters.push(role.context.uuid);
-    } else
-    if (role.role === CONTENT_PRODUCER) {
-      obj.contentProducer = true;
-      contentProducers.push(role.context.uuid);
-    } else
-    if (role.role === ADMIN) { obj.sysAdmin = true; } else
-    if (role.role === CONTENT_MANAGER) { obj.contentManager = true; }
+    switch (role.role) {
+      case ADMIN:
+        obj.sysAdmin = true;
+        break;
+      case BRAND_REPRESENTATIVE:
+        obj.brand = true;
+        brands.push(role.context.uuid);
+        break;
+      case BROADCASTER:
+        obj.broadcaster = true;
+        broadcasters.push(role.context.uuid);
+        break;
+      case CONTENT_MANAGER:
+        obj.contentManager = true;
+        break;
+      case CONTENT_PRODUCER:
+        obj.contentProducer = true;
+        contentProducers.push(role.context.uuid);
+        break;
+    }
   });
   return {
     ...obj,
+    brands,
     broadcasters,
     contentProducers,
     avatar: transformImage(avatar),

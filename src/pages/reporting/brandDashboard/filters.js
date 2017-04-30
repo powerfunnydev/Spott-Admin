@@ -12,8 +12,8 @@ import { filtersSelector } from './selector';
 
 @connect(filtersSelector, (dispatch) => ({
   loadAges: bindActionCreators(actions.loadAges, dispatch),
-  loadGenders: bindActionCreators(actions.loadGenders, dispatch),
-  loadLanguages: bindActionCreators(actions.loadLanguages, dispatch)
+  loadGenders: bindActionCreators(actions.loadGenders, dispatch)
+  // loadLanguages: bindActionCreators(actions.loadLanguages, dispatch)
 }))
 @Radium
 export default class Filters extends Component {
@@ -32,7 +32,7 @@ export default class Filters extends Component {
     // languagesById: ImmutablePropTypes.map.isRequired,
     loadAges: PropTypes.func.isRequired,
     loadGenders: PropTypes.func.isRequired,
-    loadLanguages: PropTypes.func.isRequired,
+    // loadLanguages: PropTypes.func.isRequired,
     style: PropTypes.object,
     onChange: PropTypes.func.isRequired
   };
@@ -41,7 +41,7 @@ export default class Filters extends Component {
     // Load ages and genders, then load the rankings.
     await this.props.loadAges();
     await this.props.loadGenders();
-    await this.props.loadLanguages();
+    // await this.props.loadLanguages();
     await this.props.onChange();
   }
 

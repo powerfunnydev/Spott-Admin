@@ -92,11 +92,16 @@ export async function fetchDateData (baseUrl, authenticationToken, locale, { age
 }
 
 export async function fetchLocationData (baseUrl, authenticationToken, locale, { ages, brandId, eventId, endDate, genders, startDate }) {
-  const url = `${baseUrl}/v004/report/reports/brands/locationData?ageRanges=${ages.join(',')}&brandUuid=${brandId}&eventType=${eventId}&gender=${genders.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}`;
-  const { body } = await get(authenticationToken, locale, url);
-  console.warn('Location data', body);
-  // body.data = body.data;
-  return body;
+  const url = `${baseUrl}/v004/report/reports/brands/locationData?ageRanges=${ages.join(',')}&brandUuid=${brandId}&eventType=${eventId}&gender=${genders.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}&pageSize=100&page=0`;
+  const { body: { data, pageCount } } = await get(authenticationToken, locale, url);
+
+  let result = data;
+  for (let i = 1; i < pageCount; i++) {
+    const url = `${baseUrl}/v004/report/reports/brands/locationData?ageRanges=${ages.join(',')}&brandUuid=${brandId}&eventType=${eventId}&gender=${genders.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}&pageSize=100&page=${i}`;
+    const { body: { data } } = await get(authenticationToken, locale, url);
+    result = result.concat(data);
+  }
+  return { data: result };
 }
 
 export async function fetchKeyMetrics (baseUrl, authenticationToken, locale, { ages, brandId, endDate, genders, startDate }) {

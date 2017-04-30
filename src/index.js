@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import createStore from './createStore';
 import { getAuthorizedConfig, init } from './actions/global';
 import { LOGIN_SUCCESS } from './actions/user';
-import { ADMIN, BROADCASTER, CONTENT_MANAGER } from './constants/userRoles';
+import { ADMIN, BRAND_REPRESENTATIVE, BROADCASTER, CONTENT_MANAGER } from './constants/userRoles';
 import { TOGGLE_HOT_KEYS_INFO } from './tagger/actions/organizer';
 import { COMMERCIAL, EPISODE, MOVIE } from './constants/mediumTypes';
 
@@ -40,6 +40,7 @@ import EpisodeList from './pages/content/episodes/list';
 import EpisodeRead from './pages/content/episodes/read';
 import Error404 from './pages/error404/main';
 import ForgotPassword from './pages/forgotPassword';
+import LinkUserToBrand from './pages/content/brands/read/users/linkUser';
 import LinkUserToBroadcaster from './pages/content/broadcasters/read/users/linkUser';
 import LinkUserToContentProducer from './pages/content/contentProducers/read/users/linkUser';
 import Login from './pages/login';
@@ -158,7 +159,7 @@ function getRoutes ({ dispatch, getState }) {
       </Route>
 
       {/* TODO: update roles! */}
-      <Route component={ReportingBrandDashboard} path='reporting/brand-dashboard' onEnter={requireOneRole([ BROADCASTER, CONTENT_MANAGER, ADMIN ])}/>
+      <Route component={ReportingBrandDashboard} path='reporting/brand-dashboard' onEnter={requireOneRole([ BRAND_REPRESENTATIVE, CONTENT_MANAGER, ADMIN ])}/>
       <Route component={Reporting} path='reporting' onEnter={requireOneRole([ BROADCASTER, CONTENT_MANAGER, ADMIN ])}>
         <IndexRedirect to='activity' />
         <Route component={ReportingActivity} path='activity'/>
@@ -182,6 +183,7 @@ function getRoutes ({ dispatch, getState }) {
               component={ProductsCreate}
               load={(props) => { dispatch(loadBrandProducts(props.location.query, props.params.brandId)); }}
               path='create/product'/>
+            <Route component={LinkUserToBrand} path='link/user'/>
           </Route>
           <Route component={BrandsEdit} path='edit/:brandId'/>
         </Route>

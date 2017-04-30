@@ -81,13 +81,14 @@ export default class Header extends Component {
   }
 
   render () {
-    const { hierarchy, username } = this.props;
+    const { children, hierarchy, username } = this.props;
     const { styles } = this.constructor;
     return (
       <div>
         <Container style={styles.container}>
           <div style={styles.row}>
             <div style={styles.row}>
+              {children}
               {hierarchy && hierarchy.map((obj, index) => {
                 return <div key={index} style={[ (index === (hierarchy.length - 1)) && styles.last, styles.clickable ]} onClick={() => { obj.url && this.props.routerPushWithReturnTo(obj.url); }}>{obj.title}{(index !== (hierarchy.length - 1)) && ' /\u00a0'}</div>;
               })}

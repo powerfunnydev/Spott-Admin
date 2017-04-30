@@ -1,6 +1,6 @@
 import { del, get, post, postFormData } from './request';
 import { transformPaging, transformUser } from './transformers';
-import { INACTIVE, ADMIN, CONTENT_MANAGER, CONTENT_PRODUCER, BROADCASTER } from '../constants/userRoles';
+import { ADMIN, BRAND_REPRESENTATIVE, BROADCASTER, CONTENT_MANAGER, CONTENT_PRODUCER, INACTIVE } from '../constants/userRoles';
 
 export async function login (baseUrl, { authenticationToken, email, password }) {
   try {
@@ -67,10 +67,17 @@ export async function fetchUser (baseUrl, authenticationToken, locale, { userId 
  * broadcasters and contentproducers are arrays of Ids of broadcasters and contentproducers
  * respectively.
  */
-export async function persistUser (baseUrl, authenticationToken, locale, { dateOfBirth, disabledReason,
+export async function persistUser (baseUrl, authenticationToken, locale, {
+    brand, brands, dateOfBirth, disabledReason,
     userStatus, userId, userName, email, firstName, lastName, gender, languages,
-    contentProducer, contentProducers, contentManager, broadcaster, broadcasters, sysAdmin }) {
+    contentProducer, contentProducers, contentManager, broadcaster, broadcasters, sysAdmin
+  }) {
   const roles = [];
+  if (brand) {
+    brands.map((brandId) => {
+      roles.push({ role: BRAND_REPRESENTATIVE, context: { uuid: brandId } });
+    });
+  }
   if (broadcaster) {
     broadcasters.map((broadcasterId) => {
       roles.push({ role: BROADCASTER, context: { uuid: broadcasterId } });
