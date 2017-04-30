@@ -157,7 +157,7 @@ export default (state = fromJS({
     mediumHasProductGroups: {}, productHasAppearances: {}, productHasSimilarProducts: {},
     productSearch: {}, sceneHasCharacters: {}, sceneHasProducts: {}, videoHasCharacters: {},
     videoHasProducts: {}, videoHasGlobalProducts: {}, videoHasScenes: {},
-    videoHasSceneGroups: {}
+    videoHasSceneGroups: {}, videoHasKeyScenes: {}
   }
 }), action) => {
   switch (action.type) {
@@ -293,6 +293,19 @@ export default (state = fromJS({
     case sceneGroupActions.SCENE_GROUPS_FETCH_ERROR:
       return setFetchingStatus([ 'relations', 'videoHasSceneGroups', action.characterId ], Map({ _error: action.error, _status: ERROR }));
 
+    // Key Scenes
+    // ------------
+
+    case sceneActions.KEYSCENES_FETCH_START:
+      return setFetchingStatus(state, [ 'relations', 'videoHasKeyScenes', action.videoId ]);
+    case sceneActions.KEYSCENES_FETCH_SUCCESS: {
+      const { entities: { scenes: sceneEntities }, result: scenesResult } = normalize(action.data, arrayOf(scene));
+      return state
+          .mergeIn([ 'entities', 'scenes' ], sceneEntities)
+          .setIn([ 'relations', 'videoHasKeyScenes', action.videoId ], Map({ _status: LOADED, data: fromJS(scenesResult) }));
+    }
+    case sceneActions.KEYSCENES_FETCH_ERROR:
+      return setFetchingStatus([ 'relations', 'videoHasKeyScenes', action.videoId ], Map({ _error: action.error, _status: ERROR }));
     // Search characters
     // -----------------
 

@@ -124,7 +124,6 @@ export default class CreateCharacterModal extends Component {
         <Field
           component={SelectInput}
           getItemImage={(id) => personsById.getIn([ id, 'portraitImage', 'url' ])}
-          getItemLargeImage={(id) => personsById.getIn([ id, 'portraitImage', 'url' ])}
           getItemText={(id) => personsById.getIn([ id, 'fullName' ])}
           getOptions={searchPersons}
           isLoading={searchedPersonIds.get('_status') === FETCHING}

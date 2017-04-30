@@ -22,7 +22,8 @@ import plusIcon from '../_images/plus.svg';
   loadCrop: bindActionCreators(actions.fetchCrop, dispatch),
   loadCrops: bindActionCreators(actions.loadCrops, dispatch),
   persistCrop: bindActionCreators(actions.persistCrop, dispatch),
-  selectFrame: bindActionCreators(actions.selectFrame, dispatch)
+  selectFrame: bindActionCreators(actions.selectFrame, dispatch),
+  getKeyScenes: bindActionCreators(actions.getKeyScenes, dispatch)
 }))
 @Radium
 @PureRender
@@ -32,7 +33,9 @@ export default class Crops extends Component {
     crops: ImmutablePropTypes.map.isRequired,
     currentLocale: PropTypes.string.isRequired,
     currentScene: ImmutablePropTypes.map,
+    currentVideoId: PropTypes.string.isRequired,
     deleteCrop: PropTypes.func.isRequired,
+    getKeyScenes: PropTypes.func.isRequired,
     loadCrop: PropTypes.func.isRequired,
     loadCrops: PropTypes.func.isRequired,
     persistCrop: PropTypes.func.isRequired,
@@ -51,7 +54,9 @@ export default class Crops extends Component {
   }
 
   componentDidMount () {
+    const currentVideoId = this.props.currentVideoId;
     this.props.loadCrops();
+    this.props.getKeyScenes(currentVideoId);
   }
 
   onAddSpott (e) {

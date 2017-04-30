@@ -10,7 +10,9 @@ import {
   listPersonsEntitiesSelector,
   listProductsEntitiesSelector,
   searchStringHasTopicsRelationsSelector,
-  topicsEntitiesSelector
+  searchStringHasUsersRelationsSelector,
+  topicsEntitiesSelector,
+  usersEntitiesSelector
 } from '../../../../selectors/data';
 import { createFormValueSelector } from '../../../../utils';
 
@@ -38,6 +40,10 @@ export const currentTopicsSearchStringSelector = (state) => state.getIn([ 'conte
 
 export const searchedTopicIdsSelector = createEntityIdsByRelationSelector(searchStringHasTopicsRelationsSelector, currentTopicsSearchStringSelector);
 
+export const currentUsersSearchStringSelector = (state) => state.getIn([ 'content', 'spotts', 'create', 'currentUserSearchString' ]);
+
+export const searchedUserIdsSelector = createEntityIdsByRelationSelector(searchStringHasUsersRelationsSelector, currentUsersSearchStringSelector);
+
 export default createStructuredSelector({
   charactersById: listCharactersEntitiesSelector,
   currentLocale: currentLocaleSelector,
@@ -49,5 +55,7 @@ export default createStructuredSelector({
   tags: spottTagsSelector,
   topicIds: topicIdsSelector,
   topicsById: topicsEntitiesSelector,
-  searchedTopicIds: searchedTopicIdsSelector
+  searchedTopicIds: searchedTopicIdsSelector,
+  usersById: usersEntitiesSelector,
+  searchedUserIds: searchedUserIdsSelector
 });

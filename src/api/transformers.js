@@ -965,9 +965,10 @@ function transformProductMarker ({ character, person, point, product, relevance,
 
 export function transformSpott ({
   auditInfo, defaultLocale, image, imageSource, localeData, personMarkers, productMarkers,
-  publishStatus, promoted, promotedForBrand, topics, uuid
+  publishStatus, promoted, promotedForBrand, topics, uuid, author
 }) {
   const spott = {
+    author: author && transformUser(author),
     basedOnDefaultLocale: {},
     createdBy: auditInfo && auditInfo.createdBy,
     createdOn: auditInfo && auditInfo.createdOn,

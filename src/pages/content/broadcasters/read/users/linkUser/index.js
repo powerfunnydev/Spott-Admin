@@ -42,8 +42,14 @@ export default class LinkUserToBroadcaster extends Component {
   }
 
   render () {
+    console.warn('props', this.props);
     return (
-      <LinkUserModal {...this.props} submitButtonText='Link user' title='Link user to a broadcaster' onCreateOption={this.onCreateOption} onSubmit={this.onSubmit}/>
+      <LinkUserModal
+        {...this.props}
+        submitButtonText='Link user'
+        title='Link user to a broadcaster'
+        onCreateOption={this.onCreateOption}
+        onSubmit={this.onSubmit}/>
     );
   }
 }

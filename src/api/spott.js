@@ -23,7 +23,7 @@ export async function fetchSpott (baseUrl, authenticationToken, locale, { spottI
 
 export async function persistSpott (baseUrl, authenticationToken, locale, {
   basedOnDefaultLocale, brandId, defaultLocale, comment, image, imageSource, locales,
-  promoted, publishStatus, spottId, tags, title, topicIds }) {
+  promoted, publishStatus, spottId, tags, title, topicIds, authorId }) {
   let spott = {};
   if (spottId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/post/posts/${spottId}`);
@@ -32,7 +32,6 @@ export async function persistSpott (baseUrl, authenticationToken, locale, {
 
   spott.productMarkers = [];
   spott.personMarkers = [];
-
   console.warn('TO persist tags', tags);
 
   if (tags) {
@@ -53,6 +52,7 @@ export async function persistSpott (baseUrl, authenticationToken, locale, {
     }));
   }
 
+  spott.author = authorId ? { uuid: authorId } : null;
   spott.defaultLocale = defaultLocale;
   spott.imageSource = imageSource;
   spott.promoted = promoted;

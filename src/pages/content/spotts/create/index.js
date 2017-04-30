@@ -41,6 +41,7 @@ function validate (values, { t }) {
 @connect(selector, (dispatch) => ({
   load: bindActionCreators(loadList, dispatch),
   searchTopics: bindActionCreators(actions.searchTopics, dispatch),
+  searchUsers: bindActionCreators(actions.searchUsers, dispatch),
   persistTopic: bindActionCreators(actions.persistTopic, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
@@ -71,12 +72,15 @@ export default class CreateSpottModal extends Component {
     reset: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchedTopicIds: ImmutablePropTypes.map.isRequired,
+    searchedUserIds: ImmutablePropTypes.map.isRequired,
     searchTopics: PropTypes.func.isRequired,
+    searchUsers: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired,
     tags: PropTypes.array,
     topicIds: PropTypes.array,
-    topicsById: ImmutablePropTypes.map.isRequired
+    topicsById: ImmutablePropTypes.map.isRequired,
+    usersById: ImmutablePropTypes.map.isRequired
   };
 
   constructor (props) {
@@ -192,7 +196,7 @@ export default class CreateSpottModal extends Component {
 
   render () {
     const { change, dispatch, handleSubmit, image, localeNames, searchedTopicIds,
-      searchTopics, tags, topicsById } = this.props;
+      searchTopics, searchUsers, searchedUserIds, usersById, tags, topicsById } = this.props;
     return (
       <PersistModal createAnother isOpen style={{ ...dialogStyle, content: { ...dialogStyle.content, maxWidth: 620 } }} title='Add Spott' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         {this.state.modal === 'createTag' &&
@@ -215,14 +219,24 @@ export default class CreateSpottModal extends Component {
             onSubmit={this.onPersistTag}/>}
         <div style={{ display: 'flex' }}>
           <div style={{ paddingRight: 20, width: '100%' }}>
-              <Scene
+              {/* <Scene
                 imageUrl={image && image.preview}
                 tags={tags}
                 onChangeImage={this.onChangeImage}
                 onEditTag={this.onEditTag}
                 onMoveTag={this.onMoveTag}
                 onRemoveTag={this.onRemoveTag}
-                onSelectionRegion={this.onSelectionRegion}/>
+                onSelectionRegion={this.onSelectionRegion}/> */}
+                <Field
+                  component={Scene}
+                  imageUrl={image && image.preview}
+                  name='image'
+                  tags={tags}
+                  onChangeImage={this.onChangeImage}
+                  onEditTag={this.onEditTag}
+                  onMoveTag={this.onMoveTag}
+                  onRemoveTag={this.onRemoveTag}
+                  onSelectionRegion={this.onSelectionRegion}/>
           </div>
           <div style={{ width: '100%' }}>
             <FormSubtitle first>Content</FormSubtitle>
@@ -248,6 +262,16 @@ export default class CreateSpottModal extends Component {
               label='Comment'
               name='comment'
               placeholder='Comment'/>
+            <Field
+              component={SelectInput}
+              getItemImage={(id) => usersById.getIn([ id, 'avatar', 'url' ])}
+              getItemText={(id) => usersById.getIn([ id, 'userName' ])}
+              getOptions={searchUsers}
+              isLoading={searchedUserIds.get('_status') === FETCHING}
+              label='Author'
+              name='authorId'
+              options={searchedUserIds.get('data').toJS()}
+              placeholder='Author'/>
             <Field
               component={SelectInput}
               getItemImage={(id) => topicsById.getIn([ id, 'icon', 'url' ])}

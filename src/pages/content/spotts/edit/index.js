@@ -1,4 +1,4 @@
-/* eslint-disable react/no-set-state */
+ /* eslint-disable react/no-set-state */
 import React, { Component, PropTypes } from 'react';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
@@ -58,6 +58,7 @@ function validate (values, { t }) {
   searchAudienceLanguages: bindActionCreators(actions.searchAudienceLanguages, dispatch),
   searchBrands: bindActionCreators(actions.searchBrands, dispatch),
   searchTopics: bindActionCreators(actions.searchTopics, dispatch),
+  searchUsers: bindActionCreators(actions.searchUsers, dispatch),
   submit: bindActionCreators(actions.submit, dispatch)
 }))
 @reduxForm({
@@ -100,16 +101,19 @@ export default class EditSpott extends Component {
     searchAudienceLanguages: PropTypes.func.isRequired,
     searchBrands: PropTypes.func.isRequired,
     searchTopics: PropTypes.func.isRequired,
+    searchUsers: PropTypes.func.isRequired,
     searchedAudienceCountryIds: ImmutablePropTypes.map.isRequired,
     searchedAudienceLanguageIds: ImmutablePropTypes.map.isRequired,
     searchedBrandIds: ImmutablePropTypes.map.isRequired,
     searchedTopicIds: ImmutablePropTypes.map.isRequired,
+    searchedUserIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
     tags: PropTypes.array,
     topicIds: PropTypes.array,
     topicsById: ImmutablePropTypes.map.isRequired,
+    usersById: ImmutablePropTypes.map.isRequired,
     onBeforeChangeTab: PropTypes.func.isRequired,
     onChangeTab: PropTypes.func.isRequired
   };
@@ -134,10 +138,12 @@ export default class EditSpott extends Component {
   async componentWillMount () {
     if (this.props.params.spottId) {
       const editObj = await this.props.loadSpott(this.props.params.spottId);
+      console.warn('editobj:', editObj);
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale,
-        brandId: editObj.promotedForBrand && editObj.promotedForBrand.id,
+        authorId: editObj.author ? editObj.author.id : null,
+        brandId: editObj.promotedForBrand ? editObj.promotedForBrand.id : null,
         tags: editObj.tags.map(({ character, entityType, id, person, point, product, productCharacter, relevance }) => ({
           character,
           characterId: character ? character.id : null,
@@ -315,7 +321,7 @@ export default class EditSpott extends Component {
       _activeLocale, brandsById, errors, currentModal, closeModal, supportedLocales, defaultLocale,
       currentSpott, location, handleSubmit, location: { query: { tab } }, promoted,
       searchAudienceCountries, searchAudienceLanguages, searchedAudienceCountryIds, searchedAudienceLanguageIds,
-      searchBrands, searchTopics, searchedBrandIds, searchedTopicIds, tags, topicsById
+      searchBrands, searchUsers, searchedUserIds, usersById, searchTopics, searchedBrandIds, searchedTopicIds, tags, topicsById
     } = this.props;
     return (
       <SideMenu>
@@ -401,8 +407,18 @@ export default class EditSpott extends Component {
                         placeholder='Comment'/>
                       <Field
                         component={SelectInput}
+                        getItemImage={(id) => usersById.getIn([ id, 'avatar', 'url' ])}
+                        getItemText={(id) => usersById.getIn([ id, 'userName' ])}
+                        getOptions={searchUsers}
+                        isLoading={searchedUserIds.get('_status') === FETCHING}
+                        label='Author'
+                        name='authorId'
+                        options={searchedUserIds.get('data').toJS()}
+                        placeholder='Author'/>
+                      <Field
+                        component={SelectInput}
                         getItemImage={(id) => topicsById.getIn([ id, 'icon', 'url' ])}
-                        getItemText={(id) => topicsById.getIn([ id, 'text' ])}
+                        getItemText={(id) => `(${topicsById.getIn([ id, 'sourceType' ]) && topicsById.getIn([ id, 'sourceType' ]).toLowerCase()}) ${topicsById.getIn([ id, 'text' ])}`}
                         getOptions={searchTopics}
                         isLoading={searchedTopicIds.get('_status') === FETCHING}
                         label='Topics'

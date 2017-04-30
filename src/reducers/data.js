@@ -943,7 +943,7 @@ export default (state = fromJS({
     case spottActions.SPOTT_FETCH_START:
       return fetchStart(state, [ 'entities', 'spotts', action.spottId ]);
     case spottActions.SPOTT_FETCH_SUCCESS: {
-      const { promotedForBrand, tags, topics } = action.data;
+      const { author, promotedForBrand, tags, topics } = action.data;
       const characters = tags.filter(({ entityType }) => entityType === 'CHARACTER').map(({ character }) => character);
       const persons = tags.filter(({ entityType }) => entityType === 'PERSON').map(({ person }) => person);
       const products = tags.filter(({ entityType }) => entityType === 'PRODUCT').map(({ product }) => product);
@@ -953,6 +953,7 @@ export default (state = fromJS({
       newState = mergeListOfEntities(newState, [ 'entities', 'listProducts' ], products);
       newState = topics && mergeListOfEntities(newState, [ 'entities', 'topics' ], topics) || newState;
       newState = promotedForBrand && fetchSuccess(state, [ 'entities', 'listBrands', promotedForBrand.id ], promotedForBrand) || newState;
+      newState = author && fetchSuccess(state, [ 'entities', 'users', author.id ], author) || newState;
 
       return fetchSuccess(newState, [ 'entities', 'spotts', action.spottId ], action.data);
     }

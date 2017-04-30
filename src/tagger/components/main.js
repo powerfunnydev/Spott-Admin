@@ -271,7 +271,6 @@ export default class TaggerApplication extends Component {
         mvpToggleKeyFrame();
       }
     };
-
     return (
       <div style={styles.container}>
         <CustomDragLayer />

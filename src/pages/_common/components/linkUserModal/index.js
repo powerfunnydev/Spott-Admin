@@ -67,6 +67,7 @@ export default class LinkUser extends Component {
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={SelectInput}
+          getItemImage={(id) => usersById.getIn([ id, 'avatar', 'url' ])}
           getItemText={(id) => usersById.getIn([ id, 'userName' ])}
           getOptions={searchUsers}
           isLoading={searchedUserIds.get('_status') === FETCHING}

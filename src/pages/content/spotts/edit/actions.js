@@ -5,6 +5,7 @@ import { fetchCountries } from '../../../../actions/country';
 import { searchCharacters as dataSearchCharacters } from '../../../../actions/character';
 import { searchPersons as dataSearchPersons } from '../../../../actions/person';
 import { searchProducts as dataSearchProducts } from '../../../../actions/product';
+import { searchUsers as dataSearchUsers } from '../../../../actions/user';
 import { fetchLanguages } from '../../../../actions/language';
 import { createSearchAction } from '../../../../utils';
 
@@ -31,6 +32,9 @@ export const AUDIENCE_COUNTRIES_SEARCH_ERROR = 'SPOTTS_EDIT/AUDIENCE_COUNTRIES_S
 
 export const AUDIENCE_LANGUAGES_SEARCH_START = 'SPOTTS_EDIT/AUDIENCE_LANGUAGES_SEARCH_START';
 export const AUDIENCE_LANGUAGES_SEARCH_ERROR = 'SPOTTS_EDIT/AUDIENCE_LANGUAGES_SEARCH_ERROR';
+
+export const USERS_SEARCH_START = 'LINK_USER_MODAL/USERS_SEARCH_START';
+export const USERS_SEARCH_ERROR = 'LINK_USER_MODAL/USERS_SEARCH_ERROR';
 
 export { openModal, closeModal } from '../../../../actions/global';
 
@@ -77,3 +81,17 @@ export const searchProducts = createSearchAction(dataSearchProducts, TAGS_PRODUC
 
 export const searchAudienceCountries = createSearchAction(fetchCountries, AUDIENCE_COUNTRIES_SEARCH_START, AUDIENCE_COUNTRIES_SEARCH_ERROR);
 export const searchAudienceLanguages = createSearchAction(fetchLanguages, AUDIENCE_LANGUAGES_SEARCH_START, AUDIENCE_LANGUAGES_SEARCH_ERROR);
+
+// User
+// ////
+
+export function searchUsers (searchString) {
+  return async (dispatch, getState) => {
+    try {
+      await dispatch({ type: USERS_SEARCH_START, searchString });
+      return await dispatch(dataSearchUsers({ searchString }));
+    } catch (error) {
+      dispatch({ error, type: USERS_SEARCH_ERROR });
+    }
+  };
+}

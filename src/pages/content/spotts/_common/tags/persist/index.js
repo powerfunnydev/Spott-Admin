@@ -166,7 +166,6 @@ export default function createPersistTag (selector, actions) {
                 <Field
                   component={SelectInput}
                   getItemImage={(id) => productsById.getIn([ id, 'logo', 'url' ])}
-                  getItemLargeImage={(id) => productsById.getIn([ id, 'logo', 'url' ])}
                   getItemText={(productId) => `${productsById.getIn([ productId, 'brand', 'name' ])} - ${productsById.getIn([ productId, 'fullName' ])}`}
                   getOptions={this.searchProducts}
                   isLoading={searchedProductIds.get('_status') !== 'loaded'}
@@ -197,7 +196,6 @@ export default function createPersistTag (selector, actions) {
                 <Field
                   component={SelectInput}
                   getItemImage={(id) => charactersById.getIn([ id, 'portraitImage', 'url' ])}
-                  getItemLargeImage={(id) => charactersById.getIn([ id, 'portraitImage', 'url' ])}
                   getItemText={(characterId) => charactersById.getIn([ characterId, 'name' ])}
                   getOptions={this.searchCharacters}
                   label='Character name'
@@ -212,7 +210,6 @@ export default function createPersistTag (selector, actions) {
                 <Field
                   component={SelectInput}
                   getItemImage={(id) => personsById.getIn([ id, 'portraitImage', 'url' ])}
-                  getItemLargeImage={(id) => personsById.getIn([ id, 'portraitImage', 'url' ])}
                   getItemText={(personId) => personsById.getIn([ personId, 'fullName' ])}
                   getOptions={this.searchPersons}
                   label='Person name'
