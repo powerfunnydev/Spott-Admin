@@ -18,6 +18,7 @@ import {
   currentVideoIdSelector,
   sceneEntitiesSelector,
   videoHasSceneGroupsRelationsSelector,
+  videoHasKeyScenesRelationsSelector,
   videoHasScenesRelationsSelector,
   sceneGroupEntitiesSelector,
   productEntitiesSelector,
@@ -60,6 +61,16 @@ export const allScenesSelector = createSelector(
      return sceneIds.map((sceneId) => scenes.get(sceneId));
    }
  );
+
+export const allKeyScenesSelector = createSelector(
+    currentVideoIdSelector,
+    videoHasKeyScenesRelationsSelector,
+    sceneEntitiesSelector,
+    (videoId, videoHasKeyScenes, scenes) => {
+      const sceneIds = videoHasKeyScenes.get(videoId).get('data') || List();
+      return sceneIds.map((sceneId) => scenes.get(sceneId));
+    }
+  );
 
 // export const visibleScenesSelector = createSelector(
 //   _sceneGroupsSelector,
@@ -105,14 +116,15 @@ const cropsSelector = createEntitiesByRelationSelector(videoHasCropsRelationsSel
 export default createStructuredSelector({
   crops: cropsSelector,
   currentLocale: currentLocaleSelector,
-  currentScene: currentSceneSelector
+  currentScene: currentSceneSelector,
+  currentVideoId: currentVideoIdSelector
 });
 
 // Select a crop modal
 // ///////////////////
 
 export const selectCropSelector = createStructuredSelector({
-  scenes: allScenesSelector
+  scenes: allKeyScenesSelector
 });
 
 // Persist a crop modal

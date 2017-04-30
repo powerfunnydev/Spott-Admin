@@ -23,6 +23,12 @@ export const SCENES_FETCH_ERROR = 'SCENE/SCENES_FETCH_ERROR';
 
 export const fetchScenes = makeApiActionCreator(getScenes, SCENES_FETCH_START, SCENES_FETCH_SUCCESS, SCENES_FETCH_ERROR);
 
+export const KEYSCENES_FETCH_START = 'SCENE/KEYSCENES_FETCH_START';
+export const KEYSCENES_FETCH_SUCCESS = 'SCENE/KEYSCENES_FETCH_SUCCESS';
+export const KEYSCENES_FETCH_ERROR = 'SCENE/KEYSCENES_FETCH_ERROR';
+
+export const fetchKeyScenes = makeApiActionCreator(getScenes, KEYSCENES_FETCH_START, KEYSCENES_FETCH_SUCCESS, KEYSCENES_FETCH_ERROR);
+
 // Helper functions
 // ----------------
 
@@ -165,3 +171,8 @@ export function selectSimilarScene (scene) {
     dispatch({ currentSceneId, scene, type: SELECT_SIMILAR_SCENE });
   };
 }
+// export function getKeyScenes (videoId) {
+//   return async (dispatch) => {
+//     await dispatch(fetchKeyScenes({ videoId, onlyKeyScenes: true }));
+//   };
+// }

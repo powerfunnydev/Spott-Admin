@@ -11,6 +11,8 @@ export default (state = Map({}), action) => {
       return state.set('currentTagsPersonsSearchString', action.searchString);
     case actions.TAGS_PRODUCTS_SEARCH_START:
       return state.set('currentTagsProductsSearchString', action.searchString);
+    case actions.USERS_SEARCH_START:
+      return state.set('currentUserSearchString', action.searchString);
     // Uninteresting actions
     default:
       return state;

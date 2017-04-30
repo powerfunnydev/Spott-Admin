@@ -86,8 +86,8 @@ export default class Scene extends Component {
                 hovered={hovered}
                 isDragging={false}
                 key={appearanceId}
-                relativeLeft={point.get('x')}
-                relativeTop={point.get('y')}
+                relativeLeft={point && point.get('x')}
+                relativeTop={point && point.get('y')}
                 selected={false}
                 onCopy={noop}
                 onEdit={noop}

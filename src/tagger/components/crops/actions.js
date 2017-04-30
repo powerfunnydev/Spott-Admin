@@ -5,6 +5,7 @@ import { searchTopics as dataSearchTopics } from '../../../actions/topic';
 import { createSearchAction } from '../../../utils';
 import { currentVideoIdSelector } from '../../selectors/common';
 import { fetchCrops } from '../../../actions/crop';
+import { fetchKeyScenes } from '../../actions/scene';
 
 export const TOPICS_SEARCH_START = 'CROP_EDIT/TOPICS_SEARCH_START';
 export const TOPICS_SEARCH_ERROR = 'CROP_EDIT/TOPICS_SEARCH_ERROR';
@@ -34,5 +35,11 @@ export function loadCrops () {
   return (dispatch, getState) => {
     const videoId = currentVideoIdSelector(getState());
     dispatch(fetchCrops({ videoId }));
+  };
+}
+
+export function getKeyScenes (videoId) {
+  return async (dispatch) => {
+    await dispatch(fetchKeyScenes({ videoId, onlyKeyScenes: true }));
   };
 }

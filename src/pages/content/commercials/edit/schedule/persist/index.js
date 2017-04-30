@@ -18,8 +18,7 @@ import * as actions from './actions';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { broadcasterId, endDate, endTime, startDate, startTime, timezone, noEndDate } = values.toJS();
-  if (!broadcasterId) { validationErrors.broadcasterId = t('common.errors.required'); }
+  const { endDate, endTime, startDate, startTime, timezone, noEndDate } = values.toJS();
   if (!startDate) { validationErrors.startDate = t('common.errors.required'); }
   if (!startTime) { validationErrors.startTime = t('common.errors.required'); }
   if (!timezone) { validationErrors.timezone = t('common.errors.required'); }
@@ -199,7 +198,6 @@ export default class ScheduleEntryModal extends Component {
           name='broadcasterId'
           options={searchedBroadcasterIds.get('data').toJS()}
           placeholder='Broadcaster'
-          required
           // When the broadcaster was changed, we reset the mediumIds.
           onChange={() => {
             dispatch(change('broadcastChannelIds', []));

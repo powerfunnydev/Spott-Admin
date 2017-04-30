@@ -62,6 +62,16 @@ class optionWithImage extends Component {
       width: '30px',
       objectFit: 'contain'
     };
+    const optionImageStyle = {
+      display: 'inline-block',
+      backgroundColor: colors.lightGray,
+      position: 'relative',
+      height: '100%',
+      width: '100%',
+      maxHeight: '150px',
+      maxWidth: '150px',
+      objectFit: 'contain'
+    };
     const optionStyle = {
       padding: '0px 0px',
       ':hover': {
@@ -83,14 +93,14 @@ class optionWithImage extends Component {
       backgroundColor: colors.veryLightGray
     };
     const option = this.props.option;
-    const imageSection = option.largeImage
+    const imageSection = option.image
     ? (<ToolTip
-      overlay={<img src={`${option.largeImage}?height=150&width=150`}/>}
+      overlay={<img src={`${option.image}?height=150&width=150`} style={optionImageStyle}/>}
       placement='top'
       prefixCls='no-arrow'>
-      <img src={option.image} style={imageStyle}/>
+      <img src={`${option.image}?height=150&width=150`} style={imageStyle}/>
     </ToolTip>)
-    : option.hasImages && (option.image ? <img src={`${option.image}?height=30&width=30`} style={imageStyle}/> : <span style={imageStyle}/>);
+    : option.hasImages && (option.image ? <img src={`${option.image}?height=150&width=150`} style={imageStyle}/> : <span style={imageStyle}/>);
     return (
 			<div
   className={this.props.className}
@@ -187,32 +197,54 @@ class valueWithImage extends Component {
       position: 'relative',
       backgroundColor: colors.lightGray,
       verticalAlign: 'middle',
-      height: '30px',
-      width: '30px',
+      height: '24px',
+      width: '24px',
       borderTopLeftRadius: '1px',
       borderBottomLeftRadius: '1px',
+      objectFit: 'contain',
+      marginLeft: '5px'
+    };
+    const valueImageStyle = {
+      display: 'inline-block',
+      backgroundColor: colors.lightGray,
+      position: 'relative',
+      height: '100%',
+      width: '100%',
+      maxHeight: '150px',
+      maxWidth: '150px',
       objectFit: 'contain'
     };
+    const valueContainerStyle = {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center'
+    };
+    const valueStyle = {
+      marginLeft: '10px',
+      marginRight: '10px',
+      width: '80%',
+      overflow: 'hidden'
+    };
     const value = this.props.value;
-    const imageSection = value.largeImage
+    const imageSection = value.image
     ? (<ToolTip
-      overlay={<img src={`${value.largeImage}?height=150&width=150`}/>}
+      overlay={<img src={`${value.image}?height=150&width=150`} style={valueImageStyle}/>}
       placement='top'
       prefixCls='no-arrow'>
-      <img src={value.image} style={imageStyle}/>
+      <img src={`${value.image}?height=150&width=150`} style={imageStyle}/>
     </ToolTip>)
-    : value.hasImages && (value.image ? <img src={`${value.image}?height=30&width=30`} style={imageStyle}/> : <span style={imageStyle}/>);
+    : value.hasImages && (value.image ? <img src={`${value.image}?height=150&width=150`} style={imageStyle}/> : null);
     return (
-			<div className='Select-value' style={{ marginBottom: '0.3rem' }} title={value.title}>
-				<span className='Select-value-label'>
+			<div className='Select-value' title={value.title}>
+				<div className='Select-value-label' style={valueContainerStyle}>
           {imageSection}
 					{/* {value.hasImages && (value.image ? <img src={value.image} style={imageStyle}/> : <span style={imageStyle}/>)} */}
           {/* <img src={value.image} style={imageStyle}/> */}
-					<span style={{ paddingLeft: '10px', paddingRight: '10px' }}>
-          {this.props.children}
-        </span>
+					<div style={valueStyle}>
+            {this.props.children}
+          </div>
         {this.renderRemoveIcon()}
-				</span>
+      </div>
 			</div>
     );
   }
@@ -228,8 +260,7 @@ export default class SelectInput extends Component {
     disabled: PropTypes.bool,
     filter: PropTypes.func,
     first: PropTypes.bool,
-    getItemImage: PropTypes.func.isRequired,
-    getItemLargeImage: PropTypes.func.isRequired,
+    getItemImage: PropTypes.func,
     getItemText: PropTypes.func.isRequired, // Takes a value (an id) and produces the string for its visualization.
     getOptions: PropTypes.func, // Triggered on search text change, responsible for getting the new options.
     input: PropTypes.object.isRequired, // Provides value and onChange. Note that value is an id.
@@ -250,7 +281,6 @@ export default class SelectInput extends Component {
     super(props);
     this.onInternalChange = ::this.onInternalChange;
     this.getItemImage = ::this.getItemImage;
-    this.getItemLargeImage = ::this.getItemLargeImage;
     this.state = { value: '' };
   }
 
@@ -264,13 +294,6 @@ export default class SelectInput extends Component {
     const getItemImage = this.props.getItemImage;
     if (getItemImage) {
       return getItemImage(option);
-    }
-    return null;
-  }
-  getItemLargeImage (option) {
-    const getItemLargeImage = this.props.getItemLargeImage;
-    if (getItemLargeImage) {
-      return getItemLargeImage(option);
     }
     return null;
   }
@@ -340,18 +363,18 @@ export default class SelectInput extends Component {
       required, style
     } = this.props;
     const hasImages = getItemImage;
-    const options = this.props.options ? this.props.options.map((o) => ({ value: o, label: getItemText(o), image: this.getItemImage(o), largeImage: this.getItemLargeImage(o), hasImages })) : [];
+    const options = this.props.options ? this.props.options.map((o) => ({ value: o, label: getItemText(o), image: this.getItemImage(o), hasImages })) : [];
     onCreateOption && this.state.value && options.push({ value: this.state.value, label: `Add ${this.state.value}`, className: 'Select-create-option-placeholder' });
     let value;
     // first time we initialize a multiselect, we retrieve a immutable List. The select components
     // expects a classic array. So we invoke toJS on the list.
     if (Immutable.Iterable.isIterable(input.value)) {
-      value = (input.value || []).map((o) => ({ value: o, label: getItemText(o), image: this.getItemImage(o), largeImage: this.getItemLargeImage(o), hasImages })).toJS();
+      value = (input.value || []).map((o) => ({ value: o, label: getItemText(o), image: this.getItemImage(o), hasImages })).toJS();
     } else if (multiselect) { // If it isn't a immutable List, but a classic array.
       // We fall back to [] because of https://github.com/erikras/redux-form/issues/621
-      value = (input.value || []).map((o) => ({ value: o, label: getItemText(o), image: this.getItemImage(o), largeImage: this.getItemLargeImage(o), hasImages }));
+      value = (input.value || []).map((o) => ({ value: o, label: getItemText(o), image: this.getItemImage(o), hasImages }));
     } else {
-      value = input.value && { value: input.value, label: getItemText(input.value), image: this.getItemImage(input.value), largeImage: this.getItemLargeImage(input.value), hasImages };
+      value = input.value && { value: input.value, label: getItemText(input.value), image: this.getItemImage(input.value), hasImages };
     }
 
     const maxSelected = maxSelect ? ((input.value && input.value.length) || 0) >= maxSelect : false;

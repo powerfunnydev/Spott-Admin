@@ -13,8 +13,10 @@ import {
   listProductsEntitiesSelector,
   searchStringHasBrandsRelationsSelector,
   searchStringHasTopicsRelationsSelector,
+  searchStringHasUsersRelationsSelector,
   spottsEntitiesSelector,
-  topicsEntitiesSelector
+  topicsEntitiesSelector,
+  usersEntitiesSelector
 } from '../../../../selectors/data';
 
 const formName = 'spottEdit';
@@ -42,6 +44,10 @@ const popUpMessageSelector = (state) => state.getIn([ 'content', 'spotts', 'edit
 export const currentTopicsSearchStringSelector = (state) => state.getIn([ 'content', 'spotts', 'edit', 'currentTopicsSearchString' ]);
 
 export const searchedTopicIdsSelector = createEntityIdsByRelationSelector(searchStringHasTopicsRelationsSelector, currentTopicsSearchStringSelector);
+
+export const currentUsersSearchStringSelector = (state) => state.getIn([ 'content', 'spotts', 'edit', 'currentUserSearchString' ]);
+
+export const searchedUserIdsSelector = createEntityIdsByRelationSelector(searchStringHasUsersRelationsSelector, currentUsersSearchStringSelector);
 
 // Audience
 
@@ -84,5 +90,7 @@ export default createStructuredSelector({
   supportedLocales: supportedLocalesSelector,
   tags: spottTagsSelector,
   topicIds: topicIdsSelector,
-  topicsById: topicsEntitiesSelector
+  topicsById: topicsEntitiesSelector,
+  usersById: usersEntitiesSelector,
+  searchedUserIds: searchedUserIdsSelector
 });

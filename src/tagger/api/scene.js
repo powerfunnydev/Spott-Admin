@@ -44,12 +44,13 @@ export async function postScene (baseUrl, authenticationToken, locale, { sceneId
   return _transformScene(updatedScene);
 }
 
-export async function getScenes (baseUrl, authenticationToken, locale, { videoId }) {
-  const { body: { data: scenes, pageCount } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/scenes?page=0&pageSize=5000`);
+export async function getScenes (baseUrl, authenticationToken, locale, { videoId, onlyKeyScenes }) {
+  const hasOnlyKeyScenes = onlyKeyScenes ? onlyKeyScenes : false;
+  const { body: { data: scenes, pageCount } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/scenes?page=0&pageSize=5000&onlyKeyScenes=${hasOnlyKeyScenes}`);
 
   let result = scenes;
   for (let i = 1; i < pageCount; i++) {
-    const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/scenes?page=${i}&pageSize=5000`);
+    const { body: { data } } = await get(authenticationToken, locale, `${baseUrl}/v004/video/videos/${videoId}/scenes?page=${i}&pageSize=5000&onlyKeyScenes=${hasOnlyKeyScenes}`);
     result = result.concat(data);
   }
 

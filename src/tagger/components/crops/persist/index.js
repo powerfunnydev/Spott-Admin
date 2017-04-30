@@ -237,6 +237,7 @@ export default class PersistCrop extends Component {
                 placeholder='Comment'/>
               <Field
                 component={SelectInput}
+                getItemImage={(id) => topicsById.getIn([ id, 'icon', 'url' ])}
                 getItemText={(id) => `(${topicsById.getIn([ id, 'sourceType' ]) && topicsById.getIn([ id, 'sourceType' ]).toLowerCase()}) ${topicsById.getIn([ id, 'text' ])}`}
                 getOptions={searchTopics}
                 isLoading={searchedTopicIds.get('_status') === FETCHING}

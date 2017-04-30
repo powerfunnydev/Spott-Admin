@@ -103,6 +103,7 @@ export const videoHasProductsRelationsSelector = (state) => state.getIn([ 'tagge
 export const videoHasGlobalProductsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'videoHasGlobalProducts' ]);
 export const videoHasScenesRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'videoHasScenes' ]);
 export const videoHasSceneGroupsRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'videoHasSceneGroups' ]);
+export const videoHasKeyScenesRelationsSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'relations', 'videoHasKeyScenes' ]);
 
 // Selectors related to the `data.entities` part of the state tree.
 export const appearanceEntitiesSelector = (state) => state.getIn([ 'tagger', 'tagger', 'data', 'entities', 'appearances' ]);

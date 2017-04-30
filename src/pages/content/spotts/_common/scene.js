@@ -5,6 +5,7 @@ import { DropTarget } from 'react-dnd';
 import ImageDropzone from '../../../_common/dropzone/imageDropzone';
 import SelectionArea from '../../../../tagger/components/sceneEditor/selectionArea';
 import MarkerImageTooltip from '../../../../tagger/components/sceneEditor/markerImageTooltip';
+import { errorTextStyle } from '../../../_common/styles';
 import Tag from './tag';
 
 const sceneTarget = {
@@ -34,6 +35,7 @@ export default class Scene extends Component {
   static propTypes = {
     connectDropTarget: PropTypes.func.isRequired,
     imageUrl: PropTypes.string,
+    meta: PropTypes.object,
     tags: PropTypes.array,
     onChangeImage: PropTypes.func.isRequired,
     onEditTag: PropTypes.func.isRequired,
@@ -103,10 +105,10 @@ export default class Scene extends Component {
       let image;
       switch (tag.entityType) {
         case 'CHARACTER':
-          image = tag.character.profileImage;
+          image = tag.character.portraitImage;
           break;
         case 'PERSON':
-          image = tag.person.profileImage;
+          image = tag.person.portraitImage;
           break;
         case 'PRODUCT':
           image = tag.product.logo;
@@ -125,12 +127,11 @@ export default class Scene extends Component {
   }
 
   render () {
-    const { connectDropTarget, imageUrl, tags, onChangeImage, onEditTag, onMoveTag, onRemoveTag } = this.props;
+    const { connectDropTarget, imageUrl, meta, tags, onChangeImage, onEditTag, onMoveTag, onRemoveTag } = this.props;
     const { localeImage } = this.state;
     const styles = this.constructor.styles;
 
     const noop = (c) => c;
-
     return (
       <div style={styles.container}>
         {imageUrl &&
@@ -181,6 +182,7 @@ export default class Scene extends Component {
             this.setState({ localeImage: null });
             onChangeImage(null);
           }}/>
+          {meta && meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div>}
       </div>
     );
   }
