@@ -968,8 +968,8 @@ export default (state = fromJS({
       newState = mergeListOfEntities(newState, [ 'entities', 'listPersons' ], persons);
       newState = mergeListOfEntities(newState, [ 'entities', 'listProducts' ], products);
       newState = topics && mergeListOfEntities(newState, [ 'entities', 'topics' ], topics) || newState;
-      newState = promotedForBrand && fetchSuccess(state, [ 'entities', 'listBrands', promotedForBrand.id ], promotedForBrand) || newState;
-      newState = author && fetchSuccess(state, [ 'entities', 'users', author.id ], author) || newState;
+      newState = promotedForBrand && fetchSuccess(newState, [ 'entities', 'listBrands', promotedForBrand.id ], promotedForBrand) || newState;
+      newState = author && fetchSuccess(newState, [ 'entities', 'users', author.id ], author) || newState;
 
       return fetchSuccess(newState, [ 'entities', 'spotts', action.spottId ], action.data);
     }

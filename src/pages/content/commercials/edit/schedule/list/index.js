@@ -101,6 +101,9 @@ export default class Schedule extends Component {
       justifyContent: 'center',
       backgroundColor: 'rgba(244, 245, 245, 0.5)'
     },
+    addContent: {
+      justifyContent: 'center'
+    },
     editButton: {
       marginRight: '0.75em'
     },
@@ -186,7 +189,7 @@ export default class Schedule extends Component {
               );
             })}
             <Row isFirst={scheduleEntries.get('data').size === 0} >
-              <CustomCel style={[ styles.add, styles.adaptedCustomCel ]} onClick={this.onClickCreateScheduleEntry}>
+              <CustomCel contentStyle={styles.addContent} style={[ styles.add, styles.adaptedCustomCel ]} onClick={this.onClickCreateScheduleEntry}>
                 <Plus color={colors.primaryBlue} />&nbsp;&nbsp;&nbsp;Add entry
               </CustomCel>
             </Row>

@@ -14,6 +14,7 @@ export class CustomCel extends Component {
 
   static propTypes = {
     children: PropTypes.node,
+    contentStyle: PropTypes.any,
     getValue: PropTypes.func,
     objectToRender: PropTypes.object,
     sortColumn: PropTypes.func,
@@ -59,13 +60,13 @@ export class CustomCel extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { children, style, getValue, objectToRender, onClick, sortColumn, sortDirection } = this.props;
+    const { children, contentStyle, style, getValue, objectToRender, onClick, sortColumn, sortDirection } = this.props;
 
     return (
       <div style={[ styles.cell, (sortColumn || onClick) && styles.pointer,
         sortDirection && sortDirection !== NONE && styles.headerSelected,
         onClick && styles.clickable, style ]} onClick={sortColumn || onClick}>
-        <div style={styles.inlineFlex}>
+        <div style={[ styles.inlineFlex, contentStyle ]}>
           {children}
           {getValue && objectToRender && getValue(objectToRender)}
         </div>

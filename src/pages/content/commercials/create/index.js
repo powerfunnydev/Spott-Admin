@@ -106,6 +106,7 @@ export default class CreateEpisodentryModal extends Component {
           placeholder='Default language'/>
         <Field
           component={SelectInput}
+          getItemImage={(id) => brandsById.getIn([ id, 'logo', 'url' ])}
           getItemText={(id) => brandsById.getIn([ id, 'name' ])}
           getOptions={searchBrands}
           isLoading={searchedBrandIds.get('_status') === FETCHING}

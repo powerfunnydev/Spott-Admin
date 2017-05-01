@@ -90,6 +90,9 @@ export default class Audiences extends Component {
       justifyContent: 'center',
       backgroundColor: 'rgba(244, 245, 245, 0.5)'
     },
+    addContent: {
+      justifyContent: 'center'
+    },
     editButton: {
       marginRight: '0.75em'
     },
@@ -163,7 +166,7 @@ export default class Audiences extends Component {
               );
             })}
             <Row isFirst={audiences.get('data').size === 0} >
-              <CustomCel style={[ styles.add, styles.adaptedCustomCel ]} onClick={this.onClickCreateAudience}>
+              <CustomCel contentStyle={styles.addContent} style={[ styles.add, styles.adaptedCustomCel ]} onClick={this.onClickCreateAudience}>
                 <Plus color={colors.primaryBlue} />&nbsp;&nbsp;&nbsp;Add audience
               </CustomCel>
             </Row>

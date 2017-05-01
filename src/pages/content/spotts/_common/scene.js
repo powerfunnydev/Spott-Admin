@@ -134,7 +134,7 @@ export default class Scene extends Component {
     const noop = (c) => c;
     return (
       <div style={styles.container}>
-        {imageUrl &&
+        {(imageUrl || localeImage) &&
           <SelectionArea
             disable={Boolean(this.state.hoveredTag)}
             ref={(c) => { this._wrapper = c && c.component; }}
@@ -159,10 +159,10 @@ export default class Scene extends Component {
                       onEdit={onEditTag.bind(null, id)}
                       onHover={() => this.setState({ hoveredTag: tag })}
                       onLeave={() => this.setState({ hoveredTag: null })}
-                      onMove={onMoveTag.bind(null, id)} // onMoveAppearance.bind(this, appearanceId)}
+                      onMove={onMoveTag.bind(null, id)}
                       onRemove={onRemoveTag.bind(null, id)}
-                      onSelect={noop} // onSelectAppearance.bind(this, appearanceId)}
-                      onToggleSelect={noop}/> // onToggleSelectAppearance.bind(this, appearanceId)} />
+                      onSelect={noop}
+                      onToggleSelect={noop}/>
                   );
                 })}
             </div>)}

@@ -323,12 +323,12 @@ export default class Collections extends Component {
                 persistMoveCollection={this.onCollectionMove}
                 persistMoveCollectionItem={this.onCollectionItemMove}
                 persistMoveCollectionItemToOtherCollection={this.onCollectionItemMoveToOtherCollection}
+                onChangeCollectionVisibility={this.onChangeCollectionVisibility.bind(this, collectionId)}
                 onCollectionDelete={this.onCollectionDelete.bind(this, collectionId)}
                 onCollectionEdit={this.onCollectionEdit.bind(this, collectionId)}
                 onCollectionItemCreate={this.onCollectionItemCreate.bind(this, collectionId)}
                 onCollectionItemDelete={this.onCollectionItemDelete.bind(this, collectionId)}
-                onCollectionItemEdit={this.onCollectionItemEdit.bind(this, collectionId)}
-                onChangeCollectionVisibility={this.onChangeCollectionVisibility.bind(this, collectionId)}/>
+                onCollectionItemEdit={this.onCollectionItemEdit.bind(this, collectionId)}/>
             );
           })}
         </Section>

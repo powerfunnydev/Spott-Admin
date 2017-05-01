@@ -83,7 +83,8 @@ export default class BrandModal extends Component {
         <Field
           component={SelectInput}
           first
-          getItemText={(brandId) => brandsById.getIn([ brandId, 'name' ])}
+          getItemImage={(id) => brandsById.getIn([ id, 'logo', 'url' ])}
+          getItemText={(id) => brandsById.getIn([ id, 'name' ])}
           getOptions={searchBrands}
           label='Brand'
           name='brandId'

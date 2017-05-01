@@ -208,7 +208,8 @@ export default class CollectionModal extends Component {
           {currentLinkType === 'BRAND' &&
             <Field
               component={SelectInput}
-              getItemText={(brandId) => brandsById.getIn([ brandId, 'name' ])}
+              getItemImage={(id) => brandsById.getIn([ id, 'logo', 'url' ])}
+              getItemText={(id) => brandsById.getIn([ id, 'name' ])}
               getOptions={searchBrands}
               label='Link brand'
               name='brandId'

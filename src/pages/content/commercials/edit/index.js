@@ -386,6 +386,7 @@ export default class EditCommercial extends Component {
                   <Field
                     component={SelectInput}
                     disabled={_activeLocale !== defaultLocale}
+                    getItemImage={(id) => brandsById.getIn([ id, 'logo', 'url' ])}
                     getItemText={(id) => brandsById.getIn([ id, 'name' ])}
                     getOptions={searchBrands}
                     isLoading={searchedBrandIds.get('_status') === FETCHING}
@@ -573,6 +574,7 @@ export default class EditCommercial extends Component {
                           component={SelectInput}
                           disabled={!hasBanner}
                           first
+                          getItemImage={(id) => brandsById.getIn([ id, 'logo', 'url' ])}
                           getItemText={(id) => brandsById.getIn([ id, 'name' ])}
                           getOptions={searchBannerLinkBrands}
                           isLoading={searchedBannerLinkBrandIds.get('_status') === FETCHING}

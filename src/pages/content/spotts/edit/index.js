@@ -35,13 +35,13 @@ const PersistTag = createPersistTag(tagsSelector, actions);
 
 let spottCount = 1;
 
-function validate (values, { t }) {
+function validate (values, { currentSpott, t }) {
   const validationErrors = {};
-  const { defaultLocale } = values.toJS();
+  const { _activeLocale, defaultLocale, image, title } = values.toJS();
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
-  // if (!name) { validationErrors.name = t('common.errors.required'); }
-
-// Done
+  if (title && !title[_activeLocale]) { validationErrors.title = validationErrors.title || {}; validationErrors.title[_activeLocale] = t('common.errors.required'); }
+  if (!currentSpott.getIn([ 'image', 'url' ]) && !image) { validationErrors.image = t('common.errors.required'); }
+  console.warn('validationErrors', validationErrors);
   return validationErrors;
 }
 
@@ -144,6 +144,7 @@ export default class EditSpott extends Component {
         _activeLocale: editObj.defaultLocale,
         authorId: editObj.author ? editObj.author.id : null,
         brandId: editObj.promotedForBrand ? editObj.promotedForBrand.id : null,
+        image: null,
         tags: editObj.tags.map(({ character, entityType, id, person, point, product, productCharacter, relevance }) => ({
           character,
           characterId: character ? character.id : null,
@@ -364,21 +365,24 @@ export default class EditSpott extends Component {
               <Tab title='Details'>
                 <div style={{ display: 'flex', marginTop: -1 }}>
                   <div style={{ width: '40%' }}>
-                    <Section style={{ marginTop: 0, marginRight: -1 }}>
-                      {currentSpott.get('image') &&
-                        <Scene
-                          imageUrl={currentSpott.getIn([ 'image', 'url' ])}
-                          tags={tags}
-                          onChangeImage={this.onChangeImage}
-                          onEditTag={this.onEditTag}
-                          onMoveTag={this.onMoveTag}
-                          onRemoveTag={this.onRemoveTag}
-                          onSelectionRegion={this.onSelectionRegion}/>}
-                        <Field
-                          component={TextInput}
-                          label='Image source'
-                          name='imageSource'
-                          placeholder='Image source'/>
+                    <Section style={{ height: '100%', marginTop: 0, marginRight: -1 }}>
+                      {/* Only mounted fields will be validated and stop submit on errors.
+                          Without using Field, the field is not mounted. */}
+                      <Field
+                        component={Scene}
+                        imageUrl={currentSpott.getIn([ 'image', 'url' ])}
+                        name='image'
+                        tags={tags}
+                        onChangeImage={this.onChangeImage}
+                        onEditTag={this.onEditTag}
+                        onMoveTag={this.onMoveTag}
+                        onRemoveTag={this.onRemoveTag}
+                        onSelectionRegion={this.onSelectionRegion}/>
+                      <Field
+                        component={TextInput}
+                        label='Image source'
+                        name='imageSource'
+                        placeholder='Image source'/>
                     </Section>
                   </div>
                   <div style={{ width: '60%', display: 'flex', flexDirection: 'column' }}>
@@ -440,13 +444,13 @@ export default class EditSpott extends Component {
                   first
                   label='Promote this spott'
                   name='promoted'/>
-                {
-                  promoted &&
+                {promoted &&
                   <div>
                     <FormSubtitle >More options</FormSubtitle>
                     <Field
                       component={SelectInput}
                       disabled={_activeLocale !== defaultLocale}
+                      getItemImage={(id) => brandsById.getIn([ id, 'logo', 'url' ])}
                       getItemText={(id) => brandsById.getIn([ id, 'name' ])}
                       getOptions={searchBrands}
                       isLoading={searchedBrandIds.get('_status') === FETCHING}
@@ -454,8 +458,7 @@ export default class EditSpott extends Component {
                       name='brandId'
                       options={searchedBrandIds.get('data').toJS()}
                       placeholder='Brand name'/>
-                  </div>
-                }
+                  </div>}
               </Section>
             </Tab>
             <Tab title='Audience'>

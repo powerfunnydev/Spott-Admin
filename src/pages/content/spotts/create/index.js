@@ -219,24 +219,18 @@ export default class CreateSpottModal extends Component {
             onSubmit={this.onPersistTag}/>}
         <div style={{ display: 'flex' }}>
           <div style={{ paddingRight: 20, width: '100%' }}>
-              {/* <Scene
-                imageUrl={image && image.preview}
-                tags={tags}
-                onChangeImage={this.onChangeImage}
-                onEditTag={this.onEditTag}
-                onMoveTag={this.onMoveTag}
-                onRemoveTag={this.onRemoveTag}
-                onSelectionRegion={this.onSelectionRegion}/> */}
-                <Field
-                  component={Scene}
-                  imageUrl={image && image.preview}
-                  name='image'
-                  tags={tags}
-                  onChangeImage={this.onChangeImage}
-                  onEditTag={this.onEditTag}
-                  onMoveTag={this.onMoveTag}
-                  onRemoveTag={this.onRemoveTag}
-                  onSelectionRegion={this.onSelectionRegion}/>
+            {/* Only mounted fields will be validated and stop submit on errors.
+                Without using Field, the field is not mounted. */}
+            <Field
+              component={Scene}
+              imageUrl={image && image.preview}
+              name='image'
+              tags={tags}
+              onChangeImage={this.onChangeImage}
+              onEditTag={this.onEditTag}
+              onMoveTag={this.onMoveTag}
+              onRemoveTag={this.onRemoveTag}
+              onSelectionRegion={this.onSelectionRegion}/>
           </div>
           <div style={{ width: '100%' }}>
             <FormSubtitle first>Content</FormSubtitle>

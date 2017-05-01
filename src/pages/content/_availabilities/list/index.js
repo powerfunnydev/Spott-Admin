@@ -105,6 +105,9 @@ export default class Availabilities extends Component {
       justifyContent: 'center',
       backgroundColor: 'rgba(244, 245, 245, 0.5)'
     },
+    addContent: {
+      justifyContent: 'center'
+    },
     editButton: {
       marginRight: '0.75em'
     },
@@ -174,7 +177,7 @@ export default class Availabilities extends Component {
               );
             })}
             <Row isFirst={availabilities.get('data').size === 0} >
-              <CustomCel style={[ styles.add, styles.adaptedCustomCel ]} onClick={this.onClickCreateAvailability}>
+              <CustomCel contentStyle={styles.addContent} style={[ styles.add, styles.adaptedCustomCel ]} onClick={this.onClickCreateAvailability}>
                 <Plus color={colors.primaryBlue} />&nbsp;&nbsp;&nbsp;Add availability
               </CustomCel>
             </Row>
