@@ -9,7 +9,7 @@ import { colors, makeTextStyle, fontWeights } from '../../_common/styles';
 import { menuSelector } from '../selectors';
 import * as globalActions from '../../../actions/global';
 import * as actions from '../../../actions/user';
-import { ADMIN, BROADCASTER, CONTENT_MANAGER } from '../../../constants/userRoles';
+import { ADMIN, BRAND_REPRESENTATIVE, BROADCASTER, CONTENT_MANAGER } from '../../../constants/userRoles';
 
 require('./style.css');
 const Link = Radium(ReactRouterLink);
@@ -301,21 +301,24 @@ class VerticalSideMenu extends Component {
               </Link>
             </div>
           }
-          {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER) || userRoles.includes(BROADCASTER)) &&
+          {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER) || userRoles.includes(BROADCASTER) || userRoles.includes(BRAND_REPRESENTATIVE)) &&
             <div>
               <div style={styles.seperator}/>
               <div style={styles.category}>
                 <div style={styles.categoryTitle}>REPORTING</div>
               </div>
-              <Link activeStyle={styles.sectionActive} key='activity' style={styles.section} to='/reporting/activity'>
-                <div style={styles.sectionTitle}>ACTIVITY</div>
-              </Link>
-              <Link activeStyle={styles.sectionActive} key='rankings' style={styles.section} to='/reporting/rankings'>
-                <div style={styles.sectionTitle}>RANKINGS</div>
-              </Link>
-              <Link activeStyle={styles.sectionActive} key='brand-dashboard' style={styles.section} to='/reporting/brand-dashboard'>
-                <div style={styles.sectionTitle}>BRAND DASHBOARD</div>
-              </Link>
+              {(userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER) || userRoles.includes(BROADCASTER)) &&
+                <Link activeStyle={styles.sectionActive} key='activity' style={styles.section} to='/reporting/activity'>
+                  <div style={styles.sectionTitle}>ACTIVITY</div>
+                </Link>}
+              {(userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER) || userRoles.includes(BROADCASTER)) &&
+                <Link activeStyle={styles.sectionActive} key='rankings' style={styles.section} to='/reporting/rankings'>
+                  <div style={styles.sectionTitle}>RANKINGS</div>
+                </Link>}
+              {(userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER) || userRoles.includes(BRAND_REPRESENTATIVE)) &&
+                <Link activeStyle={styles.sectionActive} key='brand-dashboard' style={styles.section} to='/reporting/brand-dashboard'>
+                  <div style={styles.sectionTitle}>BRAND DASHBOARD</div>
+                </Link>}
             </div>}
           {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
             <div>
