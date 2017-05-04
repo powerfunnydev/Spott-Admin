@@ -62,6 +62,8 @@ export const allScenesSelector = createSelector(
    }
  );
 
+export const currentMediumIdSelector = (state) => state.getIn([ 'tagger', 'tagger', 'app', 'currentMediumId' ]);
+
 export const allKeyScenesSelector = createSelector(
     currentVideoIdSelector,
     videoHasKeyScenesRelationsSelector,
@@ -178,6 +180,7 @@ const appearancesSelector = createSelector(
 export const persistCropSelector = createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
   appearances: appearancesSelector,
+  currentMediumId: currentMediumIdSelector,
   defaultLocale: currentDefaultLocaleSelector,
   errors: formErrorsSelector,
   searchedTopicIds: searchedTopicIdsSelector,

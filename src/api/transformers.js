@@ -78,6 +78,22 @@ export function transformListTag ({ uuid, name, auditInfo, logo }) {
   };
 }
 
+export function transformListTopic ({ icon, readOnly, sourceBrand, sourceCharacter,
+  sourceMedium, sourcePerson, sourceReference, sourceType, text, uuid }) {
+  return {
+    icon: transformImage(icon),
+    id: uuid,
+    readOnly,
+    sourceBrand,
+    sourceCharacter,
+    sourceMedium,
+    sourcePerson,
+    sourceReference,
+    sourceType,
+    text
+  };
+}
+
 export function transformBroadcaster ({ logo, name, uuid }) {
   return { logo: logo && { id: logo.uuid, url: logo.url }, name, id: uuid };
 }
@@ -854,10 +870,14 @@ export function transformAudience ({ countries, languages, name, uuid }) {
   };
 }
 
-export function transformTopic ({ sourceType, text, uuid, icon }) {
+export function transformTopic ({ icon, profileImage, readOnly, sourceMedium, sourceReference, sourceType, text, uuid }) {
   return {
-    id: uuid,
     icon: transformImage(icon),
+    id: uuid,
+    profileImage: transformImage(profileImage),
+    readOnly,
+    sourceMedium,
+    sourceReference,
     sourceType,
     text
   };

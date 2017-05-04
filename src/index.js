@@ -87,6 +87,10 @@ import SpottsCreate from './pages/content/spotts/create';
 import SpottsEdit from './pages/content/spotts/edit';
 import SpottsList from './pages/content/spotts/list';
 import SpottsRead from './pages/content/spotts/read';
+import TopicsCreate from './pages/content/topics/create';
+import TopicsEdit from './pages/content/topics/edit';
+import TopicsList from './pages/content/topics/list';
+import TopicsRead from './pages/content/topics/read';
 import TaggerApplication from './tagger/components/main';
 import TvGuideCreateEntry from './pages/tvGuide/create';
 import TvGuideEditEntry from './pages/tvGuide/edit';
@@ -370,6 +374,13 @@ function getRoutes ({ dispatch, getState }) {
         </Route>
         <Route component={EpisodeList} path='episodes'>
           <Route component={EpisodeCreate} path='create'/>
+        </Route>
+        <Route component={TopicsList} path='topics'>
+          <Route component={TopicsCreate} path='create'/>
+        </Route>
+        <Route path='topics'>
+          <Route component={TopicsEdit} path='edit/:topicId'/>
+          <Route component={TopicsRead} path='read/:topicId'/>
         </Route>
       </Route>
 

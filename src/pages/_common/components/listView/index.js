@@ -17,6 +17,7 @@ const numberOfRows = 25;
 export default class ListView extends Component {
 
   static propTypes = {
+    checkIfItemIsUnremovable: PropTypes.func,
     columns: PropTypes.array.isRequired,
     data: ImmutablePropTypes.map.isRequired,
     deleteItem: PropTypes.func,
@@ -59,7 +60,7 @@ export default class ListView extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { data, columns, isSelected, selectAllCheckboxes, onSortField, sortField, sortDirection, routerPushWithReturnTo,
+    const { data, checkIfItemIsUnremovable, columns, isSelected, selectAllCheckboxes, onSortField, sortField, sortDirection, routerPushWithReturnTo,
       onCheckboxChange, getEditUrl, style } = this.props;
     const { deleteItem } = this;
     return (
@@ -125,10 +126,10 @@ export default class ListView extends Component {
                         );
                       case 'dropdown':
                         return (
-                          <DropdownCel key={subindex} >
+                          <DropdownCel key={subindex}>
                             <Dropdown
                               elementShown={<div key={0} style={[ dropdownStyles.clickable, dropdownStyles.option, dropdownStyles.borderLeft ]} onClick={() => { getEditUrl(item) && routerPushWithReturnTo(getEditUrl(item)); }}>Edit</div>}>
-                              <div key={1} style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); deleteItem(item.get('id'), item.get('type'), this.props); }}>Remove</div>
+                              { !(checkIfItemIsUnremovable && checkIfItemIsUnremovable(item.get('id'))) && <div key={1} style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); deleteItem(item.get('id'), item.get('type'), this.props); }}>Remove</div> }
                             </Dropdown>
                           </DropdownCel>
                         );

@@ -39,6 +39,9 @@ export const USERS_SEARCH_ERROR = 'LINK_USER_MODAL/USERS_SEARCH_ERROR';
 export { openModal, closeModal } from '../../../../actions/global';
 
 export { persistTopic } from '../../../../actions/topic';
+export { fetchTopic as fetchPersonTopic } from '../../../../actions/person';
+export { fetchTopic as fetchBrandTopic } from '../../../../actions/brand';
+export { fetchTopic as fetchCharacterTopic } from '../../../../actions/character';
 
 export const submit = persistSpott;
 

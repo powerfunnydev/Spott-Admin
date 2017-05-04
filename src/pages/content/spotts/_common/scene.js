@@ -95,7 +95,8 @@ export default class Scene extends Component {
       right: 0,
       overflow: 'hidden',
       userDrag: 'none',
-      userSelect: 'none'
+      userSelect: 'none',
+      zIndex: 2
     }
   }
 

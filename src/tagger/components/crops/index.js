@@ -54,7 +54,7 @@ export default class Crops extends Component {
   }
 
   componentDidMount () {
-    const currentVideoId = this.props.currentVideoId;
+    const { currentVideoId } = this.props;
     this.props.loadCrops();
     this.props.getKeyScenes(currentVideoId);
   }

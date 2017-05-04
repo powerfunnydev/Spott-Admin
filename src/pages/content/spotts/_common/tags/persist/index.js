@@ -1,14 +1,16 @@
+/* eslint-disable react/no-set-state */
 import React, { Component, PropTypes } from 'react';
 import { reduxForm, Field, SubmissionError } from 'redux-form/immutable';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { FormSubtitle, buttonStyles } from '../../../../../_common/styles';
+import { FormSubtitle, buttonStyles, colors } from '../../../../../_common/styles';
 import SelectInput from '../../../../../_common/inputs/selectInput';
 import RadioInput from '../../../../../_common/inputs/radioInput';
 import localized from '../../../../../_common/decorators/localized';
 import PersistModal from '../../../../../_common/components/persistModal';
+import CreateProductModal from '../../../../products/create';
 import { slowdown } from '../../../../../../utils';
 import ProductCharacter from './productCharacter';
 
@@ -110,6 +112,7 @@ export default function createPersistTag (selector, actions) {
         this.searchPersons = slowdown(props.searchPersons, 300);
         this.searchProducts = slowdown(props.searchProducts, 300);
         this.submit = ::this.submit;
+        this.onCreateProduct = ::this.onCreateProduct;
       }
 
       async submit (form) {
@@ -121,6 +124,10 @@ export default function createPersistTag (selector, actions) {
           throw new SubmissionError({ _error: 'common.errors.unexpected' });
         }
       }
+      onCreateProduct (e) {
+        e.preventDefault();
+        this.setState({ ...this.state, modal: 'createProduct' });
+      }
 
       static styles = {
         productCharacters: {
@@ -129,8 +136,8 @@ export default function createPersistTag (selector, actions) {
           paddingTop: 14
         },
         grayButton: {
-          backgroundColor: 'rgb(123, 129, 134)',
-          color: 'rgb(220, 222, 223)',
+          backgroundColor: colors.primaryBlue,
+          color: colors.white,
           fontFamily: 'Rubik-Regular'
         },
         link: {
@@ -142,11 +149,21 @@ export default function createPersistTag (selector, actions) {
           alignItems: 'flex-end',
           display: 'flex',
           justifyContent: 'flex-end'
+        },
+        addProductDiv: {
+          width: '100%',
+          textAlign: 'center'
+        },
+        addProductLink: {
+          color: colors.blue,
+          fontWeight: '700',
+          cursor: 'pointer'
         }
       };
 
       render () {
         const styles = this.constructor.styles;
+        const addProductLink = <div style={styles.addProductDiv}><a style={styles.addProductLink} onClick={this.onCreateProduct}>+ New Product</a></div>;
         const {
           charactersById, entityType, handleSubmit, personsById, productCharacters, productsById,
           searchedCharacterIds, searchedPersonIds, searchedProductIds, selectedProductId, submitButtonText,
@@ -154,6 +171,9 @@ export default function createPersistTag (selector, actions) {
         } = this.props;
         return (
           <PersistModal isOpen submitButtonText={submitButtonText} title='Tag your spott' onClose={onClose} onSubmit={handleSubmit(this.submit)}>
+            {this.state.modal === 'createProduct' &&
+            <CreateProductModal
+              onClose={() => this.setState({ ...this.state, modal: null })}/>}
             <Field
               component={RadioInput}
               first
@@ -171,6 +191,7 @@ export default function createPersistTag (selector, actions) {
                   isLoading={searchedProductIds.get('_status') !== 'loaded'}
                   label='Product name'
                   name='productId'
+                  noResultsText={addProductLink}
                   options={searchedProductIds.get('data').toArray()}
                   placeholder='Search for products'
                   required/>

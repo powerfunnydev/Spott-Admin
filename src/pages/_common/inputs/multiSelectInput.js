@@ -123,8 +123,8 @@ export default class MultiSelectInput extends Component {
       base: {
         border: `solid 1px ${colors.lightGray2}`,
         borderRadius: 2,
-        height: 22,
-        width: 22
+        height: 20,
+        width: 20
       },
       disabled: {
         opacity: 0.5

@@ -50,6 +50,7 @@ function validate (values, { t }) {
 
 @localized
 @connect(persistCropSelector, (dispatch) => ({
+  fetchMediumTopic: bindActionCreators(actions.fetchMediumTopic, dispatch),
   loadAppearances: bindActionCreators(actions.loadAppearances, dispatch),
   loadCropTopics: bindActionCreators(actions.fetchCropTopics, dispatch),
   persistTopic: bindActionCreators(actions.persistTopic, dispatch),
@@ -66,11 +67,13 @@ export default class PersistCrop extends Component {
     _activeLocale: PropTypes.string,
     appearances: ImmutablePropTypes.list,
     change: PropTypes.func.isRequired,
+    currentMediumId: PropTypes.string.isRequired,
     currentScene: ImmutablePropTypes.map.isRequired,
     defaultLocale: PropTypes.string,
     dispatch: PropTypes.func.isRequired,
     edit: PropTypes.bool,
     errors: PropTypes.object,
+    fetchMediumTopic: PropTypes.func.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
     loadAppearances: PropTypes.func.isRequired,
@@ -98,8 +101,15 @@ export default class PersistCrop extends Component {
     this.onCreateTopic = ::this.onCreateTopic;
   }
 
-  componentDidMount () {
-    const { currentScene, loadAppearances } = this.props;
+  async componentDidMount () {
+    const { change, currentMediumId, currentScene, dispatch, fetchMediumTopic, loadAppearances, topicIds } = this.props;
+    const mediumTopic = await fetchMediumTopic({ mediumId: currentMediumId });
+    // Add the medium topic to the list of topics.
+    const ids = topicIds ? topicIds : [];
+    if (ids.indexOf(mediumTopic.id) === -1) {
+      ids.push(mediumTopic.id);
+      dispatch(change('topicIds', ids));
+    }
     loadAppearances(currentScene.get('id'));
   }
 

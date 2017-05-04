@@ -36,7 +36,8 @@ class VerticalSideMenu extends Component {
     location: PropTypes.object.isRequired,
     logout: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
-    userRoles: ImmutablePropTypes.list
+    userRoles: ImmutablePropTypes.list,
+    onScroll: PropTypes.func
   }
 
   constructor (props) {
@@ -177,7 +178,7 @@ class VerticalSideMenu extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { isAuthenticated, userRoles } = this.props;
+    const { isAuthenticated, userRoles, onScroll } = this.props;
     return (
       <div style={styles.fullHeight}>
         <div style={styles.sideMenu}>
@@ -208,6 +209,13 @@ class VerticalSideMenu extends Component {
               <div>
                 <Link activeStyle={styles.sectionActive} key='spotts' onlyActiveOnIndex style={styles.section} to='/content/spotts'>
                   <div style={styles.sectionTitle}>SPOTTS</div>
+                </Link>
+              </div>
+            }
+            {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&
+              <div>
+                <Link activeStyle={styles.sectionActive} key='topics' onlyActiveOnIndex style={styles.section} to='/content/topics'>
+                  <div style={styles.sectionTitle}>TOPICS</div>
                 </Link>
               </div>
             }
@@ -332,7 +340,7 @@ class VerticalSideMenu extends Component {
             </div>
           }
         </div>
-        <div style={styles.content}>
+        <div style={styles.content} onScroll={onScroll}>
           {this.props.children}
         </div>
       </div>

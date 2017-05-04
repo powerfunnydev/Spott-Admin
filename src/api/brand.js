@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformProductOffering, transformBrand, transformListBrand, transformListProduct, transformUser } from './transformers';
+import { transformProductOffering, transformBrand, transformListBrand, transformListProduct, transformUser, transformTopic } from './transformers';
 
 export async function fetchBrands (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/product/brands?page=${page}&pageSize=${pageSize}`;
@@ -168,4 +168,11 @@ export async function deleteLinkUsers (baseUrl, authenticationToken, locale, { b
   for (const userId of userIds) {
     await deleteLinkUser(baseUrl, authenticationToken, locale, { brandId, userId });
   }
+}
+
+export async function fetchTopic (baseUrl, authenticationToken, locale, { brandId }) {
+  const url = `${baseUrl}/v004/product/brands/${brandId}/topic`;
+  const { body } = await get(authenticationToken, locale, url);
+  const result = transformTopic(body);
+  return result;
 }

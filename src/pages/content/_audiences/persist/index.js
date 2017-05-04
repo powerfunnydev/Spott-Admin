@@ -87,7 +87,6 @@ export default class AudienceModal extends Component {
   };
 
   render () {
-    const styles = this.constructor.styles;
     const {
       countriesById, edit, handleSubmit, languagesById, searchCountries,
       searchLanguages, searchedCountryIds, searchedLanguageIds

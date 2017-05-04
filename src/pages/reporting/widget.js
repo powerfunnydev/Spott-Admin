@@ -51,6 +51,7 @@ export default class Widget extends Component {
   static propTypes = {
     children: PropTypes.node,
     contentStyle: PropTypes.object,
+    header: PropTypes.node,
     isLoading: PropTypes.bool,
     style: PropTypes.object,
     title: PropTypes.string
@@ -71,32 +72,34 @@ export default class Widget extends Component {
       paddingRight: '1.5em'
     },
     header: {
-      backgroundColor: '#eaeced',
+      backgroundColor: 'white',
       display: 'flex',
       alignItems: 'center',
       height: '2em',
       paddingLeft: '1em',
-      paddingRight: '1em',
+      paddingRight: '10px',
       borderBottomWidth: 1,
       borderBottomStyle: 'solid',
       borderBottomColor: '#ced6da'
     },
     title: {
-      ...makeTextStyle(fontWeights.medium, '0.688em', '0.0455em'),
+      ...makeTextStyle(fontWeights.regular, '0.688em', '0.0455em'),
       color: '#6d8791',
+      fontWeight: 'normal',
       textTransform: 'uppercase'
     }
   };
 
   render () {
     const styles = this.constructor.styles;
-    const { children, contentStyle, isLoading, style, title } = this.props;
+    const { children, contentStyle, header, isLoading, style, title } = this.props;
     return (
       <div style={[ smallWidgetStyle, style ]}>
         <div style={styles.container}>
           <div style={styles.header}>
             <h2 style={styles.title}>{title}&nbsp;&nbsp;&nbsp;</h2>
             {isLoading && <Spinner size='small' />}
+            {header}
           </div>
           <div style={[ styles.content, contentStyle ]}>
             {children}

@@ -56,6 +56,10 @@ export const MEDIUM_FETCH_START = 'MEDIA/MEDIUM_FETCH_START';
 export const MEDIUM_FETCH_SUCCESS = 'MEDIA/MEDIUM_FETCH_SUCCESS';
 export const MEDIUM_FETCH_ERROR = 'MEDIA/MEDIUM_FETCH_ERROR';
 
+export const TOPIC_FETCH_START = 'MEDIA/TOPIC_FETCH_START';
+export const TOPIC_FETCH_SUCCESS = 'MEDIA/TOPIC_FETCH_SUCCESS';
+export const TOPIC_FETCH_ERROR = 'MEDIA/TOPIC_FETCH_ERROR';
+
 export const fetchTvGuideEntries = makeApiActionCreator(mediaApi.fetchTvGuideEntries, TV_GUIDE_ENTRIES_FETCH_START, TV_GUIDE_ENTRIES_FETCH_SUCCESS, TV_GUIDE_ENTRIES_FETCH_ERROR);
 export const fetchMedium = makeApiActionCreator(mediaApi.fetchMedium, MEDIUM_FETCH_START, MEDIUM_FETCH_SUCCESS, MEDIUM_FETCH_ERROR);
 export const fetchMedia = makeApiActionCreator(mediaApi.fetchMedia, MEDIA_FETCH_START, MEDIA_FETCH_SUCCESS, MEDIA_FETCH_ERROR);
@@ -63,7 +67,7 @@ export const searchMedia = makeApiActionCreator(mediaApi.searchMedia, MEDIA_SEAR
 export const deleteProfileImage = makeApiActionCreator(mediaApi.deleteProfileImage, DELETE_PROFILE_IMAGE_START, DELETE_PROFILE_IMAGE_SUCCESS, DELETE_PROFILE_IMAGE_ERROR);
 export const deletePosterImage = makeApiActionCreator(mediaApi.deletePosterImage, DELETE_POSTER_IMAGE_START, DELETE_POSTER_IMAGE_SUCCESS, DELETE_POSTER_IMAGE_ERROR);
 export const deleteRoundLogo = makeApiActionCreator(mediaApi.deleteRoundLogo, DELETE_ROUND_LOGO_START, DELETE_ROUND_LOGO_SUCCESS, DELETE_ROUND_LOGO_ERROR);
-
+export const fetchTopic = makeApiActionCreator(mediaApi.fetchTopic, TOPIC_FETCH_START, TOPIC_FETCH_SUCCESS, TOPIC_FETCH_ERROR);
 /**
  * Opens the create media modal with video upload etc.
  * @return {Object} The action

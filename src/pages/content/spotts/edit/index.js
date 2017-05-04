@@ -21,6 +21,7 @@ import { fromJS } from 'immutable';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
 import Audiences from '../../_audiences/list';
+import Availabilities from '../../_availabilities/list';
 import Header from '../../../app/multiFunctionalHeader';
 import SelectInput from '../../../_common/inputs/selectInput';
 import Checkbox from '../../../_common/inputs/checkbox';
@@ -50,6 +51,9 @@ function validate (values, { currentSpott, t }) {
 @connect(selector, (dispatch) => ({
   closeModal: bindActionCreators(actions.closeModal, dispatch),
   closePopUpMessage: bindActionCreators(actions.closePopUpMessage, dispatch),
+  fetchPersonTopic: bindActionCreators(actions.fetchPersonTopic, dispatch),
+  fetchBrandTopic: bindActionCreators(actions.fetchBrandTopic, dispatch),
+  fetchCharacterTopic: bindActionCreators(actions.fetchCharacterTopic, dispatch),
   loadSpott: bindActionCreators(actions.loadSpott, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   persistTopic: bindActionCreators(actions.persistTopic, dispatch),
@@ -84,6 +88,9 @@ export default class EditSpott extends Component {
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
+    fetchBrandTopic: PropTypes.func.isRequired,
+    fetchCharacterTopic: PropTypes.func.isRequired,
+    fetchPersonTopic: PropTypes.func.isRequired,
     formValues: ImmutablePropTypes.map,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
@@ -120,6 +127,7 @@ export default class EditSpott extends Component {
 
   constructor (props) {
     super(props);
+    this.addTopic = ::this.addTopic;
     this.submit = ::this.submit;
     this.redirect = ::this.redirect;
     this.onSetDefaultLocale = ::this.onSetDefaultLocale;
@@ -198,6 +206,15 @@ export default class EditSpott extends Component {
     }
   }
 
+  addTopic (id) {
+    const { change, dispatch, topicIds } = this.props;
+    const ids = topicIds ? topicIds : [];
+    if (ids.indexOf(id) === -1) {
+      ids.push(id);
+      dispatch(change('topicIds', ids));
+    }
+  }
+
   async submit (form) {
     const { initialize, params: { spottId } } = this.props;
 
@@ -217,20 +234,26 @@ export default class EditSpott extends Component {
     dispatch(change('defaultLocale', _activeLocale));
   }
 
-  onPersistTag (tag) {
-    const { change, charactersById, dispatch, personsById, productsById, tags } = this.props;
+  async onPersistTag (tag) {
+    const { change, charactersById, dispatch, fetchBrandTopic, fetchCharacterTopic, fetchPersonTopic, personsById, productsById, tags } = this.props;
 
     const newTags = [ ...tags ];
 
     switch (tag.entityType) {
       case 'CHARACTER':
         tag.character = charactersById.get(tag.characterId).toJS();
+        const characterTopic = await fetchCharacterTopic({ characterId: tag.characterId });
+        this.addTopic(characterTopic.id);
         break;
       case 'PERSON':
         tag.person = personsById.get(tag.personId).toJS();
+        const personTopic = await fetchPersonTopic({ personId: tag.personId });
+        this.addTopic(personTopic.id);
         break;
       case 'PRODUCT':
         tag.product = productsById.get(tag.productId).toJS();
+        const brandTopic = await fetchBrandTopic({ brandId: tag.product.brand.id });
+        this.addTopic(brandTopic.id);
         break;
     }
 
@@ -460,6 +483,11 @@ export default class EditSpott extends Component {
                       placeholder='Brand name'/>
                   </div>}
               </Section>
+            </Tab>
+            <Tab title='Availability'>
+              <Availabilities
+                mediumId={this.props.params.spottId}
+                mediumType='spott'/>
             </Tab>
             <Tab title='Audience'>
               <Audiences
