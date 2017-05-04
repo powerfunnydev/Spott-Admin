@@ -18,6 +18,7 @@ export const searchTopics = createSearchAction(dataSearchTopics, TOPICS_SEARCH_S
 
 export { deleteCrop, fetchCrop, persistCrop } from '../../../actions/crop';
 export { fetchCropTopics, persistTopic } from '../../../actions/topic';
+export { fetchTopic as fetchMediumTopic } from '../../../actions/media';
 
 export function selectFrame ({ sceneId }) {
   return { sceneId, type: SELECT_FRAME };

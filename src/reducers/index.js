@@ -55,6 +55,8 @@ import spottsCreate from '../pages/content/spotts/create/reducer';
 import spottsEdit from '../pages/content/spotts/edit/reducer';
 import spottsList from '../pages/content/spotts/list/reducer';
 import Toast from './toast';
+import topicsEdit from '../pages/content/topics/edit/reducer';
+import topicsList from '../pages/content/topics/list/reducer';
 import tvGuideCreate from '../pages/tvGuide/create/reducer';
 import tvGuideEdit from '../pages/tvGuide/edit/reducer';
 import tvGuideList from '../pages/tvGuide/list/reducer';
@@ -163,6 +165,10 @@ export default combineReducers({
       create: spottsCreate,
       edit: spottsEdit,
       list: spottsList
+    }),
+    topics: combineReducers({
+      edit: topicsEdit,
+      list: topicsList
     })
   }),
   users: combineReducers({

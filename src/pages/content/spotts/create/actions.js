@@ -23,6 +23,9 @@ export const TOPICS_SEARCH_START = 'SPOTT_CREATE/TOPICS_SEARCH_START';
 export const TOPICS_SEARCH_ERROR = 'SPOTT_CREATE/TOPICS_SEARCH_ERROR';
 
 export { persistTopic } from '../../../../actions/topic';
+export { fetchTopic as fetchPersonTopic } from '../../../../actions/person';
+export { fetchTopic as fetchBrandTopic } from '../../../../actions/brand';
+export { fetchTopic as fetchCharacterTopic } from '../../../../actions/character';
 
 export const searchTopics = createSearchAction(dataSearchTopics, TOPICS_SEARCH_START, TOPICS_SEARCH_ERROR);
 

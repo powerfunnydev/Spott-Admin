@@ -15,31 +15,31 @@ export function serialize ({ searchString = '', page = 0, pageSize = 25, sortDir
   return id;
 }
 
-export const serializeFilterHasCountries = serialize;
-export const serializeFilterHasTopics = serialize;
-export const serializeFilterHasLanguages = serialize;
 export const serializeFilterHasBrands = serialize;
 export const serializeFilterHasBroadcasters = serialize;
 export const serializeFilterHasCharacters = serialize;
 export const serializeFilterHasCommercials = serialize;
 export const serializeFilterHasContentProducers = serialize;
+export const serializeFilterHasCountries = serialize;
+export const serializeFilterHasDemographics = serialize;
+export const serializeFilterHasLanguages = serialize;
 export const serializeFilterHasMedia = serialize;
 export const serializeFilterHasMediumCategories = serialize;
 export const serializeFilterHasMovies = serialize;
 export const serializeFilterHasPersons = serialize;
 export const serializeFilterHasProductCategories = serialize;
+export const serializeFilterHasProducts = serialize;
 export const serializeFilterHasPushNotifications = serialize;
 export const serializeFilterHasSeasons = serialize;
 export const serializeFilterHasSeriesEntries = serialize;
-export const serializeFilterHasUsers = serialize;
 export const serializeFilterHasShops = serialize;
 export const serializeFilterHasSpotts = serialize;
 export const serializeFilterHasTags = serialize;
-export const serializeFilterHasProducts = serialize;
+export const serializeFilterHasTopics = serialize;
 export const serializeFilterHasTopMedia = serialize;
 export const serializeFilterHasTopPeople = serialize;
+export const serializeFilterHasUsers = serialize;
 export const serializeFilterHasTopProducts = serialize;
-export const serializeFilterHasDemographics = serialize;
 
 export function serializeBroadcasterFilterHasMedia ({ broadcasterId, ...rest }) {
   return `${serialize(rest)}&broadcasterId=${broadcasterId}`;

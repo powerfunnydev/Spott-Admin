@@ -122,7 +122,7 @@ export default class PersistModal extends Component {
       paddingTop: '1.875em',
       borderLeft: 'solid 1px #ced6da',
       borderRight: 'solid 1px #ced6da',
-      overflow: 'visible'
+      overflow: 'scroll'
     },
     cross: {
       cursor: 'pointer',

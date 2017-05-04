@@ -16,6 +16,7 @@ import * as seriesActions from '../actions/series';
 import * as shopActions from '../actions/shop';
 import * as spottActions from '../actions/spott';
 import * as toastActions from '../actions/toast';
+import * as topicActions from '../actions/topic';
 import * as tvGuideActions from '../actions/tvGuide';
 import * as userActions from '../actions/user';
 import * as scheduleEntryActions from '../actions/scheduleEntry';
@@ -113,6 +114,9 @@ export default (state = List(), action) => {
     case shopActions.SHOP_PERSIST_ERROR:
       return pushError(state, action.error, entityTypes.SHOP);
 
+    case topicActions.TOPIC_PERSIST_ERROR:
+      return pushError(state, action.error, entityTypes.TOPIC);
+
     case tvGuideActions.TV_GUIDE_ENTRIES_DELETE_ERROR:
     case tvGuideActions.TV_GUIDE_ENTRY_DELETE_ERROR:
     case tvGuideActions.TV_GUIDE_ENTRY_PERSIST_ERROR:
@@ -181,6 +185,9 @@ export default (state = List(), action) => {
 
     case spottActions.SPOTT_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.SPOTT);
+
+    case topicActions.TOPIC_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, entityTypes.TOPIC);
 
     case tvGuideActions.TV_GUIDE_ENTRY_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.TV_GUIDE_ENTRY);

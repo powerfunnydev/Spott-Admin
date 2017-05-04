@@ -59,7 +59,8 @@ export default class CreateProductModal extends Component {
     searchBrands: PropTypes.func.isRequired,
     searchedBrandIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
-    t: PropTypes.func.isRequired
+    t: PropTypes.func.isRequired,
+    onClose: PropTypes.func
   };
 
   constructor (props) {
@@ -70,13 +71,14 @@ export default class CreateProductModal extends Component {
 
   componentWillMount () {
     this.props.initialize({
-      brandId: this.props.params.brandId,
+      brandId: this.props.params ? this.props.params.brandId : null,
       defaultLocale: this.props.currentLocale
     });
   }
   async submit (form) {
     try {
-      const { route: { load }, loadProducts, location, submit, dispatch, change, reset } = this.props;
+      const { route, loadProducts, location, submit, dispatch, change, reset } = this.props;
+      const load = route && route.load;
       await submit(form.toJS());
       const createAnother = form.get('createAnother');
       load && load(this.props);
@@ -97,7 +99,11 @@ export default class CreateProductModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo('/content/products', true);
+    if (this.props.onClose) {
+      this.props.onClose();
+    } else {
+      this.props.routerPushWithReturnTo('/content/products', true);
+    }
   }
 
   render () {

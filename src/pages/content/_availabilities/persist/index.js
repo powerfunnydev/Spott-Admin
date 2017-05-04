@@ -64,6 +64,7 @@ export default class AvailabilityModal extends Component {
     edit: PropTypes.bool,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
+    mediumType: PropTypes.string,
     noEndDate: PropTypes.bool,
     onClose: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired
@@ -112,7 +113,7 @@ export default class AvailabilityModal extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { change, countries, dispatch, edit, handleSubmit, noEndDate } = this.props;
+    const { change, countries, dispatch, edit, handleSubmit, mediumType, noEndDate } = this.props;
     return (
       <PersistModal isOpen submitButtonText={edit ? 'Save' : 'Add'} title={edit ? 'Edit Availability' : 'Add Availability'} onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <Field
@@ -175,14 +176,15 @@ export default class AvailabilityModal extends Component {
             required
             style={styles.timeInput} />
         </div>
-        <Field
-          component={SelectInput}
-          getItemText={(videoStatus) => videoStatusTypes[videoStatus]}
-          label='Sync state'
-          name='videoStatus'
-          options={Object.keys(videoStatusTypes)}
-          placeholder='Sync state'
-          required />
+        {mediumType !== 'spott' &&
+          <Field
+            component={SelectInput}
+            getItemText={(videoStatus) => videoStatusTypes[videoStatus]}
+            label='Sync state'
+            name='videoStatus'
+            options={Object.keys(videoStatusTypes)}
+            placeholder='Sync state'
+            required />}
       </PersistModal>
     );
   }

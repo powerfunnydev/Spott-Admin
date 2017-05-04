@@ -1,7 +1,9 @@
-import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
+import React, { Component, PropTypes } from 'react';
+import { Link as ReactRouterLink } from 'react-router';
 import { colors, fontWeights } from '../../_common/styles';
 
+const Link = Radium(ReactRouterLink);
 /* eslint-disable react/no-set-state */
 
 const yellowCrossIcon = require('../../../assets/images/cross/cross-yellow.svg');
@@ -31,6 +33,7 @@ const generalStyles = {
 class StandardComponent extends Component {
   static propTypes = {
     color: PropTypes.string.isRequired,
+    link: PropTypes.object,
     message: PropTypes.string.isRequired,
     stackTrace: PropTypes.string,
     style: PropTypes.object,
@@ -76,6 +79,9 @@ class StandardComponent extends Component {
       color: colors.errorColor,
       fontFamily: 'Courier'
     },
+    link: {
+      fontFamily: fontWeights.light
+    },
     medium: {
       fontFamily: fontWeights.medium
     },
@@ -88,7 +94,7 @@ class StandardComponent extends Component {
 
   render () {
     const { styles } = this.constructor;
-    const { message, stackTrace, style, color } = this.props;
+    const { message, stackTrace, style, color, link } = this.props;
 
     return (
       <div>
@@ -100,7 +106,17 @@ class StandardComponent extends Component {
         ]}>
             <div style={[ generalStyles.horizontal ]}>
               <div>
-                <span style={styles.medium}>{message}</span>
+                <span style={styles.medium}>{message}{link &&
+                  <Link key='popup' style={[
+                    styles.link,
+                    color === 'blue' && styles.blue,
+                    color === 'yellow' && styles.yellow,
+                    color === 'red' && styles.red, style
+                  ]}
+                    to={link.to}>
+                    {link.text}
+                  </Link>}
+                </span>
                 {stackTrace && <span style={styles.toggle} onClick={this.onToggle}>{this.state.toggleMessage}</span> }
               </div>
               {color === 'blue' && <img src={blueCrossIcon} style={generalStyles.close} onClick={this.onClose}/>}
@@ -118,15 +134,16 @@ class StandardComponent extends Component {
 @Radium
 export class HintComponent extends Component {
   static propTypes = {
+    link: PropTypes.object,
     message: PropTypes.string.isRequired,
     style: PropTypes.object
   }
 
   render () {
-    const { message, style } = this.props;
+    const { link, message, style } = this.props;
 
     return (
-      <StandardComponent color='blue' message={message} style={style} {...this.props}/>
+      <StandardComponent color='blue' link={link} message={message} style={style} {...this.props}/>
     );
   }
 }
@@ -134,15 +151,16 @@ export class HintComponent extends Component {
 @Radium
 export class InfoComponent extends Component {
   static propTypes = {
+    link: PropTypes.object,
     message: PropTypes.string.isRequired,
     style: PropTypes.object
   }
 
   render () {
-    const { message, style } = this.props;
+    const { link, message, style } = this.props;
 
     return (
-      <StandardComponent color='yellow' message={message} style={style} {...this.props}/>
+      <StandardComponent color='yellow' link={link} message={message} style={style} {...this.props}/>
     );
   }
 }
@@ -150,16 +168,17 @@ export class InfoComponent extends Component {
 @Radium
 export class ErrorComponent extends Component {
   static propTypes = {
+    link: PropTypes.object,
     message: PropTypes.string.isRequired,
     stackTrace: PropTypes.string,
     style: PropTypes.object
   }
 
   render () {
-    const { message, stackTrace, style } = this.props;
+    const { link, message, stackTrace, style } = this.props;
 
     return (
-      <StandardComponent color='red' message={message} stackTrace={stackTrace} style={style} {...this.props}/>
+      <StandardComponent color='red' link={link} message={message} stackTrace={stackTrace} style={style} {...this.props}/>
     );
   }
 }

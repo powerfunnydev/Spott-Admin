@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformPerson, transformListPerson, transformImage } from './transformers';
+import { transformPerson, transformListPerson, transformImage, transformTopic } from './transformers';
 
 // IMPORTANT
 // Actors will be Persons in the future, so we will call this entity already Person,
@@ -121,4 +121,11 @@ export async function deletePortraitImage (baseUrl, authenticationToken, locale,
 export async function deleteProfileImage (baseUrl, authenticationToken, locale, { personId }) {
   const url = `${baseUrl}/v004/media/actors/${personId}/profileCover`;
   await del(authenticationToken, locale, url);
+}
+
+export async function fetchTopic (baseUrl, authenticationToken, locale, { personId }) {
+  const url = `${baseUrl}/v004/media/actors/${personId}/topic`;
+  const { body } = await get(authenticationToken, locale, url);
+  const result = transformTopic(body);
+  return result;
 }

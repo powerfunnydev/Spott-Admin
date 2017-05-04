@@ -29,6 +29,7 @@ export default class Audiences extends Component {
     loadAudience: PropTypes.func.isRequired,
     loadAudiences: PropTypes.func.isRequired,
     mediumId: PropTypes.string.isRequired,
+    mediumType: PropTypes.string,
     persistAudience: PropTypes.func.isRequired,
     searchCountries: PropTypes.func.isRequired,
     searchLanguages: PropTypes.func.isRequired,
@@ -53,8 +54,8 @@ export default class Audiences extends Component {
   }
 
   getAudience (index) {
-    const mediumId = this.props.mediumId;
-    const { countries, id, languages, mediumType, name } = this.props.audiences.getIn([ 'data', index ]).toJS();
+    const { mediumId, mediumType } = this.props;
+    const { countries, id, languages, name } = this.props.audiences.getIn([ 'data', index ]).toJS();
     return {
       countryIds: countries && countries.map((c) => c.id),
       id,

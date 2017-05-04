@@ -1,32 +1,53 @@
+/* eslint-disable react/no-set-state */
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { Link } from 'react-router';
 import moment from 'moment';
 import Highcharts from 'react-highcharts';
-// import Papa from 'papaparse';
+import HighchartsExporting from 'highcharts-exporting';
+import HighchartsExportCsv from 'highcharts-export-csv';
+import HighchartsMore from 'highcharts-more';
+import Papa from 'papaparse';
 import * as globalActions from '../../../actions/global';
 import ListView from '../../_common/components/listView/index';
 import { tableDecorator } from '../../_common/components/table/index';
 import MultiSelectInput from '../../_common/inputs/multiSelectInput';
 import { colors, fontWeights, makeTextStyle, Container } from '../../_common/styles';
 import SelectInput from '../../_common/inputs/selectInput';
-import { isLoading } from '../../../constants/statusTypes';
+import { FETCHING, isLoading } from '../../../constants/statusTypes';
 import { SideMenu } from '../../app/sideMenu';
 import Header from '../../app/multiFunctionalHeader';
-import DemographicsWidget from './demographicsWidget';
 import Filters from './filters';
 import NumberWidget from './numberWidget';
 import MarkersMap from './markersMap';
 import Widget from './widget';
 import ImageTitle from './imageTitle';
-import OpportunitiesWidget from './opportunitiesWidget';
 import * as actions from './actions';
-import { arraysEqual } from '../../../utils';
-import { FETCHING } from '../../../constants/statusTypes';
 import selector, { topMediaPrefix, topPeoplePrefix, topProductsPrefix } from './selector';
+import HamburgerDropdown, { styles as dropdownStyles } from '../../_common/components/hamburgerDropdown';
+
+HighchartsMore(Highcharts.Highcharts);
+HighchartsExporting(Highcharts.Highcharts);
+HighchartsExportCsv(Highcharts.Highcharts);
+
+const actionTypes = {
+  PRINT: 'PRINT',
+  PNG: 'PNG',
+  JPEG: 'JPEG',
+  PDF: 'PDF',
+  SVG: 'SVG',
+  CSV: 'CSV'
+};
+
+Highcharts.Highcharts.setOptions({
+  navigation: {
+    buttonOptions: {
+      enabled: false
+    }
+  }
+});
 
 const colorStyle = {
   borderRadius: '100%',
@@ -34,6 +55,42 @@ const colorStyle = {
   width: 6,
   marginRight: 6
 };
+
+function getFormatedDate (dateString) {
+  const date = new Date(dateString);
+  return moment(date).format('YYYY-MM-DD HH:mm');
+}
+
+// Generic method that generate a CSV file.
+function downloadCsv (columns, data, title = 'download') {
+  const newColumns = columns.map((column) => column.title[0].toUpperCase() + column.title.slice(1).toLowerCase());
+  const newData = data.get('data').map((item, index) => {
+    return columns.map((column, subindex) => {
+      if (column.dataType === 'date') {
+        return getFormatedDate(item.get(column.name));
+      }
+      const result = (column.convert || ((text) => text))(column.name ? item.get(column.name) : item);
+      if (typeof result === 'object') {
+        return result.props.title;
+      }
+      return result;
+    });
+  });
+  const csv = Papa.unparse({
+    fields: newColumns,
+    data: newData.toJS()
+  });
+
+  const csvData = new Blob([ csv ], { type: 'text/csv;charset=utf-8;' });
+  // Fix for IE11, see: https://github.com/mholt/PapaParse/issues/175
+  const csvUrl = navigator.msSaveBlob ? navigator.msSaveBlob(csvData, 'download.cv') : window.URL.createObjectURL(csvData);
+  const a = window.document.createElement('a');
+  a.href = csvUrl;
+  a.setAttribute('download', title.concat('.csv'));
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
 
 @Radium
 class ColorValue extends Component {
@@ -92,7 +149,7 @@ class TopMedia extends Component {
   }
 
   render () {
-    const { data, load, location: { query: { topMediaSortDirection, topMediaSortField } }, routerPushWithReturnTo, style, onSortField } = this.props;
+    const { data, load, location: { query: { topMediaSortDirection, topMediaSortField } }, style, onSortField } = this.props;
 
     const columns = [
       { clickable: true, colspan: 3, convert: this.getTitle, title: 'TITLE', type: 'custom' },
@@ -101,7 +158,14 @@ class TopMedia extends Component {
     ];
 
     return (
-      <Widget style={style} title='Top media for your brand'>
+      <Widget
+        header={
+          <HamburgerDropdown style={{ marginLeft: 'auto' }}>
+            <div key='CSV' style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); downloadCsv(columns, data, 'TopMedia'); }}>Download CSV</div>
+          </HamburgerDropdown>
+        }
+        style={style}
+        title='Top media for your brand'>
         <div style={listViewContainerStyle}>
           <ListView
             columns={columns}
@@ -129,7 +193,8 @@ class TopPeople extends Component {
     load: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
-    style: PropTypes.object
+    style: PropTypes.object,
+    onSortField: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -146,7 +211,7 @@ class TopPeople extends Component {
   }
 
   render () {
-    const { data, load, location: { query: { topPeopleSortDirection, topPeopleSortField } }, routerPushWithReturnTo, style, onSortField } = this.props;
+    const { data, load, location: { query: { topPeopleSortDirection, topPeopleSortField } }, style, onSortField } = this.props;
 
     const columns = [
       { clickable: true, colspan: 3, convert: this.getTitle, title: 'TITLE', type: 'custom' },
@@ -155,7 +220,14 @@ class TopPeople extends Component {
     ];
 
     return (
-      <Widget style={style} title='Top people and characters for your brand'>
+      <Widget
+        header={
+          <HamburgerDropdown style={{ marginLeft: 'auto' }}>
+            <div key='CSV' style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); downloadCsv(columns, data, 'TopPeople'); }}>Download CSV</div>
+          </HamburgerDropdown>
+        }
+        style={style}
+        title='Top people and characters for your brand'>
         <div style={listViewContainerStyle}>
           <ListView
             columns={columns}
@@ -183,7 +255,8 @@ class TopProducts extends Component {
     load: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
-    style: PropTypes.object
+    style: PropTypes.object,
+    onSortField: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -205,7 +278,7 @@ class TopProducts extends Component {
   }
 
   render () {
-    const { data, load, location: { query: { topProductsSortDirection, topProductsSortField } }, routerPushWithReturnTo, style, onSortField } = this.props;
+    const { data, load, location: { query: { topProductsSortDirection, topProductsSortField } }, style, onSortField } = this.props;
 
     const columns = [
       { clickable: true, colspan: 3, convert: this.getTitle, title: 'TITLE', type: 'custom' },
@@ -215,7 +288,14 @@ class TopProducts extends Component {
     ];
 
     return (
-      <Widget style={style} title='Top products for your brand'>
+      <Widget
+        header={
+          <HamburgerDropdown style={{ marginLeft: 'auto' }}>
+            <div key='CSV' style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); downloadCsv(columns, data, 'TopProducts'); }}>Download CSV</div>
+          </HamburgerDropdown>
+        }
+        style={style}
+        title='Top products for your brand'>
         <div style={listViewContainerStyle}>
           <ListView
             columns={columns}
@@ -253,11 +333,14 @@ class TopProducts extends Component {
 export default class BrandDashboard extends Component {
 
   static propTypes = {
-    // children: PropTypes.node.isRequired,
+    ageDataConfig: PropTypes.object.isRequired,
+    brandsById: ImmutablePropTypes.map.isRequired,
+    children: PropTypes.node,
     dateDataConfig: PropTypes.object.isRequired,
     events: ImmutablePropTypes.map.isRequired,
     eventsById: ImmutablePropTypes.map.isRequired,
     fetchBrand: PropTypes.func.isRequired,
+    genderDataConfig: PropTypes.object.isRequired,
     loadAgeData: PropTypes.func.isRequired,
     loadDateData: PropTypes.func.isRequired,
     loadEvents: PropTypes.func.isRequired,
@@ -270,6 +353,7 @@ export default class BrandDashboard extends Component {
     location: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBrands: PropTypes.func.isRequired,
+    searchedBrandIds: ImmutablePropTypes.map.isRequired,
     topMedia: ImmutablePropTypes.map.isRequired,
     topPeople: ImmutablePropTypes.map.isRequired,
     topProducts: ImmutablePropTypes.map.isRequired
@@ -278,6 +362,8 @@ export default class BrandDashboard extends Component {
   constructor (props) {
     super(props);
     this.onChangeFilter = ::this.onChangeFilter;
+    this.hideBar = ::this.hideBar;
+    this.state = { headerHidden: false };
   }
 
   async componentDidMount () {
@@ -317,6 +403,26 @@ export default class BrandDashboard extends Component {
     await this.props.loadAgeData();
     await this.props.loadGenderData();
     await this.props.loadLocationData();
+  }
+
+  /*
+   * This function triggers an method, depending on the given actionType.
+   */
+  downloadFile (actionType = actionTypes.PNG) {
+    const chart = this.refs.brandActivityHighchart.getChart();
+    actionType === actionTypes.PRINT && chart.print();
+    actionType === actionTypes.PNG && chart.exportChart();
+    actionType === actionTypes.JPEG && chart.exportChart({ type: 'image/jpeg' });
+    actionType === actionTypes.PDF && chart.exportChart({ type: 'application/pdf' });
+    actionType === actionTypes.SVG && chart.exportChart({ type: 'image/svg+xml' });
+    actionType === actionTypes.CSV && chart.downloadCSV();
+  }
+
+  hideBar (event) {
+    const { headerHidden } = this.state;
+    event.currentTarget.scrollTop > 70 ?
+       !headerHidden && this.setState({ headerHidden: true })
+       : headerHidden && this.setState({ headerHidden: false });
   }
 
   async onChangeFilter (field, type, value) {
@@ -385,6 +491,19 @@ export default class BrandDashboard extends Component {
     filters: {
       paddingTop: '1.5em',
       paddingBottom: '1em'
+      // position: 'fixed'
+    },
+    fixedFilters: {
+      position: 'fixed',
+      left: 200,
+      right: 0,
+      top: 0,
+      backgroundColor: colors.white,
+      zIndex: 10,
+      marginLeft: 0,
+      marginRight: 0,
+      paddingLeft: '1.5em',
+      paddingRight: '1.5em'
     },
     topProductsWidget: {
       paddingBottom: '1.5em'
@@ -399,26 +518,6 @@ export default class BrandDashboard extends Component {
     }
   };
 
-  // downloadCsv () {
-  //   const csv = Papa.unparse({
-  //     fields: [ 'Column 1', 'Column 2' ],
-  //     data: [
-  //   		[ 'foo', 'bar' ],
-  //   		[ 'abc', 'def' ]
-  //     ]
-  //   });
-  //
-  //   const csvData = new Blob([ csv ], { type: 'text/csv;charset=utf-8;' });
-  //   // Fix for IE11, see: https://github.com/mholt/PapaParse/issues/175
-  //   const csvUrl = navigator.msSaveBlob ? navigator.msSaveBlob(csvData, 'download.cv') : window.URL.createObjectURL(csvData);
-  //   const a = window.document.createElement('a');
-  //   a.href = csvUrl;
-  //   a.setAttribute('download', 'download.csv');
-  //   document.body.appendChild(a);
-  //   a.click();
-  //   document.body.removeChild(a);
-  // }
-
   render () {
     const styles = this.constructor.styles;
     const {
@@ -427,11 +526,11 @@ export default class BrandDashboard extends Component {
       location, location: { query: { ages, brand, brandActivityByRegionEvent, brandActivityEvents, endDate, genders, /* languages, */ startDate } },
       keyMetrics, markers, routerPushWithReturnTo, searchBrands, searchedBrandIds, topMedia, topPeople, topProducts
     } = this.props;
-
+    const { headerHidden } = this.state;
     const brandActivityEventsValue = typeof brandActivityEvents === 'string' ? [ brandActivityEvents ] : brandActivityEvents;
 
     return (
-      <SideMenu location={location}>
+      <SideMenu location={location} onScroll={this.hideBar}>
         <Header hierarchy={[ { title: 'Dashboard', url: '/brand-dashboard' } ]}>
           <SelectInput
             first
@@ -447,6 +546,7 @@ export default class BrandDashboard extends Component {
             onChange={this.onChangeFilter.bind(this, 'brand', 'string')}/>
           <span style={styles.slash}>&nbsp;&nbsp;/&nbsp;&nbsp;</span>
         </Header>
+        <div style={headerHidden ? { visibility: 'visible', height: 102 } : { visibility: 'hidden' }} />
         <Container>
           <Filters
             fields={{
@@ -456,7 +556,7 @@ export default class BrandDashboard extends Component {
               endDate: moment(endDate),
               startDate: moment(startDate)
             }}
-            style={styles.filters}
+            style={[ styles.filters, headerHidden && styles.fixedFilters ]}
             onChange={this.onChangeFilter}/>
         </Container>
         <Container style={styles.wrapper}>
@@ -482,25 +582,32 @@ export default class BrandDashboard extends Component {
           </div>
           <Widget
             header={
-              <MultiSelectInput
-                first
-                getItem={(id) => eventsById.get(id)}
-                getItemText={(id) => eventsById.getIn([ id, 'description' ])}
-                input={{ value: brandActivityEventsValue }}
-                multiselect
-                name='brandActivityEvents'
-                options={events.get('data').map((e) => e.get('id')).toJS()}
-                placeholder='Events'
-                style={[ styles.field, { paddingRight: '0.75em' } ]}
-                valueComponent={ColorValue}
-                onChange={this.onChangeFilter.bind(this, 'brandActivityEvents', 'array')} />
+              <div style={{ display: 'flex', flexDirection: 'row', flex: 1 }}>
+                <MultiSelectInput
+                  first
+                  getItem={(id) => eventsById.get(id)}
+                  getItemText={(id) => eventsById.getIn([ id, 'description' ])}
+                  input={{ value: brandActivityEventsValue }}
+                  multiselect
+                  name='brandActivityEvents'
+                  options={events.get('data').map((e) => e.get('id')).toJS()}
+                  placeholder='Events'
+                  style={[ styles.field, { paddingRight: '0.75em' } ]}
+                  valueComponent={ColorValue}
+                  onChange={this.onChangeFilter.bind(this, 'brandActivityEvents', 'array')} />
+                  <HamburgerDropdown style={{ marginLeft: 'auto' }}>
+                    <div key='print' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.PRINT)}>Print</div>
+                    <div key='png' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.PNG)}>Download PNG</div>
+                    <div key='jpeg' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.JPEG)}>Download JPEG</div>
+                    <div key='pdf' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.PDF)}>Download PDF</div>
+                    <div key='svg' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.SVG)}>Download SVG</div>
+                    <div key='csv' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.CSV)}>Download CSV</div>
+                  </HamburgerDropdown>
+              </div>
             }
             isLoading={isLoading(dateDataConfig)}
             style={styles.paddingBottom} title='Brand activity'>
-            {/* <button onClick={(e) => { e.preventDefault(); this.downloadCsv(); }}>
-              Donwload csv
-            </button> */}
-            <Highcharts config={dateDataConfig.get('data')} isPureConfig />
+            <Highcharts config={dateDataConfig.get('data')} isPureConfig ref='brandActivityHighchart'/>
           </Widget>
           <div style={styles.widgets}>
             <TopMedia

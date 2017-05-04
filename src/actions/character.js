@@ -65,6 +65,10 @@ export const DELETE_POSTER_IMAGE_START = 'CHARACTER/DELETE_POSTER_IMAGE_START';
 export const DELETE_POSTER_IMAGE_SUCCESS = 'CHARACTER/DELETE_POSTER_IMAGE_SUCCESS';
 export const DELETE_POSTER_IMAGE_ERROR = 'CHARACTER/DELETE_POSTER_IMAGE_ERROR';
 
+export const TOPIC_FETCH_START = 'CHARACTER/TOPIC_FETCH_START';
+export const TOPIC_FETCH_SUCCESS = 'CHARACTER/TOPIC_FETCH_SUCCESS';
+export const TOPIC_FETCH_ERROR = 'CHARACTER/TOPIC_FETCH_ERROR';
+
 export const deletePortraitImage = makeApiActionCreator(api.deletePortraitImage, DELETE_POSTER_IMAGE_START, DELETE_POSTER_IMAGE_SUCCESS, DELETE_POSTER_IMAGE_ERROR);
 export const deleteProfileImage = makeApiActionCreator(api.deleteProfileImage, DELETE_PROFILE_IMAGE_START, DELETE_PROFILE_IMAGE_SUCCESS, DELETE_PROFILE_IMAGE_ERROR);
 export const deleteCharacters = makeApiActionCreator(api.deleteCharacters, CHARACTERS_DELETE_START, CHARACTERS_DELETE_SUCCESS, CHARACTERS_DELETE_ERROR);
@@ -81,3 +85,4 @@ export const deleteMediumCharacter = makeApiActionCreator(api.deleteMediumCharac
 export const uploadPortraitImage = makeApiActionCreator(api.uploadPortraitImage, UPLOAD_PORTRAIT_IMAGE_START, UPLOAD_PORTRAIT_IMAGE_SUCCESS, UPLOAD_PORTRAIT_IMAGE_ERROR);
 export const uploadProfileImage = makeApiActionCreator(api.uploadProfileImage, UPLOAD_PROFILE_IMAGE_START, UPLOAD_PROFILE_IMAGE_SUCCESS, UPLOAD_PROFILE_IMAGE_ERROR);
 export const uploadFaceImage = makeApiActionCreator(api.uploadFaceImage, UPLOAD_FACE_IMAGE_START, UPLOAD_FACE_IMAGE_SUCCESS, UPLOAD_FACE_IMAGE_ERROR);
+export const fetchTopic = makeApiActionCreator(api.fetchTopic, TOPIC_FETCH_START, TOPIC_FETCH_SUCCESS, TOPIC_FETCH_ERROR);

@@ -18,6 +18,7 @@ import * as actions from './actions';
 
 @connect(selector, (dispatch) => ({
   deleteAvailability: bindActionCreators(actions.deleteAvailability, dispatch),
+  loadAvailability: bindActionCreators(actions.loadAvailability, dispatch),
   loadAvailabilities: bindActionCreators(actions.loadAvailabilities, dispatch),
   persistAvailiability: bindActionCreators(actions.persistAvailability, dispatch)
 }))
@@ -29,7 +30,9 @@ export default class Availabilities extends Component {
     countries: ImmutablePropTypes.map.isRequired,
     deleteAvailability: PropTypes.func.isRequired,
     loadAvailabilities: PropTypes.func.isRequired,
+    loadAvailability: PropTypes.func.isRequired,
     mediumId: PropTypes.string.isRequired,
+    mediumType: PropTypes.string,
     persistAvailiability: PropTypes.func.isRequired
   };
 
@@ -44,25 +47,26 @@ export default class Availabilities extends Component {
     };
   }
 
-  componentWillMount () {
-    const { loadAvailabilities, mediumId } = this.props;
-    loadAvailabilities({ mediumId });
+  async componentWillMount () {
+    const { loadAvailabilities, mediumId, mediumType } = this.props;
+    await loadAvailabilities({ mediumId, mediumType });
   }
 
   // Transform the date + time + timezone to one date
-  transformAvailability ({ countryId, endDate, endTime, id, mediumId, startDate, startTime, timezone, videoStatus }) {
+  transformAvailability ({ countryId, endDate, endTime, id, mediumId, mediumType, startDate, startTime, timezone, videoStatus }) {
     return {
       availabilityFrom: startDate && startTime && moment(`${startDate.format('YYYY-MM-DD')} ${startTime.format('HH:mm')} ${timezone}`, 'YYYY-MM-DD HH:mm Z').utc().toDate(),
       availabilityTo: endDate && endTime && moment(`${endDate.format('YYYY-MM-DD')} ${endTime.format('HH:mm')} ${timezone}`, 'YYYY-MM-DD HH:mm Z').utc().toDate(),
       countryId,
       id,
       mediumId,
+      mediumType,
       videoStatus
     };
   }
 
   getAvailability (index) {
-    const mediumId = this.props.mediumId;
+    const { mediumId, mediumType } = this.props;
     const { availabilityFrom, availabilityTo, countryId, id, videoStatus } = this.props.availabilities.getIn([ 'data', index ]).toJS();
 
     return {
@@ -72,6 +76,7 @@ export default class Availabilities extends Component {
       id,
       noEndDate: !availabilityTo,
       mediumId,
+      mediumType,
       startDate: availabilityFrom && moment(availabilityFrom).startOf('day'),
       startTime: availabilityFrom && moment(availabilityFrom),
       timezone: myTimezone,
@@ -85,16 +90,16 @@ export default class Availabilities extends Component {
   }
 
   async onClickDeleteAvailability (availabilityId) {
-    const { deleteAvailability, loadAvailabilities, mediumId } = this.props;
-    await deleteAvailability({ availabilityId, mediumId });
-    await loadAvailabilities({ mediumId });
+    const { deleteAvailability, loadAvailabilities, mediumId, mediumType } = this.props;
+    await deleteAvailability({ availabilityId, mediumId, mediumType });
+    await loadAvailabilities({ mediumId, mediumType });
   }
 
   async onSubmit (form) {
-    const { loadAvailabilities, persistAvailiability, mediumId } = this.props;
+    const { loadAvailabilities, persistAvailiability, mediumId, mediumType } = this.props;
     const availability = this.transformAvailability(form);
     await persistAvailiability(availability);
-    await loadAvailabilities({ mediumId });
+    await loadAvailabilities({ mediumId, mediumType });
   }
 
   static styles = {
@@ -130,8 +135,7 @@ export default class Availabilities extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { availabilities, countries, mediumId } = this.props;
-
+    const { availabilities, countries, loadAvailability, mediumId, mediumType } = this.props;
     return (
       <Section>
         <FormSubtitle first>Availability</FormSubtitle>
@@ -148,9 +152,11 @@ export default class Availabilities extends Component {
             <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 2 } ]}>
               End
             </CustomCel>
-            <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 2 } ]}>
-              Sync state
-            </CustomCel>
+            {mediumType !== 'spott' &&
+              <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 2 } ]}>
+                Sync state
+              </CustomCel>
+            }
             <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 1 } ]} />
           </Headers>
           <Rows style={styles.adaptedRows}>
@@ -166,11 +172,15 @@ export default class Availabilities extends Component {
                   <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]}>
                     {availability.get('availabilityTo') ? moment(availability.get('availabilityTo')).format('DD/MM/YYYY HH:mm') : '-'}
                   </CustomCel>
-                  <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]}>
-                    {availability.get('videoStatus')}
-                  </CustomCel>
+                  {mediumType !== 'spott' &&
+                    <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]}>
+                      {availability.get('videoStatus')}
+                    </CustomCel>}
                   <CustomCel style={[ styles.adaptedCustomCel, { flex: 1 } ]}>
-                    <EditButton style={styles.editButton} onClick={() => this.setState({ edit: index })} />
+                    <EditButton style={styles.editButton} onClick={async () => {
+                      await loadAvailability({ availabilityId: availability.get('id'), mediumId, mediumType });
+                      this.setState({ edit: index });
+                    }} />
                     <RemoveButton onClick={this.onClickDeleteAvailability.bind(this, availability.get('id'))} />
                   </CustomCel>
                 </Row>
@@ -189,10 +199,11 @@ export default class Availabilities extends Component {
                 endDate: moment().startOf('day'),
                 endTime: moment(),
                 mediumId,
+                mediumType,
                 startDate: moment().startOf('day'),
                 startTime: moment(),
                 timezone: myTimezone,
-                videoStatus: 'DISABLED'
+                videoStatus: mediumType === 'spott' ? null : 'DISABLED'
               }}
               onClose={() => this.setState({ create: false })}
               onSubmit={this.onSubmit} />}

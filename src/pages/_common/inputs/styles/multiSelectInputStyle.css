@@ -5,8 +5,10 @@
 
 .Multi > .Select-control .Select-value, .Multi > .Select-control .Select-placeholder {
   line-height: 20px !important;
+  padding-left: 10px;
 }
 
 .Multi > .Select-control .Select-input {
   height: 20px !important;
+  padding-left: 10px;
 }

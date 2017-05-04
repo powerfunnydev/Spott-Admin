@@ -13,7 +13,7 @@ import CompletedSVG from '../images/completed';
 import PlusSVG from '../images/plus';
 import {
   BRAND, BROADCAST_CHANNEL, BROADCASTER, CHARACTER, COMMERCIAL, CONTENT_PRODUCER, EPISODE,
-  MOVIE, PERSON, PRODUCT, PUSH_NOTIFICATION, SEASON, SERIES_ENTRY, SHOP, SPOTT,
+  MOVIE, PERSON, PRODUCT, PUSH_NOTIFICATION, SEASON, SERIES_ENTRY, SHOP, SPOTT, TOPIC,
   TV_GUIDE_ENTRY, USER, SCHEDULE_ENTRY
 } from '../../../constants/entityTypes';
 
@@ -114,6 +114,7 @@ export class SuccessMessage extends Component {
     this.seriesEntryPersistSuccess = ::this.seriesEntryPersistSuccess;
     this.seriesEntryPersistSuccess = ::this.seriesEntryPersistSuccess;
     this.spottPersistSuccess = ::this.spottPersistSuccess;
+    this.topicPersistSuccess = ::this.topicPersistSuccess;
   }
 
   async redirect (url) {
@@ -268,6 +269,15 @@ export class SuccessMessage extends Component {
     );
   }
 
+  topicPersistSuccess (topic) {
+    const { styles } = this.constructor;
+    return (
+      <span>
+        Topic <Link style={styles.clickable} to={`/content/topics/read/${topic.id}`}>{topic.text}</Link> has been succesfully persisted.
+      </span>
+    );
+  }
+
   tvGuideEntryPersistSuccess (tvGuideEntry) {
     const { styles } = this.constructor;
     return (
@@ -332,6 +342,8 @@ export class SuccessMessage extends Component {
         return this.shopPersistSuccess(entity);
       case SPOTT:
         return this.spottPersistSuccess(entity);
+      case TOPIC:
+        return this.topicPersistSuccess(entity);
       case TV_GUIDE_ENTRY:
         return this.tvGuideEntryPersistSuccess(entity);
       case USER:

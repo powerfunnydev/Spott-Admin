@@ -44,7 +44,10 @@ function validate (values, { t }) {
   searchUsers: bindActionCreators(actions.searchUsers, dispatch),
   persistTopic: bindActionCreators(actions.persistTopic, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
-  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
+  fetchPersonTopic: bindActionCreators(actions.fetchPersonTopic, dispatch),
+  fetchBrandTopic: bindActionCreators(actions.fetchBrandTopic, dispatch),
+  fetchCharacterTopic: bindActionCreators(actions.fetchCharacterTopic, dispatch)
 }))
 @reduxForm({
   form: 'spottCreate',
@@ -59,6 +62,9 @@ export default class CreateSpottModal extends Component {
     currentLocale: PropTypes.string.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
+    fetchBrandTopic: PropTypes.func.isRequired,
+    fetchCharacterTopic: PropTypes.func.isRequired,
+    fetchPersonTopic: PropTypes.func.isRequired,
     genders: ImmutablePropTypes.map.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     image: PropTypes.object,
@@ -86,6 +92,7 @@ export default class CreateSpottModal extends Component {
   constructor (props) {
     super(props);
     this.submit = ::this.submit;
+    this.addTopic = ::this.addTopic;
     this.onChangeImage = ::this.onChangeImage;
     this.onCloseClick = ::this.onCloseClick;
     this.onCreateTopic = ::this.onCreateTopic;
@@ -153,8 +160,8 @@ export default class CreateSpottModal extends Component {
     dispatch(change('tags', myTags));
   }
 
-  onPersistTag (tag) {
-    const { change, charactersById, dispatch, personsById, productsById, tags } = this.props;
+  async onPersistTag (tag) {
+    const { change, charactersById, dispatch, fetchBrandTopic, fetchCharacterTopic, fetchPersonTopic, personsById, productsById, tags } = this.props;
     const myTags = tags ? tags : [];
     console.warn('tags', myTags);
     const newTags = [ ...myTags ];
@@ -162,12 +169,18 @@ export default class CreateSpottModal extends Component {
     switch (tag.entityType) {
       case 'CHARACTER':
         tag.character = charactersById.get(tag.characterId).toJS();
+        const characterTopic = await fetchCharacterTopic({ characterId: tag.characterId });
+        this.addTopic(characterTopic.id);
         break;
       case 'PERSON':
         tag.person = personsById.get(tag.personId).toJS();
+        const personTopic = await fetchPersonTopic({ personId: tag.personId });
+        this.addTopic(personTopic.id);
         break;
       case 'PRODUCT':
         tag.product = productsById.get(tag.productId).toJS();
+        const brandTopic = await fetchBrandTopic({ brandId: tag.product.brand.id });
+        this.addTopic(brandTopic.id);
         break;
     }
 
@@ -184,6 +197,14 @@ export default class CreateSpottModal extends Component {
 
   onCloseClick () {
     this.props.routerPushWithReturnTo('/content/spotts', true);
+  }
+  addTopic (id) {
+    const { change, dispatch, topicIds } = this.props;
+    const ids = topicIds ? topicIds : [];
+    if (ids.indexOf(id) === -1) {
+      ids.push(id);
+      dispatch(change('topicIds', ids));
+    }
   }
 
   async onCreateTopic (text) {

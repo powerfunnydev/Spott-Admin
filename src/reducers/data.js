@@ -6,7 +6,7 @@ import {
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
   serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasLanguages,
   serializeFilterHasPushNotifications, serializeFilterHasSpotts, serializeBroadcasterFilterHasMedia,
-  transformMediumToListMedium, serializeFilterHasTopMedia, serializeFilterHasDemographics, serializeFilterHasTopPeople, serializeFilterHasTopProducts
+  transformMediumToListMedium, serializeFilterHasTopics, serializeFilterHasTopMedia, serializeFilterHasDemographics, serializeFilterHasTopPeople, serializeFilterHasTopProducts
 } from './utils';
 
 import * as audienceActions from '../actions/audience';
@@ -76,6 +76,7 @@ export default (state = fromJS({
     listPushNotificationDestinations: {},
     listShops: {},
     listTags: {},
+    listTopics: {},
     listPersons: {}, // listCharacters is the light version of characters, without locales
     media: {}, // Completed version of media, with locales
     mediumCategories: {},
@@ -123,6 +124,7 @@ export default (state = fromJS({
     filterHasShops: {},
     filterHasSpotts: {},
     filterHasTags: {},
+    filterHasTopics: {},
     filterHasTopMedia: {},
     filterHasTopPeople: {},
     filterHasTopProducts: {},
@@ -178,6 +180,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'availabilities', 'mediumHasAvailabilities', action.mediumId, action.data);
     case availabilityActions.AVAILABILITIES_FETCH_ERROR:
       return searchError(state, 'mediumHasAvailabilities', action.mediumId, action.error);
+
+    case availabilityActions.AVAILABILITY_FETCH_START:
+      return fetchStart(state, [ 'entities', 'availabilities', action.availabilityId ]);
+    case availabilityActions.AVAILABILITY_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'availabilities', action.availabilityId ], action.data);
+    case availabilityActions.AVAILABILITY_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'availabilities', action.availabilityId ], action.error);
 
     // Audiences
     // /////////
@@ -298,6 +307,15 @@ export default (state = fromJS({
       return searchSuccess(state, 'listBrands', 'mediumHasBrands', action.mediumId, action.data);
     case brandActions.MEDIUM_BRAND_SEARCH_ERROR:
       return searchError(state, 'mediumHasBrands', action.mediumId, action.error);
+
+    case brandActions.TOPIC_FETCH_START:
+      return fetchStart(state, [ 'entities', 'brands', action.brandId ]);
+    case brandActions.TOPIC_FETCH_SUCCESS: {
+      const newState = fetchSuccess(state, [ 'entities', 'topics', action.data.id ], action.data) || state;
+      return fetchSuccess(newState, [ 'entities', 'brands', action.brandId ], action.data);
+    }
+    case brandActions.TOPIC_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'brands', action.brandId ], action.error);
 
     // Broadcaster Channels
     // ////////////////////
@@ -425,6 +443,15 @@ export default (state = fromJS({
       return searchSuccess(state, 'listCharacters', 'filterHasCharacters', serializeFilterHasCharacters(action, action.mediumId), action.data);
     case charactersActions.MEDIUM_CHARACTER_SEARCH_ERROR:
       return searchError(state, 'filterHasCharacters', serializeFilterHasCharacters(action, action.mediumId), action.error);
+
+    case charactersActions.TOPIC_FETCH_START:
+      return fetchStart(state, [ 'entities', 'characters', action.characterId ]);
+    case charactersActions.TOPIC_FETCH_SUCCESS: {
+      const newState = fetchSuccess(state, [ 'entities', 'topics', action.data.id ], action.data) || state;
+      return fetchSuccess(newState, [ 'entities', 'characters', action.characterId ], action.data);
+    }
+    case charactersActions.TOPIC_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'characters', action.characterId ], action.error);
 
     // Collections
     // ///////////
@@ -596,6 +623,24 @@ export default (state = fromJS({
 
     // Topics
     // //////
+    case topicActions.UPLOAD_BACKGROUND_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'topics', action.topicId ], action.data);
+    case topicActions.UPLOAD_THUMB_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'topics', action.topicId ], action.data);
+
+    case topicActions.TOPIC_FETCH_START:
+      return fetchStart(state, [ 'entities', 'topics', action.topicId ]);
+    case topicActions.TOPIC_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'topics', action.topicId ], action.data);
+    case topicActions.TOPIC_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'topics', action.topicId ], action.error);
+
+    case topicActions.TOPICS_FETCH_START:
+      return searchStart(state, 'filterHasTopics', serializeFilterHasTopics(action));
+    case topicActions.TOPICS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listTopics', 'filterHasTopics', serializeFilterHasTopics(action), action.data.data);
+    case topicActions.TOPICS_FETCH_ERROR:
+      return searchError(state, 'filterHasTopics', serializeFilterHasTopics(action), action.error);
 
     case topicActions.TOPICS_SEARCH_START:
       return searchStart(state, 'searchStringHasTopics', action.searchString);
@@ -651,6 +696,15 @@ export default (state = fromJS({
       return searchSuccess(state, 'listMedia', 'filterHasMedia', serializeFilterHasMedia(action), action.data.data);
     case mediaActions.MEDIA_FETCH_ERROR:
       return searchError(state, 'filterHasMedia', serializeFilterHasMedia(action), action.error);
+
+    case mediaActions.TOPIC_FETCH_START:
+      return fetchStart(state, [ 'entities', 'media', action.mediumId ]);
+    case mediaActions.TOPIC_FETCH_SUCCESS: {
+      const newState = fetchSuccess(state, [ 'entities', 'topics', action.data.id ], action.data) || state;
+      return fetchSuccess(newState, [ 'entities', 'media', action.mediumId ], action.data);
+    }
+    case mediaActions.TOPIC_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'media', action.mediumId ], action.error);
 
     // Medium categories
     // /////////////////
@@ -732,6 +786,15 @@ export default (state = fromJS({
       return searchSuccess(state, 'faceImages', 'personHasFaceImages', action.personId, action.data.data);
     case personActions.PERSON_FACE_IMAGES_FETCH_ERROR:
       return searchError(state, 'personHasFaceImages', action.personId, action.error);
+
+    case personActions.TOPIC_FETCH_START:
+      return fetchStart(state, [ 'entities', 'persons', action.personId ]);
+    case personActions.TOPIC_FETCH_SUCCESS: {
+      const newState = fetchSuccess(state, [ 'entities', 'topics', action.data.id ], action.data) || state;
+      return fetchSuccess(newState, [ 'entities', 'persons', action.personId ], action.data);
+    }
+    case personActions.TOPIC_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'persons', action.personId ], action.error);
 
     // Products
     // ////////

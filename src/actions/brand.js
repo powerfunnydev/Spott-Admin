@@ -77,6 +77,10 @@ export const DELETE_LOGO_IMAGE_START = 'BRAND/DELETE_LOGO_IMAGE_START';
 export const DELETE_LOGO_IMAGE_SUCCESS = 'BRAND/DELETE_LOGO_IMAGE_SUCCESS';
 export const DELETE_LOGO_IMAGE_ERROR = 'BRAND/DELETE_LOGO_IMAGE_ERROR';
 
+export const TOPIC_FETCH_START = 'BRAND/TOPIC_FETCH_START';
+export const TOPIC_FETCH_SUCCESS = 'BRAND/TOPIC_FETCH_SUCCESS';
+export const TOPIC_FETCH_ERROR = 'BRAND/TOPIC_FETCH_ERROR';
+
 export const deleteBrand = makeApiActionCreator(api.deleteBrand, BRAND_DELETE_START, BRAND_DELETE_SUCCESS, BRAND_DELETE_ERROR);
 export const deleteBrands = makeApiActionCreator(api.deleteBrands, BRANDS_DELETE_START, BRANDS_DELETE_SUCCESS, BRANDS_DELETE_ERROR);
 export const deleteLogoImage = makeApiActionCreator(api.deleteLogoImage, DELETE_LOGO_IMAGE_START, DELETE_LOGO_IMAGE_SUCCESS, DELETE_LOGO_IMAGE_ERROR);
@@ -95,3 +99,4 @@ export const deleteMediumBrand = makeApiActionCreator(api.deleteMediumBrand, MED
 export const persistLinkUser = makeApiActionCreator(api.persistLinkUser, BRAND_LINK_USER_PERSIST_START, BRAND_LINK_USER_PERSIST_SUCCESS, BRAND_LINK_USER_PERSIST_ERROR);
 export const deleteLinkUser = makeApiActionCreator(api.deleteLinkUser, BRAND_LINK_USER_DELETE_START, BRAND_LINK_USER_DELETE_SUCCESS, BRAND_LINK_USER_DELETE_ERROR);
 export const deleteLinkUsers = makeApiActionCreator(api.deleteLinkUsers, BRAND_LINK_USERS_DELETE_START, BRAND_LINK_USERS_DELETE_SUCCESS, BRAND_LINK_USERS_DELETE_ERROR);
+export const fetchTopic = makeApiActionCreator(api.fetchTopic, TOPIC_FETCH_START, TOPIC_FETCH_SUCCESS, TOPIC_FETCH_ERROR);

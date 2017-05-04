@@ -1,7 +1,7 @@
 import { del, get, postFormData } from './request';
-import { transformBrand, transformListSpott, transformSpott } from './transformers';
+import { transformListSpott, transformSpott } from './transformers';
 
-export async function fetchSpotts (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+export async function fetchSpotts (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection = 'DESC', sortField = 'LAST_MODIFIED' }) {
   let url = `${baseUrl}/v004/post/posts?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);

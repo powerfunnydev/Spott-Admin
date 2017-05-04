@@ -46,13 +46,13 @@ export default class Section extends Component {
     return (
       <div style={[ styles.container, style ]}>
         {popUpObject && popUpObject.type === 'error' && popUpObject.message && popUpObject.stackTrace &&
-          <ErrorComponent message={popUpObject.message} stackTrace={popUpObject.stackTrace} onClose={clearPopUpMessage}/>
+          <ErrorComponent link={popUpObject.link} message={popUpObject.message} stackTrace={popUpObject.stackTrace} onClose={clearPopUpMessage}/>
         }
         {popUpObject && popUpObject.type === 'hint' && popUpObject.message &&
-          <HintComponent message={popUpObject.message} onClose={clearPopUpMessage}/>
+          <HintComponent link={popUpObject.link} message={popUpObject.message} onClose={clearPopUpMessage}/>
         }
         {popUpObject && popUpObject.type === 'info' && popUpObject.message &&
-          <InfoComponent message={popUpObject.message} onClose={clearPopUpMessage}/>
+          <InfoComponent link={popUpObject.link} message={popUpObject.message} onClose={clearPopUpMessage}/>
         }
         <div style={[ !noPadding && styles.padding, first && styles.first ]}>
           {title && <h2 style={styles.title}>{title}</h2>}

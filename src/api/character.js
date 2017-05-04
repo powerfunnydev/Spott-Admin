@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformImage, transformCharacter, transformListCharacter } from './transformers';
+import { transformImage, transformCharacter, transformListCharacter, transformTopic } from './transformers';
 
 export async function fetchCharacters (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/characters?page=${page}&pageSize=${pageSize}`;
@@ -132,4 +132,11 @@ export async function deletePortraitImage (baseUrl, authenticationToken, locale,
 export async function deleteProfileImage (baseUrl, authenticationToken, locale, { characterId }) {
   const url = `${baseUrl}/v004/media/characters/${characterId}/profileCover`;
   await del(authenticationToken, locale, url);
+}
+
+export async function fetchTopic (baseUrl, authenticationToken, locale, { characterId }) {
+  const url = `${baseUrl}/v004/media/characters/${characterId}/topic`;
+  const { body } = await get(authenticationToken, locale, url);
+  const result = transformTopic(body);
+  return result;
 }

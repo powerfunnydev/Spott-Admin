@@ -274,7 +274,8 @@ export default class SelectInput extends Component {
     required: PropTypes.bool,
     style: PropTypes.object,
     onChange: PropTypes.func,
-    onCreateOption: PropTypes.func
+    onCreateOption: PropTypes.func,
+    noResultsText: PropTypes.any
   };
 
   constructor (props) {
@@ -359,7 +360,7 @@ export default class SelectInput extends Component {
     const styles = this.constructor.styles;
     const {
       onCreateOption, disabled, first, getItemImage, getItemText, getOptions, filter, input,
-      isLoading, label, meta, maxSelect, multiselect, placeholder,
+      isLoading, label, meta, maxSelect, multiselect, noResultsText, placeholder,
       required, style
     } = this.props;
     const hasImages = getItemImage;
@@ -389,6 +390,7 @@ export default class SelectInput extends Component {
           filterOption={filter ? filter : () => true}
           isLoading={isLoading}
           multi={multiselect}
+          noResultsText={noResultsText}
           optionComponent={optionWithImage}
           options={maxSelected ? [] : options}
           placeholder={placeholder}

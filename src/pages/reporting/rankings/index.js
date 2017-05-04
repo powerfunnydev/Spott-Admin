@@ -3,6 +3,7 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ImmutablePropTypes from 'react-immutable-proptypes';
+import Papa from 'papaparse';
 import moment from 'moment';
 import { routerPushWithReturnTo } from '../../../actions/global';
 import { colors, fontWeights, makeTextStyle, Container } from '../../_common/styles';
@@ -13,6 +14,7 @@ import Widget from '../widget';
 import * as actions from './actions';
 import RankingsFilterForm from './filters';
 import { rankingsSelector } from './selector';
+import HamburgerDropdown, { styles as dropdownStyles } from '../../_common/components/hamburgerDropdown';
 
 @Radium
 class RankingItem extends Component {
@@ -170,6 +172,7 @@ export default class Rankings extends Component {
     super(props);
     this.onChangeRankingsFilter = ::this.onChangeRankingsFilter;
     this.loadRankings = slowdown(props.loadRankings, 300);
+    this.downloadProgramSubscribers = ::this.downloadProgramSubscribers;
   }
 
   componentWillMount () {
@@ -185,6 +188,115 @@ export default class Rankings extends Component {
       !arraysEqual(query.media, nextQuery.media)) {
       this.loadRankings(nextProps.location.query);
     }
+  }
+
+  // Generic method that generate a CSV file.
+  downloadCsv (columns, data, title = 'download') {
+    const csv = Papa.unparse({
+      fields: columns,
+      data
+    });
+
+    const csvData = new Blob([ csv ], { type: 'text/csv;charset=utf-8;' });
+    // Fix for IE11, see: https://github.com/mholt/PapaParse/issues/175
+    const csvUrl = navigator.msSaveBlob ? navigator.msSaveBlob(csvData, 'download.cv') : window.URL.createObjectURL(csvData);
+    const a = window.document.createElement('a');
+    a.href = csvUrl;
+    a.setAttribute('download', title.concat('.csv'));
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  downloadProgramSubscribers () {
+    const { mediumSubscriptions } = this.props;
+    const headers = [ 'Title', 'Subscribers' ];
+    const data = mediumSubscriptions.get('data').map((mediumSubscription) => {
+      return [
+        mediumSubscription.medium.title,
+        `${mediumSubscription.count} Subscribers`
+      ];
+    });
+    const title = 'ProgramSubscribers';
+    this.downloadCsv(headers, data, title);
+  }
+
+  downloadProgramSyncs () {
+    const { mediumSyncs } = this.props;
+    const headers = [ 'Title', 'Syncs' ];
+    const data = mediumSyncs.get('data').map((mediumSync) => {
+      return [
+        mediumSync.medium.title,
+        `${mediumSync.count} Syncs`
+      ];
+    });
+    const title = 'ProgramSyncs';
+    this.downloadCsv(headers, data, title);
+  }
+
+  downloadCharacterSubscribers () {
+    const { characterSubscriptions } = this.props;
+    const headers = [ 'Title', 'Character subscribers' ];
+    const data = characterSubscriptions.get('data').map((characterSubscription) => {
+      return [
+        characterSubscription.character.name ? `${characterSubscription.character.name} - ${characterSubscription.medium.title}` : characterSubscription.medium.title,
+        `${characterSubscription.count} CharacterSubscribers`
+      ];
+    });
+    const title = 'CharacterSubscribers';
+    this.downloadCsv(headers, data, title);
+  }
+
+  downloadProductImpressions () {
+    const { productImpressions } = this.props;
+    const headers = [ 'Title', 'Product impressions' ];
+    const data = productImpressions.get('data').map((productImpression) => {
+      return [
+        productImpression.product.shortName,
+        `${productImpression.count} Impressions`
+      ];
+    });
+    const title = 'ProductImpressions';
+    this.downloadCsv(headers, data, title);
+  }
+
+  downloadProductClicks () {
+    const { productViews } = this.props;
+    const headers = [ 'Title', 'Product clicks' ];
+    const data = productViews.get('data').map((productView) => {
+      return [
+        productView.product.shortName,
+        `${productView.count} Clicks`
+      ];
+    });
+    const title = 'ProductClicks';
+    this.downloadCsv(headers, data, title);
+  }
+
+  downloadProductBuys () {
+    const { productBuys } = this.props;
+    const headers = [ 'Title', 'Product buys' ];
+    const data = productBuys.get('data').map((productBuy) => {
+      return [
+        productBuy.product.shortName,
+        `${productBuy.count} Buys`
+      ];
+    });
+    const title = 'ProductBuys';
+    this.downloadCsv(headers, data, title);
+  }
+
+  downloadBrandSubscriptions () {
+    const { brandSubscriptions } = this.props;
+    const headers = [ 'Title', 'Brand subscriptions' ];
+    const data = brandSubscriptions.get('data').map((brandSubscription) => {
+      return [
+        brandSubscription.brand.name,
+        `${brandSubscription.count} Subscriptions`
+      ];
+    });
+    const title = 'BrandSubscriptions';
+    this.downloadCsv(headers, data, title);
   }
 
   onChangeRankingsFilter (field, type, value) {
@@ -259,7 +371,6 @@ export default class Rankings extends Component {
       loadProductViews, location: { query: { ages, endDate, genders, startDate } }, mediumSubscriptions,
       mediumSyncs, productBuys, productImpressions, productViews
     } = this.props;
-
     return (
       <div>
         <Container>
@@ -276,7 +387,18 @@ export default class Rankings extends Component {
         <div style={styles.rankings}>
           <Container>
             <div style={styles.widgets}>
-              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(mediumSubscriptions)} title='Program subscribers'>
+              <Widget
+                contentStyle={styles.rankingWidget}
+                header={
+                  <HamburgerDropdown style={{ marginLeft: 'auto' }}>
+                    <div
+                      key='CSV'
+                      style={dropdownStyles.floatOption}
+                      onClick={(e) => { e.preventDefault(); this.downloadProgramSubscribers(); }}>Download CSV</div>
+                  </HamburgerDropdown>
+                }
+                isLoading={isLoading(mediumSubscriptions)}
+                title='Program subscribers'>
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
@@ -295,7 +417,18 @@ export default class Rankings extends Component {
                    ))}
                 </InfiniteScroll>
               </Widget>
-              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(mediumSyncs)} title='Program syncs'>
+              <Widget
+                contentStyle={styles.rankingWidget}
+                header={
+                  <HamburgerDropdown style={{ marginLeft: 'auto' }}>
+                    <div
+                      key='CSV'
+                      style={dropdownStyles.floatOption}
+                      onClick={(e) => { e.preventDefault(); this.downloadProgramSyncs(); }}>Download CSV</div>
+                  </HamburgerDropdown>
+                }
+                isLoading={isLoading(mediumSyncs)}
+                title='Program syncs'>
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
@@ -315,7 +448,18 @@ export default class Rankings extends Component {
                 </InfiniteScroll>
               </Widget>
               {/* <Widget contentStyle={styles.rankingWidget} title='Interactive commercials'>{content}</Widget> */}
-              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(characterSubscriptions)} title='Character subscribers'>
+              <Widget
+                contentStyle={styles.rankingWidget}
+                header={
+                  <HamburgerDropdown style={{ marginLeft: 'auto' }}>
+                    <div
+                      key='CSV'
+                      style={dropdownStyles.floatOption}
+                      onClick={(e) => { e.preventDefault(); this.downloadCharacterSubscribers(); }}>Download CSV</div>
+                  </HamburgerDropdown>
+                }
+                isLoading={isLoading(characterSubscriptions)}
+                title='Character subscribers'>
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
@@ -334,7 +478,18 @@ export default class Rankings extends Component {
                   ))}
                 </InfiniteScroll>
               </Widget>
-              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(productImpressions)} title='Product impressions'>
+              <Widget
+                contentStyle={styles.rankingWidget}
+                header={
+                  <HamburgerDropdown style={{ marginLeft: 'auto' }}>
+                    <div
+                      key='CSV'
+                      style={dropdownStyles.floatOption}
+                      onClick={(e) => { e.preventDefault(); this.downloadProductImpressions(); }}>Download CSV</div>
+                  </HamburgerDropdown>
+                }
+                isLoading={isLoading(productImpressions)}
+                title='Product impressions'>
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
@@ -353,7 +508,18 @@ export default class Rankings extends Component {
                 ))}
                 </InfiniteScroll>
               </Widget>
-              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(productViews)} title='Product clicks'>
+              <Widget
+                contentStyle={styles.rankingWidget}
+                header={
+                  <HamburgerDropdown style={{ marginLeft: 'auto' }}>
+                    <div
+                      key='CSV'
+                      style={dropdownStyles.floatOption}
+                      onClick={(e) => { e.preventDefault(); this.downloadProductClicks(); }}>Download CSV</div>
+                  </HamburgerDropdown>
+                }
+                isLoading={isLoading(productViews)}
+                title='Product clicks'>
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
@@ -372,7 +538,18 @@ export default class Rankings extends Component {
                 ))}
                 </InfiniteScroll>
               </Widget>
-              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(productBuys)} title='Product buys'>
+              <Widget
+                contentStyle={styles.rankingWidget}
+                header={
+                  <HamburgerDropdown style={{ marginLeft: 'auto' }}>
+                    <div
+                      key='CSV'
+                      style={dropdownStyles.floatOption}
+                      onClick={(e) => { e.preventDefault(); this.downloadProductBuys(); }}>Download CSV</div>
+                  </HamburgerDropdown>
+                }
+                isLoading={isLoading(productBuys)}
+                title='Product buys'>
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
@@ -391,7 +568,18 @@ export default class Rankings extends Component {
                 ))}
                 </InfiniteScroll>
               </Widget>
-              <Widget contentStyle={styles.rankingWidget} isLoading={isLoading(brandSubscriptions)} title='Brand subscribers'>
+              <Widget
+                contentStyle={styles.rankingWidget}
+                header={
+                  <HamburgerDropdown style={{ marginLeft: 'auto' }}>
+                    <div
+                      key='CSV'
+                      style={dropdownStyles.floatOption}
+                      onClick={(e) => { e.preventDefault(); this.downloadBrandSubscriptions(); }}>Download CSV</div>
+                  </HamburgerDropdown>
+                }
+                isLoading={isLoading(brandSubscriptions)}
+                title='Brand subscribers'>
                 <InfiniteScroll
                   containerHeight={260}
                   elementHeight={40}
