@@ -33,7 +33,8 @@ export default class Availabilities extends Component {
     loadAvailability: PropTypes.func.isRequired,
     mediumId: PropTypes.string.isRequired,
     mediumType: PropTypes.string,
-    persistAvailiability: PropTypes.func.isRequired
+    persistAvailiability: PropTypes.func.isRequired,
+    readOnly: PropTypes.bool
   };
 
   constructor (props) {
@@ -135,11 +136,12 @@ export default class Availabilities extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { availabilities, countries, loadAvailability, mediumId, mediumType } = this.props;
+    const { availabilities, countries, loadAvailability, mediumId, mediumType, readOnly } = this.props;
     return (
       <Section>
-        <FormSubtitle first>Availability</FormSubtitle>
-        <FormDescription style={styles.description}>Where, when and how will people be able to sync on this content? (from a legal perspective)</FormDescription>
+        <FormSubtitle first>Availability {readOnly && ' (read-only)'}</FormSubtitle>
+        <FormDescription style={styles.description}>Where, when and how will people be able to sync on this content? (from a legal perspective)
+          {readOnly && ' The availability is read-only because this spott belogs to a medium. If you wish to change the availability, please do so in the source medium.'}</FormDescription>
         <Table style={styles.customTable}>
           <Headers>
             {/* Be aware that width or flex of each headerCel and the related rowCel must be the same! */}
@@ -157,7 +159,9 @@ export default class Availabilities extends Component {
                 Sync state
               </CustomCel>
             }
+            {!readOnly &&
             <CustomCel style={[ headerStyles.base, styles.adaptedCustomCel, { flex: 1 } ]} />
+            }
           </Headers>
           <Rows style={styles.adaptedRows}>
             {availabilities.get('data').map((availability, index) => {
@@ -176,6 +180,7 @@ export default class Availabilities extends Component {
                     <CustomCel style={[ styles.adaptedCustomCel, { flex: 2 } ]}>
                       {availability.get('videoStatus')}
                     </CustomCel>}
+                  {!readOnly &&
                   <CustomCel style={[ styles.adaptedCustomCel, { flex: 1 } ]}>
                     <EditButton style={styles.editButton} onClick={async () => {
                       await loadAvailability({ availabilityId: availability.get('id'), mediumId, mediumType });
@@ -183,14 +188,17 @@ export default class Availabilities extends Component {
                     }} />
                     <RemoveButton onClick={this.onClickDeleteAvailability.bind(this, availability.get('id'))} />
                   </CustomCel>
+                }
                 </Row>
               );
             })}
+            {!readOnly &&
             <Row isFirst={availabilities.get('data').size === 0} >
               <CustomCel contentStyle={styles.addContent} style={[ styles.add, styles.adaptedCustomCel ]} onClick={this.onClickCreateAvailability}>
                 <Plus color={colors.primaryBlue} />&nbsp;&nbsp;&nbsp;Add availability
               </CustomCel>
             </Row>
+          }
           </Rows>
           {this.state.create &&
             <PersistAvailabilityModal

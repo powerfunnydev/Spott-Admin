@@ -997,7 +997,7 @@ function transformProductMarker ({ character, person, point, product, relevance,
 
 export function transformSpott ({
   auditInfo, defaultLocale, image, imageSource, localeData, personMarkers, productMarkers,
-  publishStatus, promoted, promotedForBrand, topics, uuid, author
+  publishStatus, promoted, promotedForBrand, topics, uuid, author, source
 }) {
   const spott = {
     author: author && transformUser(author),
@@ -1017,7 +1017,8 @@ export function transformSpott ({
     tags: personMarkers.map(transformPersonMarker).concat(productMarkers.map(transformProductMarker)),
     title: {},
     topics: (topics || []).map(transformTopic),
-    publishStatus
+    publishStatus,
+    source: source.medium ? { medium: source.medium } : {}
   };
   if (localeData) {
     for (const { basedOnDefaultLocale, comment, locale, title } of localeData) {

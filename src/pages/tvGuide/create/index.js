@@ -224,6 +224,7 @@ export default class CreateTvGuideEntryModal extends Component {
           <div>
             <Field
               component={SelectInput}
+              getItemImage={(id) => mediaById.getIn([ id, 'posterImage', 'url' ])}
               getItemText={(id) => mediaById.getIn([ id, 'title' ])}
               getOptions={searchSeasons}
               isLoading={searchedSeasonIds.get('_status') === FETCHING}
@@ -237,6 +238,7 @@ export default class CreateTvGuideEntryModal extends Component {
               }} />
             <Field
               component={SelectInput}
+              getItemImage={(id) => mediaById.getIn([ id, 'posterImage', 'url' ])}
               getItemText={(id) => mediaById.getIn([ id, 'title' ])}
               getOptions={searchEpisodes}
               isLoading={searchedEpisodeIds.get('_status') === FETCHING}
