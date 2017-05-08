@@ -41,8 +41,10 @@ export default class Filters extends Component {
     // Load ages and genders, then load the rankings.
     await this.props.loadAges();
     await this.props.loadGenders();
-    // await this.props.loadLanguages();
-    await this.props.onChange();
+    // await this.props.loadLanguages();s
+    // The following line caused the data to be loaded twice when loading the dashboard,
+    // since the data is also loaded in the dashboard's componentDidMount.
+    // await this.props.onChange();
   }
 
   static styles = {

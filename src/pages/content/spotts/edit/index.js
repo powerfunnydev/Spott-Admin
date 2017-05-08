@@ -42,7 +42,6 @@ function validate (values, { currentSpott, t }) {
   if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
   if (title && !title[_activeLocale]) { validationErrors.title = validationErrors.title || {}; validationErrors.title[_activeLocale] = t('common.errors.required'); }
   if (!currentSpott.getIn([ 'image', 'url' ]) && !image) { validationErrors.image = t('common.errors.required'); }
-  console.warn('validationErrors', validationErrors);
   return validationErrors;
 }
 
@@ -114,6 +113,7 @@ export default class EditSpott extends Component {
     searchedBrandIds: ImmutablePropTypes.map.isRequired,
     searchedTopicIds: ImmutablePropTypes.map.isRequired,
     searchedUserIds: ImmutablePropTypes.map.isRequired,
+    source: PropTypes.object,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
@@ -146,7 +146,6 @@ export default class EditSpott extends Component {
   async componentWillMount () {
     if (this.props.params.spottId) {
       const editObj = await this.props.loadSpott(this.props.params.spottId);
-      console.warn('editobj:', editObj);
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale,
@@ -384,7 +383,7 @@ export default class EditSpott extends Component {
               onClose={() => this.setState({ ...this.state, modal: null })}
               onSubmit={this.onPersistTag}/>}
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
-            <Tabs activeTab={tab} showPublishStatus onBeforeChange={this.props.onBeforeChangeTab} onChange={this.props.onChangeTab}>
+            <Tabs activeTab={tab} publishStatusDisabled={currentSpott.hasIn([ 'source', 'medium' ])} showPublishStatus onBeforeChange={this.props.onBeforeChangeTab} onChange={this.props.onChangeTab}>
               <Tab title='Details'>
                 <div style={{ display: 'flex', marginTop: -1 }}>
                   <div style={{ width: '40%' }}>
@@ -487,7 +486,8 @@ export default class EditSpott extends Component {
             <Tab title='Availability'>
               <Availabilities
                 mediumId={this.props.params.spottId}
-                mediumType='spott'/>
+                mediumType='spott'
+                readOnly={currentSpott.hasIn([ 'source', 'medium' ])}/>
             </Tab>
             <Tab title='Audience'>
               <Audiences
