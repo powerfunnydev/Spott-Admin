@@ -48,7 +48,6 @@ const sceneTarget = {
         break;
       }
       case COLLECTION_ITEM: {
-        console.warn('COLLECTION_ITEM');
         const { x, y } = monitor.getClientOffset();
         const { height, left, top, width } = component._wrapper.getBoundingClientRect();
         const { sourceCollectionItem } = monitor.getItem();

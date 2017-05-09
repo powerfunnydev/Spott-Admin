@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformListTopic, transformTopic } from './transformers';
+import { transformListSpott, transformListTopic, transformTopic } from './transformers';
 
 export async function deleteBackgroundImage (baseUrl, authenticationToken, locale, { topicId }) {
   const url = `${baseUrl}/v004/data/topics/${topicId}/profileCover`;
@@ -24,6 +24,21 @@ export async function deleteTopics (baseUrl, authenticationToken, locale, { topi
 export async function fetchCropTopics (baseUrl, authenticationToken, locale, { region: { height, width, x, y }, sceneId }) {
   const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/video/scenes/${sceneId}/topics?height=${Math.round(height)}&width=${Math.round(width)}&x=${Math.round(x)}&y=${Math.round(y)}`);
   body.data = body.data.map(transformTopic);
+  return body;
+}
+
+export async function fetchSpotts (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField, topicId }) {
+  let url = `${baseUrl}/v004/data/topics/${topicId}/posts?page=${page}&pageSize=${pageSize}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
+  }
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  const { body } = await get(authenticationToken, locale, url);
+  // There is also usable data in body (not only in data field).
+  // We need also fields page, pageCount,...
+  body.data = body.data.map(transformListSpott);
   return body;
 }
 

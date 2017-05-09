@@ -89,9 +89,7 @@ export default class CollectionModal extends Component {
     const { collection, currentLocale, initialize, localeNames } = this.props;
 
     if (collection) {
-      console.warn('COLL', collection);
       for (const [ locale ] of localeNames) {
-        console.warn('locale', locale);
         if (typeof collection.basedOnDefaultLocale[locale] === 'undefined') {
           collection.basedOnDefaultLocale[locale] = true;
         }
@@ -120,7 +118,6 @@ export default class CollectionModal extends Component {
 
   async submit (form) {
     try {
-      console.warn('FORM', form.toJS());
       await this.props.onSubmit(form.toJS());
       this.onCloseClick();
     } catch (error) {

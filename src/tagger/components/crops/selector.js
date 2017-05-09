@@ -15,6 +15,7 @@ import {
   characterEntitiesSelector,
   createEntitiesByRelationSelector,
   characterHasAppearancesRelationsSelector,
+  currentMediumSelector,
   currentVideoIdSelector,
   sceneEntitiesSelector,
   videoHasSceneGroupsRelationsSelector,
@@ -180,6 +181,7 @@ const appearancesSelector = createSelector(
 export const persistCropSelector = createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
   appearances: appearancesSelector,
+  currentMedium: currentMediumSelector,
   currentMediumId: currentMediumIdSelector,
   defaultLocale: currentDefaultLocaleSelector,
   errors: formErrorsSelector,

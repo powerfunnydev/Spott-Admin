@@ -4,7 +4,9 @@ import { reducer as form } from 'redux-form/immutable';
 import media from './media';
 import globalReducer from './global';
 import data from './data';
+import _mediumCrops from '../pages/content/_mediumCrops/reducer';
 import _mediumTvGuide from '../pages/content/_mediumTvGuide/reducer';
+import _topicSpotts from '../pages/content/_topicSpotts/reducer';
 import brandsEdit from '../pages/content/brands/edit/reducer';
 import brandsList from '../pages/content/brands/list/reducer';
 import brandsReadUsers from '../pages/content/brands/read/users/list/reducer';
@@ -76,7 +78,9 @@ export default combineReducers({
   }),
   content: combineReducers({
     // _mediumTvGuide is a component used by a medium.
+    mediumCrops: _mediumCrops,
     mediumTvGuide: _mediumTvGuide,
+    topicSpotts: _topicSpotts,
     broadcastChannels: combineReducers({
       create: broadcastChannelsCreate,
       list: broadcastChannelsList

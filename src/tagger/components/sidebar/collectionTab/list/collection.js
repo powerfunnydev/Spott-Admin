@@ -72,7 +72,6 @@ const collectionTarget = {
       // Time to actually perform the action.
       if (hoverCollection !== sourceCollectionId) {
         // Locally, mutates state, not directly persisted to server!
-        console.warn('MOVE COLLECTION', dragIndex, hoverIndex);
         props.moveCollection(dragIndex, hoverIndex);
 
         // Note: we're mutating the monitor item here!

@@ -9,6 +9,7 @@ import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
+import CropList from '../../_mediumCrops';
 import TvGuideList from '../../_mediumTvGuide';
 import { generalStyles } from '../../../_common/components/table/index';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
@@ -87,6 +88,9 @@ export default class ReadMovie extends Component {
               <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
                 <Tab title='TV Guide'>
                   <TvGuideList {...this.props} mediumId={this.props.params.movieId}/>
+                </Tab>
+                <Tab title='Spotts'>
+                  <CropList {...this.props} mediumId={this.props.params.movieId}/>
                 </Tab>
               </Tabs>
             </Container>

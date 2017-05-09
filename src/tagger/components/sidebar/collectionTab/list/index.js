@@ -97,8 +97,6 @@ export default class Collections extends Component {
     const collectionsData = collections.get('data');
     const dragCollection = collectionsData.get(dragIndex);
 
-    console.warn('MOVE COLLECTION', dragIndex, hoverIndex);
-
     const newData = collectionsData
       .remove(dragIndex)
       .splice(hoverIndex, 0, dragCollection);

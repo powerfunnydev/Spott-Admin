@@ -14,6 +14,7 @@ import TvGuideList from '../../_mediumTvGuide';
 import { Tabs, Tab } from '../../../_common/components/formTabs';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
+import CropList from '../../_mediumCrops';
 
 /* eslint-disable no-alert */
 
@@ -99,6 +100,9 @@ export default class ReadEpisode extends Component {
               <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
                 <Tab title='TV Guide'>
                   <TvGuideList {...this.props} mediumId={this.props.params.episodeId}/>
+                </Tab>
+                <Tab title='Spotts'>
+                  <CropList {...this.props} mediumId={this.props.params.episodeId}/>
                 </Tab>
               </Tabs>
             </Container>
