@@ -324,7 +324,6 @@ export async function postVideoProduct (baseUrl, authenticationToken, locale, { 
       sortOrder: 0,
       uuid: appearanceId
     });
-    console.warn('products', _transformVideoProducts(products));
     return _transformVideoProducts(products);
   } catch (error) {
     switch (error.statusCode) {

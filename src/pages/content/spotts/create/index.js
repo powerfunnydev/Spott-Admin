@@ -152,7 +152,6 @@ export default class CreateSpottModal extends Component {
   }
 
   onMoveTag (tagId, point) {
-    console.warn('onMoveTag');
     const { change, dispatch, tags } = this.props;
     const myTags = tags ? tags : [];
     const tag = myTags.find((t) => t.id === tagId);
@@ -163,7 +162,6 @@ export default class CreateSpottModal extends Component {
   async onPersistTag (tag) {
     const { change, charactersById, dispatch, fetchBrandTopic, fetchCharacterTopic, fetchPersonTopic, personsById, productsById, tags } = this.props;
     const myTags = tags ? tags : [];
-    console.warn('tags', myTags);
     const newTags = [ ...myTags ];
 
     switch (tag.entityType) {

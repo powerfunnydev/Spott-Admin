@@ -67,6 +67,7 @@ export default class PersistCrop extends Component {
     _activeLocale: PropTypes.string,
     appearances: ImmutablePropTypes.list,
     change: PropTypes.func.isRequired,
+    currentMedium: ImmutablePropTypes.map.isRequired,
     currentMediumId: PropTypes.string.isRequired,
     currentScene: ImmutablePropTypes.map.isRequired,
     defaultLocale: PropTypes.string,
@@ -102,11 +103,12 @@ export default class PersistCrop extends Component {
   }
 
   async componentDidMount () {
-    const { change, currentMediumId, currentScene, dispatch, fetchMediumTopic, loadAppearances, topicIds } = this.props;
-    const mediumTopic = await fetchMediumTopic({ mediumId: currentMediumId });
+    const { change, currentMedium, currentScene, dispatch, fetchMediumTopic, loadAppearances, topicIds } = this.props;
+    // Get the topic for this medium.
+    const mediumTopic = await fetchMediumTopic({ mediumId: currentMedium.get('rootMediumId') });
     // Add the medium topic to the list of topics.
     const ids = topicIds ? topicIds : [];
-    if (ids.indexOf(mediumTopic.id) === -1) {
+    if (mediumTopic.text && ids.indexOf(mediumTopic.id) === -1) {
       ids.push(mediumTopic.id);
       dispatch(change('topicIds', ids));
     }
@@ -151,8 +153,7 @@ export default class PersistCrop extends Component {
   async onCreateTopic (text) {
     const { change, dispatch, persistTopic, topicIds = [] } = this.props;
     const { id } = await persistTopic({ text });
-    console.warn('id:', id);
-    console.log('topics:', topicIds);
+    // Construct new array (new reference).
     const newTopicIds = [ ...topicIds ];
     newTopicIds.push(id);
     dispatch(change('topicIds', newTopicIds));

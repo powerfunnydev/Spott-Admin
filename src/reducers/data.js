@@ -1,12 +1,13 @@
 import { fromJS } from 'immutable';
 import {
   serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
-  serializeFilterHasUsers, serializeFilterHasMediumCategories, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
+  serializeFilterHasUsers, serializeFilterHasMediumCategories, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTopics,
+  serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
   serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasLanguages,
-  serializeFilterHasPushNotifications, serializeFilterHasSpotts, serializeBroadcasterFilterHasMedia,
-  transformMediumToListMedium, serializeFilterHasTopics, serializeFilterHasTopMedia, serializeFilterHasDemographics, serializeFilterHasTopPeople, serializeFilterHasTopProducts
+  serializeFilterHasPushNotifications, serializeFilterHasCrops, serializeFilterHasSpotts, serializeBroadcasterFilterHasMedia,
+  transformMediumToListMedium, serializeFilterHasTopMedia, serializeFilterHasDemographics, serializeFilterHasTopPeople, serializeFilterHasTopProducts
 } from './utils';
 
 import * as audienceActions from '../actions/audience';
@@ -156,6 +157,7 @@ export default (state = fromJS({
     mediumHasAudiences: {},
     mediumHasAvailabilities: {},
     mediumHasBrands: {},
+    mediumHasCrops: {},
     mediumHasCollections: {},
     mediumHasShops: {},
     mediumHasTvGuideEntries: {},
@@ -166,6 +168,7 @@ export default (state = fromJS({
     seasonHasEpisodes: {},
     seriesEntryHasEpisodes: {},
     seriesEntryHasSeasons: {},
+    topicHasSpotts: {},
     videoHasCrops: {}
   }
 }), action) => {
@@ -628,6 +631,13 @@ export default (state = fromJS({
     case topicActions.UPLOAD_THUMB_IMAGE_SUCCESS:
       return fetchSuccess(state, [ 'entities', 'topics', action.topicId ], action.data);
 
+    case topicActions.SPOTTS_FETCH_START:
+      return searchStart(state, 'topicHasSpotts', serializeFilterHasSpotts(action));
+    case topicActions.SPOTTS_FETCH_SUCCESS:
+      return searchSuccess(state, 'spotts', 'topicHasSpotts', serializeFilterHasSpotts(action), action.data.data);
+    case topicActions.SPOTTS_FETCH_ERROR:
+      return searchError(state, 'topicHasSpotts', serializeFilterHasSpotts(action), action.error);
+
     case topicActions.TOPIC_FETCH_START:
       return fetchStart(state, [ 'entities', 'topics', action.topicId ]);
     case topicActions.TOPIC_FETCH_SUCCESS:
@@ -676,6 +686,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'tvGuideEntries', 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.data.data);
     case mediaActions.TV_GUIDE_ENTRIES_FETCH_ERROR:
       return searchError(state, 'mediumHasTvGuideEntries', serializeFilterHasTvGuideEntries(action), action.error);
+
+    case mediaActions.CROPS_FETCH_START:
+      return searchStart(state, 'mediumHasCrops', serializeFilterHasCrops(action));
+    case mediaActions.CROPS_FETCH_SUCCESS:
+      return searchSuccess(state, 'crops', 'mediumHasCrops', serializeFilterHasCrops(action), action.data.data);
+    case mediaActions.CROPS_FETCH_ERROR:
+      return searchError(state, 'mediumHasCrops', serializeFilterHasCrops(action), action.error);
 
     case mediaActions.MEDIUM_FETCH_START:
       return fetchStart(state, [ 'entities', 'media', action.mediumId ]);

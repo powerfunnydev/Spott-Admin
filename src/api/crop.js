@@ -38,6 +38,12 @@ export async function deleteCrop (baseUrl, authenticationToken, locale, { cropId
   await del(authenticationToken, locale, `${baseUrl}/v004/video/sceneCrops/${cropId}`);
 }
 
+export async function deleteCrops (baseUrl, authenticationToken, locale, { cropIds }) {
+  for (const cropId of cropIds) {
+    await deleteCrop(baseUrl, authenticationToken, locale, { cropId });
+  }
+}
+
 export async function fetchCrop (baseUrl, authenticationToken, locale, { cropId }) {
   const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/video/sceneCrops/${cropId}`);
   return transformCrop(body);

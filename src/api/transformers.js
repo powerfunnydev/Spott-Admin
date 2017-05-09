@@ -884,7 +884,8 @@ export function transformTopic ({ icon, profileImage, readOnly, sourceMedium, so
 }
 
 export function transformListCrop ({ area, auditInfo, post: {
-  comment, image, promoted, publishStatus, title, topics }, scene, uuid }) {
+  auditInfo: { lastUpdatedBy: postLastUpdatedBy, lastUpdatedOn: postLastUpdatedOn },
+  comment, image, promoted, publishStatus, title, topics, uuid: postUuid }, scene, uuid }) {
   return {
     comment,
     createdBy: auditInfo && auditInfo.createdBy,
@@ -893,6 +894,9 @@ export function transformListCrop ({ area, auditInfo, post: {
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     id: uuid,
     image: transformImage(image),
+    postId: postUuid,
+    postLastUpdatedBy,
+    postLastUpdatedOn,
     publishStatus,
     promoted,
     region: {

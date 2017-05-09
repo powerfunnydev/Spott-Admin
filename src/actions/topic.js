@@ -13,6 +13,10 @@ export const DELETE_THUMB_IMAGE_START = 'TOPIC/DELETE_THUMB_IMAGE_START';
 export const DELETE_THUMB_IMAGE_SUCCESS = 'TOPIC/DELETE_THUMB_IMAGE_SUCCESS';
 export const DELETE_THUMB_IMAGE_ERROR = 'TOPIC/DELETE_THUMB_IMAGE_ERROR';
 
+export const SPOTTS_FETCH_START = 'TOPIC/SPOTTS_FETCH_START';
+export const SPOTTS_FETCH_SUCCESS = 'TOPIC/SPOTTS_FETCH_SUCCESS';
+export const SPOTTS_FETCH_ERROR = 'TOPIC/SPOTTS_FETCH_ERROR';
+
 export const TOPIC_DELETE_START = 'TOPIC/TOPIC_DELETE_START';
 export const TOPIC_DELETE_SUCCESS = 'TOPIC/TOPIC_DELETE_SUCCESS';
 export const TOPIC_DELETE_ERROR = 'TOPIC/TOPIC_DELETE_ERROR';
@@ -50,6 +54,7 @@ export const deleteThumbImage = makeApiActionCreator(api.deleteThumbImage, DELET
 export const deleteTopic = makeApiActionCreator(api.deleteTopic, TOPIC_DELETE_START, TOPIC_DELETE_SUCCESS, TOPIC_DELETE_ERROR);
 export const deleteTopics = makeApiActionCreator(api.deleteTopics, TOPICS_DELETE_START, TOPICS_DELETE_SUCCESS, TOPICS_DELETE_ERROR);
 export const fetchCropTopics = makeApiActionCreator(api.fetchCropTopics, CROP_TOPICS_FETCH_START, CROP_TOPICS_FETCH_SUCCESS, CROP_TOPICS_FETCH_ERROR);
+export const fetchSpotts = makeApiActionCreator(api.fetchSpotts, SPOTTS_FETCH_START, SPOTTS_FETCH_SUCCESS, SPOTTS_FETCH_ERROR);
 export const fetchTopic = makeApiActionCreator(api.fetchTopic, TOPIC_FETCH_START, TOPIC_FETCH_SUCCESS, TOPIC_FETCH_ERROR);
 export const fetchTopics = makeApiActionCreator(api.fetchTopics, TOPICS_FETCH_START, TOPICS_FETCH_SUCCESS, TOPICS_FETCH_ERROR);
 export const persistTopic = makeApiActionCreator(api.persistTopic, TOPIC_PERSIST_START, TOPIC_PERSIST_SUCCESS, TOPIC_PERSIST_ERROR);

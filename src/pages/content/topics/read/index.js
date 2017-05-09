@@ -8,10 +8,12 @@ import selector from './selector';
 import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
+import { Tabs, Tab } from '../../../_common/components/formTabs';
 import Line from '../../../_common/components/line';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 import { generalStyles } from '../../../_common/components/table/index';
+import TopicList from '../../_topicSpotts';
 
 /* eslint-disable no-alert */
 
@@ -80,7 +82,13 @@ export default class ReadTopic extends Component {
           </Container>
           <Line/>
           <div style={[ generalStyles.fillPage, styles.table ]}>
-            <Container />
+            <Container>
+              <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
+                <Tab title='Spotts'>
+                  <TopicList {...this.props} topicId={params.topicId}/>
+                </Tab>
+              </Tabs>
+            </Container>
           </div>
           {children}
         </Root>

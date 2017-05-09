@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import AWS from 'aws-sdk';
 import { get, post, UnexpectedError, del } from './request';
-import { transformMedium, transformListMedium, transformTvGuideEntry, transformTopic } from './transformers';
+import { transformMedium, transformListMedium, transformTopic, transformTvGuideEntry, transformListCrop } from './transformers';
 
 function uploadToS3 ({ accessKeyId, acl, baseKey, bucket, file, policy, signature }, uploadingCallback) {
   return new Promise((resolve, reject) => {
@@ -280,6 +280,21 @@ export async function fetchTvGuideEntries (baseUrl, authenticationToken, locale,
   // There is also usable data in body (not only in data field).
   // We need also fields page, pageCount,...
   body.data = body.data.map(transformTvGuideEntry);
+  return body;
+}
+
+export async function fetchCrops (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField, mediumId }) {
+  let url = `${baseUrl}/v004/media/media/${mediumId}/crops?page=${page}&pageSize=${pageSize}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
+  }
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  const { body } = await get(authenticationToken, locale, url);
+  // There is also usable data in body (not only in data field).
+  // We need also fields page, pageCount,...
+  body.data = body.data.map(transformListCrop);
   return body;
 }
 

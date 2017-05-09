@@ -5,12 +5,15 @@ import { bindActionCreators } from 'redux';
 import { Root, Container, colors } from '../../../_common/styles';
 import * as actions from './actions';
 import selector from './selector';
-import EntityDetails from '../../../_common/entityDetails';
+import { generalStyles } from '../../../_common/components/table/index';
 import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
+import { Tabs, Tab } from '../../../_common/components/formTabs';
 import Line from '../../../_common/components/line';
+import EntityDetails from '../../../_common/entityDetails';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
+import CropList from '../../_mediumCrops';
 
 @connect(selector, (dispatch) => ({
   deleteCommercial: bindActionCreators(listActions.deleteCommercial, dispatch),
@@ -65,7 +68,8 @@ export default class ReadCommercial extends Component {
   }
 
   render () {
-    const { params, children, currentCommercial, deleteCommercial } = this.props;
+    const { styles } = this.constructor;
+    const { params, children, currentCommercial, deleteCommercial, location: { query: { tabIndex } } } = this.props;
     const defaultLocale = currentCommercial.get('defaultLocale');
 
     return (
@@ -83,6 +87,16 @@ export default class ReadCommercial extends Component {
                 onEdit={() => this.props.routerPushWithReturnTo(`/content/commercials/edit/${params.commercialId}`)}
                 onRemove={async () => { await deleteCommercial(params.commercialId); this.redirect(); }}/>}
           </Container>
+          <Line/>
+          <div style={[ generalStyles.fillPage, styles.table ]}>
+            <Container>
+              <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
+                <Tab title='Spotts'>
+                  <CropList {...this.props} mediumId={params.commercialId}/>
+                </Tab>
+              </Tabs>
+            </Container>
+          </div>
           <Line/>
           {children}
         </Root>
