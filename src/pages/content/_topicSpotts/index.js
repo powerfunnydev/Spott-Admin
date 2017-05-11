@@ -14,6 +14,7 @@ import selector from './selector';
 import UtilsBar from '../../_common/components/table/utilsBar';
 import ToolTip from '../../_common/components/toolTip';
 import { confirmation } from '../../_common/askConfirmation';
+import { MOVIE, EPISODE, COMMERCIAL, SERIE, SEASON } from '../../../constants/mediumTypes';
 import Spott from '../spotts/list/spott';
 import { slowdown } from '../../../utils';
 
@@ -29,7 +30,7 @@ export const prefix = 'spotts';
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
 }))
 @Radium
-export default class SpottsList extends Component {
+export default class SpottList extends Component {
 
   static propTypes = {
     children: PropTypes.node,
@@ -72,6 +73,22 @@ export default class SpottsList extends Component {
     const query = this.props.location.query;
     if (isQueryChanged(query, nextQuery, prefix)) {
       await this.slowSearch(nextProps.location.query, this.props.topicId);
+    }
+  }
+
+  determineMediumReadUrl (spott) {
+    const medium = spott.getIn([ 'sourceMedium' ]);
+    switch (medium && medium.get('type')) {
+      case COMMERCIAL:
+        return `/content/commercials/read/${medium.get('id')}`;
+      case EPISODE:
+        return `/content/series/read/${medium.getIn([ 'serie', 'id' ])}/seasons/read/${medium.getIn([ 'season', 'id' ])}/episodes/read/${medium.get('id')}`;
+      case MOVIE:
+        return `/content/movies/read/${medium.get('id')}`;
+      case SEASON:
+        return `/content/series/read/${medium.getIn([ 'serie', 'id' ])}/seasons/read/${medium.get('id')}`;
+      case SERIE:
+        return `/content/series/read/${medium.get('id')}`;
     }
   }
 
@@ -121,6 +138,17 @@ export default class SpottsList extends Component {
     );
   }
 
+  getSourceType (spott) {
+    const type = spott.getIn([ 'sourceMedium', 'type' ]);
+    const mediumTitle = spott.getIn([ 'sourceMedium', 'title' ]);
+    if (type === EPISODE) {
+      const seasonTitle = spott.getIn([ 'sourceMedium', 'season', 'title' ]);
+      const serieTitle = spott.getIn([ 'sourceMedium', 'serie', 'title' ]);
+      return `${serieTitle} - ${seasonTitle} - ${mediumTitle}`;
+    }
+    return mediumTitle;
+  }
+
   async deleteSpott (spottId) {
     const result = await confirmation();
     if (result) {
@@ -149,7 +177,8 @@ export default class SpottsList extends Component {
     console.warn('spotts', spotts.toJS());
     const columns = [
       { type: 'checkBox' },
-      { type: 'custom', sort: true, sortField: 'TITLE', title: 'TITLE', clickable: true, getUrl: this.determineReadUrl, convert: this.getNameItem, colspan: 2 },
+      { type: 'custom', sort: true, sortField: 'TITLE', title: 'TITLE', clickable: true, getUrl: this.determineReadUrl, convert: this.getNameItem, colspan: 3 },
+      { type: 'custom', title: 'SOURCE TYPE', clickable: true, getUrl: this.determineMediumReadUrl, convert: this.getSourceType, colspan: 3 },
       { type: 'custom', title: 'UPDATED BY', name: 'lastUpdatedBy' },
       { type: 'custom', sort: true, sortField: 'LAST_MODIFIED', title: 'LAST UPDATED ON', convert: this.getLastUpdatedOn },
       { type: 'custom', title: 'PUBLISH STATUS', name: 'publishStatus' },

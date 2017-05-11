@@ -1,11 +1,15 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { initialize, Field } from 'redux-form/immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { Root, Container } from '../../../_common/styles';
+import { filterStyles, Root, Container } from '../../../_common/styles';
 import { Tile, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, Pagination } from '../../../_common/components/table/index';
+import { FilterContent } from '../../../_common/components/filterDropdown';
+import SelectionDropdown from '../../../_common/components/selectionDropdown';
 import Line from '../../../_common/components/line';
 import ListView from '../../../_common/components/listView/index';
+import SelectInput from '../../../_common/inputs/selectInput';
 import Radium from 'radium';
 import * as actions from './actions';
 import selector from './selector';
@@ -16,10 +20,12 @@ import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 import { transformSourceToLink } from '../_common/utils';
 
+export const filterArray = [ 'sourceTypes' ];
 @tableDecorator()
 @connect(selector, (dispatch) => ({
   deleteTopic: bindActionCreators(actions.deleteTopic, dispatch),
   deleteTopics: bindActionCreators(actions.deleteTopics, dispatch),
+  initializeForm: bindActionCreators(initialize, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
@@ -32,6 +38,8 @@ export default class Topics extends Component {
     children: PropTypes.node,
     deleteTopic: PropTypes.func.isRequired,
     deleteTopics: PropTypes.func.isRequired,
+    getFilterObjectFromQuery: PropTypes.func.isRequired,
+    initializeForm: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     listTopicsEntities: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
@@ -46,6 +54,7 @@ export default class Topics extends Component {
     topics: ImmutablePropTypes.map.isRequired,
     totalResultCount: PropTypes.number.isRequired,
     onChangeDisplay: PropTypes.func.isRequired,
+    onChangeFilter: PropTypes.func.isRequired,
     onChangePage: PropTypes.func.isRequired,
     onChangeSearchString: PropTypes.func.isRequired,
     onSortField: PropTypes.func.isRequired
@@ -60,13 +69,15 @@ export default class Topics extends Component {
   }
 
   componentWillMount () {
-    this.props.load(this.props.location.query);
+    const { getFilterObjectFromQuery, initializeForm, load } = this.props;
+    load(this.props.location.query);
+    initializeForm('topicList', getFilterObjectFromQuery(filterArray));
   }
 
   async componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
-    if (isQueryChanged(query, nextQuery)) {
+    if (isQueryChanged(query, nextQuery, null, filterArray)) {
       this.slowSearch(nextQuery);
     }
   }
@@ -114,7 +125,7 @@ export default class Topics extends Component {
 
   render () {
     const { topics, children, deleteTopic, isSelected, location: { query, query: { display, page, searchString, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString } = this.props;
+      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeFilter, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     const columns = [
       { type: 'checkBox' },
@@ -123,6 +134,13 @@ export default class Topics extends Component {
       { type: 'custom', title: 'TYPE', name: 'sourceType' },
       { type: 'dropdown' }
     ];
+    const sourceTypes = {
+      BRAND: 'Brand',
+      CHARACTER: 'Character',
+      MANUAL: 'Manuel',
+      MEDIUM: 'Medium',
+      PERSON: 'Person'
+    };
     return (
       <SideMenu>
         <Root>
@@ -131,6 +149,27 @@ export default class Topics extends Component {
             <Container>
               <UtilsBar
                 display={display}
+                filterContent={
+                  <FilterContent
+                    form='topicList'
+                    initialValues={{ sourceTypes: null }}
+                    style={[ filterStyles.filterContent, { minWidth: '400px', right: '-150px' } ]}
+                    onApplyFilter={onChangeFilter}>
+                    <div style={[ filterStyles.row, filterStyles.firstRow ]}>
+                      <div style={filterStyles.title}>Source types</div>
+                      <Field
+                        component={SelectInput}
+                        first
+                        getItemText={(key) => sourceTypes[key]}
+                        getOptions={() => Object.keys(sourceTypes)}
+                        multiselect
+                        name='sourceTypes'
+                        options={Object.keys(sourceTypes)}
+                        placeholder='Source types'
+                        style={filterStyles.fullWidth}/>
+                    </div>
+                  </FilterContent>
+                }
                 isLoading={topics.get('_status') !== 'loaded'}
                 numberSelected={numberSelected}
                 searchString={searchString}

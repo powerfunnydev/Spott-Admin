@@ -2,11 +2,14 @@ import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { initialize, Field } from 'redux-form/immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { Root, Container } from '../../../_common/styles';
+import { filterStyles, Root, Container } from '../../../_common/styles';
 import { Tile, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, Pagination } from '../../../_common/components/table/index';
-import Line from '../../../_common/components/line';
 import ListView from '../../../_common/components/listView/index';
+import { FilterContent } from '../../../_common/components/filterDropdown';
+import Line from '../../../_common/components/line';
+import TextInput from '../../../_common/inputs/textInput';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
@@ -15,10 +18,12 @@ import selector from './selector';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 
+export const filterArray = [ 'brand' ];
 @tableDecorator()
 @connect(selector, (dispatch) => ({
   deleteCommercial: bindActionCreators(actions.deleteCommercial, dispatch),
   deleteCommercials: bindActionCreators(actions.deleteCommercials, dispatch),
+  initializeForm: bindActionCreators(initialize, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
@@ -32,6 +37,8 @@ export default class Commercials extends Component {
     commercials: ImmutablePropTypes.map.isRequired,
     deleteCommercial: PropTypes.func.isRequired,
     deleteCommercials: PropTypes.func.isRequired,
+    getFilterObjectFromQuery: PropTypes.func.isRequired,
+    initializeForm: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.shape({
@@ -44,6 +51,7 @@ export default class Commercials extends Component {
     selectCheckbox: PropTypes.func.isRequired,
     totalResultCount: PropTypes.number.isRequired,
     onChangeDisplay: PropTypes.func.isRequired,
+    onChangeFilter: PropTypes.func.isRequired,
     onChangePage: PropTypes.func.isRequired,
     onChangeSearchString: PropTypes.func.isRequired,
     onSortField: PropTypes.func.isRequired
@@ -57,13 +65,15 @@ export default class Commercials extends Component {
   }
 
   async componentWillMount () {
-    await this.props.load(this.props.location.query);
+    const { getFilterObjectFromQuery, initializeForm, load } = this.props;
+    await load(this.props.location.query);
+    initializeForm('commercialList', getFilterObjectFromQuery(filterArray));
   }
 
   async componentWillReceiveProps (nextProps) {
     const nextQuery = nextProps.location.query;
     const query = this.props.location.query;
-    if (isQueryChanged(query, nextQuery)) {
+    if (isQueryChanged(query, nextQuery, null, filterArray)) {
       this.slowSearch(nextQuery);
     }
   }
@@ -102,7 +112,7 @@ export default class Commercials extends Component {
 
   render () {
     const { commercials, children, deleteCommercial, isSelected, location: { query, query: { display, page, searchString, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString } = this.props;
+      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeFilter, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     const columns = [
       { type: 'checkBox' },
@@ -120,6 +130,22 @@ export default class Commercials extends Component {
             <Container>
               <UtilsBar
                 display={display}
+                filterContent={
+                  <FilterContent
+                    form='commercialList'
+                    initialValues={{ brand: '' }}
+                    style={filterStyles.filterContent}
+                    onApplyFilter={onChangeFilter}>
+                    <div style={[ filterStyles.row, filterStyles.firstRow ]}>
+                      <div style={filterStyles.title}>Brand</div>
+                      <Field
+                        component={TextInput}
+                        first
+                        name='brand'
+                        style={filterStyles.fullWidth}/>
+                    </div>
+                  </FilterContent>
+                }
                 isLoading={commercials.get('_status') !== 'loaded'}
                 searchString={searchString}
                 textCreateButton='New Commercial'

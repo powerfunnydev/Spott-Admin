@@ -13,7 +13,7 @@ import Line from '../../../_common/components/line';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 import { generalStyles } from '../../../_common/components/table/index';
-import TopicList from '../../_topicSpotts';
+import SpottList from '../../_topicSpotts';
 
 /* eslint-disable no-alert */
 
@@ -85,7 +85,7 @@ export default class ReadTopic extends Component {
             <Container>
               <Tabs activeTab={tabIndex} onChange={this.onChangeTab}>
                 <Tab title='Spotts'>
-                  <TopicList {...this.props} topicId={params.topicId}/>
+                  <SpottList {...this.props} topicId={params.topicId}/>
                 </Tab>
               </Tabs>
             </Container>

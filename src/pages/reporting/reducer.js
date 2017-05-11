@@ -35,6 +35,7 @@ function fetchActivityDataError (state, field, { error, mediumIds }) {
 
 export default (state = fromJS({
   ageData: {},
+  brandSubscriptions: {},
   currentBrandSubscriptionsPage: 0,
   currentCharacterSubscriptionsPage: 0,
   currentMediumSubscriptionsPage: 0,
@@ -42,9 +43,9 @@ export default (state = fromJS({
   currentProductBuysPage: 0,
   currentProductImpressionsPage: 0,
   currentProductViewsPage: 0,
-  brandSubscriptions: {},
   characterSubscriptions: {},
   genderData: {},
+  locationData: {},
   mediumSubscriptions: {},
   mediumSyncs: {},
   productBuys: {},
@@ -104,6 +105,13 @@ export default (state = fromJS({
       return fetchSuccess(state, [ 'characterSubscriptions', action.data.page ], action.data);
     case actions.CHARACTER_SUBSCRIPTIONS_FETCH_ERROR:
       return fetchError(state, [ 'characterSubscriptions', action.page ], action.error);
+
+    case actions.LOCATION_DATA_FETCH_START:
+      return fetchStart(state, [ 'locationData' ]);
+    case actions.LOCATION_DATA_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'locationData' ], action.data);
+    case actions.LOCATION_DATA_FETCH_ERROR:
+      return fetchError(state, [ 'locationData' ], action.error);
 
     case actions.MEDIUM_SUBSCRIPTIONS_FETCH_START:
       return fetchStart(state, [ 'mediumSubscriptions', action.page ])

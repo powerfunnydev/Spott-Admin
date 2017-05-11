@@ -3,6 +3,7 @@ import Radium from 'radium';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Highcharts from 'react-highcharts';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import { routerPushWithReturnTo } from '../../../actions/global';
 import moment from 'moment';
 // Note that Highcharts has to be in the codebase already
@@ -10,15 +11,21 @@ import moment from 'moment';
 import HighchartsMore from 'highcharts-more';
 // Highcharts exporting
 import HighchartsExporting from 'highcharts-exporting';
+import HighchartsExportCsv from 'highcharts-export-csv';
 import Widget, { largeWidgetStyle, mediumWidgetStyle } from '../widget';
 import { colors, fontWeights, makeTextStyle, Container } from '../../_common/styles';
+import { isLoading } from '../../../constants/statusTypes';
 import ActivityFilterForm from './filters';
 import * as actions from './actions';
 import { activitySelector } from './selector';
 import { arraysEqual, slowdown } from '../../../utils';
+import MarkersMap from '../_markersMap';
+import HamburgerDropdown, { styles as dropdownStyles } from '../../_common/components/hamburgerDropdown';
+import { actionTypes, downloadFile, renderHamburgerDropdown } from '../highchart';
 
 HighchartsMore(Highcharts.Highcharts);
 HighchartsExporting(Highcharts.Highcharts);
+HighchartsExportCsv(Highcharts.Highcharts);
 
 Highcharts.Highcharts.setOptions({
   global: {
@@ -28,6 +35,7 @@ Highcharts.Highcharts.setOptions({
 
 @connect(activitySelector, (dispatch) => ({
   loadActivities: bindActionCreators(actions.loadActivities, dispatch),
+  loadLocationData: bindActionCreators(actions.loadLocationData, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @Radium
@@ -40,7 +48,9 @@ export default class ReportingActivity extends Component {
     isLoadingGender: PropTypes.bool.isRequired,
     isLoadingTimeline: PropTypes.bool.isRequired,
     loadActivities: PropTypes.func.isRequired,
+    loadLocationData: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    markers: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     timelineConfig: PropTypes.object.isRequired
   };
@@ -62,6 +72,7 @@ export default class ReportingActivity extends Component {
     };
     await this.props.routerPushWithReturnTo({ ...location, query });
     await this.loadActivities(query);
+    await this.props.loadLocationData();
   }
 
   componentWillReceiveProps (nextProps) {
@@ -73,7 +84,21 @@ export default class ReportingActivity extends Component {
       query.startDate !== nextQuery.startDate ||
       !arraysEqual(query.media, nextQuery.media)) {
       this.loadActivities(nextProps.location.query);
+      this.props.loadLocationData();
     }
+  }
+
+  /*
+   * This function triggers an method, depending on the given actionType.
+   */
+  downloadFile (actionType = actionTypes.PNG) {
+    const chart = this.refs.brandActivityHighchart.getChart();
+    actionType === actionTypes.PRINT && chart.print();
+    actionType === actionTypes.PNG && chart.exportChart();
+    actionType === actionTypes.JPEG && chart.exportChart({ type: 'image/jpeg' });
+    actionType === actionTypes.PDF && chart.exportChart({ type: 'application/pdf' });
+    actionType === actionTypes.SVG && chart.exportChart({ type: 'image/svg+xml' });
+    actionType === actionTypes.CSV && chart.downloadCSV();
   }
 
   onChangeActivityFilter (field, type, value) {
@@ -87,6 +112,9 @@ export default class ReportingActivity extends Component {
   }
 
   static styles = {
+    paddingBottom: {
+      paddingBottom: '1.5em'
+    },
     activityFilterForm: {
       paddingBottom: '1.5em'
     },
@@ -135,7 +163,8 @@ export default class ReportingActivity extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { ageConfig, genderConfig, isLoadingAge, isLoadingGender, isLoadingTimeline, location: { query: { startDate, endDate, events } }, timelineConfig } = this.props;
+    const { ageConfig, genderConfig, isLoadingAge, isLoadingGender, isLoadingTimeline,
+      location: { query: { startDate, endDate, events } }, markers, timelineConfig } = this.props;
     return (
       <div>
         <div style={styles.charts}>
@@ -149,22 +178,45 @@ export default class ReportingActivity extends Component {
               }}
               style={styles.activityFilterForm}
               onChange={this.onChangeActivityFilter} />
-            <Widget isLoading={isLoadingTimeline} style={largeWidgetStyle} title='Timeline'>
-              <Highcharts config={timelineConfig} isPureConfig />
+            <Widget
+              header={
+               renderHamburgerDropdown(this.refs.timelineHighchart)
+              }
+              isLoading={isLoadingTimeline}
+              style={largeWidgetStyle}
+              title='Timeline'>
+              <Highcharts config={timelineConfig} isPureConfig ref='timelineHighchart'/>
+            </Widget>
+            <Widget
+              isLoading={isLoading(markers)}
+              style={largeWidgetStyle}
+              title='Activity by region'>
+              <MarkersMap markers={markers.get('data')} />
             </Widget>
             <div style={styles.widgets}>
-              <Widget isLoading={isLoadingAge} style={mediumWidgetStyle} title='Age'>
-                <Highcharts config={ageConfig} isPureConfig />
+              <Widget
+                header={
+                 renderHamburgerDropdown(this.refs.ageHighchart)
+                }
+                isLoading={isLoadingAge}
+                style={mediumWidgetStyle} title='Age'>
+                <Highcharts config={ageConfig} isPureConfig ref='ageHighchart'/>
               </Widget>
-              <Widget isLoading={isLoadingGender} style={mediumWidgetStyle} title='Gender'>
-                <Highcharts config={genderConfig} isPureConfig />
+              <Widget
+                header={
+                 renderHamburgerDropdown(this.refs.genderHighchart)
+                }
+                isLoading={isLoadingGender}
+                style={mediumWidgetStyle}
+                title='Gender'>
+                <Highcharts config={genderConfig} isPureConfig ref='genderHighchart'/>
               </Widget>
+            </div>
               {/*
               <Widget title='Location'>
                 <Highcharts config={locationConfig} isPureConfig />
               </Widget>
               */}
-            </div>
           </Container>
         </div>
       </div>

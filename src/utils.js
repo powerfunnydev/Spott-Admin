@@ -95,10 +95,10 @@ export function downloadFile (url) {
 
 // Creates an action creator which takes a searchString
 export function createSearchAction (dataAction, startActionType, errorActionType, selector) {
-  return (searchString = '') => {
+  return (searchString = '', extraArgs = {}) => {
     return async (dispatch, getState) => {
       const lowerCaseSearchString = searchString.toLowerCase();
-      const payload = selector ? selector(getState()) : {};
+      const payload = selector ? selector(getState()) : extraArgs;
       try {
         dispatch({ searchString: lowerCaseSearchString, type: startActionType, ...payload });
         return await dispatch(dataAction({ searchString: lowerCaseSearchString, ...payload }));

@@ -11,6 +11,7 @@ import { buttonStyles, colors, fontWeights, makeTextStyle, FormSubtitle, FormDes
 import Button from '../../../_common/components/buttons/button';
 import PlusButton from '../../../_common/components/buttons/plusButton';
 import Collection from './collection';
+import CollectionsImport from './collectionsImport';
 import PersistCollectionModal from '../persist';
 import PersistCollectionItemModal from './collectionItems/persist';
 import PersistModal, { dialogStyle } from '../../../_common/components/persistModal';
@@ -19,6 +20,7 @@ import * as actions from './actions';
 @connect(null, (dispatch) => ({
   deleteCollection: bindActionCreators(actions.deleteCollection, dispatch),
   deleteCollectionItem: bindActionCreators(actions.deleteCollectionItem, dispatch),
+  importCollections: bindActionCreators(actions.importCollections, dispatch),
   loadCollection: bindActionCreators(actions.loadCollection, dispatch),
   loadCollectionItem: bindActionCreators(actions.loadCollectionItem, dispatch),
   loadCollectionItems: bindActionCreators(actions.fetchCollectionItems, dispatch),
@@ -36,8 +38,10 @@ export default class Collections extends Component {
   static propTypes = {
     brandsById: ImmutablePropTypes.map.isRequired,
     charactersById: ImmutablePropTypes.map.isRequired,
+    currentSeriesEntryId: PropTypes.string,
     deleteCollection: PropTypes.func.isRequired,
     deleteCollectionItem: PropTypes.func.isRequired,
+    importCollections: PropTypes.func.isRequired,
     loadCollection: PropTypes.func.isRequired,
     loadCollectionItem: PropTypes.func.isRequired,
     loadCollectionItems: PropTypes.func.isRequired,
@@ -69,6 +73,7 @@ export default class Collections extends Component {
     this.onCollectionMove = ::this.onCollectionMove;
     this.onSubmitCollection = :: this.onSubmitCollection;
     this.onSubmitCollectionItem = ::this.onSubmitCollectionItem;
+    this.onSubmitImportCollection = ::this.onSubmitImportCollection;
     this.state = {
       collections: props.mediumCollections,
       createCollection: false,
@@ -201,6 +206,14 @@ export default class Collections extends Component {
     await loadCollectionItems({ collectionId: form.collectionId });
   }
 
+  async onSubmitImportCollection (form) {
+    const { episodeId } = form.toJS();
+    const { loadCollections, importCollections, mediumId } = this.props;
+    await importCollections({ fromMediumId: episodeId, toMediumId: mediumId });
+    loadCollections({ mediumId });
+    this.setState({ ...this.state, editImportCollections: false });
+  }
+
   async onCollectionItemMove ({ before, sourceCollectionId, sourceCollectionItemId, targetCollectionItemId }) {
     const { loadCollectionItems, persistMoveCollectionItem } = this.props;
     await persistMoveCollectionItem({
@@ -281,8 +294,9 @@ export default class Collections extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      brandsById, charactersById, loadCollections, mediumId, productsById, reorderCollections, searchBrands,
-      searchCharacters, searchProducts, searchedBrandIds, searchedProductIds, searchedCharacterIds
+      brandsById, charactersById, loadCollections, currentSeriesEntryId, mediumId,
+       productsById, reorderCollections, searchBrands, searchCharacters, searchProducts,
+       searchedBrandIds, searchedProductIds, searchedCharacterIds
     } = this.props;
     return (
       <div>
@@ -306,6 +320,22 @@ export default class Collections extends Component {
                     visibleCollections
                   });
                 }}/>
+                {currentSeriesEntryId &&
+                <Button
+                  first
+                  style={[ buttonStyles.gray, buttonStyles.extraSmall, { marginBottom: 40, marginLeft: 10 } ]}
+                  text='Import Collections'
+                  onClick={async () => {
+                    // const visibleCollections = {};
+                    // for (const collection of this.state.collections.get('data')) {
+                    //   visibleCollections[collection.get('id')] = collection.get('visible');
+                    // }
+                    this.setState({
+                      ...this.state,
+                      editImportCollections: true
+                    });
+                  }}/>
+}
             </div>
             <div>
               <PlusButton key='create' style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]} text='Create Collection' onClick={this.onClickNewEntry} />
@@ -406,6 +436,11 @@ export default class Collections extends Component {
               );
             })}
           </PersistModal>}
+
+          {this.state.editImportCollections &&
+            <CollectionsImport currentSeriesEntryId={currentSeriesEntryId} mediumId={mediumId}
+              onClose={() => this.setState({ ...this.state, editImportCollections: false })}
+              onSubmit={this.onSubmitImportCollection}/>}
       </div>
     );
   }

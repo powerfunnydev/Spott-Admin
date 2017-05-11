@@ -106,7 +106,7 @@ export class FilterContent extends Component {
             <button
               key='cancel'
               style={[ buttonStyles.base, buttonStyles.small, buttonStyles.white ]}
-              onClick={this.onCancel}>Cancel</button>
+              onClick={this.onCancelFilter}>Cancel</button>
             <button
               key='save'
               style={[ buttonStyles.base, buttonStyles.small, buttonStyles.blue ]}

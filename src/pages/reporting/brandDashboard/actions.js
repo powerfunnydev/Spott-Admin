@@ -1,7 +1,7 @@
 import moment from 'moment';
 // import { fetchLanguages } from '../../../actions/language';
 import {
-  fetchAgeData, fetchDateData, fetchDemographics, fetchBrandDashboardEvents,
+  fetchAgeData, fetchDateData, fetchBrandDashboardEvents,
   fetchGenderData, fetchKeyMetrics, fetchTopMedia, fetchTopPeople, fetchTopProducts,
   fetchLocationData
 } from '../../../actions/brandDashboard';
@@ -221,7 +221,7 @@ export function loadAgeData () {
   };
 }
 
-export function loadGenderData (query) {
+export function loadGenderData () {
   return async (dispatch, getState) => {
     const state = getState();
     const query = locationSelector(state).query;

@@ -469,7 +469,7 @@ class ProductMarker extends Component {
                 <div style={styles.buttons}>
                   {this.renderSimilarProducts(product, similarProducts)}
                   {product && product.get('id') &&
-                    <a href={`${cmsNextBaseUrl}/#/content/products/edit/${product.get('id')}`} style={[ buttonStyle.base, buttonStyle.small, styles.grayButton, styles.link ]} target='_blank'>Edit product</a>}
+                    <a href={`/#/content/products/edit/${product.get('id')}`} style={[ buttonStyle.base, buttonStyle.small, styles.grayButton, styles.link ]} target='_blank'>Edit product</a>}
 
                   {allowProductSuggestions &&
                     <button key='suggestions' style={[ buttonStyle.base, buttonStyle.small, styles.grayButton ]} onClick={this.onSeeProductSuggestions}>See suggestions</button>}

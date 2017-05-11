@@ -21,6 +21,9 @@ export const SORT_COLUMN = 'TOPICS/SORT_COLUMN';
 export function load (query) {
   return async (dispatch, getState) => {
     try {
+      if (query.sourceTypesFilter && typeof query.sourceTypesFilter === 'string') {
+        query.sourceTypesFilter = [ query.sourceTypesFilter ]; // convert query.sourceTypesFilter into an array.
+      }
       return await dispatch(dataFetchTopics(query));
     } catch (error) {
       console.warn(error);

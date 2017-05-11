@@ -71,7 +71,6 @@ export function tableDecorator (prefix) {
         // E.g.: { published: true, drafted: true }
         onChangeFilter (filterObj) {
           const queryObj = { ...this.props.location.query };
-          console.log('prefix', prefix);
           for (const filter in filterObj) {
             queryObj[concatCamelCase(filter.concat('Filter'), prefix)] = filterObj[filter];
           }

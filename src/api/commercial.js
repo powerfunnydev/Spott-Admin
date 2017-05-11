@@ -1,13 +1,16 @@
 import { del, get, post, postFormData } from './request';
 import { transformListCommercial, transformCommercial, transformScheduleEntry } from './transformers';
 
-export async function fetchCommercials (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+export async function fetchCommercials (baseUrl, authenticationToken, locale, { brandFilter, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/commercials?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  if (brandFilter) {
+    url = url.concat(`&brand=${encodeURIComponent(brandFilter)}`);
   }
   const { body } = await get(authenticationToken, locale, url);
   // There is also usable data in body (not only in data field).
