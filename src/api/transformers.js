@@ -946,13 +946,14 @@ export function transformCrop ({ area, auditInfo, post: { defaultLocale, image, 
   return crop;
 }
 
-export function transformListSpott ({ auditInfo, comment, image, promoted, publishStatus, title, topics, uuid }) {
+export function transformListSpott ({ auditInfo, comment, image, promoted, publishStatus, source, title, topics, uuid }) {
   return {
     comment,
     createdBy: auditInfo && auditInfo.createdBy,
     createdOn: auditInfo && auditInfo.createdOn,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    sourceMedium: source && source.medium && transformListMedium(source.medium),
     id: uuid,
     image: transformImage(image),
     promoted,

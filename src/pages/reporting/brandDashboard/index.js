@@ -21,25 +21,17 @@ import { SideMenu } from '../../app/sideMenu';
 import Header from '../../app/multiFunctionalHeader';
 import Filters from './filters';
 import NumberWidget from './numberWidget';
-import MarkersMap from './markersMap';
+import MarkersMap from '../_markersMap';
 import Widget from './widget';
 import ImageTitle from './imageTitle';
 import * as actions from './actions';
 import selector, { topMediaPrefix, topPeoplePrefix, topProductsPrefix } from './selector';
 import HamburgerDropdown, { styles as dropdownStyles } from '../../_common/components/hamburgerDropdown';
+import { actionTypes, downloadFile, renderHamburgerDropdown } from '../highchart';
 
 HighchartsMore(Highcharts.Highcharts);
 HighchartsExporting(Highcharts.Highcharts);
 HighchartsExportCsv(Highcharts.Highcharts);
-
-const actionTypes = {
-  PRINT: 'PRINT',
-  PNG: 'PNG',
-  JPEG: 'JPEG',
-  PDF: 'PDF',
-  SVG: 'SVG',
-  CSV: 'CSV'
-};
 
 Highcharts.Highcharts.setOptions({
   navigation: {
@@ -351,6 +343,7 @@ export default class BrandDashboard extends Component {
     loadTopPeople: PropTypes.func.isRequired,
     loadTopProducts: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    markers: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBrands: PropTypes.func.isRequired,
     searchedBrandIds: ImmutablePropTypes.map.isRequired,
@@ -405,24 +398,11 @@ export default class BrandDashboard extends Component {
     await this.props.loadLocationData();
   }
 
-  /*
-   * This function triggers an method, depending on the given actionType.
-   */
-  downloadFile (actionType = actionTypes.PNG) {
-    const chart = this.refs.brandActivityHighchart.getChart();
-    actionType === actionTypes.PRINT && chart.print();
-    actionType === actionTypes.PNG && chart.exportChart();
-    actionType === actionTypes.JPEG && chart.exportChart({ type: 'image/jpeg' });
-    actionType === actionTypes.PDF && chart.exportChart({ type: 'application/pdf' });
-    actionType === actionTypes.SVG && chart.exportChart({ type: 'image/svg+xml' });
-    actionType === actionTypes.CSV && chart.downloadCSV();
-  }
-
   hideBar (event) {
     const { headerHidden } = this.state;
-    event.currentTarget.scrollTop > 70 ?
-       !headerHidden && this.setState({ headerHidden: true })
-       : headerHidden && this.setState({ headerHidden: false });
+    event.currentTarget.scrollTop > 70
+      ? !headerHidden && this.setState({ headerHidden: true })
+      : headerHidden && this.setState({ headerHidden: false });
   }
 
   async onChangeFilter (field, type, value) {
@@ -595,14 +575,7 @@ export default class BrandDashboard extends Component {
                   style={[ styles.field, { paddingRight: '0.75em' } ]}
                   valueComponent={ColorValue}
                   onChange={this.onChangeFilter.bind(this, 'brandActivityEvents', 'array')} />
-                  <HamburgerDropdown style={{ marginLeft: 'auto' }}>
-                    <div key='print' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.PRINT)}>Print</div>
-                    <div key='png' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.PNG)}>Download PNG</div>
-                    <div key='jpeg' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.JPEG)}>Download JPEG</div>
-                    <div key='pdf' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.PDF)}>Download PDF</div>
-                    <div key='svg' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.SVG)}>Download SVG</div>
-                    <div key='csv' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.CSV)}>Download CSV</div>
-                  </HamburgerDropdown>
+                  { renderHamburgerDropdown(this.refs.brandActivityHighchart) }
               </div>
             }
             isLoading={isLoading(dateDataConfig)}

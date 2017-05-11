@@ -1,10 +1,10 @@
 import moment from 'moment';
 import { searchMedia as dataSearchMedia } from '../../../actions/media';
 import {
-  fetchAges, fetchEvents, fetchGenders, fetchTimelineData, fetchAgeData,
+  fetchAges, fetchEvents, fetchGenders, fetchLocationData, fetchTimelineData, fetchAgeData,
   fetchGenderData
 } from '../../../actions/reporting';
-import { currentEventsSelector, currentMediaSelector } from './selector';
+import { currentAgesSelector, currentGendersSelector, currentLanguagesSelector, currentEventsSelector, currentMediaSelector } from './selector';
 import { locationSelector } from '../../../selectors/global';
 
 // Action types
@@ -57,6 +57,34 @@ export function loadActivities () {
       }
     } catch (error) {
       dispatch({ error, type: ACTIVITIES_FETCH_ERROR });
+    }
+  };
+}
+
+export function loadLocationData () {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const query = locationSelector(state).query;
+    const mediumIds = currentMediaSelector(state);
+    const eventIds = currentEventsSelector(state);
+
+    if (mediumIds && query.endDate && query.startDate && eventIds) {
+      const ages = currentAgesSelector(state);
+      const genders = currentGendersSelector(state);
+      const languages = currentLanguagesSelector(state);
+      const endDate = moment(query.endDate);
+      const startDate = moment(query.startDate);
+
+      const args = {
+        ages,
+        mediumIds,
+        eventIds,
+        endDate,
+        genders,
+        languages,
+        startDate
+      };
+      return await dispatch(fetchLocationData(args));
     }
   };
 }

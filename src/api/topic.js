@@ -49,10 +49,13 @@ export async function fetchTopic (baseUrl, authenticationToken, locale, { topicI
   return result;
 }
 
-export async function fetchTopics (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+export async function fetchTopics (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField, sourceTypesFilter }) {
   let url = `${baseUrl}/v004/data/topics?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
+  }
+  if (sourceTypesFilter) {
+    url = url.concat(`&sourceType=${sourceTypesFilter.join(',')}`);
   }
   if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);

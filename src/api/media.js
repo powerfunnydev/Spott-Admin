@@ -1,7 +1,7 @@
 /* eslint-disable prefer-const */
 import AWS from 'aws-sdk';
 import { get, post, UnexpectedError, del } from './request';
-import { transformMedium, transformListMedium, transformTopic, transformTvGuideEntry, transformListCrop } from './transformers';
+import { transformMedium, transformListMedium, transformTopic, transformTvGuideEntry, transformListCrop, transformListCollection } from './transformers';
 
 function uploadToS3 ({ accessKeyId, acl, baseKey, bucket, file, policy, signature }, uploadingCallback) {
   return new Promise((resolve, reject) => {
@@ -308,4 +308,11 @@ export async function fetchTopic (baseUrl, authenticationToken, locale, { medium
   const { body } = await get(authenticationToken, locale, url);
   const result = transformTopic(body);
   return result;
+}
+
+export async function importCollections (baseUrl, authenticationToken, locale, { fromMediumId, toMediumId }) {
+  const url = `${baseUrl}/v004/media/media/${toMediumId}/itemCollections/actions/copy/${fromMediumId}`;
+  const result = await post(authenticationToken, locale, url);
+  const collections = result.body.data.map(transformListCollection);
+  return collections;
 }

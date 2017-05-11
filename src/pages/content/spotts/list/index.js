@@ -19,6 +19,7 @@ import Header from '../../../app/multiFunctionalHeader';
 import * as actions from './actions';
 import selector from './selector';
 import Spott from './spott';
+import { MOVIE, EPISODE, COMMERCIAL, SERIE, SEASON } from '../../../../constants/mediumTypes';
 
 @tableDecorator()
 @connect(selector, (dispatch) => ({
@@ -81,12 +82,39 @@ export default class Spotts extends Component {
     }
   }
 
+  determineMediumReadUrl (spott) {
+    const medium = spott.getIn([ 'sourceMedium' ]);
+    switch (medium && medium.get('type')) {
+      case COMMERCIAL:
+        return `/content/commercials/read/${medium.get('id')}`;
+      case EPISODE:
+        return `/content/series/read/${medium.getIn([ 'serie', 'id' ])}/seasons/read/${medium.getIn([ 'season', 'id' ])}/episodes/read/${medium.get('id')}`;
+      case MOVIE:
+        return `/content/movies/read/${medium.get('id')}`;
+      case SEASON:
+        return `/content/series/read/${medium.getIn([ 'serie', 'id' ])}/seasons/read/${medium.get('id')}`;
+      case SERIE:
+        return `/content/series/read/${medium.get('id')}`;
+    }
+  }
+
   determineReadUrl (spott) {
     return `/content/spotts/read/${spott.get('id')}`;
   }
 
   determineEditUrl (spott) {
     return `/content/spotts/edit/${spott.get('id')}`;
+  }
+
+  getSourceType (spott) {
+    const type = spott.getIn([ 'sourceMedium', 'type' ]);
+    const mediumTitle = spott.getIn([ 'sourceMedium', 'title' ]);
+    if (type === EPISODE) {
+      const seasonTitle = spott.getIn([ 'sourceMedium', 'season', 'title' ]);
+      const serieTitle = spott.getIn([ 'sourceMedium', 'serie', 'title' ]);
+      return `${serieTitle} - ${seasonTitle} - ${mediumTitle}`
+    }
+    return mediumTitle;
   }
 
   getLastUpdatedOn (spott) {
@@ -145,6 +173,7 @@ export default class Spotts extends Component {
   }
 
   render () {
+    // TODO implement link to source of medium
     const {
       spotts, children, deleteSpott, isSelected, location: { query, query: { display, page, searchString, sortField, sortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeSearchString
@@ -152,7 +181,8 @@ export default class Spotts extends Component {
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     const columns = [
       { type: 'checkBox' },
-      { type: 'custom', sort: true, sortField: 'TITLE', title: 'TITLE', clickable: true, getUrl: this.determineReadUrl, convert: this.getNameItem, colspan: 2 },
+      { type: 'custom', sort: true, sortField: 'TITLE', title: 'TITLE', clickable: true, getUrl: this.determineReadUrl, convert: this.getNameItem, colspan: 3 },
+      { type: 'custom', title: 'SOURCE TYPE', clickable: true, getUrl: this.determineMediumReadUrl, convert: this.getSourceType, colspan: 3 },
       { type: 'custom', title: 'UPDATED BY', name: 'lastUpdatedBy' },
       { type: 'custom', sort: true, sortField: 'LAST_MODIFIED', title: 'LAST UPDATED ON', convert: this.getLastUpdatedOn },
       { type: 'custom', title: 'PUBLISH STATUS', name: 'publishStatus' },

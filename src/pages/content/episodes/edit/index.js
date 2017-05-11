@@ -520,6 +520,7 @@ export default class EditEpisode extends Component {
                 <Collections
                   brandsById={brandsById}
                   charactersById={charactersById}
+                  currentSeriesEntryId={currentSeriesEntryId}
                   mediumCollections={episodeCollections}
                   mediumId={this.props.params.episodeId}
                   productsById={productsById}

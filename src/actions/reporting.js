@@ -53,6 +53,10 @@ export const PRODUCT_VIEWS_FETCH_START = 'REPORTING/PRODUCT_VIEWS_FETCH_START';
 export const PRODUCT_VIEWS_FETCH_SUCCESS = 'REPORTING/PRODUCT_VIEWS_FETCH_SUCCESS';
 export const PRODUCT_VIEWS_FETCH_ERROR = 'REPORTING/PRODUCT_VIEWS_FETCH_ERROR';
 
+export const LOCATION_DATA_FETCH_START = 'REPORTING/LOCATION_DATA_FETCH_START';
+export const LOCATION_DATA_FETCH_SUCCESS = 'REPORTING/LOCATION_DATA_FETCH_SUCCESS';
+export const LOCATION_DATA_FETCH_ERROR = 'REPORTING/LOCATION_DATA_FETCH_ERROR';
+
 export const fetchAges = makeApiActionCreator(api.getAges, AGES_FETCH_START, AGES_FETCH_SUCCESS, AGES_FETCH_ERROR);
 export const fetchEvents = makeApiActionCreator(api.getActivityReportEvents, EVENTS_FETCH_START, EVENTS_FETCH_SUCCESS, EVENTS_FETCH_ERROR);
 export const fetchGenders = makeApiActionCreator(api.getGenders, GENDERS_FETCH_START, GENDERS_FETCH_SUCCESS, GENDERS_FETCH_ERROR);
@@ -66,3 +70,4 @@ export const fetchMediumSyncs = makeApiActionCreator(api.getRankingMediumSyncs, 
 export const fetchProductBuys = makeApiActionCreator(api.getRankingProductBuys, PRODUCT_BUYS_FETCH_START, PRODUCT_BUYS_FETCH_SUCCESS, PRODUCT_BUYS_FETCH_ERROR);
 export const fetchProductViews = makeApiActionCreator(api.getRankingProductViews, PRODUCT_VIEWS_FETCH_START, PRODUCT_VIEWS_FETCH_SUCCESS, PRODUCT_VIEWS_FETCH_ERROR);
 export const fetchProductImpressions = makeApiActionCreator(api.getRankingProductImpressions, PRODUCT_IMPRESSIONS_FETCH_START, PRODUCT_IMPRESSIONS_FETCH_SUCCESS, PRODUCT_IMPRESSIONS_FETCH_ERROR);
+export const fetchLocationData = makeApiActionCreator(api.fetchLocationData, LOCATION_DATA_FETCH_START, LOCATION_DATA_FETCH_SUCCESS, LOCATION_DATA_FETCH_ERROR);

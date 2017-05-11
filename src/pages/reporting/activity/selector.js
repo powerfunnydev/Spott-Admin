@@ -17,10 +17,14 @@ function createQueryStringArraySelector (field) {
   );
 }
 
-const ageDataSelector = (state) => state.getIn([ 'reporting', 'ageData' ]);
-const genderDataSelector = (state) => state.getIn([ 'reporting', 'genderData' ]);
+export const ageDataSelector = (state) => state.getIn([ 'reporting', 'ageData' ]);
+export const genderDataSelector = (state) => state.getIn([ 'reporting', 'genderData' ]);
 const timelineDataSelector = (state) => state.getIn([ 'reporting', 'timelineData' ]);
+export const locationDataSelector = (state) => state.getIn([ 'reporting', 'locationData' ]);
 
+export const currentAgesSelector = createQueryStringArraySelector('ages');
+export const currentGendersSelector = createQueryStringArraySelector('genders');
+export const currentLanguagesSelector = createQueryStringArraySelector('languages');
 const eventsSelector = createEntitiesByListSelector(eventsListSelector, eventsEntitiesSelector);
 
 // Activity tab
@@ -158,12 +162,29 @@ const genderConfigSelector = createSelector(
   }
 );
 
+const markersSelector = createSelector(
+  locationDataSelector,
+  (locationData) => (
+    locationData.set(
+      'data',
+      (locationData.get('data') || []).map((l) => ({
+        label: `${l.value}`, // label has to be a string.
+        position: {
+          lat: l.latitude,
+          lng: l.longitude
+        }
+      }))
+    )
+  )
+);
+
 export const activitySelector = createStructuredSelector({
   ageConfig: ageConfigSelector,
   genderConfig: genderConfigSelector,
   isLoadingAge: isLoadingAgeSelector,
   isLoadingGender: isLoadingGenderSelector,
   isLoadingTimeline: isLoadingTimelineSelector,
+  markers: markersSelector,
   mediaById: listMediaEntitiesSelector,
   mediumIds: currentMediaSelector,
   timelineConfig: timelineConfigSelector
