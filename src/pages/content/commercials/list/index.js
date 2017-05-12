@@ -5,11 +5,12 @@ import { bindActionCreators } from 'redux';
 import { initialize, Field } from 'redux-form/immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { filterStyles, Root, Container } from '../../../_common/styles';
+import { FETCHING } from '../../../../constants/statusTypes';
 import { Tile, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, Pagination } from '../../../_common/components/table/index';
 import ListView from '../../../_common/components/listView/index';
 import { FilterContent } from '../../../_common/components/filterDropdown';
 import Line from '../../../_common/components/line';
-import TextInput from '../../../_common/inputs/textInput';
+import SelectInput from '../../../_common/inputs/selectInput';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { slowdown } from '../../../../utils';
 import { confirmation } from '../../../_common/askConfirmation';
@@ -23,9 +24,11 @@ export const filterArray = [ 'brand' ];
 @connect(selector, (dispatch) => ({
   deleteCommercial: bindActionCreators(actions.deleteCommercial, dispatch),
   deleteCommercials: bindActionCreators(actions.deleteCommercials, dispatch),
+  fetchBrand: bindActionCreators(actions.fetchBrand, dispatch),
   initializeForm: bindActionCreators(initialize, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
+  searchBrands: bindActionCreators(actions.searchBrands, dispatch),
   selectAllCheckboxes: bindActionCreators(actions.selectAllCheckboxes, dispatch),
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
 }))
@@ -33,10 +36,12 @@ export const filterArray = [ 'brand' ];
 export default class Commercials extends Component {
 
   static propTypes = {
+    brandsById: ImmutablePropTypes.map.isRequired,
     children: PropTypes.node,
     commercials: ImmutablePropTypes.map.isRequired,
     deleteCommercial: PropTypes.func.isRequired,
     deleteCommercials: PropTypes.func.isRequired,
+    fetchBrand: PropTypes.func.isRequired,
     getFilterObjectFromQuery: PropTypes.func.isRequired,
     initializeForm: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
@@ -47,6 +52,8 @@ export default class Commercials extends Component {
     }),
     pageCount: PropTypes.number,
     routerPushWithReturnTo: PropTypes.func.isRequired,
+    searchBrands: PropTypes.func.isRequired,
+    searchedBrandIds: ImmutablePropTypes.map.isRequired,
     selectAllCheckboxes: PropTypes.func.isRequired,
     selectCheckbox: PropTypes.func.isRequired,
     totalResultCount: PropTypes.number.isRequired,
@@ -61,12 +68,17 @@ export default class Commercials extends Component {
     super(props);
     this.onClickNewEntry = ::this.onClickNewEntry;
     this.onClickDeleteSelected = ::this.onClickDeleteSelected;
+    this.searchBrands = slowdown(props.searchBrands, 300);
     this.slowSearch = slowdown(props.load, 300);
   }
 
   async componentWillMount () {
-    const { getFilterObjectFromQuery, initializeForm, load } = this.props;
-    await load(this.props.location.query);
+    const { fetchBrand, getFilterObjectFromQuery, initializeForm, load, location: { query } } = this.props;
+    const brandId = query.brandFilter;
+    await load(query);
+    if (brandId) {
+      await fetchBrand({ brandId });
+    }
     initializeForm('commercialList', getFilterObjectFromQuery(filterArray));
   }
 
@@ -111,8 +123,8 @@ export default class Commercials extends Component {
   }
 
   render () {
-    const { commercials, children, deleteCommercial, isSelected, location: { query, query: { display, page, searchString, sortField, sortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeFilter, onChangeSearchString } = this.props;
+    const { brandsById, commercials, children, deleteCommercial, isSelected, location: { query, query: { display, page, searchString, sortField, sortDirection } },
+      pageCount, searchedBrandIds, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeDisplay, onChangeFilter, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     const columns = [
       { type: 'checkBox' },
@@ -134,14 +146,20 @@ export default class Commercials extends Component {
                   <FilterContent
                     form='commercialList'
                     initialValues={{ brand: '' }}
-                    style={filterStyles.filterContent}
+                    style={[ filterStyles.filterContent, { minWidth: '400px', right: '-150px' } ]}
                     onApplyFilter={onChangeFilter}>
                     <div style={[ filterStyles.row, filterStyles.firstRow ]}>
                       <div style={filterStyles.title}>Brand</div>
                       <Field
-                        component={TextInput}
+                        component={SelectInput}
                         first
+                        getItemImage={(id) => brandsById.getIn([ id, 'logo', 'url' ])}
+                        getItemText={(id) => brandsById.getIn([ id, 'name' ])}
+                        getOptions={this.searchBrands}
+                        isLoading={searchedBrandIds.get('_status') === FETCHING}
                         name='brand'
+                        options={searchedBrandIds.get('data').toArray()}
+                        placeholder='Brand'
                         style={filterStyles.fullWidth}/>
                     </div>
                   </FilterContent>

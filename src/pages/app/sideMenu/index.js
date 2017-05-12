@@ -296,6 +296,9 @@ class VerticalSideMenu extends Component {
               <Link activeStyle={styles.sectionActive} key='push-notifications' onlyActiveOnIndex style={styles.section} to='/content/push-notifications'>
                 <div style={styles.sectionTitle}>PUSH NOTIFICATIONS</div>
               </Link>
+              <Link activeStyle={styles.sectionActive} key='interactive-videos' onlyActiveOnIndex style={styles.section} to='/content/interactive-videos'>
+                <div style={styles.sectionTitle}>INTERACTIVE VIDEOS</div>
+              </Link>
             </div>
           }
           {isAuthenticated && (userRoles.includes(ADMIN) || userRoles.includes(CONTENT_MANAGER)) &&

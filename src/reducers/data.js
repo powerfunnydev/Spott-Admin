@@ -2,7 +2,7 @@ import { fromJS } from 'immutable';
 import {
   serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
   serializeFilterHasUsers, serializeFilterHasMediumCategories, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTopics,
-  serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers,
+  serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers, serializeFilterHasInteractiveVideos,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
   serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasLanguages,
@@ -63,6 +63,7 @@ export default (state = fromJS({
     events: {},
     faceImages: {}, // Characters and persons has faceImages
     genders: {},
+    interactiveVideos: {},
     languages: {},
     listBrands: {},
     listCharacters: {}, // listCharacters is the light version of characters, without locales
@@ -112,6 +113,7 @@ export default (state = fromJS({
     filterHasCountries: {},
     filterHasDemographics: {},
     filterHasEpisodes: {},
+    filterHasInteractiveVideos: {},
     filterHasLanguages: {},
     filterHasMedia: {},
     filterHasMediumCategories: {},
@@ -270,7 +272,10 @@ export default (state = fromJS({
       // We will convert the full version of brands to a light version. This is needed when we
       // want to create a product from the read page of a brand. Otherwise the brand field
       // will be empty.
-      const newState = fetchSuccess(state, [ 'entities', 'listBrands', action.brandId ], { id: action.data.id, name: action.data.name[action.data.defaultLocale] }) || state;
+      const newState = fetchSuccess(state, [ 'entities', 'listBrands', action.brandId ], {
+        id: action.data.id,
+        name: action.data.name[action.data.defaultLocale],
+        logo: action.data.logo [action.data.defaultLocale] }) || state;
       return fetchSuccess(newState, [ 'entities', 'brands', action.brandId ], action.data);
     }
     case brandActions.BRAND_FETCH_ERROR:
@@ -997,7 +1002,14 @@ export default (state = fromJS({
     case seriesActions.SERIES_ENTRY_FETCH_START:
       return fetchStart(state, [ 'entities', 'media', action.seriesEntryId ]);
     case seriesActions.SERIES_ENTRY_FETCH_SUCCESS:
-      return fetchSuccess(state, [ 'entities', 'media', action.seriesEntryId ], action.data);
+      const data = action.data;
+      const success = fetchSuccess(state, [ 'entities', 'listMedia', action.seriesEntryId ], {
+        id: data.id,
+        title: data.title[data.defaultLocale],
+        posterImage: data.posterImage[data.defaultLocale],
+        profileImage: data.profileImage[data.defaultLocale]
+      });
+      return fetchSuccess(success, [ 'entities', 'media', action.seriesEntryId ], data);
     case seriesActions.SERIES_ENTRY_FETCH_ERROR:
       return fetchError(state, [ 'entities', 'media', action.seriesEntryId ], action.error);
 
@@ -1177,6 +1189,13 @@ export default (state = fromJS({
       return fetchSuccess(state, [ 'entities', 'videos', action.videoId ], action.data);
     case videoActions.VIDEO_FETCH_ERROR:
       return fetchError(state, [ 'entities', 'videos', action.videoId ], action.error);
+
+    case videoActions.VIDEO_PROCESSORS_FETCH_START:
+      return searchStart(state, 'filterHasInteractiveVideos', serializeFilterHasInteractiveVideos(action));
+    case videoActions.VIDEO_PROCESSORS_FETCH_SUCCESS:
+      return searchSuccess(state, 'interactiveVideos', 'filterHasInteractiveVideos', serializeFilterHasInteractiveVideos(action), action.data.data);
+    case videoActions.VIDEO_PROCESSORS_FETCH_ERROR:
+      return searchError(state, 'filterHasInteractiveVideos', serializeFilterHasInteractiveVideos(action), action.error);
 
     default:
       return state;

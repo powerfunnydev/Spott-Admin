@@ -1,5 +1,12 @@
 import { createStructuredSelector } from 'reselect';
-import { createEntitiesByRelationSelector, listMediaEntitiesSelector, filterHasCommercialsRelationsSelector } from '../../../../selectors/data';
+import {
+  createEntitiesByRelationSelector,
+  createEntityIdsByRelationSelector,
+  listBrandsEntitiesSelector,
+  listMediaEntitiesSelector,
+  filterHasCommercialsRelationsSelector,
+  searchStringHasBrandsRelationsSelector
+} from '../../../../selectors/data';
 import { serialize } from '../../../../../src/reducers/utils';
 
 export const isSelectedSelector = (state) => state.getIn([ 'content', 'commercials', 'list', 'isSelected' ]);
@@ -8,6 +15,9 @@ export const totalResultCountSelector = (state) => state.getIn([ 'content', 'com
 
 export const commercialsFilterKeySelector = (state, props) => { return serialize(props.location.query); };
 
+const currentBrandsSearchStringSelector = (state) => state.getIn([ 'content', 'commercials', 'list', 'currentBrandsSearchString' ]);
+const searchedBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentBrandsSearchStringSelector);
+
 export const commercialsSelector = createEntitiesByRelationSelector(
   filterHasCommercialsRelationsSelector,
   commercialsFilterKeySelector,
@@ -15,8 +25,10 @@ export const commercialsSelector = createEntitiesByRelationSelector(
 );
 
 export default createStructuredSelector({
+  brandsById: listBrandsEntitiesSelector,
   commercials: commercialsSelector,
   isSelected: isSelectedSelector,
   pageCount: pageCountSelector,
+  searchedBrandIds: searchedBrandIdsSelector,
   totalResultCount: totalResultCountSelector
 });

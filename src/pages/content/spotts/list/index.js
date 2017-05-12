@@ -112,7 +112,7 @@ export default class Spotts extends Component {
     if (type === EPISODE) {
       const seasonTitle = spott.getIn([ 'sourceMedium', 'season', 'title' ]);
       const serieTitle = spott.getIn([ 'sourceMedium', 'serie', 'title' ]);
-      return `${serieTitle} - ${seasonTitle} - ${mediumTitle}`
+      return `${serieTitle} - ${seasonTitle} - ${mediumTitle}`;
     }
     return mediumTitle;
   }
@@ -182,7 +182,7 @@ export default class Spotts extends Component {
     const columns = [
       { type: 'checkBox' },
       { type: 'custom', sort: true, sortField: 'TITLE', title: 'TITLE', clickable: true, getUrl: this.determineReadUrl, convert: this.getNameItem, colspan: 3 },
-      { type: 'custom', title: 'SOURCE TYPE', clickable: true, getUrl: this.determineMediumReadUrl, convert: this.getSourceType, colspan: 3 },
+      { type: 'custom', title: 'SOURCE', clickable: true, getUrl: this.determineMediumReadUrl, convert: this.getSourceType, colspan: 3 },
       { type: 'custom', title: 'UPDATED BY', name: 'lastUpdatedBy' },
       { type: 'custom', sort: true, sortField: 'LAST_MODIFIED', title: 'LAST UPDATED ON', convert: this.getLastUpdatedOn },
       { type: 'custom', title: 'PUBLISH STATUS', name: 'publishStatus' },

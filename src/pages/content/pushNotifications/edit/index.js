@@ -26,6 +26,8 @@ import { FETCHING } from '../../../../constants/statusTypes';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 
+const types = { NOW_ON_TV: 'NOW ON TV', GENERAL_NEWS: 'GENERAL NEWS', NEW_MEDIUM: 'NEW MEDIUM' };
+
 function validate (values, { t }) {
   const validationErrors = {};
   const { _activeLocale, defaultLocale, payloadData } = values.toJS();
@@ -40,10 +42,12 @@ function validate (values, { t }) {
 @connect(selector, (dispatch) => ({
   closeModal: bindActionCreators(actions.closeModal, dispatch),
   closePopUpMessage: bindActionCreators(actions.closePopUpMessage, dispatch),
+  fetchSeriesEntry: bindActionCreators(actions.fetchSeriesEntry, dispatch),
   loadPushNotification: bindActionCreators(actions.loadPushNotification, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
   searchPushNotificationDestinations: bindActionCreators(actions.searchPushNotificationDestinations, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
+  searchSeriesEntries: bindActionCreators(actions.searchSeriesEntries, dispatch),
   submit: bindActionCreators(actions.submit, dispatch)
 }))
 @reduxForm({
@@ -65,6 +69,7 @@ export default class EditPushNotification extends Component {
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     errors: PropTypes.object,
+    fetchSeriesEntry: PropTypes.func.isRequired,
     formValues: ImmutablePropTypes.map,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
@@ -100,6 +105,8 @@ export default class EditPushNotification extends Component {
     const { pushNotificationId } = this.props.params;
     if (pushNotificationId) {
       const editObj = await this.props.loadPushNotification(pushNotificationId);
+      const seriesEntryId = editObj.seriesEntryId;
+      seriesEntryId && this.props.fetchSeriesEntry({ seriesEntryId });
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale,
@@ -239,7 +246,8 @@ export default class EditPushNotification extends Component {
   render () {
     const styles = this.constructor.styles;
     const { _activeLocale, errors, currentModal, closeModal, supportedLocales, defaultLocale, pushNotificationDestinationsById, searchedPushNotificationDestinationByIds,
-      searchPushNotificationDestinations, location, handleSubmit, currentPushNotification, location: { query: { tab } } } = this.props;
+      searchPushNotificationDestinations, location, handleSubmit, currentPushNotification, location: { query: { tab } },
+      seriesEntriesById, searchSeriesEntries, searchedSeriesEntryByIds } = this.props;
     const { searchVersions, searchRetryDurations } = this;
     const formValues = (this.props.formValues && this.props.formValues.toJS()) || { applications: [] };
 
@@ -282,6 +290,14 @@ export default class EditPushNotification extends Component {
                     name={`payloadData.${_activeLocale}`}
                     placeholder='Message'
                     required/>
+                    <Field
+                      component={SelectInput}
+                      getItemText={(id) => types[id]}
+                      getOptions={() => Object.keys(types)}
+                      label='Type'
+                      name='type'
+                      options={Object.keys(types)}
+                      placeholder='Type'/>
                 </Section>
               </Tab>
               <Tab title='Destination'>
@@ -390,9 +406,28 @@ export default class EditPushNotification extends Component {
                                 style={styles.versionInput} />
                             </div>)
                         }
+                        <Field
+                          component={SelectInput}
+                          getItemText={(value) => value}
+                          label='Minimum Version'
+                          name={`applications[${index}].minimumAppVersion`}
+                          options={searchVersions()}
+                          placeholder='0.0.0'
+                          required
+                          style={styles.versionInput} />
                       </div>
                     )
                   }
+                  <Field
+                    component={SelectInput}
+                    getItemImage={(id) => seriesEntriesById.getIn([ id, 'posterImage', 'url' ])}
+                    getItemText={(id) => seriesEntriesById.getIn([ id, 'title' ])}
+                    getOptions={searchSeriesEntries}
+                    isLoading={searchedSeriesEntryByIds.get('_status') === FETCHING}
+                    label='Serie title'
+                    name='seriesEntryId'
+                    options={searchedSeriesEntryByIds.get('data').toJS()}
+                    placeholder='Serie title'/>
                 </Section>
               </Tab>
             </Tabs>

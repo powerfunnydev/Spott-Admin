@@ -38,7 +38,8 @@ export async function deletePushNotifications (baseUrl, authenticationToken, loc
 }
 
 export async function persistPushNotification (baseUrl, authenticationToken, locale, { applications, registeredUser, unRegisteredUser,
-  defaultLocale, pushNotificationId, payloadData, payloadType, locales, basedOnDefaultLocale, actionType, type, publishStatus, sendDate, sendTime, retryDuration }) {
+  defaultLocale, pushNotificationId, payloadData, payloadType, locales, basedOnDefaultLocale, actionType, type, publishStatus, sendDate, sendTime, retryDuration,
+  seriesEntryId }) {
   let pushNotification = {};
   if (pushNotificationId) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/push/messages/${pushNotificationId}`);
@@ -72,6 +73,11 @@ export async function persistPushNotification (baseUrl, authenticationToken, loc
   pushNotification.audienceFilter = pushNotification.audienceFilter || {};
   pushNotification.audienceFilter.registeredUser = registeredUser;
   pushNotification.audienceFilter.unRegisteredUser = unRegisteredUser;
+  const subscriptions = [];
+  if (seriesEntryId) {
+    subscriptions.push({ type: 'MEDIUM', uuid: seriesEntryId });
+  }
+  pushNotification.audienceFilter.subscriptions = subscriptions;
 
   pushNotification.applications = (applications || []).filter((application) => application.deviceSelected);
   pushNotification.applications.forEach((application) => { application.deviceSelected = undefined; application.application = application.application || { uuid: 1 }; return true; });

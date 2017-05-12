@@ -9,8 +9,8 @@ import { searchUsers as dataSearchUsers } from '../../../../actions/user';
 import { fetchLanguages } from '../../../../actions/language';
 import { createSearchAction } from '../../../../utils';
 
-export const BRANDS_SEARCH_START = 'PRODUCTS_EDIT/BRANDS_SEARCH_START';
-export const BRANDS_SEARCH_ERROR = 'PRODUCTS_EDIT/BRANDS_SEARCH_ERROR';
+export const BRANDS_SEARCH_START = 'SPOTTS_EDIT/BRANDS_SEARCH_START';
+export const BRANDS_SEARCH_ERROR = 'SPOTTS_EDIT/BRANDS_SEARCH_ERROR';
 
 export const SPOTT_FETCH_ENTRY_ERROR = 'SPOTTS_EDIT/FETCH_ENTRY_ERROR';
 export const CLOSE_POP_UP_MESSAGE = 'SPOTTS_EDIT/CLOSE_POP_UP_MESSAGE';

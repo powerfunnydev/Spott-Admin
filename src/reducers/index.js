@@ -28,6 +28,7 @@ import contentProducersReadUsers from '../pages/content/contentProducers/read/us
 import episodesCreate from '../pages/content/episodes/create/reducer';
 import episodesEdit from '../pages/content/episodes/edit/reducer';
 import episodesList from '../pages/content/episodes/list/reducer';
+import interactiveVideosList from '../pages/content/interactiveVideos/list/reducer';
 import LinkUserModal from '../pages/_common/components/linkUserModal/reducer';
 import mediaList from '../pages/content/media/list/reducer';
 import moviesEdit from '../pages/content/movies/edit/reducer';
@@ -123,6 +124,9 @@ export default combineReducers({
       create: episodesCreate,
       edit: episodesEdit,
       list: episodesList
+    }),
+    interactiveVideos: combineReducers({
+      list: interactiveVideosList
     }),
     media: combineReducers({
       list: mediaList

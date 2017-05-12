@@ -5,6 +5,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { FormSubtitle } from '../../../_common/styles';
+import { slowdown } from '../../../../utils';
 import TextInput from '../../../_common/inputs/textInput';
 import localized from '../../../_common/decorators/localized';
 import PersistModal from '../../../_common/components/persistModal';
@@ -62,6 +63,7 @@ export default class CreateEpisodentryModal extends Component {
     super(props);
     this.submit = ::this.submit;
     this.onCloseClick = ::this.onCloseClick;
+    this.searchBrands = slowdown(props.searchBrands, 300);
   }
 
   componentWillMount () {
@@ -90,7 +92,7 @@ export default class CreateEpisodentryModal extends Component {
 
   render () {
     const {
-      brandsById, localeNames, searchedBrandIds, searchBrands, handleSubmit
+      brandsById, localeNames, searchedBrandIds, handleSubmit
     } = this.props;
     return (
       <PersistModal isOpen title='Create Commercial'
@@ -108,7 +110,7 @@ export default class CreateEpisodentryModal extends Component {
           component={SelectInput}
           getItemImage={(id) => brandsById.getIn([ id, 'logo', 'url' ])}
           getItemText={(id) => brandsById.getIn([ id, 'name' ])}
-          getOptions={searchBrands}
+          getOptions={this.searchBrands}
           isLoading={searchedBrandIds.get('_status') === FETCHING}
           label='Brand'
           name='brandId'

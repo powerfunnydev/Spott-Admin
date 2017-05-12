@@ -10,7 +10,7 @@ export async function fetchCommercials (baseUrl, authenticationToken, locale, { 
     url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
   }
   if (brandFilter) {
-    url = url.concat(`&brand=${encodeURIComponent(brandFilter)}`);
+    url = url.concat(`&brand=${brandFilter}`);
   }
   const { body } = await get(authenticationToken, locale, url);
   // There is also usable data in body (not only in data field).
@@ -26,7 +26,7 @@ export async function fetchCommercial (baseUrl, authenticationToken, locale, { c
 }
 
 export async function persistCommercial (baseUrl, authenticationToken, locale, {
-  bannerActorId, bannerBarColor, bannerBrandId, bannerCharacterId, bannerExternalLink,
+  bannerActorId, bannerBarColor, bannerBrandId, bannerCharacterId, bannerDirectLink, bannerExternalLink,
   bannerInternalLinkType, bannerMediumId, bannerSystemLinkType,
   basedOnDefaultLocale, brandId, broadcasters, commercialId, contentProducers, defaultLocale,
   description, hasBanner, live, locales, publishStatus, title
@@ -37,6 +37,7 @@ export async function persistCommercial (baseUrl, authenticationToken, locale, {
     commercial = body;
   }
 
+  commercial.bannerDirectLink = bannerDirectLink;
   commercial.brand = brandId && { uuid: brandId };
   commercial.broadcasters = broadcasters && broadcasters.map((bc) => ({ uuid: bc }));
   commercial.contentProducers = contentProducers && contentProducers.map((cp) => ({ uuid: cp }));

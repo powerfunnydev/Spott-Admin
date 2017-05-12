@@ -78,9 +78,10 @@ export function transformListTag ({ uuid, name, auditInfo, logo }) {
   };
 }
 
-export function transformListTopic ({ icon, readOnly, sourceBrand, sourceCharacter,
+export function transformListTopic ({ hidden, icon, readOnly, sourceBrand, sourceCharacter,
   sourceMedium, sourcePerson, sourceReference, sourceType, text, uuid }) {
   return {
+    hidden,
     icon: transformImage(icon),
     id: uuid,
     readOnly,
@@ -331,7 +332,8 @@ export function transformPushNotification ({ uuid: id, type, applications, pushO
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     registeredUser: audienceFilter && audienceFilter.registeredUser,
-    unRegisteredUser: audienceFilter && audienceFilter.unRegisteredUser
+    unRegisteredUser: audienceFilter && audienceFilter.unRegisteredUser,
+    seriesEntryId: audienceFilter && audienceFilter.subscriptions && audienceFilter.subscriptions[0] && audienceFilter.subscriptions[0].uuid
   };
   if (localeData) {
     for (const { basedOnDefaultLocale, payload: { data, type }, locale } of localeData) {
@@ -627,6 +629,7 @@ export const transformMovie = transformMedium;
 
 export function transformCommercial (data) {
   const commercial = transformMedium(data);
+  commercial.bannerDirectLink = data.bannerDirectLink;
   commercial.hasBanner = data.hasBanner;
   commercial.bannerExternalLink = {};
   commercial.bannerImage = {};
@@ -1079,5 +1082,19 @@ export function transformAgeRange ({ ageRange: { from, to }, value }) {
   return {
     label: to ? `${from}-${to}` : `${from}+`,
     value
+  };
+}
+
+export function transformVideoProcessor ({ auditInfo, description, inputFileName, requestId, status }) {
+  // inputFileName also contains a path , we only need the fileName.
+  const fileNameStrings = inputFileName.split('/');
+  const fileName = fileNameStrings[fileNameStrings.length - 1];
+  return {
+    createdOn: auditInfo && auditInfo.createdOn,
+    createdBy: auditInfo && auditInfo.createdBy,
+    description,
+    fileName: fileName && fileName,
+    id: requestId && requestId.uuid,
+    status
   };
 }
