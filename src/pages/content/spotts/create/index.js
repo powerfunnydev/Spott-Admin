@@ -14,6 +14,7 @@ import PersistModal, { dialogStyle } from '../../../_common/components/persistMo
 import { FETCHING } from '../../../../constants/statusTypes';
 // import { POSTER_IMAGE } from '../../../../constants/imageTypes';
 import { routerPushWithReturnTo } from '../../../../actions/global';
+import { slowdown } from '../../../../utils';
 import createPersistTag from '../_common/tags/persist';
 import { load as loadList } from '../list/actions';
 import * as actions from './actions';
@@ -101,6 +102,8 @@ export default class CreateSpottModal extends Component {
     this.onRemoveTag = ::this.onRemoveTag;
     this.onSelectionRegion = ::this.onSelectionRegion;
     this.onPersistTag = ::this.onPersistTag;
+    this.searchTopics = slowdown(props.searchTopics, 300);
+    this.searchUsers = slowdown(props.searchUsers, 300);
   }
 
   componentWillMount () {
@@ -215,7 +218,7 @@ export default class CreateSpottModal extends Component {
 
   render () {
     const { change, dispatch, handleSubmit, image, localeNames, searchedTopicIds,
-      searchTopics, searchUsers, searchedUserIds, usersById, tags, topicsById } = this.props;
+       searchedUserIds, usersById, tags, topicsById } = this.props;
     return (
       <PersistModal createAnother isOpen style={{ ...dialogStyle, content: { ...dialogStyle.content, maxWidth: 620 } }} title='Add Spott' onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         {this.state.modal === 'createTag' &&
@@ -279,7 +282,7 @@ export default class CreateSpottModal extends Component {
               component={SelectInput}
               getItemImage={(id) => usersById.getIn([ id, 'avatar', 'url' ])}
               getItemText={(id) => usersById.getIn([ id, 'userName' ])}
-              getOptions={searchUsers}
+              getOptions={this.searchUsers}
               isLoading={searchedUserIds.get('_status') === FETCHING}
               label='Author'
               name='authorId'
@@ -289,7 +292,7 @@ export default class CreateSpottModal extends Component {
               component={SelectInput}
               getItemImage={(id) => topicsById.getIn([ id, 'icon', 'url' ])}
               getItemText={(id) => topicsById.getIn([ id, 'text' ])}
-              getOptions={searchTopics}
+              getOptions={this.searchTopics}
               isLoading={searchedTopicIds.get('_status') === FETCHING}
               label='Topics'
               multiselect

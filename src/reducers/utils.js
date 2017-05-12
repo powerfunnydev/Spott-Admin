@@ -22,6 +22,7 @@ export const serializeFilterHasCommercials = serialize;
 export const serializeFilterHasContentProducers = serialize;
 export const serializeFilterHasCountries = serialize;
 export const serializeFilterHasDemographics = serialize;
+export const serializeFilterHasInteractiveVideos = serialize;
 export const serializeFilterHasLanguages = serialize;
 export const serializeFilterHasMedia = serialize;
 export const serializeFilterHasMediumCategories = serialize;

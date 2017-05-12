@@ -14,6 +14,7 @@ import Section from '../../../_common/components/section';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import { SPOTT_CREATE_LANGUAGE } from '../../../../constants/modalTypes';
 import { FETCHING } from '../../../../constants/statusTypes';
+import { slowdown } from '../../../../utils';
 import CreateLanguageModal from '../../_languageModal/create';
 import selector from './selector';
 import LanguageBar from '../../../_common/components/languageBar';
@@ -141,6 +142,9 @@ export default class EditSpott extends Component {
     this.onMoveTag = ::this.onMoveTag;
     this.onRemoveTag = ::this.onRemoveTag;
     this.onSelectionRegion = ::this.onSelectionRegion;
+    this.searchBrands = slowdown(props.searchBrands, 300);
+    this.searchTopics = slowdown(props.searchTopics, 300);
+    this.searchUsers = slowdown(props.searchUsers, 300);
   }
 
   async componentWillMount () {
@@ -344,7 +348,7 @@ export default class EditSpott extends Component {
       _activeLocale, brandsById, errors, currentModal, closeModal, supportedLocales, defaultLocale,
       currentSpott, location, handleSubmit, location: { query: { tab } }, promoted,
       searchAudienceCountries, searchAudienceLanguages, searchedAudienceCountryIds, searchedAudienceLanguageIds,
-      searchBrands, searchUsers, searchedUserIds, usersById, searchTopics, searchedBrandIds, searchedTopicIds, tags, topicsById
+      searchedUserIds, usersById, searchedBrandIds, searchedTopicIds, tags, topicsById
     } = this.props;
     return (
       <SideMenu>
@@ -435,7 +439,7 @@ export default class EditSpott extends Component {
                         component={SelectInput}
                         getItemImage={(id) => usersById.getIn([ id, 'avatar', 'url' ])}
                         getItemText={(id) => usersById.getIn([ id, 'userName' ])}
-                        getOptions={searchUsers}
+                        getOptions={this.searchUsers}
                         isLoading={searchedUserIds.get('_status') === FETCHING}
                         label='Author'
                         name='authorId'
@@ -445,7 +449,7 @@ export default class EditSpott extends Component {
                         component={SelectInput}
                         getItemImage={(id) => topicsById.getIn([ id, 'icon', 'url' ])}
                         getItemText={(id) => `(${topicsById.getIn([ id, 'sourceType' ]) && topicsById.getIn([ id, 'sourceType' ]).toLowerCase()}) ${topicsById.getIn([ id, 'text' ])}`}
-                        getOptions={searchTopics}
+                        getOptions={this.searchTopics}
                         isLoading={searchedTopicIds.get('_status') === FETCHING}
                         label='Topics'
                         multiselect
@@ -474,7 +478,7 @@ export default class EditSpott extends Component {
                       disabled={_activeLocale !== defaultLocale}
                       getItemImage={(id) => brandsById.getIn([ id, 'logo', 'url' ])}
                       getItemText={(id) => brandsById.getIn([ id, 'name' ])}
-                      getOptions={searchBrands}
+                      getOptions={this.searchBrands}
                       isLoading={searchedBrandIds.get('_status') === FETCHING}
                       label='Link to brand'
                       name='brandId'

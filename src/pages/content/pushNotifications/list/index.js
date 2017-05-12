@@ -132,6 +132,7 @@ export default class PushNotifications extends Component {
       { type: 'custom', title: 'DATA', name: 'payloadData' },
       { type: 'custom', title: 'UPDATED BY', name: 'lastUpdatedBy' },
       { type: 'custom', title: 'LAST UPDATED ON', name: 'lastUpdatedOn', dataType: 'date' },
+      { type: 'custom', title: 'PUSHED ON', name: 'pushedOn', dataType: 'date' },
       { type: 'dropdown' }
     ];
     const page = pushNotificationsPage;

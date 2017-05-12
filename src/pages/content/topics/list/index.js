@@ -4,9 +4,8 @@ import { bindActionCreators } from 'redux';
 import { initialize, Field } from 'redux-form/immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { filterStyles, Root, Container } from '../../../_common/styles';
-import { Tile, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, Pagination } from '../../../_common/components/table/index';
+import { CheckBoxCel, Tile, UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, Pagination } from '../../../_common/components/table/index';
 import { FilterContent } from '../../../_common/components/filterDropdown';
-import SelectionDropdown from '../../../_common/components/selectionDropdown';
 import Line from '../../../_common/components/line';
 import ListView from '../../../_common/components/listView/index';
 import SelectInput from '../../../_common/inputs/selectInput';
@@ -107,6 +106,10 @@ export default class Topics extends Component {
     return transformSourceToLink(topic.get('sourceReference'), topic.get('sourceType'), 'read');
   }
 
+  getHidden (topic) {
+    return <CheckBoxCel checked={topic.get('hidden')} onChange={() => {}}/>;
+  }
+
   onCreateTopic (e) {
     e.preventDefault();
     this.props.routerPushWithReturnTo('/content/topics/create');
@@ -129,15 +132,16 @@ export default class Topics extends Component {
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     const columns = [
       { type: 'checkBox' },
-      { type: 'custom', title: 'TITLE', clickable: true, getUrl: this.determineReadUrl, name: 'text' },
-      { type: 'custom', title: 'SOURCE', clickable: true, getUrl: this.determineSourceUrl, sort: true, sortField: 'TEXT', name: 'text' },
+      { type: 'custom', title: 'TITLE', clickable: true, getUrl: this.determineReadUrl, sort: true, sortField: 'TEXT', name: 'text', colspan: 2 },
+      { type: 'custom', title: 'SOURCE', clickable: true, getUrl: this.determineSourceUrl, sort: true, sortField: 'TEXT', name: 'text', colspan: 2 },
       { type: 'custom', title: 'TYPE', name: 'sourceType' },
+      { type: 'custom', title: 'HIDDEN', convert: this.getHidden },
       { type: 'dropdown' }
     ];
     const sourceTypes = {
       BRAND: 'Brand',
       CHARACTER: 'Character',
-      MANUAL: 'Manuel',
+      MANUAL: 'Manual',
       MEDIUM: 'Medium',
       PERSON: 'Person'
     };

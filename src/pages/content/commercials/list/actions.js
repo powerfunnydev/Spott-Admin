@@ -1,3 +1,5 @@
+import { searchBrands as dataSearchBrands } from '../../../../actions/brand';
+
 import {
   fetchCommercials as dataFetchCommercials,
   deleteCommercial as dataDeleteCommercial,
@@ -6,6 +8,8 @@ import {
 
 // Action types
 // ////////////
+export const BRANDS_SEARCH_START = 'COMMERCIALS/BRANDS_SEARCH_START';
+export const BRANDS_SEARCH_ERROR = 'COMMERCIALS/BRANDS_SEARCH_ERROR';
 
 export const COMMERCIALS_FETCH_START = 'COMMERCIALS/COMMERCIALS_FETCH_START';
 export const COMMERCIALS_FETCH_ERROR = 'COMMERCIALS/COMMERCIALS_FETCH_ERROR';
@@ -17,6 +21,8 @@ export const SELECT_ALL_CHECKBOXES = 'COMMERCIALS/SELECT_ALL_CHECKBOXES';
 export const SELECT_CHECKBOX = 'COMMERCIALS/SELECT_CHECKBOX';
 
 export const SORT_COLUMN = 'COMMERCIALS/SORT_COLUMN';
+
+export { fetchBrand } from '../../../../actions/brand';
 
 export function load (query) {
   return async (dispatch, getState) => {
@@ -44,6 +50,17 @@ export function deleteCommercial (commercialId) {
       return await dispatch(dataDeleteCommercial({ commercialId }));
     } catch (error) {
       dispatch({ error, type: COMMERCIAL_DELETE_ERROR });
+    }
+  };
+}
+
+export function searchBrands (searchString) {
+  return async (dispatch, getState) => {
+    try {
+      await dispatch({ type: BRANDS_SEARCH_START, searchString });
+      return await dispatch(dataSearchBrands({ searchString }));
+    } catch (error) {
+      dispatch({ error, type: BRANDS_SEARCH_ERROR });
     }
   };
 }

@@ -103,6 +103,10 @@ export default class Products extends Component {
     return `/content/products/edit/${product.get('id')}`;
   }
 
+  determineBrandUrl (product) {
+    return `/content/brands/read/${product.getIn([ 'brand', 'id' ])}`;
+  }
+
   getLastUpdatedOn (product) {
     const date = new Date(product.get('lastUpdatedOn'));
     return moment(date).format('YYYY-MM-DD HH:mm');
@@ -257,12 +261,13 @@ export default class Products extends Component {
     const columns = [
       { type: 'checkBox' },
       { type: 'custom', sort: true, sortField: 'FULL_NAME', title: 'FULL NAME', clickable: true, getUrl: this.determineReadUrl, convert: this.getNameItem, colspan: 2 },
-      { type: 'custom', title: 'BRAND', name: 'brand', convert: (text) => text.get('name') },
+      { type: 'custom', title: 'BRAND', clickable: true, getUrl: this.determineBrandUrl, name: 'brand', convert: (text) => text.get('name') },
       { type: 'custom', title: 'OFFERINGS', convert: (product) => this.getofferings(product) },
       { type: 'custom', title: 'PUBLISH STATUS', name: 'publishStatus' },
       { type: 'custom', title: 'AVAILABLE', convert: this.getAvailable },
       { type: 'dropdown' }
     ];
+    console.warn('products', products.toJS());
     return (
       <SideMenu>
         <Root>

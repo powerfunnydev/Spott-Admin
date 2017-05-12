@@ -40,6 +40,7 @@ import EpisodeList from './pages/content/episodes/list';
 import EpisodeRead from './pages/content/episodes/read';
 import Error404 from './pages/error404/main';
 import ForgotPassword from './pages/forgotPassword';
+import InteractiveVideoList from './pages/content/interactiveVideos/list';
 import LinkUserToBrand from './pages/content/brands/read/users/linkUser';
 import LinkUserToBroadcaster from './pages/content/broadcasters/read/users/linkUser';
 import LinkUserToContentProducer from './pages/content/contentProducers/read/users/linkUser';
@@ -288,6 +289,7 @@ function getRoutes ({ dispatch, getState }) {
         <Route component={PushNotificationsList} path='push-notifications'>
           <Route component={PushNotificationsCreate} path='create'/>
         </Route>
+        <Route component={InteractiveVideoList} path='interactive-videos'/>
         <Route path='push-notifications'>
           <Route component={PushNotificationsRead} path='read/:pushNotificationId'/>
           <Route component={PushNotificationsEdit} path='edit/:pushNotificationId'/>

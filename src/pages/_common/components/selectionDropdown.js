@@ -87,7 +87,7 @@ export default class Dropdown extends Component {
       position: 'relative',
       ...makeTextStyle(fontWeights.regular, '11px'),
       color: colors.darkGray2,
-      minWidth: '120px'
+      minWidth: '140px'
     },
     isOpen: {
       backgroundColor: colors.veryLightGray

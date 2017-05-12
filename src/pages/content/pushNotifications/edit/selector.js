@@ -4,7 +4,9 @@ import { createFormValueSelector } from '../../../../utils';
 import {
   pushNotificationEntitiesSelector,
   listPushNotificationDestinationsEntitiesSelector,
+  listMediaEntitiesSelector,
   searchStringHasPushNotificationDestinationsRelationsSelector,
+  searchStringHasSeriesEntriesRelationsSelector,
   createEntityIdsByRelationSelector,
   createEntityByIdSelector
 } from '../../../../selectors/data';
@@ -20,10 +22,14 @@ const supportedLocalesSelector = createFormValueSelector(formName, 'locales');
 const currentPushNotificationIdSelector = (state, props) => { return props.params.pushNotificationId; };
 const currentPushNotificationSelector = createEntityByIdSelector(pushNotificationEntitiesSelector, currentPushNotificationIdSelector);
 const currentPushNotificationDestinationsSearchStringSelector = (state) => state.getIn([ 'content', 'pushNotifications', 'edit', 'currentPushNotificationDestinationsSearchString' ]);
+const currentSeriesEntrySearchStringSelector = (state) => state.getIn([ 'content', 'pushNotifications', 'edit', 'currentSeriesEntrySearchString' ]);
 
 const popUpMessageSelector = (state) => state.getIn([ 'content', 'pushNotifications', 'edit', 'popUpMessage' ]);
 const searchedPushNotificationDestinationByIdsSelector = createEntityIdsByRelationSelector(
   searchStringHasPushNotificationDestinationsRelationsSelector, currentPushNotificationDestinationsSearchStringSelector);
+export const currentSeriesEntryIdSelector = createEntityIdsByRelationSelector(
+  searchStringHasSeriesEntriesRelationsSelector,
+  currentSeriesEntrySearchStringSelector);
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
@@ -35,5 +41,7 @@ export default createStructuredSelector({
   popUpMessage: popUpMessageSelector,
   pushNotificationDestinationsById: listPushNotificationDestinationsEntitiesSelector,
   searchedPushNotificationDestinationByIds: searchedPushNotificationDestinationByIdsSelector,
+  searchedSeriesEntryByIds: currentSeriesEntryIdSelector,
+  seriesEntriesById: listMediaEntitiesSelector,
   supportedLocales: supportedLocalesSelector
 });

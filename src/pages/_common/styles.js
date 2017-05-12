@@ -37,11 +37,13 @@ export const colors = {
   secondaryPink2: '#ed316b',
   strongBlue: '#0073d3',
   strongLimeGreen: '#00ca1d',
+  darkLimeGreen: '#00A117',
   veryDarkGray: '#17262b',
   veryLightGray: '#eaeced',
   veryLightRed: '#fbeeee',
   vividOrange: '#f8aa0f',
   vividRed: '#ec410f',
+  darkVividRed: '#BC340C',
   warmGray: '#8d8d8d',
   white: '#ffffff'
 };

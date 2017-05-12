@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 import { get, post, UnexpectedError } from './request';
-import { transformVideo } from './transformers';
+import { transformVideo, transformVideoProcessor } from './transformers';
 
 function uploadToS3 ({ accessKeyId, acl, baseKey, bucket, file, policy, signature }, uploadingCallback) {
   return new Promise((resolve, reject) => {
@@ -231,4 +231,25 @@ export async function persistVideo (baseUrl, authenticationToken, locale, { desc
 
   const { body } = await post(authenticationToken, locale, `${baseUrl}/v004/video/videos`, video);
   return transformVideo(body);
+}
+
+export async function fetchVideoProcessors (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/video/processors?page=${page}&pageSize=${pageSize}`;
+  if (searchString) {
+    url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
+  }
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  const { body } = await get(authenticationToken, locale, url);
+  // There is also usable data in body (not only in data field).
+  // We need also fields page, pageCount,...
+  body.data = body.data.map(transformVideoProcessor);
+  return body;
+}
+
+export async function fetchVideoProcessorLog (baseUrl, authenticationToken, locale, { requestId }) {
+  const url = `${baseUrl}/v004/video/processors/${requestId}/log`;
+  const { body } = await get(authenticationToken, locale, url);
+  return body;
 }

@@ -385,6 +385,7 @@ export default class Collections extends Component {
             onSubmit={this.onSubmitCollectionItem} />}
         {this.state.editLiveCollections &&
           <PersistModal
+            contentStyle={{ overflow: 'scroll' }}
             isOpen
             style={{
               ...dialogStyle,

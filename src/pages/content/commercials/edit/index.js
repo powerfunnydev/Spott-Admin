@@ -19,6 +19,7 @@ import Section from '../../../_common/components/section';
 import SelectInput from '../../../_common/inputs/selectInput';
 import TextInput from '../../../_common/inputs/textInput';
 import LanguageBar from '../../../_common/components/languageBar';
+import { slowdown } from '../../../../utils';
 import Audiences from '../../_audiences/list';
 import Availabilities from '../../_availabilities/list';
 import RelatedVideo from '../../../content/_relatedVideo/read';
@@ -201,6 +202,7 @@ export default class EditCommercial extends Component {
     this.submit = ::this.submit;
     this.onChangeTab = ::this.onChangeTab;
     this.onSetDefaultLocale = ::this.onSetDefaultLocale;
+    this.searchBrands = slowdown(props.searchBrands, 300);
   }
 
   async componentWillMount () {
@@ -210,6 +212,7 @@ export default class EditCommercial extends Component {
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale,
+        bannerDirectLink: editObj.bannerDirectLink,
         bannerSystemLinkType: editObj.bannerSystemLinkType || 'EXTERNAL',
         bannerInternalLinkType: editObj.bannerInternalLinkType || 'MEDIUM',
         brandId: editObj.brand && editObj.brand.id,
@@ -345,7 +348,7 @@ export default class EditCommercial extends Component {
       commercialCollections, contentProducersById, currentCommercial, currentModal,
       defaultLocale, deleteBannerImage, deletePosterImage, deleteRoundLogo, errors, handleSubmit, hasBanner,
       mediaById, personsById, productsById, searchCollectionsBrands, searchCollectionsCharacters, searchCollectionsProducts,
-      searchBannerLinkBrands, searchBannerLinkCharacters, searchBannerLinkMedia, searchBrands,
+      searchBannerLinkBrands, searchBannerLinkCharacters, searchBannerLinkMedia,
       searchCharacters, searchAudienceCountries, searchContentProducers,
       searchedBannerLinkBrandIds, searchedBannerLinkCharacterIds, searchedBannerLinkMediumIds, searchBannerLinkPersons,
       searchedContentProducerIds, searchBroadcasters, searchAudienceLanguages,
@@ -388,7 +391,7 @@ export default class EditCommercial extends Component {
                     disabled={_activeLocale !== defaultLocale}
                     getItemImage={(id) => brandsById.getIn([ id, 'logo', 'url' ])}
                     getItemText={(id) => brandsById.getIn([ id, 'name' ])}
-                    getOptions={searchBrands}
+                    getOptions={this.searchBrands}
                     isLoading={searchedBrandIds.get('_status') === FETCHING}
                     label='Brand'
                     name='brandId'
@@ -520,6 +523,10 @@ export default class EditCommercial extends Component {
                     component={({ meta }) => meta && meta.touched && meta.error && <div style={errorTextStyle}>{meta.error}</div> || null}
                     name={`bannerImage.${_activeLocale}`}/>
                   <FormSubtitle>Banner Link</FormSubtitle>
+                  <Field
+                    component={CheckboxInput}
+                    label='Direct link'
+                    name='bannerDirectLink' />
                   <Field
                     component={RadioInput}
                     disabled={!hasBanner}
