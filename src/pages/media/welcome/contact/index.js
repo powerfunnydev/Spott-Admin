@@ -133,7 +133,7 @@ class Info extends Component {
           <h1 style={[ styles.title ]}>Contact</h1>
           <p><span style={styles.companyName}>Appiness NV</span><br />
           Hershage 10, 9300 Aalst, Belgium<br />
-          +32 493 137 160<br />
+          +32 496 80 38 36<br />
           <a href='mailto:info@apptvate.com' style={styles.emailLink}>info@apptvate.com</a></p>
         </div>
         {/* Social media block */}
