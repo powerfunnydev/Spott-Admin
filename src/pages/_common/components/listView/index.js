@@ -34,6 +34,9 @@ export default class ListView extends Component {
   };
 
   getFormatedDate = (dateString) => {
+    if (!dateString) {
+      return '-';
+    }
     const date = new Date(dateString);
     return moment(date).format('YYYY-MM-DD HH:mm');
   }
