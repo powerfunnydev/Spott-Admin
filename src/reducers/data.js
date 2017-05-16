@@ -7,7 +7,7 @@ import {
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
   serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasLanguages,
   serializeFilterHasPushNotifications, serializeFilterHasCrops, serializeFilterHasSpotts, serializeBroadcasterFilterHasMedia,
-  transformMediumToListMedium, serializeFilterHasTopMedia, serializeFilterHasDemographics, serializeFilterHasTopPeople, serializeFilterHasTopProducts
+  transformMediumToListMedium, serializeFilterHasTopMedia, serializeFilterHasDemographics, serializeFilterHasTopPeople, serializeFilterHasTopProducts, serializeFilterHasTopCommercials
 } from './utils';
 
 import * as audienceActions from '../actions/audience';
@@ -95,6 +95,7 @@ export default (state = fromJS({
     topMedia: {}, // Used in brand dashboard. Includes media, subscriptions, etc.
     topPeople: {},
     topProducts: {},
+    topCommercials: {},
     users: {},
     videos: {}
   },
@@ -131,6 +132,7 @@ export default (state = fromJS({
     filterHasTopMedia: {},
     filterHasTopPeople: {},
     filterHasTopProducts: {},
+    filterHasTopCommercials: {},
     filterHasTvGuideEntries: {},
     filterHasUsers: {},
 
@@ -229,6 +231,13 @@ export default (state = fromJS({
       return searchSuccess(state, 'topMedia', 'filterHasTopMedia', serializeFilterHasTopMedia(action), action.data.data);
     case brandDashboardActions.TOP_MEDIA_FETCH_ERROR:
       return searchError(state, 'filterHasTopMedia', serializeFilterHasTopMedia(action), action.error);
+
+    case brandDashboardActions.TOP_COMMERCIALS_FETCH_START:
+      return searchStart(state, 'filterHasTopCommercials', serializeFilterHasTopCommercials(action));
+    case brandDashboardActions.TOP_COMMERCIALS_FETCH_SUCCESS:
+      return searchSuccess(state, 'topCommercials', 'filterHasTopCommercials', serializeFilterHasTopCommercials(action), action.data.data);
+    case brandDashboardActions.TOP_COMMERCIALS_FETCH_ERROR:
+      return searchError(state, 'filterHasTopCommercials', serializeFilterHasTopCommercials(action), action.error);
 
     case brandDashboardActions.TOP_PEOPLE_FETCH_START:
       return searchStart(state, 'filterHasTopPeople', serializeFilterHasTopPeople(action));

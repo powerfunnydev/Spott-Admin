@@ -5,10 +5,11 @@ import {
   createEntitiesByRelationSelector, createEntityIdsByRelationSelector, createEntitiesByListSelector, brandDashboardEventsEntitiesSelector,
   filterHasTopMediaRelationsSelector, brandDashboardEventsListSelector, listBrandsEntitiesSelector,
   filterHasTopPeopleRelationsSelector, filterHasTopProductsRelationsSelector, topProductsEntitiesSelector,
+  filterHasTopCommercialsRelationsSelector, topCommercialsEntitiesSelector,
   topMediaEntitiesSelector, topPeopleEntitiesSelector, languagesEntitiesSelector, searchStringHasBrandsRelationsSelector
 } from '../../../selectors/data';
 import { getInformationFromQuery } from '../../_common/components/table/index';
-import { serializeFilterHasTopMedia, serializeFilterHasTopPeople, serializeFilterHasTopProducts } from '../../../reducers/utils';
+import { serializeFilterHasTopMedia, serializeFilterHasTopPeople, serializeFilterHasTopProducts, serializeFilterHasTopCommercials } from '../../../reducers/utils';
 import { createQueryStringArraySelector } from '../../../selectors/global';
 import { ageDataConfig, dateDataConfig, genderDataConfig } from './defaultHighchartsConfig';
 
@@ -43,6 +44,7 @@ export const filtersSelector = createStructuredSelector({
 export const topMediaPrefix = 'topMedia';
 export const topPeoplePrefix = 'topPeople';
 export const topProductsPrefix = 'topProducts';
+export const topCommercialsPrefix = 'topCommercials';
 
 const topMediaFilterKeySelector = (state, props) => serializeFilterHasTopMedia({
   ...getInformationFromQuery(props.location.query, topMediaPrefix)
@@ -57,6 +59,11 @@ const topPeopleFilterKeySelector = (state, props) => serializeFilterHasTopPeople
 const topProductsFilterKeySelector = (state, props) => serializeFilterHasTopProducts({
   ...getInformationFromQuery(props.location.query, topProductsPrefix)
   // brandId: 'BRAND_ID_PLACEHOLDER'
+});
+
+const topCommercialsFilterKeySelector = (state, props) => serializeFilterHasTopCommercials({
+    ...getInformationFromQuery(props.location.query, topCommercialsPrefix)
+    // brandId: 'BRAND_ID_PLACEHOLDER'
 });
 
 export const topMediaSelector = createEntitiesByRelationSelector(
@@ -75,6 +82,12 @@ export const topProductsSelector = createEntitiesByRelationSelector(
   filterHasTopProductsRelationsSelector,
   topProductsFilterKeySelector,
   topProductsEntitiesSelector
+);
+
+export const topCommercialsSelector = createEntitiesByRelationSelector(
+    filterHasTopCommercialsRelationsSelector,
+    topCommercialsFilterKeySelector,
+    topCommercialsEntitiesSelector
 );
 
 const ageDataSelector = (state) => state.getIn([ 'brandDashboard', 'ageData' ]);
@@ -218,5 +231,6 @@ export default createStructuredSelector({
   searchedBrandIds: searchedBrandIdsSelector,
   topMedia: topMediaSelector,
   topPeople: topPeopleSelector,
-  topProducts: topProductsSelector
+  topProducts: topProductsSelector,
+  topCommercials: topCommercialsSelector
 });

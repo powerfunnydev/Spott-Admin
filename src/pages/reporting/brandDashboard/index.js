@@ -25,13 +25,21 @@ import MarkersMap from '../_markersMap';
 import Widget from './widget';
 import ImageTitle from './imageTitle';
 import * as actions from './actions';
-import selector, { topMediaPrefix, topPeoplePrefix, topProductsPrefix } from './selector';
+import selector, { topMediaPrefix, topPeoplePrefix, topProductsPrefix, topCommercialsPrefix } from './selector';
 import HamburgerDropdown, { styles as dropdownStyles } from '../../_common/components/hamburgerDropdown';
-import { actionTypes, downloadFile, renderHamburgerDropdown } from '../highchart';
 
 HighchartsMore(Highcharts.Highcharts);
 HighchartsExporting(Highcharts.Highcharts);
 HighchartsExportCsv(Highcharts.Highcharts);
+
+const actionTypes = {
+  PRINT: 'PRINT',
+  PNG: 'PNG',
+  JPEG: 'JPEG',
+  PDF: 'PDF',
+  SVG: 'SVG',
+  CSV: 'CSV'
+};
 
 Highcharts.Highcharts.setOptions({
   navigation: {
@@ -165,6 +173,68 @@ class TopMedia extends Component {
             load={load}
             sortDirection={topMediaSortDirection}
             sortField={topMediaSortField}
+            onSortField={(name) => (...args) => {
+              // Update url
+              onSortField(name, ...args);
+              // Trigger load actions
+              load();
+            }} />
+        </div>
+      </Widget>
+    );
+  }
+}
+
+@tableDecorator(topCommercialsPrefix)
+class TopCommercials extends Component {
+
+  static propTypes = {
+    data: ImmutablePropTypes.map.isRequired,
+    load: PropTypes.func.isRequired,
+    location: PropTypes.object.isRequired,
+    routerPushWithReturnTo: PropTypes.func.isRequired,
+    style: PropTypes.object,
+    onSortField: PropTypes.func.isRequired
+  };
+
+  constructor (props) {
+    super(props);
+    this.getTitle = ::this.getTitle;
+  }
+
+  getTitle (topCommercials) {
+    return (
+      <ImageTitle
+        imageUrl={topCommercials.getIn([ 'medium', 'posterImage', 'url' ])}
+        title={topCommercials.getIn([ 'medium', 'title' ])}/>
+    );
+  }
+
+  render () {
+    const { data, load, location: { query: { topCommercialsSortDirection, topCommercialsSortField } }, style, onSortField } = this.props;
+
+    const columns = [
+      { clickable: true, colspan: 3, convert: this.getTitle, title: 'TITLE', type: 'custom' },
+      { clickable: true, colspan: 1, name: 'syncs', sort: true, sortField: 'SYNCS', title: 'SYNCS', type: 'custom' },
+      { clickable: true, colspan: 1, name: 'bannerClicks', sort: true, sortField: 'BANNER_CLICKS', title: 'BANNER CLICKS', type: 'custom' }
+    ];
+
+    return (
+      <Widget
+        header={
+          <HamburgerDropdown style={{ marginLeft: 'auto' }}>
+            <div key='CSV' style={dropdownStyles.floatOption} onClick={(e) => { e.preventDefault(); downloadCsv(columns, data, 'topCommercials'); }}>Download CSV</div>
+          </HamburgerDropdown>
+        }
+        style={style}
+        title='Commercials for your brand'>
+        <div style={listViewContainerStyle}>
+          <ListView
+            columns={columns}
+            data={data}
+            load={load}
+            sortDirection={topCommercialsSortDirection}
+            sortField={topCommercialsSortField}
             onSortField={(name) => (...args) => {
               // Update url
               onSortField(name, ...args);
@@ -318,6 +388,7 @@ class TopProducts extends Component {
   loadTopMedia: bindActionCreators(actions.loadTopMedia, dispatch),
   loadTopPeople: bindActionCreators(actions.loadTopPeople, dispatch),
   loadTopProducts: bindActionCreators(actions.loadTopProducts, dispatch),
+  loadTopCommercials: bindActionCreators(actions.loadTopCommercials, dispatch),
   routerPushWithReturnTo: bindActionCreators(globalActions.routerPushWithReturnTo, dispatch),
   searchBrands: bindActionCreators(actions.searchBrands, dispatch)
 }))
@@ -342,14 +413,15 @@ export default class BrandDashboard extends Component {
     loadTopMedia: PropTypes.func.isRequired,
     loadTopPeople: PropTypes.func.isRequired,
     loadTopProducts: PropTypes.func.isRequired,
+    loadTopCommercials: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
-    markers: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBrands: PropTypes.func.isRequired,
     searchedBrandIds: ImmutablePropTypes.map.isRequired,
     topMedia: ImmutablePropTypes.map.isRequired,
     topPeople: ImmutablePropTypes.map.isRequired,
-    topProducts: ImmutablePropTypes.map.isRequired
+    topProducts: ImmutablePropTypes.map.isRequired,
+    topCommercials: ImmutablePropTypes.map.isRequired,
   };
 
   constructor (props) {
@@ -393,16 +465,30 @@ export default class BrandDashboard extends Component {
     await this.props.loadTopMedia();
     await this.props.loadTopPeople();
     await this.props.loadTopProducts();
+    await this.props.loadTopCommercials();
     await this.props.loadAgeData();
     await this.props.loadGenderData();
     await this.props.loadLocationData();
   }
 
+  /*
+   * This function triggers an method, depending on the given actionType.
+   */
+  downloadFile (actionType = actionTypes.PNG) {
+    const chart = this.refs.brandActivityHighchart.getChart();
+    actionType === actionTypes.PRINT && chart.print();
+    actionType === actionTypes.PNG && chart.exportChart();
+    actionType === actionTypes.JPEG && chart.exportChart({ type: 'image/jpeg' });
+    actionType === actionTypes.PDF && chart.exportChart({ type: 'application/pdf' });
+    actionType === actionTypes.SVG && chart.exportChart({ type: 'image/svg+xml' });
+    actionType === actionTypes.CSV && chart.downloadCSV();
+  }
+
   hideBar (event) {
     const { headerHidden } = this.state;
-    event.currentTarget.scrollTop > 70
-      ? !headerHidden && this.setState({ headerHidden: true })
-      : headerHidden && this.setState({ headerHidden: false });
+    event.currentTarget.scrollTop > 70 ?
+       !headerHidden && this.setState({ headerHidden: true })
+       : headerHidden && this.setState({ headerHidden: false });
   }
 
   async onChangeFilter (field, type, value) {
@@ -425,6 +511,7 @@ export default class BrandDashboard extends Component {
       await this.props.loadTopMedia();
       await this.props.loadTopPeople();
       await this.props.loadTopProducts();
+      await this.props.loadTopCommercials();
       await this.props.loadAgeData();
       await this.props.loadGenderData();
       await this.props.loadLocationData();
@@ -485,6 +572,9 @@ export default class BrandDashboard extends Component {
       paddingLeft: '1.5em',
       paddingRight: '1.5em'
     },
+    topMediaWidget: {
+      paddingBottom: '1.5em'
+    },
     topProductsWidget: {
       paddingBottom: '1.5em'
     },
@@ -502,9 +592,9 @@ export default class BrandDashboard extends Component {
     const styles = this.constructor.styles;
     const {
       ageDataConfig, brandsById, children, dateDataConfig, eventsById, events, genderDataConfig,
-      loadTopMedia, loadTopPeople, loadTopProducts,
+      loadTopMedia, loadTopPeople, loadTopProducts, loadTopCommercials,
       location, location: { query: { ages, brand, brandActivityByRegionEvent, brandActivityEvents, endDate, genders, /* languages, */ startDate } },
-      keyMetrics, markers, routerPushWithReturnTo, searchBrands, searchedBrandIds, topMedia, topPeople, topProducts
+      keyMetrics, markers, routerPushWithReturnTo, searchBrands, searchedBrandIds, topMedia, topPeople, topProducts, topCommercials
     } = this.props;
     const { headerHidden } = this.state;
     const brandActivityEventsValue = typeof brandActivityEvents === 'string' ? [ brandActivityEvents ] : brandActivityEvents;
@@ -575,17 +665,30 @@ export default class BrandDashboard extends Component {
                   style={[ styles.field, { paddingRight: '0.75em' } ]}
                   valueComponent={ColorValue}
                   onChange={this.onChangeFilter.bind(this, 'brandActivityEvents', 'array')} />
-                  { renderHamburgerDropdown(this.refs.brandActivityHighchart) }
+                  <HamburgerDropdown style={{ marginLeft: 'auto' }}>
+                    <div key='print' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.PRINT)}>Print</div>
+                    <div key='png' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.PNG)}>Download PNG</div>
+                    <div key='jpeg' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.JPEG)}>Download JPEG</div>
+                    <div key='pdf' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.PDF)}>Download PDF</div>
+                    <div key='svg' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.SVG)}>Download SVG</div>
+                    <div key='csv' style={dropdownStyles.floatOption} onClick={this.downloadFile.bind(this, actionTypes.CSV)}>Download CSV</div>
+                  </HamburgerDropdown>
               </div>
             }
             isLoading={isLoading(dateDataConfig)}
             style={styles.paddingBottom} title='Brand activity'>
             <Highcharts config={dateDataConfig.get('data')} isPureConfig ref='brandActivityHighchart'/>
           </Widget>
-          <div style={styles.widgets}>
-            <TopMedia
+          <TopMedia
               data={topMedia}
               load={loadTopMedia}
+              location={location}
+              routerPushWithReturnTo={routerPushWithReturnTo}
+              style={styles.topMediaWidget} />
+          <div style={styles.widgets}>
+            <TopCommercials
+              data={topCommercials}
+              load={loadTopCommercials}
               location={location}
               routerPushWithReturnTo={routerPushWithReturnTo}
               style={styles.widget} />

@@ -1,5 +1,5 @@
 import { get } from './request';
-import { transformTopMedia, transformTopPeople, transformTopProduct, transformKeyMetrics, transformAgeRange } from './transformers';
+import { transformTopMedia, transformTopPeople, transformTopProduct, transformKeyMetrics, transformAgeRange, transformTopCommercials } from './transformers';
 
 const chartColors = [
   '#058dc7',
@@ -29,6 +29,16 @@ export async function fetchTopMedia (baseUrl, authenticationToken, locale, { age
   }
   const { body } = await get(authenticationToken, locale, url);
   body.data = body.data.map(transformTopMedia);
+  return body;
+}
+
+export async function fetchTopCommercials (baseUrl, authenticationToken, locale, { ages, brandId, eventIds, endDate, genders, startDate, sortDirection, sortField }) {
+  let url = `${baseUrl}/v004/report/reports/brands/topCommercials?ageRanges=${ages.join(',')}&brandUuid=${brandId}&eventType=${eventIds.join(',')}&genders=${genders.join(',')}&startDate=${encodeURIComponent(startDate.format())}&endDate=${encodeURIComponent(endDate.clone().add(1, 'day').format())}`;
+  if (sortDirection && sortField && (sortDirection === 'ASC' || sortDirection === 'DESC')) {
+    url = url.concat(`&sortField=${sortField}&sortDirection=${sortDirection}`);
+  }
+  const { body } = await get(authenticationToken, locale, url);
+  body.data = body.data.map(transformTopCommercials);
   return body;
 }
 

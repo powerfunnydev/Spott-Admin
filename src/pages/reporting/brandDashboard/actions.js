@@ -3,7 +3,7 @@ import moment from 'moment';
 import {
   fetchAgeData, fetchDateData, fetchBrandDashboardEvents,
   fetchGenderData, fetchKeyMetrics, fetchTopMedia, fetchTopPeople, fetchTopProducts,
-  fetchLocationData
+  fetchTopCommercials, fetchLocationData
 } from '../../../actions/brandDashboard';
 import { fetchBrand as dataFetchBrand, searchBrands as dataSearchBrands } from '../../../actions/brand';
 import { fetchAges, fetchGenders } from '../../../actions/reporting';
@@ -130,6 +130,34 @@ export function loadTopMedia () {
         startDate
       };
       return await dispatch(fetchTopMedia(args));
+    }
+  };
+}
+
+export function loadTopCommercials () {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const query = locationSelector(state).query;
+    const brandId = currentBrandSelector(state);
+    const eventIds = currentBrandActivityEventsSelector(state);
+
+    if (brandId && query.endDate && query.startDate && eventIds) {
+      const ages = currentAgesSelector(state);
+      const genders = currentGendersSelector(state);
+      const endDate = moment(query.endDate);
+      const startDate = moment(query.startDate);
+
+      const args = {
+        ages,
+        brandId,
+        endDate,
+        eventIds: eventIds.filter((e) => e !== 'undefined'),
+        genders,
+        sortDirection: query.topCommercialsSortDirection,
+        sortField: query.topCommercialsSortField,
+        startDate
+      };
+      return await dispatch(fetchTopCommercials(args));
     }
   };
 }
