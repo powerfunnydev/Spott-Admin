@@ -205,8 +205,8 @@ class TopCommercials extends Component {
   getTitle (topCommercials) {
     return (
       <ImageTitle
-        imageUrl={topCommercials.getIn([ 'medium', 'posterImage', 'url' ])}
-        title={topCommercials.getIn([ 'medium', 'title' ])}/>
+        imageUrl={topCommercials.getIn([ 'commercial', 'posterImage', 'url' ])}
+        title={topCommercials.getIn([ 'commercial', 'title' ])}/>
     );
   }
 
