@@ -310,6 +310,24 @@ export function transformListMedium ({ number, publishStatus, auditInfo, title, 
 }
 
 /**
+ *  Light version of a commercial. No locales includes.
+ */
+export function transformListCommercials ({ number, publishStatus, auditInfo, title, type, posterImage, profileImage, roundLogo, uuid: id }) {
+  return {
+    id,
+    title,
+    type,
+    number,
+    publishStatus,
+    posterImage: transformImage(posterImage),
+    profileImage: transformImage(profileImage),
+    roundLogo: transformImage(roundLogo),
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy
+  };
+}
+
+/**
  *  Light version of a push notification. No locales includes.
  */
 export function transformPushNotification ({ uuid: id, type, applications, pushOn, publishStatus, pushWindowStart, pushWindowSizeInMinutes, pushedOn, localeData, defaultLocale, action, payload, audienceFilter, auditInfo }) {
@@ -1045,6 +1063,15 @@ export function transformTopMedia ({ medium, subscriptionCount, taggedProductCou
     medium: transformListMedium(medium),
     subscriptionCount,
     taggedProductCount
+  };
+}
+
+export function transformTopCommercials ({ commercial, syncs, bannerClicks }) {
+  return {
+    id: commercial.uuid,
+    commercial: transformListCommercials(commercial),
+    syncs,
+    bannerClicks
   };
 }
 

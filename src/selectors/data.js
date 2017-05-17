@@ -50,6 +50,7 @@ export const topicsEntitiesSelector = (state) => state.getIn([ 'data', 'entities
 export const topMediaEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'topMedia' ]);
 export const topPeopleEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'topPeople' ]);
 export const topProductsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'topProducts' ]);
+export const topCommercialsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'topCommercials' ]);
 export const tvGuideEntriesEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'tvGuideEntries' ]);
 export const usersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'users' ]);
 export const videosEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'videos' ]);
@@ -80,6 +81,7 @@ export const filterHasTopicsRelationsSelector = (state) => state.getIn([ 'data',
 export const filterHasTopMediaRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasTopMedia' ]);
 export const filterHasTopPeopleRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasTopPeople' ]);
 export const filterHasTopProductsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasTopProducts' ]);
+export const filterHasTopCommercialsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasTopCommercials' ]);
 export const filterHasTvGuideEntriesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasTvGuideEntries' ]);
 export const filterHasUsersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasUsers' ]);
 
