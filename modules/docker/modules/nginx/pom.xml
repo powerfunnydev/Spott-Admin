@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>appiness.mobi</groupId>
 		<artifactId>apptvate.website.docker</artifactId>
-		<version>01.00.20</version>
+		<version>01.00.21-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 	<artifactId>apptvate.website.docker.nginx</artifactId>
