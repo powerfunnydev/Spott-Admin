@@ -340,6 +340,9 @@ class VerticalSideMenu extends Component {
               <Link activeStyle={styles.sectionActive} key='categories' style={styles.section} to='/settings/categories'>
                 <div style={styles.sectionTitle}>CATEGORIES</div>
               </Link>
+              <Link activeStyle={styles.sectionActive} key='datalabeltypes' style={styles.section} to='/settings/datalabeltypes'>
+                <div style={styles.sectionTitle}>DATALABELTYPES</div>
+              </Link>
             </div>
           }
         </div>

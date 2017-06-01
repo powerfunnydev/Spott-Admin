@@ -6,7 +6,7 @@ import {
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
   serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasLanguages,
-  serializeFilterHasPushNotifications, serializeFilterHasCrops, serializeFilterHasSpotts, serializeBroadcasterFilterHasMedia,
+  serializeFilterHasPushNotifications, serializeFilterHasCrops, serializeFilterHasSpotts, serializeBroadcasterFilterHasMedia, serializeDatalabeltypeFilterHasMedia,
   transformMediumToListMedium, serializeFilterHasTopMedia, serializeFilterHasDemographics, serializeFilterHasTopPeople, serializeFilterHasTopProducts, serializeFilterHasTopCommercials
 } from './utils';
 
@@ -16,6 +16,7 @@ import * as brandActions from '../actions/brand';
 import * as brandDashboardActions from '../actions/brandDashboard';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcastersActions from '../actions/broadcaster';
+import * as datalabeltypesActions from '../actions/datalabeltype';
 import * as charactersActions from '../actions/character';
 import * as collectionsActions from '../actions/collection';
 import * as collectionItemsActions from '../actions/collectionItem';
@@ -54,6 +55,7 @@ export default (state = fromJS({
     brands: {},
     broadcastChannels: {},
     broadcasters: {},
+    datalabeltypes: {},
     characters: {},
     collections: {},
     contentProducers: {},
@@ -108,6 +110,7 @@ export default (state = fromJS({
     filterHasBrands: {},
     filterHasBroadcastChannels: {},
     filterHasBroadcasters: {},
+    filterHasDatalabeltypes: {},
     filterHasCharacters: {},
     filterHasCommercials: {},
     filterHasContentProducers: {},
@@ -140,6 +143,7 @@ export default (state = fromJS({
     searchStringHasBrands: {},
     searchStringHasBroadcastChannels: {},
     searchStringHasBroadcasters: {},
+    searchStringHasDatalabeltypes: {},
     searchStringHasCharacters: {},
     searchStringHasContentProducers: {},
     searchStringHasMedia: {},
@@ -381,6 +385,16 @@ export default (state = fromJS({
     case broadcastersActions.BROADCASTER_USERS_FETCH_ERROR:
       return searchError(state, 'filterHasUsers', serializeFilterHasUsers(action, 'broadcasters'), action.error);
 
+
+    case datalabeltypesActions.DATALABELTYPE_UPLOAD_IMAGE_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'datalabeltypes', action.datalabeltypeId ], action.data);
+    case datalabeltypesActions.DATALABELTYPE_USERS_FETCH_START:
+      return searchStart(state, 'filterHasUsers', serializeFilterHasUsers(action, 'datalabeltypes'));
+    case datalabeltypesActions.DATALABELTYPE_USERS_FETCH_SUCCESS:
+      return searchSuccess(state, 'users', 'filterHasUsers', serializeFilterHasUsers(action, 'datalabeltypes'), action.data.data);
+    case datalabeltypesActions.DATALABELTYPE_USERS_FETCH_ERROR:
+      return searchError(state, 'filterHasUsers', serializeFilterHasUsers(action, 'datalabeltypes'), action.error);
+
     case broadcastersActions.BROADCASTER_CHANNELS_FETCH_START:
       return fetchListStart(state, 'broadcastChannels');
     case broadcastersActions.BROADCASTER_CHANNELS_FETCH_SUCCESS:
@@ -415,6 +429,35 @@ export default (state = fromJS({
       return searchSuccess(state, 'listMedia', 'filterHasMedia', serializeBroadcasterFilterHasMedia(action), action.data.data);
     case broadcastersActions.BROADCASTER_MEDIA_SEARCH_ERROR:
       return searchError(state, 'filterHasMedia', serializeBroadcasterFilterHasMedia(action), action.error);
+
+
+    case datalabeltypesActions.DATALABELTYPE_FETCH_START:
+      return fetchStart(state, [ 'entities', 'datalabeltypes', action.datalabeltypeId ]);
+    case datalabeltypesActions.DATALABELTYPE_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'datalabeltypes', action.datalabeltypeId ], action.data);
+    case datalabeltypesActions.DATALABELTYPE_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'datalabeltypes', action.datalabeltypeId ], action.error);
+
+    case datalabeltypesActions.DATALABELTYPES_FETCH_START:
+      return searchStart(state, 'filterHasDatalabeltypes', serializeFilterHasBroadcasters(action));
+    case datalabeltypesActions.DATALABELTYPES_FETCH_SUCCESS:
+      return searchSuccess(state, 'datalabeltypes', 'filterHasDatalabeltypes', serializeFilterHasBroadcasters(action), action.data.data);
+    case datalabeltypesActions.DATALABELTYPES_FETCH_ERROR:
+      return searchError(state, 'filterHasDatalabeltypes', serializeFilterHasBroadcasters(action), action.error);
+
+    case datalabeltypesActions.DATALABELTYPE_SEARCH_START:
+      return searchStart(state, 'searchStringHasDatalabeltypes', action.searchString);
+    case datalabeltypesActions.DATALABELTYPE_SEARCH_SUCCESS:
+      return searchSuccess(state, 'datalabeltypes', 'searchStringHasDatalabeltypes', action.searchString, action.data);
+    case datalabeltypesActions.DATALABELTYPE_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasDatalabeltypes', action.searchString, action.error);
+
+    case datalabeltypesActions.DATALABELTYPE_MEDIA_SEARCH_START:
+      return searchStart(state, 'filterHasMedia', serializeDatalabeltypeFilterHasMedia(action));
+    case datalabeltypesActions.DATALABELTYPE_MEDIA_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listMedia', 'filterHasMedia', serializeDatalabeltypeFilterHasMedia(action), action.data.data);
+    case datalabeltypesActions.DATALABELTYPE_MEDIA_SEARCH_ERROR:
+      return searchError(state, 'filterHasMedia', serializeDatalabeltypeFilterHasMedia(action), action.error);
 
     // Characters
     // //////////

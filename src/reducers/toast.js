@@ -2,6 +2,7 @@ import { Map, List } from 'immutable';
 import * as brandActions from '../actions/brand';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcasterActions from '../actions/broadcaster';
+import * as datalabeltypeActions from '../actions/datalabeltype';
 import * as characterActions from '../actions/character';
 import * as commercialActions from '../actions/commercial';
 import * as contentProducerActions from '../actions/contentProducer';
@@ -58,6 +59,11 @@ export default (state = List(), action) => {
     case broadcasterActions.BROADCASTERS_DELETE_ERROR:
     case broadcasterActions.BROADCASTER_PERSIST_ERROR:
       return pushError(state, action.error, entityTypes.BROADCASTER);
+
+    case datalabeltypeActions.DATALABELTYPE_DELETE_ERROR:
+    case datalabeltypeActions.DATALABELTYPES_DELETE_ERROR:
+    case datalabeltypeActions.DATALABELTYPE_PERSIST_ERROR:
+      return pushError(state, action.error, entityTypes.DATALABELTYPE);
 
     case characterActions.CHARACTER_DELETE_ERROR:
     case characterActions.CHARACTERS_DELETE_ERROR:
@@ -146,6 +152,9 @@ export default (state = List(), action) => {
 
     case broadcasterActions.BROADCASTER_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.BROADCASTER);
+
+    case datalabeltypeActions.DATALABELTYPE_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, entityTypes.DATALABELTYPE);
 
     case characterActions.CHARACTER_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.CHARACTER);

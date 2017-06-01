@@ -80,6 +80,10 @@ import SeriesEdit from './pages/content/series/edit';
 import SeriesList from './pages/content/series/list';
 import SeriesRead from './pages/content/series/read';
 import SettingsCategoriesEdit from './pages/settings/categories/edit';
+import DataLabelTypesCreate from './pages/settings/datalabeltypes/create';
+import DataLabelTypesEdit from './pages/settings/datalabeltypes/edit';
+import DataLabelTypesList from './pages/settings/datalabeltypes/list';
+import DataLabelTypesRead from './pages/settings/datalabeltypes/read';
 import ShopsCreate from './pages/content/shops/create';
 import ShopsEdit from './pages/content/shops/edit';
 import ShopsList from './pages/content/shops/list';
@@ -388,6 +392,11 @@ function getRoutes ({ dispatch, getState }) {
 
       <Route path='settings'>
         <Route component={SettingsCategoriesEdit} path='categories'/>
+        <Route component={DataLabelTypesList} path='datalabeltypes'>
+          <Route component={DataLabelTypesCreate} path='create'/>
+          <Route component={DataLabelTypesEdit} path='edit/:datalabeltypeId'/>
+          <Route component={DataLabelTypesRead} path='read/:datalabeltypeId'/>
+        </Route>
       </Route>
       {/* Users */}
       <Route component={UsersList} path='users' onEnter={requireOneRole([ ADMIN ])}>
