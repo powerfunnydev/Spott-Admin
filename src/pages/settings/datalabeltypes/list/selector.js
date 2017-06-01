@@ -4,9 +4,9 @@ import { serializeFilterHasBroadcasters } from '../../../../../src/reducers/util
 import { getInformationFromQuery } from '../../../_common/components/table/index';
 import { prefix } from './index';
 
-export const isSelectedSelector = (state) => state.getIn([ 'content', 'broadcasters', 'list', 'broadcasters', 'isSelected' ]);
-export const pageCountSelector = (state) => state.getIn([ 'content', 'broadcasters', 'list', 'broadcasters', 'pageCount' ]);
-export const totalResultCountSelector = (state) => state.getIn([ 'content', 'broadcasters', 'list', 'broadcasters', 'totalResultCount' ]);
+export const isSelectedSelector = (state) => state.getIn([ 'settings', 'datalabeltypes', 'list', 'datalabeltypes', 'isSelected' ]);
+export const pageCountSelector = (state) => state.getIn([ 'settings', 'datalabeltypes', 'list', 'datalabeltypes', 'pageCount' ]);
+export const totalResultCountSelector = (state) => state.getIn([ 'settings', 'datalabeltypes', 'list', 'datalabeltypes', 'totalResultCount' ]);
 
 export const broadcastersFilterKeySelector = (state, props) => serializeFilterHasBroadcasters(getInformationFromQuery(props.location.query, prefix));
 

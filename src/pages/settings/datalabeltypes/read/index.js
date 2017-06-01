@@ -20,7 +20,7 @@ import Header from '../../../app/multiFunctionalHeader';
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @Radium
-export default class ReadBroadcaster extends Component {
+export default class ReadDatalabeltype extends Component {
 
   static propTypes = {
     children: PropTypes.node,

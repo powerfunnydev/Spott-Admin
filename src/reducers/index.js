@@ -14,6 +14,7 @@ import brandsReadProducts from '../pages/content/brands/read/products/list/reduc
 import broadcastChannelsCreate from '../pages/content/broadcastChannels/create/reducer';
 import broadcastChannelsList from '../pages/content/broadcastChannels/list/reducer';
 import broadcastersListBroadcasters from '../pages/content/broadcasters/list/reducer';
+import datalabeltypesListDatalabeltypes from '../pages/settings/datalabeltypes/list/reducer';
 import broadcastersReadBroadcastChannels from '../pages/content/broadcasters/read/broadcastChannels/reducer';
 import broadcastersReadUsers from '../pages/content/broadcasters/read/users/list/reducer';
 import charactersCreate from '../pages/content/characters/create/reducer';
@@ -76,6 +77,13 @@ export default combineReducers({
   _relatedVideo: relatedVideoPersist,
   common: combineReducers({
     linkUserModal: LinkUserModal
+  }),
+  settings: combineReducers({
+    datalabeltypes: combineReducers({
+      list: combineReducers({
+        datalabeltypes: datalabeltypesListDatalabeltypes
+      })
+    })
   }),
   content: combineReducers({
     // _mediumTvGuide is a component used by a medium.

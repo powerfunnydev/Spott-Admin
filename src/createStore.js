@@ -29,5 +29,5 @@ export default function (theHistory, reducers, initialState) {
   // Construct our new createStore() function, using given middleware
   const newCreateStore = Reflect.apply(applyMiddleware, null, middleware)(createStore);
   // Create the store
-  return newCreateStore(reducers, initialState);
+  return newCreateStore(reducers, initialState, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 }

@@ -394,6 +394,8 @@ function getRoutes ({ dispatch, getState }) {
         <Route component={SettingsCategoriesEdit} path='categories'/>
         <Route component={DataLabelTypesList} path='datalabeltypes'>
           <Route component={DataLabelTypesCreate} path='create'/>
+        </Route>
+        <Route path='datalabeltypes'>
           <Route component={DataLabelTypesEdit} path='edit/:datalabeltypeId'/>
           <Route component={DataLabelTypesRead} path='read/:datalabeltypeId'/>
         </Route>

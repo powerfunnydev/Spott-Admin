@@ -40,7 +40,7 @@ function validate (values, { t }) {
 })
 @ensureEntityIsSaved
 @Radium
-export default class EditBroadcaster extends Component {
+export default class EditDatalabeltype extends Component {
 
   static propTypes = {
     currentBroadcaster: ImmutablePropTypes.map.isRequired,

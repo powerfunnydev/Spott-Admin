@@ -30,7 +30,7 @@ function validate (values, { t }) {
   validate
 })
 @Radium
-export default class CreateBroadcasterEntryModal extends Component {
+export default class CreateDatalabeltypeEntryModal extends Component {
 
   static propTypes = {
     change: PropTypes.func.isRequired,

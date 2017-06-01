@@ -25,7 +25,7 @@ export const prefix = 'datalabeltypes';
   selectCheckbox: bindActionCreators(actions.selectCheckbox, dispatch)
 }))
 @Radium
-export default class Broadcasters extends Component {
+export default class Datalabeltypes extends Component {
 
   static propTypes = {
     broadcasters: ImmutablePropTypes.map.isRequired,
