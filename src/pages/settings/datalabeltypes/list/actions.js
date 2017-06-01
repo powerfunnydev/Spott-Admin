@@ -1,17 +1,20 @@
-import { fetchBroadcasters as dataFetchBroadcasters,
-  deleteBroadcaster as dataDeleteBroadcaster,
-  deleteBroadcasters as dataDeleteBroadcasters } from '../../../../actions/broadcaster';
+//import { fetchBroadcasters as dataFetchBroadcasters,
+//  deleteBroadcaster as dataDeleteBroadcaster,
+//  deleteBroadcasters as dataDeleteBroadcasters } from '../../../../actions/broadcaster';
+import { fetchDatalabeltypes as dataFetchDatalabeltypes,
+    deleteDatalabeltype as dataDeleteDatalabeltype,
+    deleteDatalabeltypes as dataDeleteDatalabeltypes } from '../../../../actions/datalabeltype';
 import { getInformationFromQuery } from '../../../_common/components/table/index';
 import { prefix } from './index';
 
 // Action types
 // ////////////
 
-export const BROADCASTERS_FETCH_START = 'BROADCASTERS/BROADCASTERS_FETCH_START';
-export const BROADCASTERS_FETCH_ERROR = 'BROADCASTERS/BROADCASTERS_FETCH_ERROR';
+export const DATALABELTYPES_FETCH_START = 'DATALABELTYPES/DATALABELTYPES_FETCH_START';
+export const DATALABELTYPES_FETCH_ERROR = 'DATALABELTYPES/DATALABELTYPES_FETCH_ERROR';
 
-export const BROADCASTERS_DELETE_ERROR = 'BROADCASTERS/BROADCASTERS_REMOVE_ERROR';
-export const BROADCASTER_DELETE_ERROR = 'BROADCASTERS/BROADCASTER_REMOVE_ERROR';
+export const DATALABELTYPES_DELETE_ERROR = 'DATALABELTYPES/DATALABELTYPES_REMOVE_ERROR';
+export const DATALABELTYPE_DELETE_ERROR = 'DATALABELTYPES/DATALABELTYPES_REMOVE_ERROR';
 
 export const SELECT_ALL_CHECKBOXES = 'DATALABELTYPE/SELECT_ALL_CHECKBOXES';
 export const SELECT_CHECKBOX = 'DATALABELTYPE/SELECT_CHECKBOX';
@@ -21,9 +24,9 @@ export const SORT_COLUMN = 'BROADCASTERS/SORT_COLUMN';
 export function load (query) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataFetchBroadcasters(getInformationFromQuery(query, prefix)));
+      return await dispatch(dataFetchDatalabeltypes(getInformationFromQuery(query, prefix)));
     } catch (error) {
-      dispatch({ error, type: BROADCASTERS_FETCH_ERROR });
+      dispatch({ error, type: DATALABELTYPES_FETCH_ERROR });
     }
   };
 }
@@ -31,9 +34,9 @@ export function load (query) {
 export function deleteDatalabeltypes (datalabeltypeIds) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataDeleteBroadcasters({ datalabeltypeIds }));
+      return await dispatch(dataDeleteDatalabeltypes({ datalabeltypeIds }));
     } catch (error) {
-      dispatch({ error, type: BROADCASTERS_DELETE_ERROR });
+      dispatch({ error, type: DATALABELTYPES_DELETE_ERROR });
     }
   };
 }
@@ -41,9 +44,9 @@ export function deleteDatalabeltypes (datalabeltypeIds) {
 export function deleteDatalabeltype (datalabeltypeId) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataDeleteBroadcaster({ datalabeltypeId }));
+      return await dispatch(dataDeleteDatalabeltype({ datalabeltypeId }));
     } catch (error) {
-      dispatch({ error, type: BROADCASTER_DELETE_ERROR });
+      dispatch({ error, type: DATALABELTYPE_DELETE_ERROR });
     }
   };
 }

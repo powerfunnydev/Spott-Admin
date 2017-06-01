@@ -28,7 +28,7 @@ export const prefix = 'datalabeltypes';
 export default class Datalabeltypes extends Component {
 
   static propTypes = {
-    broadcasters: ImmutablePropTypes.map.isRequired,
+    datalabeltypes: ImmutablePropTypes.map.isRequired,
     children: PropTypes.node,
     deleteDatalabeltype: PropTypes.func.isRequired,
     deleteDatalabeltypes: PropTypes.func.isRequired,
@@ -101,7 +101,7 @@ export default class Datalabeltypes extends Component {
   }
 
   render () {
-    const { broadcasters, children, deleteDatalabeltype, isSelected, location: { query, query: { broadcastersDisplay, broadcastersPage,
+    const { datalabeltypes, children, deleteDatalabeltype, isSelected, location: { query, query: { broadcastersDisplay, broadcastersPage,
       broadcastersSearchString, broadcastersSortField, broadcastersSortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount,
     onChangeDisplay, onChangeSearchString } = this.props;
@@ -120,7 +120,7 @@ export default class Datalabeltypes extends Component {
               <Container >
                 <UtilsBar
                   display={broadcastersDisplay}
-                  isLoading={broadcasters.get('_status') !== 'loaded'}
+                  isLoading={datalabeltypes.get('_status') !== 'loaded'}
                   numberSelected={numberSelected}
                   searchString={broadcastersSearchString}
                   textCreateButton='New DataLabelType'
@@ -140,7 +140,7 @@ export default class Datalabeltypes extends Component {
                   <div>
                     <ListView
                       columns={columns}
-                      data={broadcasters}
+                      data={datalabeltypes}
                       deleteItem={deleteDatalabeltype}
                       getEditUrl={this.determineEditUrl}
                       isSelected={isSelected}

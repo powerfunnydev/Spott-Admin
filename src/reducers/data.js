@@ -1,6 +1,6 @@
 import { fromJS } from 'immutable';
 import {
-  serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
+  serializeFilterHasBroadcasters, serializeFilterHasDatalabeltypes, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
   serializeFilterHasUsers, serializeFilterHasMediumCategories, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTopics,
   serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers, serializeFilterHasInteractiveVideos,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
@@ -439,11 +439,11 @@ export default (state = fromJS({
       return fetchError(state, [ 'entities', 'datalabeltypes', action.datalabeltypeId ], action.error);
 
     case datalabeltypesActions.DATALABELTYPES_FETCH_START:
-      return searchStart(state, 'filterHasDatalabeltypes', serializeFilterHasBroadcasters(action));
+      return searchStart(state, 'filterHasDatalabeltypes', serializeFilterHasDatalabeltypes(action));
     case datalabeltypesActions.DATALABELTYPES_FETCH_SUCCESS:
-      return searchSuccess(state, 'datalabeltypes', 'filterHasDatalabeltypes', serializeFilterHasBroadcasters(action), action.data.data);
+      return searchSuccess(state, 'datalabeltypes', 'filterHasDatalabeltypes', serializeFilterHasDatalabeltypes(action), action.data.data);
     case datalabeltypesActions.DATALABELTYPES_FETCH_ERROR:
-      return searchError(state, 'filterHasDatalabeltypes', serializeFilterHasBroadcasters(action), action.error);
+      return searchError(state, 'filterHasDatalabeltypes', serializeFilterHasDatalabeltypes(action), action.error);
 
     case datalabeltypesActions.DATALABELTYPE_SEARCH_START:
       return searchStart(state, 'searchStringHasDatalabeltypes', action.searchString);

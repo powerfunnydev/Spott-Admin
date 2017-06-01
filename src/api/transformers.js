@@ -99,6 +99,10 @@ export function transformBroadcaster ({ logo, name, uuid }) {
   return { logo: logo && { id: logo.uuid, url: logo.url }, name, id: uuid };
 }
 
+export function transformDatalabeltype ({ auditInfo, name, uuid }) {
+  return { auditInfo: auditInfo && { createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn }, name, id: uuid };
+}
+
 export function transformContentProducer ({ uuid, name, auditInfo, logo }) {
   return {
     createdOn: auditInfo && auditInfo.createdOn,

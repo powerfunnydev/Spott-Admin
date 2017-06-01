@@ -1,5 +1,5 @@
 import { del, get, post, postFormData } from './request';
-import { transformListMedium, transformUser, transformBroadcaster, transformBroadcastChannel } from './transformers';
+import { transformListMedium, transformUser, transformBroadcaster, transformBroadcastChannel, transformDatalabeltype } from './transformers';
 
 export async function fetchDatalabeltypeUsers (baseUrl, authenticationToken, locale, { broadcasterId, searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/media/broadcasters/${broadcasterId}/users?page=${page}&pageSize=${pageSize}`;
@@ -17,7 +17,7 @@ export async function fetchDatalabeltypeUsers (baseUrl, authenticationToken, loc
 }
 
 export async function fetchDatalabeltypes (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
-  let url = `${baseUrl}/v004/media/broadcasters?page=${page}&pageSize=${pageSize}`;
+  let url = `${baseUrl}/v004/data/labelTypes?page=${page}&pageSize=${pageSize}`;
   if (searchString) {
     url = url.concat(`&searchString=${encodeURIComponent(searchString)}`);
   }
@@ -27,7 +27,7 @@ export async function fetchDatalabeltypes (baseUrl, authenticationToken, locale,
   const { body } = await get(authenticationToken, locale, url);
   // There is also usable data in body (not only in data field).
   // We need also fields page, pageCount,...
-  body.data = body.data.map(transformBroadcaster);
+  body.data = body.data.map(transformDatalabeltype);
   return body;
 }
 
@@ -63,13 +63,13 @@ export async function persistDatalabeltype (baseUrl, authenticationToken, locale
   return transformBroadcaster(result.body);
 }
 
-export async function deleteDatalabeltype (baseUrl, authenticationToken, locale, { broadcasterId }) {
-  await del(authenticationToken, locale, `${baseUrl}/v004/media/broadcasters/${broadcasterId}`);
+export async function deleteDatalabeltype (baseUrl, authenticationToken, locale, { datalabeltypeId }) {
+  await del(authenticationToken, locale, `${baseUrl}/v004/data/labelTypes/${datalabeltypeId}`);
 }
 
-export async function deleteDatalabeltypes (baseUrl, authenticationToken, locale, { broadcasterIds }) {
-  for (const broadcasterId of broadcasterIds) {
-    await deleteDatalabeltype(baseUrl, authenticationToken, locale, { broadcasterId });
+export async function deleteDatalabeltypes (baseUrl, authenticationToken, locale, { datalabeltypeIds }) {
+  for (const datalabeltypeId of datalabeltypeIds) {
+    await deleteDatalabeltype(baseUrl, authenticationToken, locale, { datalabeltypeId });
   }
 }
 
