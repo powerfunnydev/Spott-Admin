@@ -11,8 +11,6 @@ import * as actions from './actions';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import Section from '../../../_common/components/section';
 import { routerPushWithReturnTo } from '../../../../actions/global';
-import Dropzone from '../../../_common/dropzone/imageDropzone';
-import Label from '../../../_common/inputs/_label';
 import selector from './selector';
 import ensureEntityIsSaved from '../../../_common/decorators/ensureEntityIsSaved';
 import { SideMenu } from '../../../app/sideMenu';
@@ -28,14 +26,12 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
-  deleteLogo: bindActionCreators(actions.deleteLogo, dispatch),
   load: bindActionCreators(actions.load, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
-  uploadImage: bindActionCreators(actions.uploadImage, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
-  form: 'broadcasterEdit',
+  form: 'datalabeltypeEdit',
   validate
 })
 @ensureEntityIsSaved
@@ -43,8 +39,7 @@ function validate (values, { t }) {
 export default class EditDatalabeltype extends Component {
 
   static propTypes = {
-    currentBroadcaster: ImmutablePropTypes.map.isRequired,
-    deleteLogo: PropTypes.func.isRequired,
+    currentDatalabeltype: ImmutablePropTypes.map.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
@@ -54,7 +49,6 @@ export default class EditDatalabeltype extends Component {
     routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired,
-    uploadImage: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -64,20 +58,20 @@ export default class EditDatalabeltype extends Component {
   }
 
   async componentWillMount () {
-    const broadcasterId = this.props.params.broadcasterId;
-    if (broadcasterId) {
-      const { name } = await this.props.load(broadcasterId);
+    const datalabeltypeId = this.props.params.datalabeltypeId
+    if (datalabeltypeId) {
+      const { name } = await this.props.load(datalabeltypeId);
       this.props.initialize({ name });
     }
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('/content/broadcasters', true);
+    this.props.routerPushWithReturnTo('/settings/datalabeltypes', true);
   }
 
   async submit (form) {
     try {
-      await this.props.submit({ ...form.toJS(), id: this.props.params.broadcasterId });
+      await this.props.submit({ ...form.toJS(), id: this.props.params.datalabeltypeId });
       this.props.initialize(form.toJS());
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
@@ -95,14 +89,14 @@ export default class EditDatalabeltype extends Component {
   }
 
   render () {
-    const { currentBroadcaster, location, handleSubmit, deleteLogo } = this.props;
+    const { currentDatalabeltype, location, handleSubmit } = this.props;
     const { styles } = this.constructor;
     return (
       <SideMenu>
         <Root style={styles.background}>
           <Header hierarchy={[
-            { title: 'Broadcasters', url: '/content/broadcasters' },
-            { title: currentBroadcaster.get('name'), url: location } ]}/>
+            { title: 'Datalabeltypes', url: '/settings/datalabeltypes' },
+            { title: currentDatalabeltype.get('name'), url: location } ]}/>
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
             <Tabs>
               <TabList style={tabStyles.tabList}>
@@ -115,19 +109,8 @@ export default class EditDatalabeltype extends Component {
                     component={TextInput}
                     label='Name'
                     name='name'
-                    placeholder='Name broadcaster'
+                    placeholder='Name datalabeltype'
                     required/>
-                  <div style={styles.paddingTop}>
-                    <Label text='Upload image' />
-                    <Dropzone
-                      accept='image/*'
-                      downloadUrl={currentBroadcaster.get('logo') &&
-                        currentBroadcaster.getIn([ 'logo', 'url' ])}
-                      imageUrl={currentBroadcaster.get('logo') &&
-                        `${currentBroadcaster.getIn([ 'logo', 'url' ])}?height=310&width=310`}
-                      onChange={({ callback, file }) => this.props.uploadImage({ broadcasterId: this.props.params.broadcasterId, image: file, callback })}
-                      onDelete={() => { deleteLogo({ broadcasterId: currentBroadcaster.get('id') }); }}/>
-                  </div>
                 </Section>
               </TabPanel>
             </Tabs>

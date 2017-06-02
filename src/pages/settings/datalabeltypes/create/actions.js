@@ -1,3 +1,3 @@
-import { persistBroadcaster } from '../../../../actions/broadcaster';
+import { persistDatalabeltype } from '../../../../actions/datalabeltype';
 
-export const submit = persistBroadcaster;
+export const submit = persistDatalabeltype;

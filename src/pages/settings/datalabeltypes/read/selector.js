@@ -1,9 +1,9 @@
 import { createStructuredSelector } from 'reselect';
-import { broadcastersEntitiesSelector, createEntityByIdSelector } from '../../../../selectors/data';
+import { datalabeltypesEntitiesSelector, createEntityByIdSelector } from '../../../../selectors/data';
 
-export const currentBroadcasterIdSelector = (state, props) => props.params.broadcasterId;
-export const currentBroadcasterSelector = createEntityByIdSelector(broadcastersEntitiesSelector, currentBroadcasterIdSelector);
+export const currentDatalabeltypeIdSelector = (state, props) => props.params.datalabeltypeId;
+export const currentDatalabeltypeSelector = createEntityByIdSelector(datalabeltypesEntitiesSelector, currentDatalabeltypeIdSelector);
 
 export default createStructuredSelector({
-  currentBroadcaster: currentBroadcasterSelector
+  currentDatalabeltype: currentDatalabeltypeSelector
 });

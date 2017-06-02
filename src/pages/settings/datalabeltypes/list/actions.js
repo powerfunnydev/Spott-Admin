@@ -1,6 +1,3 @@
-//import { fetchBroadcasters as dataFetchBroadcasters,
-//  deleteBroadcaster as dataDeleteBroadcaster,
-//  deleteBroadcasters as dataDeleteBroadcasters } from '../../../../actions/broadcaster';
 import { fetchDatalabeltypes as dataFetchDatalabeltypes,
     deleteDatalabeltype as dataDeleteDatalabeltype,
     deleteDatalabeltypes as dataDeleteDatalabeltypes } from '../../../../actions/datalabeltype';
@@ -19,7 +16,7 @@ export const DATALABELTYPE_DELETE_ERROR = 'DATALABELTYPES/DATALABELTYPES_REMOVE_
 export const SELECT_ALL_CHECKBOXES = 'DATALABELTYPE/SELECT_ALL_CHECKBOXES';
 export const SELECT_CHECKBOX = 'DATALABELTYPE/SELECT_CHECKBOX';
 
-export const SORT_COLUMN = 'BROADCASTERS/SORT_COLUMN';
+export const SORT_COLUMN = 'DATALABELTYPE/SORT_COLUMN';
 
 export function load (query) {
   return async (dispatch, getState) => {

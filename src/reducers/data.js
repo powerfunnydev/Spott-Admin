@@ -385,16 +385,6 @@ export default (state = fromJS({
     case broadcastersActions.BROADCASTER_USERS_FETCH_ERROR:
       return searchError(state, 'filterHasUsers', serializeFilterHasUsers(action, 'broadcasters'), action.error);
 
-
-    case datalabeltypesActions.DATALABELTYPE_UPLOAD_IMAGE_SUCCESS:
-      return fetchSuccess(state, [ 'entities', 'datalabeltypes', action.datalabeltypeId ], action.data);
-    case datalabeltypesActions.DATALABELTYPE_USERS_FETCH_START:
-      return searchStart(state, 'filterHasUsers', serializeFilterHasUsers(action, 'datalabeltypes'));
-    case datalabeltypesActions.DATALABELTYPE_USERS_FETCH_SUCCESS:
-      return searchSuccess(state, 'users', 'filterHasUsers', serializeFilterHasUsers(action, 'datalabeltypes'), action.data.data);
-    case datalabeltypesActions.DATALABELTYPE_USERS_FETCH_ERROR:
-      return searchError(state, 'filterHasUsers', serializeFilterHasUsers(action, 'datalabeltypes'), action.error);
-
     case broadcastersActions.BROADCASTER_CHANNELS_FETCH_START:
       return fetchListStart(state, 'broadcastChannels');
     case broadcastersActions.BROADCASTER_CHANNELS_FETCH_SUCCESS:
@@ -444,20 +434,6 @@ export default (state = fromJS({
       return searchSuccess(state, 'datalabeltypes', 'filterHasDatalabeltypes', serializeFilterHasDatalabeltypes(action), action.data.data);
     case datalabeltypesActions.DATALABELTYPES_FETCH_ERROR:
       return searchError(state, 'filterHasDatalabeltypes', serializeFilterHasDatalabeltypes(action), action.error);
-
-    case datalabeltypesActions.DATALABELTYPE_SEARCH_START:
-      return searchStart(state, 'searchStringHasDatalabeltypes', action.searchString);
-    case datalabeltypesActions.DATALABELTYPE_SEARCH_SUCCESS:
-      return searchSuccess(state, 'datalabeltypes', 'searchStringHasDatalabeltypes', action.searchString, action.data);
-    case datalabeltypesActions.DATALABELTYPE_SEARCH_ERROR:
-      return searchError(state, 'searchStringHasDatalabeltypes', action.searchString, action.error);
-
-    case datalabeltypesActions.DATALABELTYPE_MEDIA_SEARCH_START:
-      return searchStart(state, 'filterHasMedia', serializeDatalabeltypeFilterHasMedia(action));
-    case datalabeltypesActions.DATALABELTYPE_MEDIA_SEARCH_SUCCESS:
-      return searchSuccess(state, 'listMedia', 'filterHasMedia', serializeDatalabeltypeFilterHasMedia(action), action.data.data);
-    case datalabeltypesActions.DATALABELTYPE_MEDIA_SEARCH_ERROR:
-      return searchError(state, 'filterHasMedia', serializeDatalabeltypeFilterHasMedia(action), action.error);
 
     // Characters
     // //////////

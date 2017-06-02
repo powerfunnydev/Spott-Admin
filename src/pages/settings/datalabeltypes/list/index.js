@@ -101,8 +101,8 @@ export default class Datalabeltypes extends Component {
   }
 
   render () {
-    const { datalabeltypes, children, deleteDatalabeltype, isSelected, location: { query, query: { broadcastersDisplay, broadcastersPage,
-      broadcastersSearchString, broadcastersSortField, broadcastersSortDirection } },
+    const { datalabeltypes, children, deleteDatalabeltype, isSelected, location: { query, query: { datalabeltypesDisplay, datalabeltypesPage,
+      datalabeltypesSearchString, datalabeltypesSortField, datalabeltypesSortDirection } },
       pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount,
     onChangeDisplay, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
@@ -119,12 +119,12 @@ export default class Datalabeltypes extends Component {
             <div style={generalStyles.backgroundBar}>
               <Container >
                 <UtilsBar
-                  display={broadcastersDisplay}
+                  display={datalabeltypesDisplay}
                   isLoading={datalabeltypes.get('_status') !== 'loaded'}
                   numberSelected={numberSelected}
-                  searchString={broadcastersSearchString}
+                  searchString={datalabeltypesSearchString}
                   textCreateButton='New DataLabelType'
-                  onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, broadcastersSearchString: value }); }}
+                  onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, datalabeltypesSearchString: value }); }}
                   onClickNewEntry={this.onClickNewEntry}/>
               </Container>
             </div>
@@ -136,7 +136,7 @@ export default class Datalabeltypes extends Component {
                   numberSelected={numberSelected}
                   totalResultCount={totalResultCount}
                   onDeleteSelected={this.onClickDeleteSelected}/>
-                {(broadcastersDisplay === undefined || broadcastersDisplay === 'list') &&
+                {(datalabeltypesDisplay === undefined || datalabeltypesDisplay === 'list') &&
                   <div>
                     <ListView
                       columns={columns}
@@ -146,11 +146,11 @@ export default class Datalabeltypes extends Component {
                       isSelected={isSelected}
                       load={() => this.props.load(this.props.location.query)}
                       selectAllCheckboxes={selectAllCheckboxes}
-                      sortDirection={broadcastersSortDirection}
-                      sortField={broadcastersSortField}
+                      sortDirection={datalabeltypesSortDirection}
+                      sortField={datalabeltypesSortField}
                       onCheckboxChange={(id) => selectCheckbox.bind(this, id)}
                       onSortField={(name) => this.props.onSortField.bind(this, name)} />
-                    <Pagination currentPage={(broadcastersPage && (parseInt(broadcastersPage, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(broadcastersPage, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(broadcastersPage, 10), true); }}/>
+                    <Pagination currentPage={(datalabeltypesPage && (parseInt(datalabeltypesPage, 10) + 1) || 1)} pageCount={pageCount} onLeftClick={() => { this.props.onChangePage(parseInt(datalabeltypesPage, 10), false); }} onRightClick={() => { this.props.onChangePage(parseInt(datalabeltypesPage, 10), true); }}/>
                   </div>
                 }
               </Container>

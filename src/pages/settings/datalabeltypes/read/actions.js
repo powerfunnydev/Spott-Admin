@@ -1,13 +1,13 @@
-import { fetchBroadcaster as dataFetchBroadcaster } from '../../../../actions/broadcaster';
+import { fetchDatalabeltype as dataFetchDatalabeltype } from '../../../../actions/datalabeltype';
 
-export const BROADCASTER_FETCH_ENTRY_ERROR = 'BROADCASTERS_READ/FETCH_ENTRY_ERROR';
+export const DATALABELTYPE_FETCH_ENTRY_ERROR = 'DATALABELTYPES_READ/FETCH_ENTRY_ERROR';
 
-export function loadBroadcaster (broadcasterId) {
+export function loadDatalabeltype (datalabeltypeId) {
   return async (dispatch, getState) => {
     try {
-      return await dispatch(dataFetchBroadcaster({ broadcasterId }));
+      return await dispatch(dataFetchDatalabeltype({ datalabeltypeId }));
     } catch (error) {
-      dispatch({ error, type: BROADCASTER_FETCH_ENTRY_ERROR });
+      dispatch({ error, type: DATALABELTYPE_FETCH_ENTRY_ERROR });
     }
   };
 }

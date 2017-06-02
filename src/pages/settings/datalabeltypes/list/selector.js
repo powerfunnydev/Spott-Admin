@@ -10,14 +10,14 @@ export const totalResultCountSelector = (state) => state.getIn([ 'settings', 'da
 
 export const datalabeltypesFilterKeySelector = (state, props) => serializeFilterHasDatalabeltypes(getInformationFromQuery(props.location.query, prefix));
 
-export const broadcastersSelector = createEntitiesByRelationSelector(
+export const datalabeltypesSelector = createEntitiesByRelationSelector(
   filterHasDatalabeltypesRelationsSelector,
   datalabeltypesFilterKeySelector,
   datalabeltypesEntitiesSelector
 );
 
 export default createStructuredSelector({
-  datalabeltypes: broadcastersSelector,
+  datalabeltypes: datalabeltypesSelector,
   isSelected: isSelectedSelector,
   pageCount: pageCountSelector,
   totalResultCount: totalResultCountSelector

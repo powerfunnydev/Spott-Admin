@@ -26,7 +26,7 @@ function validate (values, { t }) {
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
-  form: 'broadcastersCreateEntry',
+  form: 'datalabeltypesCreateEntry',
   validate
 })
 @Radium
@@ -73,20 +73,20 @@ export default class CreateDatalabeltypeEntryModal extends Component {
   }
 
   onCloseClick () {
-    this.props.routerPushWithReturnTo('/content/broadcasters', true);
+    this.props.routerPushWithReturnTo('/settings/datalabeltypes', true);
   }
 
   render () {
     const { handleSubmit } = this.props;
     return (
-      <PersistModal createAnother isOpen title='Create Broadcaster'
+      <PersistModal createAnother isOpen title='Create Datalabeltype'
         onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Content</FormSubtitle>
         <Field
           component={TextInput}
           label='Name'
           name='name'
-          placeholder='Name broadcaster'
+          placeholder='Name datalabeltype'
           required/>
       </PersistModal>
     );

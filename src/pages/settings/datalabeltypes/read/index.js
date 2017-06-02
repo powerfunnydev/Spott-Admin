@@ -9,14 +9,12 @@ import EntityDetails from '../../../_common/entityDetails';
 import * as listActions from '../list/actions';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
-import { Tabs, Tab } from '../../../_common/components/formTabs';
-import { generalStyles } from '../../../_common/components/table/index';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
 
 @connect(selector, (dispatch) => ({
   deleteDatalabeltype: bindActionCreators(listActions.deleteDatalabeltype, dispatch),
-  loadBroadcaster: bindActionCreators(actions.loadBroadcaster, dispatch),
+  loadDatalabeltype: bindActionCreators(actions.loadDatalabeltype, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @Radium
@@ -24,10 +22,10 @@ export default class ReadDatalabeltype extends Component {
 
   static propTypes = {
     children: PropTypes.node,
-    currentBroadcaster: PropTypes.object.isRequired,
+    currentDatalabeltype: PropTypes.object.isRequired,
     deleteDatalabeltype: PropTypes.func.isRequired,
     error: PropTypes.any,
-    loadBroadcaster: PropTypes.func.isRequired,
+    loadDatalabeltype: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired
@@ -41,17 +39,17 @@ export default class ReadDatalabeltype extends Component {
   }
 
   async componentWillMount () {
-    if (this.props.params.broadcasterId) {
-      await this.props.loadBroadcaster(this.props.params.broadcasterId);
+    if (this.props.params.datalabeltypeId) {
+      await this.props.loadDatalabeltype(this.props.params.datalabeltypeId);
     }
   }
 
-  getName (broadcaster) {
-    return broadcaster.get('name');
+  getName (datalabeltype) {
+    return datalabeltype.get('name');
   }
 
   redirect () {
-    this.props.routerPushWithReturnTo('/content/broadcasters', true);
+    this.props.routerPushWithReturnTo('/settings/datalabeltypes', true);
   }
 
   onChangeTab (tab) {
@@ -60,9 +58,9 @@ export default class ReadDatalabeltype extends Component {
 
   onClickNewEntry (e) {
     e.preventDefault();
-    const broadcasterId = this.props.params.broadcasterId;
-    if (broadcasterId) {
-      this.props.routerPushWithReturnTo(`/content/broadcasters/read/${broadcasterId}/create/broadcast-channel`);
+    const datalabeltypeId = this.props.params.datalabeltypeId;
+    if (datalabeltypeId) {
+      this.props.routerPushWithReturnTo(`/settings/datalabeltypes/read/${datalabeltypeId}`);
     }
   }
 
@@ -76,25 +74,25 @@ export default class ReadDatalabeltype extends Component {
   render () {
     const styles = this.constructor.styles;
     const {
-      children, currentBroadcaster, deleteDatalabeltype, location, location: { query: { tab } }
+      children, currentDatalabeltype, deleteDatalabeltype, location, location: { query: { tab } }
     } = this.props;
 
+    console.log('~~~~~~~~~~', currentDatalabeltype, currentDatalabeltype.getIn([ 'name' ]), currentDatalabeltype.getIn('name'), currentDatalabeltype.get('name'));
     return (
       <SideMenu>
         <Root>
           <Header
             hierarchy={[
-              { title: 'Broadcasters', url: '/content/broadcasters' },
-              { title: currentBroadcaster.get('name'), url: location.pathname }
+              { title: 'Datalabeltypes', url: '/settings/datalabeltypes' },
+              { title: currentDatalabeltype.get('name'), url: location.pathname }
             ]}/>
           <Container>
-            {currentBroadcaster.get('_status') === 'loaded' && currentBroadcaster &&
+            {currentDatalabeltype.get('_status') === 'loaded' && currentDatalabeltype &&
               <EntityDetails
-                imageUrl={currentBroadcaster.get('logo') && `${currentBroadcaster.getIn([ 'logo', 'url' ])}?height=310&width=310`}
-                title={currentBroadcaster.getIn([ 'name' ])}
-                onEdit={() => this.props.routerPushWithReturnTo(`/content/broadcasters/edit/${currentBroadcaster.getIn([ 'id' ])}`)}
+                title={currentDatalabeltype.getIn([ 'name' ])}
+                onEdit={() => this.props.routerPushWithReturnTo(`/settings/datalabeltypes/edit/${currentDatalabeltype.getIn([ 'id' ])}`)}
                 onRemove={async () => {
-                  await deleteDatalabeltype(currentBroadcaster.getIn([ 'id' ]));
+                  await deleteDatalabeltype(currentDatalabeltype.getIn([ 'id' ]));
                   this.redirect();
                 }}/>}
           </Container>
