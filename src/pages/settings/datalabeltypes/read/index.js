@@ -72,12 +72,9 @@ export default class ReadDatalabeltype extends Component {
   };
 
   render () {
-    const styles = this.constructor.styles;
     const {
-      children, currentDatalabeltype, deleteDatalabeltype, location, location: { query: { tab } }
-    } = this.props;
+      children, currentDatalabeltype, deleteDatalabeltype, location } = this.props;
 
-    console.log('~~~~~~~~~~', currentDatalabeltype, currentDatalabeltype.getIn([ 'name' ]), currentDatalabeltype.getIn('name'), currentDatalabeltype.get('name'));
     return (
       <SideMenu>
         <Root>

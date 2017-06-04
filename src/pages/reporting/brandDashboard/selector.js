@@ -62,7 +62,7 @@ const topProductsFilterKeySelector = (state, props) => serializeFilterHasTopProd
 });
 
 const topCommercialsFilterKeySelector = (state, props) => serializeFilterHasTopCommercials({
-    ...getInformationFromQuery(props.location.query, topCommercialsPrefix)
+  ...getInformationFromQuery(props.location.query, topCommercialsPrefix)
     // brandId: 'BRAND_ID_PLACEHOLDER'
 });
 

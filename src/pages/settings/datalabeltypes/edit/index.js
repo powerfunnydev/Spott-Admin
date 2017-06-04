@@ -48,7 +48,7 @@ export default class EditDatalabeltype extends Component {
     params: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
-    t: PropTypes.func.isRequired,
+    t: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -58,7 +58,7 @@ export default class EditDatalabeltype extends Component {
   }
 
   async componentWillMount () {
-    const datalabeltypeId = this.props.params.datalabeltypeId
+    const datalabeltypeId = this.props.params.datalabeltypeId;
     if (datalabeltypeId) {
       const { name } = await this.props.load(datalabeltypeId);
       this.props.initialize({ name });

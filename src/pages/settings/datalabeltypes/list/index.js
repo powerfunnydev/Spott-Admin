@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import Radium from 'radium';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Container, Root } from '../../../_common/styles';
-import { UtilsBar, isQueryChanged, Tile, tableDecorator, generalStyles, TotalEntries, Pagination } from '../../../_common/components/table/index';
+import { UtilsBar, isQueryChanged, tableDecorator, generalStyles, TotalEntries, Pagination } from '../../../_common/components/table/index';
 import Line from '../../../_common/components/line';
 import ListView from '../../../_common/components/listView/index';
 import { slowdown } from '../../../../utils';
@@ -28,8 +28,8 @@ export const prefix = 'datalabeltypes';
 export default class Datalabeltypes extends Component {
 
   static propTypes = {
-    datalabeltypes: ImmutablePropTypes.map.isRequired,
     children: PropTypes.node,
+    datalabeltypes: ImmutablePropTypes.map.isRequired,
     deleteDatalabeltype: PropTypes.func.isRequired,
     deleteDatalabeltypes: PropTypes.func.isRequired,
     isSelected: ImmutablePropTypes.map.isRequired,
@@ -103,8 +103,7 @@ export default class Datalabeltypes extends Component {
   render () {
     const { datalabeltypes, children, deleteDatalabeltype, isSelected, location: { query, query: { datalabeltypesDisplay, datalabeltypesPage,
       datalabeltypesSearchString, datalabeltypesSortField, datalabeltypesSortDirection } },
-      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount,
-    onChangeDisplay, onChangeSearchString } = this.props;
+      pageCount, selectAllCheckboxes, selectCheckbox, totalResultCount, onChangeSearchString } = this.props;
     const numberSelected = isSelected.reduce((total, selected, key) => selected && key !== 'ALL' ? total + 1 : total, 0);
     const columns = [
       { type: 'checkBox' },

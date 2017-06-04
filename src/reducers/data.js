@@ -420,7 +420,6 @@ export default (state = fromJS({
     case broadcastersActions.BROADCASTER_MEDIA_SEARCH_ERROR:
       return searchError(state, 'filterHasMedia', serializeBroadcasterFilterHasMedia(action), action.error);
 
-
     case datalabeltypesActions.DATALABELTYPE_FETCH_START:
       return fetchStart(state, [ 'entities', 'datalabeltypes', action.datalabeltypeId ]);
     case datalabeltypesActions.DATALABELTYPE_FETCH_SUCCESS:

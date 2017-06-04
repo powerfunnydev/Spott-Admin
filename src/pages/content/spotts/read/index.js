@@ -11,8 +11,6 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 import Line from '../../../_common/components/line';
 import { SideMenu } from '../../../app/sideMenu';
 import Header from '../../../app/multiFunctionalHeader';
-import { generalStyles } from '../../../_common/components/table/index';
-import { Tabs, Tab } from '../../../_common/components/formTabs';
 
 /* eslint-disable no-alert */
 
@@ -63,8 +61,7 @@ export default class ReadSpott extends Component {
   }
 
   render () {
-    const { params, children, currentSpott, location, deleteSpott, location: { query: { tabIndex } } } = this.props;
-    const { styles } = this.constructor;
+    const { params, children, currentSpott, location, deleteSpott } = this.props;
     const defaultLocale = currentSpott.get('defaultLocale');
     return (
       <SideMenu>
