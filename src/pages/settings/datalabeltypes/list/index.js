@@ -108,6 +108,8 @@ export default class Datalabeltypes extends Component {
     const columns = [
       { type: 'checkBox' },
       { type: 'custom', sort: true, sortField: 'NAME', title: 'NAME', clickable: true, getUrl: this.determineReadUrl, name: 'name' },
+      { type: 'custom', title: 'CREATED BY', name: 'createdBy', colspan: 2 },
+      { type: 'custom', title: 'CREATED ON', name: 'createdOn', dataType: 'date', colspan: 2 },
       { type: 'dropdown' }
     ];
     return (

@@ -100,7 +100,7 @@ export function transformBroadcaster ({ logo, name, uuid }) {
 }
 
 export function transformDatalabeltype ({ auditInfo, name, uuid }) {
-  return { name, id: uuid };
+  return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn};
 }
 
 export function transformSingleDatalabeltype ({ auditInfo, localeData, uuid }, locale) {
@@ -110,7 +110,7 @@ export function transformSingleDatalabeltype ({ auditInfo, localeData, uuid }, l
       name = localeData[data].name;
     }
   }
-  return { name, id: uuid };
+  return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn};
 }
 
 export function transformContentProducer ({ uuid, name, auditInfo, logo }) {
