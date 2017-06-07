@@ -10,6 +10,7 @@ export const brandsEntitiesSelector = (state) => state.getIn([ 'data', 'entities
 export const broadcastChannelsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'broadcastChannels' ]);
 export const broadcastersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'broadcasters' ]);
 export const datalabeltypesEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'datalabeltypes' ]);
+export const datalabelsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'datalabels' ]);
 export const charactersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'characters' ]);
 export const collectionsEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'collections' ]);
 export const contentProducersEntitiesSelector = (state) => state.getIn([ 'data', 'entities', 'contentProducers' ]);
@@ -59,6 +60,7 @@ export const filterHasBrandsRelationsSelector = (state) => state.getIn([ 'data',
 export const filterHasBroadcasterChannelsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasBroadcastChannels' ]);
 export const filterHasBroadcastersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasBroadcasters' ]);
 export const filterHasDatalabeltypesRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasDatalabeltypes' ]);
+export const filterHasDatalabelsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasDatalabels' ]);
 export const filterHasCharactersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasCharacters' ]);
 export const filterHasCommercialsRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasCommercials' ]);
 export const filterHasContentProducersRelationsSelector = (state) => state.getIn([ 'data', 'relations', 'filterHasContentProducers' ]);

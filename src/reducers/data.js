@@ -1,6 +1,6 @@
 import { fromJS } from 'immutable';
 import {
-  serializeFilterHasBroadcasters, serializeFilterHasDatalabeltypes, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
+  serializeFilterHasBroadcasters, serializeFilterHasDatalabeltypes, serializeFilterHasDatalabels, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
   serializeFilterHasUsers, serializeFilterHasMediumCategories, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTopics,
   serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers, serializeFilterHasInteractiveVideos,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
@@ -17,6 +17,7 @@ import * as brandDashboardActions from '../actions/brandDashboard';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcastersActions from '../actions/broadcaster';
 import * as datalabeltypesActions from '../actions/datalabeltype';
+import * as datalabelsActions from '../actions/datalabel';
 import * as charactersActions from '../actions/character';
 import * as collectionsActions from '../actions/collection';
 import * as collectionItemsActions from '../actions/collectionItem';
@@ -56,6 +57,7 @@ export default (state = fromJS({
     broadcastChannels: {},
     broadcasters: {},
     datalabeltypes: {},
+    datalabels: {},
     characters: {},
     collections: {},
     contentProducers: {},
@@ -111,6 +113,7 @@ export default (state = fromJS({
     filterHasBroadcastChannels: {},
     filterHasBroadcasters: {},
     filterHasDatalabeltypes: {},
+    filterHasDatalabels: {},
     filterHasCharacters: {},
     filterHasCommercials: {},
     filterHasContentProducers: {},
@@ -144,6 +147,7 @@ export default (state = fromJS({
     searchStringHasBroadcastChannels: {},
     searchStringHasBroadcasters: {},
     searchStringHasDatalabeltypes: {},
+    searchStringHasDatalabels: {},
     searchStringHasCharacters: {},
     searchStringHasContentProducers: {},
     searchStringHasMedia: {},
@@ -434,6 +438,19 @@ export default (state = fromJS({
     case datalabeltypesActions.DATALABELTYPES_FETCH_ERROR:
       return searchError(state, 'filterHasDatalabeltypes', serializeFilterHasDatalabeltypes(action), action.error);
 
+    case datalabelsActions.DATALABEL_FETCH_START:
+      return fetchStart(state, [ 'entities', 'datalabels', action.datalabelId ]);
+    case datalabelsActions.DATALABEL_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'datalabels', action.datalabelId ], action.data);
+    case datalabelsActions.DATALABEL_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'datalabels', action.datalabelId ], action.error);
+
+    case datalabelsActions.DATALABELS_FETCH_START:
+      return searchStart(state, 'datalabels', serializeFilterHasDatalabels(action));
+    case datalabelsActions.DATALABELS_FETCH_SUCCESS:
+      return searchSuccess(state, 'datalabels', 'filterHasDatalabels', serializeFilterHasDatalabels(action), action.data.data);
+    case datalabelsActions.DATALABELS_FETCH_ERROR:
+      return searchError(state, 'filterHasDatalabels', serializeFilterHasDatalabels(action), action.error);
     // Characters
     // //////////
 

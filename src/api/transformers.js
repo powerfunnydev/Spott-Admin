@@ -113,6 +113,20 @@ export function transformSingleDatalabeltype ({ auditInfo, localeData, uuid }, l
   return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn};
 }
 
+export function transformDatalabel ({ auditInfo, name, uuid, type }) {
+  return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn, typeName: type.name, typeId: type.uuid};
+}
+
+export function transformSingleDatalabel ({ auditInfo, localeData, uuid, type }, locale) {
+  let name;
+  for (const data in localeData) {
+    if (localeData[data].locale === locale) {
+      name = localeData[data].name;
+    }
+  }
+  return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn, typeName: type.name, typeId: type.uuid};
+}
+
 export function transformContentProducer ({ uuid, name, auditInfo, logo }) {
   return {
     createdOn: auditInfo && auditInfo.createdOn,

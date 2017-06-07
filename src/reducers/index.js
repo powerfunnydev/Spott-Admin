@@ -15,6 +15,7 @@ import broadcastChannelsCreate from '../pages/content/broadcastChannels/create/r
 import broadcastChannelsList from '../pages/content/broadcastChannels/list/reducer';
 import broadcastersListBroadcasters from '../pages/content/broadcasters/list/reducer';
 import datalabeltypesListDatalabeltypes from '../pages/settings/datalabeltypes/list/reducer';
+import datalabelsListDatalabels from '../pages/settings/datalabels/list/reducer';
 import broadcastersReadBroadcastChannels from '../pages/content/broadcasters/read/broadcastChannels/reducer';
 import broadcastersReadUsers from '../pages/content/broadcasters/read/users/list/reducer';
 import charactersCreate from '../pages/content/characters/create/reducer';
@@ -82,6 +83,11 @@ export default combineReducers({
     datalabeltypes: combineReducers({
       list: combineReducers({
         datalabeltypes: datalabeltypesListDatalabeltypes
+      })
+    }),
+    datalabels: combineReducers({
+      list: combineReducers({
+        datalabels: datalabelsListDatalabels
       })
     })
   }),

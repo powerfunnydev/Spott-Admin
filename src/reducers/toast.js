@@ -3,6 +3,7 @@ import * as brandActions from '../actions/brand';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcasterActions from '../actions/broadcaster';
 import * as datalabeltypeActions from '../actions/datalabeltype';
+import * as datalabelActions from '../actions/datalabel';
 import * as characterActions from '../actions/character';
 import * as commercialActions from '../actions/commercial';
 import * as contentProducerActions from '../actions/contentProducer';
@@ -64,6 +65,11 @@ export default (state = List(), action) => {
     case datalabeltypeActions.DATALABELTYPES_DELETE_ERROR:
     case datalabeltypeActions.DATALABELTYPE_PERSIST_ERROR:
       return pushError(state, action.error, entityTypes.DATALABELTYPE);
+
+    case datalabelActions.DATALABEL_DELETE_ERROR:
+    case datalabelActions.DATALABELS_DELETE_ERROR:
+    case datalabelActions.DATALABEL_PERSIST_ERROR:
+      return pushError(state, action.error, entityTypes.DATALABEL);
 
     case characterActions.CHARACTER_DELETE_ERROR:
     case characterActions.CHARACTERS_DELETE_ERROR:
@@ -153,8 +159,8 @@ export default (state = List(), action) => {
     case broadcasterActions.BROADCASTER_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.BROADCASTER);
 
-    case datalabeltypeActions.DATALABELTYPE_PERSIST_SUCCESS:
-      return pushSuccess(state, action.data, entityTypes.DATALABELTYPE);
+    case datalabelActions.DATALABEL_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, entityTypes.DATALABEL);
 
     case characterActions.CHARACTER_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.CHARACTER);

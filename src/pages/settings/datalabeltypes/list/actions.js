@@ -1,6 +1,7 @@
 import { fetchDatalabeltypes as dataFetchDatalabeltypes,
     deleteDatalabeltype as dataDeleteDatalabeltype,
-    deleteDatalabeltypes as dataDeleteDatalabeltypes } from '../../../../actions/datalabeltype';
+    deleteDatalabeltypes as dataDeleteDatalabeltypes,
+    fetchAllDatalabeltypes as dataFetchAllDatalabeltypes} from '../../../../actions/datalabeltype';
 import { getInformationFromQuery } from '../../../_common/components/table/index';
 import { prefix } from './index';
 
@@ -22,6 +23,16 @@ export function load (query) {
   return async (dispatch, getState) => {
     try {
       return await dispatch(dataFetchDatalabeltypes(getInformationFromQuery(query, prefix)));
+    } catch (error) {
+      dispatch({ error, type: DATALABELTYPES_FETCH_ERROR });
+    }
+  };
+}
+
+export function loadAll () {
+  return async (dispatch, getState) => {
+    try {
+      return await dispatch(dataFetchAllDatalabeltypes());
     } catch (error) {
       dispatch({ error, type: DATALABELTYPES_FETCH_ERROR });
     }

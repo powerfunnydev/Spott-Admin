@@ -16,6 +16,16 @@ export async function fetchDatalabeltypes (baseUrl, authenticationToken, locale,
   return body;
 }
 
+export async function fetchAllDatalabeltypes (baseUrl, authenticationToken, locale) {
+  const url = `${baseUrl}/v004/data/labelTypes?`;
+
+  const { body } = await get(authenticationToken, locale, url);
+  // There is also usable data in body (not only in data field).
+  // We need also fields page, pageCount,...
+  body.data = body.data.map(transformDatalabeltype);
+  return body;
+}
+
 export async function fetchDatalabeltype (baseUrl, authenticationToken, locale, { datalabeltypeId }) {
   const url = `${baseUrl}/v004/data/labelTypes/${datalabeltypeId}`;
   const { body } = await get(authenticationToken, locale, url);
