@@ -54,7 +54,7 @@ export async function persistDatalabeltype (baseUrl, authenticationToken, locale
 
   const url = `${baseUrl}/v004/data/labelTypes`;
   const result = await post(authenticationToken, locale, url, datalabeltype);
-  return transformNewDatalabeltype(result.body, locale);
+  return transformNewDatalabeltype(result.body);
 }
 
 export async function deleteDatalabeltype (baseUrl, authenticationToken, locale, { datalabeltypeId }) {

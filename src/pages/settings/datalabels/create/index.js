@@ -17,8 +17,10 @@ import { routerPushWithReturnTo } from '../../../../actions/global';
 
 function validate (values, { t }) {
   const validationErrors = {};
-  const { name } = values.toJS();
+  const { defaultLocale, name } = values.toJS();
+  if (!defaultLocale) { validationErrors.defaultLocale = t('common.errors.required'); }
   if (!name) { validationErrors.name = t('common.errors.required'); }
+
   // Done
   return validationErrors;
 }
@@ -49,7 +51,9 @@ export default class CreateDatalabelEntryModal extends Component {
     routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired,
-    datalabeltypes: ImmutablePropTypes.map.isRequired
+    datalabeltypes: ImmutablePropTypes.map.isRequired,
+    localeNames: ImmutablePropTypes.map.isRequired,
+    currentLocale: PropTypes.string.isRequired,
   };
 
   constructor (props) {
@@ -60,6 +64,9 @@ export default class CreateDatalabelEntryModal extends Component {
 
   async componentWillMount () {
     await this.props.loadTypes();
+    this.props.initialize({
+      defaultLocale: this.props.currentLocale
+    });
   }
 
   async submit (form) {
@@ -88,24 +95,36 @@ export default class CreateDatalabelEntryModal extends Component {
   }
 
   render () {
-    const { handleSubmit, datalabeltypes } = this.props;
-    console.log(datalabeltypes.get('data').toJS(), datalabeltypes.getIn([ 'data' ]));
+    const { handleSubmit, datalabeltypes, localeNames, defaultLocale } = this.props;
     const types = datalabeltypes.get('data').toJS();
+    let typedata = {};
+    for ( const type in types) {
+        typedata = {...typedata, [types[type].id]: types[type].name};
+    }
     return (
       <PersistModal createAnother isOpen title='Create Datalabel'
         onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
-        <FormSubtitle first>Content</FormSubtitle>
+        <FormSubtitle first>Add Label</FormSubtitle>
+        <Field
+          component={SelectInput}
+          getItemText={(language) => { return localeNames.get(language); }}
+          label='Default language'
+          name='defaultLocale'
+          options={localeNames.keySeq().toArray()}
+          placeholder='Default language'
+          required/>
         <Field
           component={TextInput}
-          label='Name'
+          label='Label Name'
           name='name'
           placeholder='Name datalabel'
           required/>
         <Field
           component={SelectInput}
-          getItemText={(data) => data.name}
+          getItemText={(type) => typedata[type]}
+          label='Label Type'
           name='type'
-          options={types}
+          options={typedata.keySeq().toArray()}
           required/>
       </PersistModal>
     );

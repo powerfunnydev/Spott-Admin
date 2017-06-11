@@ -1,5 +1,6 @@
 export const BRAND_CREATE_LANGUAGE = 'brandCreateLanguage';
 export const DATALABELTYPE_CREATE_LANGUAGE = 'datalabletypeCreateLanguage';
+export const DATALABEL_CREATE_LANGUAGE = 'datalableCreateLanguage';
 export const CHARACTER_CREATE_LANGUAGE = 'characterCreateLanguage';
 export const COMMERCIAL_CREATE_LANGUAGE = 'commercialCreateLanguage';
 export const EPISODE_CREATE_LANGUAGE = 'episodeCreateLanguage';

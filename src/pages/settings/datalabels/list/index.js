@@ -110,7 +110,7 @@ export default class Datalabels extends Component {
       { type: 'custom', sort: true, sortField: 'NAME', title: 'NAME', clickable: true, getUrl: this.determineReadUrl, name: 'name' },
       { type: 'custom', title: 'CREATED BY', name: 'createdBy', colspan: 2 },
       { type: 'custom', title: 'CREATED ON', name: 'createdOn', dataType: 'date', colspan: 2 },
-      { type: 'custom', title: 'TYPE', name: 'typeName', colspan: 2 },
+      { type: 'custom', title: 'TYPE', name: 'type', colspan: 2 },
       { type: 'dropdown' }
     ];
     return (

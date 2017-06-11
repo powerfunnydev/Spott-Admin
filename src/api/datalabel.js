@@ -25,15 +25,29 @@ export async function fetchDatalabel (baseUrl, authenticationToken, locale, { da
   return transformSingleDatalabel(body, locale);
 }
 
-export async function persistDatalabel (baseUrl, authenticationToken, locale, { id, name, type }) {
-  let datalabel;
+export async function persistDatalabel (baseUrl, authenticationToken, locale, { id, name, type, basedOnDefaultLocale, defaultLocale, locales }) {
+  let datalabel = {};
   if (id) {
     const { body } = await get(authenticationToken, locale, `${baseUrl}/v004/data/labels/${id}`);
     datalabel = body;
   }
+
+  datalabel.defaultLocale = defaultLocale;
+  datalabel.localeData = datalabel.localeData || []; // Ensure we have locale data
+  datalabel.type = {...datalabel.type, uuid: type};
+  locales.forEach((locale) => {
+    let localeData = datalabel.localeData.find((ld) => ld.locale === locale);
+    if (!localeData) {
+      localeData = { locale };
+      datalabel.localeData.push(localeData);
+    }
+    localeData.name = name && name[locale];
+    localeData.basedOnDefaultLocale = basedOnDefaultLocale && basedOnDefaultLocale[locale];
+  });
+
   const url = `${baseUrl}/v004/data/labels`;
-  const result = await post(authenticationToken, locale, url, { ...datalabel, defaultLocale: locale, uuid: id, localeData: [ { locale, name } ], type: { uuid: type.id } });
-  return transformSingleDatalabel(result.body, locale);
+  const result = await post(authenticationToken, locale, url, datalabel);
+  return transformSingleDatalabel(result.body);
 }
 
 export async function deleteDatalabel (baseUrl, authenticationToken, locale, { datalabelId }) {

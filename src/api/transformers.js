@@ -103,18 +103,8 @@ export function transformDatalabeltype ({ auditInfo, name, uuid }) {
   return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn};
 }
 
-export function transformSingleDatalabeltype ({ auditInfo, localeData, uuid }, locale) {
-  let name;
-  for (const data in localeData) {
-    if (localeData[data].locale === locale) {
-      name = localeData[data].name;
-    }
-  }
-  return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn};
-}
-
 export function transformNewDatalabeltype ({ uuid, defaultLocale, localeData, auditInfo }) {
-  const datalabeltype = {
+  let datalabeltype = {
     basedOnDefaultLocale: {},
     createdOn: auditInfo && auditInfo.createdOn,
     defaultLocale,
@@ -125,7 +115,7 @@ export function transformNewDatalabeltype ({ uuid, defaultLocale, localeData, au
     name: {},
   };
   if (localeData) {
-    for (const { basedOnDefaultLocale, description, logo, locale, name, profileCover, tagLine } of localeData) {
+    for (const { basedOnDefaultLocale, locale, name } of localeData) {
       datalabeltype.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
       datalabeltype.name[locale] = name;
       datalabeltype.locales.push(locale);
@@ -135,17 +125,31 @@ export function transformNewDatalabeltype ({ uuid, defaultLocale, localeData, au
 }
 
 export function transformDatalabel ({ auditInfo, name, uuid, type }) {
-  return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn, typeName: type.name, typeId: type.uuid};
+  return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn, type: type.name};
 }
 
-export function transformSingleDatalabel ({ auditInfo, localeData, uuid, type }, locale) {
-  let name;
-  for (const data in localeData) {
-    if (localeData[data].locale === locale) {
-      name = localeData[data].name;
+export function transformSingleDatalabel ({ uuid, defaultLocale, localeData, auditInfo, type }) {
+  let datalabel = {
+    basedOnDefaultLocale: {},
+    createdOn: auditInfo && auditInfo.createdOn,
+    defaultLocale,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    locales: [],
+    name: {},
+    type: type.uuid
+  };
+
+  if (localeData) {
+    for (const { basedOnDefaultLocale, locale, name } of localeData) {
+      datalabel.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      datalabel.name[locale] = name;
+      datalabel.locales.push(locale);
     }
   }
-  return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn, typeName: type.name, typeId: type.uuid};
+
+  return datalabel;
 }
 
 export function transformContentProducer ({ uuid, name, auditInfo, logo }) {

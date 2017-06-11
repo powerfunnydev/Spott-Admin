@@ -11,7 +11,7 @@ import PersistModal from '../../../_common/components/persistModal';
 import { load as loadList } from '../list/actions';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import * as actions from './actions';
-import selector from './selector';
+import selector from '../list/selector';
 import { routerPushWithReturnTo } from '../../../../actions/global';
 
 function validate (values, { t }) {

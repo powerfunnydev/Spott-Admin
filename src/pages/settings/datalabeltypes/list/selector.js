@@ -4,6 +4,12 @@ import { serializeFilterHasDatalabeltypes } from '../../../../../src/reducers/ut
 import { getInformationFromQuery } from '../../../_common/components/table/index';
 import { prefix } from './index';
 
+import {
+  currentLocaleSelector,
+  localeNamesSelector
+} from '../../../../selectors/global';
+
+
 export const isSelectedSelector = (state) => state.getIn([ 'settings', 'datalabeltypes', 'list', 'datalabeltypes', 'isSelected' ]);
 export const pageCountSelector = (state) => state.getIn([ 'settings', 'datalabeltypes', 'list', 'datalabeltypes', 'pageCount' ]);
 export const totalResultCountSelector = (state) => state.getIn([ 'settings', 'datalabeltypes', 'list', 'datalabeltypes', 'totalResultCount' ]);
@@ -20,5 +26,7 @@ export default createStructuredSelector({
   datalabeltypes: datalabeltypesSelector,
   isSelected: isSelectedSelector,
   pageCount: pageCountSelector,
-  totalResultCount: totalResultCountSelector
+  totalResultCount: totalResultCountSelector,
+  currentLocale: currentLocaleSelector,
+  localeNames: localeNamesSelector
 });
