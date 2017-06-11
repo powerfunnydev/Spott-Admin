@@ -162,6 +162,9 @@ export default (state = List(), action) => {
     case datalabelActions.DATALABEL_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.DATALABEL);
 
+    case datalabeltypeActions.DATALABELTYPE_PERSIST_SUCCESS:
+      return pushSuccess(state, action.data, entityTypes.DATALABELTYPE);
+
     case characterActions.CHARACTER_PERSIST_SUCCESS:
       return pushSuccess(state, action.data, entityTypes.CHARACTER);
 

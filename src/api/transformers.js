@@ -113,6 +113,27 @@ export function transformSingleDatalabeltype ({ auditInfo, localeData, uuid }, l
   return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn};
 }
 
+export function transformNewDatalabeltype ({ uuid, defaultLocale, localeData, auditInfo }) {
+  const datalabeltype = {
+    basedOnDefaultLocale: {},
+    createdOn: auditInfo && auditInfo.createdOn,
+    defaultLocale,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    locales: [],
+    name: {},
+  };
+  if (localeData) {
+    for (const { basedOnDefaultLocale, description, logo, locale, name, profileCover, tagLine } of localeData) {
+      datalabeltype.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      datalabeltype.name[locale] = name;
+      datalabeltype.locales.push(locale);
+    }
+  }
+  return datalabeltype;
+}
+
 export function transformDatalabel ({ auditInfo, name, uuid, type }) {
   return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn, typeName: type.name, typeId: type.uuid};
 }

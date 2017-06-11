@@ -68,6 +68,13 @@ export default class ReadDatalabeltype extends Component {
     table: {
       backgroundColor: colors.lightGray4,
       paddingTop: '20px'
+    },
+    background: {
+      backgroundColor: colors.lightGray4,
+      paddingBottom: '50px'
+    },
+    paddingTop: {
+      paddingTop: '1.25em'
     }
   };
 
@@ -81,12 +88,12 @@ export default class ReadDatalabeltype extends Component {
           <Header
             hierarchy={[
               { title: 'Datalabeltypes', url: '/settings/datalabeltypes' },
-              { title: currentDatalabeltype.get('name'), url: location.pathname }
+              { title: currentDatalabeltype.getIn(['name', currentDatalabeltype.get('defaultLocale')]), url: location.pathname }
             ]}/>
           <Container>
-            {currentDatalabeltype.get('_status') === 'loaded' && currentDatalabeltype &&
+            {currentDatalabeltype.get('_status') === 'loaded' && currentDatalabeltype && currentDatalabeltype.getIn(['name', currentDatalabeltype.get('defaultLocale')]) &&
               <EntityDetails
-                title={currentDatalabeltype.getIn([ 'name' ])}
+                title={currentDatalabeltype.getIn(['name', currentDatalabeltype.get('defaultLocale')])}
                 onEdit={() => this.props.routerPushWithReturnTo(`/settings/datalabeltypes/edit/${currentDatalabeltype.getIn([ 'id' ])}`)}
                 onRemove={async () => {
                   await deleteDatalabeltype(currentDatalabeltype.getIn([ 'id' ]));
