@@ -116,7 +116,7 @@ export default class Datalabels extends Component {
     return (
       <SideMenu>
         <Root>
-          <Header hierarchy={[ { title: 'DataLabels', url: '/settings/datalabels' } ]}/>
+          <Header hierarchy={[ { title: 'Labels', url: '/settings/datalabels' } ]}/>
           <div style={generalStyles.tableFillPage}>
             <div style={generalStyles.backgroundBar}>
               <Container >

@@ -1,7 +1,3 @@
-// import { persistDatalabel } from '../../../../actions/datalabel';
-//
-// export const submit = persistDatalabel;
-
 import { persistDatalabel } from '../../../../actions/datalabel';
 export const DATALABEL_PERSIST_ERROR = 'DATALABEL/DATALABELTYPE_PERSIST_ERROR';
 

@@ -18,8 +18,8 @@ const popUpMessageSelector = (state) => state.getIn([ 'content', 'brands', 'edit
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
-  currentModal: currentModalSelector,
   currentDatalabeltype: currentDatalabeltypeSelector,
+  currentModal: currentModalSelector,
   defaultLocale: currentDefaultLocaleSelector,
   errors: formErrorsSelector,
   formValues: valuesSelector,

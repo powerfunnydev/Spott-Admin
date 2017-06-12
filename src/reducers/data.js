@@ -6,7 +6,7 @@ import {
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
   serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasLanguages,
-  serializeFilterHasPushNotifications, serializeFilterHasCrops, serializeFilterHasSpotts, serializeBroadcasterFilterHasMedia, serializeDatalabeltypeFilterHasMedia,
+  serializeFilterHasPushNotifications, serializeFilterHasCrops, serializeFilterHasSpotts, serializeBroadcasterFilterHasMedia,
   transformMediumToListMedium, serializeFilterHasTopMedia, serializeFilterHasDemographics, serializeFilterHasTopPeople, serializeFilterHasTopProducts, serializeFilterHasTopCommercials
 } from './utils';
 

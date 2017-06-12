@@ -115,7 +115,7 @@ export default class Datalabeltypes extends Component {
     return (
       <SideMenu>
         <Root>
-          <Header hierarchy={[ { title: 'DataLabelTypes', url: '/settings/datalabeltypes' } ]}/>
+          <Header hierarchy={[ { title: 'Label Types', url: '/settings/datalabeltypes' } ]}/>
           <div style={generalStyles.tableFillPage}>
             <div style={generalStyles.backgroundBar}>
               <Container >
@@ -124,7 +124,7 @@ export default class Datalabeltypes extends Component {
                   isLoading={datalabeltypes.get('_status') !== 'loaded'}
                   numberSelected={numberSelected}
                   searchString={datalabeltypesSearchString}
-                  textCreateButton='New DataLabelType'
+                  textCreateButton='New Label Type'
                   onChangeSearchString={(value) => { onChangeSearchString(value); this.slowSearch({ ...query, datalabeltypesSearchString: value }); }}
                   onClickNewEntry={this.onClickNewEntry}/>
               </Container>

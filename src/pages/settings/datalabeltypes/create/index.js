@@ -39,12 +39,13 @@ export default class CreateDatalabeltypeEntryModal extends Component {
 
   static propTypes = {
     change: PropTypes.func.isRequired,
+    currentLocale: PropTypes.string.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
+    initialize: PropTypes.func.isRequired,
     load: PropTypes.func.isRequired,
     localeNames: ImmutablePropTypes.map.isRequired,
-    currentLocale: PropTypes.string.isRequired,
     location: PropTypes.object.isRequired,
     reset: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
@@ -91,26 +92,25 @@ export default class CreateDatalabeltypeEntryModal extends Component {
 
   render () {
     const { handleSubmit, localeNames } = this.props;
-    console.log(localeNames.keySeq());
     return (
-      <PersistModal createAnother isOpen title='Create Datalabeltype'
+      <PersistModal createAnother isOpen title='Create Label Type'
         onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
-        <FormSubtitle first>Content</FormSubtitle>
+        <FormSubtitle first>Add Label Type</FormSubtitle>
         <Field
           component={SelectInput}
           filter={(option, filter) => {
             return option && filter ? localeNames.get(option.value).toLowerCase().indexOf(filter.toLowerCase()) !== -1 : true;
           }}
           getItemText={(language) => { return localeNames.get(language); }}
-          label='Default language'
+          label='Base Language'
           name='defaultLocale'
           options={localeNames.keySeq().toArray()}
-          placeholder='Default language'/>
+          placeholder='Base Language'/>
         <Field
           component={TextInput}
-          label='Name'
+          label='Label Type Name'
           name='name'
-          placeholder='Name datalabeltype'
+          placeholder='Label Type Name'
           required/>
       </PersistModal>
     );

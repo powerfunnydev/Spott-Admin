@@ -30,12 +30,12 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
-  load: bindActionCreators(actions.load, dispatch),
-  submit: bindActionCreators(actions.submit, dispatch),
-  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   closeModal: bindActionCreators(actions.closeModal, dispatch),
   closePopUpMessage: bindActionCreators(actions.closePopUpMessage, dispatch),
+  load: bindActionCreators(actions.load, dispatch),
   openModal: bindActionCreators(actions.openModal, dispatch),
+  submit: bindActionCreators(actions.submit, dispatch),
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch)
 }))
 @reduxForm({
   form: 'datalabeltypeEdit',
@@ -47,26 +47,27 @@ export default class EditDatalabeltype extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
+    change: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
+    closePopUpMessage: PropTypes.func.isRequired,
+    currentDatalabeltype: ImmutablePropTypes.map.isRequired,
+    currentModal: PropTypes.string,
     defaultLocale: PropTypes.string,
+    dispatch: PropTypes.func.isRequired,
+    error: PropTypes.any,
     errors: PropTypes.object,
     formValues: ImmutablePropTypes.map,
-    popUpMessage: PropTypes.object,
-    currentDatalabeltype: ImmutablePropTypes.map.isRequired,
-    error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
     load: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
+    popUpMessage: PropTypes.object,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
-    t: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
-    closeModal: PropTypes.func.isRequired,
-    currentModal: PropTypes.string,
-    closePopUpMessage: PropTypes.func.isRequired,
-    openModal: PropTypes.func.isRequired,
-    change: PropTypes.func.isRequired,
+    t: PropTypes.func.isRequired,
     onBeforeChangeTab: PropTypes.func.isRequired,
     onChangeTab: PropTypes.func.isRequired
   };
@@ -101,8 +102,8 @@ export default class EditDatalabeltype extends Component {
       const newSupportedLocales = supportedLocales.push(language);
       this.submit(fromJS({
         ...formValues,
-        locales: newSupportedLocales.toJS(),
         _activeLocale: language,
+        locales: newSupportedLocales.toJS(),
         name: { ...formValues.name, [language]: name }
       }));
     }
@@ -118,11 +119,6 @@ export default class EditDatalabeltype extends Component {
     }
   }
 
-  onSetDefaultLocale (locale) {
-    const { change, dispatch, _activeLocale } = this.props;
-    dispatch(change('defaultLocale', _activeLocale));
-  }
-
   openCreateLanguageModal () {
     if (this.props.onBeforeChangeTab()) {
       this.props.openModal(DATALABELTYPE_CREATE_LANGUAGE);
@@ -136,6 +132,11 @@ export default class EditDatalabeltype extends Component {
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
+  }
+
+  onSetDefaultLocale (locale) {
+    const { change, dispatch, _activeLocale } = this.props;
+    dispatch(change('defaultLocale', _activeLocale));
   }
 
   static styles = {
@@ -156,7 +157,7 @@ export default class EditDatalabeltype extends Component {
       <SideMenu>
         <Root style={styles.background}>
           <Header hierarchy={[
-            { title: 'Datalabeltypes', url: '/settings/datalabeltypes' },
+            { title: 'Label Types', url: '/settings/datalabeltypes' },
             { title: currentDatalabeltype.get('name'), url: location } ]}/>
           {currentModal === DATALABELTYPE_CREATE_LANGUAGE &&
           <CreateLanguageModal
@@ -165,9 +166,9 @@ export default class EditDatalabeltype extends Component {
             onCreate={this.languageAdded}>
             <Field
               component={TextInput}
-              label='Brand name'
+              label='Label Type Name'
               name='name'
-              placeholder='Brand name'
+              placeholder='Label Type Name'
               required />
           </CreateLanguageModal>}
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
@@ -187,12 +188,12 @@ export default class EditDatalabeltype extends Component {
                     onSetDefaultLocale={this.onSetDefaultLocale}/>
                 </Section>
                 <Section first>
-                  <FormSubtitle first>Content</FormSubtitle>
+                  <FormSubtitle first>General</FormSubtitle>
                   <Field
                     component={TextInput}
-                    label='Name'
+                    label='Label Type Name'
                     name={`name.${_activeLocale}`}
-                    placeholder='Datalabeltype name'
+                    placeholder='Label Type Name'
                     required/>
                 </Section>
               </TabPanel>

@@ -100,11 +100,11 @@ export function transformBroadcaster ({ logo, name, uuid }) {
 }
 
 export function transformDatalabeltype ({ auditInfo, name, uuid }) {
-  return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn};
+  return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn };
 }
 
-export function transformNewDatalabeltype ({ uuid, defaultLocale, localeData, auditInfo }) {
-  let datalabeltype = {
+export function transformSingleDatalabeltype ({ uuid, defaultLocale, localeData, auditInfo }) {
+  const datalabeltype = {
     basedOnDefaultLocale: {},
     createdOn: auditInfo && auditInfo.createdOn,
     defaultLocale,
@@ -112,7 +112,7 @@ export function transformNewDatalabeltype ({ uuid, defaultLocale, localeData, au
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     locales: [],
-    name: {},
+    name: {}
   };
   if (localeData) {
     for (const { basedOnDefaultLocale, locale, name } of localeData) {
@@ -125,11 +125,11 @@ export function transformNewDatalabeltype ({ uuid, defaultLocale, localeData, au
 }
 
 export function transformDatalabel ({ auditInfo, name, uuid, type }) {
-  return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn, type: type.name};
+  return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn, type: type.name };
 }
 
 export function transformSingleDatalabel ({ uuid, defaultLocale, localeData, auditInfo, type }) {
-  let datalabel = {
+  const datalabel = {
     basedOnDefaultLocale: {},
     createdOn: auditInfo && auditInfo.createdOn,
     defaultLocale,

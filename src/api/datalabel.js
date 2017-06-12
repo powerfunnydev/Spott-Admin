@@ -34,7 +34,7 @@ export async function persistDatalabel (baseUrl, authenticationToken, locale, { 
 
   datalabel.defaultLocale = defaultLocale;
   datalabel.localeData = datalabel.localeData || []; // Ensure we have locale data
-  datalabel.type = {...datalabel.type, uuid: type};
+  datalabel.type = { ...datalabel.type, uuid: type };
   locales.forEach((locale) => {
     let localeData = datalabel.localeData.find((ld) => ld.locale === locale);
     if (!localeData) {

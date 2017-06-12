@@ -28,9 +28,9 @@ function validate (values, { t }) {
 @localized
 @connect(selector, (dispatch) => ({
   load: bindActionCreators(loadList, dispatch),
-  submit: bindActionCreators(actions.submit, dispatch),
-  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   loadTypes: bindActionCreators(loadTypes, dispatch),
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
+  submit: bindActionCreators(actions.submit, dispatch)
 }))
 @reduxForm({
   form: 'datalabelsCreateEntry',
@@ -41,19 +41,19 @@ export default class CreateDatalabelEntryModal extends Component {
 
   static propTypes = {
     change: PropTypes.func.isRequired,
+    currentLocale: PropTypes.string.isRequired,
+    datalabeltypes: ImmutablePropTypes.map.isRequired,
     dispatch: PropTypes.func.isRequired,
     error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     load: PropTypes.func.isRequired,
     loadTypes: PropTypes.func.isRequired,
+    localeNames: ImmutablePropTypes.map.isRequired,
     location: PropTypes.object.isRequired,
     reset: PropTypes.func.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
-    t: PropTypes.func.isRequired,
-    datalabeltypes: ImmutablePropTypes.map.isRequired,
-    localeNames: ImmutablePropTypes.map.isRequired,
-    currentLocale: PropTypes.string.isRequired,
+    t: PropTypes.func.isRequired
   };
 
   constructor (props) {
@@ -95,14 +95,14 @@ export default class CreateDatalabelEntryModal extends Component {
   }
 
   render () {
-    const { handleSubmit, datalabeltypes, localeNames, defaultLocale } = this.props;
+    const { handleSubmit, datalabeltypes, localeNames } = this.props;
     const types = datalabeltypes.get('data').toJS();
     let typedata = {};
-    for ( const type in types) {
-        typedata = {...typedata, [types[type].id]: types[type].name};
+    for (const type in types) {
+      typedata = { ...typedata, [types[type].id]: types[type].name };
     }
     return (
-      <PersistModal createAnother isOpen title='Create Datalabel'
+      <PersistModal createAnother isOpen title='Create label'
         onClose={this.onCloseClick} onSubmit={handleSubmit(this.submit)}>
         <FormSubtitle first>Add Label</FormSubtitle>
         <Field
@@ -124,7 +124,7 @@ export default class CreateDatalabelEntryModal extends Component {
           getItemText={(type) => typedata[type]}
           label='Label Type'
           name='type'
-          options={typedata.keySeq().toArray()}
+          options={Object.keys(typedata)}
           required/>
       </PersistModal>
     );

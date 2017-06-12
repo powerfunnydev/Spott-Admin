@@ -80,7 +80,7 @@ export default class ReadDatalabel extends Component {
         <Root>
           <Header
             hierarchy={[
-              { title: 'Datalabels', url: '/settings/datalabels' },
+              { title: 'Labels', url: '/settings/datalabels' },
               { title: currentDatalabel.get('name'), url: location.pathname }
             ]}/>
           <Container>

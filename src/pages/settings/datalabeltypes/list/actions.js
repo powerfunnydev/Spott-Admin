@@ -1,7 +1,7 @@
 import { fetchDatalabeltypes as dataFetchDatalabeltypes,
     deleteDatalabeltype as dataDeleteDatalabeltype,
     deleteDatalabeltypes as dataDeleteDatalabeltypes,
-    fetchAllDatalabeltypes as dataFetchAllDatalabeltypes} from '../../../../actions/datalabeltype';
+    fetchAllDatalabeltypes as dataFetchAllDatalabeltypes } from '../../../../actions/datalabeltype';
 import { getInformationFromQuery } from '../../../_common/components/table/index';
 import { prefix } from './index';
 

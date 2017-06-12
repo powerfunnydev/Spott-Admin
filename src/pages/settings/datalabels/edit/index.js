@@ -34,13 +34,13 @@ function validate (values, { t }) {
 
 @localized
 @connect(selector, (dispatch) => ({
-  load: bindActionCreators(actions.load, dispatch),
-  submit: bindActionCreators(actions.submit, dispatch),
-  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
-  loadTypes: bindActionCreators(loadTypes, dispatch),
   closeModal: bindActionCreators(actions.closeModal, dispatch),
   closePopUpMessage: bindActionCreators(actions.closePopUpMessage, dispatch),
-  openModal: bindActionCreators(actions.openModal, dispatch)
+  load: bindActionCreators(actions.load, dispatch),
+  loadTypes: bindActionCreators(loadTypes, dispatch),
+  openModal: bindActionCreators(actions.openModal, dispatch),
+  routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
+  submit: bindActionCreators(actions.submit, dispatch)
 }))
 @reduxForm({
   form: 'datalabelEdit',
@@ -52,28 +52,29 @@ export default class EditDatalabel extends Component {
 
   static propTypes = {
     _activeLocale: PropTypes.string,
+    change: PropTypes.func.isRequired,
+    closeModal: PropTypes.func.isRequired,
+    closePopUpMessage: PropTypes.func.isRequired,
+    currentDatalabel: ImmutablePropTypes.map.isRequired,
+    currentModal: PropTypes.string,
+    datalabeltypes: ImmutablePropTypes.map.isRequired,
     defaultLocale: PropTypes.string,
+    dispatch: PropTypes.func.isRequired,
+    error: PropTypes.any,
     errors: PropTypes.object,
     formValues: ImmutablePropTypes.map,
-    popUpMessage: PropTypes.object,
-    currentDatalabel: ImmutablePropTypes.map.isRequired,
-    error: PropTypes.any,
     handleSubmit: PropTypes.func.isRequired,
     initialize: PropTypes.func.isRequired,
     load: PropTypes.func.isRequired,
     loadTypes: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
+    openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
+    popUpMessage: PropTypes.object,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     submit: PropTypes.func.isRequired,
     t: PropTypes.func.isRequired,
-    datalabeltypes: ImmutablePropTypes.map.isRequired,
     supportedLocales: ImmutablePropTypes.list,
-    closeModal: PropTypes.func.isRequired,
-    currentModal: PropTypes.string,
-    closePopUpMessage: PropTypes.func.isRequired,
-    openModal: PropTypes.func.isRequired,
-    change: PropTypes.func.isRequired,
     onBeforeChangeTab: PropTypes.func.isRequired,
     onChangeTab: PropTypes.func.isRequired
   };
@@ -92,7 +93,6 @@ export default class EditDatalabel extends Component {
     const datalabelId = this.props.params.datalabelId;
     if (datalabelId) {
       const editObj = await this.props.load(datalabelId);
-      console.log('~~~edit~~~~', editObj);
       this.props.initialize({ ...editObj, _activeLocale: editObj.defaultLocale });
     }
     await this.props.loadTypes();
@@ -103,7 +103,7 @@ export default class EditDatalabel extends Component {
   }
 
   languageAdded (form) {
-    const { language, name, type } = form && form.toJS();
+    const { language, name } = form && form.toJS();
     const { closeModal, supportedLocales } = this.props;
     const formValues = this.props.formValues.toJS();
     if (language) {
@@ -127,11 +127,6 @@ export default class EditDatalabel extends Component {
     }
   }
 
-  onSetDefaultLocale (locale) {
-    const { change, dispatch, _activeLocale } = this.props;
-    dispatch(change('defaultLocale', _activeLocale));
-  }
-
   openCreateLanguageModal () {
     if (this.props.onBeforeChangeTab()) {
       this.props.openModal(DATALABEL_CREATE_LANGUAGE);
@@ -140,13 +135,16 @@ export default class EditDatalabel extends Component {
 
   async submit (form) {
     try {
-      const { type } = form && form.toJS();
-      console.log('~~~~submit~~~~', form.toJS());
       await this.props.submit({ ...form.toJS(), id: this.props.params.datalabelId });
       this.props.initialize(form.toJS());
     } catch (error) {
       throw new SubmissionError({ _error: 'common.errors.unexpected' });
     }
+  }
+
+  onSetDefaultLocale (locale) {
+    const { change, dispatch, _activeLocale } = this.props;
+    dispatch(change('defaultLocale', _activeLocale));
   }
 
   static styles = {
@@ -164,15 +162,15 @@ export default class EditDatalabel extends Component {
     const { styles } = this.constructor;
     const types = datalabeltypes.get('data').toJS();
     let typedata = {};
-    for ( const type in types) {
-      typedata = {...typedata, [types[type].id]: types[type].name};
+    for (const type in types) {
+      typedata = { ...typedata, [types[type].id]: types[type].name };
     }
 
     return (
       <SideMenu>
         <Root style={styles.background}>
           <Header hierarchy={[
-            { title: 'Datalabels', url: '/settings/datalabels' },
+            { title: 'Labels', url: '/settings/datalabels' },
             { title: currentDatalabel.get('name'), url: location } ]}/>
           {currentModal === DATALABEL_CREATE_LANGUAGE &&
           <CreateLanguageModal
@@ -181,9 +179,9 @@ export default class EditDatalabel extends Component {
             onCreate={this.languageAdded}>
             <Field
               component={TextInput}
-              label='Brand name'
+              label='Label Name'
               name='name'
-              placeholder='Brand name'
+              placeholder='Label Name'
               required />
           </CreateLanguageModal>}
           <EditTemplate onCancel={this.redirect} onSubmit={handleSubmit(this.submit)}>
@@ -203,12 +201,12 @@ export default class EditDatalabel extends Component {
                     onSetDefaultLocale={this.onSetDefaultLocale}/>
                 </Section>
                 <Section first>
-                  <FormSubtitle first>Content</FormSubtitle>
+                  <FormSubtitle first>General</FormSubtitle>
                   <Field
                     component={TextInput}
-                    label='Name'
+                    label='Label Name'
                     name={`name.${_activeLocale}`}
-                    placeholder='Name datalabel'
+                    placeholder='Label Name'
                     required/>
                   <Field
                     component={SelectInput}

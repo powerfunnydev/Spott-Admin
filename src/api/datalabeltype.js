@@ -1,5 +1,5 @@
 import { del, get, post } from './request';
-import { transformDatalabeltype, transformNewDatalabeltype } from './transformers';
+import { transformDatalabeltype, transformSingleDatalabeltype } from './transformers';
 
 export async function fetchDatalabeltypes (baseUrl, authenticationToken, locale, { searchString = '', page = 0, pageSize = 25, sortDirection, sortField }) {
   let url = `${baseUrl}/v004/data/labelTypes?page=${page}&pageSize=${pageSize}`;
@@ -29,7 +29,7 @@ export async function fetchAllDatalabeltypes (baseUrl, authenticationToken, loca
 export async function fetchDatalabeltype (baseUrl, authenticationToken, locale, { datalabeltypeId }) {
   const url = `${baseUrl}/v004/data/labelTypes/${datalabeltypeId}`;
   const { body } = await get(authenticationToken, locale, url);
-  return transformNewDatalabeltype(body, locale);
+  return transformSingleDatalabeltype(body, locale);
 }
 
 export async function persistDatalabeltype (baseUrl, authenticationToken, locale, { id, name, basedOnDefaultLocale, defaultLocale, locales }) {
@@ -54,7 +54,7 @@ export async function persistDatalabeltype (baseUrl, authenticationToken, locale
 
   const url = `${baseUrl}/v004/data/labelTypes`;
   const result = await post(authenticationToken, locale, url, datalabeltype);
-  return transformNewDatalabeltype(result.body);
+  return transformSingleDatalabeltype(result.body);
 }
 
 export async function deleteDatalabeltype (baseUrl, authenticationToken, locale, { datalabeltypeId }) {

@@ -9,7 +9,6 @@ import {
   localeNamesSelector
 } from '../../../../selectors/global';
 
-
 export const isSelectedSelector = (state) => state.getIn([ 'settings', 'datalabeltypes', 'list', 'datalabeltypes', 'isSelected' ]);
 export const pageCountSelector = (state) => state.getIn([ 'settings', 'datalabeltypes', 'list', 'datalabeltypes', 'pageCount' ]);
 export const totalResultCountSelector = (state) => state.getIn([ 'settings', 'datalabeltypes', 'list', 'datalabeltypes', 'totalResultCount' ]);
