@@ -224,7 +224,6 @@ export default class EditProduct extends Component {
                       currentProduct.getIn([ 'logo', defaultLocale ]);
     // Construct an array of product images.
     const images = currentProduct.getIn([ 'images', _activeLocale ]) && currentProduct.getIn([ 'images', _activeLocale ]).toJS() || [];
-    console.log('~~~~~~~~~~~', searchedProductLabelIds.get('data').toJS(), productLabelsById.toJS());
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>

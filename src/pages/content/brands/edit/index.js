@@ -99,7 +99,6 @@ export default class EditBrand extends Component {
   async componentWillMount () {
     if (this.props.params.brandId) {
       const editObj = await this.props.loadBrand(this.props.params.brandId);
-      console.log('editObj', editObj);
       this.props.initialize({
         ...editObj,
         _activeLocale: editObj.defaultLocale
@@ -202,7 +201,6 @@ export default class EditBrand extends Component {
     const styles = this.constructor.styles;
     const { _activeLocale, errors, currentModal, closeModal, supportedLocales, defaultLocale,
       currentBrand, location, handleSubmit, deleteLogoImage, deleteProfileImage, location: { query: { tab } } } = this.props;
-    console.log('_activeLocale', _activeLocale);
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>

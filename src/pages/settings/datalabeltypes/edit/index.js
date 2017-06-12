@@ -151,7 +151,6 @@ export default class EditDatalabeltype extends Component {
 
   render () {
     const { currentDatalabeltype, location, currentModal, handleSubmit, supportedLocales, closeModal, _activeLocale, defaultLocale, errors } = this.props;
-    console.log(supportedLocales, _activeLocale, defaultLocale);
     const { styles } = this.constructor;
     return (
       <SideMenu>

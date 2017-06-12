@@ -163,7 +163,6 @@ export default class EditMovie extends Component {
     const { movieId } = this.props.params;
     if (movieId) {
       const editObj = await this.props.loadMovie(movieId);
-      console.log('editObj', editObj);
       this.props.initialize({
         ...editObj,
         contentProducers: editObj.contentProducers && editObj.contentProducers.map((bc) => bc.id),
