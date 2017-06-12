@@ -18,7 +18,6 @@ export function serialize ({ searchString = '', page = 0, pageSize = 25, sortDir
 export const serializeFilterHasBrands = serialize;
 export const serializeFilterHasBroadcasters = serialize;
 export const serializeFilterHasDatalabeltypes = serialize;
-export const serializeFilterHasDatalabels = serialize;
 export const serializeFilterHasCharacters = serialize;
 export const serializeFilterHasCommercials = serialize;
 export const serializeFilterHasContentProducers = serialize;
@@ -31,6 +30,7 @@ export const serializeFilterHasMediumCategories = serialize;
 export const serializeFilterHasMovies = serialize;
 export const serializeFilterHasPersons = serialize;
 export const serializeFilterHasProductCategories = serialize;
+export const serializeFilterHasProductLabels = serialize;
 export const serializeFilterHasProducts = serialize;
 export const serializeFilterHasPushNotifications = serialize;
 export const serializeFilterHasSeasons = serialize;
@@ -48,12 +48,6 @@ export const serializeFilterHasTopCommercials = serialize;
 
 export function serializeBroadcasterFilterHasMedia ({ broadcasterId, ...rest }) {
   return `${serialize(rest)}&broadcasterId=${broadcasterId}`;
-}
-export function serializeDatalabeltypeFilterHasMedia ({ datalabeltypeId, ...rest }) {
-  return `${serialize(rest)}&datalabeltypeId=${datalabeltypeId}`;
-}
-export function serializeDatalabelFilterHasMedia ({ datalabelId, ...rest }) {
-  return `${serialize(rest)}&datalabelId=${datalabelId}`;
 }
 export const serializeFilterHasBroadcastChannels = serializeBroadcasterFilterHasMedia;
 

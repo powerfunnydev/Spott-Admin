@@ -1,11 +1,11 @@
 import { createStructuredSelector } from 'reselect';
 import { currentModalSelector } from '../../../../selectors/global';
 import { createFormValueSelector } from '../../../../utils';
-import { datalabelsEntitiesSelector, createEntityByIdSelector } from '../../../../selectors/data';
+import { listProductLabelsEntitiesSelector, createEntityByIdSelector } from '../../../../selectors/data';
 import { datalabeltypesSelector } from '../../datalabeltypes/list/selector';
 
 export const currentDatalabelIdSelector = (state, props) => props.params.datalabelId;
-export const currentDatalabelSelector = createEntityByIdSelector(datalabelsEntitiesSelector, currentDatalabelIdSelector);
+export const currentDatalabelSelector = createEntityByIdSelector(listProductLabelsEntitiesSelector, currentDatalabelIdSelector);
 
 const formName = 'datalabelEdit';
 const formErrorsSelector = (state) => { return state.getIn([ 'form', formName, 'syncErrors' ]); };

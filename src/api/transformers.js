@@ -220,7 +220,7 @@ export function transformShop ({ defaultLocale, localeData, publishStatus, unive
 }
 
 export function transformProduct ({ affiliate, auditInfo, brand, categories, defaultLocale,
-  localeData, noLongerAvailable, publishStatus, tags, uuid }) {
+  localeData, noLongerAvailable, publishStatus, tags, uuid, labels }) {
   const product = {
     affiliate,
     basedOnDefaultLocale: {},
@@ -232,6 +232,7 @@ export function transformProduct ({ affiliate, auditInfo, brand, categories, def
     fullName: {},
     id: uuid,
     images: {},
+    labels: categories && labels.map(label => label.uuid),
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     locales: [],

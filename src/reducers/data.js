@@ -1,11 +1,11 @@
 import { fromJS } from 'immutable';
 import {
-  serializeFilterHasBroadcasters, serializeFilterHasDatalabeltypes, serializeFilterHasDatalabels, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
+  serializeFilterHasBroadcasters, serializeFilterHasDatalabeltypes, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
   serializeFilterHasUsers, serializeFilterHasMediumCategories, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTopics,
   serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers, serializeFilterHasInteractiveVideos,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
-  serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasLanguages,
+  serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasProductLabels, serializeFilterHasLanguages,
   serializeFilterHasPushNotifications, serializeFilterHasCrops, serializeFilterHasSpotts, serializeBroadcasterFilterHasMedia,
   transformMediumToListMedium, serializeFilterHasTopMedia, serializeFilterHasDemographics, serializeFilterHasTopPeople, serializeFilterHasTopProducts, serializeFilterHasTopCommercials
 } from './utils';
@@ -78,6 +78,7 @@ export default (state = fromJS({
     listMediumCategories: {},
     listProducts: {},
     listProductCategories: {},
+    listProductLabels: {},
     listPushNotifications: {},
     listPushNotificationDestinations: {},
     listShops: {},
@@ -127,6 +128,7 @@ export default (state = fromJS({
     filterHasMovies: {},
     filterHasPersons: {},
     filterHasProductCategories: {},
+    filterHasProductLabels: {},
     filterHasProducts: {},
     filterHasPushNotifications: {},
     filterHasSeasons: {},
@@ -155,6 +157,7 @@ export default (state = fromJS({
     searchStringHasPersons: {},
     searchStringHasProducts: {},
     searchStringHasProductCategories: {},
+    searchStringHasProductLabels: {},
     searchStringHasPushNotificationDestinations: {},
     searchStringHasShops: {},
     searchStringHasSeriesEntries: {},
@@ -439,18 +442,26 @@ export default (state = fromJS({
       return searchError(state, 'filterHasDatalabeltypes', serializeFilterHasDatalabeltypes(action), action.error);
 
     case datalabelsActions.DATALABEL_FETCH_START:
-      return fetchStart(state, [ 'entities', 'datalabels', action.datalabelId ]);
+      return fetchStart(state, [ 'entities', 'listProductLabels', action.datalabelId ]);
     case datalabelsActions.DATALABEL_FETCH_SUCCESS:
-      return fetchSuccess(state, [ 'entities', 'datalabels', action.datalabelId ], action.data);
+      return fetchSuccess(state, [ 'entities', 'listProductLabels', action.datalabelId ], action.data);
     case datalabelsActions.DATALABEL_FETCH_ERROR:
-      return fetchError(state, [ 'entities', 'datalabels', action.datalabelId ], action.error);
+      return fetchError(state, [ 'entities', 'listProductLabels', action.datalabelId ], action.error);
 
     case datalabelsActions.DATALABELS_FETCH_START:
-      return searchStart(state, 'datalabels', serializeFilterHasDatalabels(action));
+      return searchStart(state, 'listProductLabels', serializeFilterHasProductLabels(action));
     case datalabelsActions.DATALABELS_FETCH_SUCCESS:
-      return searchSuccess(state, 'datalabels', 'filterHasDatalabels', serializeFilterHasDatalabels(action), action.data.data);
+      return searchSuccess(state, 'listProductLabels', 'filterHasProductLabels', serializeFilterHasProductLabels(action), action.data.data);
     case datalabelsActions.DATALABELS_FETCH_ERROR:
-      return searchError(state, 'filterHasDatalabels', serializeFilterHasDatalabels(action), action.error);
+      return searchError(state, 'filterHasProductLabels', serializeFilterHasProductLabels(action), action.error);
+
+    case datalabelsActions.DATALABELS_SEARCH_START:
+      return searchStart(state, 'searchStringHasProductLabels', action.searchString);
+    case datalabelsActions.DATALABELS_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listProductLabels', 'searchStringHasProductLabels', action.searchString, action.data);
+    case datalabelsActions.DATALABELS_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasProductLabels', action.searchString, action.error);
+
     // Characters
     // //////////
 

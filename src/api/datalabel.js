@@ -50,6 +50,16 @@ export async function persistDatalabel (baseUrl, authenticationToken, locale, { 
   return transformSingleDatalabel(result.body);
 }
 
+// Used for autocompletion.
+export async function searchProductLabels (baseUrl, authenticationToken, locale, { searchString = '' }) {
+  let searchUrl = `${baseUrl}/v004/data/labels?pageSize=100`;
+  if (searchString) {
+    searchUrl += `&searchString=${encodeURIComponent(searchString)}`;
+  }
+  const { body: { data } } = await get(authenticationToken, locale, searchUrl);
+  return data.map(transformDatalabel);
+}
+
 export async function deleteDatalabel (baseUrl, authenticationToken, locale, { datalabelId }) {
   await del(authenticationToken, locale, `${baseUrl}/v004/data/labels/${datalabelId}`);
 }
