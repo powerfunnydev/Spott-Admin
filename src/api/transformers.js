@@ -99,6 +99,59 @@ export function transformBroadcaster ({ logo, name, uuid }) {
   return { logo: logo && { id: logo.uuid, url: logo.url }, name, id: uuid };
 }
 
+export function transformDatalabeltype ({ auditInfo, name, uuid }) {
+  return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn };
+}
+
+export function transformSingleDatalabeltype ({ uuid, defaultLocale, localeData, auditInfo }) {
+  const datalabeltype = {
+    basedOnDefaultLocale: {},
+    createdOn: auditInfo && auditInfo.createdOn,
+    defaultLocale,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    locales: [],
+    name: {}
+  };
+  if (localeData) {
+    for (const { basedOnDefaultLocale, locale, name } of localeData) {
+      datalabeltype.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      datalabeltype.name[locale] = name;
+      datalabeltype.locales.push(locale);
+    }
+  }
+  return datalabeltype;
+}
+
+export function transformDatalabel ({ auditInfo, name, uuid, type }) {
+  return { name, id: uuid, createdBy: auditInfo.createdBy, createdOn: auditInfo.createdOn, type: type.name };
+}
+
+export function transformSingleDatalabel ({ uuid, defaultLocale, localeData, auditInfo, type }) {
+  const datalabel = {
+    basedOnDefaultLocale: {},
+    createdOn: auditInfo && auditInfo.createdOn,
+    defaultLocale,
+    id: uuid,
+    lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
+    lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
+    locales: [],
+    name: {},
+    type: type.uuid
+  };
+
+  if (localeData) {
+    for (const { basedOnDefaultLocale, locale, name } of localeData) {
+      datalabel.basedOnDefaultLocale[locale] = basedOnDefaultLocale;
+      datalabel.name[locale] = name;
+      datalabel.locales.push(locale);
+    }
+  }
+
+  return datalabel;
+}
+
 export function transformContentProducer ({ uuid, name, auditInfo, logo }) {
   return {
     createdOn: auditInfo && auditInfo.createdOn,
@@ -167,7 +220,7 @@ export function transformShop ({ defaultLocale, localeData, publishStatus, unive
 }
 
 export function transformProduct ({ affiliate, auditInfo, brand, categories, defaultLocale,
-  localeData, noLongerAvailable, publishStatus, tags, uuid }) {
+  localeData, noLongerAvailable, publishStatus, tags, uuid, labels }) {
   const product = {
     affiliate,
     basedOnDefaultLocale: {},
@@ -179,6 +232,7 @@ export function transformProduct ({ affiliate, auditInfo, brand, categories, def
     fullName: {},
     id: uuid,
     images: {},
+    labels: categories && labels.map(label => label.uuid),
     lastUpdatedBy: auditInfo && auditInfo.lastUpdatedBy,
     lastUpdatedOn: auditInfo && auditInfo.lastUpdatedOn,
     locales: [],

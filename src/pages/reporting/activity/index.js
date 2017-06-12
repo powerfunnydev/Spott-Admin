@@ -20,8 +20,7 @@ import * as actions from './actions';
 import { activitySelector } from './selector';
 import { arraysEqual, slowdown } from '../../../utils';
 import MarkersMap from '../_markersMap';
-import HamburgerDropdown, { styles as dropdownStyles } from '../../_common/components/hamburgerDropdown';
-import { actionTypes, downloadFile, renderHamburgerDropdown } from '../highchart';
+import { actionTypes, renderHamburgerDropdown } from '../highchart';
 
 HighchartsMore(Highcharts.Highcharts);
 HighchartsExporting(Highcharts.Highcharts);

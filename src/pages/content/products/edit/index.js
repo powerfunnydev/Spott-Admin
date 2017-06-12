@@ -51,7 +51,7 @@ function validate (values, { t }) {
   openModal: bindActionCreators(actions.openModal, dispatch),
   routerPushWithReturnTo: bindActionCreators(routerPushWithReturnTo, dispatch),
   searchBrands: bindActionCreators(actions.searchBrands, dispatch),
-  searchProductCategories: bindActionCreators(actions.searchProductCategories, dispatch),
+  searchProductLabels: bindActionCreators(actions.searchProductLabels, dispatch),
   submit: bindActionCreators(actions.submit, dispatch),
   uploadImage: bindActionCreators(actions.uploadImage, dispatch)
 }))
@@ -84,12 +84,12 @@ export default class EditProduct extends Component {
     openModal: PropTypes.func.isRequired,
     params: PropTypes.object.isRequired,
     popUpMessage: PropTypes.object,
-    productCategoriesById: ImmutablePropTypes.map.isRequired,
+    productLabelsById: ImmutablePropTypes.map.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBrands: PropTypes.func.isRequired,
-    searchProductCategories: PropTypes.func.isRequired,
+    searchProductLabels: PropTypes.func.isRequired,
     searchedBrandIds: ImmutablePropTypes.map.isRequired,
-    searchedProductCategoryIds: ImmutablePropTypes.map.isRequired,
+    searchedProductLabelIds: ImmutablePropTypes.map.isRequired,
     submit: PropTypes.func.isRequired,
     supportedLocales: ImmutablePropTypes.list,
     t: PropTypes.func.isRequired,
@@ -217,13 +217,14 @@ export default class EditProduct extends Component {
 
   render () {
     const styles = this.constructor.styles;
-    const { _activeLocale, brandsById, productCategoriesById, errors, currentModal, closeModal, supportedLocales, defaultLocale,
-      currentProduct, location, handleSubmit, searchBrands, searchProductCategories, searchedProductCategoryIds, searchedBrandIds, deleteImage,
+    const { _activeLocale, brandsById, productLabelsById, errors, currentModal, closeModal, supportedLocales, defaultLocale,
+      currentProduct, location, handleSubmit, searchBrands, searchProductLabels, searchedProductLabelIds, searchedBrandIds, deleteImage,
       location: { query: { tab } } } = this.props;
     const logo = currentProduct.getIn([ 'logo', _activeLocale ]) ||
                       currentProduct.getIn([ 'logo', defaultLocale ]);
     // Construct an array of product images.
     const images = currentProduct.getIn([ 'images', _activeLocale ]) && currentProduct.getIn([ 'images', _activeLocale ]).toJS() || [];
+    console.log('~~~~~~~~~~~', searchedProductLabelIds.get('data').toJS(), productLabelsById.toJS());
     return (
       <SideMenu>
         <Root style={styles.backgroundRoot}>
@@ -291,14 +292,14 @@ export default class EditProduct extends Component {
                   <Field
                     component={SelectInput}
                     disabled={_activeLocale !== defaultLocale}
-                    getItemText={(id) => productCategoriesById.getIn([ id, 'name' ])}
-                    getOptions={searchProductCategories}
-                    isLoading={searchedProductCategoryIds.get('_status') === FETCHING}
-                    label='Product categories'
+                    getItemText={(id) => productLabelsById.getIn([ id, 'name' ])}
+                    getOptions={searchProductLabels}
+                    isLoading={searchedProductLabelIds.get('_status') === FETCHING}
+                    label='Product labels'
                     multiselect
-                    name='categories'
-                    options={searchedProductCategoryIds.get('data').toJS()}
-                    placeholder='Product categories'
+                    name='labels'
+                    options={searchedProductLabelIds.get('data').toJS()}
+                    placeholder='Product labels'
                     required/>
                   <Field
                     component={TextInput}

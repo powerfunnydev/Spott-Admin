@@ -5,10 +5,10 @@ import {
   productsEntitiesSelector,
   createEntityByIdSelector,
   listBrandsEntitiesSelector,
-  listProductCategoriesEntitiesSelector,
+  listProductLabelsEntitiesSelector,
   createEntityIdsByRelationSelector,
   searchStringHasBrandsRelationsSelector,
-  searchStringHasProductCategoriesRelationsSelector
+  searchStringHasProductLabelsRelationsSelector
 } from '../../../../selectors/data';
 
 const formName = 'productEdit';
@@ -25,15 +25,15 @@ const currentProductSelector = createEntityByIdSelector(productsEntitiesSelector
 const popUpMessageSelector = (state) => state.getIn([ 'content', 'products', 'edit', 'popUpMessage' ]);
 
 const currentBrandsSearchStringSelector = (state) => state.getIn([ 'content', 'products', 'edit', 'currentBrandsSearchString' ]);
-const currentProductCategoriesSearchStringSelector = (state) => state.getIn([ 'content', 'products', 'edit', 'currentProductCategoriesSearchString' ]);
+const currentProductLabelsSearchStringSelector = (state) => state.getIn([ 'content', 'products', 'edit', 'currentProductLabelsSearchString' ]);
 
 const searchedBrandIdsSelector = createEntityIdsByRelationSelector(searchStringHasBrandsRelationsSelector, currentBrandsSearchStringSelector);
-const searchedProductCategoryIdsSelector = createEntityIdsByRelationSelector(searchStringHasProductCategoriesRelationsSelector, currentProductCategoriesSearchStringSelector);
+const searchedProductLabelIdsSelector = createEntityIdsByRelationSelector(searchStringHasProductLabelsRelationsSelector, currentProductLabelsSearchStringSelector);
 
 export default createStructuredSelector({
   _activeLocale: _activeLocaleSelector,
   brandsById: listBrandsEntitiesSelector,
-  productCategoriesById: listProductCategoriesEntitiesSelector,
+  productLabelsById: listProductLabelsEntitiesSelector,
   currentModal: currentModalSelector,
   currentProduct: currentProductSelector,
   defaultLocale: currentDefaultLocaleSelector,
@@ -41,6 +41,6 @@ export default createStructuredSelector({
   formValues: valuesSelector,
   popUpMessage: popUpMessageSelector,
   searchedBrandIds: searchedBrandIdsSelector,
-  searchedProductCategoryIds: searchedProductCategoryIdsSelector,
+  searchedProductLabelIds: searchedProductLabelIdsSelector,
   supportedLocales: supportedLocalesSelector
 });

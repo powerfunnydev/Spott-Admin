@@ -410,18 +410,18 @@ export default class BrandDashboard extends Component {
     loadGenderData: PropTypes.func.isRequired,
     loadKeyMetrics: PropTypes.func.isRequired,
     loadLocationData: PropTypes.func.isRequired,
+    loadTopCommercials: PropTypes.func.isRequired,
     loadTopMedia: PropTypes.func.isRequired,
     loadTopPeople: PropTypes.func.isRequired,
     loadTopProducts: PropTypes.func.isRequired,
-    loadTopCommercials: PropTypes.func.isRequired,
     location: PropTypes.object.isRequired,
     routerPushWithReturnTo: PropTypes.func.isRequired,
     searchBrands: PropTypes.func.isRequired,
     searchedBrandIds: ImmutablePropTypes.map.isRequired,
     topMedia: ImmutablePropTypes.map.isRequired,
-    topPeople: ImmutablePropTypes.map.isRequired,
-    topProducts: ImmutablePropTypes.map.isRequired,
     topCommercials: ImmutablePropTypes.map.isRequired,
+    topPeople: ImmutablePropTypes.map.isRequired,
+    topProducts: ImmutablePropTypes.map.isRequired
   };
 
   constructor (props) {
@@ -680,11 +680,11 @@ export default class BrandDashboard extends Component {
             <Highcharts config={dateDataConfig.get('data')} isPureConfig ref='brandActivityHighchart'/>
           </Widget>
           <TopMedia
-              data={topMedia}
-              load={loadTopMedia}
-              location={location}
-              routerPushWithReturnTo={routerPushWithReturnTo}
-              style={styles.topMediaWidget} />
+            data={topMedia}
+            load={loadTopMedia}
+            location={location}
+            routerPushWithReturnTo={routerPushWithReturnTo}
+            style={styles.topMediaWidget} />
           <div style={styles.widgets}>
             <TopCommercials
               data={topCommercials}

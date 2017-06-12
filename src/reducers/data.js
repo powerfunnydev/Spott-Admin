@@ -1,11 +1,11 @@
 import { fromJS } from 'immutable';
 import {
-  serializeFilterHasBroadcasters, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
+  serializeFilterHasBroadcasters, serializeFilterHasDatalabeltypes, serializeFilterHasCharacters, serializeFilterHasCommercials, serializeFilterHasSeriesEntries,
   serializeFilterHasUsers, serializeFilterHasMediumCategories, serializeFilterHasBroadcastChannels, serializeFilterHasMovies, serializeFilterHasPersons, serializeFilterHasTopics,
   serializeFilterHasTvGuideEntries, serializeFilterHasContentProducers, serializeFilterHasInteractiveVideos,
   fetchStart, fetchSuccess, fetchError, searchStart, searchSuccess, searchError, fetchListStart, serializeFilterHasTags,
   fetchListSuccess, fetchListError, mergeListOfEntities, serializeFilterHasBrands, serializeFilterHasShops, serializeFilterHasMedia, serializeFilterHasProducts,
-  serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasLanguages,
+  serializeFilterHasCountries, serializeFilterHasProductCategories, serializeFilterHasProductLabels, serializeFilterHasLanguages,
   serializeFilterHasPushNotifications, serializeFilterHasCrops, serializeFilterHasSpotts, serializeBroadcasterFilterHasMedia,
   transformMediumToListMedium, serializeFilterHasTopMedia, serializeFilterHasDemographics, serializeFilterHasTopPeople, serializeFilterHasTopProducts, serializeFilterHasTopCommercials
 } from './utils';
@@ -16,6 +16,8 @@ import * as brandActions from '../actions/brand';
 import * as brandDashboardActions from '../actions/brandDashboard';
 import * as broadcastChannelActions from '../actions/broadcastChannel';
 import * as broadcastersActions from '../actions/broadcaster';
+import * as datalabeltypesActions from '../actions/datalabeltype';
+import * as datalabelsActions from '../actions/datalabel';
 import * as charactersActions from '../actions/character';
 import * as collectionsActions from '../actions/collection';
 import * as collectionItemsActions from '../actions/collectionItem';
@@ -54,6 +56,8 @@ export default (state = fromJS({
     brands: {},
     broadcastChannels: {},
     broadcasters: {},
+    datalabeltypes: {},
+    datalabels: {},
     characters: {},
     collections: {},
     contentProducers: {},
@@ -74,6 +78,7 @@ export default (state = fromJS({
     listMediumCategories: {},
     listProducts: {},
     listProductCategories: {},
+    listProductLabels: {},
     listPushNotifications: {},
     listPushNotificationDestinations: {},
     listShops: {},
@@ -108,6 +113,8 @@ export default (state = fromJS({
     filterHasBrands: {},
     filterHasBroadcastChannels: {},
     filterHasBroadcasters: {},
+    filterHasDatalabeltypes: {},
+    filterHasDatalabels: {},
     filterHasCharacters: {},
     filterHasCommercials: {},
     filterHasContentProducers: {},
@@ -121,6 +128,7 @@ export default (state = fromJS({
     filterHasMovies: {},
     filterHasPersons: {},
     filterHasProductCategories: {},
+    filterHasProductLabels: {},
     filterHasProducts: {},
     filterHasPushNotifications: {},
     filterHasSeasons: {},
@@ -140,6 +148,8 @@ export default (state = fromJS({
     searchStringHasBrands: {},
     searchStringHasBroadcastChannels: {},
     searchStringHasBroadcasters: {},
+    searchStringHasDatalabeltypes: {},
+    searchStringHasDatalabels: {},
     searchStringHasCharacters: {},
     searchStringHasContentProducers: {},
     searchStringHasMedia: {},
@@ -147,6 +157,7 @@ export default (state = fromJS({
     searchStringHasPersons: {},
     searchStringHasProducts: {},
     searchStringHasProductCategories: {},
+    searchStringHasProductLabels: {},
     searchStringHasPushNotificationDestinations: {},
     searchStringHasShops: {},
     searchStringHasSeriesEntries: {},
@@ -415,6 +426,41 @@ export default (state = fromJS({
       return searchSuccess(state, 'listMedia', 'filterHasMedia', serializeBroadcasterFilterHasMedia(action), action.data.data);
     case broadcastersActions.BROADCASTER_MEDIA_SEARCH_ERROR:
       return searchError(state, 'filterHasMedia', serializeBroadcasterFilterHasMedia(action), action.error);
+
+    case datalabeltypesActions.DATALABELTYPE_FETCH_START:
+      return fetchStart(state, [ 'entities', 'datalabeltypes', action.datalabeltypeId ]);
+    case datalabeltypesActions.DATALABELTYPE_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'datalabeltypes', action.datalabeltypeId ], action.data);
+    case datalabeltypesActions.DATALABELTYPE_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'datalabeltypes', action.datalabeltypeId ], action.error);
+
+    case datalabeltypesActions.DATALABELTYPES_FETCH_START:
+      return searchStart(state, 'filterHasDatalabeltypes', serializeFilterHasDatalabeltypes(action));
+    case datalabeltypesActions.DATALABELTYPES_FETCH_SUCCESS:
+      return searchSuccess(state, 'datalabeltypes', 'filterHasDatalabeltypes', serializeFilterHasDatalabeltypes(action), action.data.data);
+    case datalabeltypesActions.DATALABELTYPES_FETCH_ERROR:
+      return searchError(state, 'filterHasDatalabeltypes', serializeFilterHasDatalabeltypes(action), action.error);
+
+    case datalabelsActions.DATALABEL_FETCH_START:
+      return fetchStart(state, [ 'entities', 'listProductLabels', action.datalabelId ]);
+    case datalabelsActions.DATALABEL_FETCH_SUCCESS:
+      return fetchSuccess(state, [ 'entities', 'listProductLabels', action.datalabelId ], action.data);
+    case datalabelsActions.DATALABEL_FETCH_ERROR:
+      return fetchError(state, [ 'entities', 'listProductLabels', action.datalabelId ], action.error);
+
+    case datalabelsActions.DATALABELS_FETCH_START:
+      return searchStart(state, 'listProductLabels', serializeFilterHasProductLabels(action));
+    case datalabelsActions.DATALABELS_FETCH_SUCCESS:
+      return searchSuccess(state, 'listProductLabels', 'filterHasProductLabels', serializeFilterHasProductLabels(action), action.data.data);
+    case datalabelsActions.DATALABELS_FETCH_ERROR:
+      return searchError(state, 'filterHasProductLabels', serializeFilterHasProductLabels(action), action.error);
+
+    case datalabelsActions.DATALABELS_SEARCH_START:
+      return searchStart(state, 'searchStringHasProductLabels', action.searchString);
+    case datalabelsActions.DATALABELS_SEARCH_SUCCESS:
+      return searchSuccess(state, 'listProductLabels', 'searchStringHasProductLabels', action.searchString, action.data);
+    case datalabelsActions.DATALABELS_SEARCH_ERROR:
+      return searchError(state, 'searchStringHasProductLabels', action.searchString, action.error);
 
     // Characters
     // //////////
